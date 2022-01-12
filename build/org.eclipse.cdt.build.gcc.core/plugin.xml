@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.core.toolChainProvider">
+      <provider
+            class="org.eclipse.cdt.build.gcc.core.internal.GCCPathToolChainProvider"
+            id="org.eclipse.cdt.build.gcc.core.gccPathProvider">
+      </provider>
+      <provider
+            class="org.eclipse.cdt.build.gcc.core.internal.Msys2ToolChainProvider"
+            id="org.eclipse.cdt.build.gcc.core.msys2Provider">
+      </provider>
+      <provider
+            class="org.eclipse.cdt.build.gcc.core.GCCUserToolChainProvider"
+            id="org.eclipse.cdt.build.gcc.core.provider.user">
+      </provider>
+      <type
+            id="org.eclipse.cdt.build.gcc"
+            name="GCC">
+      </type>
+      <type
+            id="org.eclipse.cdt.build.clang"
+            name="clang">
+      </type>
+   </extension>
+
+</plugin>

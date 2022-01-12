@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Build, Settings, Container Settings</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main"><h1>C/C++ Project Properties, Build, Settings, Container Settings</h1>
+<p>Use the <strong>Container Settings</strong> properties tab to
+specify options for building the project in a Docker Container.  This properties tab is
+provided with the optional Docker C/C++ Launch feature.  By default,
+project configurations will build locally, however, if you want to have a particular
+configuration build the project in a Container, use the enablement check-box.
+After enabling building in a Container, you need to select an active Docker Connection and
+a down-loaded Image in that Connection to run the build in.  The Image must have whatever
+tools are necessary to perform the build already installed.  Docker Images will be linux-based so the build
+will use linux appropriate toolsets and create a linux-compatible executable.</p>
+<p>By default, the C/C++ project and all dependent project contents will be mounted
+into the Container where the build is occurring.  This allows the build to find project source and
+header files.  If additional host directories are needed to
+build the project (e.g. a local header file directory that is not part of an
+installed package in the Docker Image), such directories can be added to the Data Volumes table and they
+will be mounted in the Container before the build occurs.  If the Docker daemon is running locally, this
+will be a simple mount.  If the Docker daemon is remote,
+mounting will involve automatically copying the directory contents over to the Container since system mounting cannot
+occur across machines.</p>
+<p>To accommodate indexing, build-specs discovery will be performed in the Docker Container.  Directories found
+by specs detection will be copied locally for use by the indexer.  This copying process also occurs for any
+header file directories discovered while building.  The
+header files are stored within the workspace and are only uploaded once per Docker Image.  These header files
+can be removed from the Preferences page if, for example, the project no longer needs to build/index for that
+particular Docker Image.</p>
+
+<p><img img="" src="../images/prop_container.png"
+ alt="C/C++ Project Properties, Build, Settings, Container Settings"></p>
+
+
+<table cellpadding="5" cellspacing="0" border="1" width="600px" bordercolor="#DDDDDD" >
+	<caption><strong>Container settings options</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr style="text-align:center;">
+			<th id="group"><strong>Group</strong></th>
+			<th id="description"><strong>Description</strong></th>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Configuration</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Manage Configurations...</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for a description.</a></td>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Build inside Docker Image</strong> (check-box)</td>
+			<td headers="description">Enables the build to occur inside a Container.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Connection</strong></td>
+			<td headers="description">Pull-down that contains a list of known Docker daemon connections to run the build in if enablement button is checked.</td>
+			</tr>	
+		<tr>
+			<td headers="group"><strong>Image</strong></td>
+			<td headers="description">Pull-down that contains Docker Image names to use to create the Container the build will run in.  This list is enabled by
+			a Docker Connection selection and the enablement check-box.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Data Volumes</strong></td>
+			<td headers="description">Optional list of directories to mount into the Container prior to building.  By default, the C/C++ project and any refererenced
+			projects are mounted automatically in the Container.  Directories can be added, edited, or removed using the buttons to the
+			right of the list.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Add...</strong></td>
+			<td headers="description">Button to bring up the <a href="cdt_u_prop_data_volumes.htm">Data Volume</a> dialog for specifying a
+			data volume to mount in the Docker Container.  This usually involves selecting a directory from the local system.  Once finished,
+			the mount will be shown in the Data Volumes list.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Edit...</strong></td>
+			<td headers="description">Button to edit the currently selected data volume in the Data Volumes list.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Remove</strong></td>
+			<td headers="description">Button to remove the currently selected data volume(s) in the Data Volumes list.</td>
+			</tr>		
+	</tbody>
+</table>
+<br>
+<p><strong>Available for:</strong> CDT projects.</p>
+
+<p><img src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
+<br>
+</p>
+
+
+<p style="margin-top: 0pt; margin-bottom: 0pt;"><img 
+ src="../images/ngref.gif" alt="Related reference" width="143"
+ height="21"><br>
+
+
+<ul>
+<li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
+<li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
+<li><a href="cdt_u_prop_all.htm">Project Properties, common C/C++ Configurations handling</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_manage_dialog.htm">Manage Configurations dialog</a>
+   <li><a href="cdt_u_prop_manage_newdialog.htm">Create Configuration dialog</a>
+   <li><a href="cdt_u_prop_manage_rendialog.htm">Rename Configuration dialog</a>
+   </ul>
+<li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
+   <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
+   <li>Settings page
+       <ul> 
+       <li><a href="cdt_u_prop_build_settings_tool.htm">     Tool Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_container.htm">ContainerSettings tab</a>
+       <li><a href="cdt_u_prop_build_settings_steps.htm">    Build Steps tab</a>
+       <li><a href="cdt_u_prop_build_settings_artifact.htm"> Build Artifact tab</a>
+       <li><a href="cdt_u_prop_build_settings_binparser.htm">Binary Parsers tab</a>
+       <li><a href="cdt_u_prop_build_settings_errparser.htm">Error Parsers tab</a>
+       </ul> 
+   <li><a href="cdt_u_prop_build_toolchain.htm">Tool chain editor page</a>
+   <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
+   </ul>
+<li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
+   <ul style="list-style-type: disc"> 
+   <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
+   <li><a href="cdt_u_prop_general_exp.htm">Export Settings page</a>
+       <!--ul>
+       <li><a href="cdt_u_prop_general_exp_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_exp_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_exp_lib.htm">Libraries tab</a>
+       <li><a href="cdt_u_prop_general_exp_libpath.htm">Libraries path tab</a>
+       </ul-->
+   <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
+   <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
+   <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
+   <li>Paths and Symbols page
+       <ul>
+       <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_pns_lib.htm">Libraries tab</a>
+       <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
+       <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_out.htm">Output Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
+       <li><a href="cdt_u_prop_general_pns_hier.htm">Data Hierarchy tab</a>
+       </ul>
+   </ul>
+<li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
+</ul>
+</p>
+<hr >
+<p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
+
+</div></body>
+</html>

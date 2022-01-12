@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<!--
+# Copyright (c) 2009 Wind River Systems, Inc. and others.
+#
+# This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License 2.0
+# which accompanies this distribution, and is available at
+# https://www.eclipse.org/legal/epl-2.0/
+#
+# SPDX-License-Identifier: EPL-2.0
+#
+# Contributors:
+# Ted R Williams (Wind River) - initial implementation 
+# Patrick Chuong (Texas Instruments) - Pin and Clone Supports (331781)
+# Randy Rohrbach (Wind River) - Multiple expression support (326307)
+-->
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+            icon="icons/memorybrowser_view.gif"
+            id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+            name="%view.name.0">
+      </view>
+   </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+               relationship="stack" relative="org.eclipse.ui.console.ConsoleView" visible="false">
+         </view>
+         <viewShortcut id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"/>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowserPreferenceInitializer"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eclipse.cdt.debug.ui.memoryBrowser.toolbar"
+            targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
+               icon="icons/toolbar_pinned.gif"
+               id="org.eclipse.pinclone.memoryBrowser.pinDebugContext"
+               label="%PinView.name "
+               style="toggle"
+               toolbarPath="pinGroup">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
+               icon="icons/open_new.gif"
+               id="org.eclipse.pinclone.memoryBrowser.clone"
+               label="%OpenNewView.name"
+               style="push"
+               toolbarPath="pinGroup">
+         </action>
+      </viewContribution>
+   </extension>
+   <!-- Add the ability to clear the expressions list -->
+   <extension point="org.eclipse.ui.viewActions">
+     <viewContribution
+       id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.clearExpressionList"
+       targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+       <action
+          class="org.eclipse.cdt.debug.ui.memory.memorybrowser.ClearExpressionsListAction"
+          id="org.eclipse.cdt.debug.ui.memory.memorybrowser.ClearExpressionListActionID"
+          label="%view.clearExpressionList"
+          menubarPath="additions">
+       </action>
+     </viewContribution>
+   </extension>
+  <extension point="org.eclipse.ui.popupMenus">
+     <viewerContribution
+        id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+        targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
+         <action
+               class="org.eclipse.cdt.debug.ui.breakpoints.AddWatchpointActionDelegate"
+               enablesFor="1"
+               icon="icons/elcl16/watchpoint_co.gif"
+               id="org.eclipse.cdt.debug.internal.ui.actions.AddWatchpointOnMemoryActionDelegate.1"
+               label="%AddWatchpoint.label"
+               menubarPath="additions"
+               tooltip="%AddWatchpoint.tooltip">
+         </action>
+      </viewerContribution>
+  </extension>
+</plugin>

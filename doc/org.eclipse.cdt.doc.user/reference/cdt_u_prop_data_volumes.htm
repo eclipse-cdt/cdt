@@ -1,0 +1,149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Build, Settings, Data Volume Dialog</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main"><h1>C/C++ Project Properties, Build, Settings, Data Volume Dialog</h1>
+<p>The <strong>Data Volume</strong> dialog is brought up when a user selects the
+Add... button from the Container Settings Data Volumes table.  Like the properties tab,
+this dialog is only available if the optional Docker C/C++ Launch feature is installed.</p>
+<p>Data volumes can be specified from the local file system, another Container, or created
+as empty, in the Docker Container where the build will be performed.</p>
+
+<p><img img="" src="../images/prop_datavolumes.png"
+ alt="C/C++ Project Properties, Build, Settings, Data Volume Dialog"></p>
+
+
+<table cellpadding="5" cellspacing="0" border="1" width="600px" bordercolor="#DDDDDD" >
+	<caption><strong>Data Volume Dialog</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr style="text-align:center;">
+			<th id="group"><strong>Group</strong></th>
+			<th id="description"><strong>Description</strong></th>
+		</tr>
+		<tr>
+			<td headers="group"><strong>Container path</strong></td>
+			<td headers="description">This defines the path that the data volume will be mounted as within the Docker Container.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>No external mount</strong></td>
+			<td headers="description">Use this option to create a new empty directory in the Docker Container that is not mounted
+			to any external directory.</td>
+			</tr>	
+		<tr>
+			<td headers="group"><strong>Mount a host directory or host file</strong></td>
+			<td headers="description">Use this to specify a local system path that will be mounted in the Docker Container with
+			the given Container path.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Path</strong></td>
+			<td headers="description">This is the local path of the directory or file to mount in the Docker Container.  This
+			can be specified manually or via the Directory/File buttons.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Directory</strong></td>
+			<td headers="description">Use this button to bring up a local directory browser to fill in the Path text field
+			when mounting a local directory in the Docker Container.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>File</strong></td>
+			<td headers="description">Use this button to bring up a local file browser to fill in the Path text field
+			when mounting a local file in the Docker Container.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Read-only access</strong></td>
+			<td headers="description">Check this button if mounting a local directory or file and you do not wish the
+			Container to modify it.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Mount a data volume container</strong></td>
+			<td headers="description">Check this button if mounting the volumes of another Container.</td>
+			</tr>		
+		<tr>
+			<td headers="group"><strong>Container</strong></td>
+			<td headers="description">This is a pull-down containing actively running Containers to use data volumes from if
+			the option above is chosen.</td>
+			</tr>		
+	</tbody>
+</table>
+<br>
+<p><strong>Available for:</strong> CDT projects.</p>
+
+<p><img src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
+<br>
+</p>
+
+
+<p style="margin-top: 0pt; margin-bottom: 0pt;"><img 
+ src="../images/ngref.gif" alt="Related reference" width="143"
+ height="21"><br>
+
+
+<ul>
+<li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
+<li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
+<li><a href="cdt_u_prop_all.htm">Project Properties, common C/C++ Configurations handling</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_manage_dialog.htm">Manage Configurations dialog</a>
+   <li><a href="cdt_u_prop_manage_newdialog.htm">Create Configuration dialog</a>
+   <li><a href="cdt_u_prop_manage_rendialog.htm">Rename Configuration dialog</a>
+   </ul>
+<li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
+   <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
+   <li>Settings page
+       <ul> 
+       <li><a href="cdt_u_prop_build_settings_tool.htm">     Tool Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_container.htm">ContainerSettings tab</a>
+       <li><a href="cdt_u_prop_build_settings_steps.htm">    Build Steps tab</a>
+       <li><a href="cdt_u_prop_build_settings_artifact.htm"> Build Artifact tab</a>
+       <li><a href="cdt_u_prop_build_settings_binparser.htm">Binary Parsers tab</a>
+       <li><a href="cdt_u_prop_build_settings_errparser.htm">Error Parsers tab</a>
+       </ul> 
+   <li><a href="cdt_u_prop_build_toolchain.htm">Tool chain editor page</a>
+   <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
+   </ul>
+<li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
+   <ul style="list-style-type: disc"> 
+   <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
+   <li><a href="cdt_u_prop_general_exp.htm">Export Settings page</a>
+       <!--ul>
+       <li><a href="cdt_u_prop_general_exp_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_exp_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_exp_lib.htm">Libraries tab</a>
+       <li><a href="cdt_u_prop_general_exp_libpath.htm">Libraries path tab</a>
+       </ul-->
+   <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
+   <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
+   <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
+   <li>Paths and Symbols page
+       <ul>
+       <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_pns_lib.htm">Libraries tab</a>
+       <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
+       <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_out.htm">Output Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
+       <li><a href="cdt_u_prop_general_pns_hier.htm">Data Hierarchy tab</a>
+       </ul>
+   </ul>
+<li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
+</ul>
+</p>
+<hr >
+<p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
+
+</div></body>
+</html>

@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.launch" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.launch" id="launchConfigAffinity" name="CDT Launch Config Affinity"/>
+      </appInfo>
+      <documentation>
+         CDT adopters can extend this extension point to declare that their launch configurations are CDT-ish. CDT features that manipulate CDT launch configurations in a generic enough way to make them equally applicable to third-party solutions will look at this extension point to see what additional configurations to operate on.
+
+Adopters that contribute launch configurations that are vastly different from the standard CDT ones should not declare an affinity, as it&apos;s unlikely CDT features would know what to do with them.
+
+One feature that uses this extension point (as a consumer) is CDT&apos;s support for adjusting a launch configuration when the user renames the project.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="launchConfigTypeId" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="launchConfigTypeId">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  launch configuration type ID
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         7.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;extension
+      point=&quot;org.eclipse.cdt.launch.launchConfigAffinity&quot;&gt;
+   &lt;launchConfigTypeId id=&quot;com.acme.launchTypeAttach&quot;/&gt;
+   &lt;launchConfigTypeId id=&quot;com.acme.launchTypeCreateProcess&quot;/&gt;   
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         There is no API associated with this extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+<meta name="copyright" content="Copyright (c) Andrew Gvozdev and others 2013,2013. This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
+
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Setting up include paths and macros for C/C++ indexer</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+<div>
+<h1>Setting up include paths and macros for C/C++ indexer</h1>
+
+<p>
+CDT allows for comfortable environment with code highlighting, navigation, content assist and static analysis.
+However, most C/C++ projects have to be configured to enjoy those features. Most real life C/C++ projects heavily depend on code outside of the project itself,
+such as system headers or third party libraries. CDT indexer needs to process those to provide accurate index.
+Failure to set up these important settings assuredly will cause the assist tools misbehave.
+</p>
+
+<p>CDT will try to discover include paths and preprocessor symbols automatically for supported toolchains. This process is known as <a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a> or <b>Autodiscovery</b>.
+This discovery of symbols is twofold.
+One way, CDT will try to detect built-in compiler symbols and include paths running the compiler with special options and parse the output.
+Another method that CDT employs is to analyze build output of the regular build with Build Output Parser. Often, include paths are supplied to the compiler with -I options, and macros with -D options.
+That relies on verbose build output of your build where all these options are actually printed by make.
+</p>
+
+<p>
+<a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a> uses <strong>Language Settings Providers</strong> to find include paths and preprocessor symbols.
+Language Settings Providers can be configured on project properties page "Preprocessor Include Paths, Macros, etc.", <a href="../reference/cdt_u_prop_general_sd_providers.htm">Providers tab</a> for a configuration
+and on preference page <a href="../reference/cdt_u_pref_build_scanner_discovery.htm">C/C++ Preferences: Scanner Discovery</a> for shared providers.
+</p>
+<p>
+If information retrieved by auto-discovery is insufficient or the project deviates from a standard one supported by CDT a user can inspect discovered entries and enter additional include paths and macros manually
+on the property page "Preprocessor Include Paths, Macros, etc.", <a href="../reference/cdt_u_prop_general_sd_entries.htm">Entries tab</a>.
+</p>
+
+
+<p>
+There are other ways to make C/C++ indexer aware of include paths or macros. One way is to set up them in MBS via "Paths and Symbols" project properties.
+See <a href="cdt_t_proj_paths.htm">Including paths and symbols in Managed Build System</a>. These entries are supplied to the indexer with MBS Language Settings Provider.
+</p>
+
+
+<p><img src="../images/ngconcepts.gif" alt="Related concepts" width="143" height="21"><br>
+<a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+</p>
+
+<p><img src="../images/ngtasks.gif" alt="Related tasks" width="143" height="21"><br>
+<a href="../tasks/cdt_t_search.htm">Searching for C/C++ elements</a></p>
+</p>
+
+<p><img src="../images/ngref.gif" alt="Related reference" width="143" height="21"><br>
+<a href="../reference/cdt_u_pref_build_scanner_discovery.htm">C/C++ Preferences: Scanner Discovery</a><br>
+<a href="../reference/cdt_u_prop_general_scanner_discovery.htm">C/C++ Project properties: Preprocessor Include Paths, Macros, etc.</a><br>
+</p>
+
+</div></body>
+
+</html>

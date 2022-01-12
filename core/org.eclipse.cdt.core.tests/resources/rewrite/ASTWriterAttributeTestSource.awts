@@ -1,0 +1,384 @@
+//!Attributed Lambda
+//%CPP
+auto t = []() mutable throw (char*) [[noreturn]] {
+    throw "exception";
+}
+;
+
+//!Attributed Array New Initialization
+//%CPP
+int* arr = new int[1][[attr]]{2};
+
+//!Attributed Multidimensional Array
+//%CPP
+int (*matrix) = new int[2][[attr1]][2][[attr2]];
+
+//!Attributed Label
+//%CPP
+void foo()
+{
+    [[attr]] label:
+    ;
+}
+
+//!Attributed Switch Labels
+//%CPP
+void foo(int i)
+{
+    switch (i){
+        [[attr]] case 42:
+        [[attr]] default:
+            ;
+    }
+}
+
+//!Attributed Expression Statement
+//%CPP
+void foo()
+{
+    int i{0};
+    [[attr]] i++;
+}
+
+//!Attributed Compound Statement
+//%CPP
+void foo()
+{
+    [[attr]] {
+    }
+}
+
+//!Attributed Selection Statement
+//%CPP
+void foo()
+{
+    [[attr]] if (false);
+
+}
+
+//!Attributed Iteration Statement
+//%CPP
+void foo()
+{
+    [[attr]] while (false);
+
+}
+
+//!Attributed Jump Statement
+//%CPP
+void foo()
+{
+    [[attr]] return;
+}
+
+//!Attributed Try Block Statement
+//%CPP
+void foo()
+{
+    [[attr]] try {
+    }
+    catch (...){
+    }
+}
+
+//!Attributed Condition with Initializer
+//%CPP
+void foo()
+{
+    if ([[attr]] int i{0});
+
+}
+
+//!Attributed For Range Declaration
+//%CPP
+void foo()
+{
+    int a[1]{0};
+    for ([[attr]] auto i: a){
+    }
+}
+
+//!Attributed Alias Declaration
+//%CPP
+using number [[attr]] = int;
+
+//!Attributed Enum Declaration
+//%CPP
+enum [[attr]] e{ };
+
+//!Attributed Using Directive
+//%CPP
+namespace NS
+{
+
+
+}
+
+[[attr]] using namespace NS;
+
+//!Attributed Function Declarator in Definition
+//%CPP
+void foo() throw (char*) [[noreturn]] -> void
+{
+    throw "exception";
+}
+
+//!Attributed Class
+//%CPP
+class [[attr]] C
+{
+};
+
+//!Attributed Exception Declaration
+//%CPP
+void f()
+{
+    try {
+    }
+    catch ([[attr]] int& id){
+    }
+}
+
+//!Attributed Elaborated Type Specifier
+//%CPP
+struct [[attr]] S;
+
+//!Attributed Decl Specifier
+//%CPP
+static int [[int_attr]] v;
+
+//!Attributed Type Specifier
+//%CPP
+const volatile unsigned long int [[attr]] cvuli;
+
+//!Attributed Ptr Operators
+//%CPP
+int*[[pointer_attribute]]*[[pointer_attribute]] ipp;
+
+//!Attributed Reference Operator
+//%CPP
+int&[[ref_attribute]] iRef;
+
+//!Attributed Rvalue Reference Operator
+//%CPP
+int&&[[rvalue_ref_attribute]] iRvalueRef;
+
+//!Attributed Function Declaration
+//%CPP
+void foo() [[function_attr]];
+
+//!Attributed Declarator
+//%CPP
+int ipp [[declarator_attr]];
+
+//!Attributed Array Declarator
+//%CPP
+int iArr[5][[arr_attr]];
+
+//!Attributed Simple Declaration
+//%CPP
+[[attr]] int i;
+
+//!Attributed Function Definition
+//%CPP
+[[attr]] void bar()
+{
+}
+
+//!Attributed Deleted Constructor
+//%CPP
+struct S
+{
+    [[ctor_attr]] S() = delete;
+};
+
+//!Attributed Simple Declaration in Statement
+//%CPP
+void bar()
+{
+    [[attr]] int i;
+}
+
+//!Attributed Do-while Statement 514684
+//%CPP
+void foo()
+{
+    [[attr]] do{
+    } while (true);
+}
+
+//!Attributed For Statement 514684
+//%CPP
+void foo()
+{
+    [[attr]] for (int i = 0;i < 10;i++){
+    }
+}
+
+//!Attributed Range-Based For Statement 514684
+//%CPP
+void foo()
+{
+    int a[] = {0, 1, 2};
+    [[attr]] for (int n: a){
+    }
+}
+
+//!Attributed Break Statement 514684
+//%CPP
+void foo()
+{
+    while (true){
+        [[attr]] break;
+    }
+}
+
+//!Attributed Continue Statement 514684
+//%CPP
+void foo()
+{
+    while (true){
+        [[attr]] continue;
+    }
+}
+
+//!Attributed Goto Statement 514684
+//%CPP
+void foo()
+{
+    [[attr]] goto label;
+    label:
+    ;
+}
+
+//!Attributed GNU Goto Statement 514684
+//%CPP GNU
+void foo()
+{
+    label2:
+    ;
+    void* ptr = &&label2;
+    [[attr]] goto *ptr;
+}
+
+//!Attributed Null Statement 514684
+//%CPP
+void foo()
+{
+    [[attr]];
+}
+
+//!Attributed Switch Statement 514684
+//%CPP
+void foo()
+{
+    [[attr]] switch (1){
+        default:
+    }
+}
+
+//!Empty Attribute
+//%CPP
+[[]] int i;
+
+//!Multiple Sequential Attribute Specifiers
+//%CPP
+[[attr]][[attr2]][[attr3]] int i;
+
+//!Multiple Attributes
+//%CPP
+[[attr1, attr2]] int i;
+
+//!Pack Expansion Attribute
+//%CPP
+[[attribute ...]] int i;
+
+//!Multiple Pack Expansions Attribute
+//%CPP
+[[attribute1 ..., attribute2 ...]] int i;
+
+//!Scoped Attribute
+//%CPP
+[[scope::attribute]] int i;
+
+//!Attribute with Empty Argument
+//%CPP
+[[attr()]] int i;
+
+//!Attribute with Balanced Argument
+//%CPP
+[[attr(this(is){[my]}(argument[with]{some},parentheses))]] int i;
+
+//!Attribute with Keyword Argument
+//%CPP
+[[attr(class)]] int i;
+
+//!GCC Attribute Sequence
+//%CPP GNU
+void bar(void* a1, void* a2) __attribute__((nonnull(1,2)));
+
+//!GCC Attributed Using Directive
+//%CPP GNU
+namespace inner
+{
+
+
+}
+
+using namespace inner __attribute__((__strong__));
+
+//!GCC Attributed Namespace Declaration
+//%CPP GNU
+namespace NS __attribute__((__visibility__("default")))
+{
+
+
+}
+
+//!GCC Attributed Function Definition
+//%CPP GNU
+inline static int __attribute__((always_inline)) f(int x)
+{
+    return x;
+}
+
+//!GCC Attributed Enum Declaration
+//%CPP GNU
+enum __attribute__((deprecated)) Obsolete{ o1, o2};
+
+//!GCC Attributed Elaborated Type Specifier
+//%CPP GNU
+struct __attribute__((declspec)) S;
+
+//!GCC Attributed Pointer Declarator
+//%CPP GNU
+void (*__attribute__((__stdcall__))*foo3)(int);
+char*__attribute__((aligned(8)))* f;
+
+//!GCC Attributed Declarator
+//%CPP GNU
+void __attribute__((noreturn)) foo();
+void (__attribute__((__stdcall__))*foo1)(int);
+
+//!Attributed Enumerator
+//%CPP
+enum E{ value1 [[attr1]], value2 [[attr2]] = 1};
+
+//!MS declspec attribute on class
+//%CPP GNU
+__declspec(dllimport) class X
+{
+} varX;
+
+//!MS declspec attribute on declarator
+//%CPP GNU
+int __declspec(selectany)* pi2 = 0;
+
+//!MS declspec attribute on simple declaration
+//%CPP GNU
+__declspec(thread) int tls_i = 1;
+
+//!Attributed structured binding declaration
+//%CPP
+int arr[]{1, 2, 3};
+[[nodiscard]] auto [a, b, c] = arr;

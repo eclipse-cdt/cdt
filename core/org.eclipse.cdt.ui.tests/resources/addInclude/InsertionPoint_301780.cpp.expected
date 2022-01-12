@@ -1,0 +1,7 @@
+#ifndef TST_H_
+#define TST_H_
+#include "InsertionPoint_301780.h"
+
+XXX var;
+
+#endif /* TST_H_ */

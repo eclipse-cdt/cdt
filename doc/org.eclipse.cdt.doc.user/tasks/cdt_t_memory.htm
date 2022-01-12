@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+ 
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Working with memory</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+ 
+<body>
+
+<div role="main"><h1>Working with memory</h1>
+
+<p>You can inspect and change process memory.</p>
+
+<p>The Memory view supports the same addressing as the C and C++ languages. You can address memory using expressions
+such as:</p>
+
+<ul>
+ <li><samp>0x0847d3c</samp></li>
+ <li><samp>(&amp;y)+1024</samp></li>
+ <li><samp>*ptr</samp></li>
+</ul>
+
+<p> You can configure your output to
+display hexadecimal, ascii and/or signed/unsigned decimal. You can also set the
+size of the rendering columns. You can configure each memory monitor renderings
+independently.</p>
+
+<p> You can customize the Memory view to colors and fonts displayed.  </p>
+
+<p>To monitor process memory:</p>
+<ol>
+<li> In the Debug view, select a debug session. Selecting a thread or stack frame automatically
+selects the associated session.</li>
+
+<li> Select <strong><q>Add Memory Monitor</q></strong> in the context menu of the Memory Monitors pane.
+The <strong><q>Memory Monitor</q></strong> dialog appears.</li>
+
+<li> Type the address or expression that specifies the memory section you want to monitor and
+press <strong>"OK"</strong>. The monitor appears in the monitor list and the Memory Renderings
+pane displays the contents of memory locations beginning at the specified address.</li>
+
+</ol>
+<p>To view memory in a different rendering: </p>
+<ol>
+<li> Select <strong><q>Add Rendering</q></strong> in the context menu of the Memory Renderings pane.
+The <strong><q>Add Memory Rendering</q></strong> dialog appears.</li>
+
+<li> Select renderings from the list and press <strong>"OK"</strong>.</li>
+</ol>
+<p>To change process memory:</p>
+
+<p><strong>Warning:</strong>
+Changing process memory can cause a program to crash.</p>
+
+<ol>
+ <li> In the Debug view, select a debug session. Selecting a thread or stack frame automatically
+     selects the associated session.</li>
+ <li> In the Memory Monitors pane, add a new monitor or select an existing monitor.</li>
+ <li> In the Memory Renderings pane add a new rendering or select an existing one.  </li>
+ <li> Type a new value for memory.  </li>
+</ol>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_over_cdt.htm">C/C++ Development perspective</a><br>
+</p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="cdt_o_debug.htm">Debugging</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_o_dbg_view.htm">Debug views</a></p>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+
+</div></body>
+
+</html>

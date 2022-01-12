@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.cdt.util;singleton:=true
+Bundle-Version: 5.0.300.qualifier
+Bundle-Vendor: %providerName
+Require-Bundle: org.eclipse.cdt.core,
+ org.junit,
+ org.eclipse.core.runtime,
+ org.eclipse.core.resources
+Export-Package: org.eclipse.cdt.internal.core.parser.util
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Automatic-Module-Name: org.eclipse.cdt.util

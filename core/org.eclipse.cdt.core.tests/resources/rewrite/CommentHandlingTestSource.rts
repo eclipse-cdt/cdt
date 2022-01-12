@@ -1,0 +1,3217 @@
+//!CommentHandlingTest 1 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+class test
+{
+public:
+    test();
+    /*
+     * Hallo
+     */
+    void lala();
+    //test
+    virtual ~test();
+protected:
+    class test2
+    {
+    public:
+        test2();
+    }; //Komment 1
+    //Komment 2
+    //Komment 3
+};
+
+//=
+=>leading
+void lala(); = /*
+     * Hallo
+     */
+virtual ~test(); = //test
+
+=>trailing
+class test2
+    {
+    public:
+        test2();
+    }; = //Komment 1
+
+=>freestanding
+test = //Komment 2 , //Komment 3
+
+//!CommentHandlingTest 2 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+class test
+{
+public:
+    virtual ~test();
+    test();
+    void lala();
+protected:
+    class test2
+    {
+    public:
+        test2();
+    };
+};
+//LALA
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+class test
+{
+public:
+    virtual ~test();
+    test();
+    void lala();
+protected:
+    class test2
+    {
+    public:
+        test2();
+    };
+}; = //LALA
+
+//!CommentHandlingTest 3 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+//Anfang
+class test
+{
+public:
+    test();
+    void lala();
+    virtual ~test();
+protected:
+    class test2
+    {
+    public:
+        test2();
+    };
+};
+
+//=
+=>leading
+class test
+{
+public:
+    test();
+    void lala();
+    virtual ~test();
+protected:
+    class test2
+    {
+    public:
+        test2();
+    };
+}; = //Anfang
+
+=>trailing
+
+=>freestanding
+
+//!CommentHandlingTest 4 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+class test
+{
+    //Klasse...
+public:
+    test();
+    void lala();
+    virtual ~test();
+protected:
+    class test2
+    {
+    public:
+        test2();
+    };
+};
+
+//=
+=>leading
+public: = //Klasse...
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition00
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+class Klasse0
+{
+public:
+    Klasse0();   //Comment
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+Klasse0(); = //Comment
+
+=>freestanding
+
+//!CommentRecognition0
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+//Comment1
+class Klasse0
+{
+    //Comment2
+public:
+    Klasse1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+=>leading
+class Klasse0
+{
+    //Comment2
+public:
+    Klasse1();
+    std::string toString();
+
+private:
+    int i;
+}; = //Comment1
+public: = //Comment2
+
+=>trailing
+
+=>freestanding
+
+//!DeclarationWithTraillingDoubleComments
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+int foo = bar; //Comment
+ //Zweiteilig
+
+//=
+=>leading
+
+=>trailing
+int foo = bar; = //Comment
+
+=>freestanding
+int foo = bar; = //Zweiteilig
+
+//!DeclarationWithLeadingDoubleComments
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+//Comment
+//Zweiteilig
+int foo;
+
+//=
+=>leading
+int foo; = //Comment , //Zweiteilig
+
+=>trailing
+
+=>freestanding
+
+//!DeclarationWithTraillingAndLeadingComments
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+//Comment1
+int foo = bar; //Comment2
+
+//=
+=>leading
+int foo = bar; = //Comment1
+
+=>trailing
+int foo = bar; = //Comment2
+
+=>freestanding
+
+//!DeclarationWithTraillingComments
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+int foo = bar; //Comment
+
+//=
+=>leading
+
+=>trailing
+int foo = bar; = //Comment
+
+=>freestanding
+
+//!DeclarationWithTraillingComments
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+int foo; //Comment
+
+//=
+=>leading
+
+=>trailing
+int foo; = //Comment
+
+=>freestanding
+
+//!Method with Trailercomment
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+int foo ()
+{
+    return 42;
+    //return the Answer
+}
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+{
+    return 42;
+    //return the Answer
+} = //return the Answer
+
+//!Method with Trailercomment2
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+int foo()
+{
+    return 42; //return the Answer
+}
+
+//=
+=>leading
+
+=>trailing
+return 42; = //return the Answer
+
+=>freestanding
+
+//!Method with Trailercomment3
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+int foo()
+{
+    //return the Answer
+    return 42;
+}
+
+//=
+=>leading
+return 42; = //return the Answer
+
+=>trailing
+
+=>freestanding
+
+//!ClassCommentTest
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse0.h
+class comment
+{
+    //hallo
+};
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+comment = //hallo
+
+//!CommentRecognition1 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+    //TEST
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition2 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public: //TEST
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+public: = //TEST
+
+=>freestanding
+
+//!CommentRecognition3 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    //TEST
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+Klasse1(); = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition4 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition5 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{   //TEST
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition6 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1{    //TEST
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition7 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{//TEST
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition8 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+    int i = 5; //lala
+};
+
+//=
+=>leading
+
+=>trailing
+int i = 5; = //lala
+
+=>freestanding
+
+//!CommentRecognition9 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+    /*TEST*/
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = /*TEST*/
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition10 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1{    /*TEST*/
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = /*TEST*/
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition11 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public: /*TEST*/
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+public: = /*TEST*/
+
+=>freestanding
+
+//!CommentRecognition11b - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public: /*TEST*/ Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+public: = /*TEST*/
+
+=>freestanding
+
+//!CommentRecognition12 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+    int i = 5; /*TEST*/
+};
+
+//=
+=>leading
+
+=>trailing
+int i = 5; = /*TEST*/
+
+=>freestanding
+
+//!CommentRecognition13 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+    /*
+     * TEST
+     */
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = /*
+     * TEST
+     */
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition14 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+    int i = 5; /*
+                * TEST
+                */
+};
+
+//=
+=>leading
+
+=>trailing
+int i = 5; = /*
+                * TEST
+                */
+
+=>freestanding
+
+//!CommentRecognition15 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public: /*
+         * TEST
+         */
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+public: = /*
+         * TEST
+         */
+
+=>freestanding
+
+//!CommentRecognition16 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1{  //Test mit
+                //2 Zeilen
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //Test mit , //2 Zeilen
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition17 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+    int i = 5; //Test mit
+    //2 Zeilen
+};
+
+//=
+=>leading
+
+=>trailing
+int i = 5; = //Test mit
+
+=>freestanding
+Klasse1 = //2 Zeilen
+
+//!CommentRecognition18 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1{
+    //Test mit
+    //2 Zeilen
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //Test mit , //2 Zeilen
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition19 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+    //Test mit
+    //2 Zeilen
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //Test mit , //2 Zeilen
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition20 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition21 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0; //TEST
+        i++;
+    }
+
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+int i = 0; = //TEST
+
+=>freestanding
+
+//!CommentRecognition22 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    } //TEST
+
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+{
+        int i = 0;
+        i++;
+    } = //TEST
+
+=>freestanding
+
+//!CommentRecognition23 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    //KommentarDavor
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    } //TEST
+
+private:
+    int i;
+};
+
+//=
+=>leading
+void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    } = //KommentarDavor
+
+=>trailing
+{
+        int i = 0;
+        i++;
+    } = //TEST
+
+=>freestanding
+
+//!CommentRecognition24 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; //SCHLUSS
+
+//=
+=>leading
+
+=>trailing
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = //SCHLUSS
+
+=>freestanding
+
+//!CommentRecognition25 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; //SCHLUSS
+ //2. teil
+
+//=
+=>leading
+
+=>trailing
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = //SCHLUSS
+
+=>freestanding
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = //2. teil
+
+//!CommentRecognition26 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+    //SCHLUSS
+    //2. teil
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = //SCHLUSS , //2. teil
+
+//!CommentRecognition27 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; /*SCHLUSS*/
+
+//=
+=>leading
+
+=>trailing
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = /*SCHLUSS*/
+
+=>freestanding
+
+//!CommentRecognition28 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};    
+/*SCHLUSS*/
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = /*SCHLUSS*/
+
+//!CommentRecognition29 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; /*
+    * SCHLUSS
+    */
+
+//=
+=>leading
+
+=>trailing
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = /*
+    * SCHLUSS
+    */
+
+=>freestanding
+
+//!CommentRecognition30 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    //TEST
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//=
+=>leading
+void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    } = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition31 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    /*TEST*/
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//=
+=>leading
+void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    } = /*TEST*/
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition32 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//Vorher
+class Klasse1 //Nachher
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//=
+=>leading
+class Klasse1 //Nachher
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = //Vorher
+
+=>trailing
+Klasse1 = //Nachher
+
+=>freestanding
+
+//!CommentRecognition33 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//Vorher
+class Klasse1 /*Nachher*/
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//=
+=>leading
+class Klasse1 /*Nachher*/
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = //Vorher
+
+=>trailing
+Klasse1 = /*Nachher*/
+
+=>freestanding
+
+//!CommentRecognition34 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+/*Vorher*/
+class Klasse1
+{
+    /*Nachher*/
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//=
+=>leading
+class Klasse1
+{
+    /*Nachher*/
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = /*Vorher*/
+public: = /*Nachher*/
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition35 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+/*Vorher*/
+class Klasse1
+{
+    //Nachher
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//=
+=>leading
+class Klasse1
+{
+    //Nachher
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = /*Vorher*/
+public: = //Nachher
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition36 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+/*
+ * Vorher
+ */
+class Klasse1
+{
+    //Nachher
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//=
+=>leading
+class Klasse1
+{
+    //Nachher
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; = /*
+ * Vorher
+ */
+public: = //Nachher
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition37 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i; //Test
+};
+
+//=
+=>leading
+
+=>trailing
+int i; = //Test
+
+=>freestanding
+
+//!CommentRecognition38 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i; /*Test*/
+};
+
+//=
+=>leading
+
+=>trailing
+int i; = /*Test*/
+
+=>freestanding
+
+//!CommentRecognition39 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i; /*
+            * Test
+            */
+};
+
+//=
+=>leading
+
+=>trailing
+int i; = /*
+            * Test
+            */
+
+=>freestanding
+
+//!CommentRecognition40 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+    /*
+     * Test
+     */
+};
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+Klasse1 = /*
+     * Test
+     */
+
+//!CommentRecognition41 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    //TEST
+    int i;
+};
+
+//=
+=>leading
+int i; = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition42 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    /*TEST*/
+    int i;
+};
+
+//=
+=>leading
+int i; = /*TEST*/
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition43 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition44 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+private:
+    int i;
+    //TEST
+};
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+Klasse1 = //TEST
+
+//!CommentRecognition44b - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+private:
+    int i; //TEST
+};
+
+//=
+=>leading
+
+=>trailing
+int i; = //TEST
+
+=>freestanding
+
+//!CommentRecognition44c - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+private:
+    int i;
+    //TEST
+}; //Add
+
+//=
+=>leading
+
+=>trailing
+class Klasse1
+{
+private:
+    int i;
+    //TEST
+}; = //Add
+
+=>freestanding
+Klasse1 = //TEST
+
+//!CommentRecognition45 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+private:
+    //TEST
+    int i;
+};
+
+//=
+=>leading
+int i; = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition46 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+    //TEST
+private:
+    int i;
+};
+
+//=
+=>leading
+private: = //TEST
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition47 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private: //TEST
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+private: = //TEST
+
+=>freestanding
+
+//!CommentRecognition48 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+    //TEST
+public: /*TEST*/
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //TEST
+
+=>trailing
+public: = /*TEST*/
+
+=>freestanding
+
+//!CommentRecognition48b - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+    //TEST
+public: /*TEST*/
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //TEST
+
+=>trailing
+public: = /*TEST*/
+
+=>freestanding
+
+//!CommentRecognition49 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1(); //TEST1
+    //TEST2
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+std::string toString(); = //TEST2
+
+=>trailing
+Klasse1(); = //TEST1
+
+=>freestanding
+
+//!CommentRecognition50 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1(); /*TEST1*/
+    /*TEST2*/
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+std::string toString(); = /*TEST2*/
+
+=>trailing
+Klasse1(); = /*TEST1*/
+
+=>freestanding
+
+//!CommentRecognition51 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1(); //TEST1
+    /*TEST2*/
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+std::string toString(); = /*TEST2*/
+
+=>trailing
+Klasse1(); = //TEST1
+
+=>freestanding
+
+//!CommentRecognition52 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1(); /*TEST1*/
+    //TEST2
+    std::string toString();
+private:
+    int i;
+};
+//=
+=>leading
+std::string toString(); = //TEST2
+
+=>trailing
+Klasse1(); = /*TEST1*/
+
+=>freestanding
+
+//!CommentRecognition53 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1(); /*TEST1*/
+    //TEST3
+    //TEST2
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+std::string toString(); = //TEST3 , //TEST2
+
+=>trailing
+Klasse1(); = /*TEST1*/
+
+=>freestanding
+
+//!CommentRecognition54 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1(); /*TEST1*/
+    /*TEST3*/
+    //TEST2
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+std::string toString(); = /*TEST3*/ , //TEST2
+
+=>trailing
+Klasse1(); = /*TEST1*/
+
+=>freestanding
+
+//!CommentRecognition55 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1(); //TEST1
+    /*
+     * TEST3
+     */
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+std::string toString(); = /*
+     * TEST3
+     */
+
+=>trailing
+Klasse1(); = //TEST1
+
+=>freestanding
+
+//!CommentRecognition56 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+class Klasse1
+{
+public:
+    Klasse1(); /*
+                * TEST1
+                */
+    //TEST2
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+std::string toString(); = //TEST2
+
+=>trailing
+Klasse1(); = /*
+                * TEST1
+                */
+
+=>freestanding
+
+//!CommentRecognition57 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+}
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition58 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//Kommentar
+namespace testNamespace
+{
+
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+}
+
+//=
+=>leading
+namespace testNamespace
+{
+
+class Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+} = //Kommentar
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition59 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace //Kommentar
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+}
+
+//=
+=>leading
+
+=>trailing
+testNamespace = //Kommentar
+
+=>freestanding
+
+//!CommentRecognition60 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+/*Kommentar*/
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+}
+
+//=
+=>leading
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+} = /*Kommentar*/
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition61 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace /*Kommentar*/
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+}
+
+//=
+=>leading
+
+=>trailing
+testNamespace = /*Kommentar*/
+
+=>freestanding
+
+//!CommentRecognition62 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+/*
+ * Kommentar
+ */
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+}
+
+//=
+=>leading
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+} = /*
+ * Kommentar
+ */
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition63 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace /*
+                         * Kommentar
+                         */
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+}
+
+//=
+=>leading
+
+=>trailing
+testNamespace = /*
+                         * Kommentar
+                         */
+
+=>freestanding
+
+//!CommentRecognition64 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+} //Kommentar
+
+//=
+=>leading
+
+=>trailing
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+} = //Kommentar
+
+=>freestanding
+
+//!CommentRecognition65 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+} /*Kommentar*/
+
+//=
+=>leading
+
+=>trailing
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+} = /*Kommentar*/
+
+=>freestanding
+
+//!CommentRecognition66 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+} /*
+   * Kommentar
+   */
+
+//=
+=>leading
+
+=>trailing
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+} = /*
+   * Kommentar
+   */
+
+=>freestanding
+
+//!CommentRecognition67 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace
+{
+    class Klasse1 //TEST
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+}
+
+//=
+=>leading
+
+=>trailing
+Klasse1 = //TEST
+
+=>freestanding
+
+//!CommentRecognition68 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i; //TEST
+    };
+}
+
+//=
+=>leading
+
+=>trailing
+int i; = //TEST
+
+=>freestanding
+
+//!CommentRecognition69 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    }; //TEST
+}
+
+//=
+=>leading
+
+=>trailing
+class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    }; = //TEST
+
+=>freestanding
+
+//!CommentRecognition70 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+    //TEST
+}
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+namespace testNamespace
+{
+    class Klasse1
+    {
+    public:
+        Klasse1();
+        std::string toString();
+    private:
+        int i;
+    };
+    //TEST
+} = //TEST
+
+//!CommentRecognition100
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+struct Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition101
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//Kommentar
+struct Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+struct Klasse1
+{
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+}; = //Kommentar
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition102
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+struct Klasse1
+{
+    //Kommentar
+public:
+    Klasse1();
+    std::string toString();
+private:
+    int i;
+};
+
+//=
+=>leading
+public: = //Kommentar
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition103
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+struct Klasse1
+{
+    //Kommentar
+private:
+    Klasse1();
+    std::string toString();
+protected:
+    int i;
+};
+
+//=
+=>leading
+private: = //Kommentar
+
+=>trailing
+
+=>freestanding
+
+//!CommentRecognition104
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+/*Davor*/
+struct Klasse1 //Kommentar
+{
+private:
+    Klasse1();
+    std::string toString();
+protected:
+    int i;
+};
+
+//=
+=>leading
+struct Klasse1 //Kommentar
+{
+private:
+    Klasse1();
+    std::string toString();
+protected:
+    int i;
+}; = /*Davor*/
+
+=>trailing
+Klasse1 = //Kommentar
+
+=>freestanding
+
+//!CommentRecognition200 - von ASTWriter
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//comment a
+void tree(int a)
+{
+    //comment b
+    a = 1; //comment c
+} //comment d
+
+//=
+=>leading
+void tree(int a)
+{
+    //comment b
+    a = 1; //comment c
+} = //comment a
+a = 1; = //comment b
+
+=>trailing
+{
+    //comment b
+    a = 1; //comment c
+} = //comment d
+a = 1; = //comment c
+
+=>freestanding
+
+//!CommentRecognition201 - von ASTWriter
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+void tree(int a)
+{
+    a = 1;
+} //comment d
+
+//=
+=>leading
+
+=>trailing
+{
+    a = 1;
+} = //comment d
+
+=>freestanding
+
+//!CommentRecognition202 - von ASTWriter DeclarationStatement
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+void foo()
+{
+    //TEST 1
+    int i = 2; //TEST 2
+    //TEST 3
+    int a; //TEST 4
+    //TEST 5
+}
+
+//=
+=>leading
+int i = 2; = //TEST 1
+int a; = //TEST 3
+
+=>trailing
+int i = 2; = //TEST 2
+int a; = //TEST 4
+
+=>freestanding
+{
+    //TEST 1
+    int i = 2; //TEST 2
+    //TEST 3
+    int a; //TEST 4
+    //TEST 5
+} = //TEST 5
+
+//!CommentRecognition203 - von ASTWriter ForStatement
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+void foo()
+{
+    //TEST 1
+    for(int i = 0;i < 1;++i){
+        //TEST 2
+        break; //TEST 3
+    } //TEST 4
+}
+
+//=
+=>leading
+for(int i = 0;i < 1;++i){
+        //TEST 2
+        break; //TEST 3
+    } = //TEST 1
+break; = //TEST 2
+
+=>trailing
+{
+        //TEST 2
+        break; //TEST 3
+    } = //TEST 4
+break; = //TEST 3
+
+=>freestanding
+
+//!CommentRecognition204 - von ASTWriter LabelStatement
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+void foo()
+{
+    start:
+    bar(); //Test
+    goto start;
+}
+
+
+//=
+=>leading
+
+=>trailing
+bar(); = //Test
+
+=>freestanding
+
+//!CommentRecognition205 - von ASTWriter IfStatement
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+int f()
+{
+    if(int c = f()){
+        c++;
+    } //TEST 1
+    return i;
+}
+
+//=
+=>leading
+
+=>trailing
+{
+        c++;
+    } = //TEST 1
+
+=>freestanding
+
+//!CommentRecognition206 - von ASTWriter SwitchStatement
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+void foo()
+{
+    //TEST 1
+    switch (1){
+        //TEST 2
+        case 1: //TEST 3
+            return 1; //TEST 4
+        case 2:
+            return 2;
+        default: //TEST 5
+            return 3;
+            //TEST 6
+    } //TEST 7
+}
+//=
+=>leading
+switch (1){
+        //TEST 2
+        case 1: //TEST 3
+            return 1; //TEST 4
+        case 2:
+            return 2;
+        default: //TEST 5
+            return 3;
+            //TEST 6
+    } = //TEST 1
+case 1: = //TEST 2
+
+=>trailing
+{
+        //TEST 2
+        case 1: //TEST 3
+            return 1; //TEST 4
+        case 2:
+            return 2;
+        default: //TEST 5
+            return 3;
+            //TEST 6
+    } = //TEST 7
+case 1: = //TEST 3
+return 1; = //TEST 4
+default: = //TEST 5
+
+=>freestanding
+{
+        //TEST 2
+        case 1: //TEST 3
+            return 1; //TEST 4
+        case 2:
+            return 2;
+        default: //TEST 5
+            return 3;
+            //TEST 6
+    } = //TEST 6
+
+//!CommentRecognition207 - von ASTWriter WhileStatement
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+void foo()
+{
+    while(true){
+        break;
+    } /*TEST 6*/
+}
+
+//=
+=>leading
+
+=>trailing
+{
+        break;
+    } = /*TEST 6*/
+
+=>freestanding
+
+//!CommentRecognition208 - von ASTWriter ExplicitTemplateInstantiationStatement
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//TEST 1
+template class vector<int>; //TEST 2
+
+//=
+=>leading
+template class vector<int>; = //TEST 1
+
+=>trailing
+class vector<int>; = //TEST 2
+
+=>freestanding
+
+//!CommentRecognition209 - von ASTWriter GPPExplicitTemplateInstantitation
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//TEST 1
+static template class vector<int>; //TEST 2
+//TEST 3
+inline template class vector<int>; //TEST 4
+//TEST 5
+inline template class vector<int>; //TEST 6
+
+//=
+=>leading
+static template class vector<int>; = //TEST 1
+inline template class vector<int>; = //TEST 3
+inline template class vector<int>; = //TEST 5
+
+=>trailing
+class vector<int>; = //TEST 2
+class vector<int>; = //TEST 4
+class vector<int>; = //TEST 6
+
+=>freestanding
+
+//!CommentRecognition210 - von ASTWriter LinkageSpecification
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//TEST 1
+extern "C" typedef void FUNC(); //TEST 2
+
+//=
+=>leading
+extern "C" typedef void FUNC(); = //TEST 1
+
+=>trailing
+typedef void FUNC(); = //TEST 2
+
+=>freestanding
+
+//!CommentRecognition212 - von ASTWriter TemplateFunction
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+template<typename T> int tempFunct(T p)
+{
+    ++p;
+    p + 4;
+    return 0;
+} //Kommentar
+
+//=
+=>leading
+
+=>trailing
+{
+    ++p;
+    p + 4;
+    return 0;
+} = //Kommentar
+
+=>freestanding
+
+//!CommentRecognition213 - von ASTWriter DeclarationWithTraillingDoubleComments
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+int foo = bar; //Comment
+ //Zweiteilig
+//=
+=>leading
+
+=>trailing
+int foo = bar; = //Comment
+
+=>freestanding
+int foo = bar; = //Zweiteilig
+
+//!CommentRecognition214 - von ASTWriter NamesapceDefinition
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//TEST 1
+namespace somenamespace
+{
+    //TEST 2
+} //TEST 3
+
+//=
+=>leading
+namespace somenamespace
+{
+    //TEST 2
+} = //TEST 1
+
+=>trailing
+namespace somenamespace
+{
+    //TEST 2
+} = //TEST 3
+
+=>freestanding
+namespace somenamespace
+{
+    //TEST 2
+} = //TEST 2
+
+
+//!CommentRecognition215 - von ASTWriter NamesapceDefinition
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace somenamespace
+{
+    //TEST
+}
+
+void doIt(){
+	int i = 0;
+}
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+namespace somenamespace
+{
+    //TEST
+} = //TEST
+
+//!CommentRecognition216 - von ASTWriter NamesapceDefinition
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+namespace somenamespace
+{
+    int i = 0;
+    //TEST
+}
+
+void doIt(){
+	int i = 0;
+}
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+namespace somenamespace
+{
+    int i = 0;
+    //TEST
+} = //TEST
+
+//!ImplementationFileCommentRecognition1 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+void Demo::methode1()
+{
+}
+
+void Demo::methode2()
+{
+}
+
+void Demo::methode3()
+{
+}
+
+//=
+=>leading
+
+=>trailing
+
+=>freestanding
+
+//!ImplementationFileCommentRecognition2 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+//Zuvorderst
+
+
+void Demo::methode1()
+{
+    //Test
+}
+
+void Demo::methode2()
+{
+}
+//Davor
+
+void Demo::methode3()
+{
+} //Danach
+
+//Am Schluss
+//=
+=>leading
+void Demo::methode1()
+{
+    //Test
+} = //Zuvorderst
+void Demo::methode3()
+{
+} = //Davor
+
+=>trailing
+{
+} = //Danach
+
+=>freestanding
+{
+    //Test
+} = //Test
+void Demo::methode3()
+{
+} = //Am Schluss
+
+//!ImplementationFileCommentRecognition3 - von CERP
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@Klasse1.h
+/*Zuvorderst*/
+void Demo::methode1()
+{
+    /*Test*/
+}
+
+void Demo::methode2()
+{
+}
+
+/*Davor*/
+void Demo::methode3()
+{
+} /*Danach*/
+
+
+/*Am Schluss*/
+
+//=
+=>leading
+void Demo::methode1()
+{
+    /*Test*/
+} = /*Zuvorderst*/
+void Demo::methode3()
+{
+} = /*Davor*/
+
+=>trailing
+{
+} = /*Danach*/
+
+=>freestanding
+{
+    /*Test*/
+} = /*Test*/
+void Demo::methode3()
+{
+} = /*Am Schluss*/
+
+//!CommentRecognitionAtTheBeginningBeforePreprocessorStatement 1
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+//TEST
+#ifndef TEST_H_
+#define TEST_H_
+
+class test
+{
+};
+
+#endif
+
+//=
+=>leading
+#ifndef TEST_H_ = //TEST
+=>trailing
+=>freestanding
+
+//!CommentRecognitionAtTheBeginningBeforePreprocessorStatement 2
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+/*
+ * Licence information...
+ */
+
+#ifndef TEST_H_
+#define TEST_H_
+
+class test
+{
+};
+
+#endif
+
+//=
+=>leading
+#ifndef TEST_H_ = /*
+ * Licence information...
+ */
+=>trailing
+=>freestanding
+
+//!CommentRecognitionAtTheBeginningBeforePreprocessorStatement 3
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+/*
+ * Licence information...
+ */
+
+#ifndef TEST_H_
+#define TEST_H_
+
+//test
+class test
+{
+};
+
+#endif
+
+//=
+=>leading
+#ifndef TEST_H_ = /*
+ * Licence information...
+ */
+class test
+{
+}; = //test
+=>trailing
+=>freestanding
+
+//!CommentRecognitionAtTheBeginningBeforePreprocessorStatement 4
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+/*
+ * HideMethod.h
+ */
+
+#ifndef HIDEMETHOD_H_
+#define HIDEMETHOD_H_
+
+
+class HideMethod {
+public:
+    HideMethod();
+    virtual ~HideMethod();
+    void methode2();
+    void methode3();
+
+private:
+	int i;
+	bool isOk;
+};
+
+#endif /* HIDEMETHOD_H_ */
+
+//=
+=>leading
+#ifndef HIDEMETHOD_H_ = /*
+ * HideMethod.h
+ */
+=>trailing
+#endif = /* HIDEMETHOD_H_ */
+=>freestanding
+
+//!CommentRecognition Bug 233438
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+#ifndef HIDEMETHOD_H_
+#define HIDEMETHOD_H_
+
+class HideMethod {
+public:
+    HideMethod();
+    virtual ~HideMethod();
+    int methode2();
+private:
+	int i;
+};
+
+#endif /* HIDEMETHOD_H_ */
+
+//=
+=>leading
+=>trailing
+#endif = /* HIDEMETHOD_H_ */
+=>freestanding
+
+//@test.cpp
+#include "test.h"
+
+HideMethod::HideMethod()
+{
+}
+
+HideMethod::~HideMethod()
+{
+}
+
+int HideMethod::methode2(){
+	i++;
+	//comment
+	return i;
+}
+
+//=
+=>leading
+return i; = //comment
+=>trailing
+=>freestanding
+
+//!CommentRecognition Bug 234786
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@test.h
+#ifndef HIDEMETHOD_H_
+#define HIDEMETHOD_H_
+
+class HideMethod {
+public:
+    HideMethod();
+    virtual ~HideMethod();
+    int methode2();
+private:
+	int i;
+};
+
+#endif /* HIDEMETHOD_H_ */
+
+//=
+=>leading
+=>trailing
+#endif = /* HIDEMETHOD_H_ */
+=>freestanding
+
+//@test.cpp
+#include "test.h"
+
+HideMethod::HideMethod()
+{
+}
+
+HideMethod::~HideMethod()
+{
+}
+
+int HideMethod::methode2(){
+	i++;     //comment
+	return i;
+}
+
+//=
+=>leading
+=>trailing
+i++; = //comment
+=>freestanding
+//!CommentRecognition preprocessor directives comment recognition
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@main.cpp
+//c1
+int i;//c2
+//inc1
+
+//inc2
+
+#include "foo.h" /*inc3*/ /*inc4*/
+//main
+int main() {
+	return 0;
+	//block1
+}
+//ifdef1
+#ifdef X //ifdef2
+//=
+=>leading
+int i; = //c1
+#include "foo.h" = //inc1 , //inc2
+int main() {
+	return 0;
+	//block1
+} = //main
+#ifdef X = //ifdef1
+=>trailing
+int i; = //c2
+#include "foo.h" = /*inc3*/ , /*inc4*/
+#ifdef X = //ifdef2
+=>freestanding
+{
+	return 0;
+	//block1
+} = //block1
+//@foo.h
+void foo();
+//=
+=>leading
+=>trailing
+=>freestanding
+//!CommentRecognition comment in empty compound statement width include guard
+//#org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest
+//@A.h
+#ifndef A_H_
+#define A_H_
+void foo() {
+  // comment in body
+}
+#endif
+//=
+=>leading
+=>trailing
+=>freestanding
+{
+  // comment in body
+} = // comment in body

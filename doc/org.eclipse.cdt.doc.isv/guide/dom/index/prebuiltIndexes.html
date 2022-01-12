@@ -1,0 +1,2040 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=ISO-8859-1">
+<meta name=ProgId content="Word.Document">
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+<link rel=File-List href="prebuiltIndexes_files/filelist.xml">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Building a PDOM for use with the CIndexProvider extension point</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Administrator</o:Author>
+  <o:LastAuthor>Administrator</o:LastAuthor>
+  <o:Revision>7</o:Revision>
+  <o:TotalTime>845</o:TotalTime>
+  <o:LastPrinted>2007-04-16T17:28:00Z</o:LastPrinted>
+  <o:Created>2007-08-20T16:06:00Z</o:Created>
+  <o:LastSaved>2007-08-21T10:40:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>1861</o:Words>
+  <o:Characters>10610</o:Characters>
+  <o:Company>Symbian Ltd.</o:Company>
+  <o:Lines>88</o:Lines>
+  <o:Paragraphs>24</o:Paragraphs>
+  <o:CharactersWithSpaces>12447</o:CharactersWithSpaces>
+  <o:Version>10.6830</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:Compatibility>
+   <w:BreakWrappedTables/>
+   <w:SnapToGridInCell/>
+   <w:WrapTextWithPunct/>
+   <w:UseAsianBreakRules/>
+  </w:Compatibility>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-link:"Heading 1 Char";
+	mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-link:"Heading 2 Char";
+	mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic;}
+h3
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:6.0pt;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	text-transform:uppercase;
+	font-weight:bold;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:12.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-variant:small-caps;}
+p.MsoToc3, li.MsoToc3, div.MsoToc3
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:24.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	font-style:italic;}
+p.MsoToc4, li.MsoToc4, div.MsoToc4
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc5, li.MsoToc5, div.MsoToc5
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:48.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc6, li.MsoToc6, div.MsoToc6
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:60.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc7, li.MsoToc7, div.MsoToc7
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:72.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc8, li.MsoToc8, div.MsoToc8
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:84.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoToc9, li.MsoToc9, div.MsoToc9
+	{mso-style-update:auto;
+	mso-style-noshow:yes;
+	mso-style-next:Normal;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:96.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:9.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoNormalIndent, li.MsoNormalIndent, div.MsoNormalIndent
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoList2, li.MsoList2, div.MsoList2
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:28.3pt;
+	margin-bottom:.0001pt;
+	text-indent:-14.15pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+	{margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	text-align:center;
+	mso-pagination:widow-orphan;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-fareast-font-family:"Times New Roman";
+	mso-font-kerning:14.0pt;
+	font-weight:bold;}
+p.MsoBodyText, li.MsoBodyText, div.MsoBodyText
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.MsoBodyTextIndent, li.MsoBodyTextIndent, div.MsoBodyTextIndent
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:14.15pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:#606420;
+	text-decoration:underline;
+	text-underline:single;}
+pre
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Courier New";
+	mso-fareast-font-family:"Times New Roman";}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-link:"Heading 1";
+	mso-ansi-font-size:16.0pt;
+	mso-bidi-font-size:16.0pt;
+	font-family:Arial;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;
+	mso-bidi-font-family:Arial;
+	mso-font-kerning:16.0pt;
+	mso-ansi-language:EN-GB;
+	mso-fareast-language:EN-GB;
+	mso-bidi-language:AR-SA;
+	font-weight:bold;}
+span.Heading2Char
+	{mso-style-name:"Heading 2 Char";
+	mso-style-link:"Heading 2";
+	mso-ansi-font-size:14.0pt;
+	mso-bidi-font-size:14.0pt;
+	font-family:Arial;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;
+	mso-bidi-font-family:Arial;
+	mso-ansi-language:EN-GB;
+	mso-fareast-language:EN-GB;
+	mso-bidi-language:AR-SA;
+	font-weight:bold;
+	font-style:italic;}
+p.ReferenceLine, li.ReferenceLine, div.ReferenceLine
+	{mso-style-name:"Reference Line";
+	mso-style-parent:"Body Text";
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:6.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.ShortReturnAddress, li.ShortReturnAddress, div.ShortReturnAddress
+	{mso-style-name:"Short Return Address";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	mso-header-margin:35.4pt;
+	mso-footer-margin:35.4pt;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:349184337;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1421170792 134807553 134807555 134807557 134807553 134807555 134807557 134807553 134807555 134807557;}
+@list l0:level1
+	{mso-level-start-at:0;
+	mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:Symbol;
+	mso-fareast-font-family:"Times New Roman";
+	mso-bidi-font-family:"Times New Roman";}
+@list l0:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:o;
+	mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;
+	font-family:"Courier New";}
+@list l0:level3
+	{mso-level-tab-stop:108.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level4
+	{mso-level-tab-stop:144.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level5
+	{mso-level-tab-stop:180.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level6
+	{mso-level-tab-stop:216.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level7
+	{mso-level-tab-stop:252.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level8
+	{mso-level-tab-stop:288.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l0:level9
+	{mso-level-tab-stop:324.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1
+	{mso-list-id:512257346;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1530771604 -15590566 134807577 134807579 134807567 134807577 134807579 134807567 134807577 134807579;}
+@list l1:level1
+	{mso-level-text:"\(%1\)";
+	mso-level-tab-stop:54.0pt;
+	mso-level-number-position:left;
+	margin-left:54.0pt;
+	text-indent:-18.0pt;}
+@list l1:level2
+	{mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level3
+	{mso-level-tab-stop:108.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level4
+	{mso-level-tab-stop:144.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level5
+	{mso-level-tab-stop:180.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level6
+	{mso-level-tab-stop:216.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level7
+	{mso-level-tab-stop:252.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level8
+	{mso-level-tab-stop:288.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l1:level9
+	{mso-level-tab-stop:324.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l2
+	{mso-list-id:1784763561;
+	mso-list-type:hybrid;
+	mso-list-template-ids:101777246 1465948790 134807577 134807579 134807567 134807577 134807579 134807567 134807577 134807579;}
+@list l2:level1
+	{mso-level-text:"\(%1\)";
+	mso-level-tab-stop:54.0pt;
+	mso-level-number-position:left;
+	margin-left:54.0pt;
+	text-indent:-18.0pt;}
+@list l3
+	{mso-list-id:1822429290;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-673412320 134807569 134807577 134807579 134807567 134807577 134807579 134807567 134807577 134807579;}
+@list l3:level1
+	{mso-level-text:"%1\)";
+	mso-level-tab-stop:36.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level2
+	{mso-level-tab-stop:72.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level3
+	{mso-level-tab-stop:108.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level4
+	{mso-level-tab-stop:144.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level5
+	{mso-level-tab-stop:180.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level6
+	{mso-level-tab-stop:216.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level7
+	{mso-level-tab-stop:252.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level8
+	{mso-level-tab-stop:288.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+@list l3:level9
+	{mso-level-tab-stop:324.0pt;
+	mso-level-number-position:left;
+	text-indent:-18.0pt;}
+ol
+	{margin-bottom:0cm;}
+ul
+	{margin-bottom:0cm;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
+	mso-para-margin:0cm;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+table.MsoTableGrid
+	{mso-style-name:"Table Grid";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	border:solid windowtext 1.0pt;
+	mso-border-alt:solid windowtext .5pt;
+	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
+	mso-border-insideh:.5pt solid windowtext;
+	mso-border-insidev:.5pt solid windowtext;
+	mso-para-margin:0cm;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="5122"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang="EN-GB" link=blue vlink="#606420" style='tab-interval:36.0pt'>
+
+<div class=Section1>
+
+<p class=MsoTitle><a name="_Toc164570181">Pre-built indexes in CDT 4.0</a></p>
+
+<p class=MsoTitle style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><span class="bold" style='mso-bidi-font-weight:
+normal'><span style='font-size:11.0pt'><o:p>&nbsp;</o:p></span></span></p>
+
+<p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><!--[if supportFields]><span
+style='font-size:11.0pt;font-weight:normal;mso-bidi-font-weight:bold'><span
+style='mso-element:field-begin'></span><span
+style='mso-spacerun:yes'> </span>TOC \o &quot;1-3&quot; \h \z \u <span
+style='mso-element:field-separator'></span></span><![endif]--><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570182">Overview<span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-tab-count:1 dotted'>... </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570182 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>1<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100380032000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;text-transform:none;font-weight:normal;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570183">Export
+of index content<span style='color:windowtext;display:none;mso-hide:screen;
+text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>.. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570183 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>1<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100380033000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;text-transform:none;font-weight:normal;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='text-transform:uppercase;mso-no-proof:yes'><a
+href="#_Toc164570184">IExportProjectProvider<span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-tab-count:1 dotted'>.. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570184 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>2<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100380034000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='text-transform:uppercase;mso-no-proof:yes'><a
+href="#_Toc164570185">The GeneratePDOM Application<span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-tab-count:1 dotted'>.. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570185 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100380035000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570186">Common
+command-line options<span style='color:windowtext;display:none;mso-hide:screen;
+text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570186 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100380036000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-style:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570187">ExternalExportProjectProvider
+command-line options<span style='color:windowtext;display:none;mso-hide:screen;
+text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570187 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100380037000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-style:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='text-transform:uppercase;mso-no-proof:yes'><a
+href="#_Toc164570188">Invoking the GeneratePDOM application<span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-tab-count:1 dotted'>.. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570188 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>5<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100380038000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570189">Invoking
+as a self-hosted eclipse application<span style='color:windowtext;display:none;
+mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570189 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>5<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100380039000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-style:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570190">Invoking
+via the command-line<span style='color:windowtext;display:none;mso-hide:screen;
+text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570190 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>6<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100390030000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-style:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc3 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570191">Invoking
+via an Ant script<span style='color:windowtext;display:none;mso-hide:screen;
+text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'> </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570191 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>7<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100390031000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-style:normal;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570192">Import
+of index content<span style='color:windowtext;display:none;mso-hide:screen;
+text-decoration:none;text-underline:none'><span style='mso-tab-count:1 dotted'>.. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570192 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>8<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100390032000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;text-transform:none;font-weight:normal;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='text-transform:uppercase;mso-no-proof:yes'><a
+href="#_Toc164570193">IReadOnlyPDOMProvider<span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-tab-count:1 dotted'>.. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570193 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>8<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100390033000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;mso-no-proof:yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570194">Appendix
+B<span style='color:windowtext;display:none;mso-hide:screen;text-decoration:
+none;text-underline:none'><span style='mso-tab-count:1 dotted'>.. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570194 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>11<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100390034000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;text-transform:none;font-weight:normal;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1 style='tab-stops:right dotted 431.5pt'><span
+class=MsoHyperlink><span style='mso-no-proof:yes'><a href="#_Toc164570195">References<span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-tab-count:1 dotted'>.. </span></span><!--[if supportFields]><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'><span style='mso-element:field-begin'></span> PAGEREF
+_Toc164570195 \h </span><span style='color:windowtext;text-decoration:none;
+text-underline:none'><span style='display:none;mso-hide:screen'><span
+style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:windowtext;display:none;mso-hide:screen;text-decoration:none;
+text-underline:none'>12<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003100360034003500370030003100390035000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:windowtext;
+display:none;mso-hide:screen;text-decoration:none;text-underline:none'><span
+style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;text-transform:none;font-weight:normal;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><!--[if supportFields]><span class="bold">
+style='mso-bidi-font-weight:normal'><span style='font-size:11.0pt'><span
+style='mso-element:field-end'></span></span></span><![endif]--><span class="bold"
+style='mso-bidi-font-weight:normal'><span style='font-size:11.0pt'><o:p>&nbsp;</o:p></span></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span class="bold" style='mso-bidi-font-weight:
+normal'><span style='font-size:11.0pt'><o:p>&nbsp;</o:p></span></span></p>
+
+<h1 style='text-align:justify'><a name="_Toc164570182">Overview</a></h1>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'>This document describes two
+extension points used for generating reusable index content, and for adding
+this content into a CDT 4.0 based environment. The intended audience is ISVs
+who are looking to build indexes of libraries or SDKs that are of interest to
+them and their customers, and to integrate the pre-built index information into
+their IDE environment. The extension points are intended to be general enough
+to allow ISVs to support unforeseen pre-built index content scenarios, with a
+set of default implementations intended to be useful for standard situations.
+Other sources that may be helpful are the extension point descriptions, and the
+central interfaces’ <span class=SpellE>javadoc</span>.</p>
+
+<h1 style='text-align:justify'><a name="_Toc164570183">Export of index content</a></h1>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>Export is performed by indexing a
+normal CDT project which has been setup and configured programmatically. A
+top-level summary of the steps needed is:</p>
+
+<p class=MsoList2 style='margin-left:54.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l1 level1 lfo2;tab-stops:list 54.0pt'><![if !supportLists]><span
+style='mso-list:Ignore'>(1)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
+</span></span><![endif]>Write a class that can setup your index content as a
+CDT project, and register it against an extension point. For simple
+libraries/SDKs the default implementation can be used. </p>
+
+<p class=MsoList2 style='margin-left:54.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l1 level1 lfo2;tab-stops:list 54.0pt'><![if !supportLists]><span
+style='mso-list:Ignore'>(2)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;
+</span></span><![endif]>Invoke the GeneratePDOM application from the command-line.
+This involves invoking eclipse from an eclipse installation with the CDT 4.0
+plug-ins, and the plug-in containing the project generation code from step (1)</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<h2 style='text-align:justify'><a name="_Toc164570184"><span style='font-style:
+normal;mso-bidi-font-style:italic'>IExportProjectProvider</span></a><span
+style='font-style:normal;mso-bidi-font-style:italic'><o:p></o:p></span></h2>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>It is expected that real-world
+libraries and SDK’s may need complex configuration before indexing. For
+example, per-file macro or include settings, or excluding certain files from
+being indexed. In this case, it is necessary for the ISV to write code which
+programmatically performs this configuration. If detailed configuration is not
+needed then a default implementation of IExportProjectProvider may be
+sufficient.</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>The call-back for project
+creation must implement the following interface</p>
+
+<span class=MsoBodyText style='text-align:justify;text-indent:36.0pt'><strong 
+style='mso-bidi-font-weight:normal'>org.eclipse.cdt.core.index.export.IExportProjectProvider<o:p></o:p></strong></span>
+
+<p class=MsoBodyText style='text-align:justify;text-indent:36.0pt'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'>The skeletal form of this
+interface is shown below: </p>
+
+<p class=MsoBodyText style='text-align:justify'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='mso-element:field-begin;mso-field-lock:yes'></span><span
+style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span><![endif]--><!--[if gte vml 1]><v:group
+ id="_x0000_s1046" editas="canvas" style='width:6in;height:135pt;
+ mso-position-horizontal-relative:char;mso-position-vertical-relative:line'
+ coordorigin="2520,3735" coordsize="7200,2314">
+ <o:lock v:ext="edit" aspectratio="t"/>
+ <v:shapetype id="_x0000_t75" coordsize="21600,21600" o:spt="75"
+  o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+  <v:stroke joinstyle="miter"/>
+  <v:formulas>
+   <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+   <v:f eqn="sum @0 1 0"/>
+   <v:f eqn="sum 0 0 @1"/>
+   <v:f eqn="prod @2 1 2"/>
+   <v:f eqn="prod @3 21600 pixelWidth"/>
+   <v:f eqn="prod @3 21600 pixelHeight"/>
+   <v:f eqn="sum @0 0 1"/>
+   <v:f eqn="prod @6 1 2"/>
+   <v:f eqn="prod @7 21600 pixelWidth"/>
+   <v:f eqn="sum @8 21600 0"/>
+   <v:f eqn="prod @7 21600 pixelHeight"/>
+   <v:f eqn="sum @10 21600 0"/>
+  </v:formulas>
+  <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+  <o:lock v:ext="edit" aspectratio="t"/>
+ </v:shapetype><v:shape id="_x0000_s1045" type="#_x0000_t75" style='position:absolute;
+  left:2520;top:3735;width:7200;height:2314' o:preferrelative="f">
+  <v:fill o:detectmouseclick="t"/>
+  <v:path o:extrusionok="t" o:connecttype="none"/>
+ </v:shape><v:shapetype id="_x0000_t202" coordsize="21600,21600" o:spt="202"
+  path="m,l,21600r21600,l21600,xe">
+  <v:stroke joinstyle="miter"/>
+  <v:path gradientshapeok="t" o:connecttype="rect"/>
+ </v:shapetype><v:shape id="_x0000_s1047" type="#_x0000_t202" style='position:absolute;
+  left:2520;top:3735;width:7200;height:2314'>
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=MsoBodyText><span class=GramE>public</span> interface
+     IExportProjectProvider {</p>
+     <p class=MsoBodyText style='text-indent:36.0pt'><span class=GramE>public</span>
+     void setApplicationArguments(String[] arguments);</p>
+     <p class=MsoBodyText style='text-indent:36.0pt'><span class=GramE>public</span>
+     ICProject createProject() throws CoreException;</p>
+     <p class=MsoBodyText style='text-indent:36.0pt'><span class=GramE>public</span>
+     IIndexLocationConverter getLocationConverter(ICProject cproject);</p>
+     <p class=MsoBodyText style='text-indent:36.0pt'><span class=GramE>public</span>
+     Map/*&lt;String,String&gt;*/ getExportProperties();<span style='mso-tab-count:
+     1'>   </span></p>
+     <p class=MsoBodyText>}</p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+ </v:shape><w:wrap type="none"/>
+ <w:anchorlock/>
+</v:group><![endif]--><![if !vml]><img width=582 height=186
+src="prebuiltIndexes_files/image001.gif" alt="IExportProjectProvider interface" v:shapes="_x0000_s1046 _x0000_s1045 _x0000_s1047"><![endif]><!--[if mso & !supportInlineShapes & supportFields]><v:shape
+ id="_x0000_i1025" type="#_x0000_t75" style='width:6in;height:135pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span><![endif]--></p>
+
+<p class=MsoBodyText style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'>This interface allows any index
+export application to delegate the entire setting up of the project content to
+an ISV specific implementation. The interface javadoc describes each method in
+more detail but a summary is:</p>
+
+<p class=MsoBodyText style='margin-left:36.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l0 level1 lfo4;tab-stops:list 36.0pt'><![if !supportLists]><span
+style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
+Symbol'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>setApplicationArguments – this receives any
+application arguments specified on the command-line. Its expected
+implementations will simply store the arguments for later processing by
+createProject.</p>
+
+<p class=MsoBodyText style='margin-left:36.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l0 level1 lfo4;tab-stops:list 36.0pt'><![if !supportLists]><span
+style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
+Symbol'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>createProject – this is the key method which is
+expected to create and configure a project representing the content to be
+indexed</p>
+
+<p class=MsoBodyText style='margin-left:36.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l0 level1 lfo4;tab-stops:list 36.0pt'><![if !supportLists]><span
+style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
+Symbol'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>getLocationConverter – this returns an
+IIndexLocationConverter which converts IIndexFileLocation objects (which
+represent file locations in the index) to an unspecified ISV determined
+internal (String) format. For convenience, an implementation which converts an
+IIndexFileLocation to an internal format relative path is provided</p>
+
+<p class=MsoBodyText style='margin-left:72.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l0 level2 lfo4;tab-stops:list 72.0pt'><![if !supportLists]><span
+style='font-family:"Courier New";mso-fareast-font-family:"Courier New"'><span
+style='mso-list:Ignore'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter</p>
+
+<p class=MsoBodyText style='margin-left:36.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l0 level1 lfo4;tab-stops:list 36.0pt'><![if !supportLists]><span
+style='font-family:Symbol;mso-fareast-font-family:Symbol;mso-bidi-font-family:
+Symbol'><span style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]>getExportProperties – this allows ISV’s to
+associate String values with String keys within exported content. This is
+mostly for debugging purposes as it is not exposed to the CDT user in the 4.0
+release.</p>
+
+<p class=MsoBodyText style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'>A default implementation of
+this interface, which is also intended to be sub-classed, is<span
+style='mso-tab-count:1'>            </span><strong style='mso-bidi-font-weight:normal'>org.eclipse.cdt.core.index.export.ExternalExportProjectProvider</strong></p>
+
+<p class=MsoBodyText style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'>The project provider must be
+registered as an extension to the <span class=SpellE>org.eclipse.cdt.core.CIndex</span>
+extension point under the <span class=SpellE>ExportProjectProvider</span> child
+element, in order that it is visible to the CDT core index generation code.</p>
+
+<p class=MsoBodyText style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='mso-element:field-begin;mso-field-lock:yes'></span><span
+style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span><![endif]--><!--[if gte vml 1]><v:group
+ id="_x0000_s1052" editas="canvas" style='width:6in;height:252pt;
+ mso-position-horizontal-relative:char;mso-position-vertical-relative:line'
+ coordorigin="2520,2422" coordsize="7200,4320">
+ <o:lock v:ext="edit" aspectratio="t"/>
+ <v:shape id="_x0000_s1051" type="#_x0000_t75" style='position:absolute;left:2520;
+  top:2422;width:7200;height:4320' o:preferrelative="f">
+  <v:fill o:detectmouseclick="t"/>
+  <v:path o:extrusionok="t" o:connecttype="none"/>
+ </v:shape><v:shape id="_x0000_s1053" type="#_x0000_t202" style='position:absolute;
+  left:2520;top:2422;width:7200;height:4320'>
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'>&lt;<span class=SpellE><span class=GramE>plugin</span></span>&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>    </span>...<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>   </span>&lt;extension <o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>         </span><span
+     class=GramE>point</span>=&quot;org.eclipse.cdt.core.CIndex&quot;&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>      </span>&lt;<span
+     class=SpellE>ExportProjectProvider</span><o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>            </span><span
+     class=GramE>class</span>=&quot;com.acme.sdk.SDKProjectProvider_2_0_1&quot;&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>      </span>&lt;/<span
+     class=SpellE>ExportProjectProvider</span>&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>   </span>&lt;/extension&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>    </span>...<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'>&lt;/<span class=SpellE>plugin</span>&gt;<o:p></o:p></span></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+ </v:shape><w:wrap type="none"/>
+ <w:anchorlock/>
+</v:group><![endif]--><![if !vml]><img width=582 height=342
+src="prebuiltIndexes_files/image002.gif" alt="ExportProjectProvider extension point" v:shapes="_x0000_s1052 _x0000_s1051 _x0000_s1053"><![endif]><!--[if mso & !supportInlineShapes & supportFields]><v:shape
+ id="_x0000_i1026" type="#_x0000_t75" style='width:6in;height:252pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span><![endif]--><br clear=all
+style='mso-special-character:line-break;page-break-before:always'>
+</p>
+
+<h2 style='text-align:justify'><a name="_Toc164570185">The </a><span
+class=SpellE><span style='mso-bookmark:_Toc164570185'>GeneratePDOM</span></span><span
+style='mso-bookmark:_Toc164570185'> Application</span></h2>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'>CDT 4.0 provides an eclipse
+command-line application for generating the index. Its application ID is:</p>
+
+<p class=MsoBodyTextIndent style='text-align:justify'><span class=SpellE>org.eclipse.cdt.core.GeneratePDOM</span></p>
+
+<p class=MsoBodyTextIndent style='margin-left:0cm;text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'><span style='font-size:11.0pt'>This
+application can be invoked as any other eclipse command-line application, some
+examples are provided later in this document.</span></p>
+
+<h3 style='text-align:justify'><o:p>&nbsp;</o:p></h3>
+
+<h3 style='text-align:justify'><a name="_Toc164570186">Common command-line
+options</a></h3>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>Command-line options common to
+all IExportProjectProvider implementations are:</p>
+
+<p class=MsoBodyText style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-yfti-tbllook:480;mso-padding-alt:0cm 5.4pt 0cm 5.4pt;mso-border-insideh:
+ .5pt solid windowtext;mso-border-insidev:.5pt solid windowtext'>
+ <tr style='mso-yfti-irow:0'>
+  <td width=197 valign=top style='width:147.6pt;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>-pprovider</span></p>
+  </td>
+  <td width=197 valign=top style='width:147.6pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>The fully qualified <span class=SpellE>classname</span>
+  of a class implementing interface IExportProjectProvider<o:p></o:p></span></p>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>Example:<o:p></o:p></span></p>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+  <p class=MsoBodyText style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>-pprovider <span class=SpellE>com.acme.sdk.AcmeExportProjectProvider</span></span></p>
+  </td>
+  <td width=197 valign=top style='width:147.6pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'>Optional. Defaults to the
+  fully qualified class name of <span class=SpellE>ExternalExportProjectProvider</span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td width=197 valign=top style='width:147.6pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>-target<o:p></o:p></span></p>
+  </td>
+  <td width=197 valign=top style='width:147.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>An absolute or relative path of the resulting file</span></p>
+  </td>
+  <td width=197 valign=top style='width:147.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'>Needed</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2'>
+  <td width=197 valign=top style='width:147.6pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>-properties &lt;key=value&gt;<o:p></o:p></span></p>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>…<o:p></o:p></span></p>
+  <p class=MsoBodyText style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>&lt;key=value&gt;</span></p>
+  </td>
+  <td width=197 valign=top style='width:147.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'><o:p>&nbsp;</o:p></p>
+  </td>
+  <td width=197 valign=top style='width:147.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'>Optional</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3;mso-yfti-lastrow:yes'>
+  <td width=197 valign=top style='width:147.6pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>-quiet</span></p>
+  </td>
+  <td width=197 valign=top style='width:147.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>If present, problems, statistics and indexer
+  activity will be suppressed.</span></p>
+  </td>
+  <td width=197 valign=top style='width:147.6pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoBodyText style='text-align:justify'>Optional</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoBodyText style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoBodyText style='text-align:justify'>Other command-line options
+depend on what the project provider specified in –pprovider.</p>
+
+<h3 style='text-align:justify'><a name="_Toc164570187"></a><span class=SpellE><span
+style='mso-bookmark:_Toc164570187'>ExternalExportProjectProvider</span></span><span
+style='mso-bookmark:_Toc164570187'> command-line options</span></h3>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><span class=SpellE>ExternalExportProjectProvider</span>
+specific command-line options are:</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=583
+ style='width:437.4pt;border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-yfti-tbllook:480;mso-padding-alt:0cm 5.4pt 0cm 5.4pt;mso-border-insideh:
+ .5pt solid windowtext;mso-border-insidev:.5pt solid windowtext'>
+ <tr style='mso-yfti-irow:0'>
+  <td width=163 valign=top style='width:122.4pt;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>-source<o:p></o:p></span></p>
+  </td>
+  <td width=264 valign=top style='width:198.0pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>The absolute path of a directory to index.
+  Everything under this directory will be indexed. <o:p></o:p></span></p>
+  </td>
+  <td width=156 valign=top style='width:117.0pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>Needed<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td width=163 valign=top style='width:122.4pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>-include<o:p></o:p></span></p>
+  </td>
+  <td width=264 valign=top style='width:198.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>An absolute or relative path of a pre-include file<o:p></o:p></span></p>
+  </td>
+  <td width=156 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>Optional<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2;mso-yfti-lastrow:yes'>
+  <td width=163 valign=top style='width:122.4pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>- id<o:p></o:p></span></p>
+  </td>
+  <td width=264 valign=top style='width:198.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>A <span class=SpellE>namespaced</span> identifier
+  identifying the indexed content<o:p></o:p></span></p>
+  </td>
+  <td width=156 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal style='text-align:justify'><span style='font-size:8.0pt;
+  font-family:"Courier New"'>Optional<o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+<h3 style='text-align:justify'><o:p>&nbsp;</o:p></h3>
+
+<span style='font-size:14.0pt;font-family:Arial;mso-fareast-font-family:"Times New Roman";
+mso-ansi-language:EN-GB;mso-fareast-language:EN-GB;mso-bidi-language:AR-SA'><br
+clear=all style='page-break-before:always'>
+</span>
+
+<h2 style='text-align:justify'><a name="_Toc164570188">Invoking the
+GeneratePDOM application</a></h2>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>As an eclipse application, the
+GeneratePDOM application can be invoked in the normal ways that any other
+eclipse application can [1]. For initial development, <span class=GramE>its</span>
+most convenient to invoke as a self-hosted eclipse application via a launch
+configuration. For integrating into an automated build, either direct
+command-line invocation or via an ant build is more convenient.</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<h3 style='text-align:justify'><a name="_Toc164570189">Invoking as a
+self-hosted eclipse application</a></h3>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>Running as a self-hosted eclipse
+application is straightforward. You will need to have the CDT 4.0 plug-ins
+installed, or in your workspace. Then the steps are:</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l3 level1 lfo6;tab-stops:list 36.0pt'><![if !supportLists]><span
+style='mso-list:Ignore'>1)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>Create a new launch configuration of type “Eclipse
+Application”</p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l3 level1 lfo6;tab-stops:list 36.0pt'><![if !supportLists]><span
+style='mso-list:Ignore'>2)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>Choose “Run an application” and select “<span
+class=SpellE>org.eclipse.cdt.core.GeneratePDOM</span>”</p>
+
+<p class=MsoNormal style='margin-left:36.0pt;text-align:justify;text-indent:
+-18.0pt;mso-list:l3 level1 lfo6;tab-stops:list 36.0pt'><![if !supportLists]><span
+style='mso-list:Ignore'>3)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>Enter the Arguments to the application as detailed in
+the previous sections</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><!--[if gte vml 1]><v:shape id="_x0000_i1027"
+ type="#_x0000_t75" style='width:431.25pt;height:321pt'>
+ <v:imagedata src="prebuiltIndexes_files/image003.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=575 height=428
+src="prebuiltIndexes_files/image004.jpg" alt="Run configuration, Run an application" v:shapes="_x0000_i1027"><![endif]></p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><!--[if gte vml 1]><v:shape id="_x0000_i1028"
+ type="#_x0000_t75" style='width:431.25pt;height:321pt'>
+ <v:imagedata src="prebuiltIndexes_files/image005.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=575 height=428
+src="prebuiltIndexes_files/image006.jpg" alt="Run configuration, Arguments tab" v:shapes="_x0000_i1028"><![endif]></p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<h3 style='text-align:justify'><a name="_Toc164570190">Invoking via the
+command-line</a></h3>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>The PDOM generation application
+can be invoked via the command-line. Since version 3.3, the Eclipse</p>
+
+<p class=MsoNormal style='text-align:justify'><span class=GramE>distribution</span>
+on Windows includes an “ecilpsec.exe” which is for launching eclipse as a
+console application.</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='mso-element:field-begin;mso-field-lock:yes'></span><span
+style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span><![endif]--><!--[if gte vml 1]><v:group
+ id="_x0000_s1043" editas="canvas" style='width:6in;height:205.5pt;
+ mso-position-horizontal-relative:char;mso-position-vertical-relative:line'
+ coordorigin="2520,5160" coordsize="7200,3523">
+ <o:lock v:ext="edit" aspectratio="t"/>
+ <v:shape id="_x0000_s1042" type="#_x0000_t75" style='position:absolute;left:2520;
+  top:5160;width:7200;height:3523' o:preferrelative="f">
+  <v:fill o:detectmouseclick="t"/>
+  <v:path o:extrusionok="t" o:connecttype="none"/>
+ </v:shape><v:shape id="_x0000_s1044" type="#_x0000_t202" style='position:absolute;
+  left:2520;top:5160;width:7200;height:3446'>
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'>&lt;<span
+     class=GramE>eclipse</span>&gt; &lt;app&gt; &lt;app <span class=SpellE>args</span>&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span class=GramE><span style='font-size:8.0pt;
+     font-family:"Courier New"'>where</span></span><span style='font-size:8.0pt;
+     font-family:"Courier New"'><o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'><span
+     style='mso-tab-count:1'>       </span>&lt;<span class=GramE>eclipse</span>&gt;
+     = eclipse (or eclipsec.exe on windows)<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'><span
+     style='mso-tab-count:1'>       </span>&lt;<span class=GramE>app</span>&gt;
+     = -application <span class=SpellE>org.eclipse.cdt.core.GeneratePDOM</span><o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'><span
+     style='mso-tab-count:1'>       </span>&lt;<span class=GramE>app</span> <span
+     class=SpellE>args</span>&gt; =<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'>-pprovider
+     <span style='color:black'>org.eclipse.cdt.core.index.export.ExternalExportProjectProvider</span><o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'>-target
+     <span style='color:black'>C:\ExportedPDOMs\acmeSDK_2_5.pdom</span><o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'>-source
+     <span style='color:black'>E:\AcmeSDK\v2.5\inc</span><o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New"'>-id
+     <span style='color:black'>com.acme.mysdk.v2.5<o:p></o:p></span></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span class=GramE><span style='font-size:8.0pt;
+     font-family:"Courier New";color:black'>e.g.</span></span><span
+     style='font-size:8.0pt;font-family:"Courier New";color:black'> <o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:8.0pt;font-family:"Courier New";
+     color:black'>eclipsec.exe -application <span class=SpellE>org.eclipse.cdt.core.GeneratePDOM</span>
+     -<span class=SpellE>pprovider</span> <span class=SpellE>org.eclipse.cdt.core.index.export.ExternalExportProjectProvider</span>
+     -target C:\ExportedPDOMs\acmeSDK_2_5.pdom -source E:\AcmeSDK\v2.5\inc -id
+     com.acme.mysdk.v2.5<o:p></o:p></span></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+ </v:shape><w:wrap type="none"/>
+ <w:anchorlock/>
+</v:group><![endif]--><![if !vml]><img width=582 height=277
+src="prebuiltIndexes_files/image007.gif" alt="launching Eclipse as a console application" v:shapes="_x0000_s1043 _x0000_s1042 _x0000_s1044"><![endif]><!--[if mso & !supportInlineShapes & supportFields]><v:shape
+ id="_x0000_i1029" type="#_x0000_t75" style='width:6in;height:205.5pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span><![endif]--></p>
+
+<h3 style='text-align:justify'><a name="_Toc164570191"><o:p>&nbsp;</o:p></a></h3>
+
+<h3 style='text-align:justify'><span style='mso-bookmark:_Toc164570191'>Invoking
+via an Ant script</span></h3>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>An example script invoking the
+application via Ant is shown below:</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='mso-element:field-begin;mso-field-lock:yes'></span><span
+style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span><![endif]--><!--[if gte vml 1]><v:group
+ id="_x0000_s1040" editas="canvas" style='width:6in;height:348pt;
+ mso-position-horizontal-relative:char;mso-position-vertical-relative:line'
+ coordorigin="2520,3825" coordsize="7200,5965">
+ <o:lock v:ext="edit" aspectratio="t"/>
+ <v:shape id="_x0000_s1039" type="#_x0000_t75" style='position:absolute;left:2520;
+  top:3825;width:7200;height:5965' o:preferrelative="f">
+  <v:fill o:detectmouseclick="t"/>
+  <v:path o:extrusionok="t" o:connecttype="none"/>
+ </v:shape><v:shape id="_x0000_s1041" type="#_x0000_t202" style='position:absolute;
+  left:2520;top:3825;width:7200;height:5965'>
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div><pre><span style='font-size:8.0pt;color:black'>&lt;project name=&quot;Generate PDOM&quot; default=&quot;generate&quot;&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'> &lt;target name=&quot;generate&quot;&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>  </span><span
+     class=GramE>&lt;!--</span> This script shows how to invoke the default project provider<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'>(<span class=SpellE>ExternalExportProjectProvider</span>) --&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>  </span>&lt;property name=&quot;pprovider&quot;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'>value=&quot;org.eclipse.cdt.core.index.export.ExternalExportProjectProvider&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>  </span>&lt;property name=&quot;target&quot; value=&quot;C:\ExportedPDOMs\acmeSDK_2_5.pdom&quot;/&gt; &lt;!--<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'>Where the output <span class=SpellE>pdom</span> is to go --&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>  </span>&lt;property name=&quot;source&quot; value=&quot;E:\AcmeSDK\v2.5\inc&quot;/&gt; &lt;<span
+     class=GramE>!--</span> e.g. the directory<o:p></o:p></span></pre><pre><span
+     class=GramE><span style='font-size:8.0pt;color:black'>to</span></span><span
+     style='font-size:8.0pt;color:black'> source content from --&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>  </span>&lt;property name=&quot;id&quot; value=&quot;com.acme.mysdk.v2.5&quot;/&gt; &lt;<span
+     class=GramE>!--</span> the id to store in the<o:p></o:p></span></pre><pre><span
+     class=GramE><span style='font-size:8.0pt;color:black'>generate</span></span><span
+     style='font-size:8.0pt;color:black'> <span class=SpellE>pdom</span> --&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><o:p>&nbsp;</o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>  </span>&lt;property name=&quot;<span
+     class=SpellE>eclipse.home</span>&quot; value=&quot;C:\eclipse&quot;/&gt; &lt;<span
+     class=GramE>!--</span> e.g. The eclipse<o:p></o:p></span></pre><pre><span
+     class=GramE><span style='font-size:8.0pt;color:black'>installation</span></span><span
+     style='font-size:8.0pt;color:black'> to use. This installation must contain CDT 4.0+ <span
+     class=SpellE>plugins</span> --&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><o:p>&nbsp;</o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>  </span>&lt;java <span
+     class=SpellE>classname</span>=&quot;<span class=SpellE>org.eclipse.equinox.launcher.Main</span>&quot;&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;<span
+     class=SpellE><span class=GramE>classpath</span></span>&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>    </span>&lt;<span
+     class=SpellE>fileset</span> dir=&quot;${<span class=SpellE>eclipse.home</span>}/<span
+     class=SpellE>plugins</span>&quot;&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>     </span>&lt;<span
+     class=GramE>include</span> name=&quot;*<span class=SpellE>equinox.launcher</span>*.jar&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>    </span>&lt;/<span
+     class=SpellE>fileset</span>&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;/<span
+     class=SpellE>classpath</span>&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;<span
+     class=SpellE>arg</span> value=&quot;-<span class=SpellE>nosplash</span>&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;<span
+     class=SpellE>arg</span> value=&quot;-<span class=SpellE>exitdata</span>&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;<span
+     class=SpellE>arg</span> value=&quot;-application&quot;/&gt;&lt;<span
+     class=SpellE>arg</span> value=&quot;<span class=SpellE>org.eclipse.cdt.core.GeneratePDOM</span>&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;<span
+     class=SpellE>arg</span> value=&quot;-<span class=SpellE>pprovider</span>&quot;/&gt;&lt;<span
+     class=SpellE>arg</span> value=&quot;${<span class=SpellE>pprovider</span>}&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;<span
+     class=SpellE>arg</span> value=&quot;-source&quot;/&gt;&lt;<span
+     class=SpellE>arg</span> value=&quot;${source}&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;<span
+     class=SpellE>arg</span> value=&quot;-target&quot;/&gt;&lt;<span
+     class=SpellE>arg</span> value=&quot;${target}&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>   </span>&lt;<span
+     class=SpellE>arg</span> value=&quot;-id&quot;/&gt;&lt;<span class=SpellE>arg</span> value=&quot;${id}&quot;/&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><span style='mso-spacerun:yes'>  </span>&lt;/java&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'> &lt;/target&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'>&lt;/project&gt;<o:p></o:p></span></pre><pre><span
+     style='font-size:8.0pt;color:black'><o:p>&nbsp;</o:p></span></pre>
+     <p class=MsoNormal><span style='font-size:8.0pt'><o:p>&nbsp;</o:p></span></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+ </v:shape><w:wrap type="none"/>
+ <w:anchorlock/>
+</v:group><![endif]--><![if !vml]><img width=582 height=470
+src="prebuiltIndexes_files/image008.gif" alt="invoking via an Ant script" v:shapes="_x0000_s1040 _x0000_s1039 _x0000_s1041"><![endif]><!--[if mso & !supportInlineShapes & supportFields]><v:shape
+ id="_x0000_i1030" type="#_x0000_t75" style='width:6in;height:348pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span><![endif]--></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:11.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<span style='font-size:16.0pt;font-family:Arial;mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:16.0pt;mso-ansi-language:EN-GB;mso-fareast-language:EN-GB;
+mso-bidi-language:AR-SA'><br clear=all style='page-break-before:always'>
+</span>
+
+<h1 style='text-align:justify'><a name="_Toc164570192">Import of index content</a><span
+style='mso-bookmark:_Toc164570192'></span><span style='font-size:11.0pt'><o:p></o:p></span></h1>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>Once ISV content has been
+generated and distributed to the user’s computer, the mechanism to have that
+content appear within a CDT 4.0 session is via another extension point:</p>
+
+<span class=MsoNormal style='text-align:justify'><strong style='mso-bidi-font-weight:
+normal'><span style='mso-tab-count:1'>            </span><span class=SpellE>org.eclipse.cdt.core.CIndex.ReadOnlyPDOMProvider</span><em
+style='mso-bidi-font-style:normal'><o:p></o:p></em></strong></span>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>An implementation of the <span
+class=SpellE>IReadOnlyPDOMProvider</span> interface is registered under this
+extension point.</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<h2><a name="_Toc164570193"></a><span class=SpellE><span style='mso-bookmark:
+_Toc164570193'>IReadOnlyPDOMProvider</span></span><span style='mso-bookmark:
+_Toc164570193'></span></h2>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>Since CDT 4.0, the project model
+has the concept of project configurations, which in terms of code corresponds
+to the interface:</p>
+
+<span class=MsoNormal style='text-align:justify;text-indent:36.0pt'><span
+class=SpellE><strong style='mso-bidi-font-weight:normal'>org.eclipse.cdt.core.settings.model.ICConfigurationDescription</strong></span><strong
+style='mso-bidi-font-weight:normal'><o:p></o:p></strong></span>
+
+<span class=MsoNormal style='text-align:justify;text-indent:36.0pt'><strong
+style='mso-bidi-font-weight:normal'><o:p>&nbsp;</o:p></strong></span>
+
+<p class=MsoNormal style='text-align:justify'>The index model allows content to
+be associated with <span class=SpellE>ICConfigurationDescription</span> objects
+via the <span class=SpellE>CIndex.ReadOnlyPDOMProvider</span> extension point.
+ISV implementations are expected to examine the specified <span class=SpellE>ICConfigurationDescription</span>
+object, and determine from its properties (for example, macros and include
+paths, or perhaps custom builder properties) which ISV content is relevant. </p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><!--[if mso & !supportInlineShapes & supportFields]><span
+style='mso-element:field-begin;mso-field-lock:yes'></span><span
+style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span><![endif]--><!--[if gte vml 1]><v:group
+ id="_x0000_s1037" editas="canvas" style='width:459pt;height:126pt;
+ mso-position-horizontal-relative:char;mso-position-vertical-relative:line'
+ coordorigin="2520,4297" coordsize="7650,2160">
+ <o:lock v:ext="edit" aspectratio="t"/>
+ <v:shape id="_x0000_s1036" type="#_x0000_t75" style='position:absolute;left:2520;
+  top:4297;width:7650;height:2160' o:preferrelative="f">
+  <v:fill o:detectmouseclick="t"/>
+  <v:path o:extrusionok="t" o:connecttype="none"/>
+ </v:shape><v:shape id="_x0000_s1038" type="#_x0000_t202" style='position:absolute;
+  left:2520;top:4297;width:7650;height:2160'>
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=MsoNormal><span class=GramE>public</span> interface <span
+     class=SpellE>IReadOnlyPDOMProvider</span> extends <span class=SpellE>IIndexProvider</span>
+     {</p>
+     <p class=MsoNormal><span style='mso-tab-count:1'>            </span><span
+     class=GramE>public</span> <span class=SpellE>IPDOMDescriptor</span>[] <span
+     class=SpellE>getDescriptors</span>(<span class=SpellE>ICConfigurationDescription</span>
+     <span class=SpellE>config</span>);</p>
+     <p class=MsoNormal>}</p>
+     <p class=MsoNormal><o:p>&nbsp;</o:p></p>
+     <p class=MsoNormal><span class=GramE>public</span> interface <span
+     class=SpellE>IPDOMDescriptor</span> {</p>
+     <p class=MsoNormal><span style='mso-tab-count:1'>            </span><span
+     class=SpellE>IPath</span> <span class=SpellE><span class=GramE>getLocation</span></span><span
+     class=GramE>(</span>);</p>
+     <p class=MsoNormal><span style='mso-tab-count:1'>            </span><span
+     class=SpellE>IIndexLocationConverter</span> <span class=SpellE><span
+     class=GramE>getIndexLocationConverter</span></span><span class=GramE>(</span>);</p>
+     <p class=MsoNormal>}</p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+ </v:shape><w:wrap type="none"/>
+ <w:anchorlock/>
+</v:group><![endif]--><![if !vml]><img width=618 height=174
+src="prebuiltIndexes_files/image009.gif" alt="IReadOnlyPDOMProvider and IPDOMDescriptor interface " v:shapes="_x0000_s1037 _x0000_s1036 _x0000_s1038"><![endif]><!--[if mso & !supportInlineShapes & supportFields]><v:shape
+ id="_x0000_i1031" type="#_x0000_t75" style='width:459pt;height:126pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span><![endif]--></p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>The interface <span class=SpellE>IReadOnlyPDOMProvider</span>
+allows index content contributors to register content related to a particular <span
+class=SpellE>ICConfigurationDescription</span>. This will be queried
+dynamically, so it is important to perform only inexpensive logic in this
+method. The resulting <span class=SpellE>IPDOMDescriptor</span> objects will be
+used to load PDOM format files into the logical index. </p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>The <span class=SpellE>IPDOMDescriptor</span>
+consists of the absolute path of the PDOM format file, and a location converter
+suitable for converting from the file’s internal representation of paths to the
+runtime IIndexFileLocation objects used by the indexing API. The location
+converter must be compatible with the one used on export. Again, a default
+implementation is provided. If you exported your index content with
+org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter then the
+location converter <span class=SpellE>org.eclipse.cdt.core.index.URIRelativeLocationConverter</span>
+is internal format compatible.</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'>Once the provider is registered
+in the CDT extension point, then the pre-built index content will be available
+via index-based features in the IDE for the appropriate configurations.</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><!--[if mso & !supportInlineShapes & supportFields]><span
+style='mso-element:field-begin;mso-field-lock:yes'></span><span
+style='mso-spacerun:yes'> </span>SHAPE <span
+style='mso-spacerun:yes'> </span>\* MERGEFORMAT <span style='mso-element:field-separator'></span><![endif]--><!--[if gte vml 1]><v:group
+ id="_x0000_s1049" editas="canvas" style='width:6in;height:162pt;
+ mso-position-horizontal-relative:char;mso-position-vertical-relative:line'
+ coordorigin="2520,937" coordsize="7200,2777">
+ <o:lock v:ext="edit" aspectratio="t"/>
+ <v:shape id="_x0000_s1048" type="#_x0000_t75" style='position:absolute;left:2520;
+  top:937;width:7200;height:2777' o:preferrelative="f">
+  <v:fill o:detectmouseclick="t"/>
+  <v:path o:extrusionok="t" o:connecttype="none"/>
+ </v:shape><v:shape id="_x0000_s1050" type="#_x0000_t202" style='position:absolute;
+  left:2520;top:937;width:7200;height:2777'>
+  <v:textbox>
+   <![if !mso]>
+   <table cellpadding=0 cellspacing=0 width="100%">
+    <tr>
+     <td><![endif]>
+     <div>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'>&lt;<span class=SpellE><span class=GramE>plugin</span></span>&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>    </span>...<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>   </span>&lt;extension <o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>        </span><span
+     class=GramE>point</span>=&quot;org.eclipse.cdt.core.CIndex&quot;&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>      </span>&lt;<span
+     class=SpellE>ReadOnlyPDOMProvider</span><o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>           
+     </span>class=&quot;<span class=SpellE>com.acme.sdk.PrebuiltSDKPDOMProvider</span>&quot;/&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>   </span>&lt;/extension&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><span style='mso-spacerun:yes'>    </span>...<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'>&lt;/<span class=SpellE>plugin</span>&gt;<o:p></o:p></span></p>
+     <p class=MsoNormal><span style='font-size:10.0pt;font-family:"Courier New";
+     color:black'><o:p>&nbsp;</o:p></span></p>
+     </div>
+     <![if !mso]></td>
+    </tr>
+   </table>
+   <![endif]></v:textbox>
+ </v:shape><w:wrap type="none"/>
+ <w:anchorlock/>
+</v:group><![endif]--><![if !vml]><img width=582 height=222
+src="prebuiltIndexes_files/image010.gif" alt="ReadOnlyPDOMProvider extension point" v:shapes="_x0000_s1049 _x0000_s1048 _x0000_s1050"><![endif]><!--[if mso & !supportInlineShapes & supportFields]><v:shape
+ id="_x0000_i1032" type="#_x0000_t75" style='width:6in;height:162pt'>
+ <v:imagedata croptop="-65520f" cropbottom="65520f"/>
+</v:shape><span style='mso-element:field-end'></span><![endif]--><br clear=all
+style='mso-special-character:line-break;page-break-before:always'>
+</p>
+
+<p class=MsoNormal><span class=Heading1Char><span style='font-size:11.0pt;
+mso-bidi-font-size:16.0pt'>Appendix A</span></span><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:Arial;mso-bidi-font-family:"Times New Roman";
+mso-font-kerning:16.0pt'><o:p></o:p></span></p>
+
+<p class=MsoBodyText><span style='font-size:10.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span class=GramE><span style='font-size:10.0pt'>package</span></span><span
+style='font-size:10.0pt'> <span class=SpellE>org.eclipse.cdt.core.index</span>;<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>/**<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* Each <span class=SpellE>IIndexFragment</span>
+stores file location representations in an implementation specific manner.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* External to <span class=SpellE>IIndexFragment</span>
+files are identified by an {@link <span class=SpellE>IIndexFileLocation</span>}<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* <o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* Internal to <span class=SpellE>IIndexFragment</span>
+a mechanism for converting between the string location format used<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* <span class=GramE>and</span> the URI world
+is needed. This interface represents that mechanism.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>*/<o:p></o:p></span></p>
+
+<p class=MsoNormal><span class=GramE><span style='font-size:10.0pt'>public</span></span><span
+style='font-size:10.0pt'> interface <span class=SpellE>IIndexLocationConverter</span>
+{<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span>/**<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>* Convert a
+raw string in an internal <span class=SpellE>IIndexFragment</span>
+implementation specific format to <o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>* <span
+class=GramE>an</span> <span class=SpellE>IIndexFileLocation</span> or null if
+the internal format could not be translated.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>* @<span
+class=SpellE>param</span> raw<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>* @return<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>*/<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span class=GramE>public</span> abstract <span
+class=SpellE>IIndexFileLocation</span> <span class=SpellE>fromInternalFormat</span>(String
+raw);<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span>/**<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>* Convert <span
+class=GramE>a</span> <span class=SpellE>IIndexFileLocation</span> to the
+internal <span class=SpellE>IIndexFragment</span> implementation specific
+format<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>* <span
+class=GramE>or</span> null if the location could not be translated.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>* @<span
+class=SpellE>param</span> location<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>* @return an
+internal representation for the location specified<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span style='mso-spacerun:yes'> </span>*/<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><span style='mso-tab-count:
+1'>                </span><span class=GramE>public</span> abstract String <span
+class=SpellE>toInternalFormat</span>(<span class=SpellE>IIndexFileLocation</span>
+location);<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>}<o:p></o:p></span></p>
+
+<span style='font-size:16.0pt;font-family:Arial;mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:16.0pt;mso-ansi-language:EN-GB;mso-fareast-language:EN-GB;
+mso-bidi-language:AR-SA'><br clear=all style='page-break-before:always'>
+</span>
+
+<h1><a name="_Toc164570194"><span style='font-size:11.0pt;mso-bidi-font-size:
+16.0pt'>Appendix B</span></a><span style='font-size:11.0pt;mso-bidi-font-size:
+16.0pt'><o:p></o:p></span></h1>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt;
+font-family:"Courier New";color:black'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'>/*******************************************************************************<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* Copyright (c) 2006 Symbian Software Ltd. and
+others.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* This program and the
+accompanying materials<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* are made available under the terms of the
+Eclipse Public License 2.0<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* <span class=GramE>which</span> accompanies
+this distribution, and is available at<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* https://www.eclipse.org/legal/epl-2.0/
+>*
+>* SPDX-License-Identifier: EPL-2.0<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>*<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* Contributors:<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>*<span style='mso-spacerun:yes'>   
+</span>Andrew Ferguson (Symbian) - initial API and implementation<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>*******************************************************************************/
+<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span class=GramE><span
+style='font-size:10.0pt'>package</span></span><span style='font-size:10.0pt'> <span
+class=SpellE>org.eclipse.cdt.core.index</span>;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span class=GramE><span
+style='font-size:10.0pt'>import</span></span><span style='font-size:10.0pt'> <span
+class=SpellE>java.net.URI</span>;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'>/**<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* Files in the index are (conceptually)
+partitioned into workspace and non-workspace (external) files.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* Clients can obtain instances of
+IIndexFileLocation implementations from {@link <span class=SpellE>IndexLocationFactory</span>}<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* &lt;p&gt;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* This interface is not intended to be
+implemented by clients.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* &lt;/p&gt;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* &lt;p&gt;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span><span class=GramE>*
+&lt;strong&gt;EXPERIMENTAL&lt;/strong&gt;.</span> This class or interface has
+been added as<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* <span class=GramE>part</span> of a work in
+progress. There is no guarantee that this API will work or<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* <span class=GramE>that</span> it will remain
+the same. Please do not use this API without consulting<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* <span class=GramE>with</span> the CDT team.<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* &lt;/p&gt;<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* <o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>* @since 4.0<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'> </span>*/<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span class=GramE><span
+style='font-size:10.0pt'>public</span></span><span style='font-size:10.0pt'>
+interface IIndexFileLocation {<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span>/**<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span
+style='mso-spacerun:yes'> </span>* The URI of the indexed file<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span
+style='mso-spacerun:yes'> </span>* @return the URI of the indexed file
+(non-null)<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span
+style='mso-spacerun:yes'> </span>*/<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span class=GramE>public</span>
+URI <span class=SpellE>getURI</span>();<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span>/**<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span
+style='mso-spacerun:yes'> </span>* Return the workspace relative path of the
+indexed file or null if the file<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span
+style='mso-spacerun:yes'> </span>* is not in the workspace <o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span
+style='mso-spacerun:yes'> </span>* @return the workspace relative path of the
+file in the index, or null if the<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-spacerun:yes'>     </span>* <span class=GramE>file</span> is not in
+the workspace<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span
+style='mso-spacerun:yes'> </span>*/<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><span
+style='mso-tab-count:1'>                </span><span class=GramE>public</span>
+String <span class=SpellE>getFullPath</span>();<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'>}<o:p></o:p></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:10.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<span style='font-size:16.0pt;font-family:Arial;mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:16.0pt;mso-ansi-language:EN-GB;mso-fareast-language:EN-GB;
+mso-bidi-language:AR-SA'><br clear=all style='page-break-before:always'>
+</span>
+
+<h1><a name="_Toc164570195">References</a></h1>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='font-size:9.0pt'>[1]<span
+style='mso-tab-count:1'>           </span><a
+href="../../../../org.eclipse.platform.doc.user/tasks/running_eclipse.htm">http://help.eclipse.org/help32/index.jsp?topic=/org.eclipse.platform.doc.user/tasks/running_eclipse.htm</a><o:p></o:p></span></p>
+
+</div>
+
+</body>
+
+</html>

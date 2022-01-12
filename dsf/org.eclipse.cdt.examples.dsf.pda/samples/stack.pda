@@ -1,0 +1,21 @@
+push 5
+:thread_create
+exec stack
+dec 
+dup
+branch_not_zero thread_create
+push finished
+output 
+halt
+:stack
+push 100
+:inner
+dup
+output
+dup
+branch_not_zero descend
+return
+:descend
+dec
+call inner 
+return

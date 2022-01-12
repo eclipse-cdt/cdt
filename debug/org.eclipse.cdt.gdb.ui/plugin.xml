@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension point="org.eclipse.cdt.debug.ui.breakpointContribution">
+	<breakpointLabels 
+		debugModelId="org.eclipse.cdt.gdb"
+		markerType="org.eclipse.cdt.debug.core.cEventBreakpointMarker"> 
+		<attribute name="org.eclipse.cdt.debug.core.eventbreakpoint_event_id" label="%catchType.label" type="string">
+			<value 
+				label="%catchCatch.label"
+	        	value="org.eclipse.cdt.debug.gdb.catch"/>
+			<value 
+	        	label="%catchThrow.label"
+	        	value="org.eclipse.cdt.debug.gdb.throw"/>
+			<value 
+				label="%catchSyscall.label"
+				value="org.eclipse.cdt.debug.gdb.catch_syscall">
+				<attribute 
+					name="org.eclipse.cdt.debug.core.eventbreakpoint_event_arg" label="%catchSyscall.arg.label" 
+					type="string" fieldEditor="org.eclipse.jface.preference.StringFieldEditor"/>
+			</value>
+			<value
+				label="%catchFork.label"
+				value="org.eclipse.cdt.debug.gdb.catch_fork"/>
+			<value
+				label="%catchVfork.label"
+				value="org.eclipse.cdt.debug.gdb.catch_vfork"/>
+			<value
+				label="%catchExec.label"
+				value="org.eclipse.cdt.debug.gdb.catch_exec"/>
+		</attribute> 
+	</breakpointLabels>
+</extension>
+</plugin>

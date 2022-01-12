@@ -1,0 +1,256 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.managedbuilder.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.managedbuilder.core" id="tcModificationInfo" name="ToolChain Modification Info"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="conflictDefinition" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="matchObject">
+      <annotation>
+         <documentation>
+            specifies the buildObject pattern to be matched.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="pattern" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="objectIds" type="string">
+            <annotation>
+               <documentation>
+                  Required if no &quot;pattern&quot; objects are specified.
+&lt;br&gt;represents one or more buils object ID [patterns] separated with &quot;;&quot;
+&lt;br&gt;Note that specifying several IDs with one matchObject has exactly the same meaning as specifying those IDs in separate matchObjects combined with the &quot;select&quot; element.
+&lt;br&gt;When both &quot;pattern&quot; objects and &quot;objectIds&quot; are defined, patterns defined in both of them are treated as valid patterns.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="objectType" use="required">
+            <annotation>
+               <documentation>
+                  Specifies the type of build objects presented with this element.
+&lt;br&gt;Can have one of the following values:
+&lt;br&gt;TOOL - to represent a tool
+&lt;br&gt;TOOLCHAIN - to represent a tool-chain
+&lt;br&gt;BUILDER - to represent a builder
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="toolChain">
+                  </enumeration>
+                  <enumeration value="tool">
+                  </enumeration>
+                  <enumeration value="builder">
+                  </enumeration>
+                  <enumeration value="configuration">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="searchScope" use="default" value="EXTENSION_SUPERCLASSES">
+            <annotation>
+               <documentation>
+                  specifies how the object is to be searched.
+Can contain one of the following values:
+&lt;br&gt;1. EXTENSION_OBJECT - the direct extension superclass is to be checked
+&lt;br&gt;2. ALL_EXTENSION_SUPERCLASSES - object&apos;s extension supet-classes are to be checked.
+&lt;br&gt;The default value is &quot;EXTENSION_OBJECT&quot;
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="ALL_EXTENSION_SUPERCLASSES">
+                  </enumeration>
+                  <enumeration value="EXTENSION_OBJECT">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="objectIdsType" use="default" value="EXACT_MATCH">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="REGEXP">
+                  </enumeration>
+                  <enumeration value="EXACT_MATCH">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="conflictDefinition">
+      <annotation>
+         <documentation>
+            represents templates for objects conflicting with each other.
+&lt;br&gt; See the &quot;Calculating Tool-chain modification info from the “objects-set” info&quot; section for more information
+&lt;br&gt;the &quot;status&quot; object for this element represents the status information to be applied in case the given conflictingSet information is not fulfilled.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="matchObject" minOccurs="2" maxOccurs="2"/>
+         </sequence>
+      </complexType>
+   </element>
+
+   <element name="pattern">
+      <annotation>
+         <documentation>
+            specifies a string pattern
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="objectIds" type="string" use="required">
+            <annotation>
+               <documentation>
+                  pattern value
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type" use="default" value="EXACT_MATCH">
+            <annotation>
+               <documentation>
+                  specifies the value type. 
+&lt;br&gt;May contain the following values:
+&lt;br&gt; EXACT_MATCH - value is exact string representation
+&lt;br&gt; REGEXP - value is a regular expressions
+&lt;br&gt;The default is &quot;EXACT_MATCH&quot;.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="EXACT_MATCH">
+                  </enumeration>
+                  <enumeration value="REGEXP">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="searchScope" use="default" value="EXTENSION_SUPERCLASSES">
+            <annotation>
+               <documentation>
+                  specifies how the object is to be searched.
+Can contain one of the following values:
+&lt;br&gt;1. EXTENSION_OBJECT - the direct extension superclass is to be checked
+&lt;br&gt;2. ALL_EXTENSION_SUPERCLASSES - object&apos;s extension supet-classes are to be checked.
+
+&lt;br&gt;If undefined, the parent search scope will be used, i.e. when used with the matchObject, search scope defined for that matchObject will be used
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="ALL_EXTENSION_SUPERCLASSES">
+                  </enumeration>
+                  <enumeration value="EXTENSION_OBJECT">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="objectIdsType">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="REGEXP">
+                  </enumeration>
+                  <enumeration value="EXACT_MATCH">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         
+      </documentation>
+   </annotation>
+
+</schema>

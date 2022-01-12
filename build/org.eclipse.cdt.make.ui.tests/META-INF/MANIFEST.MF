@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.cdt.make.ui.tests;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.cdt.make.ui.tests.MakeUITestsPlugin
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.cdt.make.ui,
+ org.junit;bundle-version="4.10.0",
+ org.eclipse.cdt.core.tests
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-Vendor: %providerName
+Automatic-Module-Name: org.eclipse.cdt.make.ui.tests
+Bundle-Localization: plugin

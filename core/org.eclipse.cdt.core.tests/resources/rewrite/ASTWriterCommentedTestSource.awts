@@ -1,0 +1,1606 @@
+//!CommentRecognition000
+//%CPP
+class Class0
+{
+public:
+    Class0();   /*
+    			  * Comment
+    			  */
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class0
+{
+public:
+    Class0(); /*
+    			  * Comment
+    			  */
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition00
+//%CPP
+class Class0
+{
+public:
+    Class0();   //Comment
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class0
+{
+public:
+    Class0(); //Comment
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition0
+//%CPP
+//Comment1
+class Class0
+{
+    //Comment2
+public:
+    Class0();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!DeclarationWithTraillingDoubleComments
+//%CPP
+int foo = bar; //Comment
+//Zweiteilig
+
+//!DeclarationWithLeadingDoubleComments
+//%CPP
+//Comment
+//Zweiteilig
+int foo;
+
+//!DeclarationWithTraillingAndLeadingComments
+//%CPP
+//Comment1
+int foo = bar; //Comment2
+
+//!DeclarationWithTraillingAndLeadingComments
+//%CPP
+//Comment1
+int foo = bar; //Comment2
+
+//!DeclarationWithTraillingComments
+//%CPP
+int foo = bar; //Comment
+
+//!DeclarationWithTraillingComments
+//%CPP
+int foo; //Comment
+
+//!Method witch Trailercomment
+//%CPP
+int foo()
+{
+    return 42;
+    //return the Answer
+}
+
+
+//!Method witch Trailercomment2
+//%CPP
+int foo()
+{
+    return 42; //return the Answer
+}
+
+
+//!Method witch Trailercomment3
+//%CPP
+int foo()
+{
+    //return the Answer
+    return 42;
+}
+
+
+//!ClassCommentTest
+//%CPP
+class comment
+{
+    //hallo
+};
+
+//!Comment1 - von CERP
+//%CPP
+class test
+{
+public:
+    test();
+    /*
+     * Hallo
+     */
+    void lala();
+    //test
+    virtual ~test();
+
+protected:
+    class test2
+    {
+    public:
+        test2();
+    }; //Komment 1
+    //Komment 2
+    //Komment 3
+};
+
+//!Comment2 - von CERP
+//%CPP
+class test
+{
+public:
+    test();
+    /*
+     * Hallo
+     */
+    void lala();
+    //test
+    virtual ~test();
+
+protected:
+    class test2
+    {
+    public:
+        test2();
+    }; //Komment 1
+};
+//LALA
+
+//!Comment3 - von CERP
+//%CPP
+//Anfang
+class test
+{
+public:
+    test();
+    /*
+     * Hallo
+     */
+    void lala();
+    //test
+    virtual ~test();
+
+protected:
+    class test2
+    {
+    public:
+        test2();
+    }; //Komment 1
+};
+
+//!Comment4 - von CERP
+//%CPP
+class test
+{
+    //Class...
+public:
+    test();
+    /*
+     * Hallo
+     */
+    void lala();
+    //test
+    virtual ~test();
+
+protected:
+    class test2
+    {
+    public:
+        test2();
+    }; //Komment 1
+};
+
+//!CommentRecognition1 - von CERP
+//%CPP
+class Class1
+{
+    //TEST
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition2 - von CERP
+//%CPP
+class Class1
+{
+public: //TEST
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition3 - von CERP
+//%CPP
+class Class1
+{
+public:
+    //TEST
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition4 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition5 - von CERP
+//%CPP
+class Class1
+{   //TEST
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class1
+{
+    //TEST
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition6 - von CERP
+//%CPP
+class Class1{    //TEST
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class1
+{
+    //TEST
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition7 - von CERP
+//%CPP
+class Class1
+{//TEST
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class1
+{
+    //TEST
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition8 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+    int i = 5; //lala
+};
+
+//!CommentRecognition9 - von CERP
+//%CPP
+class Class1
+{
+    /*TEST*/
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition10 - von CERP
+//%CPP
+class Class1{    /*TEST*/
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class1
+{
+    /*TEST*/
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition11 - von CERP
+//%CPP
+class Class1
+{
+public: /*TEST*/
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition11b - von CERP
+//%CPP
+class Class1
+{
+public: /*TEST*/ Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class1
+{
+public: /*TEST*/
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition12 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+    int i = 5; /*TEST*/
+};
+
+//!CommentRecognition13 - von CERP
+//%CPP
+class Class1
+{
+    /*
+     * TEST
+     */
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition14 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+    int i = 5; /*
+                * TEST
+                */
+};
+
+//!CommentRecognition15 - von CERP
+//%CPP
+class Class1
+{
+public: /*
+         * TEST
+         */
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition16 - von CERP
+//%CPP
+class Class1{  //Test mit
+                //2 Zeilen
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class1
+{
+    //Test mit
+    //2 Zeilen
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition17 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+    int i = 5; //Test mit
+    //2 Zeilen
+};
+
+//!CommentRecognition18 - von CERP
+//%CPP
+class Class1{
+    //Test mit
+    //2 Zeilen
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//=
+class Class1
+{
+    //Test mit
+    //2 Zeilen
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition19 - von CERP
+//%CPP
+class Class1
+{
+    //Test mit
+    //2 Zeilen
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition20 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//!CommentRecognition21 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0; //TEST
+        i++;
+    }
+
+    int i;
+};
+
+//!CommentRecognition22 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    } //TEST
+
+private:
+    int i;
+};
+
+//!CommentRecognition23 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    //KommentarDavor
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    } //TEST
+
+private:
+    int i;
+};
+
+//!CommentRecognition24 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; //SCHLUSS
+
+//!CommentRecognition25 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; //SCHLUSS
+//2. teil
+
+//!CommentRecognition26 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+//SCHLUSS
+//2. teil
+
+//!CommentRecognition27 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; /*SCHLUSS*/
+
+//!CommentRecognition28 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+/*SCHLUSS*/
+
+//!CommentRecognition29 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+}; /*
+    * SCHLUSS
+    */
+
+//!CommentRecognition30 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    //TEST
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//!CommentRecognition31 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    /*TEST*/
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//!CommentRecognition32 - von CERP
+//%CPP
+//Vorher
+class Class1 //Nachher
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//!CommentRecognition33 - von CERP
+//%CPP
+//Vorher
+class Class1 /*Nachher*/
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//!CommentRecognition34 - von CERP
+//%CPP
+/*Vorher*/
+class Class1
+{
+    /*Nachher*/
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//!CommentRecognition35 - von CERP
+//%CPP
+/*Vorher*/
+class Class1
+{
+    //Nachher
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//!CommentRecognition36 - von CERP
+//%CPP
+/*
+ * Vorher
+ */
+class Class1
+{
+    //Nachher
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+};
+
+//!CommentRecognition37 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i; //Test
+};
+
+//!CommentRecognition38 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i; /*Test*/
+};
+
+//!CommentRecognition39 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i; /*
+            * Test
+            */
+};
+
+//!CommentRecognition40 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    int i;
+    /*
+     * Test
+     */
+};
+
+//!CommentRecognition41 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    //TEST
+    int i;
+};
+
+//!CommentRecognition42 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+    void inlineMethode()
+    {
+        int i = 0;
+        i++;
+    }
+
+private:
+    /*TEST*/
+    int i;
+};
+
+//!CommentRecognition43 - von CERP
+//%CPP
+class Class1
+{
+private:
+    int i;
+};
+
+//!CommentRecognition44 - von CERP
+//%CPP
+class Class1
+{
+private:
+    int i;
+    //TEST
+};
+
+//!CommentRecognition44b - von CERP
+//%CPP
+class Class1
+{
+private:
+    int i; //TEST
+};
+
+//!CommentRecognition44c - von CERP
+//%CPP
+class Class1
+{
+private:
+    int i;
+    //TEST
+}; //Add
+
+//!CommentRecognition44d - von CERP
+//%CPP
+class Class1
+{
+private:
+    int i;
+    //TEST
+} //Add
+;
+
+//!CommentRecognition45 - von CERP
+//%CPP
+class Class1
+{
+private:
+    //TEST
+    int i;
+};
+
+//!CommentRecognition46 - von CERP
+//%CPP
+class Class1
+{
+    //TEST
+private:
+    int i;
+};
+
+//!CommentRecognition47 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private: //TEST
+    int i;
+};
+
+//!CommentRecognition48 - von CERP
+//%CPP
+class Class1
+{
+    //TEST
+public: /*TEST*/
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition48b - von CERP
+//%CPP
+class Class1
+{
+    //TEST
+public: /*TEST*/
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition49 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1(); //TEST1
+    //TEST2
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition50 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1(); /*TEST1*/
+    /*TEST2*/
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition51 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1(); //TEST1
+    /*TEST2*/
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition52 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1(); /*TEST1*/
+    //TEST2
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition53 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1(); /*TEST1*/
+    //TEST3
+    //TEST2
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition54 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1(); /*TEST1*/
+    /*TEST3*/
+    //TEST2
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition55 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1(); //TEST1
+    /*
+     * TEST3
+     */
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition56 - von CERP
+//%CPP
+class Class1
+{
+public:
+    Class1(); /*
+                * TEST1
+                */
+    //TEST2
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition57 - von CERP
+//%CPP
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//!CommentRecognition58 - von CERP
+//%CPP
+//Comment
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//=
+//Comment
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//!CommentRecognition59 - von CERP
+//%CPP
+namespace testNamespace //Comment
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//!CommentRecognition60 - von CERP
+//%CPP
+/*Comment*/
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//!CommentRecognition61 - von CERP
+//%CPP
+namespace testNamespace /*Comment*/
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//!CommentRecognition62 - von CERP
+//%CPP
+/*
+ * Comment
+ */
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//!CommentRecognition63 - von CERP
+//%CPP
+namespace testNamespace /*
+                         * Comment
+                         */
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//!CommentRecognition64 - von CERP
+//%CPP
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+} //Comment
+
+//!CommentRecognition65 - von CERP
+//%CPP
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+} /*Comment*/
+
+//!CommentRecognition66 - von CERP
+//%CPP
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+} /*
+   * Comment
+   */
+
+//!CommentRecognition67 - von CERP
+//%CPP
+namespace testNamespace
+{
+
+class Class1 //TEST
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+}
+
+//!CommentRecognition68 - von CERP
+//%CPP
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i; //TEST
+};
+
+}
+
+//!CommentRecognition69 - von CERP
+//%CPP
+namespace testNamespace
+{
+
+class Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+}; //TEST
+
+}
+
+//!CommentRecognition100 - von CERP
+//%CPP
+struct Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition101 - von CERP
+//%CPP
+//Comment
+struct Class1
+{
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition102 - von CERP
+//%CPP
+struct Class1
+{
+    //Comment
+public:
+    Class1();
+    std::string toString();
+
+private:
+    int i;
+};
+
+//!CommentRecognition103 - von CERP
+//%CPP
+struct Class1
+{
+    //Comment
+private:
+    Class1();
+    std::string toString();
+
+protected:
+    int i;
+};
+
+//!CommentRecognition104 - von CERP
+//%CPP
+/*Davor*/
+struct Class1 //Comment
+{
+private:
+    Class1();
+    std::string toString();
+
+protected:
+    int i;
+};
+
+//!ImplementationFileCommentRecognition1 - von CERP
+//%CPP
+void Demo::methode1()
+{
+}
+
+void Demo::methode2()
+{
+}
+
+void Demo::methode3()
+{
+}
+
+
+//!ImplementationFileCommentRecognition2 - von CERP
+//%CPP
+//Zuvorderst
+
+
+void Demo::methode1()
+{
+    //Test
+}
+
+void Demo::methode2()
+{
+}
+//Davor
+
+void Demo::methode3()
+{    
+} //Danach
+
+//Am Schluss
+//=
+//Zuvorderst
+void Demo::methode1()
+{
+    //Test
+}
+
+void Demo::methode2()
+{
+}
+
+//Davor
+void Demo::methode3()
+{
+} //Danach
+
+//Am Schluss
+
+//!ImplementationFileCommentRecognition3 - von CERP
+//%CPP
+/*Zuvorderst*/
+void Demo::methode1()
+{
+    /*Test*/
+}
+
+void Demo::methode2()
+{
+}
+
+/*Davor*/
+void Demo::methode3()
+{    
+} /*Danach*/
+
+
+/*Am Schluss*/
+
+//=
+/*Zuvorderst*/
+void Demo::methode1()
+{
+    /*Test*/
+}
+
+void Demo::methode2()
+{
+}
+
+/*Davor*/
+void Demo::methode3()
+{
+} /*Danach*/
+
+/*Am Schluss*/
+

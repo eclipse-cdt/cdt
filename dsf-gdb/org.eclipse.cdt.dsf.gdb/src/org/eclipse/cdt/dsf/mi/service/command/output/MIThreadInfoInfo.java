@@ -1,0 +1,169 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2014 Ericsson and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Ericsson - Initial API and implementation
+ *     Wind River Systems - refactored to match pattern in package
+ *     Xavier Raynaud (Kalray) - MIThread can be overridden (Bug 429124)
+ *******************************************************************************/
+package org.eclipse.cdt.dsf.mi.service.command.output;
+
+import java.util.Arrays;
+import java.util.Comparator;
+
+/**
+ * GDB/MI thread list parsing.
+ *
+ * Example 1:
+ *
+ * -thread-info
+ * ^done,threads=[
+ * 	{id="2",target-id="Thread 0xb7c8ab90 (LWP 7010)",
+ *		frame={level="0",addr="0x08048bba",func="my_func",args=[{name="arg",value="0xbff056f5"}],
+ * 			file="my_test.cc",fullname="/home/francois/GDB/my_test.cc",line="26"},
+ * 		state="stopped"},
+ * 	{id="1",target-id="Thread 0xb7c8b8d0 (LWP 7007)",
+ * 		frame={level="0",addr="0x08048a77",func="timer",args=[{name="duration",value="0xbff056f5 \"10\""}],
+ * 			file="my_test.cc",fullname="/home/francois/GDB/my_test.cc",line="39"},
+ * 		state="stopped"}
+ * 	],current-thread-id="2"
+ *
+ *
+ * Example 2:
+ *
+ * -thread-info 2
+ * ^done,threads=[
+ * 	{id="2",target-id="Thread 0xb7c8ab90 (LWP 7010)",
+ *		frame={level="0",addr="0x08048bba",func="my_func",args=[{name="arg",value="0xbff056f5"}],
+ * 			file="my_test.cc",fullname="/home/francois/GDB/my_test.cc",line="26"},
+ * 		state="stopped"}
+ *  ]
+ *
+ *
+ * Example 3 (non-stop):
+ *
+ * -thread-info
+ * ^done,threads=[
+ *  {id="2",target-id="Thread 0xb7d6d6b0 (LWP 14494)",state="running"},
+ * 	{id="1",target-id="Thread 0xb7c8b8d0 (LWP 7007)",
+ * 		frame={level="0",addr="0x08048a77",func="timer",args=[{name="duration",value="0xbff056f5 \"10\""}],
+ * 			file="my_test.cc",fullname="/home/francois/GDB/my_test.cc",line="39"},
+ * 		state="stopped"}
+ * 	],current-thread-id="1"
+ *
+ *
+ * Example 4 (non-stop):
+ *
+ * -thread-info 1
+ * ^done,threads=[{id="1",target-id="Thread 0xb7d6d6b0 (LWP 14494)",state="running"}]
+ *
+ *
+ * Example 5 (Dicos):
+ *
+ * -thread-info 1
+ * ^done,threads=[
+ *  {id="1",target-id="Thread 162.32942",details="JUnitProcess_PT (Ready) 175417582794 8572423",
+ *        frame={level="0",addr="0x1559a318",func="mainExpressionTestApp",args=[],
+ *            file="/local/home/lmckhou/TSP/TADE/example/JUnitProcess_OU/src/ExpressionTestApp.cc",
+ *            fullname="/local/home/lmckhou/TSP/TADE/example/JUnitProcess_OU/src/ExpressionTestApp.cc",line="279"},
+ *        state="stopped"}]
+ *
+ * With GDB 7.1, a new 'core' field is present to indicate which core the thread is on.
+ * The parsing of this new field is handled by {@link MIThread}
+ *
+ * -thread-info
+ * ^done,threads=[
+ *  {id="1",target-id="process 1307",
+ *   frame={level="0",addr="0x08048618",func="main",args=[],
+ *          file="a.cc",fullname="/local/lmckhou/testing/a.cc",line="9"},
+ *   state="stopped",
+ *   core="2"}],
+ *  current-thread-id="1"
+ *
+ * @since 1.1
+ */
+public class MIThreadInfoInfo extends MIInfo {
+
+	private String fCurrentThread = null;
+	private MIThread[] fThreadList = null;
+
+	public MIThreadInfoInfo(MIOutput out) {
+		super(out);
+		parse();
+	}
+
+	public String getCurrentThread() {
+		return fCurrentThread;
+	}
+
+	public MIThread[] getThreadList() {
+		return fThreadList;
+	}
+
+	// General format:
+	//		threads=[{...}],current-thread-id="n"
+	/** @since 4.4 */
+	protected void parse() {
+		if (isDone()) {
+			MIOutput out = getMIOutput();
+			MIResultRecord rr = out.getMIResultRecord();
+			if (rr != null) {
+				MIResult[] results = rr.getMIResults();
+				for (int i = 0; i < results.length; i++) {
+					String var = results[i].getVariable();
+					if (var.equals("threads")) { //$NON-NLS-1$
+						MIValue val = results[i].getMIValue();
+						if (val instanceof MIList) {
+							fThreadList = parseThreadsImpl((MIList) val);
+						}
+					} else if (var.equals("current-thread-id")) { //$NON-NLS-1$
+						MIValue value = results[i].getMIValue();
+						if (value instanceof MIConst) {
+							fCurrentThread = ((MIConst) value).getCString().trim();
+						}
+					}
+				}
+			}
+		}
+		if (fThreadList == null) {
+			fThreadList = new MIThread[0];
+		}
+	}
+
+	/** @since 4.4 */
+	protected MIThread[] parseThreadsImpl(MIList list) {
+		return parseThreads(list);
+	}
+
+	// General formats:
+	//		id="n",target-id="Thread 0xb7c8ab90 (LWP 7010)",frame={...},state="stopped"
+	//		id="n",target-id="Thread 0xb7c8eb90 (LWP 7807)",state="running"
+	//      id="n",target-id="Thread 162.32942",details="...",frame={...},state="stopped"
+	static MIThread[] parseThreads(MIList list) {
+		MIValue[] values = list.getMIValues();
+		MIThread[] threadList = new MIThread[values.length];
+
+		for (int i = 0; i < values.length; i++) {
+			threadList[i] = MIThread.parse((MITuple) values[i]);
+		}
+		Arrays.sort(threadList, new Comparator<MIThread>() {
+
+			@Override
+			public int compare(MIThread o1, MIThread o2) {
+				try {
+					return Integer.parseInt(o1.getThreadId()) - Integer.parseInt(o2.getThreadId());
+				} catch (NumberFormatException e) {
+					return 0;
+				}
+			}
+		});
+		return threadList;
+	}
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.ui.newToolChainWizards">
+      <wizard
+            class="org.eclipse.cdt.build.gcc.ui.internal.NewGCCToolChainWizard"
+            name="GCC"
+            providerId="org.eclipse.cdt.build.gcc.core.provider.user">
+      </wizard>
+      <wizard
+            class="org.eclipse.cdt.build.gcc.ui.internal.NewClangToolChainWizard"
+            name="clang"
+            providerId="org.eclipse.cdt.build.gcc.core.provider.user">
+      </wizard>
+   </extension>
+
+</plugin>

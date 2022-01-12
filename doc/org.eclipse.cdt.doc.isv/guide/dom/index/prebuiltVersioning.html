@@ -1,0 +1,350 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=ISO-8859-1">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 10">
+<meta name=Originator content="Microsoft Word 10">
+
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Versioning pre-built indexes</title>
+<!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>80</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]-->
+<style>
+<!--
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:1;
+	font-size:16.0pt;
+	font-family:Arial;
+	mso-font-kerning:16.0pt;}
+h2
+	{mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0cm;
+	margin-bottom:3.0pt;
+	margin-left:0cm;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:2;
+	font-size:14.0pt;
+	font-family:Arial;
+	font-style:italic;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:#606420;
+	text-decoration:underline;
+	text-underline:single;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 90.0pt 72.0pt 90.0pt;
+	mso-header-margin:35.4pt;
+	mso-footer-margin:35.4pt;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0cm 5.4pt 0cm 5.4pt;
+	mso-para-margin:0cm;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";}
+</style>
+<![endif]--><!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="3074"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-GB link=blue vlink="#606420" style='tab-interval:36.0pt'>
+
+<div class=Section1>
+
+<h1 align=center style='text-align:center'>Versioning of pre-built indexes</h1>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>In CDT 4.0.1 support for
+versioning of pre-built indexes was added. This means that if you release
+pre-built indexes for the same content (for example, the same SDK version), but
+they were built with different versions of CDT, then a suitable version will
+now be used automatically. The previous behaviour assumed only one format
+version of any particular content would be provided via the <span class=SpellE>CIndex</span>
+extension point.</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>It is important to distinguish
+between two versions: the content version and the index format version. A
+content version refers to the version of the source code being indexed
+independent of how it is represented in the index e.g. SDK v1.0 and SDK v1.2.
+The index format version is the version of the internal representation of the
+index. This document is about coping with the latter.</p>
+
+<p class=MsoNormal style='text-align:justify'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>Our versioning policy for index
+formats is that they should be compatible within major (yearly) release
+versions. That is if you build an index using CDT 4.0.X it should work with CDT
+4.0.Y. This policy should mean that ISVs do not need to worry about index
+format versioning, but this page describes how to handle it should it be
+necessary (for example <span class=SpellE>bugzilla</span> 189811).Each
+pre-built index carries a string ID which identifies it uniquely within a
+logical index - i.e. it identifies the content (<span class=SpellE>e.g</span> <span
+class=SpellE>MySDK</span> v1.2). When multiple pre-built indexes are provided
+with the same ID, the particular one for use is disambiguated automatically by
+CDT which chooses the most recent compatible version.</p>
+
+<h2><span style='font-style:normal;mso-bidi-font-style:italic'>Compatibility
+Table<o:p></o:p></span></h2>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>This table shows the
+compatibility of pre-built indexes built with one version of CDT and used with
+another. “Built With” is the vertical axis.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<table class=MsoNormalTable border=0 cellspacing=0 cellpadding=0 width=516
+ style='width:387.0pt;margin-left:23.4pt;border-collapse:collapse;mso-padding-alt:
+ 0cm 0cm 0cm 0cm'>
+ <tr style='mso-yfti-irow:0'>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <span class=MsoNormal><strong><span style='font-size:8.0pt'>Built With \ Use With</span></strong></span>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>CDT 4.0</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>CDT 4.0.1</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>CDT Next**</p>
+  </td>
+  <td width=44 valign=top style='width:32.8pt;border:none;border-bottom:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <span class=MsoNormal><strong>&nbsp;</strong></span>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1'>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>CDT 4.0</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Yes*</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Yes*</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>No</p>
+  </td>
+  <td width=44 valign=top style='width:32.8pt;border:none;border-bottom:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2'>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>CDT 4.0.1</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Yes*</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Yes</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>No</p>
+  </td>
+  <td width=44 valign=top style='width:32.8pt;border:none;border-bottom:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3'>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>CDT Next**</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>No</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>No</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border-top:none;border-left:
+  none;border-bottom:solid white 2.25pt;border-right:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>Yes</p>
+  </td>
+  <td width=44 valign=top style='width:32.8pt;border:none;border-bottom:solid white 2.25pt;
+  background:#F2F2F2;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4;mso-yfti-lastrow:yes'>
+  <td width=118 valign=top style='width:88.55pt;border:none;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border:none;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border:none;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=118 valign=top style='width:88.55pt;border:none;border-right:solid white 2.25pt;
+  background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+  <td width=44 valign=top style='width:32.8pt;background:#CCCCCC;padding:0cm 5.4pt 0cm 5.4pt'>
+  <p class=MsoNormal>&nbsp;</p>
+  </td>
+ </tr>
+</table>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>Note that even though in the PDOM
+format has its own internal versioning scheme, consumers of official CDT
+releases need only be aware of compatibility constraints between these
+releases.</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span style='font-size:8.0pt'>* <span class=GramE>with</span>
+performance issues in very large projects. See <a
+href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=189811">https://bugs.eclipse.org/bugs/show_bug.cgi?id=189811</a></span></p>
+
+<p class=MsoNormal><span class=GramE><span style='font-size:8.0pt'>** represents
+the next major release of CDT.</span></span><span style='font-size:8.0pt'> It
+is assumed significant changes to the PDOM database will occur.<o:p></o:p></span></p>
+
+<p class=MsoNormal><span style='font-size:8.0pt'><o:p>&nbsp;</o:p></span></p>
+
+<h2><span style='font-style:normal;mso-bidi-font-style:italic'>Example scenario<o:p></o:p></span></h2>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<span style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-ansi-language:EN-GB;mso-fareast-language:EN-GB;
+mso-bidi-language:AR-SA'><br clear=all style='page-break-before:always'>
+</span>
+
+<p class=MsoNormal align=center style='text-align:center'>&nbsp;</p>
+
+<p class=MsoNormal align=center style='text-align:center'><img border=0
+width=421 height=653 id="_x0000_i1025"
+src="prebuiltVersioning_files/image001.jpg" alt="example scenario"></p>
+
+<p class=MsoNormal align=center style='text-align:center'>&nbsp;</p>
+
+<p class=MsoNormal style='text-align:justify'>The figure above shows an example
+scenario where pre-built indexes are contributed by multiple <span class=GramE>plug-ins</span>.
+The same content is contributed in multiple index format versions. The versions
+selected for use by each version of CDT are highlighted in <span class=SpellE>gray</span>.</p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+<p class=MsoNormal><span style='font-size:10.0pt'>Versioning <span
+class=SpellE>Bugzilla</span>: <a
+href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=196338">https://bugs.eclipse.org/bugs/show_bug.cgi?id=196338</a></span></p>
+
+<p class=MsoNormal style='text-align:justify'><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>

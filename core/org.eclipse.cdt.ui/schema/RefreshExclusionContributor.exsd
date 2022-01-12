@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="RefreshExclusionContributor" name="Refresh Exclusion Contributor"/>
+      </appInfo>
+      <documentation>
+         This extension point allows for contribution of new types of refresh exclusions to CDT&apos;s refresh exclusion system.  A refresh exclusion is essentially some arbitrary rule that can be tested against a given resource and evaluates to true or false.  The exclusion returns true if it should be applied (i.e. the tested resource should be excluded).  Rules can be nested, so it is possible to have exclusions to exclusions.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="exclusionContributor"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="exclusionContributor">
+      <annotation>
+         <documentation>
+            A contribution of a new type of refresh exclusion.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Java class corresponding to the contribution, responsible both for acting as a factory that creates concrete instances of the exclusion, as well as providing a UI for modifying properties specific to the exclusion.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.resources.RefreshExclusionContribution:"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique string that identifies this contribution.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The human readable name used to refer to this exclusion type in the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="isTest" type="boolean">
+            <annotation>
+               <documentation>
+                  Attribute indicating this contribution is for testing purposes and hence the given contributor should not be considered for contributions to the UI.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         5.3
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         There is a supplied implementation for Resource Exclusions.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2011 IBM Corporation and others.&lt;br&gt;
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0 which accompanies
+this distribution, and is available at &lt;a 
+href=&quot;https://www.eclipse.org/legal/epl-2.0/
+t;
+t;SPDX-License-Identifier: EPL-2.0&quot;&gt;https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0&lt;/a&gt;
+      </documentation>
+   </annotation>
+</schema>

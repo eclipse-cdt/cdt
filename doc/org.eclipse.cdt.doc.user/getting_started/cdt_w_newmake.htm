@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Creating your makefile</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript">
+function newWin(url) {
+	window.open(url, 'install_cdt', 'width=750, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
+}
+</script>
+</head>
+
+<body>
+
+<div role="main"><h1>Creating a makefile</h1>
+
+<p>For the purpose of this tutorial, you were instructed to create a C++ Project which requires you to create a makefile.</p>
+
+<p>To create a makefile:</p>
+<ol>
+  <li>In the <strong>Project Explorer</strong> view, right-click the <strong>HelloWorld</strong> project 
+  folder and select <strong>New &gt; File</strong>.</li>
+  <li>In the <strong>File name</strong> box, type <strong>makefile</strong>.</li>
+  <li>Click <strong>Finish</strong>.</li>
+  <li>Type the gnu make instructions below in the editor. Lines are 
+  indented with tab characters, not with spaces.
+
+<blockquote>
+  <p>
+  <br>
+  all: hello.exe<br>
+  <br>
+  clean:<br>
+&nbsp;&nbsp;&nbsp; rm main.o hello.exe<br>
+  <br>
+  hello.exe: main.o<br>
+&nbsp;&nbsp;&nbsp; g++ -g -o hello main.o<br>
+  <br>
+  main.o:<br>
+&nbsp;&nbsp;&nbsp; g++ -c -g main.cpp<br>
+&nbsp;</p>
+</blockquote>
+</li>
+  <li>Click <strong>File &gt; 
+  Save</strong>.</li></ol>
+
+<p>Your new makefile, along with your main.cpp file are 
+displayed in the Project Explorer view. Your project now 
+contains main.cpp and makefile. You can now build your HelloWorld project.</p>
+
+
+<p>NEW <a href="javascript:void(0)" onClick="newWin('../images/cdt_w_newmake02.png')">Click here to see an illustration</a>.</p>
+
+<p>
+<a href="cdt_w_build.htm" style="text-decoration: none">
+  <img src="../images/ngnext.gif" width="16" height="16" alt="Next icon"></a>
+  <strong><a href="cdt_w_build.htm">
+  Next: Building your project</a> </strong>
+</p>
+<p>
+
+<a href="cdt_w_newcpp.htm">
+<img src="../images/ngback.gif" width="16" height="16" alt="Back icon"></a> <strong><a href="cdt_w_newcpp.htm">Back: Creating your C++ file</a></strong> </p>
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_projects.htm">Project</a><br>
+<a href="../concepts/cdt_o_code_entry.htm">Code entry</a></p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a><br>
+<a href="../tasks/cdt_o_write_code.htm">Writing code</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_o_proj_prop_pages.htm">C/C++ Projects view</a></p>
+
+<p>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+</div></body>
+
+</html>

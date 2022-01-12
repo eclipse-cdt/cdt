@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="toolChainProvider" name="%cmaketoolChainProvider.name" schema="schema/toolChainProvider.exsd"/>
+   <extension
+         id="cmakeNature"
+         name="%cmakenature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.cmake.core.CMakeNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.buildConfigProvider">
+      <provider
+            class="org.eclipse.cdt.cmake.core.internal.CMakeBuildConfigurationProvider"
+            id="org.eclipse.cdt.cmake.core.provider"
+            natureId="org.eclipse.cdt.cmake.core.cmakeNature">
+      </provider>
+   </extension>
+   <extension
+         id="cmakeproblem"
+         name="%cmakeproblem"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+</plugin>

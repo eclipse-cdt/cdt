@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.tm.terminal.connector.telnet" version="2">
+    <resource path="src/org/eclipse/tm/terminal/connector/telnet/connector/TelnetSettings.java" type="org.eclipse.tm.terminal.connector.telnet.connector.TelnetSettings">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="ITelnetSettings"/>
+                <message_argument value="TelnetSettings"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+  <head>
+    <title>NVidia.com Compilers</title>
+  </head>
+  <body>
+    <div id="lsp">
+      <h4>NVidia.com Compilers</h4>
+      <table style="border-collapse:collapse">
+        <thead>
+          <tr>
+            <th>Compiler</th>
+            <th>Vendor/Standard</th>
+            <th>Language</th>
+            <th>Macros</th>
+            <th>Include directories</th>
+            <th>System include
+              <br />
+              directories
+            </th>
+            <th>Compiler executables</th>
+          </tr>
+        </thead>
+        <tbody>
+  <tr>
+  <td>nvcc</td>
+  <td>NVidia</td>
+  <td>CUDA</td>
+  <td>Yes</td>
+  <td>Yes</td>
+  <td>Yes</td>
+  <td>nvcc, nvcc.exe</td>
+  </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="builtins">
+      <h4>NVidia.com Compilers</h4>
+      <table style="border-collapse:collapse">
+        <thead>
+          <tr>
+            <th>Compiler</th>
+            <th>Vendor</th>
+            <th>Macros</th>
+            <th>
+              System
+              <br />
+              include paths
+            </th>
+            <th>
+              Local
+              <br />
+              include paths
+            </th>
+            <th>
+              MACOS Framework
+              <br />
+              include paths
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+	<tr>
+	<td>nvcc</td>
+	<td>NVidia</td>
+	<td>tested</td>
+	<td>tested</td>
+	<td>tested</td>
+	<td>NYI <a href="#fw-help-nvcc">[3]</a></td>
+	</tr>
+        </tbody>
+      </table>
+  <p>Remarks:</p>
+  <ul style="list-style-type:none">
+  <li id="fw-help-nvcc">[3] Help wanted! To implement this, the output of <code>nvcc -E -Xcompiler -P -Xcompiler -dD -Xcompiler -v emty.cu</code>
+  running on OSX is needed.</li>
+  </ul>
+    </div>
+
+    <div id="builtins_enhanced">
+  <table id="overview_table_eh" style="border-collapse:collapse">
+  <thead>
+  <tr>
+  <th>Compiler</th>
+  <th>Vendor</th>
+  <th>Language Standard<br/>options</th>
+  <th>Non-Standard System<br/>include paths options</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td>nvcc</td>
+  <td>NVidia</td>
+  <td><code>-std</code>, <code>--std</code>: tested</td>
+  <td>N/A??? <a href="#fw-help-test">[4]</a><a href="#fw-help-test2">[4]</a></td>
+  </tr>
+  </tbody>
+  </table>
+  <p>Remarks:</p>
+  <ul style="list-style-type:none">
+  <li id="help-test">[4] If you can test it, please do so and report your findings on the 
+  <a href="https://accounts.eclipse.org/mailing-list/cdt-dev">CDT General developers list</a>.</li>
+  </ul>
+  </div>
+
+  </body>
+</html>

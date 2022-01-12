@@ -1,0 +1,13 @@
+push 1
+push 2
+push 3
+foobar swish
+push 4
+add
+add
+call zippy
+add
+output
+push 1
+branch_not_zero swishy
+halt

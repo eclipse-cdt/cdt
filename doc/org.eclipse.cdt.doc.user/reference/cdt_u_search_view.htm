@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Search view</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+<body>
+
+<div role="main"><h1>Search view</h1>
+<p>Any matches are reported in the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.search.ui.views.SearchView)")'>Search</a> view. </p>
+<p><img src="../images/searchView.png" alt="Search View" ></p>
+
+<p>When you have completed a search and have results in the 
+<span class="guilabel">Search</span> view,
+you can put the focus on that view and get more options on the 
+<span class="guilabel">Search</span> menu.
+</p>
+<p>
+ A C/C++ search can also be conducted via the context menu of selected resources and elements in the following views:
+ </p>
+ <ul>
+ <li>Project Explorer</li>
+ <li>C/C++ Projects</li>
+ <li>Make Targets</li>
+ <li>Outline view</li>
+ <li>Search result view</li>
+ </ul>
+ <p>The search context menu is also available in the C/C++ editor. The search is only performed if the currently selected text can be resolved to a C/C++ element.</p>
+ <p>The type of the selected C/C++ element defines which search context menus are available. The C/C++ editor does not constrain the list of available C/C++ searches based on the
+ selection. </p>
+
+ 
+<h2>Search view toolbar options</h2>
+
+<table border="1" cellpadding="4" cellspacing="0" bordercolor="#DDDDDD" >
+	<tr><th id="icon">Icon</th><th id="command">Command</th><th id="description">Description</th></tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_next.png" alt="Next icon"></td>	
+		<td valign="top" headers="command"><strong>Next</strong></td>
+		<td valign="top" headers="description">Navigates to the next search result.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_previous.png" alt="Previous icon"></td>	
+		<td valign="top" headers="command"><strong>Previous</strong></td>
+		<td valign="top" headers="description">Navigates to the previous search result.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_remove.png" alt="Remote the Selected Matches icon"></td>
+		<td valign="top" headers="command"><strong>Remove Selected Matches (Delete)</strong></td>
+		<td valign="top" headers="description">Removes user selected matches from the search console.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_con_rem_all_term.png" alt="Remove all Matches icon"></td>
+		<td valign="top" headers="command"><strong>Remove All Matches</strong></td>
+		<td valign="top" headers="description">Clears the search console.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_expand_all.png" alt="Expand All icon"></td>	
+		<td valign="top" headers="command"><strong>Expand All</strong></td>
+		<td valign="top" headers="description">Expands all search results.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_collapse_all.png" alt="Collapse All icon"></td>	
+		<td valign="top" headers="command"><strong>Collapse All</strong></td>
+		<td valign="top" headers="description">Collapses all search results.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_con_terminate.png" alt="Cancel Search icon"></td>	
+		<td valign="top" headers="command"><strong>Cancel Current Search</strong></td>
+		<td valign="top" headers="description">Terminates the current search.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_repeat_search.png" alt="Repeat Search icon"></td>	
+		<td valign="top" headers="command"><strong>Run the Current Search Again</strong></td>
+		<td valign="top" headers="description">Repeat the search using the same criteria.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_show_prev_search.png" alt="Show Previous Searches icon"></td>
+		<td valign="top" headers="command"><strong>Show Previous Searches</strong></td>
+		<td valign="top" headers="description">Shows the list of previously run searches which can be reselected.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_pin.png" alt="Pin view icon"></td>
+		<td valign="top" headers="command"><strong>Pin the Search View</strong></td>
+		<td valign="top" headers="description">Forces the Search view to remain on top of other views in the workbench area.</td>
+	</tr>
+	<tr>
+		<td style="text-align:center;" valign="top" headers="icon"><img src="../images/icon_menu.png" alt="Menu icon"></td>
+		<td valign="top" headers="command"><strong>Menu</strong></td>
+		<td valign="top" headers="description">Displays assorted options available for the Search view, including: <br>
+		<ul>
+			<li>Show as List</li>
+			<li>Show as Tree (default)</li>
+			<li>Hide Potential Method Calls</li>
+			<li>Filters...</li>
+			<li>Show Enclosing Definitions</li>
+		</ul>
+		</td>
+	</tr>
+</table>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
+<a href="../concepts/cdt_o_code_entry.htm">Coding aids</a><br>
+<a href="../concepts/cdt_c_search.htm">C/C++ search</a></p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21"> <br>
+<a href="../tasks/cdt_t_search.htm">Searching for C/C++ elements</a><br>
+<a href="../tasks/cdt_t_cust_cpp_editor.htm">Customizing the C/C++ editor</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a><br>
+<a href="cdt_u_m_search.htm">Search action</a><br>
+<a href="cdt_u_search.htm">Search dialog</a></p>
+
+<hr >
+<p>
+<img src="../images/rh03_04.gif" ALT="Red Hat Copyright Statement">  <br>
+<img src="../images/ng00_07.gif" ALT="IBM Copyright Statement" > <br>
+<img src="../images/nokiaCopyright.png" ALT="Nokia Copyright Statement" >  
+</p>
+</div></body>
+
+</html>

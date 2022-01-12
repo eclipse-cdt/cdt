@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="llvm_package_dependencies" size="1289,719" id="org.eclipse.cdt.managedbuilder.llvm.ui" metadata="uml2-1.0" initialized="true" scrolledY="17" tag="1000" key="32303037303533312D31303030206F72672E65636C697073652E6364742E6D616E616765646275696C6465722E6C6C766D2E75692F70657065">
+  <children xsi:type="editmodel:ClassEditModel" name="ProjectNature" location="930,645" size="188,140" id="org.eclipse.cdt.managedbuilder.llvm.ui/ProjectNature" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="104,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="project" id="org.eclipse.cdt.managedbuilder.llvm.ui/ProjectNature#project"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="165,72">
+      <children xsi:type="editmodel:MethodEditModel" name="configure" id="org.eclipse.cdt.managedbuilder.llvm.ui/ProjectNature#configure()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="deconfigure" id="org.eclipse.cdt.managedbuilder.llvm.ui/ProjectNature#deconfigure()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getProject" id="org.eclipse.cdt.managedbuilder.llvm.ui/ProjectNature#getProject()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setProject" id="org.eclipse.cdt.managedbuilder.llvm.ui/ProjectNature#setProject(Lorg.eclipse.core.resources.IProject;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="LlvmUIPlugin" location="930,285" size="239,302" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="216,72">
+      <children xsi:type="editmodel:AttributeEditModel" name="pLUGIN_ID" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#pLUGIN_ID"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="resourceBundle" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#resourceBundle"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="pROPERTIES" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#pROPERTIES"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="properties" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#properties"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="201,180">
+      <children xsi:type="editmodel:MethodEditModel" name="LlvmUIPlugin" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#LlvmUIPlugin()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="start" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#start(Lorg.osgi.framework.BundleContext;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="stop" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#stop(Lorg.osgi.framework.BundleContext;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getDefault" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#getDefault()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getResourceString" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#getResourceString(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getResourceBundle" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#getResourceBundle()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="log" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#log(Ljava.lang.Throwable;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="log" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#log(Lorg.eclipse.core.runtime.IStatus;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getProperties" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#getProperties()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getPropertyString" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmUIPlugin#getPropertyString(Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.3/@sourceConnections.0" name="LlvmEnvironmentVariableSupplier" location="40,280" size="800,556" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="436,180">
+      <children xsi:type="editmodel:AttributeEditModel" name="preferencesChanged" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#preferencesChanged"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="llvmEnvironmentVariables" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#llvmEnvironmentVariables"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="eNV_VAR_NAME_LLVM_BIN" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#eNV_VAR_NAME_LLVM_BIN"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="eNV_VAR_NAME_LLVMINTERP" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#eNV_VAR_NAME_LLVMINTERP"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="eNV_VAR_NAME_PATH" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#eNV_VAR_NAME_PATH"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="eNV_VAR_NAME_INCLUDE_PATH" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#eNV_VAR_NAME_INCLUDE_PATH"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="eNV_VAR_NAME_LIBRARY_PATH" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#eNV_VAR_NAME_LIBRARY_PATH"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="eNV_VAR_NAME_LIBRARIES" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#eNV_VAR_NAME_LIBRARIES"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="777,432">
+      <children xsi:type="editmodel:MethodEditModel" name="LlvmEnvironmentVariableSupplier" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#LlvmEnvironmentVariableSupplier()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="initializePaths" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#initializePaths()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getBinPath" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getBinPath()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getIncludePath" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getIncludePath()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLibraryPath" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getLibraryPath()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLibraries" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getLibraries()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setBinPath" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#setBinPath(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addIncludePath" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#addIncludePath(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addLibraryPath" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#addLibraryPath(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addLibrary" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#addLibrary(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="invalidatePaths" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#invalidatePaths()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getDirIfLlvmFound" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getDirIfLlvmFound(Ljava.lang.String;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getBinDirIfLlvm_ar" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getBinDirIfLlvm_ar(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLlvmEnvironmentVariable" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getLlvmEnvironmentVariable(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLlvmEnvironmentVariable" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#setLlvmEnvironmentVariable(Ljava.lang.String;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="appendLlvmEnvironmentVariable" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#appendLlvmEnvironmentVariable(Ljava.lang.String;Ljava.lang.String;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLlvmEnvironmentVariableReplace" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#setLlvmEnvironmentVariableReplace(Ljava.lang.String;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="updatePaths" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#updatePaths()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getVariable" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getVariable(Ljava.lang.String;Lorg.eclipse.cdt.managedbuilder.core.IConfiguration;Lorg.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getVariables" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier#getVariables(Lorg.eclipse.cdt.managedbuilder.core.IConfiguration;Lorg.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier-Standard::Call->org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable*org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier-Standard::Instantiate->org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable*org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier-Soyatec::Import->org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable" source="//@children.2" target="//@children.4" targetEnd="//@children.2/@sourceConnections.0/@children.2" label="//@children.2/@sourceConnections.0/@children.0" sourceEnd="//@children.2/@sourceConnections.0/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Instantiate, Import, Call»" size="140,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="245,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="240,194"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="LlvmIsToolChainSupported" location="555,120" size="458,104" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmIsToolChainSupported" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="127,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="supported" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmIsToolChainSupported#supported"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="435,36">
+      <children xsi:type="editmodel:MethodEditModel" name="LlvmIsToolChainSupported" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmIsToolChainSupported#LlvmIsToolChainSupported()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isSupported" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmIsToolChainSupported#isSupported(Lorg.eclipse.cdt.managedbuilder.core.IToolChain;Lorg.osgi.framework.Version;Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmIsToolChainSupported-Standard::Call->org.eclipse.cdt.managedbuilder.llvm.ui/LlvmEnvironmentVariableSupplier" source="//@children.3" target="//@children.2" targetEnd="//@children.3/@sourceConnections.0/@children.2" label="//@children.3/@sourceConnections.0/@children.0" sourceEnd="//@children.3/@sourceConnections.0/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Call»" size="34,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="142,104" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="657,0"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.2/@sourceConnections.0" name="LlvmBuildEnvironmentVariable" location="45,30" size="482,194" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="93,54">
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable#name"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="value" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable#value"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="operation" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable#operation"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="459,90">
+      <children xsi:type="editmodel:MethodEditModel" name="LlvmBuildEnvironmentVariable" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable#LlvmBuildEnvironmentVariable(Ljava.lang.String;Ljava.lang.String;I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getDelimiter" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable#getDelimiter()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getName" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable#getName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getOperation" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable#getOperation()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getValue" id="org.eclipse.cdt.managedbuilder.llvm.ui/LlvmBuildEnvironmentVariable#getValue()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" interactive="false" level="-1" showScope="InPackage" properties="wireOptions=4;Product=eUML2;displayOptions=1"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+</editmodel:ClassDiagramEditModel>

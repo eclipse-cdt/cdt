@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<!DOCTYPE contexts [
+	<!ENTITY defaultCSHelp "Default Context Sensitive Help">
+	<!ENTITY registersView "Registers view">
+	<!ENTITY registersViewPrefs "Registers view preferences">
+	<!ENTITY memoryView "Memory view">
+	<!ENTITY memoryViewPrefs "Memory view preferences">
+	<!ENTITY modulesView "Modules view">
+	<!ENTITY sharedLibsViewPrefs "Shared Libraries view preferences">
+	<!ENTITY signalsView "Signals view">
+	<!ENTITY disassemblyView "Disassembly view">
+	<!ENTITY breakpoints "Breakpoints">
+    <!ENTITY debugView "Debug view">
+    <!ENTITY debugPrefs "Debug preferences">
+    <!ENTITY srcPrefs "Source Code Locations">
+    <!ENTITY importExe "Import C/C++ Executable Files">
+    <!ENTITY chooseProj "Choose Project">
+	<!ENTITY consoleView "Console view">
+	<!ENTITY executablesView "Executables view">
+]>
+<contexts>
+
+<context id ="default_cs_help">
+   <description>Click below to see help.</description>
+   <topic href="default_cs_help.htm"
+   	label="&defaultCSHelp;"/>
+</context>
+
+<context id ="registers_view_context">
+   <description>The registers view displays the register values of a selected stack frame. </description>
+   <topic href="reference/cdt_u_registersview.htm" label="Registers view"/>
+</context>
+
+<context id ="registers_preference_page_context">
+   <description>Change the color in which register values are displayed. </description>
+   <topic href="reference/cdt_u_reg_view_pref.htm" label="Registers preferences"/>
+</context>
+
+<context id ="MemoryView_context">
+   <description>The memory view displays process memory. </description>
+   <topic href="reference/cdt_u_memoryview.htm" label="Memory view"/>
+</context>
+
+<context id="variable_view_context">
+   <description>This view displays the variables in your program.</description>
+</context>
+
+<context id="disassembly_view_context">
+   <description>This view displays the disassembly of your program.</description>
+   <topic href="reference/cdt_u_disassembly_view.htm" label="Disassembly view"/>
+</context>
+
+<context id="expression_view_context" >
+   <description>This view shows the results of inspecting an expression or variable.</description>
+</context>
+
+<context id="memory_preference_page_context" title="Traditional Memory Rendering">
+   <description>Click below to see help</description>
+   <topic href="reference/cdt_u_mem_view_pref.htm"
+   	label="&memoryViewPrefs;"/>
+</context>
+
+<context id ="modules_view_context">
+   <description>Click below to see help</description>
+   <topic href="reference/cdt_u_modules_view.htm" label="Modules view"/>
+</context>
+
+<context id="signals_view_context" title="Signals">
+   <description>Click below to see help</description>
+   <topic href="reference/cdt_u_signals_view.htm" label="Signals view"/>
+</context>
+
+<context id ="debug_view_context">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_dbg_view.htm"
+   	label="&debugView;"/>
+</context>
+
+<context id="breakpoint_view_context" title="Breakpoints">
+   <description>The Breakpoints view lists all the breakpoints you have set.</description>
+   <topic href="concepts/cdt_c_brkpnts.htm" label="Breakpoints view (C/C++)"/>
+</context>
+
+<context id ="c_debug_preference_page_context">
+   <description>View information about your program as you debug. </description>
+   <topic href="reference/cdt_u_dbg_pref.htm"
+   	label="&debugPrefs;"/>
+</context>
+
+<context id ="source_preference_page_context">
+   <description>Source code locations. </description>
+   <topic href="reference/cdt_u_dbg_src.htm"
+   	label="&srcPrefs;"/>
+</context>
+	
+<context id ="import_executable_page_one">
+   <description>Select or search for C/C++ executable files.</description>
+   <topic href="tasks/cdt_t_debug_exes.htm"
+	   label="&importExe;"/>
+</context>
+
+<context id ="import_executable_page_two">
+   <description>Choose or create a project to hold the executable.</description>
+   <topic href="tasks/cdt_t_debug_exes.htm"
+	   label="&chooseProj;"/>
+</context>
+
+<!-- Note: context id for console view is defined in org.eclipse.ui.console -->
+<context id ="console_view_context">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_console_view.htm" label="Console view (C/C++)"/>
+</context>
+
+<context id="executables_View_context" title="Executables (C/C++)">
+   <description>The Executables view provides a dynamic list of executables and their related source files.</description>
+   <topic href="reference/cdt_u_view_executables.htm.htm" label="Executables view (C/C++)"/>
+</context>
+<context id="breakpoint_actions_page_help" title="Breakpoint Actions">
+   <description>Manage breakpoint actions.</description>
+   <topic href="reference/cdt_u_dbg_brkpt_actions.htm" label="Breakpoint Actions preferences"/>
+   <topic href="tasks/cdt_t_addrmv_brk_action.htm" label="Attaching and Removing Breakpoint Actions"/>
+</context>
+<context id="source_preference_page_context" title="Source Lookup Path">
+   <description>Manage common source paths.</description>
+   <topic href="reference/cdt_u_dbg_src.htm" label="Source Lookup Path"/>
+</context>
+<context id="source_path_map_entry_dialog_context" title="Edit Path Mappings">
+   <description>Edit path mapping for source lookup.</description>
+   <topic href="reference/cdt_u_dbg_src_path_mapping.htm" label="Edit Path Mappings"/>
+</context>
+
+</contexts>

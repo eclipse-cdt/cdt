@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:id="eclipse" xml:lang="en-US">
+  <title>Setting up Eclipse</title>
+  <para>On Windows XP and later, this may be a good point in time to create a
+  system restore point. This may safe you trouble in the long run if the
+  installation fails.</para>
+  <section xml:id="java">
+    <title>Java</title>
+    <para>Eclipse was originally written for the Java platform. It still
+    requires a Java Runtime Environment (JRE) or a Java Development Kit (JDK),
+    version 1.5 or greater. You will most probably already have Java installed
+    (it comes included in Mac OS X until 10.6 and will be auto-installed in
+    Mac OS X 10.7 / Lion). However, if you don't have Java installed, and you
+    are on Windows or Linux, you can download a JRE from <link xlink:href="http://java.sun.com/javase/">Sun's Java website</link> or from
+    <link xlink:href="http://www.java.com">java.com</link>. At the time of
+    this writing the latest version was <link xlink:href="http://java.sun.com/javase/downloads/index.jsp">Java Runtime
+    Environment (JRE) 7</link>. Look for the section called "Java SE Runtime
+    Environment (JRE)" and select "JRE 7" (or similar). You will not need
+    NetBeans, JDK, or EE, they are just larger downloads with more programs.
+    You may need the JDK if you want to do Java development.</para>
+    <para>Note: There may be an <link xlink:href="http://blog.max.berger.name/2010/07/eclipse-helios-and-java-16u21-deadlocks.html">incompatibility
+    between Eclipse Helios and Java 1.6 update 21</link>.</para>
+    <para>To find out if you have Java installed, and which version it is, you
+    can open a command prompt / shell and type in:</para>
+    <programlisting>java -version</programlisting>
+  </section>
+  <section xml:id="download_eclipse">
+    <title>Downloading Eclipse</title>
+    <para>Eclipse is a modular software, but ever summer there are bundled
+    released. The link is:</para>
+    <itemizedlist>
+      <listitem>
+        <para>
+          <link xlink:href="http://www.eclipse.org/downloads/"/>
+        </para>
+      </listitem>
+    </itemizedlist>
+    <para>I recommend the complete "Eclipse IDE for C/C++ Developers" bundle,
+    which already contains the CDT. If you download a different bundle, you
+    will probably have to install the CDT manually, as described in <xref linkend="installingcdt"/>.</para>
+    <para>The file is about 86 MB in size, so it will take a while to
+    download. You will end up with a .ZIP file. Use either <link xlink:href="http://www.filzip.com/">FilZip</link> or your favorite ZIP
+    Program (Windows XP/Vista/7 and Mac OS X have .ZIP support build in) to
+    unpack the file. Move the unpacked folder to any location, for example
+    <filename>C:\Program Files\eclipse</filename>. You can now start Eclipse
+    by double-clicking it.</para>
+    <figure xml:id="eclipsedir">
+      <title>Eclipse installed into C:\Program Files\eclipse</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="eclipseDir.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+  </section>
+  <section xml:id="first_run_eclipse">
+    <title>First Run of Eclipse</title>
+    <para>However you installed eclipse, you should now be able to run it.
+    Double-click the icon or start the appropriate script in UNIX and
+    Eclipse's splash-screen will appear:</para>
+    <figure xml:id="splash">
+      <title>Eclipse splash screen</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="splash37.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Immediately after that Eclipse will ask you for your workspace
+    location. It defaults to a place within your personal settings. It is a
+    good idea to use the default workspace, you may want to note where it is
+    located.</para>
+    <figure xml:id="workspace">
+      <title>Eclipse asking for workspace</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="workspace.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>If you always want to use the same workspace, you may select the
+    <computeroutput>Use this as the default...</computeroutput> and you'll
+    never have to worry about workspaces again. This is usually a good idea
+    once you've used Eclipse for a while. Finally Eclipse starts up with the
+    welcome screen:</para>
+    <figure xml:id="welcome.png">
+      <title>Eclipse welcome screen</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="welcome.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>And if you select the "Go to the workbench" (the backward arrow) on
+    the right, then you are inside Eclipse.</para>
+    <para>If you downloaded the "Eclipse IDE for C/C++ Developers" you can
+    skip the next section and go straight to <xref linkend="configuring"/>.</para>
+    <para>If you have downloaded a different package, there are additional
+    tools needed to start programming. We want to develop in C++, so we will
+    continue with the next section.</para>
+  </section>
+  <section xml:id="installingcdt">
+    <title>Installing the CDT</title>
+    <note>
+      <para>This is only required if you did not download the CDT version as
+      described above. Please check if you are able to create a new C++
+      project (as described in <xref linkend="helloworld"/>) before going
+      through this section!</para>
+    </note>
+    <note>
+      <para>This section described the current (3.5, 3.6, and 3.7) version of
+      Eclipse. For the previous version (3.4) Please see <xref linkend="installingcdt"/>).</para>
+    </note>
+    <para>In the "Help" menu select "Install New Software..."</para>
+    <figure xml:id="softwareupdatemenu35">
+      <title>Select Install New Software... from the help menu</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="softwareupdatemenu35.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>This will show you the list of available software update sites. CDT
+    is part of the standard release, so you can select an update site matching
+    your eclipse version.</para>
+    <para>Please note: It is important to install the right Version of CDT for
+    your version of eclipse:</para>
+    <itemizedlist>
+      <listitem>
+        <para>For Eclipse 3.7 (Indigo): Use
+        <computeroutput>http://download.eclipse.org/tools/cdt/releases/indigo</computeroutput></para>
+      </listitem>
+      <listitem>
+        <para>For Eclipse 3.6 (Helios): Use
+        <computeroutput>http://download.eclipse.org/tools/cdt/releases/helios</computeroutput></para>
+      </listitem>
+      <listitem>
+        <para>For Eclipse 3.5 (Galileo): Use
+        <computeroutput>http://download.eclipse.org/tools/cdt/releases/galileo</computeroutput></para>
+      </listitem>
+    </itemizedlist>
+    <figure xml:id="softwareupdateadd35">
+      <title>Available Software Update page with Add... opened</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="softwareupdateadd35.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>When you have found the CDT site, it will give you two entries: CDT
+    Main Features and CDT Optional Features. Expand both, and find the latest
+    version of the CDT. Make sure you select at least the following:</para>
+    <itemizedlist>
+      <listitem>
+        <para>C/C++ Development Tools</para>
+      </listitem>
+      <listitem>
+        <para>C/C++ GNU Toolchain Build Support</para>
+      </listitem>
+      <listitem>
+        <para>C/C++ GNU Toolchain Debug Support</para>
+      </listitem>
+      <listitem>
+        <para>C/C++ Development Platform</para>
+      </listitem>
+    </itemizedlist>
+    <para>Do not select all items! Some of these require dependencies from
+    other projects, which may not be installed and thus fail to install.
+    Select only the features you need!</para>
+    <figure xml:id="softwareupdatecdt35">
+      <title>Select CDT from the Update Site</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="softwareupdatecdt35.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>The select "Next..."</para>
+    <para>You will have to confirm the selection with "Next".</para>
+    <para>And accept the license agreement with "Finish".</para>
+    <para>Downloading and installing will take a while. Once its done it will
+    ask you to restart Eclipse. This is a good idea, so select "Yes".</para>
+    <figure xml:id="restartingworkbench">
+      <title>Restarting the workbench</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="eclipsesu6.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Once Eclipse has restarted you may need to configure it for your
+    computer.</para>
+  </section>
+  <section xml:id="configuring">
+    <title>Configuring the CDT</title>
+    <para>Fortunately, this is very easy. If your path is set correctly, there
+    should be absolutely nothing you need to configure. This is true if you
+    followed these instructions for Windows or Mac OS X.</para>
+    <para>On some Unix systems you might have to change your "make" program to
+    "gmake". You will find the setting in Window / Preferences (Eclipse /
+    Preferences on Mac OS X). Then expand "C / C++", then "New CDT Project
+    Wizard", "Makefile Project" and select "Builder Settings". In the section
+    "builder", de-select "use default build command" and for "Build command"
+    enter "gmake".</para>
+  </section>
+  <section xml:id="helloworld">
+    <title>Hello, World!</title>
+    <para>Once you are in Eclipse, you are given an empty workspace. You now
+    have to start a new project. To do so, select "File" / "New" /
+    "Project...". Expand the section "C++" and select "C++ Project", then
+    click "Next &gt;".</para>
+    <figure xml:id="newcppproject">
+      <title>New Project screen</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="newcppproject.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>On the next screen, you have to give your project a name. In this
+    case, it will be "HelloWorld", however, you may use any name you like.
+    Also, you have to select a toolchain.</para>
+    <itemizedlist>
+      <listitem>
+        <para>For Windows, select "MinGW GCC"</para>
+      </listitem>
+      <listitem>
+        <para>For Linux, select "Linux GCC"</para>
+      </listitem>
+      <listitem>
+        <para>For Mac OS X, select "MacOSX GCC"</para>
+      </listitem>
+      <listitem>
+        <para>Do not use "Cross GCC"! Unfortunately this option may be
+        selected by default if you create an empty project!</para>
+      </listitem>
+    </itemizedlist>
+    <para>Click "Next".</para>
+    <figure xml:id="newprojectname">
+      <title>New Project Name</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="newcppproject2.png" format="PNG"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>The next screen contains some Basic settings. Fill in what you
+    like:</para>
+    <figure xml:id="newprojectsettings">
+      <title>Basic Settings</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="newcppproject3.png" format="PNG"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>In the last setting you can chose output formats, it is always good
+    to have a release and a debug configuration. Click "Finish".</para>
+    <figure xml:id="newprojectplatforms">
+      <title>New Project Platforms</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="newcppproject4.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Eclipse will now generate a few things, and then ask you if you want
+    to switch to the C/C++ Perspective. This is a good idea, so say
+    yes.</para>
+    <figure xml:id="perspective">
+      <title>Perspective Switch</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="perspective.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Great. You have a project now, and it does contain some sample code!
+    You will immediately get an editor window for your project. Eclipse will
+    also auto-build your project every time you save.</para>
+    <para>If eclipse does not auto-build, you have to turn on "build
+    automatically" in the Project Menu, or click the "Build All" button after
+    every change.</para>
+    <figure xml:id="buildauto">
+      <title>Make sure "Build Automatically" is enabled</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="autobuild.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <figure xml:id="buildintoolbar">
+      <title>If you turn off autobuild, you have to click the "build" button
+      on the toolbar</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="build.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <figure xml:id="helloworldapp">
+      <title>Example Hello World application</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="helloworld.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Now here comes the tricky part: On the left pane, select "C/C++
+    Projects", expand "Binaries" and you should see and executable
+    (HelloWorld.exe on Windows). Now right-click that executable, and select
+    "Run" / "Run Local C/C++ Application". If everything goes well your output
+    will be in the bottom right window in the "Console" tab and it should say
+    "Hello, World".</para>
+    <figure xml:id="helloout">
+      <title>Running the example Hello World application</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="helloout.png"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>Congratulations! You have successfully installed a compiler, a build
+    system and an IDE. You have successfully created, edited, compiled and run
+    a project. You should now be able to start your own projects!</para>
+  </section>
+</section>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>org.eclipse.cdt.target</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+	</buildSpec>
+	<natures>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>CDT.setup</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/CDT.setup</locationURI>
+		</link>
+		<link>
+			<name>parent-pom.xml</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/pom.xml</locationURI>
+		</link>
+	</linkedResources>
+</projectDescription>

@@ -1,0 +1,10 @@
+# Debugging options for the org.eclipse.cdt.jsoncdb.core plugin.
+
+# Trace total time for parsing compile_commands.json files
+org.eclipse.cdt.jsoncdb.core/debug/performance=false
+# Trace compile_commands.json Parser tool detection participant lookup
+org.eclipse.cdt.jsoncdb.core/debug/participant=false
+# Trace how compiler command-line arguments are detected and parsed
+org.eclipse.cdt.jsoncdb.core/debug/arglets=false
+# Trace detected preprocessor symbols and include path entries as passed to the indexer
+org.eclipse.cdt.jsoncdb.core/debug/detected.entries=false

@@ -1,0 +1,2 @@
+org.eclipse.cdt.tests.dsf.gdb/debug = false
+org.eclipse.cdt.tests.dsf.gdb/debug/waitMetrics = false

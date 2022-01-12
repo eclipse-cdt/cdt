@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.jsoncdb.core.ui.internal.JsonCdbPreferencePage"
+            id="org.eclipse.cdt.jsoncdb.core.ui.JsonCdbPreferencePage"
+            name="%page.name">
+      </page>
+   </extension>
+
+</plugin>

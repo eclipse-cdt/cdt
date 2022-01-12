@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            id="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"
+            type="org.eclipse.cdt.launch.applicationLaunchType"
+            modes="debug"
+            delegate="org.eclipse.cdt.examples.dsf.gdb.launch.GdbExtendedLaunchDelegate"
+            name="Example GDB Extended Launch Delegate"
+            delegateDescription="Launch Delegate that uses an example extension to the CDT's GDB launch."
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <!-- Local application launch tabs-->
+      <tab
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="Main"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"/>
+      </tab>
+      <tab id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="Arguments"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab 
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="Environment"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+         <associatedDelegate delegate="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"/>
+         <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="Debugger"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="Source"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="Common"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.examples.dsf.gdb.launchDelegate"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+      <!-- Tabs added to Run launch -->
+      <tab
+            id="org.eclipse.cdt.examples.dsf.gdb.launch.localApplicationLaunch.extraTab"
+            group="org.eclipse.cdt.launch.applicationRunLaunchTabGroup"
+            name="Extra"
+            class="org.eclipse.cdt.examples.dsf.gdb.ui.ExtendedTab">
+        <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
+        <!-- Place after main tab to check its id -->
+        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
+      </tab>
+   </extension>   
+   <extension point="org.eclipse.core.runtime.adapters">
+      <factory 
+        	class="org.eclipse.cdt.examples.dsf.gdb.GdbExtendedAdapterFactory" 
+	        adaptableType="org.eclipse.cdt.examples.dsf.gdb.launch.GdbExtendedLaunch">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+         <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
+         <adapter type="org.eclipse.debug.core.commands.ITerminateHandler"/>
+         <adapter type="org.eclipse.cdt.debug.core.model.IConnectHandler"/>
+         <adapter type="org.eclipse.debug.core.commands.IDisconnectHandler"/>
+         <adapter type="org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler"/>
+	  </factory>         
+   </extension>
+
+   <!-- Example showing how to add a custom command with toolbar/menu contributions with DSF.
+        The example command id is org.eclipse.cdt.examples.dsf.gdb.command.showVersion.
+        In this example, when run it will display the version of GDB that is connected. -->
+   <extension point="org.eclipse.ui.commands">
+      <command
+          categoryId="org.eclipse.cdt.debug.ui.category.debugViewLayout"
+          description="Show the GDB Version in a pop-up"
+          id="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+          name="Show GDB Version">
+      </command>
+   </extension>
+
+   <!-- Contribute Show GDB Version command to various places in the UI -->
+   <extension
+       point="org.eclipse.ui.menus">
+
+      <!-- Contribute Show GDB Version to the toolbar at the top of the Debug View
+           NOTE: due to platform issues, the org.eclipse.debug.ui.debugViewToolbarVisible does
+           not work reliably, further tied to the org.eclipse.core.runtime.bundleState test
+           it means that this contribution does not show up reliabliy. Closing and re-opening
+           the debug view resolves the issue fully. See Bug 378554 and 378892 (which is
+           a similar issue for reverse debugging buttons).
+       -->
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.DebugView?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen checkEnabled="false">
+               <and>
+                  <systemTest property="org.eclipse.debug.ui.debugViewToolbarVisible" value="true"/>
+                  <with variable="org.eclipse.core.runtime.Platform">
+                     <test property="org.eclipse.core.runtime.bundleState"
+                        args="org.eclipse.cdt.examples.dsf.gdb"
+                        value="ACTIVE">
+                     </test>
+                  </with>
+               </and>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+
+      <!-- Contribute Show GDB Version to the popup menu of the Debug View -->
+      <menuContribution
+          locationURI="popup:org.eclipse.debug.ui.DebugView?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen
+                  checkEnabled="false">
+               <with variable="org.eclipse.core.runtime.Platform">
+                  <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+
+      <!-- Contribute Show GDB Version to the Main toolbar -->
+      <menuContribution
+            locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?before=stepGroup">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen
+                  checkEnabled="false">
+               <and>
+                  <reference
+                        definitionId="org.eclipse.cdt.debug.ui.testIsDebugActionSetActive">
+                  </reference>
+                  <with variable="org.eclipse.core.runtime.Platform">
+                     <test property="org.eclipse.core.runtime.bundleState"
+                        args="org.eclipse.cdt.examples.dsf.gdb"
+                        value="ACTIVE">
+                     </test>
+                  </with>
+               </and>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+
+      <!-- Contribute Show GDB Version to the popup menu of the GdbFullCliConsole View -->
+      <menuContribution
+          locationURI="popup:GdbFullCliConsole.#ContextMenu?after=additions">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen
+                  checkEnabled="false">
+               <with variable="org.eclipse.core.runtime.Platform">
+                  <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>     
+      
+      <!-- Contribute Show GDB Version to the popup menu of the GdbBasicCliConsole View -->
+      <menuContribution
+          locationURI="popup:GdbBasicCliConsole.#ContextMenu?after=additions">
+         <command
+               commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion"
+               icon="icons/sample.gif"
+               label="Show GDB Version"
+               style="push"
+               tooltip="Show the GDB Version in a pop-up">
+            <visibleWhen
+                  checkEnabled="false">
+               <with variable="org.eclipse.core.runtime.Platform">
+                  <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+
+   </extension>
+
+   <!-- Connect the Show GDB Version command ID to its handler -->
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.examples.dsf.gdb.commands.ShowVersionHandler"
+            commandId="org.eclipse.cdt.examples.dsf.gdb.command.showVersion">
+         <enabledWhen>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+               </test>
+            </with>
+         </enabledWhen>
+      </handler>
+   </extension>
+      
+   <!-- Add a console page participant to the debugger console pages -->
+   <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.cdt.examples.dsf.gdb.ui.console.GdbExtendedConsolePageParticipant"
+            id="org.eclipse.cdt.examples.dsf.gdb.debuggerConsolePageParticipant">
+         <enablement>
+         <and>
+            <instanceof value="org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole"/>
+            <!-- The below check only works with the Debugger Console view and not the
+                 standard console view.  But that is ok since this contribution is
+                 for the Debugger Console views only. -->
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE">
+               </test>
+            </with>
+         </and>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
+</plugin>

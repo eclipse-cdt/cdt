@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Initial configuration</title>
+</head>
+<body>
+<h2>Initial configuration</h2>
+<p>When you launch an Eclipse workspace with LLVM plug-in for the first time, you may need to set paths to LLVM binaries, headers and libraries. This is done in Eclipse by navigating to Window -> Preferences -> LLVM. Set LLVM installation folder to point where your LLVM binaries are, include directory to point where your Clang includes are and library path to the directory where your LLVM libraries reside.</p>
+<p>If your paths in Preferences and LLVM are correctly set and the plug-in is able to find your LLVM binaries, you should have the option to use "LLVM with Clang (Linux/MacOSX/Windows)" toolchain and "LLVM with GCC (Linux/MacOSX/Windows) toolchain". The toolchains are available in project types of 'executable', 'static library' and 'dynamic library' in both C and C++.</p>
+<p>An alternative way is to set the LLVM binary path to PATH system environment variable.</p>
+<p>You may also have to <a href="../help/adding_c++_standard_library.html">include the path to Standard C++ Library</a> in order to compile C++ programs by adding the path in LLVM Preferences or appending it to LD_LIBRARY_PATH system environment variable.</p>
+</body>
+</html>

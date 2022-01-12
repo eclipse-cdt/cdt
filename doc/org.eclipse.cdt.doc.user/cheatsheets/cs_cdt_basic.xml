@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<cheatsheet title="Creating C/C++ projects">
+   <intro href="/org.eclipse.cdt.doc.user/concepts/cdt_c_projects.htm">
+      <description>
+         This guide will walk you though the process of creating a simple &quot;Hello World&quot;  C/C++ application using the CDT.
+      </description>
+   </intro>
+   <item title="C/C++ workbench setup" dialog="false" skip="false" href="/org.eclipse.cdt.doc.user/concepts/cdt_c_perspectives.htm">
+      <description>
+         Start by setting up the CDT development environment.
+      </description>
+      <subitem label="Open C/C++ perspective." skip="true">
+         <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.cdt.ui.CPerspective)" confirm="false">
+         </command>
+      </subitem>
+   </item>
+   <item title="Creating a C/C++ project" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/reference/cdt_u_new_proj_wiz.htm">
+      <description>
+         Create a C++ or C project by choosing one of the following wizards.
+      </description>
+      <subitem label="Click File &gt; New &gt; C++ Project to launch the new C++ project wizard." skip="true">
+         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.cdt.ui.wizards.NewCWizard1)" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Click File &gt; New &gt; C Project to launch the new C project wizard." skip="true">
+         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.cdt.ui.wizards.NewCWizard2)" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Choose Executable &gt; Hello World C/C++ Example from the Project types list." skip="false">
+      </subitem>
+      <subitem label="Type a project name, set its location, and select a Toolchain, then click Next." skip="false">
+      </subitem>
+      <subitem label="Enter Basic Project information, then click Next." skip="true">
+      </subitem>
+      <subitem label="Select platforms and configurations to show in the Run/Debug menus, click Finish." skip="true">
+      </subitem>
+   </item>
+   <item title="Building projects and inspecting files" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/tasks/cdt_o_build_task.htm">
+      <description>
+         Build the program to create a binary and examine it in Project Explorer and Outline views.
+      </description>
+      <subitem label="Click Project &gt; Build All to create a binary of your source file." skip="true">
+		<!--
+         <command serialization="org.eclipse.ui.project.buildAll" confirm="false">
+         </command>
+		-->
+      </subitem>
+      <subitem label="In the Project Explorer view, open the Binaries element and examine the program&apos;s binary." skip="true">
+      </subitem>
+      <subitem label="Open the .cpp file in the project and examine the Outline view." skip="true">
+		 <command serialization="org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.cdt.ui.edit.open.outline)" confirm="false">
+         </command>
+		<!--
+		 <command serialization="org.eclipse.cdt.ui.edit.open.outline" confirm="false">
+         </command>
+		-->
+      </subitem>
+   </item>
+   <item title="Running the program" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/reference/cdt_u_run_dbg_main.htm">
+      <description>
+         The final step is to create a run configuration that defines how the program is launched. Note you can define multiple run configurations if desired, each with its own settings.
+      </description>
+      <subitem label="Select the project and click Run As &gt; Open Run Dialog... to launch the program." skip="false">
+		<!--
+         <command serialization="org.eclipse.debug.ui.commands.OpenRunConfigurations" confirm="false">
+         </command>
+		-->
+      </subitem>
+      <subitem label="Create a run configuration by double-clicking the C/C++ Local Application item." skip="false">
+      </subitem>
+      <subitem label="Type a configuration name in the Name box." skip="true">
+      </subitem>
+      <subitem label="If no binary name appears in the C/C++ Application box, click Search Project to select one in the Program Selection dialog." skip="true">
+      </subitem>
+      <subitem label="Click Apply, then click Run to launch the program. The Console view displays the program output." skip="true">
+         <command serialization="org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.ContentOutline)" confirm="false">
+         </command>
+      </subitem>
+   </item>
+</cheatsheet>

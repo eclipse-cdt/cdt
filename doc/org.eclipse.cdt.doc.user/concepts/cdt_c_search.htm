@@ -1,0 +1,275 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>C/C++ search</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+<div role="main">
+<h1>C/C++ search</h1>
+
+<p>You can conduct a fully or partially qualified name search. Further 
+qualifying a search increases the accuracy and relevance of search results. The 
+sections below provide guidance on how to control the scope of your search 
+through the use of search delimiters, correct syntax, and wildcards.</p>
+
+<p>You can search for:<br>
+<ul>
+	<li>language constructs within:
+		<ul>
+			<li>projects in your workspace</li>
+			<li>selected resources from various views</li>
+			<li>working sets</li>
+		</ul></li>
+	<li>a working set for references to particular elements</li>
+	<li>declarations of particular elements</li>
+	<li>definitions of particular elements</li>
+	<li>references of particular elements</li>
+</ul>
+</p>
+
+For information on working sets, see <strong>Workbench User Guide &gt; Concepts &gt; Workbench &gt; Working sets</strong><br>
+
+
+  <h2>What you can search for</h2>
+  <p>The table below lists the element types that you can search for and special 
+  considerations to note when searching for a given element type. You can search 
+  for some or all of the element types matching a search string that you 
+  specify. If you choose to search for matching elements, all types, macros, and typdefs are included in the search.</p>
+<table border="2" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#AAA" width="60%">
+  <tr>
+    <th style="width:25%; text-align:left" id="element"><strong>Element</strong></th>
+    <th style="width:75%; text-align:left" id="note"><strong>Note</strong></th>
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Class/Struct</td>
+    <td style="width:75%" headers="note">Searches for classes and structs.<p>You can further qualify 
+    the search by specifying &quot;class&quot; or &quot;struct&quot; in front of the name 
+    that you are 
+    searching for. Specifying &quot;class&quot; or &quot;struct&quot; also allows you to 
+    search for anonymous classes and structures.</td>
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Function</td>
+    <td style="width:75%" headers="note">Searches for global functions or functions in a namespace 
+    (functions that are not members of a class, struct, or union).<p>You can 
+    specify parameters to further qualify your search. When specifying a 
+    parameter list, everything between the parentheses should be valid C/C++ 
+    syntax.</p>
+    <p>Do not specify the return type of the function.</td>
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Variable</td>
+    <td style="width:75%" headers="note">Searches for variables that are not members of a class, 
+    struct, or union.</td>
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Union</td>
+    <td style="width:75%" headers="note">Searches for unions.<p>Anonymous unions can be searched for by 
+    specifying &quot;union&quot; as the search pattern.</td>
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Method</td>
+    <td style="width:75%" headers="note">Searches for methods that are members of a class, struct, or 
+    union.<p>Searching for methods also finds constructors and destructors. See 
+    above note for functions.</td>
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Field </td>
+    <td style="width:75%" headers="note">Searches for fields that are members of a class, struct, or 
+    union.
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Enumeration</td>
+    <td style="width:75%" headers="note">Searches for enumerations.</td>
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Enumerator</td>
+    <td style="width:75%" headers="note">Searches for enumerators.</td>
+  </tr>
+  <tr>
+    <td style="width:25%" headers="element" valign="top">&nbsp;Namespace</td>
+    <td style="width:75%" headers="note">Searches for namespaces.</td>
+  </tr>
+</table>
+
+<h2>How you can limit your search</h2>
+
+<p>You can limit your search to one or all of the following:</p>
+
+<ul>
+  <li>Declarations</li>
+  <li>References</li>
+  <li>Definitions (for functions, methods, variables and fields)</li>
+</ul>
+
+<p>You can control the scope of the search by specifying which of the following 
+is to be searched:</p>
+<ul>
+  <li>Workspace</li>
+  <li>Working Set</li>
+  <li>Selected Resources</li>
+</ul>
+
+<h2>Wildcard characters</h2>
+<p>You can use wildcard characters to further refine your search.</p>
+<table border="2" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#AAA" width="60%">
+  <tr>
+    <th style="width:30%; text-align:left" id="char" valign="top"><strong>Use this wildcard character</strong></th>
+    <th style="width:70%; text-align:left" id="search"><strong>To search for this</strong></th>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="char" valign="top">&nbsp;<samp>*</samp></td>
+    <td style="width:70%" headers="search">Any string<p><strong>Tip:<br>
+    </strong> Use the character sequence <samp>\*</samp> to search for 
+    operators that begin with *. See syntax examples in the table below.</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="char" valign="top">&nbsp;<samp>?</samp></td>
+    <td style="width:70%" headers="search">A single character</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="char" valign="top">&nbsp;<samp>::</samp></td>
+    <td style="width:70%" headers="search">Nested elements</td>
+  </tr>
+</table>
+<!-- no support for function parameters
+<p><strong>Tip: </strong>Do not use wild cards between the brackets of a function or 
+method pattern.  For example, the search 
+string <samp>f( * )</samp> is an invalid search that results in a search for any function <samp>f</samp> 
+    because 
+the asterisk is interpreted as a pointer rather than a wild card.</p>
+-->
+<h2>Syntax examples</h2>
+<p>The table below provides syntax examples and an explanation for each example 
+to help you conduct an effective search.</p>
+<table border="2" cellpadding="2" cellspacing="0" style="border-collapse: collapse" bordercolor="#AAA" width="60%">
+  <tr>
+    <th style="width:30%; text-align:left" id="syntax"><strong>Syntax</strong></th>
+    <th style="width:70%; text-align:left" id="search2"><strong>Searches for this</strong></th>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp; <samp>::*::*::A</samp></td>
+    <td style="width:70%" headers="search2">A nested element two levels deep</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp; <samp>::*::*::A?</samp></td>
+    <td style="width:70%" headers="search2">Any two-letter name that begins with A and is two levels 
+    deep</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp; <samp>::A</samp> </td>
+    <td style="width:70%" headers="search2">Searches for A not nested in anything</td>
+  </tr>
+<!-- no support for function parameters
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp; <samp>*()</samp></td>
+    <td style="width:70%" headers="search2">Any function taking no parameters</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp;&nbsp;<samp>*( A * )</samp> </td>
+    <td style="width:70%" headers="search2">Any function taking 1 parameter that is a pointer to type 
+    A</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp;&nbsp;<samp>f( int * )</samp></td>
+    <td style="width:60%" headers="search2">Will search for function f taking 1 parameter that is an 
+    int *</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp;&nbsp;<samp>f( const char [ 
+    ], A &amp; )</samp></td>
+    <td style="width:60%" headers="search2">Will search for a function f, taking 2 parameters; one is a 
+    const char array, the other is a reference to type A</td>
+  </tr>
+-->
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp;<samp>operator \*</samp></td>
+    <td style="width:60%" headers="search2">Finds only operator *</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp;<samp>operator \*=</samp></td>
+    <td style="width:60%" headers="search2">Finds only operator *=</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp;<samp>operator *</samp></td>
+    <td style="width:60%" headers="search2">Finds all operators</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax">&nbsp;<samp>class</samp></td>
+    <td style="width:60%" headers="search2">Searches for anonymous classes</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax"> &nbsp;<samp>struct</samp></td>
+    <td style="width:60%" headers="search2">Searches for anonymous structs</td>
+  </tr>
+  <tr>
+    <td style="width:30%" headers="syntax"> &nbsp;<samp>union</samp></td>
+    <td style="width:60%" headers="search2">Searches for anonymous unions</td>
+  </tr>
+  </table>
+<h2>Search results</h2>
+<p>Search results are displayed in the Search view. You can sort your search by Name, Parent Name and Path. You can also repeat 
+your last search.</p>
+
+<h2>Search Concepts</h2>
+
+<h3>Declarations</h3>
+<p>According to the ANSI C++ Spec, a declaration is a statement that <Q>introduces a name into a translation unit or re-declares a name that has been previously introduced by a previous declaration</Q>.</p>
+<p>All C/C++ search elements can be searched for declarations.</p>
+
+<h3>Definitions</h3>
+<p>Most declarations are also definitions; in other words, they also define the entity for they declare the name for. However there are some elements that can have separate definitions from their declarations.</p>
+<p>For C/C++ search the following elements can be searched for definitions:
+<ul>
+	<li>Functions/Methods - the definition is where the code implementation resides</li>
+	<li>Variable:
+		<ol>
+			<li>Extern - the definition is where the variable is initialized</li>
+			<li>Non extern - the definition of a variable is where it is declared </li>
+		</ol></li>
+	<li>Field:
+		<ol>
+			<li>Static fields - the definition of a static field is where it gets initialized</li>
+			<li>Non static fields - the definition corresponds to the fields declaration</li>
+		</ol></li>
+	<li>Namespace - the definition of a namespace is the same as its declaration</li>
+</ul></p>
+
+<h3>References</h3>
+<p>By selecting references, C/C++ search will return all of the places the selected element is used.</p>
+
+<h3>All Occurrences</h3>
+<p>Selecting 'All Occurrences' in the Limit To section will result in a search for declarations, definitions (if applicable) and references for whatever element or elements have been selected.</p>
+
+<h3>Any Element</h3>
+<p>Selecting 'Any Element' in the Search For section will result in a search for all of the listed elements plus macros and typedefs.</p>
+
+
+<p>For more information, see:<ul>
+  <li> <strong>Workbench User Guide &gt; Concepts &gt; Views &gt; Search view</strong></li>
+  <li> <strong>Workbench User Guide &gt; Tasks &gt; Navigating and finding resources</strong></li>
+  </ul>
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+<a href="cdt_c_projects.htm">CDT Projects</a><br>
+<a href="cdt_c_open_declarations.htm">Open Declaration</a><br>
+</p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_search.htm">Searching for C/C++ elements</a><br>
+<a href="../tasks/cdt_t_open_declarations.htm">Navigating to C/C++ declarations</a><br>
+</p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
+<a href="../reference/cdt_u_search.htm">C/C++ search page, Search dialog box</a><br>
+<a href="../reference/cdt_u_icons.htm">C/C++ perspective icons</a></p><p>
+
+<img src="../images/ng00_07.gif" ALT="IBM Copyright Statement" ></p>
+</div>
+</body>
+
+</html>

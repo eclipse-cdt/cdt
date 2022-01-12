@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+     <extension
+         point="org.eclipse.cdt.managedbuilder.ui.newWizardPages">
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage"
+            operationClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.TestRunnable"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.AlwaysPresentWizardPage"/>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureAWizardPage">
+         <nature  natureID="A"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.NatureBWizardPage">
+         <nature  natureID="B"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCWizardPage">
+         <toolchain  toolchainID="C"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCv20WizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainCv20WizardPage">
+         <toolchain
+               toolchainID="C"
+               versionsSupported="2.0.0"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeDWizardPage">
+         <projectType  projectTypeID="D"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeEWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ProjectTypeEWizardPage">
+         <projectType  projectTypeID="E"/>
+      </wizardPage>
+      <wizardPage
+            ID="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage"
+            pageClass="org.eclipse.cdt.managedbuilder.ui.tests.wizardPages.ToolchainFWizardPage">
+         <toolchain toolchainID="F"/>
+      </wizardPage>
+   </extension>
+     <extension
+           id="cdt.test.ToolListContentProvider.toolchain"
+           point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
+        <projectType
+              id="cdt.managedbuild.target.ToolListContentProvider.exe"
+              isAbstract="false"
+              isTest="true">
+           <configuration
+                 id="cdt.managedbuild.config.ToolListContentProvider.exe.debug"
+                 name="ToolListContentProvider">
+              <toolChain
+                    id="cdt.managedbuild.toolchain.ToolListContentProvider.exe.debug"
+                    isSystem="true">
+                 <targetPlatform
+                       id="cdt.managedbuild.target.ToolListContentProvider.platform.exe.debug">
+                 </targetPlatform>
+                 <builder
+                       id="cdt.managedbuild.target.ToolListContentProvider.builder.exe.debug">
+                 </builder>
+                 <optionCategory
+                       applicabilityCalculator="org.eclipse.cdt.managedbuilder.ui.tests.properties.HideEmptyOptionCategoryApplicabilityCalculator"
+                       id="ToolListContentProvider.toolchain.empty.category1"
+                       name="ToolListContentProvider.toolchain.empty.category1">
+                 </optionCategory>
+                 <option
+                       category="ToolListContentProvider.toolchain.empty.category1"
+                       id="ToolListContentProvider.toolchain.empty.option1"
+                       isAbstract="false"
+                       resourceFilter="all"
+                       valueType="string">
+                 </option>
+                 <optionCategory
+                       applicabilityCalculator="org.eclipse.cdt.managedbuilder.ui.tests.properties.HideEmptyOptionCategoryApplicabilityCalculator"
+                       id="ToolListContentProvider.toolchain.empty.category2"
+                       name="ToolListContentProvider.toolchain.empty.category2">
+                 </optionCategory>
+                 <tool
+                       id="ToolListContentProvider.tool.empty1"
+                       isAbstract="false"
+                       superClass=" ">
+                    <optionCategory
+                          applicabilityCalculator="org.eclipse.cdt.managedbuilder.ui.tests.properties.HideEmptyOptionCategoryApplicabilityCalculator"
+                          id="ToolListContentProvider.tool.empty.category1"
+                          name="ToolListContentProvider.tool.empty.category1">
+                    </optionCategory>
+                    <option
+                          category="ToolListContentProvider.tool.empty.category1"
+                          id="ToolListContentProvider.tool.empty.option1"
+                          isAbstract="false"
+                          resourceFilter="all"
+                          valueType="string">
+                    </option>
+                    <optionCategory
+                          applicabilityCalculator="org.eclipse.cdt.managedbuilder.ui.tests.properties.HideEmptyOptionCategoryApplicabilityCalculator"
+                          id="ToolListContentProvider.tool.empty.category2"
+                          name="ToolListContentProvider.tool.empty.category2">
+                    </optionCategory>
+                 </tool>
+              </toolChain>
+           </configuration>
+        </projectType>
+     </extension>
+
+
+
+
+</plugin>

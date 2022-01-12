@@ -1,0 +1,17 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>LLVM Specific Information</title>
+</head>
+<body>
+<h1>LLVM Specific Information</h1>
+<h2>Project types</h2>
+<h3><a name="executables">Executables</a></h3>
+<p>At the moment the executables built with the default settings of a LLVM with Clang project are native binaries and can be run and debugged as such. However LLVM does also support compiling programs to LLVM bitcode, which in turn can be run with lli, which is the LLVM toolchain's interpreter/JIT compiler. Unfortunately programs run with lli can not be efficiently debugged, since the only (usable) debugging information that you can get from them is the backtrace. You can, however, compile the bitcode versions of your programs, if you will (TODO: even though running them from Eclipse doesn't work at the moment).</p>
+<h4>Compiling to LLVM bitcode instead of native binary</h4>
+<p>You can compile your programs to LLVM bitcode instead of native binaries by unchecking the "Create native binary (-native)" checkbox in your project's properties in Properties &rarr; C/C++ Build &rarr; Settings &rarr; LLVM Linker &rarr; General LLVM options. After this Eclipse will not give the -native flag to llvm-ld, so the product of linking is just linked bitcode files (.bc) and a Bash script file with the name of the wanted executable. The Bash script will simply run the compiled LLVM bitcode file with lli.</p>
+<h3><a name="libraries">Shared and static libraries</a></h3>
+<p>The shared and static libraries generated with LLVM plugin are (TODO: for now) only LLVM bitcode files linked into one file and therefore cannot be used with gcc unless compiled to object code first. These libraries can naturally be used when working with the LLVM toolchain and on the other hand llvm-ld can use libraries that are object code.</p>
+</body>
+</html>

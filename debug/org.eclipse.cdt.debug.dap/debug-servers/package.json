@@ -1,0 +1,12 @@
+{
+  "name": "cdt-debug-servers",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "author": "Eclipse CDT",
+  "license": "EPL-2.0",
+  "scripts": {},
+  "dependencies": {
+    "cdt-gdb-adapter": "^0.0.15-next.20200103232419.2160d3c.0"
+  }
+}

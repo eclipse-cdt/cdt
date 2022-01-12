@@ -1,0 +1,277 @@
+/*                                                   -*- c -*-
+  Copyright (c) 2007, 2008 Symbian Software Ltd. and others.
+  This program and the accompanying materials
+  are made available under the terms of the Eclipse Public License 2.0
+  which accompanies this distribution, and is available at
+  https://www.eclipse.org/legal/epl-2.0/
+  
+  SPDX-License-Identifier: EPL-2.0
+*/
+
+
+/* Overall page styles */
+
+body {
+  background-color: white;
+  color: black;
+}
+
+body, .Bodytext, p, td, th, ul, ol, li, dl, dt, dd,
+.Head1, .Head2, .Head3, h1, h2, h3, h4, h5, h6, .Author,
+.Abstract, .Contents1, .Contents2 {
+  font-family: arial, lucida, helvetica, verdana, sans-serif;
+  font-size: 10pt;
+}
+
+a:link    { color: #0000cc; }
+a:visited { color: #663399; }
+a:active  { color: #ff9900; }
+a:hover   { color: #ff9900; }
+
+
+/* Areas in the navigation table */
+
+.breadcrumbNav,
+.breadcrumbNav a:link, .breadcrumbNav a:visited {
+  color: #006699;
+}
+.breadcrumbNav a:link, .breadcrumbNav a:visited {
+  text-decoration: underline;
+}
+.breadcrumbNav {
+  margin: 0.0em;
+  padding: 0.0em;
+  text-align: left;
+  font-weight: bold;
+}
+.breadcrumbNav .separator {
+  color: #ff9900;
+}
+
+.DocSetBox {
+  background-image: none;
+  background-color: #006699;  /* Symbian Blue */
+ /* color:            #aaccee; */ /* Lightish blue */
+  color:			#ffffff;
+}
+
+.DocSetBox p {
+  font-family: meta, arial, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 0.5em;
+}
+
+.LogoBox { border-bottom: solid #ff9900 2px; }
+
+.DocSetBox p a:link,
+.DocSetBox p a:visited
+{
+  color: white;
+  text-decoration: none;
+}
+
+.DocSetBottomBox {
+  background-image: none;
+  background-color: white;
+ /* background-color: #b4daed; */        /* mid Blue of gradient.jpg */
+ /* background-color: #f5fafe; */        /* Lightest Blue of gradient.jpg */
+ /* background-color: #006699; */        /* Symbian Blue */
+  color:			#006699;             /* Symbian blue */
+ /* color:            #aaccee; */        /* Lightish blue */
+ /* color:			  #ffffff; */        /* white */
+ /* border-bottom: solid #ff9900 2px; */ /* Red horizontal line at bottom */
+}
+
+.DocSetBottomBox p {
+  font-family: meta, arial, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+  margin-left: 0.5em;
+}
+
+.DocSetBottomBox p a:link,
+.DocSetBottomBox p a:visited
+{
+  color: white;
+  text-decoration: none;
+}
+
+.ButtonBox {
+  background-color: white;  /* contrast with dark-blue image text */
+  color:            black;  /* for imageless people */
+  /*
+   Background image must be defined separately in each file due to
+   widespread lack of standards compliance in UAs.
+  */
+}
+
+.ButtonBottomBox {
+  background-color: white;
+ /* background-color: #b4daed; */        /* mid Blue of gradient.jpg */
+ /* background-color: white; */          /* contrast with dark-blue image text */
+  color:            black;               /* for imageless people */
+ /* border-bottom: solid #ff9900 2px; */ /* Red horizontal line at bottom */
+  /*
+   Background image must be defined separately in each file due to
+   widespread lack of standards compliance in UAs.
+  */
+}
+
+.ButtonBox p,
+.ButtonBottomBox p,
+.DocSetBox p,
+.DocSetBottomBox p
+{
+  margin-top:     0em;
+  margin-bottom:  0em;
+  padding-top:    1px;
+  padding-bottom: 1px;
+}
+
+
+.copyrightStatement {
+  font-size: 12px;
+}
+
+
+/* Ordinary items in the main area */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: arial, lucida, helvetica, verdana, sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  font-weight: bold;
+  color: #333333;
+  padding-left: 0.1em;
+}
+
+
+h1 { font-size: 180%; color: #000000;} /* Black */
+h2 { font-size: 140%; color: #006699;} /* Blue   */
+h3 { font-size: 120%; }
+h4 { font-size: 100%; padding-left: 0em; }
+h5 { font-size: 100%; padding-left: 0em; }
+h6 { font-size: 100%; padding-left: 0em; }
+
+.Title    { text-align: left;  font-weight: bold;  font-size: 180%; }
+.Author   { text-align: right; font-style: italic;}
+.Abstract  { margin-left: 9%; margin-right: 2%;  font-style: italic; font-size: 12pt;
+ font-family: arial, lucida, helvetica, verdana,
+ sans-serif; font-weight: normal;}
+.Contents1 {margin-left: 3%; margin-right: 2%;};
+.Contents2 {margin-left: 9%; margin-right: 2%;};
+.Head1    { margin-left: 0%; }
+.Head2    { margin-left: 3%; }
+.Head3    { margin-left: 6%; }
+.Bodytext { margin-left: 9%; margin-right: 2%; }
+
+code, pre, .CodeBlock, tt, kbd, samp {
+  font-family: courier new, courier, lucida console,
+               lucida typewriter, monospace;
+}
+
+
+/* Blocks of special information */
+
+.Structure, .CodeBlock, .Prototype, .Instructions, .Process, .Concept,
+.Guideline, .DataDescription, .Classification, .Example
+{
+  padding: 0.33em;
+  border: solid white 1px; /* Netscape 4.x workaround. */
+  background-color: #dddddd;
+  display: block;
+  width: 100%;
+  margin-right: 1%;
+}
+
+
+.CodeBlock,
+.Prototype
+{
+  border: solid white 1px;
+  background-color: #dddddd;
+}
+
+
+/* CodeBlocks in blue boxes want to be blue too. */
+
+.Structure       .CodeBlock,
+.Instructions    .CodeBlock,
+.Process         .CodeBlock,
+.Concept         .CodeBlock,
+.Guideline       .CodeBlock,
+.DataDescription .CodeBlock,
+.Classification  .CodeBlock,
+.Example         .CodeBlock
+{
+  background-color: #cccccc;
+  border: solid #dddddd 1px;
+}
+
+
+/* Tables. It would be nice to have the cell and border colours adapt
+to whatever the background colour is rather than just being grey. */
+
+td.Cell {
+  background-color: white;
+  color: black;
+  text-align: left;
+}
+
+th.Cell {
+  background-color: #eeeeee;
+  color: black;
+  text-align: left;
+  font-weight: bold;
+}
+
+.TableWrap, .ValueTableWrap {
+  background-color: #aaaaaa;
+  color: white;
+}
+
+/* Figures */
+
+/* This was messing up IE5's tables...
+.Figure {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+*/
+
+.Figure .Caption, .Figure .Image, .RelatedItems .Image {
+  text-align: center;
+}
+
+.Caption {
+  font-style: italic;
+}
+
+
+/* Other */
+
+.unresolvedLink {
+  color: #ff0000;
+  background-color: #ffddbb;
+}
+
+
+/* Glossary layout */
+
+/*
+.Glossary dd p,
+.Glossary dd ul,
+.Glossary dd ol
+{ margin: 0.5em; }
+*/
+
+/*
+.Glossary dd,
+{
+   margin-top: 1.0em;
+}
+*/
+
+.Glossary dt { margin-top: 1.5em; }
+

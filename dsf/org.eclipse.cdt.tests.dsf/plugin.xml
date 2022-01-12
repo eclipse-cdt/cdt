@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="DSF Tests"
+            id="org.eclipse.cdt.tests.dsf.model">
+      </category>
+      <view
+            name="Model Test View"
+            category="org.eclipse.cdt.tests.dsf.model"
+            class="org.eclipse.cdt.tests.dsf.model.ModelTestsView"
+            id="org.eclipse.cdt.tests.dsf.model.ModelTestView">
+      </view>
+   </extension>
+   
+   <extension
+         id="markerType.breakpoint"
+         name="DSF Test Breakpoint Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.debug.core.lineBreakpointMarker"/>
+      <persistent value="true"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.breakpoints">
+      <breakpoint
+            class="org.eclipse.cdt.tests.dsf.breakpoints.DsfTestBreakpoint"
+            name="DSF Test Breakpoints"
+            markerType="markerType.breakpoint"
+            id="org.eclipse.cdt.tests.dsf.breakpoint"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.cdt.tests.dsf.vm.TestPersistableFactory"
+            id="org.eclipse.cdt.tests.dsf.vm.testPersistableFactory">
+      </factory>
+   </extension>
+   
+</plugin>

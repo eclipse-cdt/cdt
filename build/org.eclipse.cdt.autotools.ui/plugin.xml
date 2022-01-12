@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="org.eclipse.cdt.ui.newCWizards"
+            class="org.eclipse.cdt.internal.autotools.ui.wizards.ConvertToAutotoolsProjectWizard"
+            finalPerspective="org.eclipse.cdt.ui.CPerspective"
+            hasPages="true"
+            icon="icons/ac16/convert_normal.gif"
+            id="org.eclipse.cdt.autotools.ui.wizards.conversionWizard"
+            name="%ConvertWizard.name">
+         <description>
+            %ConvertWizard.description
+         </description>
+         <selection class="org.eclipse.core.resources.IProject"/>
+      </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            class="org.eclipse.cdt.internal.autotools.ui.CConfigureConsole"
+            id="org.eclipse.cdt.autotools.ui.configureConsole"/>
+      <CBuildConsole
+            class="org.eclipse.cdt.internal.autotools.ui.CBuildStepsConsole"
+            id="org.eclipse.cdt.autotools.ui.buildStepsConsole">
+      </CBuildConsole>
+      <CBuildConsole
+            class="org.eclipse.cdt.internal.autotools.ui.AutotoolsConsole"
+            id="org.eclipse.cdt.autotools.ui.autotoolsConsole">
+      </CBuildConsole>
+   </extension>
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+	  <!-- declares a content type for automake files -->
+	  <content-type id="org.eclipse.cdt.autotools.ui.automake" name="%Automake.name"
+		  base-type="org.eclipse.core.runtime.text"
+		  file-names="Makefile.in"
+		  file-extensions="am" 
+		  priority="high"></content-type>
+	  <content-type id="org.eclipse.cdt.autotools.ui.autoconf" name="%Autoconf.name"
+		  base-type="org.eclipse.core.runtime.text"
+		  file-names="configure.in,configure.ac"
+		  file-extensions="m4" 
+		  priority="high"></content-type>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.cdt.autotools.ui.editors.AutoconfEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            default="true"
+            icon="icons/autoconf.gif"
+            id="org.eclipse.cdt.autotools.ui.editor.autoconf"
+            name="%Autoconf.editor.name">
+            <contentTypeBinding contentTypeId="org.eclipse.cdt.autotools.ui.autoconf"></contentTypeBinding>
+      </editor>
+      <editor
+            class="org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakeEditor"
+            contributorClass="org.eclipse.cdt.internal.autotools.ui.editors.automake.MakefileEditorActionContributor"
+            default="true"
+            icon="icons/automake.gif"
+            id="org.eclipse.cdt.autotools.ui.editors.AutomakeEditor"
+            name="%AutomakeEditor.name">
+            <contentTypeBinding contentTypeId="org.eclipse.cdt.autotools.ui.automake"></contentTypeBinding>
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.genericeditor.presentationReconcilers">
+      <presentationReconciler
+            class="org.eclipse.cdt.internal.autotools.ui.editors.automake.AutomakefilePresentationReconciler"
+            contentType="org.eclipse.cdt.autotools.ui.automake">
+      </presentationReconciler>
+      <presentationReconciler
+            class="org.eclipse.cdt.internal.autotools.ui.editors.autoconf.AutoconfPresentationReconciler"
+            contentType="org.eclipse.cdt.autotools.ui.autoconf">
+      </presentationReconciler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="%ACeditor.scope.description"
+            id="org.eclipse.cdt.autotools.ui.editor.scope"
+            name="%ACeditor.scope.name"
+            parentId="org.eclipse.ui.textEditorScope"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.eclipse.cdt.autotools.ui.editors.text.show.tooltip"
+            contextId="org.eclipse.cdt.autotools.ui.editor.scope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F2"/>
+       <key
+           sequence="Ctrl+O"
+           commandId="org.eclipse.cdt.autotools.ui.command.showOutline"
+           contextId="org.eclipse.cdt.autotools.ui.editor.scope"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            description="%CommandCategorySource.description"
+            id="org.eclipse.cdt.ui.category.source"
+            name="%CommandCategorySource.name"/>
+      <command
+            categoryId="org.eclipse.cdt.ui.category.source"
+            description="%ShowTooltip.description"
+            id="org.eclipse.cdt.autotools.ui.editors.text.show.tooltip"
+            name="%ShowTooltip.name"/>
+   </extension>
+   <extension
+         id="parsefileerror"
+         name="Autotools Parse Error Marker"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <persistent value="true"/>
+   </extension>
+   <extension
+         id="outlineparsefileerror"
+         name="Autotools Outline Page Parse Error"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.eclipse.core.resources.textmarker"/>
+      <persistent value="true"/>
+   </extension>
+   <extension
+         id="org.eclipse.linuxtools.cdt.autoconf.docsetup"
+         name="Autoconf Editor Setup"
+         point="org.eclipse.core.filebuffers.documentSetup">
+      <participant
+            class="org.eclipse.cdt.autotools.ui.editors.AutoconfDocumentSetupParticipant"
+            extensions="m4"
+            fileNames="configure.in,configure.ac"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.cdt.ui.preferences.CPluginPreferencePage"
+            class="org.eclipse.cdt.internal.autotools.ui.preferences.AutotoolsPreferencePage"
+            id="org.eclipse.cdt.autotools.ui.preferences1"
+            name="%PreferenceAutotools.name">
+      </page>
+      <page
+            category="org.eclipse.cdt.autotools.ui.preferences1"
+            class="org.eclipse.cdt.internal.autotools.ui.preferences.AutomakeEditorPreferencePage"
+            id="org.eclipse.cdt.autotools.ui.preferences.automake.editor1"
+            name="%PreferenceAutomakeEditor.name">
+      </page>
+      <page
+            category="org.eclipse.cdt.autotools.ui.preferences1"
+            class="org.eclipse.cdt.internal.autotools.ui.preferences.AutoconfEditorPreferencePage"
+            id="org.eclipse.cdt.autotools.ui.preferences.autoconf.editor1"
+            name="%PreferenceAutoconfEditor.name">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.cPropertyTab">
+      <tab
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsBuildPropertyPage"
+            icon="icons/autoconf.gif"
+            name="%AutotoolsBuildPropertyTab.name"
+            parent="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsHeadPropertyPage"
+            tooltip="%PropertyTabBuild.tooltip"
+            weight="002">
+      </tab>
+      <tab
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsEditorPropertyTab"
+            name="%AutotoolsEditorsPropertyTab.name"
+            parent="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsGeneralPropertyPage">
+      </tab>
+      <tab
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsToolsPropertyTab"
+            name="%AutotoolsToolsPropertyTab.name"
+            parent="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsGeneralPropertyPage">
+      </tab>
+      <tab
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsConfigurePropertyTab"
+            name="%AutotoolsConfigurePropertyTab.name"
+            parent="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsConfigurePropertyPage">
+      </tab>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+       <page
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsHeadPropertyPage"
+            id="org.eclipse.cdt.autotools.ui.propertypage"
+            name="%PropertyAutotools.name">
+          <filter
+               name="projectNature"
+               value="org.eclipse.cdt.autotools.core.autotoolsNatureV2">
+          </filter>
+          <enabledWhen>
+             <or>
+		       <instanceof value="org.eclipse.core.resources.IProject"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+
+		       <instanceof value="org.eclipse.core.resources.IFolder"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
+
+         	   <instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
+	           <instanceof value="org.eclipse.core.resources.IFile"/>
+		     </or>
+          </enabledWhen>
+       </page>
+       <page
+            category="org.eclipse.cdt.autotools.ui.propertypage"
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsGeneralPropertyPage"
+            id="org.eclipse.cdt.autotools.ui.propertypage2"
+            name="%PropertyAutotools.general.name">
+          <filter
+               name="projectNature"
+               value="org.eclipse.cdt.autotools.core.autotoolsNatureV2">
+          </filter>
+          <enabledWhen>
+             <or>
+		       <instanceof value="org.eclipse.core.resources.IProject"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+
+		       <instanceof value="org.eclipse.core.resources.IFolder"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
+
+         	   <instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
+	           <instanceof value="org.eclipse.core.resources.IFile"/>
+		     </or>
+          </enabledWhen>
+       </page>
+       <page
+            category="org.eclipse.cdt.autotools.ui.propertypage"
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsConfigurePropertyPage"
+            id="org.eclipse.cdt.autotools.ui.propertypage3"
+            name="%PropertyAutotools.configure.name">
+          <filter
+               name="projectNature"
+               value="org.eclipse.cdt.autotools.core.autotoolsNatureV2">
+          </filter>
+          <enabledWhen>
+             <or>
+		       <instanceof value="org.eclipse.core.resources.IProject"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+		     </or>
+          </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsHeadPropertyPage"
+            id="org.eclipse.cdt.autotools.ui.propertypage4"
+            name="%PropertyAutotools.name"
+            >
+          <filter
+               name="projectNature"
+               value="org.eclipse.linuxtools.cdt.autotools.core.autotoolsNatureV2">
+          </filter>
+          <enabledWhen>
+             <or>
+		       <instanceof value="org.eclipse.core.resources.IProject"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+
+		       <instanceof value="org.eclipse.core.resources.IFolder"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
+
+         	   <instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
+	           <instanceof value="org.eclipse.core.resources.IFile"/>
+		     </or>          
+          </enabledWhen>
+       </page>
+       <page
+            category="org.eclipse.cdt.autotools.ui.propertypage4"
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsGeneralPropertyPage"
+            id="org.eclipse.cdt.autotools.ui.propertypage5"
+            name="%PropertyAutotools.general.name">
+          <filter
+               name="projectNature"
+               value="org.eclipse.linuxtools.cdt.autotools.core.autotoolsNatureV2">
+          </filter>
+          <enabledWhen>
+             <or>
+		       <instanceof value="org.eclipse.core.resources.IProject"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+
+		       <instanceof value="org.eclipse.core.resources.IFolder"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICContainer"/>
+
+         	   <instanceof value="org.eclipse.cdt.core.model.ITranslationUnit"/>
+	           <instanceof value="org.eclipse.core.resources.IFile"/>
+		     </or>          
+          </enabledWhen>
+       </page>
+       <page
+            category="org.eclipse.cdt.autotools.ui.propertypage4"
+            class="org.eclipse.cdt.internal.autotools.ui.properties.AutotoolsConfigurePropertyPage"
+            id="org.eclipse.cdt.autotools.ui.propertypage6"
+            name="%PropertyAutotools.configure.name">
+          <filter
+               name="projectNature"
+               value="org.eclipse.linuxtools.cdt.autotools.core.autotoolsNatureV2">
+          </filter>
+          <enabledWhen>
+             <or>
+		       <instanceof value="org.eclipse.core.resources.IProject"/>
+		       <instanceof value="org.eclipse.cdt.core.model.ICProject"/>
+		     </or>          
+          </enabledWhen>
+      </page>
+    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+         <separator
+               name="autotoolsGroup"
+               visible="true">
+         </separator>
+      </menuContribution>
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.popup.any?after=autotoolsGroup">
+         <command
+               commandId="org.eclipse.cdt.autotools.ui.command.reconfigure"
+               id="autotools"
+               label="%Reconfigure.label"
+               mnemonic="%Reconfigure.mnemonic"
+               style="push">
+            <visibleWhen checkEnabled="true"/>
+         </command>
+         <menu
+               id="autotools"
+               label="%InvokeAutotools.label"
+               mnemonic="%InvokeAutotools.mnemonic">
+            <command
+                  commandId="org.eclipse.cdt.autotools.ui.command.autoconf"
+                  id="autoconf"
+                  label="%InvokeAutoconf.label"
+                  mnemonic="%InvokeAutoconf.mnemonic"
+                  style="push">
+               <visibleWhen checkEnabled="true"/>
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.autotools.ui.command.autoheader"
+                  id="autoheader"
+                  label="%InvokeAutoheader.label"
+                  mnemonic="%InvokeAutoheader.mnemonic"
+                  style="push">
+               <visibleWhen checkEnabled="true"/>
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.autotools.ui.command.automake"
+                  id="automake"
+                  label="%InvokeAutomake.label"
+                  mnemonic="%InvokeAutomake.mnemonic"
+                  style="push">
+               <visibleWhen checkEnabled="true"/>
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.autotools.ui.command.autoreconf"
+                  id="autoreconf"
+                  label="%InvokeAutoreconf.label"
+                  mnemonic="%InvokeAutoreconf.mnemonic"
+                  style="push">
+               <visibleWhen checkEnabled="true"/>
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.autotools.ui.command.aclocal"
+                  id="aclocal"
+                  label="%InvokeAclocal.label"
+                  mnemonic="%InvokeAclocal.mnemonic"
+                  style="push">
+               <visibleWhen checkEnabled="true"/>
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.autotools.ui.command.libtoolize"
+                  id="libtoolize"
+                  label="%InvokeLibtoolize.label"
+                  mnemonic="%InvokeLibtoolize.mnemonic"
+                  style="push">
+               <visibleWhen checkEnabled="true"/>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.autotools.ui.commands"
+         name="Autoconf"
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            name="%InvokeAutotools.label">
+      </category>
+      <command
+            categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            description="%InvokeAutoconf.description"
+            id="org.eclipse.cdt.autotools.ui.command.autoconf"
+            name="%InvokeAutoconf.label">
+      </command>
+      <command
+            categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            description="%InvokeAutoheader.description"
+            id="org.eclipse.cdt.autotools.ui.command.autoheader"
+            name="%InvokeAutoheader.label">
+      </command>
+      <command
+            categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            description="%InvokeAutomake.description"
+            id="org.eclipse.cdt.autotools.ui.command.automake"
+            name="%InvokeAutomake.label">
+      </command>
+      <command
+            categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            description="%InvokeAutoreconf.description"
+            id="org.eclipse.cdt.autotools.ui.command.autoreconf"
+            name="%InvokeAutoreconf.label">
+      </command>
+      <command
+            categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            description="%InvokeAclocal.description"
+            id="org.eclipse.cdt.autotools.ui.command.aclocal"
+            name="%InvokeAclocal.label">
+      </command>
+      <command
+            categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            description="%InvokeLibtoolize.description"
+            id="org.eclipse.cdt.autotools.ui.command.libtoolize"
+            name="%InvokeLibtoolize.label">
+      </command>
+      <command
+            categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            description="%Reconfigure.description"
+            id="org.eclipse.cdt.autotools.ui.command.reconfigure"
+            name="%Reconfigure.label">
+      </command>
+      <command
+             categoryId="org.eclipse.cdt.autotools.ui.category.invokeAutotools"
+            id="org.eclipse.cdt.autotools.ui.command.showOutline"
+            name="Show Outline"/>
+   </extension>
+    <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.internal.autotools.ui.actions.AutoconfHandler"
+            commandId="org.eclipse.cdt.autotools.ui.command.autoconf">
+         <enabledWhen>
+            <reference definitionId="org.eclipse.cdt.autotools.ui.handlerEnablement"/>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.internal.autotools.ui.actions.AutoheaderHandler"
+            commandId="org.eclipse.cdt.autotools.ui.command.autoheader">
+         <enabledWhen>
+            <reference definitionId="org.eclipse.cdt.autotools.ui.handlerEnablement"/>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.internal.autotools.ui.actions.AutomakeHandler"
+            commandId="org.eclipse.cdt.autotools.ui.command.automake">
+         <enabledWhen>
+            <reference definitionId="org.eclipse.cdt.autotools.ui.handlerEnablement"/>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.internal.autotools.ui.actions.AutoreconfHandler"
+            commandId="org.eclipse.cdt.autotools.ui.command.autoreconf">
+         <enabledWhen>
+            <reference definitionId="org.eclipse.cdt.autotools.ui.handlerEnablement"/>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.internal.autotools.ui.actions.AclocalHandler"
+            commandId="org.eclipse.cdt.autotools.ui.command.aclocal">
+         <enabledWhen>
+            <reference definitionId="org.eclipse.cdt.autotools.ui.handlerEnablement"/>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.internal.autotools.ui.actions.LibtoolizeHandler"
+            commandId="org.eclipse.cdt.autotools.ui.command.libtoolize">
+         <enabledWhen>
+            <reference definitionId="org.eclipse.cdt.autotools.ui.handlerEnablement"/>
+         </enabledWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.internal.autotools.ui.actions.ReconfigureHandler"
+            commandId="org.eclipse.cdt.autotools.ui.command.reconfigure">
+         <enabledWhen>
+            <reference definitionId="org.eclipse.cdt.autotools.ui.handlerEnablement"/>
+         </enabledWhen>
+      </handler>
+      <handler
+              class="org.eclipse.cdt.internal.autotools.ui.actions.ShowOutlineHandler"
+              commandId="org.eclipse.cdt.autotools.ui.command.showOutline">
+      </handler>
+   </extension>
+    <extension
+          point="org.eclipse.cdt.core.templates">
+       <template
+             id="org.eclipse.cdt.autotools.ui.template.emptyProject"
+             location="templates/projecttemplates/EmptyProject/template.xml"
+             projectType="org.eclipse.linuxtools.cdt.autotools.core.projectType">
+       </template>
+       <template
+             filterPattern=".*gcc"
+             id="org.eclipse.cdt.autotools.ui.template.helloWorldCProject"
+             location="templates/projecttemplates/HelloWorldCAutotoolsProject/template.xml"
+             projectType="org.eclipse.linuxtools.cdt.autotools.core.projectType">
+       </template>
+       <template
+             filterPattern=".*g\+\+"
+             id="org.eclipse.cdt.autotools.ui.template.helloWorldCPPProject"
+             location="templates/projecttemplates/HelloWorldCPPAutotoolsProject/template.xml"
+             projectType="org.eclipse.linuxtools.cdt.autotools.core.projectType">
+       </template>
+       <template
+             id="org.eclipse.cdt.autotools.ui.template.autotoolsSharedLibraryProject"
+             location="templates/projecttemplates/AutotoolsSharedLibraryProject/template.xml"
+             projectType="org.eclipse.linuxtools.cdt.autotools.core.projectType">
+       </template>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.CDTWizard">
+       <wizard
+             class="org.eclipse.cdt.internal.autotools.ui.wizards.AutotoolsBuildWizard"
+             name="%Autotools.wizard.name">
+       </wizard>
+    </extension>
+    <extension
+          point="org.eclipse.core.expressions.definitions">
+       <definition
+             id="org.eclipse.cdt.autotools.ui.handlerEnablement">
+            <with
+                  variable="selection">
+               <count
+                     value="1">
+               </count>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt
+                        type="org.eclipse.core.resources.IResource">
+                     <or>
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="org.eclipse.cdt.autotools.core.autotoolsNatureV2">
+                        </test>
+                        <test
+                              property="org.eclipse.core.resources.projectNature"
+                              value="org.eclipse.linuxtools.cdt.autotools.core.autotoolsNatureV2">
+                        </test>
+                     </or>
+                  </adapt>
+               </iterate>
+            </with>
+       </definition>
+    </extension>
+    <extension
+         point="org.eclipse.ui.importWizards">
+       <wizard
+             category="org.eclipse.cdt.ui.importWizardCategory"
+             class="org.eclipse.cdt.internal.autotools.ui.wizards.AutotoolsProjectImportWizard"
+             icon="icons/ac16/convert_normal.gif"
+             id="org.eclipse.cdt.autotools.ui.wizards.importWizaed"
+             name="%Autotools.import.wizard.name">
+          <description>
+             %Autotools.import.wizard.description
+          </description>
+       </wizard>
+    </extension>
+</plugin>

@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="BinaryParser" name="BinaryParser"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to contribute a new Binary Parser to CDT. Binary Parsers analyse object or executable files in order to display their symbols and other information to users.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="cextension"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  ID of the extension point (Simple ID)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Name of the extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="cextension">
+      <complexType>
+         <sequence>
+            <element ref="filter" minOccurs="0" maxOccurs="1"/>
+            <element ref="run"/>
+         </sequence>
+      </complexType>
+   </element>
+   <element name="run">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.IBinaryParser"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="filter">
+      <annotation>
+         <appInfo>
+            <meta.element deprecated="true"/>
+         </appInfo>
+         <documentation>
+            Not recommended for usage. This is used only as a workaround for old code. The filter can only define visibility as private which would prevent the parser appearing in UI. Marked as deprecated as of CDT 6.1 planning to remove in next major release.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="visibility">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="value">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="private">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT 2.0
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.cdt.core.IBinaryParser&lt;/samp&gt; interface.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2009, 2009 Andrew Gvozdev (Quoin Inc.) and others.&lt;br/&gt;
+This program and the accompanying materials&lt;br/&gt;
+are made available under the terms of the Eclipse Public License 2.0&lt;br/&gt;
+which accompanies this distribution, and is available at&lt;br/&gt;
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0&lt;br/&gt;
+      </documentation>
+   </annotation>
+</schema>

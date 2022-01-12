@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="Importing C/C++ Projects">
+   <intro>
+      <description>
+         This guide walks you though the process of importing a C/C++ project into CDT.
+      </description>
+   </intro>
+   <item title="C/C++ workbench setup" dialog="false" skip="false" href="/org.eclipse.cdt.doc.user/concepts/cdt_c_perspectives.htm">
+      <description>
+         Start by setting up the CDT development environment.
+      </description>
+      <subitem label="Open C/C++ perspective." skip="true">
+         <command serialization="org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.cdt.ui.CPerspective)" confirm="false">
+         </command>
+      </subitem>
+   </item>
+   <item title="Creating a C/C++ project" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/reference/cdt_u_new_proj_wiz.htm">
+      <description>
+         Create a C++ or C project by choosing one of the following wizards.
+      </description>
+      <subitem label="Click File &gt; New &gt; C++ Project to launch the new C++ project wizard." skip="true">
+         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.cdt.ui.wizards.NewCWizard1)" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Click File &gt; New &gt; C Project to launch the new C project wizard." skip="true">
+         <command serialization="org.eclipse.ui.newWizard(newWizardId=org.eclipse.cdt.ui.wizards.NewCWizard2)" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Choose Executable &gt; Hello World C/C++ Example from the Project types list." skip="false">
+      </subitem>
+      <subitem label="Type a project name, set its location, and select a Toolchain, then click Next." skip="false">
+      </subitem>
+      <subitem label="Enter Basic Project information, then click Next." skip="true">
+      </subitem>
+      <subitem label="Select platforms and configurations to show in the Run/Debug menus, click Finish." skip="true">
+      </subitem>
+   </item>
+   <item title="Importing files to the project" dialog="true" skip="false" href="/org.eclipse.platform.doc.user/tasks/tasks-53.xhtml">
+      <description>
+         For a project to work it needs files. In this step you import your old project files into your new C/C++ project.
+      </description>
+      <subitem label="Click File &gt; Import and then use one of the following import methods." skip="true">
+		<!--
+         <command serialization="org.eclipse.ui.file.import" confirm="false">
+         </command>
+		-->
+      </subitem>
+      <subitem label="To import files from another project, click General &gt; Existing Projects into Workspace." skip="true">
+      </subitem>
+      <subitem label="To import files from the file system, click General &gt; File System." skip="true">
+      </subitem>
+   </item>
+   <item title="Building projects and inspecting files" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/tasks/cdt_o_build_task.htm">
+      <description>
+         Build the program to create a binary and examine it in Outline and Project Explorer views.
+      </description>
+      <subitem label="Click Project &gt; Build All to create a binary of your source file." skip="true">
+		<!--
+         <command serialization="org.eclipse.ui.project.buildAll" confirm="false">
+         </command>
+		-->
+      </subitem>
+      <subitem label="In the Project Explorer view, open the Binaries element and examine the program&apos;s binary." skip="true">
+      </subitem>
+      <subitem label="Open the .cpp file in the project and examine the Outline view." skip="true">
+		<!--
+         <command serialization="org.eclipse.cdt.ui.edit.open.outline" confirm="false">
+         </command>
+		-->
+      </subitem>
+   </item>
+   <item title="Setup project properties" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/reference/cdt_u_prop_general_idx.htm">
+      <description>
+         With the project imported and able to build, its time now to reset some project properties for easier development.
+      </description>
+      <subitem label="Right-click the project name in the Project Explorer view, then click Properties." skip="true">
+      </subitem>
+      <subitem label="Click C/C++ Indexer, then select Full C/C++ Indexer from the Select Indexer list." skip="true">
+      </subitem>
+   </item>
+   <item title="Running the program" dialog="true" skip="false" href="/org.eclipse.cdt.doc.user/reference/cdt_u_run_dbg_main.htm">
+      <description>
+         Create a run configuration that defines how the program is launched. Note you can define multiple run configurations if desired, each with its own settings.
+      </description>
+      <subitem label="Select the project and click Run As &gt; Open Run Dialog... to launch the program." skip="false">
+		<!--
+		  <command serialization="org.eclipse.debug.ui.commands.OpenRunConfigurations" confirm="false">
+         </command>
+		-->
+      </subitem>
+      <subitem label="Create a run configuration by double-clicking the C/C++ Local Application item." skip="false">
+      </subitem>
+      <subitem label="Type a configuration name in the Name box." skip="true">
+      </subitem>
+      <subitem label="If no binary name appears in the C/C++ Application box, click Search Project to select one in the Program Selection dialog." skip="true">
+      </subitem>
+      <subitem label="Click Apply, then click Run to launch the program. The Console view displays the program output." skip="true">
+         <command serialization="org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.ContentOutline)" confirm="false">
+         </command>
+      </subitem>
+   </item>
+</cheatsheet>

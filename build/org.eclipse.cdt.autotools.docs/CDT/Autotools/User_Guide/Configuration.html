@@ -1,0 +1,125 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Autotools Plug-in User Guide - Configuration</title>
+		<link type="text/css" rel="stylesheet" href="../../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Configuration</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Creating-an-Autotools-Project.html" title="Creating an Autotools Project">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Invoking-Autotools.html" title="Invoking Autotools">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Creating an Autotools Project</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Invoking Autotools</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Configuration">Configuration</h1>
+		<p>Prior to running a build, the Autotools plug-in runs the configure script.  Parameters to be passed to configure may be
+			entered via the Project -&gt; Properties -&gt; Autotools -&gt; Configure Settings UI shown below:</p>
+		<p>
+			<img border="0" src="images/AutotoolsConfigureSettings.png"/>
+		</p>
+		<p>If the top-level tree item: "Configure" is selected, you will notice how the actual configure script name is editable.  It is not recommended you change the name of the configure script as this is standard for Autotool projects.  However, you can use this text input to add environment variables to set prior to invoking the configure script.  For example, you might set the command to: 
+			<b>CFLAGS="-g -debug" configure</b> to have the CFLAGS environment variable overridden while configuring.  The same applies to the autogen.sh script settings.  On the advanced options page, there are a few prepared compilation options such as: compiling for debugging, compiling for the gcov tool, and compiling for the gprof tool.  One can also specify these options directly in the additional command-line options field as demonstrated in the screen-shot above.
+		</p>
+		<p>For configure, there are a number of standard parameters that apply to generated configure scripts.  Each parameter has its command line name presented so you can look it up in Autotools documentation.  In addition, tool-tip hover help is provided.</p>
+		<p>Under the Advanced category, there is a free-form line called "Additional command-line options" where you may enter any options in their command-line format.  This is useful for entering custom options that your configure script supports (e.g. --enable-feature-x or --with-lib-y).  It can also be used for any of the standard parameters as well if that is more familiar tor you.  Parameters in this list are appended to the end of parameters derived from the standard option entries (i.e. you could get two specifications of a parameter).  In the case of multiple specification, behaviour is the same as it is on the command line.  You can optionally check off the "Display help contents (--help)" option under the General category to see all the standard and custom options the configure script accepts.  As the configure script help is a product of how it is written, it is sometimes possible that the help is out of date with regards to added features.</p>
+		<p>In some cases, a project may choose not to invoke the Autotools ahead of time and instead
+			require this be done prior to configuration.  The input files that are fed to the Autotools are provided, but the output of
+			the Autotools are not.  This may be
+			done to lower the download size and additionally to avoid having to constantly regenerate the output files as the Autotools are
+			updated.  In such cases, an autogen.sh script may be provided which is simply a script that runs the various Autotools
+			required.  This script may or may not run the configure script at the end.  Alternatively, there is also the 
+			<i>autoreconf</i>
+			tool which can be invoked to recursively run through the source tree and run all Autotools where the input files are newer than
+			the output files (this includes the case where no output file is present).  Any options required when invoking the Autotools
+			can be encoded within the input files themselves.
+		</p>
+		<p>The following defines a priority list of scenarios that the Autotools plug-in checks for when performing the configure step and how each one is handled.</p>
+		<ol>
+			<li>A config.status file exists and configure script options have not changed since the last configuration
+				<ul>
+					<li>The config.status file is created as part of running a generated configure script.  It itself is a script file and indicates a configuration has already been performed.  If the configure options have not changed since that configuration, there is no need to do a full reconfigure.  A simple check is performed by calling the config.status script with the --recheck option.  This will verify that the generated Makefile exists and is up to date.</li>
+				</ul>
+			</li>
+			<li>A configure script exists
+				<ul>
+					<li>In this case, the configure script is run with any configuration options specified in the project properties.</li>
+				</ul>
+			</li>
+			<li>An autogen script exists
+				<ul>
+					<li>In this case, the autogen.sh script is run and following that, a check is made to see if config.status has been created, indicating that the configure script was run.  If has not configured, the configure script is run automatically if it was successfully created.</li>
+				</ul>
+			</li>
+			<li>A Makefile.cvs file exists
+				<ul>
+					<li>A Makefile.cvs is an alternate form of autogen.sh/configure script.  In this case, the file is fed to the make command.  If a configure script is created and not run as part of this process, it is run automatically.</li>
+				</ul>
+			</li>
+			<li>default case
+				<ul>
+					<li>At this point, there is no configure script or autogen.sh script and configure has not been run previously.  A last resort is to run the autoreconf command with -i to recursively search the source tree and invoke Autotools for any input file that is older than its output target (or if the target is missing).  If this generates a configure script, it is run automatically.</li>
+				</ul>
+			</li>
+		</ol>
+		<p>If after all of this, the top-level Makefile is not created, an error is generated and building stops.  </p>
+		<p>The configure process can be manually forced for a project via right-clicking on any file in the project to get the Context menu and selecting the Reconfigure Project menu item.  A reconfigure runs the configure script even if a config.status file is found indicating a prior configuration was successful.</p>
+		<p>The entire configuration step is performed by a special builder that is added when an Autotools project is created or converted from another project.  The special builder runs the configure step and is positioned in the builder order to run prior to the Makefile builder.</p>
+		<p>From the Project -&gt; Properties -&gt; Builders tab for a project you will see:</p>
+		<p>
+			<img border="0" src="images/AutotoolsBuilders.png"/>
+		</p>
+		<p>Do not un-check the Autotools Makefile builder nor change the order of the builders.  Modifying this will result in undefined behaviour.</p>
+		<p>The configure step output goes to a special Configuration console added by the Autotools plug-in.  This console is separate from the C-Build console which is used to display the results of the make command invocation.</p>
+		<p>To see the Configure console, click on the console selector button (icon looks like a T.V.) found in the Console View and choose an entry which starts with "Configure" and has the project name.</p>
+		<p>
+			<img border="0" src="images/AutotoolsConfigureConsole.png"/>
+		</p>
+		<p>Note that configure console output is per project and shows configuration output for the last build of the project.  It is not saved between Eclipse sessions.</p>
+		<p>The Autotools console is an instance of a CDT Build console so the console preferences set in Window -&gt; Preferences -&gt; C/C++ -&gt; Build Console apply as well.</p>
+		<p>
+			<img border="0" src="images/AutotoolsBuildConsole.png"/>
+		</p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Creating-an-Autotools-Project.html" title="Creating an Autotools Project">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="User-Guide.html" title="Autotools Plug-in User Guide">
+						<img alt="Autotools Plug-in User Guide" border="0" src="../../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Invoking-Autotools.html" title="Invoking Autotools">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Creating an Autotools Project</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Invoking Autotools</td>
+			</tr>
+		</table>
+	</body>
+</html>

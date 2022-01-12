@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="checkers" name="%codeAnalysisCheckersExtensionPoint" schema="schema/checkers.exsd"/>
+   <extension-point id="checkerEnablement" name="%checkerEnablementExtensionPoint" schema="schema/checkerEnablement.exsd"/>
+
+   <extension
+         id="codanBuilder"
+         name="%extension.name.Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.eclipse.cdt.codan.internal.core.CodanBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="codanNature"
+         name="%extension.name.Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.codan.internal.core.CodeAnalysisNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.cdt.codan.core.codanBuilder">
+      </builder>
+   </extension>
+   <extension
+         id="codanProblem"
+         name="%extension.name.Marker"
+         point="org.eclipse.core.resources.markers">
+
+      <super type="org.eclipse.core.resources.problemmarker"/> 
+      <super type="org.eclipse.core.resources.textmarker"/> 
+      
+              <attribute
+          name="category">
+    </attribute>
+    <attribute
+          name="id">
+    </attribute>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="args">
+      </attribute>
+   </extension>
+      <extension
+         id="codanSemanticProblem"
+         name="%marker.semanticError"
+         point="org.eclipse.core.resources.markers">
+
+      <super type="org.eclipse.cdt.codan.core.codanProblem"/> 
+
+      <persistent
+            value="false">
+      </persistent>
+   
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.codan.internal.core.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+      <extension
+         point="org.eclipse.cdt.codan.core.checkers"
+         id="org.eclipse.cdt.codan.core.categories">
+
+      <category
+      id="org.eclipse.cdt.codan.core.categories.ProgrammingProblems"
+      name="%category.name.ProgrammingErrors"
+      />
+            <category
+      id="org.eclipse.cdt.codan.core.categories.CodeStyle"
+      name="%category.name.CodeStyle"
+      >
+      </category>
+      <category
+      id="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+      name="%category.name.CompilerErrors"
+      />
+            <category
+      id="org.eclipse.cdt.codan.core.categories.Security"
+      name="%category.name.Security"
+      />
+   </extension>
+   
+      <extension
+            id="application"
+            point="org.eclipse.core.runtime.applications">
+         <application
+               cardinality="singleton-global"
+               thread="main"
+              visible="true">
+           <run
+                 class="org.eclipse.cdt.codan.internal.core.CodanApplication">
+           </run>
+        </application>
+     </extension>
+ 
+   
+
+</plugin>

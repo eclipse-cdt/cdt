@@ -1,0 +1,62 @@
+<?eclipse version="3.0"?>
+<plugin>
+ 
+<extension point="org.eclipse.debug.ui.memoryRenderings">
+    <renderingType 
+        name="%renderingType.name"
+        id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering"
+        class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingTypeDelegate">
+    </renderingType>
+    <renderingBindings
+        renderingIds="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering"
+        defaultIds="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRendering">
+        <enablement>
+            <instanceof value="org.eclipse.debug.core.model.IMemoryBlockExtension"/>
+        </enablement>    
+    </renderingBindings>          
+</extension>
+
+<extension
+      point="org.eclipse.ui.preferencePages">
+   <page
+         category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+         class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
+         id="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferencePage"
+         name="%page.name"/>
+</extension>
+<extension
+      point="org.eclipse.core.runtime.preferences">
+   <initializer class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferenceInitializer"/>
+</extension>
+
+<extension point="org.eclipse.ui.viewActions">
+    <viewContribution
+            targetID="org.eclipse.debug.ui.MemoryView"
+            id="org.eclipse.debug.ui.memoryView.toolbar">
+         <action
+               class="org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPreferenceAction"
+               helpContextId="TraditionalRenderingPreferenceAction_context"
+               id="org.eclipse.cdt.debug.ui.memory.traditional.preferenceaction"
+               label="%TraditionalRenderingPreferenceActionName"
+               menubarPath="additions"
+               style="push"
+               tooltip="%TraditionalRenderingPreferenceActionName"/>
+	</viewContribution>
+</extension>
+
+   <extension
+		point = "org.eclipse.ui.trace.traceComponents">
+	<component
+		id="org.eclipse.cdt.debug.ui.memory.traditional.component"
+		label="Traditional Rendering">
+		<bundle
+			consumed="true"
+			name="org.eclipse.cdt.debug.ui.memory.traditional">
+		</bundle>
+	</component>
+   </extension>
+
+
+</plugin>
+
+

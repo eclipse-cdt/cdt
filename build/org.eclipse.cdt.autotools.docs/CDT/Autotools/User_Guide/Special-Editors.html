@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Autotools Plug-in User Guide - Special Editors</title>
+		<link type="text/css" rel="stylesheet" href="../../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Special Editors</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Invoking-Autotools.html" title="Invoking Autotools">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Building.html" title="Building">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Invoking Autotools</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Building</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Special_Editors">Special Editors</h1>
+		<p>The Autotools plug-in provides two special editors for editing Autotool input files.  The first is the Autoconf Editor.  This editor is invoked when opening configure.in, configure.ac files as well as the resultant configure scripts that autoconf creates.  Support includes full colourization, outline view, rudimentary error parsing, and hover help/completion.</p>
+		<p>
+			<img border="0" src="images/AutotoolsAutoconfEditor.png"/>
+		</p>
+		<p>The outline view shows macro references and program control statements such as if, else, for, etc...  Hover help with text completion is provided for the various AC-prefixed and AM-prefixed macros that are provided as standard.  As the macros vary from release to release of autoconf and automake, the editor uses an autoconf and automake version property to determine which set of macros it should adhere to.  The versions selected affect the parsing which will issue warnings for macros that do not have enough parameters or too many parameters.  To set the autoconf and automake versions for the Autoconf Editor, go to the Project -&gt; Properties -&gt; Autotools -&gt; General page and select the Editors tab.</p>
+		<p>
+			<img border="0" src="images/AutotoolsEditorsTab.png"/>
+		</p>
+		<p>There you will find a pull-down of the various versions supported.  Future releases may add new versions.</p>
+		<p>The default autoconf and automake versions to use for editing can be set as a preference.  Go to Window -&gt; Preferences -&gt; C/C++ -&gt; Autotools -&gt; Autoconf Editor and click on the Versions tab.</p>
+		<p>
+			<img border="0" src="images/AutotoolsEditorPreferences.png"/>
+		</p>
+		<p>Under the Syntax tab of the same preference page, you can change the colours used for the various elements shown in the editor.</p>
+		<p>A second editor, the Automake Editor is also provided by the Autotools plug-in.  This editor is invoked when opening a Makefile.am or Makefile.in file.  Support includes full colourization, outline view, rudimentary error parsing, and hover help.</p>
+		<p>
+			<img border="0" src="images/AutotoolsAutomakeEditor.png"/>
+		</p>
+		<p>In the example shown, one can see the $ variable references are displayed when hovered over.  This is particularly useful for $&lt; and $@ in make targets to understand what is being referenced.  In some instances, you will see reference to variables surrounded by the @ symbol (e.g. @srcdir@).  This represents a variable that is to be substituted by the configure script.</p>
+		<p>Rudimentary error parsing looks for syntax errors.  As with the Autoconf editor, colourization can be controlled by preferences.  Go to Window -&gt; Preferences -&gt; C/C++ -&gt; Autotools -&gt; Automake Editor and click on the Syntax tab.</p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Invoking-Autotools.html" title="Invoking Autotools">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="User-Guide.html" title="Autotools Plug-in User Guide">
+						<img alt="Autotools Plug-in User Guide" border="0" src="../../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Building.html" title="Building">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Invoking Autotools</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Building</td>
+			</tr>
+		</table>
+	</body>
+</html>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US" xml:id="gdb">
+  <title>GDB (optional!)</title>
+  <para>This section is completely optional. You may skip it and go
+        directly to <xref linkend="msys"/>.</para>
+  <para>If you want to use the debugger, you may have to install it
+        separately. This is the case with MinGW 5.0.2, it may be different in
+        other versions. Download it from the same page, look for a package
+        starting with gdb and ending with .exe. At the time of this writing
+        (Apr 29) the current version was "gdb-5.2.1-1.exe". Install
+        (double-click) that .exe, select all the default options (make sure
+        you select the same MinGW directory as you did during the MinGW
+        install).</para>
+  <para>I have received a report that gdb-6.3-2 does not work. So I
+        would advise using the older version or waiting for a newer
+        one.</para>
+  <para>Checkpoint:</para>
+  <programlisting>gdb --version</programlisting>
+  <para>should print the gdb version. This is optional.</para>
+</section>

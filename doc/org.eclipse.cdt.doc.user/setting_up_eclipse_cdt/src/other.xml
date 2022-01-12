@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" xmlns:xi="http://www.w3.org/2001/XInclude" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:lang="en-US" xml:id="other_resources">
+  <title>Other Resources</title>
+  <para>When looking for Instructions, I found the following
+    websites:</para>
+  <itemizedlist>
+    <listitem>
+      <para>
+        <link xlink:href="http://wiki.eclipse.org/CDT/User/FAQ"/>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link xlink:href="http://yongshin.blogspot.com/2005/11/how-to-use-cdt-and-mingw-for-eclipse.html"/>
+      </para>
+    </listitem>
+    <listitem>
+      <para>
+        <link xlink:href="http://www.cs.umanitoba.ca/~eclipse/7-EclipseCDT.pdf"/>
+      </para>
+    </listitem>
+  </itemizedlist>
+</section>

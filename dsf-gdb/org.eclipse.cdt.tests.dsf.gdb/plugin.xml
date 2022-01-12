@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            delegate="org.eclipse.cdt.tests.dsf.gdb.launching.TestLaunchDelegate"
+            public="false"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            name="DSF JUnit Test Application"
+            id="org.eclipse.cdt.tests.dsf.gdb.TestLaunch"
+            modes="debug">
+      </launchConfigurationType>
+   </extension>
+</plugin>

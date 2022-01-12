@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+	Copyright (c) 2017-2019 Ericsson and others
+
+	This program and the accompanying materials are made available under the
+	terms of the Eclipse Public License 2.0 which is available at
+	https://www.eclipse.org/legal/epl-2.0/.
+
+	SPDX-License-Identifier: EPL-2.0
+
+	Contributors:
+		Ericsson - initial API and implementation
+		Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558484
+-->
+<plugin>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="cpp,c,h,cxx,cc,hxx,hpp"
+            id="org.eclipse.cdt.lsp.core"
+            name="%content-type.name"
+            priority="normal">
+      </content-type>
+   </extension>
+   <extension
+         point="org.eclipse.lsp4e.languageServer">
+      <server
+            class="org.eclipse.cdt.lsp.core.CPPStreamConnectionProvider"
+            id="org.eclipse.cdt.lsp.core"
+            label="%server.label"
+            launcherBuilder="org.eclipse.cdt.lsp.internal.core.DelegatingLauncherBuilder"
+            singleton="true">
+      </server>
+      <contentTypeMapping
+            contentType="org.eclipse.cdt.lsp.core"
+            id="org.eclipse.cdt.lsp.core">
+         <enabledWhen
+               description="Project-level settings">
+            <reference
+                  definitionId="org.eclipse.cdt.lsp.core.projectAllows">
+            </reference>
+         </enabledWhen>
+      </contentTypeMapping>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.eclipse.cdt.lsp.core.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.cdt.lsp.core.projectAllows">
+         <and>
+            <reference
+                  definitionId="org.eclipse.ui.genericeditor.GenericEditor.active">
+            </reference>
+            <with
+                  variable="activeEditor">
+               <test
+                     property="org.eclipse.cdt.lsp.documents.prefer"
+                     value="true">
+               </test>
+            </with>
+         </and>
+      </definition>
+   </extension>
+</plugin>

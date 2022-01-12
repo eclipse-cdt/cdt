@@ -1,0 +1,349 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<link href="_stock/sysdoc.css" type="text/css" rel="stylesheet" media="screen">
+<link href="_stock/sysdoc.css" type="text/css" rel="stylesheet" media="print">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Example template in How to extend the user interface using templates</title>
+
+   <style type="text/css" media="screen">
+	   .ButtonBox { background-image: url(_stock/gradient.jpg); }
+   </style>
+   </head>
+   <body>
+   <table width="100%" border="0" cellspacing="0" cellpadding="0"><tbody><tr>
+   </tr><tr><td class="DocSetBox" width="25%">
+   <p>&nbsp;</p>
+   </td>
+   <td class="ButtonBox" align="right" width="40%">
+   <p><A href="../_index/index.html"></a>&nbsp;&nbsp; 
+   <A href="Howtoregistertemplates.html"><IMG height=22 alt="[Previous]" src="_stock/btn_prev_wt.gif" width=85 border=0 ></a> <A href="index.html"></a></p>
+   </td>
+   </tr></tbody></table>
+   <hr noshade size="1">
+   <p class="breadcrumbNav"><span class="separator">&raquo;</span>
+   <A href="index.html">How&nbsp;to&nbsp;extend&nbsp;the&nbsp;user&nbsp;interface&nbsp;using&nbsp;templates</a>&nbsp;<span class="separator">&raquo;</span> Example&nbsp;template</p>
+
+   <hr noshade size="1">
+   <div class="AuthoredContent">
+    
+
+</div><div class="Head1">
+
+<h1>Example template</h1>
+</div><div class="Bodytext">
+<p>
+The following is an example template to create a simple Symbian OS
+<code class="filename">EXE</code> project: 
+</p>
+<p class="CodeBlock"><code>&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;<br>
+&lt;template type="ProjTempl" version="1.0" supplier="Symbian" revision="1.0" author="Bala Torati"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id="EXE" label="Simple EXE" description="A skeletal Symbian OS EXE project. Creates a folder for sources and another for include."<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; help="help.html"&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;property-group id="basics" label="Basic Settings" description="Basic properties of a project" type="PAGES-ONLY" help="help.html"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&lt;property id="uid2"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="UID 2"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description="UID 2"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default="0x00000000"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type="input"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pattern="0x[0-9a-fA-F]{8}"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hidden="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandatory="true"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;persist="true"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&lt;property id="uid3"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="UID 3"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description="UID 3"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default="0x00000000"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type="input"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pattern="0x[0-9a-fA-F]{8}"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hidden="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandatory="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;persist="true"/&gt;<br>
+<br>
+&lt;property id="vid"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="Vendor ID"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description="Vendor ID"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default="0x00000000"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type="input"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pattern="0x[0-9a-fA-F]{8}"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hidden="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandatory="true"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;persist="true"/&gt;<br>
+<br>
+&lt;property id="author"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="Author"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description="Name of the author"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type="input"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pattern=".*"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default=""<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hidden="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;persist="true"/&gt;<br>
+<br>
+&lt;property id="copyright"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="Copyright notice"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description="Your copyright notice"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type="input"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pattern=".*"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default="Your copyright notice"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hidden="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;persist="true"/&gt;<br>
+<br>
+&lt;property id="targetType"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="Target Type"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description="Select the target type"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type="select"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default="app"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hidden="false"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandatory="true"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;persist="true"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item label="APP" value="app"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item label="LIB" value="lib"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item label="DLL" value="dll"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item label="EXE" value="exe"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;item label="EXEDLL" value="exedll"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property-group&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;property-group id="directories" label="Project Directories" description="Generated files will be copied to the specified directories under the project root directory" type="PAGES-ONLY" help="help.html"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;property id="incDir"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="Include"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description="Directory for C++ header files"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type="input"<br>
+&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;default="inc"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pattern="[a-zA-Z0-9]+"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandatory="true"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;persist="true"/&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;property id="sourceDir"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;label="Source"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description="Directory for C++ source files"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;type="input"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default="src"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pattern="[a-zA-Z0-9]+"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mandatory="true"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;persist="true"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/property-group&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="name" value="$(projectName)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="targetType" value="$(targetType)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="uid2" value="$(uid2)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="uid3" value="$(uid3)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="vid" value="$(vid)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/process&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;process type="org.eclipse.cdt.core.CreateSourceFolder"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="projectName" value="$(projectName)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="path" value="$(sourceDir)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/process&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;process type="org.eclipse.cdt.managedbuilder.core.CreateIncludeFolder"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="projectName" value="$(projectName)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="path" value="$(incDir)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/process&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;process type="org.eclipse.cdt.core.AddFiles"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="projectName" value="$(projectName)"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex-array name="files"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="source" value="inc/Basename.h"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="target" value="$(incDir)/$(baseName).h"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="replaceable" value="true"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="source" value="src/Basename.cpp"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="target" value="$(sourceDir)/$(baseName).cpp"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="replaceable" value="true"/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex-array&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/process&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;process type="org.eclipse.cdt.managedbuilder.core.AppendToMBSStringListOptionValues"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple 
+name="projectName" value= "$(projectName)"/&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;complex-array name="resourcePaths"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="id" value=".*linker\.libraries\.libraries.*" /&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple-array name="values"&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;element value="euser.lib" /&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/simple-array&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;simple name="path" value="" /&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/element&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/complex-array&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/process&gt;<br>
+&lt;/template&gt;</code></p>
+<p>
+The above given template copies the following source (<code class="filename">.cpp</code>)
+and header (<code class="filename">.h</code>) files in the <code>src</code> and <code>inc</code>
+folders respectively. These files uses a set of macros to get the values
+specified by the developer for file name, author name, copyright etc.
+</p>
+<p class="CodeBlock"><code>/*<br>
+============================================================================<br>
+&nbsp;Name        : $(baseName).cpp<br>
+&nbsp;Author      : $(author)<br>
+&nbsp;Version     :<br>
+&nbsp;Copyright   : $(copyright)<br>
+&nbsp;Description : Exe source file<br>
+============================================================================<br>
+*/<br>
+<br>
+//  Include Files  <br>
+<br>
+#include "$(baseName).h"<br>
+#include &lt;e32base.h&gt;<br>
+#include &lt;e32std.h&gt;<br>
+#include &lt;e32cons.h&gt;            // Console<br>
+<br>
+<br>
+//  Constants<br>
+<br>
+_LIT(KTextConsoleTitle, "Console");<br>
+_LIT(KTextFailed, " failed, leave code =      %d");<br>
+_LIT(KTextPressAnyKey, " [press any key]\n");<br>
+<br>
+<br>
+//  Global Variables<br>
+<br>
+LOCAL_D CConsoleBase* console;  // write all messages to this<br>
+<br>
+<br>
+//  Local Functions<br>
+<br>
+LOCAL_C void MainL(const TDesC&amp; aArgs)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// add your program code here, example code below<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;console-&gt;Write(_L("Hello, world!\n"));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;console-&gt;Printf(_L("Command line args: \"%S\"\n"), &amp;aArgs);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+<br>
+LOCAL_C void DoStartL()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Create active scheduler (to run active objects)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CActiveScheduler* scheduler = new (ELeave) CActiveScheduler();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CleanupStack::PushL(scheduler);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CActiveScheduler::Install(scheduler);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Call main function with command line<br>
+&nbsp;&nbsp;&nbsp;&nbsp;TBuf&lt;256&gt; cmdLine;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;RProcess().CommandLine(cmdLine);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;MainL(cmdLine);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Delete active scheduler<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CleanupStack::PopAndDestroy(scheduler);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+<br>
+//  Global Functions<br>
+<br>
+GLDEF_C TInt E32Main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Create cleanup stack<br>
+&nbsp;&nbsp;&nbsp;&nbsp;__UHEAP_MARK;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;CTrapCleanup* cleanup =     CTrapCleanup::New();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Create output console<br>
+&nbsp;&nbsp;&nbsp;&nbsp;TRAPD(createError, console =     Console::NewL(KTextConsoleTitle, TSize(KConsFullScreen,KConsFullScreen)));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if (createError)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return createError;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;// Run application code inside TRAP harness, wait keypress when terminated<br>
+&nbsp;&nbsp;&nbsp;&nbsp;TRAPD(mainError, DoStartL());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if (mainError)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console-&gt;Printf(KTextFailed, mainError);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;console-&gt;Printf(KTextPressAnyKey);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;console-&gt;Getch();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;delete console;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;delete cleanup;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;__UHEAP_MARKEND;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return KErrNone;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}</code></p>
+<p class="CodeBlock"><code>/*<br>
+============================================================================<br>
+&nbsp;Name        : $(baseName).h<br>
+&nbsp;Author      : $(author)<br>
+&nbsp;Version     :<br>
+&nbsp;Copyright   : $(copyright)<br>
+&nbsp;Description : Exe header file<br>
+============================================================================<br>
+*/<br>
+<br>
+#ifndef __$(baseName)_H__<br>
+#define __$(baseName)_H__<br>
+<br>
+<br>
+//  Include Files<br>
+<br>
+#include &lt;e32base.h&gt;<br>
+<br>
+<br>
+//  Function Prototypes<br>
+<br>
+GLDEF_C TInt E32Main();<br>
+<br>
+<br>
+#endif  // __$(baseName)_H__</code></p>
+<p>
+When the developer chooses the above template in the New Project wizard,
+the following wizard pages are generated: 
+</p>
+<div class="Figure">
+	<p class="Image"><a name="Basic Settings"><IMG alt="Basic Settings" src="_stock/basicsettings.gif" border=0></a></p>
+<p class="Caption">
+Basic Settings 
+</p>
+</div>
+<div class="Figure">
+	<p class="Image"><a name="Project Directories"><IMG alt="Project Directories" src="_stock/projectdirectories.gif" border=0></a></p>
+<p class="Caption">
+Project Directories 
+</p>
+</div>
+<p>
+The input fields listed in the above given pages are as per the
+definitions given in the template. In the template, the
+<code>property-group</code> element with the ID "basics" defines all the input
+fields required for the <code class="ProgramOutput">Basic Settings</code> page. While the
+<code class="ProgramOutput">property-group</code> element with the ID "directories" defines all
+the input fields required for the <code class="ProgramOutput">Project Directories</code> page. 
+</p>
+<p>
+The template will create a Symbian OS <code class="filename">EXE</code> project in the
+Eclipse workspace with all the required resources. 
+</p>
+<p>
+The following <code class="ProgramOutput">C/C++ Projects</code> view shows the resources
+created by the New Project wizard for the above given template: 
+</p>
+<div class="Figure">
+	<p class="Image"><a name="Explorer view"><IMG alt="Explorer view" src="_stock/explorerview.gif" border=0></a></p>
+<p class="Caption">
+Explorer view 
+</p>
+</div> 
+
+   </div><div class="Footer">
+   <hr noshade size="1">
+   <table cellpadding="0" cellspacing="0" border="0" width="100%">
+     <tr>
+       <td class="ButtonBottomBox" align="right" height="12" width="67%">
+         <p>
+	 <A href="Howtoregistertemplates.html"><IMG height=22 alt="[Previous]" src="_stock/btn_prev.gif" width=85 border=0></a>
+	 <A href="#_top"><IMG height=22 alt="[Top]" src="_stock/btn_top.gif" width=51 align=bottom border=0 ></a>&nbsp;
+           <A href="index.html"></a>
+         </p>
+       </td>
+     </tr>
+   </table>
+   </div>
+   </body>
+   </html>
+   

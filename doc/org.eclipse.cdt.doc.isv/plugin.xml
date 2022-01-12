@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+    <extension
+         point="org.eclipse.help.toc">
+      <toc
+            primary="true"
+            file="toc.xml"/>
+      <toc
+            primary="false"
+            file="topics_Guide.xml"/>
+      <toc
+            primary="false"
+            file="topics_Reference.xml"/>
+      <index path="index/"/>
+   </extension>
+
+</plugin>

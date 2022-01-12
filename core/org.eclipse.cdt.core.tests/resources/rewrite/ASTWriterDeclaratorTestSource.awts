@@ -1,0 +1,227 @@
+//!DeclaratorTest
+//%CPP
+int sd;
+int* ip;
+int hs = 1;
+char& c;
+
+void foo()
+{
+    struct B
+    {
+        int f();
+    };
+    int (B::*pb)() = &B::f;
+}
+
+
+//!ArrayDeclaratorTest
+//%CPP
+int* pi[3];
+int (*p3i)[3];
+
+//!FieldDeclaratorTest
+//%CPP
+struct Bit
+{
+    int bit : 3;
+};
+
+//!CStandardFunctionDeclaratorTest
+//%C
+int foo();
+int bar(int a, int b);
+int fun(const char* a, ...);
+int fun3(int i, const char* a, ...);
+
+//!CPPStandardFunctionDeclaratorTest
+//%CPP
+int foo();
+int bar(int a, int b);
+int fun(const char* a, ...);
+int fun2(const char* a ...);
+int fun3(int i, const char* a, ...);
+//= ,... is synonymous with ...
+int foo();
+int bar(int a, int b);
+int fun(const char* a, ...);
+int fun2(const char* a, ...);
+int fun3(int i, const char* a, ...);
+
+//!CPPFunctionDeclaratorTest
+//%CPP
+char& operator [](unsigned int);
+class TestClass
+{
+    int alpha;
+    TestClass(int a);
+    virtual void pure() = 0;
+    virtual void func() noexcept = 0;
+};
+
+TestClass::TestClass(int a)
+:alpha(a)
+{
+}
+
+void undefPar(const char* c) throw (int);
+int getV() const;
+int vol() volatile;
+
+//!ICPPASTFunctionTryBlockDeclarator
+//%CPP
+int f(int);
+class C
+{
+    int i;
+    double d;
+
+public:
+    C(int, double);
+};
+
+C::C(int ii, double id)
+try
+:i(f(ii)), d(id)
+{
+}
+catch (...){
+}
+
+
+//!CKnRFunctionDeclarator
+//%C GNU
+int foo(a, b)
+int b, a;
+{
+}
+
+
+//!ICPPASTDeclarator with nested declarator being a variable
+//%C
+int* (*var[3]);
+
+//!ICPPASTDeclarator with nested declarator and redundant parentheses 
+//%C
+char (*((*fptr))(int, char));
+
+//!ICPPASTDeclarator with nested declarator as a method
+//%CPP
+class Foo
+{
+    int (*(*aMethod())[2]);
+};
+//!ICPPASTReferenceOperator rvalue reference
+//%CPP
+int&& foo(int&& a)
+{
+    char&& b;
+}
+
+//!ICPPASTFunctionDeclarator in member function declared final
+//%CPP
+struct S
+{
+    virtual void memFun() final;
+};
+
+//!ICPPASTFunctionDeclarator in member function declared override
+//%CPP
+struct S
+{
+    virtual void memFun() override;
+};
+
+//!ICPPASTFunctionDeclarator in member function declared override final
+//%CPP
+struct S
+{
+    virtual void memFun() override final;
+};
+
+//!ICPPASTFunctionDeclarator in member function definition declared final
+//%CPP
+struct S
+{
+    virtual void memFun() final
+    {
+    }
+};
+
+//!Noexcept without expression specifiers
+//%CPP
+void foo() noexcept
+{
+}
+
+
+//!Noexcept with expression specifiers
+//%CPP
+void foo() noexcept (1 + 1)
+{
+}
+
+//!Nested noexcept specifiers
+//%CPP
+void foo() noexcept (noexcept (1 + 1))
+{
+}
+
+//!Multiple nested noexcept specifiers
+//%CPP
+void foo() noexcept (noexcept (1 + 1) && noexcept (2 + 3))
+{
+}
+
+//!Basic UDL operator
+//%CPP
+constexpr long double operator ""_deg(long double deg)
+{
+    return deg * 3.141592 / 180;
+}
+
+//!Memberfunction with varargs parameter without pointer ops
+//%CPP
+struct Foo
+{
+    template<typename... ARGS> 
+    void bar(ARGS... args)
+    {
+    }
+};
+
+//!Memberfunction with varargs parameter with pointer ops
+//%CPP
+struct Foo
+{
+    template<typename... ARGS> 
+    void bar(ARGS&&... args)
+    {
+    }
+};
+
+//!Template function with varargs parameter without pointer ops
+//%CPP
+template<typename... ARGS> 
+void foo(ARGS... args)
+{
+}
+
+//!Template function with varargs parameter with pointer ops
+//%CPP
+template<typename... ARGS> 
+void foo(ARGS&&... args)
+{
+}
+
+//!Function with varargs parameter without pointer ops
+//%CPP
+void foo(int arg, ...)
+{
+}
+
+//!Function with varargs parameter with pointer ops
+//%CPP
+void foo(int&& arg, ...)
+{
+}

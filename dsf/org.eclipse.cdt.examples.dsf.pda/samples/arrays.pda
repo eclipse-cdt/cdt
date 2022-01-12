@@ -1,0 +1,14 @@
+var a[10000]
+var i
+push 10000
+pop $i
+:start
+push $i
+dec
+pop $i
+push $i
+pop $a[i]
+push $i
+branch_not_zero start
+halt
+

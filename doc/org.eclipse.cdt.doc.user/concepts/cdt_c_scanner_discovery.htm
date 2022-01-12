@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <meta name="copyright" content="Copyright (c) Andrew Gvozdev and others 2013,2013. This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Scanner Discovery</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div>
+<h1>Scanner Discovery</h1>
+<p>
+
+<h2>General</h2>
+<strong>Scanner Discovery</strong> (sometimes called <strong>Autodiscovery</strong>) is a method of finding include paths and predefined preprocessor macros which the compiler uses during compilation of the code.
+</p>
+
+<p>
+Even a simplest C/C++ program just printing "Hello World" needs to include system headers. Consider:
+</p>
+<pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void) {
+  puts("!!!Hello World!!!");
+  return EXIT_SUCCESS;
+}
+</pre>
+
+<p>
+Indexer needs to be able to find headers <span class="typewriter">stdio.h</span> and <span class="typewriter">stdlib.h</span> and parse them to provide accurate index.
+In this example, the headers define prototype of function <span class="typewriter">puts</span> and macro <span class="typewriter">EXIT_SUCCESS</span>.
+</p>
+
+
+<p>
+CDT will try to discover include paths and preprocessor symbols automatically for supported toolchains.
+There are 2 main ways to discover those:
+</p>
+<ol>
+<li><strong>Built-in</strong> Settings.
+CDT will try to detect built-in compiler symbols and include paths running the compiler with special options and parse the output of this special run.
+Most compilers provide such an option to print built-in include paths and symbols. Built-in settings are implied and do not get passed to compiler during regular compilation.
+</li>
+<li><strong>Build Output Parser (BOP)</strong>. 
+Another method that CDT employs is to analyze build output of the regular build with Build Output Parser.
+Often, include paths are supplied to the compiler with <span class="typewriter">-I</span> options, and macros with <span class="typewriter">-D</span> options
+and BOP will try to find those in the output.
+That method relies on verbose build output of your build where all these options are actually printed by make.
+</li>
+</ol>
+
+<p>
+CDT uses <strong>Language Settings Providers</strong> to discover the settings (starting with version CDT 8.1). Typically Language settings Providers are specialized.
+One will provide built-in compiler settings and another one settings detected by Build output Parser.
+There is also an extension point defined in CDT to allow third party Eclipse plugins to contribute custom Language Settings Providers.
+</p>
+
+<p>
+The setting entries found by Scanner Discovery can be inspected in project properties on "Preprocessor Include Paths, Macros etc." page.
+Each Language Settings Provider can be expanded to show the entries it discovered.
+</p>
+
+<p>
+<img src="../images/scanner_discovery/sd_prop_entries.png" alt="Preprocessor Include Paths and Macros Entries">
+</p>
+
+
+<p>
+If information retrieved by auto-discovery is insufficient or the project deviates from a standard one supported by CDT a user can enter additional include paths and macros manually under "User Settings Entries".
+</p>
+
+<h2>Project Explorer View</h2>
+
+<p>
+The <strong>Project Explorer View</strong> provides a means to view some of the settings. The discovered include paths are shown under the project when "Includes" node is expanded.<br>
+Also, a <strong>"Wrench" overlay</strong> icon is shown for those file/folders where distinct entries are discovered which differ from those of parent folder. Wrench is not shown on project level.<br>
+In the example below, <span class="typewriter">Hello.cpp</span> was compiled with added <span class="typewriter">-DHELLO</span> compiler option.
+After BOP discovery "Wrench" overlay is shown for this file.
+</p>
+<p>
+<img src="../images/scanner_discovery/sd_project_explorer.png" alt="Project Explorer view">
+</p>
+
+<h2>Console View</h2>
+<p>
+The output of built-in compiler specs detectors can be inspected to troubleshoot problems running the command.
+To do so, enable checkbox "Allocate console in the Console View".
+</p>
+<p>
+<img src="../images/scanner_discovery/sd_specs_detector_options.png" alt="Spec Detectors Properties"></img>
+</p>
+
+<p>
+When checkbox "Allocate console in the Console View" is enabled, output of each run of the provider will be directed to a special console in the Console View.
+</p>
+<p>
+<img src="../images/scanner_discovery/sd_console_view.png" alt="Console View"></img>
+</p>
+
+<p><img src="../images/ngconcepts.gif" alt="Related concepts" width="143" height="21"><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+</p>
+
+<p><img src="../images/ngtasks.gif" alt="Related tasks" width="143" height="21"><br>
+<a href="../tasks/cdt_t_sd.htm">Setting up include paths and macros for C/C++ indexer</a><br>
+</p>
+
+<p><img src="../images/ngref.gif" alt="Related reference" width="143" height="21"><br>
+<a href="../reference/cdt_u_pref_build_scanner_discovery.htm">C/C++ Preferences: Scanner Discovery</a><br>
+<a href="../reference/cdt_u_prop_general_scanner_discovery.htm">C/C++ Project properties: Preprocessor Include Paths, Macros, etc.</a><br>
+</p>
+
+</div>
+</body>
+</html>

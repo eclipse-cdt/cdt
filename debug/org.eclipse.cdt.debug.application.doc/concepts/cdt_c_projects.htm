@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>CDT projects</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main">
+<h1>C/C++ projects</h1>
+
+<p>Normally, before you can work with plug-ins provided by the CDT, you must create an Eclipse project to store your 
+source code, makefiles, binaries, and related files.  However, when you use the Stand-alone Debugger, a project is created
+for your executable automatically (usually the <strong>Executables</strong> project if only dealing with one executable).
+The project created on your behalf just contains the executable and links to the source files specified in the debug
+info.  In most cases, you do not need to know about the project to debug, but if you wish to see the various files used
+and browse them directly with the editor, you can find the project in the C/C++ Projects view.  While you are allowed to import
+files into the C/C++ project, this action is normally used for adding files to a project that can build.  Since the Stand-alone
+Debugger does not contain CDT (C/C++ Developer Tools) build capability, adding files does nothing to aid in debugging and can
+confuse the indexer if the source has errors in it.</p>
+
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="cdt_c_proj_file_views.htm">Project file views</a><br>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_o_proj_files.htm">Working with C/C++ project files</a><br>
+</p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_o_proj_prop_pages.htm">Project properties</a><br>
+<a href="../reference/cdt_o_views.htm">Views</a></p>
+
+
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+</div>
+</body>
+
+</html>

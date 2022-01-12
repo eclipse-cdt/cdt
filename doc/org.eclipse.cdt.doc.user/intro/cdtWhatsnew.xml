@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<introContent>
+    <extensionContent id="orgeclipsecdtdocuserwelcome-introExtension" 
+                      alt-style="swt/tutorial.properties"
+                      style="css/sample.css" name="Sample Extension" path="whatsnew/@">
+		<group style-id="content-group" id="orgeclipsecdtdocuserwelcome-introLink-group">
+       		<link label="C/C++ Development" 
+       		url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.cdt.doc.user/concepts/cdt_c_whatsnew.htm" 
+       		id="orgeclipsecdtdocuserwelcome-introLink" style-id="content-link">
+          		<text>Learn about what's new in CDT</text>
+       		</link>
+       	</group>
+  	</extensionContent>
+</introContent>

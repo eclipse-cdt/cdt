@@ -1,0 +1,198 @@
+//!DeclSpecifierTest
+//%CPP
+inline int foo()
+{
+    return 1;
+}
+
+const int a = 1;
+volatile int b = 3;
+typedef int* intp;
+extern int b;
+static int c;
+
+int foo()
+{
+    int i = 1;
+    return i;
+}
+
+int bar()
+{
+    register int i = c;
+    return i;
+}
+
+
+//!CompositeTypeSpecifier
+//%CPP
+struct B
+{
+    int c;
+    char b;
+};
+union D
+{
+    int i;
+    int y;
+};
+class E
+{
+public:
+    int c;
+};
+
+//!ElaboratedTypeSpecifier
+//%CPP
+class A* A;
+enum Status{ good, bad};
+enum Status stat;
+union D
+{
+    int i;
+    int y;
+};
+union D d;
+struct S* S;
+
+//!EnumeratioSpecifier
+//%CPP
+enum Status{ good = 0, bad};
+
+//!NamedTypeSpecifier
+//%CPP
+typedef int INT;
+typedef INT (FOO)(INT);
+
+//!SimpleDeclSpecifier
+//%CPP
+signed short int i;
+unsigned long int y;
+float f;
+void x();
+char c;
+double d;
+
+//!CDeclSpecifer
+//%C
+restrict int i = 1;
+
+//!CCompositeTypeSpecifier
+//%C
+restrict struct B
+{
+    int c;
+    char b;
+};
+restrict union D
+{
+    int i;
+    int y;
+};
+
+//!CElaboratedTypeSpecifier
+//%C
+enum Status{ good, bad};
+restrict enum Status stat;
+union D
+{
+    int i;
+    int y;
+};
+restrict union D d;
+
+//!CEnumeratioSpecifier
+//%C
+restrict enum Status{ good, bad};
+
+//!CSimpleDeclSpecifier
+//%C
+long long int lli;
+_Complex float cf;
+_Bool b;
+
+//!CPPCompositeTypeSpecifier
+//%CPP
+class TestClass
+{
+    explicit TestClass(int);
+    friend int AddToFriend(int x);
+};
+class A
+{
+};
+class TestClass2 : public TestClass, A
+{
+};
+
+//!protected Base Specifiers
+//%CPP
+class TestClass
+{
+    explicit TestClass(int);
+    friend int AddToFriend(int x);
+};
+class TestClass2 : protected TestClass
+{
+};
+
+//!private Base Specifiers
+//%CPP
+class TestClass
+{
+    explicit TestClass(int);
+    friend int AddToFriend(int x);
+};
+class TestClass2 : private TestClass
+{
+};
+
+//!CPPNamedTypeSpecifier
+//%CPP
+template<class T> class A
+{
+    typedef char C;
+};
+
+//!SimpleDeclSpecifier
+//%CPP
+bool b;
+wchar_t wc;
+
+//!ICPPSimpleDeclSpecifier mutable Bug 40
+//%CPP
+mutable int n;
+
+//!C++0x auto keyword Bug 318588
+//%CPP
+auto var = 42;
+
+//!C++0x long long keyword Bug 318588
+//%CPP
+long long int i;
+
+//!C++0x decltype
+//%CPP
+int i;
+decltype(i) j = 3;
+
+//!C++0x typeof
+//%CPP
+int i;
+typeof i j = 3;
+
+//!CPPCompositeTypeSpecifier declared final
+//%CPP
+class Base
+{
+};
+class TestClass final : public Base
+{
+};
+//!decltype(auto)
+//%CPP
+decltype(auto) function()
+{
+    decltype(auto) a = new decltype(auto)(5);
+    return a;
+}

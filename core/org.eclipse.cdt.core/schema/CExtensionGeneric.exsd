@@ -1,0 +1,80 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="unspecified" name="CExtensionGeneric"/>
+      </appInfo>
+      <documentation>
+         Generic definition of extension point used by ICConfigExtensionReference. This definition is for a family of extension points not for any specific one.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="cextension"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  ID of the extension point (Simple ID)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Name of the extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="cextension">
+      <complexType>
+         <sequence>
+            <element ref="run"/>
+         </sequence>
+      </complexType>
+   </element>
+   <element name="run">
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2009, 2009 Andrew Gvozdev (Quoin Inc.) and others.&lt;br/&gt;
+This program and the accompanying materials&lt;br/&gt;
+are made available under the terms of the Eclipse Public License 2.0&lt;br/&gt;
+which accompanies this distribution, and is available at&lt;br/&gt;
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0&lt;br/&gt;
+      </documentation>
+   </annotation>
+</schema>

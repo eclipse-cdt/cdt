@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Tern QML Demo</title>
+
+	<!-- CodeMirror Stylesheets -->
+	<link rel=stylesheet href="../node_modules/codemirror/lib/codemirror.css">
+	<link rel="stylesheet" href="../node_modules/codemirror/theme/eclipse.css">
+	<link rel="stylesheet" href="../node_modules/codemirror/addon/dialog/dialog.css">
+
+	<!-- CodeMirror-JavaScript Stylesheets -->
+	<link rel="stylesheet" href="../node_modules/codemirror-javascript/addon/hint/tern/tern-extension.css">
+
+	<!-- CodeMirror-Extension Stylesheets -->
+	<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hover/text-hover.css">
+	<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hint/templates-hint.css">
+	<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hint/show-hint-eclipse.css">
+	<link rel="stylesheet" href="../node_modules/codemirror-extension/addon/hint/show-context-info.css">
+
+	<!-- Demo Specific Stylesheets -->
+	<link rel=stylesheet href="./docs.css">
+	<link rel=stylesheet href="./demo.css">
+</head>
+
+<body>
+	<h1>Demo with QML Tern plugin </h1>
+	<title>QML Tern Demo</title>
+
+	<!-- CodeMirror -->
+	<script src="../node_modules/codemirror/lib/codemirror.js"></script>
+	<script src="../node_modules/codemirror/addon/hint/show-hint.js"></script>
+	<script src="../node_modules/codemirror/addon/edit/closetag.js"></script>
+	<script src="../node_modules/codemirror/addon/edit/closebrackets.js"></script>
+	<script src="../node_modules/codemirror/addon/edit/matchbrackets.js"></script>
+	<script src="../node_modules/codemirror/addon/selection/active-line.js"></script>
+	<script src="../node_modules/codemirror/mode/javascript/javascript.js"></script>
+
+	<!-- Acorn -->
+	<script src="../node_modules/acorn/dist/acorn.js"></script>
+	<script src="../node_modules/acorn/dist/acorn_loose.js"></script>
+	<script src="../node_modules/acorn/dist/walk.js"></script>
+	<script src="../node_modules/acorn-qml/inject.js"></script>
+	<script src="../node_modules/acorn-qml/index.js"></script>
+	<script src="../node_modules/acorn-qml/loose/inject.js"></script>
+	<script src="../node_modules/acorn-qml/loose/index.js"></script>
+	<script src="../node_modules/acorn-qml/walk/index.js"></script>
+
+	<!-- Tern JS -->
+	<script src="../node_modules/tern/lib/signal.js"></script>
+	<script src="../node_modules/tern/lib/tern.js"></script>
+	<script src="../node_modules/tern/lib/def.js"></script>
+	<script src="../node_modules/tern/lib/comment.js"></script>
+	<script src="../node_modules/tern/lib/infer.js"></script>
+	<script src="../qml.js"></script>
+
+	<!-- Official CodeMirror Tern addon -->
+	<script src="../node_modules/codemirror/addon/tern/tern.js"></script>
+
+	<!-- ECMA 5th Edition Definitions File -->
+	<script src="defs/ecma5.json.js"></script>
+
+	<!-- CodeMirror Extension -->
+	<script src="../node_modules/codemirror-extension/addon/hint/show-context-info.js"></script>
+	<script src="../node_modules/codemirror-extension/addon/hint/templates-hint.js"></script>
+
+	<!-- CodeMirror Javascript -->
+	<script src="../node_modules/codemirror-javascript/addon/hint/javascript/javascript-templates.js"></script>
+
+	<!-- Tern Hover -->
+	<script src="../node_modules/codemirror-extension/addon/hover/text-hover.js"></script>
+	<script src="../node_modules/codemirror-javascript/addon/hint/tern/tern-hover.js"></script>
+
+	<!-- Extra script to control project logic -->
+	<script src="./demo.js"></script>
+
+	<div style="position: relative" id="demospace">
+		<div id="menus">
+			<select id="commands">
+				<option>commands...</option>
+				<option value="complete">Autocomplete (Ctrl-Space)</option>
+				<option value="jumptodef">Jump to definition (ctrl-J)</option>
+				<option value="finddocs">Describe (Ctrl-O)</option>
+				<option value="findtype">Find type of (Ctrl-I)</option>
+				<option value="rename">Rename variable (Ctrl-Q)</option>
+				<option value="addfile">Add a new file</option>
+				<option value="delfile">Remove this file</option>
+			</select>
+		</div>
+		<form id="place">
+			<ul class="tabs">
+				<li class="selected">test</li>
+			</ul>
+			<div class="CodeMirror cm-s-default">
+				<div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 5px; left: 40px;">
+					<textarea autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; padding: 0px; width: 1000px; height: 1em; outline: none;" tabindex="0"></textarea>
+				</div>
+				<div class="CodeMirror-vscrollbar" cm-not-content="true" style="display: block; bottom: 0px;">
+					<div style="min-width: 1px; height: 580px;"></div>
+				</div>
+				<div class="CodeMirror-hscrollbar" cm-not-content="true">
+					<div style="height: 100%; min-height: 1px; width: 0px;"></div>
+				</div>
+				<div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div>
+				<div class="CodeMirror-gutter-filler" cm-not-content="true"></div>
+				<div class="CodeMirror-scroll" tabindex="-1">
+					<div class="CodeMirror-sizer" style="margin-left: 30px; margin-bottom: -21px; border-right-width: 9px; min-height: 580px; min-width: 531.891px; padding-right: 21px; padding-bottom: 0px;">
+						<div style="position: relative; top: 0px;">
+							<div class="CodeMirror-lines">
+								<div style="position: relative; outline: none;">
+									<div class="CodeMirror-measure"><span><span>​</span>x</span>
+									</div>
+									<div class="CodeMirror-measure"></div>
+									<div style="position: relative; z-index: 1;"></div>
+									<div class="CodeMirror-cursors">
+										<div class="CodeMirror-cursor" style="left: 9px; top: 0px; height: 22px;">&nbsp;</div>
+									</div>
+									<div class="CodeMirror-code">
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">1</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-comment">// Use ctrl-space to complete something</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">2</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-variable">co</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">3</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-variable">document</span>.<span class="cm-property">body</span>.<span class="cm-property">a</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">4</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">5</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-comment">// Put the cursor in or after an expression, press ctrl-i to</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">6</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-comment">// find its type</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">7</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">8</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-keyword">var</span> <span class="cm-def">foo</span> <span class="cm-operator">=</span> [<span class="cm-string">"array"</span>, <span class="cm-string">"of"</span>, <span class="cm-string">"strings"</span>]</span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">9</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-keyword">var</span> <span class="cm-def">bar</span> <span class="cm-operator">=</span> <span class="cm-variable">foo</span>.<span class="cm-property">slice</span>(<span class="cm-number">0</span>, <span class="cm-number">2</span>).<span class="cm-property">join</span>(<span class="cm-string">""</span>).<span class="cm-property">split</span>(<span class="cm-string">"a"</span>)[<span class="cm-number">0</span>]</span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">10</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">11</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-comment">// Works for locally defined types too.</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">12</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">13</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-keyword">function</span> <span class="cm-def">CTor</span>() { <span class="cm-keyword">this</span>.<span class="cm-property">size</span> <span class="cm-operator">=</span> <span class="cm-number">10</span> }</span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">14</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-variable">CTor</span>.<span class="cm-property">prototype</span>.<span class="cm-property">hallo</span> <span class="cm-operator">=</span> <span class="cm-string">"hallo"</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">15</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">16</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-keyword">var</span> <span class="cm-def">baz</span> <span class="cm-operator">=</span> <span class="cm-keyword">new</span> <span class="cm-variable">CTor</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">17</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-variable">baz</span>.</span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">18</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">19</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-comment">// You can press ctrl-q when the cursor is on a variable</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">20</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-comment">// name to rename it. Try it with CTor...</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">21</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">22</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-comment">// When the cursor is in an argument list, the arguments</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">23</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span class="cm-comment">// are shown below the editor.</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">24</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">25</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;">[<span class="cm-number">1</span>].<span class="cm-property">reduce</span>(  )</span></pre></div>
+										<div style="position: relative;">
+											<div class="CodeMirror-gutter-wrapper" style="left: -30px;">
+												<div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 21px;">26</div>
+											</div><pre class=" CodeMirror-line "><span style="padding-right: 0.1px;"><span cm-text="">​</span></span></pre></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div style="position: absolute; height: 9px; width: 1px; top: 580px;"></div>
+					<div class="CodeMirror-gutters" style="height: 589px;">
+						<div class="CodeMirror-gutter CodeMirror-linenumbers" style="width: 29px;"></div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+<div style="display: none" id="projects">
+<project id="simple" data-plugins="qml">
+<pre id="main.qml">MyButton {
+	
+}
+</pre>
+<pre id="MyButton.qml">Button {
+	property int width;
+	property int height;
+	property var parent;
+}
+</pre>
+</project>
+</div>
+</body>
+
+</html>

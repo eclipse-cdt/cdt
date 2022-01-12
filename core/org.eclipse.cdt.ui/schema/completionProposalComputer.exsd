@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="completionProposalComputer" name="Completion Proposal Computer"/>
+      </appInfo>
+      <documentation>
+         This extension point allows to contribute completion proposal computers to participate in the content assist process of the C/C++ editor.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name" />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="completionProposalComputer"/>
+            <element ref="proposalCategory"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The identifier of the extension instance, unique within the declaring plug-in (the plug-in&apos;s identifier will be prepended to form a platform-wide unique id)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  The optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="completionProposalComputer">
+      <annotation>
+         <documentation>
+            A proposal computer contribution. If no partition types are specified, the computer is added to all partition types.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="6">
+            <element ref="partition"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the class that implements the contributed computer. The
+class must be public and implement
+&lt;samp&gt;org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer&lt;/samp&gt;
+and must have a public 0-argument constructor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="activate" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  If the attribute is set to &quot;true&quot; it will force this plug-in to be loaded on content assist invocation.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="categoryId" type="string" use="default" value="org.eclipse.cdt.ui.defaultProposalCategory">
+            <annotation>
+               <documentation>
+                  The id of a &lt;tt&gt;proposalCategory&lt;/tt&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="partition">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="type"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="type" use="required">
+            <annotation>
+               <documentation>
+                  A C/C++ partition type for which the specified computer can provide completion proposals. See &lt;code&gt;IDocument.DEFAULT_CONTENT_TYPE&lt;/code&gt; and &lt;code&gt;ICPartitions&lt;/code&gt; for valid values.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="__dftl_partition_content_type">
+                  </enumeration>
+                  <enumeration value="__c_multiline_comment">
+                  </enumeration>
+                  <enumeration value="__c_singleline_comment">
+                  </enumeration>
+                  <enumeration value="__c_string">
+                  </enumeration>
+                  <enumeration value="__c_character">
+                  </enumeration>
+                  <enumeration value="__c_preprocessor">
+                  </enumeration>
+                  <enumeration value="__c_multiline_doc_comment">
+                  </enumeration>
+                  <enumeration value="__c_singleline_doc_comment">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="proposalCategory">
+      <annotation>
+         <documentation>
+            A proposal category contribution defines categories of proposals used to group them in the UI.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  The optional icon of the category, which can be displayed in the user preferences.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must extend &lt;code&gt;org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer&lt;/code&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         4.0
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a completion proposal computer contribution:
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.cdt.ui.completionProposalComputer&quot;
+   id=&quot;textual_proposals&quot;
+   name=&quot;Text Proposals&quot;&gt;
+   &lt;proposalCategory icon=&quot;icons/wordcompletions.png&quot;/&gt;
+ &lt;/extension&gt;
+ &lt;extension point=&quot;org.eclipse.cdt.ui.completionProposalComputer&quot;
+   id=&quot;WordCompletionProposalComputer&quot;
+   name=&quot;Word Completion Proposal Computer&quot;&gt;
+   &lt;completionProposalComputer
+      class=&quot;org.eclipse.cdt.internal.ui.text.contentassist.HippieProposalComputer&quot;
+      categoryId=&quot;org.eclipse.ui.texteditor.textual_proposals&quot;&gt;
+      &lt;partition type=&quot;__c_multiline_comment&quot;/&gt;
+   &lt;/completionProposalComputer&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         see &lt;code&gt;org.eclipse.cdt.internal.ui.text.contentassist.HippieProposalComputer&lt;/code&gt; for an example.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2006, 2007 IBM Corporation and others.&lt;br&gt;
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-2.0/&quot;&gt;https://www.eclipse.org/legal/epl-2.0/
+t;
+t;SPDX-License-Identifier: EPL-2.0&lt;/a&gt;
+      </documentation>
+   </annotation>
+</schema>

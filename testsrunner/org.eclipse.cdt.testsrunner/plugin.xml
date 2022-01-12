@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="TestsRunner" name="Provides additional tests runner" schema="schema/TestsRunner.exsd"/>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.testsrunner.internal.ui.view.ResultsView"
+            icon="$nl$/icons/eview16/cppunit.gif"
+            id="org.eclipse.cdt.testsrunner.resultsview"
+            name="%ResultsView.name"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            id="org.eclipse.cdt.testsrunner.launch.CTestsRunner"
+            name="%CPPUnitLaunchConfigurationType.name"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.testsrunner.internal.ui.launcher.EmptyConfigurationTabGroup"
+            id="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
+            type="org.eclipse.cdt.testsrunner.launch.CTestsRunner">
+         <launchMode mode="run"/>
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.testsrunner.internal.ui.launcher.EmptyConfigurationTabGroup"
+            id="org.eclipse.cdt.testsrunner.launch.debugTestsLaunchTabGroup"
+            type="org.eclipse.cdt.testsrunner.launch.CTestsRunner">
+         <launchMode mode="debug"/>
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="org.eclipse.cdt.testsrunner.launch.CTestsRunner"
+            icon="$nl$/icons/eview16/cppunit.gif"
+            id="org.eclipse.cdt.testsrunner.launch.CTestsRunner.image">
+      </launchConfigurationTypeImage>
+   </extension>
+
+   <extension
+         point="org.eclipse.debug.core.launchDelegates">
+      <launchDelegate
+            id="org.eclipse.cdt.testsrunner.launch.runTests"
+            type="org.eclipse.cdt.testsrunner.launch.CTestsRunner"
+            delegate="org.eclipse.cdt.testsrunner.internal.launcher.RunTestsLaunchDelegate"
+            modes="run"
+            name="%CPPUnitLaunch.name"
+            delegateDescription="%CPPUnitLaunch.description"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
+      <launchDelegate
+            id="org.eclipse.cdt.testsrunner.launch.dsf.runTests"
+            type="org.eclipse.cdt.testsrunner.launch.CTestsRunner"
+            delegate="org.eclipse.cdt.testsrunner.internal.launcher.DsfGdbRunTestsLaunchDelegate"
+            modes="debug"
+            name="%CPPUnitLaunchDSF.name"
+            delegateDescription="%CPPUnitLaunchDSF.description"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
+      </launchDelegate>
+   </extension>
+
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <!-- Tests run tabs-->
+      <tab
+            id="org.eclipse.cdt.testsrunner.launch.mainTab"
+            group="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
+            name="%MainLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CMainTab2">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.runTests"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.launch.argumentsTab"
+            group="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
+            name="%ArgumentsLaunchTab.name"
+            class="org.eclipse.cdt.launch.ui.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.runTests"/>
+        <placement after="org.eclipse.cdt.cdi.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.launch.testingTab"
+            group="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
+            name="%CTestingLaunchTab.name"
+            class="org.eclipse.cdt.testsrunner.internal.ui.launcher.CTestingTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.runTests"/>
+        <placement after="org.eclipse.cdt.cdi.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.launch.environmentTab"
+            group="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
+            name="%EnvironmentLaunchTab.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.runTests"/>
+        <placement after="org.eclipse.cdt.testsrunner.testingTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.launch.commonTab"
+            group="org.eclipse.cdt.testsrunner.launch.runTestsTabGroup"
+            name="%CommonLaunchTab.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.runTests"/>
+        <placement after="org.eclipse.cdt.cdi.launch.environmentTab"/>
+      </tab>
+
+      <!-- Tests debug (DSF) tabs-->
+      <tab
+            id="org.eclipse.cdt.testsrunner.dsf.gdb.mainTab"
+            group="org.eclipse.cdt.testsrunner.launch.debugTestsLaunchTabGroup"
+            name="%MainLaunchTab.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.dsf.runTests"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.dsf.gdb.argumentsTab"
+            group="org.eclipse.cdt.testsrunner.launch.debugTestsLaunchTabGroup"
+            name="%ArgumentsLaunchTab.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.dsf.runTests"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.dsf.gdb.testingTab"
+            group="org.eclipse.cdt.testsrunner.launch.debugTestsLaunchTabGroup"
+            name="%CTestingLaunchTab.name"
+            class="org.eclipse.cdt.testsrunner.internal.ui.launcher.CTestingTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.dsf.runTests"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.dsf.gdb.environmentTab"
+            group="org.eclipse.cdt.testsrunner.launch.debugTestsLaunchTabGroup"
+            name="%EnvironmentLaunchTab.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.dsf.runTests"/>
+        <placement after="org.eclipse.cdt.testsrunner.testingTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.dsf.gdb.debuggerTab"
+            group="org.eclipse.cdt.testsrunner.launch.debugTestsLaunchTabGroup"
+            name="%DebuggerLaunchTab.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.dsf.runTests"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.dsf.gdb.sourceLookupTab"
+            group="org.eclipse.cdt.testsrunner.launch.debugTestsLaunchTabGroup"
+            name="%SourceLookupLaunchTab.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.dsf.runTests"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.testsrunner.dsf.gdb.commonTab"
+            group="org.eclipse.cdt.testsrunner.launch.debugTestsLaunchTabGroup"
+            name="%CommonLaunchTab.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.testsrunner.launch.dsf.runTests"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+      
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.processFactories">
+      <processFactory
+            class="org.eclipse.cdt.testsrunner.internal.launcher.TestingProcessFactory"
+            id="org.eclipse.cdt.testsrunner.TestingProcessFactory">
+      </processFactory>
+   </extension>
+   
+</plugin>

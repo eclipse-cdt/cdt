@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="llvm.ui.preferences_package_class_dependencies" size="1289,719" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences" metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303533312D31303030206F72672E65636C697073652E6364742E6D616E616765646275696C6465722E6C6C766D2E75692F70657065">
+  <children xsi:type="editmodel:ClassEditModel" name="PreferenceInitializer" location="434,615" size="204,68" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/PreferenceInitializer" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="181,18">
+      <children xsi:type="editmodel:MethodEditModel" name="initializeDefaultPreferences" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/PreferenceInitializer#initializeDefaultPreferences()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.3/@sourceConnections.1 //@children.4/@sourceConnections.1 //@children.5/@sourceConnections.1" name="LlvmPreferenceStore" location="28,360" size="384,356" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="361,306">
+      <children xsi:type="editmodel:MethodEditModel" name="getPreferenceStore" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#getPreferenceStore()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getPreferenceStoreValue" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#getPreferenceStoreValue(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getBinPath" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#getBinPath()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getIncludePath" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#getIncludePath()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLibraryPath" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#getLibraryPath()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLibraries" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#getLibraries()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getPreferenceStoreValueAsArray" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#getPreferenceStoreValueAsArray(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setPreferenceStoreValue" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#setPreferenceStoreValue(Ljava.lang.String;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setBinPath" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#setBinPath(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setIncludePath" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#setIncludePath(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLibraryPath" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#setLibraryPath(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLibrary" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#setLibrary(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="appendIncludePath" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#appendIncludePath(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="appendLibraryPath" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#appendLibraryPath(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="appendLibrary" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore#appendLibrary(Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="PreferenceConstants" location="435,465" size="201,112" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/PreferenceConstants" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="178,72">
+      <children xsi:type="editmodel:AttributeEditModel" name="p_LLVM_PATH" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/PreferenceConstants#p_LLVM_PATH"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="p_LLVM_INCLUDE_PATH" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/PreferenceConstants#p_LLVM_INCLUDE_PATH"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="p_LLVM_LIBRARY_PATH" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/PreferenceConstants#p_LLVM_LIBRARY_PATH"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="p_LLVM_LIBRARIES" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/PreferenceConstants#p_LLVM_LIBRARIES"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.6/@sourceConnections.1" name="IncludePathListEditor" location="435,331" size="478,104" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="455,54">
+      <children xsi:type="editmodel:MethodEditModel" name="IncludePathListEditor" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor#IncludePathListEditor(Ljava.lang.String;Ljava.lang.String;Lorg.eclipse.swt.widgets.Composite;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNewInputObject" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor#getNewInputObject()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="removePressed" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor#removePressed()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor-Standard::Derive->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor" source="//@children.3" target="//@children.7" targetEnd="//@children.3/@sourceConnections.0/@children.2" label="//@children.3/@sourceConnections.0/@children.0" sourceEnd="//@children.3/@sourceConnections.0/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Derive»" size="49,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="478,51" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,269"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor-Standard::Call->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore" source="//@children.3" target="//@children.1" targetEnd="//@children.3/@sourceConnections.1/@children.2" label="//@children.3/@sourceConnections.1/@children.0" sourceEnd="//@children.3/@sourceConnections.1/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Call»" size="34,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="87,66" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="384,37"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor&lt;-org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor" source="//@children.3" target="//@children.7" targetEnd="//@children.3/@sourceConnections.2/@children.1" sourceEnd="//@children.3/@sourceConnections.2/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="478,31" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,249"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.6/@sourceConnections.0" name="LibraryListEditor" location="28,30" size="451,104" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="428,54">
+      <children xsi:type="editmodel:MethodEditModel" name="LibraryListEditor" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor#LibraryListEditor(Ljava.lang.String;Ljava.lang.String;Lorg.eclipse.swt.widgets.Composite;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNewInputObject" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor#getNewInputObject()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="removePressed" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor#removePressed()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor-Standard::Derive->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor" source="//@children.4" target="//@children.7" targetEnd="//@children.4/@sourceConnections.0/@children.2" label="//@children.4/@sourceConnections.0/@children.0" sourceEnd="//@children.4/@sourceConnections.0/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Derive»" size="49,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="411,93" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,10"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor-Standard::Call->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore" source="//@children.4" target="//@children.1" targetEnd="//@children.4/@sourceConnections.1/@children.2" label="//@children.4/@sourceConnections.1/@children.0" sourceEnd="//@children.4/@sourceConnections.1/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Call»" size="34,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="191,104" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="191,0"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor&lt;-org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor" source="//@children.4" target="//@children.7" targetEnd="//@children.4/@sourceConnections.2/@children.1" sourceEnd="//@children.4/@sourceConnections.2/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="451,97" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,14"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.6/@sourceConnections.2" name="LibraryPathListEditor" location="435,180" size="475,104" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="452,54">
+      <children xsi:type="editmodel:MethodEditModel" name="LibraryPathListEditor" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor#LibraryPathListEditor(Ljava.lang.String;Ljava.lang.String;Lorg.eclipse.swt.widgets.Composite;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNewInputObject" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor#getNewInputObject()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="removePressed" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor#removePressed()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor-Standard::Derive->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor" source="//@children.5" target="//@children.7" targetEnd="//@children.5/@sourceConnections.0/@children.2" label="//@children.5/@sourceConnections.0/@children.0" sourceEnd="//@children.5/@sourceConnections.0/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Derive»" size="49,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="475,52" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,119"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor-Standard::Call->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferenceStore" source="//@children.5" target="//@children.1" targetEnd="//@children.5/@sourceConnections.1/@children.2" label="//@children.5/@sourceConnections.1/@children.0" sourceEnd="//@children.5/@sourceConnections.1/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Call»" size="34,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="160,104" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="384,48"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor&lt;-org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor" source="//@children.5" target="//@children.7" targetEnd="//@children.5/@sourceConnections.2/@children.1" sourceEnd="//@children.5/@sourceConnections.2/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="475,32" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,99"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="LlvmPreferencePage" location="28,210" size="201,122" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="178,72">
+      <children xsi:type="editmodel:MethodEditModel" name="LlvmPreferencePage" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage#LlvmPreferencePage()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="init" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage#init(Lorg.eclipse.ui.IWorkbench;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getDescription" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage#getDescription()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createFieldEditors" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage#createFieldEditors()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage-Standard::Instantiate->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor*org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage-Soyatec::Import->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryListEditor" source="//@children.6" target="//@children.4" targetEnd="//@children.6/@sourceConnections.0/@children.2" label="//@children.6/@sourceConnections.0/@children.0" sourceEnd="//@children.6/@sourceConnections.0/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Instantiate, Import»" size="114,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="100,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="100,104"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage-Standard::Instantiate->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor*org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage-Soyatec::Import->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/IncludePathListEditor" source="//@children.6" target="//@children.3" targetEnd="//@children.6/@sourceConnections.1/@children.2" label="//@children.6/@sourceConnections.1/@children.0" sourceEnd="//@children.6/@sourceConnections.1/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Instantiate, Import»" size="114,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="201,121" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:DependencyEditModel" autoLocated="true" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage-Standard::Instantiate->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor*org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmPreferencePage-Soyatec::Import->org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LibraryPathListEditor" source="//@children.6" target="//@children.5" targetEnd="//@children.6/@sourceConnections.2/@children.2" label="//@children.6/@sourceConnections.2/@children.0" sourceEnd="//@children.6/@sourceConnections.2/@children.1" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:WireLabelEditModel" name="«Instantiate, Import»" size="114,13" anchorKind="MiddlePart"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="201,36" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="0,66"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.4/@sourceConnections.0 //@children.3/@sourceConnections.0 //@children.5/@sourceConnections.0 //@children.3/@sourceConnections.2 //@children.4/@sourceConnections.2 //@children.5/@sourceConnections.2" name="LlvmListEditor" location="975,113" size="439,464" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor" runTimeClassModel="">
+    <children xsi:type="editmodel:CompartmentEditModel" size="215,126">
+      <children xsi:type="editmodel:AttributeEditModel" name="list" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#list"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="buttonBox" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#buttonBox"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="addButton" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#addButton"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="removeButton" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#removeButton"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="upButton" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#upButton"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="downButton" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#downButton"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="selectionListener" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#selectionListener"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="416,288">
+      <children xsi:type="editmodel:MethodEditModel" name="LlvmListEditor" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#LlvmListEditor(Ljava.lang.String;Ljava.lang.String;Lorg.eclipse.swt.widgets.Composite;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createList" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#createList([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="parseString" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#parseString(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createButtons" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#createButtons(Lorg.eclipse.swt.widgets.Composite;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createPushButton" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#createPushButton(Lorg.eclipse.swt.widgets.Composite;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createSelectionListener" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#createSelectionListener()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getButtonBoxControl" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#getButtonBoxControl(Lorg.eclipse.swt.widgets.Composite;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getListControl" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#getListControl(Lorg.eclipse.swt.widgets.Composite;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSelectionListener" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#getSelectionListener()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="selectionChanged" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#selectionChanged()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="swap" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#swap(Z)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getShell" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#getShell()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addPressed" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#addPressed()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="removePressed" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#removePressed()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="upPressed" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#upPressed()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="downPressed" id="org.eclipse.cdt.managedbuilder.llvm.ui.preferences/LlvmListEditor#downPressed()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" interactive="false" level="-1" showScope="InPackage" properties="wireOptions=4;Product=eUML2;displayOptions=1"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3"/>
+</editmodel:ClassDiagramEditModel>

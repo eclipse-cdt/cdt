@@ -1,0 +1,260 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="LanguageSettingsProvider" name="LanguageSettingsProvider"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to contribute a new Language Settings Provider. A Language Settings Provider is used to get additions to compiler options such as include paths (-I) or preprocessor defines (-D) and others into the project model.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+         <documentation>
+            This extension point is used to contribute a new Language Settings Provider. A Language Settings Provider is used to get additions to compiler options such as include paths (-I) or preprocessor defines (-D) and others into the project model.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="provider"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  ID of the extension point, not used
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Name of the extension point, not used
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="provider">
+      <annotation>
+         <documentation>
+            The definition of a language settings provider.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="language-scope" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="entry" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  A fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.cdt.core.language.settings.providers&lt;/samp&gt; interface. If empty, &lt;samp&gt;org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider&lt;/samp&gt; is used by default which provides basic functionality defined by this extension point.&lt;br&gt;
+In case the provider ever needs to be non-shared, set per project/configuration, or editable in UI - the provider must implement &lt;samp&gt;org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider&lt;/samp&gt;. There is a generic implementation &lt;samp&gt;org.eclipse.cdt.core.language.settings.providers.LanguageSettingsGenericProvider&lt;/samp&gt; that can be used in most cases.&lt;br&gt;
+If there is a need to configure a provider in more deliberate way, attribute &lt;samp&gt;parameter&lt;/samp&gt; could be used in a class extending &lt;samp&gt;LanguageSettingsBaseProvider&lt;/samp&gt;.&lt;br&gt;
+Default constructor (constructor without arguments) of this class must be public and the package be exported in order to be able to instantiate via extension point.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider:org.eclipse.cdt.core.settings.model.ILanguageSettingsProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique ID of the provider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the provider. This name will be presented to a user in UI.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="parameter" type="string">
+            <annotation>
+               <documentation>
+                  A custom parameter to initialize provider. For example, used to deliver command for GCCBuiltinSpecsDetector.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="prefer-non-shared" type="boolean" use="default" value="false">
+            <annotation>
+               <documentation>
+                  A flag indicating that the provider should be owned by a configuration rather than be global in workspace and shared between projects (when the choice has not been indicated yet by other means).  This preference is consulted in order to initially set the &quot;shared&quot; attribute, for example when a user adds a provider from the list of extension providers.
+The value &quot;true&quot; of this attribute is meaningful only for providers capable of being non-shared, i.e. providers extending ILanguageSettingsEditableProvider.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="language-scope">
+      <annotation>
+         <documentation>
+            The definition of language scope. Includes the list of language ID this provider is applicable to. If a language scope is not present, the provider will provide for any language.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  ID of the language for which this provider provides the entries. As an example, those are languages contributed by CDT (see extension org.eclipse.cdt.core.language):
+&lt;p&gt;- &quot;&lt;samp&gt;org.eclipse.cdt.core.gcc&lt;/samp&gt;&quot; for C,&lt;/p&gt;
+&lt;p&gt;- &quot;&lt;samp&gt;org.eclipse.cdt.core.g++&lt;/samp&gt;&quot; for C++.&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="entry">
+      <annotation>
+         <documentation>
+            The Language Settings Entries used to provide additions to compiler options such as include paths (-I) or preprocessor defines (-D) and others into the project model.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="flag" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="kind" use="required">
+            <annotation>
+               <documentation>
+                  Kind of language settings entry which maps to compiler options. For example, following mapping is used for gcc options:
+&lt;br&gt;&quot;&lt;samp&gt;-I&lt;/samp&gt;&quot; : includePath
+&lt;br&gt;&quot;&lt;samp&gt;-D&lt;/samp&gt;&quot; : macro
+&lt;br&gt;&quot;&lt;samp&gt;-include&lt;/samp&gt;&quot; : includeFile
+&lt;br&gt;&quot;&lt;samp&gt;-L&lt;/samp&gt;&quot; : libraryPath
+&lt;br&gt;&quot;&lt;samp&gt;-l&lt;/samp&gt;&quot; : libraryFile
+&lt;br&gt;&quot;&lt;samp&gt;-imacros&lt;/samp&gt;&quot; : macroFile
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="includePath">
+                  </enumeration>
+                  <enumeration value="macro">
+                  </enumeration>
+                  <enumeration value="includeFile">
+                  </enumeration>
+                  <enumeration value="libraryPath">
+                  </enumeration>
+                  <enumeration value="libraryFile">
+                  </enumeration>
+                  <enumeration value="macroFile">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  &quot;name&quot; attribute maps to path for the entries representing a path to a folder or file and to name for &lt;samp&gt;macro&lt;/samp&gt; kind representing name-value pair. For example:
+&lt;br&gt;&quot;&lt;samp&gt;/usr/include/&lt;/samp&gt;&quot;
+&lt;br&gt;&quot;&lt;samp&gt;MACRO&lt;/samp&gt;&quot; (for &lt;samp&gt;#define MACRO value&lt;/samp&gt;)
+&lt;br&gt;Note that relative paths are treated as rooted in build working directory (when applicable).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string">
+            <annotation>
+               <documentation>
+                  &quot;value&quot; attribute is used for &lt;samp&gt;macro&lt;/samp&gt; kind representing name-value pair only. It is not used  for the entries representing a path. For example:
+&lt;br&gt;&quot;&lt;samp&gt;value&lt;/samp&gt;&quot; (for &lt;samp&gt;#define MACRO value&lt;/samp&gt;)
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="flag">
+      <annotation>
+         <documentation>
+            Combination of flags for the entry.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="value" use="required">
+            <annotation>
+               <documentation>
+                  A value of the flag. Corresponds to &lt;samp&gt;ICSettingEntry&lt;/samp&gt; flags, see JavaDoc there for more details. Here is an excerpt from the Javadoc  for the flags intended to be used with this extension point (the others might be not supported):
+  &lt;br&gt;- &lt;samp&gt;BUILTIN&lt;/samp&gt; : Indicates settings built in a tool (compiler) itself. That kind of settings are not passed as options to a compiler but indexer or other clients might need them.
+  &lt;br&gt;- &lt;samp&gt;LOCAL&lt;/samp&gt; : Applicable for &lt;samp&gt;includePath&lt;/samp&gt; only which could be local (#include &quot;...&quot;) or system (#include &lt;...&gt;). If an &lt;samp&gt;includePath&lt;/samp&gt; is not marked as &lt;samp&gt;LOCAL&lt;/samp&gt; it is treated as system.
+  &lt;br&gt;- &lt;samp&gt;RESOLVED&lt;/samp&gt; : Indicates that the entries do not need to be resolved such as expansion of environment variables, normalizing the path against build working directory etc.
+  &lt;br&gt;- &lt;samp&gt;VALUE_WORKSPACE_PATH&lt;/samp&gt; : is used to indicate that the entry is a resource managed by eclipse in the workspace. The path is rooted in the workspace root.
+  &lt;br&gt;- &lt;samp&gt;UNDEFINED&lt;/samp&gt; : indicates that the entry should not be defined, corresponds to &lt;samp&gt;-U&lt;/samp&gt; option of gcc compiler. If this flag is defined it will negate entries with the same name (and kind) for all providers down the list.
+  &lt;br&gt;- &lt;samp&gt;EXPORTED&lt;/samp&gt; : indicates that the entry is exported to referencing projects. It will be passed to the projects configurations referencing the configuration the entry belongs to.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="BUILTIN">
+                  </enumeration>
+                  <enumeration value="LOCAL">
+                  </enumeration>
+                  <enumeration value="RESOLVED">
+                  </enumeration>
+                  <enumeration value="VALUE_WORKSPACE_PATH">
+                  </enumeration>
+                  <enumeration value="UNDEFINED">
+                  </enumeration>
+                  <enumeration value="EXPORTED">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT 8.1
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider&lt;/samp&gt; interface.
+&lt;br/&gt;
+For those cases where contributed settings entries (representing the compiler options) are not changed dynamically it is sufficient to configure existing class LanguageSettingsBaseProvider which is provided by default.
+&lt;br/&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2009, 2013 Andrew Gvozdev and others.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+</schema>

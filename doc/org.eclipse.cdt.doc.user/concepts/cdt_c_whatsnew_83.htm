@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="CDT/User/NewIn83" />
+	
+	<title>CDT 8.3 New and Noteworthy</title>
+</head>
+
+<body>
+<div>
+	<h1 id="top">CDT 8.3 - New and Noteworthy</h1>
+	<p>See <a href="https://wiki.eclipse.org/CDT/User/NewIn83">What's new in CDT 8.3</a> on the CDT Wiki
+	which may contain more recent information.
+	</p>
+
+<!-- ***** START MANUAL INSERT HTML FROM https://wiki.eclipse.org/CDT/User/NewIn83?action=render -->
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Build"><span class="tocnumber">1</span> <span class="toctext">Build</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Toolchains"><span class="tocnumber">1.1</span> <span class="toctext">Toolchains</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Scanner_Discovery.2FLanguage_Settings_Providers"><span class="tocnumber">1.2</span> <span class="toctext">Scanner Discovery/Language Settings Providers</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-4"><a href="#Indexing"><span class="tocnumber">2</span> <span class="toctext">Indexing</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#Preferences_for_header_variants"><span class="tocnumber">2.1</span> <span class="toctext">Preferences for header variants</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Debug"><span class="tocnumber">3</span> <span class="toctext">Debug</span></a>
+<ul>
+<li class="toclevel-2 tocsection-7"><a href="#Threads_displayed_by_creation_order_in_the_Debug_view"><span class="tocnumber">3.1</span> <span class="toctext">Threads displayed by creation order in the Debug view</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Support_for_multi-process_debugging_in_Memory_views"><span class="tocnumber">3.2</span> <span class="toctext">Support for multi-process debugging in Memory views</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Enhanced_support_for_multi-process_debugging_in_Registers_view"><span class="tocnumber">3.3</span> <span class="toctext">Enhanced support for multi-process debugging in Registers view</span></a></li>
+<li class="toclevel-2 tocsection-10"><a href="#Register_view_is_now_stack-frame-specific"><span class="tocnumber">3.4</span> <span class="toctext">Register view is now stack-frame-specific</span></a></li>
+<li class="toclevel-2 tocsection-11"><a href="#Basic_support_of_Multicore_Visualizer_in_all-stop_mode"><span class="tocnumber">3.5</span> <span class="toctext">Basic support of Multicore Visualizer in all-stop mode</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="#Variable_substitution_for_GDB_command_file_path"><span class="tocnumber">3.6</span> <span class="toctext">Variable substitution for GDB command file path</span></a></li>
+<li class="toclevel-2 tocsection-13"><a href="#Project-less_debugging_is_now_supported_on_the_Windows_platform"><span class="tocnumber">3.7</span> <span class="toctext">Project-less debugging is now supported on the Windows platform</span></a></li>
+<li class="toclevel-2 tocsection-14"><a href="#Detection_of_target_disconnection"><span class="tocnumber">3.8</span> <span class="toctext">Detection of target disconnection</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-15"><a href="#Qt_Support_.28preview.29"><span class="tocnumber">4</span> <span class="toctext">Qt Support (preview)</span></a>
+<ul>
+<li class="toclevel-2 tocsection-16"><a href="#New_Project_Wizard"><span class="tocnumber">4.1</span> <span class="toctext">New Project Wizard</span></a></li>
+<li class="toclevel-2 tocsection-17"><a href="#Syntax_Highlighting"><span class="tocnumber">4.2</span> <span class="toctext">Syntax Highlighting</span></a></li>
+<li class="toclevel-2 tocsection-18"><a href="#Indexing_and_Search"><span class="tocnumber">4.3</span> <span class="toctext">Indexing and Search</span></a></li>
+<li class="toclevel-2 tocsection-19"><a href="#Content_Assist"><span class="tocnumber">4.4</span> <span class="toctext">Content Assist</span></a></li>
+<li class="toclevel-2 tocsection-20"><a href="#Codan_Semantic_Checkers"><span class="tocnumber">4.5</span> <span class="toctext">Codan Semantic Checkers</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-21"><a href="#Bugs_Fixed_in_this_Release"><span class="tocnumber">5</span> <span class="toctext">Bugs Fixed in this Release</span></a></li>
+</ul>
+</td></tr></table>
+<h2> <span class="mw-headline" id="Build"> Build  </span></h2>
+<h3> <span class="mw-headline" id="Toolchains"> Toolchains </span></h3>
+<ul><li> Language dialect options in GNU toolchain definition (<a rel="nofollow" class="external text" href="https://bugs.eclipse.org/404913">Bug 404913</a>).
+</li></ul>
+<p><a><img alt="DialectLanguageStandard.png" src="../images/cdt83/DialectLanguageStandard.png" width="845" height="381" /></a>
+</p>
+<h3> <span class="mw-headline" id="Scanner_Discovery.2FLanguage_Settings_Providers"> Scanner Discovery/Language Settings Providers </span></h3>
+<ul><li> Use applicable options (such as language dialect) from build settings during discovery of built-in settings (<a rel="nofollow" class="external text" href="https://bugs.eclipse.org/404913">Bug 404913</a>). But note that to use options changed by user the built-in settings provider needs to be set as non-shared.<br />
+</li></ul>
+<p><a><img alt="BuiltInDetectors-FLAGS.png" src="../images/cdt83/BuiltInDetectors-FLAGS.png" width="974" height="533" /></a>
+</p>
+<h2> <span class="mw-headline" id="Indexing"> Indexing </span></h2>
+<h3> <span class="mw-headline" id="Preferences_for_header_variants"> Preferences for header variants </span></h3>
+<p>New indexer preferences:
+</p>
+<ul><li> Index all header variants
+</li><li> Index all header variants of specific headers
+</li></ul>
+<p><a><img alt="IndexerHeaderVariantsPref.png" src="../images/cdt83/IndexerHeaderVariantsPref.png" width="590" height="365" /></a>
+</p><p>These new preferences give the user more control over how the indexer handle variants of headers. By default, the indexer will index all variants of headers which do not have include guards or #pragma once. In certain cases, this strategy is not sufficient. To resolve this, the indexer can be configured to index all variants of headers, at the possible expense of indexing time. If the problematic headers are known, a comma separated list of headers can be specified and only those will be indexed for all variants.
+</p>
+<h2> <span class="mw-headline" id="Debug"> Debug  </span></h2>
+<h3> <span class="mw-headline" id="Threads_displayed_by_creation_order_in_the_Debug_view"> Threads displayed by creation order in the Debug view </span></h3>
+<p>For a multi-threaded program, the different threads are now shown in the order they were created during execution.  Not only is that order more intuitive, it allows for the selection in the Debug view to be more stable.  This enhancement was completed on January 13th, 2014.  For details see <a rel="nofollow" class="external text" href="https://eclip.se/412547">Bug 412547</a>.
+</p><p><a><img alt="CDT ThreadOrder.png" src="../images/cdt83/CDT_ThreadOrder.png" width="896" height="219" /></a>
+</p><p><br />
+</p><p><br />
+</p>
+<h3> <span class="mw-headline" id="Support_for_multi-process_debugging_in_Memory_views"> Support for multi-process debugging in Memory views </span></h3>
+<p>The Memory view and Memory Browser view now support multi-process debugging.  Beyond properly refreshing their content based on the currently selected process, the user can now define different memory addresses to look at for each process being debugged.  This work was a contribution from Alvaro Sanchez-Leon on January 15th, 2014.  For details see <a rel="nofollow" class="external text" href="https://eclip.se/250323">Bug 250323</a>.
+</p><p><a><img alt="CDT MemMultiProcess.png" src="../images/cdt83/CDT_MemMultiProcess.png" width="1003" height="499" /></a>
+</p><p><br />
+</p><p><br />
+</p>
+<h3> <span class="mw-headline" id="Enhanced_support_for_multi-process_debugging_in_Registers_view"> Enhanced support for multi-process debugging in Registers view </span></h3>
+<p>The Registers view now supports debugging processes with a different set of registers.  For example, the registers of the selected process will properly be displayed when debugging both a 32-bit process and a 64-bit process.  This work was a contribution from Alvaro Sanchez-Leon on September 29th, 2013.  For details see <a rel="nofollow" class="external text" href="https://eclip.se/418176">Bug 418176</a>.
+</p><p><a><img alt="CDT RegMultiProcess1.png" src="../images/cdt83/CDT_RegMultiProcess1.png" width="894" height="221" /></a>
+<a><img alt="CDT RegMultiProcess2.png" src="../images/cdt83/CDT_RegMultiProcess2.png" width="895" height="219" /></a>
+</p><p><br />
+</p><p><br />
+</p>
+<h3> <span class="mw-headline" id="Register_view_is_now_stack-frame-specific"> Register view is now stack-frame-specific </span></h3>
+<p>The Registers view will now update each time a different stack-frame is selected.  The view will show the content of the registers as they were for the selected frame, when the method call was done which caused the creation of the next stack-frame. This work was a contribution from Alvaro Sanchez-Leon on September 27th, 2013.  For details see <a rel="nofollow" class="external text" href="https://eclip.se/323552">Bug 323552</a>.
+</p><p><a><img alt="CDT RegisterStack1.png" src="../images/cdt83/CDT_RegisterStack1.png" width="887" height="198" /></a>
+<a><img alt="CDT RegisterStack2.png" src="../images/cdt83/CDT_RegisterStack2.png" width="884" height="197" /></a>
+</p><p><br />
+</p><p><br />
+</p>
+<h3> <span class="mw-headline" id="Basic_support_of_Multicore_Visualizer_in_all-stop_mode"> Basic support of Multicore Visualizer in all-stop mode </span></h3>
+<p>The <a rel="nofollow" class="external text" href="https://wiki.eclipse.org/CDT/User/FAQ#What_is_the_Multicore_Visualizer.3F">Multicore Visualizer</a> now displays properly in all-stop mode, with all its features available when the program is suspended, while still updating thread creation/termination when the program is running. This enhancement was completed on August 15th, 2013.  For details see <a rel="nofollow" class="external text" href="https://eclip.se/409965">Bug 409965</a>
+</p><p><br />
+</p>
+<h3> <span class="mw-headline" id="Variable_substitution_for_GDB_command_file_path"> Variable substitution for GDB command file path </span></h3>
+<p>It is now possible to use eclipse variables within the specified path of the GDB command file.  This allows to have project-specific GDB command files.  For example ${project_loc}/project.gdbinit.  This feature was completed July 23rd, 2013. For details see <a rel="nofollow" class="external text" href="https://eclip.se/413373">Bug 413373</a>
+</p><p><a><img alt="CDT GdbinitVarSubstitution.png" src="../images/cdt83/CDT_GdbinitVarSubstitution.png" width="671" height="575" /></a>
+</p><p><br />
+</p><p><br />
+</p>
+<h3> <span class="mw-headline" id="Project-less_debugging_is_now_supported_on_the_Windows_platform"> Project-less debugging is now supported on the Windows platform </span></h3>
+<p><a rel="nofollow" class="external text" href="https://wiki.eclipse.org/CDT/User/FAQ#Can_I_debug_a_process_that_I_didn.27t_develop_in_Eclipse.3F">Project-less debugging</a> now works as expected on Windows. This enhancement was completed on August 10th, 2013.  For details see <a rel="nofollow" class="external text" href="https://eclip.se/344470">Bug 344470</a>
+</p><p><br />
+</p>
+<h3> <span class="mw-headline" id="Detection_of_target_disconnection"> Detection of target disconnection </span></h3>
+<p>When doing remote debugging, if the connection to the target is lost, the debug session will be cleanly terminated.  Previously, some situations could lead to a debug session that lost its connection but remained active using the host machine instead; these cases have been fixed. This enhancement was completed on January 8th, 2014.  For details see <a rel="nofollow" class="external text" href="https://eclip.se/422586">Bug 422586</a>
+</p>
+<h2> <span class="mw-headline" id="Qt_Support_.28preview.29"> Qt Support (preview) </span></h2>
+<p>Work continues on CDT's support for Qt. For CDT 8.3, this includes the following. Note that we still consider this a preview release until CDT 8.4 where we'll clean up usability issues around setting up CDT to work with Qt and hopefully some better qmake and QML support.
+</p>
+<h3> <span class="mw-headline" id="New_Project_Wizard"> New Project Wizard </span></h3>
+<p>We have revamped the new project wizard for Qt. It's available under Makefile projects as Qt5 Hello World project. It uses a top level Makefile to drive the calls to qmake and make on the qmake generated QtMakefile. The project doesn't do a shadow build but an in project build to keep things simple for now.
+</p>
+<h3> <span class="mw-headline" id="Syntax_Highlighting"> Syntax Highlighting </span></h3>
+<p>Syntax highlighting is provided for Qt macros inluding 'signal', 'slot'.
+</p>
+<h3> <span class="mw-headline" id="Indexing_and_Search"> Indexing and Search </span></h3>
+<p>The CDT indexer now captures several Qt "extensions" to C++. This include slots and signals as well as properties and related functions. This enables searching for references to slots and signals in connect calls.
+</p>
+<h3> <span class="mw-headline" id="Content_Assist"> Content Assist </span></h3>
+<p>In connect calls, content assist is provided to show valid slot and signal functions for the objects you are connecting. Content assist templates are also provided for QObject class declarations and Q_PROPERTY declarations.
+</p>
+<h3> <span class="mw-headline" id="Codan_Semantic_Checkers"> Codan Semantic Checkers </span></h3>
+<p>Semantic checkers are provided to ensure that the parameters to the connect call are valid.
+</p>
+<h2> <span class="mw-headline" id="Bugs_Fixed_in_this_Release"> Bugs Fixed in this Release  </span></h2>
+<p>See bugzilla report <a rel="nofollow" class="external text" href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;resolution=FIXED;target_milestone=8.2.1;target_milestone=8.2.2;target_milestone=8.2.3;target_milestone=8.3.0;product=CDT;classification=Tools">Bugs Fixed in CDT 8.3</a>
+</p>
+<!-- ***** END MANUAL INSERT HTML FROM https://wiki.eclipse.org/CDT/User/NewIn83?action=render -->
+
+	<h2>What's new in other CDT releases</h2>
+	
+	<p>To learn what's new in other CDT releases see:</p>
+	<p><a href="cdt_c_whatsnew.htm">CDT - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_82.htm">CDT 8.2 - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_81.htm">CDT 8.1 - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_80.htm">CDT 8.0 - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_70.htm">CDT 7.0 - New and Noteworthy</a></p>
+	<p><a href="cdt_c_whatsnew_60.htm">CDT 6.0 - New and Noteworthy</a></p>
+	<p><a href="https://wiki.eclipse.org/CDT/User/NewIn50">CDT 5.0 - New and Noteworthy</a></p>
+	
+	<p><a href="#top">Back to Top</a></p>
+	
+	<p>&nbsp;</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="foldingStructureProviders" name="C/C++ Folding Structure Provider"/>
+      </appInfo>
+      <documentation>
+         Contributions to this extension point define folding structures for the C/C++ editor. That is, they define the regions of a C/C++ source file that can be folded away. See &lt;code&gt;org.eclipse.jface.text.source.ProjectionViewer&lt;/code&gt; for reference.
+&lt;p&gt;
+Extensions may optionally contribute a preference block which will appear on the C/C++ editor preference page.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="provider"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="provider">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of this provider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  The name of this provider. If none is given, the id is used instead.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  An implementation of org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="preferencesClass" type="string">
+            <annotation>
+               <documentation>
+                  An implementation of org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         3.0
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         See &lt;code&gt;org.eclipse.cdt.ui.text.folding.DefaultCFoldingStructureProvider&lt;/code&gt; for an example.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         &lt;code&gt;org.eclipse.cdt.ui.text.folding.DefaultCFoldingStructureProvider&lt;/code&gt; provides the default folding structure for the C/C++ editor.
+         &lt;code&gt;org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingPreferenceBlock&lt;/code&gt; provides the preference block for the default structure provider.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2001, 2006 IBM Corporation and others.&lt;br&gt;
+This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-2.0/&quot;&gt;https://www.eclipse.org/legal/epl-2.0/
+t;
+t;SPDX-License-Identifier: EPL-2.0&lt;/a&gt;
+      </documentation>
+   </annotation>
+</schema>

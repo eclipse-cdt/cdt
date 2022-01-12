@@ -1,0 +1,256 @@
+//!Commented ASMDeclarationTest 1
+//%CPP
+//TEST 1
+asm("movl %1, %%eax;"); //TEST 2
+
+//!Commented ASMDeclarationTest 2
+//%CPP
+/*TEST 1*/
+asm("movl %1, %%eax;"); /*TEST 2*/
+
+//!Commented FunctionDefinitionTest 1
+//%CPP
+//TEST 1
+int foo()
+{
+    //inner comment
+    return 1;
+} //TEST 2
+
+
+//!Commented FunctionDefinitionTest 2
+//%CPP
+/*TEST 1*/
+int foo()
+{
+    //inner comment
+    return 1;
+} /*TEST 1*/
+
+
+//!Commented SimpleDeclarationTest 1
+//%CPP
+//TEST 1
+int i = 2, y = 3; //TEST 2
+//TEST 3
+int b = 0; //TEST 4
+
+//!Commented SimpleDeclarationTest 2
+//%CPP
+/*TEST 1*/
+int i = 2, y = 3; /*TEST 2*/
+/*TEST 3*/
+int b = 0; /*TEST 4*/
+
+//!Commented ExplicitTemplateInstantion 1
+//%CPP
+//TEST 1
+template class vector<int>; //TEST 2
+
+//!Commented ExplicitTemplateInstantion 2
+//%CPP
+/*TEST 1*/
+template class vector<int>; /*TEST 2*/
+
+//!Commented GPPExplicitTemplateInstantion 1
+//%CPP GNU
+//TEST 1
+static template class vector<int>; //TEST 2
+//TEST 3
+inline template class vector<int>; //TEST 4
+//TEST 5
+inline template class vector<int>; //TEST 6
+
+//!Commented LinkageSpecification 1
+//%CPP
+//TEST 1
+extern "C" typedef void FUNC(); //TEST 2
+
+
+//!Commented LinkageSpecification 2
+//%CPP
+/*TEST 1*/
+extern "C" typedef void FUNC(); /*TEST 2*/
+
+
+//!Commented NamespaceAlias 1
+//%CPP
+//TEST 1
+namespace kurz = somenamespace; //TEST 2
+
+//!Commented NamespaceAlias 2
+//%CPP
+/*TEST 1*/
+namespace kurz = somenamespace; /*TEST 2*/
+
+//!Commented NamespaceDefinition 1
+//%CPP
+//TEST 1
+namespace namespace1
+{
+
+//TEST 2
+
+} //TEST 3
+
+//!Commented NamespaceDefinition 2
+//%CPP
+/*TEST 1*/
+namespace namespace2
+{
+
+/*TEST 2*/
+
+} /*TEST 3*/
+
+//!Commented NamespaceDefinition 3
+//%CPP
+namespace namespace3
+{
+
+//TEST
+
+}
+
+//!Commented NamespaceDefinition 4
+//%CPP
+namespace namespace4
+{
+
+//TEST
+
+}
+
+void doIt()
+{
+    int i = 0;
+}
+
+
+//!Commented TemplateDeclaration 1
+//%CPP
+//TEST 1
+template<class T> class vector //TEST 2
+{
+    //TEST 3
+}; //TEST 4
+
+//!Commented TemplateDeclaration 2
+//%CPP
+/*TEST 1*/
+template<class T> class vector /*TEST 2*/
+{
+    /*TEST 3*/
+}; /*TEST 4*/
+
+//!Commented NestedTemplateDeclaration 1
+//%CPP
+//TEST 1
+template<template <class T> class K> class vector //TEST 2
+{
+    //TEST 3
+}; //TEST 4
+
+//!Commented NestedTemplateDeclaration 2
+//%CPP
+/*TEST 1*/
+template<template <class T> class K> class vector /*TEST 2*/
+{
+    /*TEST 3*/
+}; /*TEST 4*/
+
+//!Commented TemplateSpecialization 1
+//%CPP
+//TEST 1
+template<typename T> class MyQueue;
+template<> class MyQueue<double> //TEST 2
+{
+    //TEST 3
+    std::vector<double> data;
+
+public:
+    void Add(const double&);
+    void Remove();
+    void Print();
+    //TEST 4
+}; //TEST 5
+
+//!Commented TemplateSpecialization 2
+//%CPP
+/*TEST 1*/
+template<typename T> class MyQueue;
+template<> class MyQueue<double> /*TEST 2*/
+{
+    /*TEST 3*/
+    std::vector<double> data;
+
+public:
+    void Add(const double&);
+    void Remove();
+    void Print();
+    /*TEST 4*/
+}; /*TEST 5*/
+
+//!Commented UsingDeclaration 1
+//%CPP
+struct A
+{
+    void f();
+    enum E{ e};
+    union 
+    {
+        int u;
+    };
+};
+struct B : A
+{
+    //TEST 1
+    using A::f; //TEST 2
+    /*TEST 3*/
+    using typename A::e; /*TEST 4*/
+    using A::u;
+    /*TEST 5*/
+};
+
+//!Commented UsingDirective 1
+//%CPP
+//TEST
+using namespace B; //TEST
+
+
+//!Commented VisibilityLabel 1
+//%CPP
+class A
+{
+    //TEST 1
+public: //TEST 2
+    int hallo();
+
+    /*TEST 3*/
+protected: /*TEST 4*/
+    int b, c;
+
+private:
+    int p;
+};
+
+//!Comment BeforeSimpleDeclaration 1
+//%CPP
+//TEST 1
+int i = 2; //TEST 2
+
+//!Comment BeforeSimpleDeclaration 2
+//%CPP
+/*TEST 1*/
+int i = 2; /*TEST 2*/
+
+//!Commented typename qualifier 1
+//%CPP
+//TEST 1
+typename T::A* a6; //TEST 2
+
+//!Commented typename qualifier 2
+//%CPP
+/*TEST 1*/
+typename T::A* a6; /*TEST 2*/
+

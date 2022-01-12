@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<!DOCTYPE contexts 	[
+	<!ENTITY defaultCSHelp "Default Context Sensitive Help">
+	<!ENTITY makeBuilder "Make Builder page, C/C++ Properties window">
+	<!ENTITY pathsSymbols "Paths and Symbols page, C/C++ Properties window">
+]>
+<contexts>
+
+<context id ="default_cs_help">
+   <description>Click below to see help.</description>
+   <topic href="default_cs_help.htm"
+   	label="&defaultCSHelp;"/>
+</context>
+<context id ="newproj_buildset">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_newproj_buildset.htm"
+	label="Make Builder"/>
+</context>
+<context id ="discovery_preferences">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_discovery_preferences.htm"
+   	label="Discovery Options"/>
+</context>					
+<context id ="std_prop_discovery">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_discovery.htm"
+   	label="Discovery Options"/>
+</context>
+<context id ="cdt_make_builder_page">
+   <description>Define the build settings for the current project. </description>
+   <topic href="reference/cdt_u_newproj_buildset.htm"
+   	label="&makeBuilder;"/>
+</context>
+
+<context id ="cdt_paths_symbols_page">
+   <description>Enter include paths and symbols. </description>
+   <topic href="reference/cdt_u_newproj_pathsymb.htm"
+   	label="&pathsSymbols;"/>
+</context>
+<context id ="make_targets_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_make_targets_view.htm"
+   	label="Make Targets view"/>
+</context>
+<context id ="new_proj_wiz_s_name">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_new_proj_wiz_name.htm"
+   	label="Name"/>
+</context>
+<context id ="new_proj_wiz_s_proj">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_ref.htm.htm"
+   	label="Referenced Projects"/>
+</context>
+<context id ="new_proj_wiz_s_errorp">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
+   	label="Error Parsers"/>
+</context>
+<context id ="new_proj_wiz_s_binary">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
+   	label="Binary Parser"/>
+</context>
+<context id ="new_proj_wiz_s_discovery">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_scanner_discovery.htm"
+   	label="Discovery Options"/>
+</context>
+<context id ="new_proj_wiz_s_cindexer">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_idx.htm"
+   	label="C/C++ Indexer"/>
+</context>
+<context id ="std_prop_build">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build.htm"
+   	label="Make Builder"/>
+</context>
+<context id ="std_prop_error">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
+   	label="Error Parser"/>
+</context>
+<context id ="std_prop_binary">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
+   	label="Binary Parser"/>
+</context>
+<context id ="newproj_parser_error">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_newproj_parser_error.htm"
+   	label="Error Parser"/>
+</context>
+<context id ="newproj_parser_binary">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_newproj_parser_binary.htm"
+   	label="Binary Parser"/>
+</context>
+<context id ="make_editor_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_makefile_settings_pref.htm"
+   	label="Makefile Editor preferences"/>
+</context>
+<context id ="make_targets_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_make_targets_pref.htm"
+   	label="Make Targets preferences"/>
+</context>
+<context id ="make_settings_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_make_settings_pref.htm"
+   label="Make Settings preferences"/>
+</context>
+
+</contexts>

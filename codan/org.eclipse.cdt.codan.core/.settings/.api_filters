@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.codan.core" version="2">
+    <resource path="src/org/eclipse/cdt/codan/core/model/AbstractChecker.java" type="org.eclipse.cdt.codan.core.model.AbstractChecker">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IChecker"/>
+                <message_argument value="AbstractChecker"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/codan/core/model/AbstractProblemLocation.java" type="org.eclipse.cdt.codan.core.model.AbstractProblemLocation">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IProblemLocation"/>
+                <message_argument value="AbstractProblemLocation"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/codan/core/param/AbstractProblemPreference.java" type="org.eclipse.cdt.codan.core.param.AbstractProblemPreference">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IProblemPreference"/>
+                <message_argument value="AbstractProblemPreference"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/codan/core/param/ListProblemPreference.java" type="org.eclipse.cdt.codan.core.param.ListProblemPreference">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IProblemPreferenceCompositeDescriptor"/>
+                <message_argument value="ListProblemPreference"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IProblemPreferenceCompositeValue"/>
+                <message_argument value="ListProblemPreference"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/codan/core/param/MapProblemPreference.java" type="org.eclipse.cdt.codan.core.param.MapProblemPreference">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IProblemPreferenceCompositeDescriptor"/>
+                <message_argument value="MapProblemPreference"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IProblemPreferenceCompositeValue"/>
+                <message_argument value="MapProblemPreference"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

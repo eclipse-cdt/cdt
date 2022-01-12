@@ -1,0 +1,177 @@
+/*******************************************************************************
+ * Copyright (c) 2007, 2011 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Chris Recoskie (IBM Corporation) - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.core.model;
+
+import java.net.URI;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.content.IContentType;
+
+/**
+ * A minimal implementation of ILanguageMappingsChangeEvent.
+ *
+ * @noextend This interface is not intended to be extended by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
+public class LanguageMappingChangeEvent implements ILanguageMappingChangeEvent {
+
+	private int fType;
+	private IProject fProject;
+	private IFile fFile;
+	private IPath fPath;
+	private String fFileName;
+	private IContentType[] fContentTypes;
+
+	@Override
+	public IContentType[] getAffectedContentTypes() {
+		return fContentTypes;
+	}
+
+	@Override
+	public IFile getFile() {
+		return fFile;
+	}
+
+	@Override
+	public String getFilename() {
+
+		// if the filename has been set, use it.  otherwise get the path from
+		// either the IFile or the IPath if we have one
+
+		if (fFileName != null)
+			return fFileName;
+		else {
+			if (fFile != null) {
+				IPath location = fFile.getLocation();
+				if (location != null)
+					return location.toString();
+				else {
+					// use the URI if there is one
+					URI uri = fFile.getLocationURI();
+
+					if (uri != null)
+						return uri.toString();
+				}
+
+			} else { // no file, use path
+				if (fPath != null)
+					return fPath.toString();
+
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public IPath getPath() {
+
+		if (fPath != null)
+			return fPath;
+
+		else { // try to get the path from the file if we have one
+			if (fFile != null) {
+				IPath location = fFile.getLocation();
+				return location;
+			}
+		}
+
+		return null;
+	}
+
+	@Override
+	public IProject getProject() {
+
+		if (fProject != null)
+			return fProject;
+
+		else { // try to get the project from the file if we have one
+
+			if (fFile != null)
+				return fFile.getProject();
+
+		}
+
+		return null;
+	}
+
+	@Override
+	public int getType() {
+		return fType;
+	}
+
+	/**
+	 * Sets the associated IContentTypes for this event.  The provided array will be returned
+	 * subsequently by getAffectedContentTypes.
+	 *
+	 * @param affectedContentTypes
+	 */
+	public void setAffectedContentTypes(IContentType[] affectedContentTypes) {
+		fContentTypes = affectedContentTypes;
+	}
+
+	/**
+	 * Sets the associated IFile for this event.  This file will be returned subsequently
+	 * by getFile().
+	 *
+	 * @param file the IFile to set
+	 */
+	public void setFile(IFile file) {
+		fFile = file;
+	}
+
+	/**
+	 * Sets the associated String filename for this event.  This filename will be returned subsequently
+	 * by getFileName().
+	 *
+	 * @param fileName the fFileName to set
+	 */
+	public void setFileName(String fileName) {
+		fFileName = fileName;
+	}
+
+	/**
+	 * Sets the associated IPath for this event.  This path will be returned subsequently
+	 * by getPath().
+	 *
+	 * @param path the IPath to set
+	 */
+	public void setPath(IPath path) {
+		fPath = path;
+	}
+
+	/**
+	 * Sets the associated project for this event.  This project will be returned subsequently
+	 * by getProject().
+	 *
+	 * @param project the IProject to set
+	 */
+	public void setProject(IProject project) {
+		fProject = project;
+	}
+
+	/**
+	 * Sets the type of this event.  This type will be returned by getType().
+	 *
+	 * @param type the type to set
+	 * @see ILanguageMappingChangeEvent#TYPE_WORKSPACE
+	 * @see ILanguageMappingChangeEvent#TYPE_PROJECT
+	 * @see ILanguageMappingChangeEvent#TYPE_FILE
+	 */
+	public void setType(int type) {
+		fType = type;
+	}
+}

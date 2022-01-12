@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<template type="TestTemplate" version="1.0" supplier="Symbian" revision="1.0" author="Symbian"
+		id="??" label="Create Source Folder test" description="Create Source Folder test"
+		 help="help.html">
+
+	<process type="org.eclipse.cdt.core.CreateSourceFolder">
+		<simple name="projectName" value="$(projectName)"/>
+		<simple name="path" value="$(sourceDir1)"/>
+	</process>
+
+	<process type="org.eclipse.cdt.core.CreateSourceFolder">
+		<simple name="projectName" value="$(projectName)"/>
+		<simple name="path" value="$(sourceDir2)"/>
+	</process>
+</template>
+

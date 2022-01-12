@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="DSF Examples"
+            id="org.eclipse.cdt.examples.dsf">
+      </category>
+      <view
+            name="Timers View"
+            icon="icons/timer.gif"
+            category="org.eclipse.cdt.examples.dsf"
+            class="org.eclipse.cdt.examples.dsf.timers.TimersView"
+            id="org.eclipse.cdt.examples.dsf.TimersView">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.cdt.dsf.test.actionSet"
+            label="DSF Examples">
+         <menu
+               id="org.eclipse.cdt.examples.dsf"
+               label="DSF Examples"
+               path="additions">
+            <groupMarker name="concurrent"/>
+         </menu>
+         <action
+               class="org.eclipse.cdt.examples.dsf.filebrowser.FileBrowserAction"
+               id="org.eclipse.cdt.dsf.test.fileBrowser"
+               label="Open File Browser Dialog"
+               menubarPath="org.eclipse.cdt.examples.dsf/concurrent"
+               style="push"/>
+      </actionSet>
+   </extension>
+
+</plugin>

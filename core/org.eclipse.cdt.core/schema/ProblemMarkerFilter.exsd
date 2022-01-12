@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="ProblemMarkerFilter" name="Problem Marker Filter"/>
+      </appInfo>
+      <documentation>
+         This extension point allows to filter out unneeded problem markers. 
+         For example during building of Qt base project with QML files tool Qt Linguist
+         could report syntax errors in some qml file. These errors are presented as 
+         &quot;C/C++ Problems&quot; in qml files because they match format CDT expects for errors.
+         If there is already installed plug-in that handles QML files it is a wise to ignore such
+         errors because they are already reported as &quot;QML Problems&quot; with more meaningful descriptions.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="problemMarkerFilter" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="problemMarkerFilter">
+      <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Implementation of Problem Marker Filter that allows to filter out unneded or duplicit problem markers.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.IProblemMarkerFilter"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         8.3
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a qmakeEnvProvider contribution:
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension
+    point=&quot;org.eclipse.cdt.core.ProblemMarkerFilter&quot;
+    id=&quot;example&quot;
+    name=&quot;Example QMake Env Provider Extension&quot;&gt;
+    &lt;problemMarkerFilter 
+        class=&quot;com.example.internal.ProblemMarkerFilter&quot;&gt;
+        &lt;enablement&gt;
+            &lt;with variable=&quot;projectNatures&quot;&gt;
+                &lt;iterate operator=&quot;or&quot;&gt;
+                    &lt;equals value=&quot;com.example.my-nature&quot;/&gt;
+                &lt;/iterate&gt;
+            &lt;/with&gt;
+        &lt;/enablement&gt;
+    &lt;/problemMarkerFilter&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.core.IProblemMarkerFilter&lt;/code&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2014 BlackBerry Limited and others.
+          This program and the accompanying materials
+          are made available under the terms of the Eclipse Public License 2.0
+          which accompanies this distribution, and is available at
+          https://www.eclipse.org/legal/epl-2.0/
+          
+          SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+
+</schema>

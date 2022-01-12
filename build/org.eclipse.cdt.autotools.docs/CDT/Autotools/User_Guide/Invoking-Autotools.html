@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Autotools Plug-in User Guide - Invoking Autotools</title>
+		<link type="text/css" rel="stylesheet" href="../../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Invoking Autotools</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Configuration.html" title="Configuration">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Special-Editors.html" title="Special Editors">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Configuration</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Special Editors</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Invoking_Autotools">Invoking Autotools</h1>
+		<p>To invoke the Autotools, a special sub-menu has been added to the project Context menu.  Select any file in the project and then click on Invoke Autotools.  There you will find a set of menu items to invoke the various Autotools for your project.  The output of the tool invocation is presented in a special Autotools Console.  Like the Configure and C-Build Consoles, the Autotools console is per-project and is not saved across Eclipse sessions.  The console, if present, can be accessed via the "Display Selected Console" button in the Console View.</p>
+		<p>
+			<img border="0" src="images/AutotoolsConsole.png"/>
+		</p>
+		<p>The tools provided are:</p>
+		<ol>
+			<li>Invoke Autoconf
+				<ul>
+					<li>The autoconf tool is run in the current directory for the current file or folder selected for the project.  There are no parameters.  Autoconf can also be run by right-clicking a configure.in or configure.ac file and selected Invoke Autoconf.
+						<br/>
+					</li>
+				</ul>
+			</li>
+			<li>Invoke Automake
+				<ul>
+					<li>The automake tool is run from the current directory for the file or folder selected in the project.  A dialog is presented to allow specification of options. 
+						<br/> 
+						<img border="0" src="images/AutotoolsAutomake.png"/>  
+						<br/>The first text entry is for options while the 2nd text window is for Makefiles targets to generate.  The automake tool should be invoked where the configure script is found that will generate the Makefile(s).  There may be multiple Makefiles to generate in the current directory or lower.  Each target location should be a Makefile and should have a corresponding Makefile.am file at the relative location specified.  For example, automake x/Makefile y/Makefile Makefile specifies three targets.  It is expected that there is an x/Makefile.am, y/Makefile.am, and a Makefile.am relative to the current directory.  For details on automake, enter --help as an option.
+						<br/>
+					</li>
+				</ul>
+			</li>
+			<li>Invoke Aclocal
+				<ul>
+					<li>The aclocal tool is run from the current directory for the file or folder selected in the project.  A dialog is presented to allow specification of options. 
+						<br/>  
+						<img border="0" src="images/AutotoolsAclocal.png"/>  
+						<br/>The first text entry is for options while the 2nd text window is for directories to search for m4 macros.  The directories can also be specified directly in the options parameters using the -I option.  For details, enter --help as an option.
+						<br/>
+					</li>
+				</ul>
+			</li>
+			<li>Invoke Autoheader
+				<ul>
+					<li>The autoheader tool is run from the current directory for the file or folder selected in the project.  A dialog is presented to allow specification of options. 
+						<br/>  
+						<img border="0" src="images/AutotoolsAutoheader.png"/>  
+						<br/>The tool is used to create a template for generated header files.  It should be run in a directory containing a configure script as it gets its information from there.  For details, enter --help as an option.
+						<br/>
+					</li>
+				</ul>
+			</li>
+			<li>Invoke Autoreconf
+				<ul>
+					<li>The autoreconf tool is run from the current directory for the file or folder selected in the project.  A dialog is presented to allow specification of options. 
+						<br/> 
+						<img border="0" src="images/AutotoolsAutoreconf.png"/>  
+						<br/>The most useful option is the -i option to recursively call Autotools for all input files out of date with respect to their outputs.  For details, enter --help as an option.
+						<br/>
+					</li>
+				</ul>
+			</li>
+			<li>Invoke Libtoolize
+				<ul>
+					<li>The libtoolize tool is run from the current directory for the file or folder selected in the project.  A dialog is presented to allow specification of options. 
+						<br/> 
+						<img border="0" src="images/AutotoolsLibtoolize.png"/>.  
+						<br/>The tool is used to add libtool support to a package.  Libtool provides macros to allow a package to create a shared library without having to know all the details required for the current platform.  This might include special compiler flags or linker options or special tools.  For details on libtoolize, enter --help as an option.
+						<br/>
+					</li>
+				</ul>
+			</li>
+		</ol>
+		<p>
+			<br/>
+			By default, the autotools are invoked simply by their names; expecting that the path has been set up appropriately.  In some instances, you might want to specify a specific location for the autotools.  For example, your project may require old versions of the tools which you have installed locally, but do not wish to be on your path.  To set these for your project, select your project or a file/folder within it and go to Project -&gt; Properties -&gt; Autotools -&gt; General and select the Tool Settings tab.
+		</p>
+		<p>
+			<img border="0" src="images/AutotoolsToolSettings.png"/>
+		</p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Configuration.html" title="Configuration">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="User-Guide.html" title="Autotools Plug-in User Guide">
+						<img alt="Autotools Plug-in User Guide" border="0" src="../../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Special-Editors.html" title="Special Editors">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Configuration</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Special Editors</td>
+			</tr>
+		</table>
+	</body>
+</html>

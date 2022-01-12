@@ -1,0 +1,1377 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta http-equiv="Content-Type"
+ content="text/html; charset=ISO-8859-1">
+  <meta name="GENERATOR" content="Microsoft FrontPage 6.0">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+
+  <title>Managed Build System Extensibility Document</title>
+  <link rel="stylesheet"
+ href="https://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/cdt-home/cdt.css?cvsroot=Tools_Project"
+ type="text/css">
+  <link rel="stylesheet" href="../../../../book.css" type="text/css">
+	<style>
+<!--
+h3
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:13.0pt;
+	font-family:Arial}
+-->
+  </style>
+	<!--[if !mso]>
+	<style>h2
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Arial";
+	font-style:italic}
+table.MsoTableGrid
+	{border:1.0pt solid windowtext;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	}
+ li.MsoNormal
+	{mso-style-parent:"";
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	margin-left:0in; margin-right:0in; margin-top:0in}
+  h4
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:.6in;
+	text-indent:-.6in;
+	page-break-after:avoid;
+	tab-stops:list .6in;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	}
+ table.MsoNormalTable
+	{mso-style-parent:"";
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	}
+</style>
+	<![endif]-->
+</head>
+<body>
+<!-- Document Header -->
+<table border="0" cellpadding="2" width="100%">
+  <tbody>
+    <tr>
+      <td align="left" width="72%">What's New in CDT 
+		Build System 4.0<br>
+      This document outlines the new features presented 
+		in the new
+		CDT build system in CDT 4.0</td>
+      <td width="28%"><img src="https://dev.eclipse.org/images/Idea.jpg"
+ height="86" width="120" alt="idea"></td>
+    </tr>
+  </tbody>
+</table>
+<table border="1">
+ <tr>
+    <td width="50%" rowspan="2">Authors</td>
+  </tr>
+  <tr>
+  <td width="50%"><a href="mailto:mikhail.sennikovsky@intel.com">Mikhail 
+	Sennikovsky</a></td>
+  </tr>
+  <tr>
+    <td width="50%" rowspan="2">Revision Date</td>
+  </tr>
+  <tr>
+    <td width="50%">06/21/07 - Version 4.0</td>
+  </tr>
+  <tr>
+    <td width="50%" rowspan="2">Change History</td>
+  </tr>
+  <tr>
+    <td width="50%">4.0 - Document Creation</td>
+  </tr>
+</table>
+<br>
+<!-- End of Document Header --><!-- Table of Contents -->
+<div class="section">Table of Contents</div>
+&nbsp;<div class="indent">
+	<p style="margin-top: 0; margin-bottom: 0"><a href="#_TocSectionIntro">1 </a>
+	<A href="#_TocSectionIntro">Scope of the document</A></div>
+<div class="indent">
+	<p style="margin-top: 0; margin-bottom: 0"><a href="#_TocSectionUIModel">2 
+	New features</a></p>
+<div class="indent">
+	<p style="margin-top: 0; margin-bottom: 0"><a href="#_TocSectionUIModel_1">2.1 Standard and 
+	Managed Build system incorporation</a></p>
+	<p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_1_1">2.1.1 Build Definitions Model Schema</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_2">2.2 New New Project Wizard</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_3">2.3 Multi-configuration support for Makefile projects.</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_4">2.4 Tool-chain support for Makefile Projects</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_5">2.5 Per-folder settings</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_6">2.6 Internal Builder</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_7">2.7 Customized Configuration Builds</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_8">2.8 Make target build for Managed Build projects</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_9">2.9 Tool-chain modification</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_10">2.10 Build Properties</a><p style="margin-top: 0; margin-bottom: 0">
+	<a href="#_TocSectionUIModel_11">2.11 Model schema changes</a></div>
+</div>
+<p>&nbsp;</p>
+<p class="section"><a name="_TocSectionIntro">1 Scope of the document</a></p>
+<p>The document highlights the new features that were introduced in 
+the New CDT Build System 4.0 from the ISV point of view. The document mostly 
+focuses on the API details rather than on UI ones.</p>
+<p>The document should be useful for ISVs willing to migrate or integrate their 
+tool-chains to the CDT 4.0 and should serve as as a valuable addition to the the
+<a href="../../migration_guides/4.0/migration_guide_40.html">Migration Guide 
+document</a>, although despite of the
+<a href="../../migration_guides/4.0/migration_guide_40.html">Migration Guide</a> 
+it mostly focuses on highlighting feature details rather than on the migration 
+problems. Please also refer to the
+<a href="../../migration_guides/4.0/migration_guide_40.html">Migration Guide 
+document</a> for additional detail on migration to the 4.0</p>
+<p>&nbsp;</p>
+<p class="section"><a name="_TocSectionUIModel">2 New features</a></p>
+<p class="MsoNormal" style="margin-top:6.0pt">The CDT 4.0 introduces a lot of 
+Build System functionality updates. The list of the new features is given below:</p>
+<ol>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_1">Standard and 
+	Managed Build system incorporation</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_2">New New Project Wizard</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_3">Multi-configuration support for Makefile projects.</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_4">Tool-chain 
+	support for Makefile Projects</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_5">Per-folder 
+	settings</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_6">Internal 
+	Builder</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_7">Customized 
+	Configuration Builds</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_8">Make target 
+	build for Managed Build projects</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_9">Tool-chain 
+	modification</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_10">Build 
+	Properties</a></p></li>
+	<li>
+	<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">
+	<a href="#_TocSectionUIModel_11">Model schema changes</a></p></li>
+</ol>
+<p class="subsection"><a name="_TocSectionUIModel_1">2.1 Standard and Managed 
+Build System incorporation</a></p>
+<p>In CDT 4.0 Standard and Managed Build Systems are incorporated into one CDT 
+Build System. This allows all Standard Make features to be used for the Managed 
+Build Projects and vice a versa and also provides one common API and UI 
+interface for the build settings.</p>
+<p>The CDT Build System is created based upon the Managed Build System 
+functionality (org.eclipse.cdt.managedbuilder.core and 
+org.eclipse.cdt.managedbuilder.ui plug-ins). So all the API that were used for 
+the Managed Build Projects in the CDT 3.x becomes valid for the Makefile 
+Projects in the 4.0, i.e</p>
+<p style="margin-top: 0; margin-bottom: 0">The <strong>
+org.eclipse.cdt.managedbuilder.core.buildDefinitions</strong> extension point serves 
+as an entry-point for the tool integration into the Build System.</p>
+<p style="margin-top: 0; margin-bottom: 0">The <strong>
+org.eclipse.cdt.managedbuilder.core.ManagedBuildManager</strong> class serves as an 
+entry-point for accessing/manipulating the Build Settings information.</p>
+<p>From the API point of view there is no principal difference between 
+the Makefile and Managed Build Projects. From the Build System perspective the 
+difference between the &quot;Makefile&quot; and the &quot;Managed&quot; modes is that in case of the 
+Managed build the makefile generation is performed (or the Internal Builder is 
+used), while for the Makefile Build no makefile generation is done, so it is 
+expected that the makefile is supplied by the user. Switching between the 
+Managed and the Makefile modes is actually switching the Makefile generation 
+either on or off.</p>
+<p>A toolChain, tool, builder definitions now have have the &quot;supportsManagedBuild&quot; 
+property to specify whether or not the managed build is supported for the given 
+object. </p>
+<p class="subsection"><a name="_TocSectionUIModel_1_1">2.1.1 Build Definitions 
+Model schema</a></p>
+<p class="MsoNormal" style="margin-top:6.0pt">The figure below shows a UML model 
+of the schema elements.&nbsp; It is simplified by leaving out the fact that the 
+configuration, toolChain, tool, targetPlatform, and builder definition elements 
+can be defined at the top level in a manifest file.</p>
+<p class="MsoNormal" style="margin-top:6.0pt"><img border="0" src="whats_1.gif" alt="UML model of schema elements"></p>
+<p>&nbsp;</p>
+<p class="subsection"><a name="_TocSectionUIModel_2">2.2 New New Project Wizard</a></p>
+<p>The CDT 4.0 presents a new New Project Wizard. This section primarily 
+focusing and describing the ways a tool-integrator can influence on how his/her tool-chains and project types 
+are presented in the wizard on the first wizard page. Please refer to the &quot;New 
+Project Wizard&quot; user description for more detail on the New Project Wizard UI.</p>
+<p>The first wizard page presents the wizard allows user to select a project 
+type and tool-chain(s) to be used with the project type.</p>
+<p>&nbsp;</p>
+<p><img border="0" src="../../migration_guides/4.0/migrat1.gif"  alt="New project wizard dialog"></p>
+<p><span class="bold">Presenting project-types and tool-chains in the New Project Wizard</span></p>
+<p>A tool-integrator has two options of presenting his project-types in the 
+wizard.</p>
+<ol>
+	<li>Define a new custom Project Type entry.</li>
+	<li>Use the general project type entries mechanism.</li>
+</ol>
+<p><strong><span style="color:#FF0000">NOTE:</span></strong>&nbsp; The new New Project Wizard now 
+	operates with tool-chains allowing to select the tool-chain(s) to be used on 
+	project creation. Thus it is 
+	required that all toolChain/tool/builder build definitions representing 
+	different tool-chains/tools/builders must have different names as well as toolChain/tool/builder build definitions representing one and the same 
+	tool-chain/tool/builder must have identical names.</p>
+<p class="MsoNormal" style="margin-top:0; margin-bottom:0"><strong>&nbsp;&nbsp;&nbsp; 
+	Example:</strong> to illustrate the above requirement here is how this is handled 
+	in the gnu tool-chain definitions:</p>
+<p class="MsoNormal" style="margin-top:0; margin-bottom:0">&nbsp;&nbsp;&nbsp; 
+	The gnu plug-in contains the gcc linker tool on Linux is defined as</p>
+<p class="MsoNormal" style="margin-top:0; margin-bottom:0">&nbsp;&nbsp;&nbsp;&nbsp; 
+	&lt;tool<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; natureFilter=&quot;cnature&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name=&quot;%ToolName.linker.gnu.c&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; outputFlag=&quot;-o&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command=&quot;gcc&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;</p>
+<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	...</p>
+<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp;
+	</p>
+<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp; 
+	At the same time the gnu tool-chain definitions refers to the gcc linker by 
+	defining a new tool as a super-class of the &quot;cdt.managedbuild.tool.gnu.c.linker&quot; 
+	tool</p>
+<p class="MsoNormal" style="margin-top:6.0pt">&nbsp;&nbsp;&nbsp;&nbsp; &lt;tool<br>&nbsp;&nbsp;&nbsp; id=&quot;cdt.managedbuild.tool.gnu.c.linker.base&quot;<br>&nbsp;&nbsp;&nbsp; superClass=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;&gt;</p>
+<p class="MsoNormal" style="margin-top:6.0pt">...</p>
+<p class="MsoNormal" style="margin-top:6.0pt">Both tool definitions listed 
+	above are actually treated as two different tools by the Build System, while 
+	both of them refer to one and&nbsp; the same &quot;gcc&quot; executable. To make the 
+	build system aware that both tool definitions refer to one and the same tool/executable 
+	it is required that both tool definitions specify one and the same name. In 
+	the above sample the tool of id=&quot;cdt.managedbuild.tool.gnu.c.linker.base&quot; 
+	does not specify any name thus making the name to be inherited from the 
+	super-class tool, so both tools have the same name.</p>
+<p class="MsoNormal" style="margin-top:6.0pt">On the other hand the cygwin 
+	gcc linker is defined as </p>
+<p class="MsoNormal" style="margin-top:6.0pt">&nbsp;&lt;tool<br>id=&quot;cdt.managedbuild.tool.gnu.c.linker.cygwin&quot;<br>name=&quot;%ToolName.linker.cygwin.gnu.c&quot;<br>superClass=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;&gt;<br>...</p>
+<p class="MsoNormal" style="margin-top:6.0pt">although the tool definitions 
+	is defined as a super-class of the linux gcc linker, it refers to the 
+	different tool(executable) than the Linux linker definition. The cygwin 
+	linker definition specifies the name=&quot;%ToolName.linker.cygwin.gnu.c&quot; that 
+	differs from the one defined by the Linux gcc linker.</p>
+<p><span class="bold">Defining new Project Type entries</span></p>
+<p>In case a tool-integrator is willing his/her project type to be displayed as 
+separate entries with custom names, his project-type definition must specify a 
+&quot;name&quot; property for the project-type, e.g.</p>
+<p><img border="0" src="whats_3.gif"  alt="Project type definition and new project wizard"></p>
+<p>When the project type entry is selected in the wizard the &quot;Toolchain:&quot; 
+pane will display the list of tool-chains defined/associated with the project type</p>
+<p><span class="bold">Using general project type entries</span></p>
+<p>The &quot;general project types&quot; mechanism allows grouping multiple project 
+types/tool-chains under one project-type entry thus ensuring the compactness of 
+the project-type information and ensuring a common user experience across 
+different tool-chains and integrations. When the general project type entry is selected the 
+&quot;ToolChains:&quot; pane will list all tool-chains contributed from different project 
+types allowing user to select the tool-chain to be used with the given 
+project-type.</p>
+<p><span class="bold">What are the general project type entries?</span></p>
+<p>The general project type entries mechanism is made based upon the new Build 
+Properties mechanism introduces in the new CDT Build System. Each general project type 
+entry is a value of the &quot;buildArtefactType&quot; property which represents the build 
+artifact type. The New Project wizard searches for the tool-chains supporting 
+each of the defined build artifact types and displays them in the &quot;ToolChains:&quot; 
+pane for each of the build artifact type.</p>
+<p>CDT pre-defines the following values of the build artifact type property:</p>
+<p>&quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot; - to represent executable</p>
+<p>&quot;org.eclipse.cdt.build.core.buildArtefactType.staticLib&quot; - to represent 
+static library</p>
+<p>&quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot; - to represent 
+shared library</p>
+<p>ISVs can define their own custom build artifact values by contributing to the 
+org.eclipse.cdt.managedbuilder.core.buildProperties extension point.</p>
+<p>See the &quot;Build Properties&quot; section for more detail on the Build Properties 
+mechanism.</p>
+<p><span class="bold">Contributing to the general project type entries</span></p>
+<p>The minimal steps needed to specify that the general project type entry should be used, a project-type 
+definition should specify the &quot;buildArtefact&quot; attribute and assign it to one of 
+the values of the buildArtefactType build property, e.g.</p>
+<p>&nbsp;&lt;projectType <br>
+&nbsp;&nbsp;&nbsp; buildArtefactType=&quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot;<br>
+&nbsp;&nbsp;&nbsp; id=&quot;cdt.managedbuild.target.gnu.exe&quot;&gt;</p>
+<p>&nbsp;&nbsp; ...</p>
+<p><img border="0" src="whats_2.gif" alt="Build property definition and New project wizard"></p>
+<p>&nbsp;</p>
+<p class="subsection"><a name="_TocSectionUIModel_3">2.3 Multi-configuration support for makefile 
+projects</a></p>
+<p>The new CDT Build System supports multiple configuration settings. This is 
+applicable for the Managed and Makefile projects now. As with the Managed 
+projects the org.eclipse.cdt.managedbuilder.core.IConfiguration interface serves 
+as a holder of the configuration settings.</p>
+<p>&nbsp;</p>
+<p class="subsection"><a name="_TocSectionUIModel_4">2.4 Tool-chain support for makefile projects</a></p>
+<p>The new CDT Build System provider the notion of the tool-chain/tool/builder 
+definitions. The tool-chain are used for the Makefile projects as 
+holders/profiles containing/grouping different settings applicable for the given 
+tool-chain thus allowing the project seyttings to be automatically configured 
+based upon the tool-chain being used. This includes adjusting error parser, 
+binary parser settings, scanner discovery profile settings, etc.</p>
+<p class="subsection"><a name="_TocSectionUIModel_5">2.5 Per-folder settings</a></p>
+<p>It is now possible to specify custom settings on the per-folder&nbsp; level. 
+It is as well possible to exclude folders from build. A new interface folderInfo 
+schema element is presented. See the buildDefinitions model above for more 
+detail.</p>
+<p class="subsection"><a name="_TocSectionUIModel_6">2.6 Internal Builder</a></p>
+<p style="margin-top: 0; margin-bottom: 0">It is now possible to use the Internal Builder in the tool-chain definitions. 
+The Internal Builder is treated as a regular builder by the Build System. To 
+associate the Internal Builder with the tool-chain the tool-chain should define 
+the builder specifying the Internal Builder as its super-class via a builder#superClass 
+attribute. The Internal Builder id is &quot;org.eclipse.cdt.build.core.internal.builder&quot;. 
+E.g.</p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&lt;builder</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+id=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;cdt.managedbuild.tool.gnu.builder.mingw.base&quot;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<span style="font-size: 10.0pt; color: navy">&nbsp;...</span></span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+superClass=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.internal.builder&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;
+</span><span style="font-size: 10.0pt; font-family: Courier New; color: black">
+&lt;- setting the Internal Builder id as a super-class ID specifies that the 
+Internal Builder will be used</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">
+&lt;/builder&gt;</span></p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+...</p>
+<p class="subsection"><a name="_TocSectionUIModel_7">2.7 Customized configuration builds</a></p>
+<p style="margin-top: 0; margin-bottom: 0">It is now possible to initiate the 
+project build that will use customized settings that differ from those of the 
+currently active configuration.</p>
+<p style="margin-top: 0; margin-bottom: 0">The following modes are supported:</p>
+<ol>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0">Building any number of project 
+	build configurations with one build request</p></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0">Building any number of 
+	configurations with builder settings customized</p></li>
+</ol>
+<p style="margin-top: 0; margin-bottom: 0">This functionality can be used 
+programmatically via the 
+org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.buildConfigurations(...) 
+methods.</p>
+<p style="margin-top: 0; margin-bottom: 0">It is also accessible in UI via the 
+&quot;Build Configurations&quot; -&gt; &quot;Build&quot; project context menu.</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0">NOTE: For Managed builds (makefiles 
+are generated automatically) this functionality works only in case the buildfile 
+generator implements the 
+org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator2. This 
+interface extends the old IManagedBuilderMakefileGenerator by defining a new 
+initialize() method which accepts IConfiguration and IBuilder rather than 
+IManagedBuildInfo thus removing an assumption that only active configuration can 
+be used for building.</p>
+<p style="margin-top: 0; margin-bottom: 0">The default GnuMakefileGenerator 
+supplied with the CDT now implements this interface, so in case the builder is 
+using this default implementation, no changes are needed.</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="subsection"><a name="_TocSectionUIModel_8">2.8 Make Target Build for Managed Build 
+Projects</a></p>
+<p style="margin-top: 0; margin-bottom: 0">As a result of combining the features 
+of old Managed and Standard Build systems, the make target build is now 
+available for Managed Projects also.</p>
+<p style="margin-top: 0; margin-bottom: 0">Internally&nbsp; it is actually 
+treated as a special case of the Custom configuration build (see the &quot;Custom 
+configuration builds&quot; section).</p>
+<p class="subsection"><a name="_TocSectionUIModel_9">2.9 Tool-chain modification</a></p>
+<p style="margin-top: 0; margin-bottom: 0">The CDT Build System now allows 
+changing tool-chains used in the configurations for the already created 
+projects.</p>
+<p style="margin-top: 0; margin-bottom: 0">The following modifications are 
+supported</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<table border="1" width="725" height="45">
+	<tr>
+		<td height="12" width="352" align="center"><strong>Modification type</strong></td>
+		<td height="12" width="357" align="center"><strong>Possible levels of 
+		modifications</strong></td>
+	</tr>
+	<tr>
+		<td height="11" width="352">Changing/substituting the entire tool-chain</td>
+		<td height="11" width="357">
+		<ol>
+			<li>Project-wide</li>
+			<li>Per-folder</li>
+		</ol>
+		</td>
+	</tr>
+	<tr>
+		<td height="11" width="352">Adding/removing tools to the tool-chain 
+		currently used</td>
+		<td height="11" width="357">
+		<ol>
+			<li>
+			<p style="margin-top: 0; margin-bottom: 0">Project-wide</li>
+			<li>
+			<p style="margin-top: 0; margin-bottom: 0">Per-folder</li>
+			<li>
+			<p style="margin-top: 0; margin-bottom: 0">Per-file</li>
+		</ol>
+		</td>
+	</tr>
+	<tr>
+		<td height="11" width="352">Changing builder </td>
+		<td height="11" width="357">
+		<ol>
+			<li>Project-wide</li>
+		</ol>
+		</td>
+	</tr>
+</table>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0">To make the tool-chain modification 
+mechanism work properly a tool-integrator is responsible for providing an 
+information that would allow to preserve/adjust the necessary settings while 
+conversion. There are several mechanisms that could be used for these purposes.</p>
+<ol>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0">Specifying a tool-chain/tool 
+	converter</p></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0">Specifying build properties 
+	supported and enablement expressions for automatic settings adjustment. (See 
+	the &quot;Build Properties mechanism&quot; section for detail on the Build Properties 
+	mechanism)</p></li>
+</ol>
+<p style="margin-top: 0; margin-bottom: 0">When the tool-chain modification is 
+performed the Build System checks whether there mechanism is performed in the 
+following </p>
+<ol>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0">In case there is an appropriate 
+	converter defined that could be used for conversion, the converter is used 
+	while modification</p></li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0">Otherwise the Build properties 
+	mechanism is used. In this case settings adjustment is performed based upon 
+	adjustment expressions defined for the tool-chain/tools and the set of build 
+	properties associated with the configuration. (See the &quot;Build Properties 
+	mechanism&quot; section for detail on the Build Properties mechanism)</p></li>
+</ol>
+<p><span style="color:#FF0000"><strong>NOTE: </strong></span>&nbsp;In order to function properly 
+the tool-chain modification functionality requires that all toolChain/tool/builder build definitions representing 
+	different tool-chains/tools/builders must have different names as well as toolChain/tool/builder build definitions representing one and the same 
+	tool-chain/tool/builder must have identical names.</p>
+<p class="MsoNormal" style="margin-top:0; margin-bottom:0"><strong>&nbsp;&nbsp;&nbsp; 
+	Example:</strong> to illustrate the above requirement here is how this is handled 
+	in the gnu tool-chain definitions:</p>
+<p class="MsoNormal" style="margin-top:0; margin-bottom:0">&nbsp;&nbsp;&nbsp; 
+	The gnu plug-in contains the gcc linker tool on Linux is defined as</p>
+<p class="MsoNormal" style="margin-top:0; margin-bottom:0">&nbsp;&nbsp;&nbsp;&nbsp; 
+	&lt;tool<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; natureFilter=&quot;cnature&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name=&quot;%ToolName.linker.gnu.c&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; outputFlag=&quot;-o&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; command=&quot;gcc&quot;<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;</p>
+<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	...</p>
+<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp;
+	</p>
+<p class="MsoNormal" style="margin-top:0pt; margin-bottom:0">&nbsp;&nbsp;&nbsp; 
+	At the same time the gnu tool-chain definitions refers to the gcc linker by 
+	defining a new tool as a super-class of the &quot;cdt.managedbuild.tool.gnu.c.linker&quot; 
+	tool</p>
+<p class="MsoNormal" style="margin-top:6.0pt">&nbsp;&nbsp;&nbsp;&nbsp; &lt;tool<br>&nbsp;&nbsp;&nbsp; id=&quot;cdt.managedbuild.tool.gnu.c.linker.base&quot;<br>&nbsp;&nbsp;&nbsp; superClass=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;&gt;</p>
+<p class="MsoNormal" style="margin-top:6.0pt">...</p>
+<p class="MsoNormal" style="margin-top:6.0pt">Both tool definitions listed 
+	above are actually treated as two different tools by the Build System, while 
+	both of them refer to one and&nbsp; the same &quot;gcc&quot; executable. To make the 
+	build system aware that both tool definitions refer to one and the same tool/executable 
+	it is required that both tool definitions specify one and the same name. In 
+	the above sample the tool of id=&quot;cdt.managedbuild.tool.gnu.c.linker.base&quot; 
+	does not specify any name thus making the name to be inherited from the 
+	super-class tool, so both tools have the same name.</p>
+<p class="MsoNormal" style="margin-top:6.0pt">On the other hand the cygwin 
+	gcc linker is defined as </p>
+<p class="MsoNormal" style="margin-top:6.0pt">&nbsp;&lt;tool<br>id=&quot;cdt.managedbuild.tool.gnu.c.linker.cygwin&quot;<br>name=&quot;%ToolName.linker.cygwin.gnu.c&quot;<br>superClass=&quot;cdt.managedbuild.tool.gnu.c.linker&quot;&gt;<br>...</p>
+<p class="MsoNormal" style="margin-top:6.0pt">although the tool definitions 
+	is defined as a super-class of the linux gcc linker, it refers to the 
+	different tool(executable) than the Linux linker definition. The cygwin 
+	linker definition specifies the name=&quot;%ToolName.linker.cygwin.gnu.c&quot; that 
+	differs from the one defined by the Linux gcc linker.</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="subsection"><a name="_TocSectionUIModel_10">2.10 Build Properties mechanism</a></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span lang="EN-US">
+The Build Properties mechanism allows defining a set of properties along with 
+the possible property values for each property.</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">It is possible to 
+associate some set of properties with the configuration/project type.</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">The tool-chains and 
+tools in their turn are allowed to specify the set of supported properties and 
+their supported values for those properties.</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Given these 
+capabilities the Build Properties mechanism is used to facilitate the following 
+functionality:</p>
+<ol>
+	<li>
+	<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">The New Project 
+	Wizard is now now creating the set of &quot;general&quot; project type entries based 
+	upon the available values for the &quot;org.eclipse.cdt.build.core.buildArtefactType&quot; 
+	build property and allows associating tool-chains with those project type 
+	entries given the information on the build artefact type values supported by 
+	the tool-chains and defined for the project types.</li>
+	<li>
+	<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">With the 
+	tool-chain modification functionality <span lang="EN-US">tool-chains, tools 
+	and builders can use the build properties mechanism to adjust their settings 
+	(e.g. option values for tools, etc. ) using enablement expressions 
+	mechanism. This allows easy tool-chain/tool/builder switching without the 
+	necessity to implement a converter. Having this mechanism it is possible to 
+	define tools whose default option values will depend on the set build 
+	properties associated with the configuration. Thus it is possible to have 
+	one tool-chain definition whose values will be automatically adjusted 
+	depending on whether the tool-chain is being used to create executable or 
+	library, etc. or depending on whether the tool-chain is used in the 
+	&quot;release&quot; or &quot;debug&quot; build, etc.</span></li>
+	<li>
+	<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">It is now 
+	possible to change the build artifact type of the already created project by 
+	changing the value of the buildArtefactType property in case the tool-chain 
+	supports that.</li>
+</ol>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span class="bold">Defining new 
+Build Properties and their values</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Build Properties 
+are defined with the org.eclipse.cdt.managedbuilder.core.buildProperties 
+extension point. Please refer to the extension point description for the 
+detailed info on extension point schema.</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span lang="EN-US">
+The Build Property definition consists of the property ID, a human-readable 
+property name and the set of values this property supports.</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">The property value 
+definition in its turn consist of the value id and <span lang="EN-US">a 
+human-readable value name.</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;extension</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+id=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;baseProperties&quot;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+name=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;Base 
+Build Properties Definition&quot;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">
+point=</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.managedbuilder.core.buildProperties&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;propertyType</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">
+id=</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">
+name=</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;%BuildProperty.type.name.buildType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">/&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;propertyType</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">
+id=</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildArtefactType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">
+name=</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;%BuildProperty.type.name.buildArtefactType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">/&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">&nbsp;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;propertyValue</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">property=</span><span style="font-size:
+10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">id=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildType.debug&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">name=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;%BuildProperty.value.name.debug&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">/&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;propertyValue</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">property=</span><span style="font-size:
+10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">id=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildType.release&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">name=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;%BuildProperty.value.name.release&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">/&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">&nbsp;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;propertyValue</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">property=</span><span style="font-size:
+10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildArtefactType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">id=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">name=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;%BuildProperty.type.name.executable&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">/&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;propertyValue</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">property=</span><span style="font-size:
+10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildArtefactType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">id=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildArtefactType.staticLib&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">name=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;%BuildProperty.type.name.staticLibrary&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">/&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;propertyValue</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">property=</span><span style="font-size:
+10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildArtefactType&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">id=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;org.eclipse.cdt.build.core.buildArtefactType.sharedLib&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">name=</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:green">&quot;%BuildProperty.type.name.sharedLibrary&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">/&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;">&nbsp;</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;
+color:black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">
+&lt;/extension&gt;</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span lang="EN-US">
+The values are defined separately from the property, so it is possible for the 
+property values set to be customized and extended by an ISV.</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span lang="EN-US">
+&nbsp;</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span lang="EN-US">
+The Build System will pre-define some common general build properties listed in 
+the table below and the set of values for each of those properties, but it will 
+be possible for the tool-integrators to define their own properties as well as 
+to add some new custom values to the already defined properties.</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span lang="EN-US">
+<br>
+Build System-predefined properties</span></p>
+<table class="MsoNormalTable" border="1" cellspacing="0" cellpadding="0" style="border-collapse: collapse; border: medium none; margin-left: 5.4pt" id="table18">
+	<tr style="height: 13.5pt">
+		<td width="120" valign="top" style="width: 1.25in; height: 13.5pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
+		<strong><span lang="EN-US">Property id</span></strong></td>
+		<td width="324" valign="top" style="width: 243.0pt; height: 13.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
+		<strong><span lang="EN-US">Description</span></strong></td>
+		<td width="168" valign="top" style="width: 1.75in; height: 13.5pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: 1.0pt solid windowtext; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" align="center" style="text-align: center; margin-top: 0; margin-bottom: 0">
+		<strong><span lang="EN-US">Pre-defined Values</span></strong></td>
+	</tr>
+	<tr style="height: 8.25pt">
+		<td width="120" valign="top" style="width: 1.25in; height: 8.25pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span style="font-size: 10.0pt; font-family: Courier New; color: green">
+		org.eclipse.cdt.build.core.buildArtefactType</span></td>
+		<td width="324" valign="top" style="width: 243.0pt; height: 8.25pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">Represents the type of the build artifact built by 
+		this project-type, configuration</span></td>
+		<td width="168" valign="top" style="width: 1.75in; height: 8.25pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span style="font-size: 10.0pt; font-family: Courier New; color: green">
+		org.eclipse.cdt.build.core.buildArtefactType.exe</span></p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		(Executable)</p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span style="font-size: 10.0pt; font-family: Courier New; color: green">
+		org.eclipse.cdt.build.core.buildArtefactType.sharedLib</span></p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">(Shared Library)</span></p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span style="font-size: 10.0pt; font-family: Courier New; color: green">
+		org.eclipse.cdt.build.core.buildArtefactType.staticLib</span></p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">Static Library</span></td>
+	</tr>
+	<tr style="height: 11.25pt">
+		<td width="120" valign="top" style="width: 1.25in; height: 11.25pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span style="font-size: 10.0pt; font-family: Courier New; color: green">
+		org.eclipse.cdt.build.core.buildType</span></td>
+		<td width="324" valign="top" style="width: 243.0pt; height: 11.25pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">Represents the build type for this configuration</span></td>
+		<td width="168" valign="top" style="width: 1.75in; height: 11.25pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span style="font-size: 10.0pt; font-family: Courier New; color: green">
+		org.eclipse.cdt.build.core.buildType.debug</span></p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">(Debug)</span></p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span style="font-size: 10.0pt; font-family: Courier New; color: green">
+		org.eclipse.cdt.build.core.buildType.release</span></p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">(Release)</span></td>
+	</tr>
+	<tr style="height: 9.75pt">
+		<td width="120" valign="top" style="width: 1.25in; height: 9.75pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">&nbsp;</span></td>
+		<td width="324" valign="top" style="width: 243.0pt; height: 9.75pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">&nbsp;</span></td>
+		<td width="168" valign="top" style="width: 1.75in; height: 9.75pt; border-left: medium none; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0in; padding-bottom: 0in">
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US">&nbsp;</span></td>
+	</tr>
+</table>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span lang="EN-US">
+&nbsp;</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0"><span class="bold">Automatic tool 
+settings adjustment with Build Properties</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Tool-chain ant tool 
+definitions can specify enablement expressions to make their default settings be 
+automatically adjusted depending on the value of Build Properties, other 
+options, Strings, etc. </p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">Below is the 
+snippet of the gcc compiler tool definition that specifies dynamic option value 
+adjustment depending on the &quot;buildType&quot; property value.</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&lt;option</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp; &nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+name=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;%Option.Posix.DebugLevel&quot;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+...</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp; &nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+valueType=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;enumerated&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;enablement</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+type=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;CONTAINER_ATTRIBUTE&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- specifying that enablement is applicable for the option attribute</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+attribute=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;value&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- attribute name the enablement is applicable to</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+value=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;gnu.c.debugging.level.none&quot;</span><span style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- the value that is to be assigned to the attribute in case enablement 
+expression is true</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+extensionAdjustment=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;false&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- specifying that enablement is applicable for non-extension (project) elements</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;checkBuildProperty</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- evaluates the build property value. treated as true if the property value 
+equals to the one defined in the value attribute</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+property=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildType&quot;</span><span style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- property id of the property to be checked</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+value=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildType.release&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">/&gt;</span><span style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- expected property value id </span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;/enablement&gt; </span>
+<span style="font-size: 10.0pt; font-family: Courier New; color: black">&lt;- in 
+case the buildType property value is &quot;release&quot; debugging level is set to &quot;none&quot;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&lt;enablement</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+type=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;CONTAINER_ATTRIBUTE&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+attribute=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;value&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+value=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;gnu.c.debugging.level.max&quot;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+extensionAdjustment=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;false&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;checkBuildProperty</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+property=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildType&quot;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+value=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildType.debug&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">/&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp; &nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;/enablement&gt; </span>
+<span style="font-size: 10.0pt; font-family: Courier New; color: black">&lt;- in 
+case the buildType property value is &quot;debug&quot; debugging level is set to &quot;max&quot;</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;
+color:black">&nbsp;&nbsp;</span><span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&lt;/option&gt;</span></p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">For more 
+information on using enablement expressions please refer to the description of 
+the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension-point.</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0"><span class="bold">Specifying the set of supported 
+build properties</span></p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0">The tool-chain modification and New 
+Project Wizard mechanisms need to know the set of build properties each 
+tool/tool-chain support for filtering incompatible tools/tool-chains.</p>
+<ol>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0">Specifying the set of supported 
+	build properties for tools.</p>
+	<p style="margin-top: 0; margin-bottom: 0">There are several options of how 
+	the tool can specify the build properties supported</p>
+	<ul>
+		<li>
+		<p style="margin-top: 0; margin-bottom: 0">A tool can specify a &quot;supportedProperties&quot; 
+		element listing all properties and property values supported, e.g.</p>
+		<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+		&nbsp;&nbsp;&nbsp;&nbsp;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&lt;supportedProperties&gt;</span></p>
+		<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+		&lt;property</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+		</span>
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+		id=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildType&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
+		<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+		&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+		&lt;value</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+		</span>
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+		id=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildType.debug&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">/&gt;</span></p>
+		<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+		&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&nbsp;&nbsp;&nbsp; 
+		&lt;value</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+		</span>
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+		id=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildType.release&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">/&gt;</span></p>
+		<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+		<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">&lt;/property&gt;</span></p>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">
+		<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;
+color:black">&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">&lt;/supportedProperties&gt;</span></li>
+		<li>
+		<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">In case the 
+		&quot;supportedProperties&quot; element is not specified the supported properties 
+		will be automatically calculated: all build properties referenced in the 
+		tool's enablement expressions will be treated as supported</li>
+	</ul>
+	</li>
+	<li>
+	<p style="margin-top: 0; margin-bottom: 0">Specifying the set of supported 
+	build properties for tool-chains.</p>
+	<ul>
+		<li>
+		<p style="margin-top: 0; margin-bottom: 0">All build properties and 
+		their values supported by the tool-chain's tools will be treated as 
+		supported by the given tool-chain. </p></li>
+		<li>
+		<p style="margin-top: 0; margin-bottom: 0">A tool-chain may specify 
+		additional supported properties and property value</p>
+		<ul>
+			<li>
+			<p style="margin-top: 0; margin-bottom: 0">A tool-chain can specify 
+			a &quot;supportedProperties&quot; element listing additional properties and 
+			property values supported in the same way as for tool elements, e.g.</p>
+			</li>
+			<li>
+			<p class="MsoNormal" style="margin-top: 0; margin-bottom: 0">In case 
+			the &quot;supportedProperties&quot; element is not specified but the 
+			tool-chain contains enablement expressions, all build properties 
+			referenced in the tool-chain's enablement expressions will be 
+			treated as supported</li>
+		</ul>
+		</li>
+	</ul>
+	</li>
+</ol>
+<p style="margin-top: 0; margin-bottom: 0"><span class="bold">Assigning the set of build 
+properties for configurations/project-types</span></p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0">Once the tools/tool-chains has 
+specified the setting adjustment expressions it is possible to use one and the 
+same tools in different configurations and project types without a necessity to 
+override/specify any project-type/configuration-specific options, e.g. debug 
+level, optimization level, etc.</p>
+<p style="margin-top: 0; margin-bottom: 0">For this purpose it is possible to 
+assign the set of build properties and their values for project-types and 
+configurations</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;projectType</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+buildArtefactType=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildArtefactType.exe&quot;</span><span style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- the project-type level build properties will be applied for all 
+configurations. The buildArtefactType is a convenience attribute that allows to 
+specify the value for the &quot;buildArtefactType&quot; property.</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-family: Courier New">It is possible to specify 
+the &quot;buildProperties&quot; attribute for the project type and define the set of build 
+properties there in the same way as for configuration (see below)</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .......</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;configuration</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+...</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+buildProperties=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug&quot;
+</span><span style="font-size: 10.0pt; font-family: Courier New; color: black">
+&lt;- defines/assigns the set of build properties for the configuration in the form 
+of comma-separated list of &lt;property_id&gt;=&lt;property_value_id&gt; pairs</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:navy">
+cleanCommand=</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:green">&quot;rm 
+-rf&quot;</span><span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;
+color:navy">&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;toolChain</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; .....</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-family: Courier New">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+...</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+&lt;tool</span><span style="font-size: 10.0pt; font-family: Courier New; color: black"> 
+&lt;- note that we are not defining any configuration specific options here (debug 
+level, optimization level, etc.) Those option values will be automatically 
+adjusted based upon enablement/adjustment expressions defined for the tool's 
+options and the set of build properties and their values assigned for the 
+configuration</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+id=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;cdt.managedbuild.tool.gnu.c.compiler.exe.debug&quot;</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>
+<span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">
+superClass=</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: green">&quot;cdt.managedbuild.tool.gnu.c.compiler.base&quot;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: navy">&gt;</span><span lang="EN-US" style="font-size: 10.0pt; font-family: Courier New; color: black">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></p>
+<p class="MsoNormal" style="text-autospace: none; margin-top: 0; margin-bottom: 0">
+<span style="font-size:10.0pt;font-family:&quot;Courier New&quot;;color:black">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; </span>
+<span style="font-size:10.0pt;
+font-family:&quot;Courier New&quot;;color:navy">&nbsp;&lt;/toolChain&gt;</span></p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p style="margin-top: 0; margin-bottom: 0">&nbsp;</p>
+<p class="subsection"><a name="_TocSectionUIModel_11">2.11 Model schema changes</a></p>
+<p class="subsection"><a name="_TocSectionUIModel_11_1">2.11.1 folderInfo</a></p>
+The folderInfo is a new element presented in 4.0. The element represents the 
+per-folder settings<table border="1" width="688" height="58" id="table21">
+	<tr>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
+	</tr>
+	<tr>
+		<td height="20" width="271">resourcePath</td>
+		<td height="20" width="235">Project-relative resource path</td>
+		<td height="20" width="160">
+		<p align="center">value is required</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">exclude</td>
+		<td height="20" width="235">Specifies whether the resource is excluded 
+		from building in the parent configuration. The default is false. The 
+		resourceConfiguration element retains its tool children, if any exist, 
+		even when excluded from the build. </td>
+		<td height="20" width="160">
+		<p align="center">false</td>
+	</tr>
+</table>
+<p class="subsection"><a name="_TocSectionUIModel_11_2">2.11.2 fileInfo</a></p>
+The fildeInfo is a new element presented in 4.0. The element represents the 
+per-file settings.<p class="ConfigMarkup" id="elementDesc">This element has the 
+same meaning as the resourceConfiguration element. It is added for consistency 
+with the folderInfo element. The only difference between this element and the 
+resourceConfiguration is that resourceConfiguration specifies the resource full 
+path, while the fileInfo specifies project-relative resource path in the same 
+way as the folderInfo does.</p>
+<table border="1" width="688" height="58" id="table22">
+	<tr>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
+	</tr>
+	<tr>
+		<td height="20" width="271">resourcePath</td>
+		<td height="20" width="235">Project-relative resource path</td>
+		<td height="20" width="160">
+		<p align="center">value is required</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">exclude</td>
+		<td height="20" width="235">Specifies whether the resource is excluded 
+		from building in the parent configuration. The default is false. The 
+		resourceConfiguration element retains its tool children, if any exist, 
+		even when excluded from the build. </td>
+		<td height="20" width="160">
+		<p align="center">false</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">rcbsApplicability </td>
+		<td height="20" width="235">Identifies how the user desires to apply a 
+		resource custom build step: 1. Apply rcbs tool before any other tools 
+		defined for the resource. 2. Apply rcbs tool after any other tools 
+		defined for the resource. 3. Apply rcbs tool overriding any other tools 
+		defined for the resource. 4. Disable (don't apply) the rcbs tool. </td>
+		<td height="20" width="160">
+		<p align="center">disable</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">toolsToInvoke</td>
+		<td height="20" width="235">Identifies which tools to invoke by a 
+		semicolon separated list of child tool ids. Applies as follows: 1. 
+		Defaults to all tools in the order found 2. Use specified ordered list 
+		of children to invoke 3. If empty string, treat as if no resource 
+		configuration existed, i.e., use project level tool.</td>
+		<td height="20" width="160">
+		<p align="center">all tools in the order found</td>
+	</tr>
+</table>
+<p class="subsection">&nbsp;</p>
+<p class="subsection"><a name="_TocSectionUIModel_11_3">2.11.3 toolChain</a></p>
+	Note: 
+
+the default value is used ONLY in case the property is undefined for all 
+tool-chain's super-classes<table border="1" width="688" height="58">
+	<tr>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
+	</tr>
+	<tr>
+		<td height="20" width="271">supportsManagedBuild</td>
+		<td height="20" width="235">specifies whether the managed build is 
+		supported by the tool-chain</td>
+		<td height="20" width="160">
+		<p align="center">true</td>
+	</tr>
+</table>
+<p class="subsection"><a name="_TocSectionUIModel_11_4">2.11.4 tool</a></p>Note: 
+
+the default value is used ONLY in case the property is undefined for all tool's 
+super-classes<table border="1" width="688" height="58" id="table19">
+	<tr>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
+	</tr>
+	<tr>
+		<td height="20" width="271">supportsManagedBuild</td>
+		<td height="20" width="235">specifies whether the managed build is 
+		supported by the tool</td>
+		<td height="20" width="160">
+		<p align="center">true</td>
+	</tr>
+</table>
+<p class="subsection"><a name="_TocSectionUIModel_11_5">2.11.5 inputType</a></p>Note: 
+
+the default value is used ONLY in case the property is undefined for all input 
+types's super-classes<table border="1" width="688" height="58" id="table20">
+	<tr>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
+	</tr>
+	<tr>
+		<td height="20" width="271">languageId</td>
+		<td height="20" width="235">the id of the org.eclipse.cdt.core.language 
+		extension point specifying the language for resources represented with 
+		the input type<p>The value of this attribute is used only in case 
+		languageInfoCalculator is not specified</td>
+		<td height="20" width="160">
+		<p align="center">none</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">languageInfoCalculator</td>
+		<td height="20" width="235">Specifies the name of the class that 
+		implements org.eclipse.cdt.managedbuilder.core.ILanguageInfoCalculator 
+		for dinamic providing the language id info.<br>
+		Overrides language id specified with the languageId attribute.</td>
+		<td height="20" width="160" align="center">
+		none</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">scannerConfigDiscoveryProfileId</td>
+		<td height="20" width="235">Specifies an id of scanner configuration 
+		discovery profile for gathering the built-in compiler settings for 
+		resource type presented with this input type.</td>
+		<td height="20" width="160" align="center">
+		the value of the scannerConfigDiscoveryProfileId defined for the 
+		tool-chain</td>
+	</tr>
+</table>
+<p class="subsection"><a name="_TocSectionUIModel_11_6">2.11.6 builder</a></p>Note: 
+
+the default value is used ONLY in case the property is undefined for all input 
+types's super-classes<table border="1" width="688" height="58" id="table23">
+	<tr>
+		<td height="30" width="271" align="center"><strong>Property</strong></td>
+		<td height="30" width="235" align="center"><strong>Description</strong></td>
+		<td height="30" width="160" align="center"><strong>Default Value</strong></td>
+	</tr>
+	<tr>
+		<td height="20" width="271">parallelBuildCmd</td>
+		<td height="20" width="235">specifies the &quot;parallel build&quot; builder 
+		option. <br>
+		If the builder supports specifying custom number of parallel jobs, the 
+		option definition may contain &quot;*&quot; the Build System sill substitute the 
+		&quot;*&quot; with the number of parallel threads to be used.</td>
+		<td height="20" width="160">
+		<p align="center">none</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">ignoreErrCmd</td>
+		<td height="20" width="235">specifies the &quot;ignore error&quot; builder option.</td>
+		<td height="20" width="160" align="center">
+		none</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">cleanBuildTarget</td>
+		<td height="20" width="235">represents the build target to be used for 
+		clean build</td>
+		<td height="20" width="160" align="center">
+		clean</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">incrementalBuildTarget</td>
+		<td height="20" width="235">represents the build target to be used for 
+		incremental build</td>
+		<td height="20" width="160" align="center">
+		all</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">autoBuildTarget</td>
+		<td height="20" width="235">represents the build target to be used for 
+		auto build</td>
+		<td height="20" width="160" align="center">
+		all</td>
+	</tr>
+	<tr>
+		<td height="20" width="271">supportsManagedBuild</td>
+		<td height="20" width="235">Specifies whether the duilder supports 
+		managed build. Default value is true.</td>
+		<td height="20" width="160" align="center">
+		true</td>
+	</tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</body>
+</html>

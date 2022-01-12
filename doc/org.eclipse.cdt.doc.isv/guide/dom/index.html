@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <link rel="STYLESHEET" href="../../book.css"
+ type="text/css">
+  <title>CDT Programmer's Guide</title>
+</head>
+<body>
+<p><span style="font-style: italic;">Note: This is a work in progress
+for CDT 3.0. Changes should be expected until further notified.</span><br>
+</p>
+<h1>CDT DOM</h1>
+<p>What is a DOM? Well, let me tell you. The DOM, or Document Object
+Model, is a programmatic way to see the underlying source code in both
+a syntactic and semantic view using an Abstract Syntax Tree (AST) and
+to allow changes in the AST to be reflected back out to the source
+code.<br>
+</p>
+<h2>Syntactic View</h2>
+<p>The syntactic view (which we sometimes call the physical view)
+represents the syntactic structure of the program. This is driven
+mainly by the grammar that the parser follows, mapping from terminals
+up to the entry rule in the grammer. This view fulfills the role of a
+traditional Abstract Syntax Tree, and you'll see that the classes that
+make up this view have AST in their name.<br>
+</p>
+<p>The top node of the Syntactic View is <a
+ href="../../reference/api/org/eclipse/cdt/core/dom/ast/IASTTranslationUnit.html">IASTTranslationUnit</a>.
+The translation unit object can be accessed from the C Model's <a
+ href="../../reference/api/org/eclipse/cdt/core/model/ITranslationUnit.html">ITranslationUnit</a>
+object.<br>
+</p>
+<h2>Semantic View</h2>
+<p>The semantic view (which we sometimes call the logical view)
+represent semantic elements in the program. These elements are
+generally types, variables, and functions. The JDT calls these things
+bindings, so we do to. However, the more general rule is that anything
+that links sub-branches of the AST is a binding.<br>
+</p>
+<p>The most common way to get from the Syntactic View is to navigate
+from an <a
+ href="../../reference/api/org/eclipse/cdt/core/dom/ast/IASTName.html">IASTName</a>
+view to the <a
+ href="../../reference/api/org/eclipse/cdt/core/dom/ast/IBinding.html">IBinding</a>
+that represents the Semantic object for that
+given name.</p></body>
+</html>

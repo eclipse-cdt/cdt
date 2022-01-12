@@ -1,0 +1,66 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2011 Intel Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Intel Corporation - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.internal.core.envvar;
+
+import java.util.Enumeration;
+import java.util.Properties;
+
+import org.eclipse.cdt.core.envvar.EnvironmentVariable;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.utils.spawner.EnvironmentReader;
+
+/**
+ * This is the Environment Variable Supplier used to supply variables
+ * defined in eclipse environment
+ *
+ * @since 3.0
+ */
+public class EclipseEnvironmentSupplier implements ICoreEnvironmentVariableSupplier {
+
+	@Override
+	public IEnvironmentVariable getVariable(String name, Object context) {
+		if (context == null) {
+			String value = EnvironmentReader.getEnvVar(name);
+			if (value == null)
+				return null;
+			return new EnvironmentVariable(name, value, IEnvironmentVariable.ENVVAR_REPLACE, null);
+		}
+		return null;
+	}
+
+	@Override
+	public IEnvironmentVariable[] getVariables(Object context) {
+		if (context == null) {
+			Properties values = EnvironmentReader.getEnvVars();
+			if (values == null)
+				return null;
+
+			IEnvironmentVariable variables[] = new IEnvironmentVariable[values.size()];
+			Enumeration<?> en = values.propertyNames();
+			for (int i = 0; i < variables.length; i++) {
+				String name = (String) en.nextElement();
+				String value = values.getProperty(name);
+				variables[i] = new EnvironmentVariable(name, value, IEnvironmentVariable.ENVVAR_REPLACE, null);
+			}
+			return variables;
+		}
+		return null;
+	}
+
+	@Override
+	public boolean appendEnvironment(Object context) {
+		return true;
+	}
+
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<!-- ============================================================================= -->
+<!-- Define topics for the main guide                                              -->
+<!-- ============================================================================= -->
+<toc label="Guide">
+	<topic label="CDT DOM" href="guide/dom/index.html">
+		<topic label="Prebuilt Indexes in CDT 4.0" href="guide/dom/index/prebuiltIndexes.html"/>
+		<topic label="Versioning of Prebuilt Indexes" href="guide/dom/index/prebuiltVersioning.html"/>
+	</topic>
+	<topic label="Managed Build System Extensibility Document" href="guide/mbs/extensibilityGuide/Managed_Build_Extensibility.html"/>
+	<topic label="Project Template Engine" href="guide/projectTemplateEngine/index.html"/>
+	<topic label="What's new in CDT Build System 4.0" href="guide/cdt_build_system/whats_new/4.0/whats_new_CBS_40.html"/>
+	<topic label="Migrating your tool-chain integration to CDT 4.0" href="guide/cdt_build_system/migration_guides/4.0/migration_guide_40.html"/>
+	<topic label="Deprecated API removals porting guide" href="guide/deprecated_API_removals.html"/>
+ <topic href="guide/dsf/intro/dsf_programming_intro.html" label="DSF Tutorial">
+ </topic>
+</toc>

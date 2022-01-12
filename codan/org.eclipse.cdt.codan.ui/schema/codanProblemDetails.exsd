@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.codan.checkers.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.cdt.codan.checkers.ui" id="codanProblemDetails" name="Codan Problem Details"/>
+      </appinfo>
+      <documentation>
+         This extension point provides a mechanism to add extra details for a problem, which would
+be displayed in Problem Details view. It can include extra locations, associated problems,
+help link or extenal link.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="problemDetails" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="problemDetails">
+      <annotation>
+         <documentation>
+            root element for extension.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="problemId" type="string">
+            <annotation>
+               <documentation>
+                  Problem id for which extra details available.
+If ommitted provider would be called for all problem kinds.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/checker/problem/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.codan.ui.AbstractCodanProblemDetailsProvider:"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         1.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+                &lt;extension
+          point=&quot;org.eclipse.cdt.codan.ui.codanProblemDetails&quot;&gt;
+       &lt;problemDetails
+             class=&quot;org.eclipse.cdt.codan.examples.uicontrib.FlexlintHelpLink&quot;
+             &gt;
+       &lt;/problemDetails&gt;
+    &lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         See
+org.eclipse.cdt.codan.examples.uicontrib.FlexlintHelpLink
+      </documentation>
+   </annotation>
+
+
+</schema>

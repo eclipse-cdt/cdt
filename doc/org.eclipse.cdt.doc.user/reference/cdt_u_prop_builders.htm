@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>C/C++ Project Properties, Builders</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main"><h1>C/C++ Project Properties, Builders</h1>
+<p>You can select which Builders to enable for this project and in
+which order they are used.</p>
+<p><img img="" src="../images/prop_builders.png"
+ alt="C/C++ Project Properties, Builders"></p>
+<p></p>
+
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><strong>Builder properties</strong></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr class="hidden">
+			<th id="option">Option</th>
+			<th id="description">Description</th>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Configure the builders for the project</strong></td>
+			<td headers="description">Selects which builders to enable from the list. You can disable the CDT Builder and you can control when the CDT Builder runs with respect to the project builders that you define.
+			</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>New...</strong></td>
+			<td headers="description">Opens the Choose configuration type dialog so that you can add a new builder to the list. <p>
+		</p><p><img img="" src="../images/prop_builders_newbldr.png"
+ alt="C/C++ Project Properties, Builders, Choose configuration type"></p>
+		<p>The <strong>Ant Builder</strong> option lets you configure and deploy projects; however, if you want to use some other tool or prefer to do it yourself, you can set up a <strong>Program</strong> external tool project builder. This type allows you to customize the deployment of your project as you require, while maintaining the convenience of automatically running your script every time your project is built.</p>
+		<p>The <strong>Program</strong> option lets you to define an external tool for any executable file that is accessible on your local or network file system. For example, if instead of Ant you prefer to use your own shell scripts or Windows .bat files to package and deploy your Eclipse projects, you can then create a <strong>Program</strong> external tool that would specify where and how to execute that script.</p></tr>
+	    <tr>
+			<td headers="option"><strong>Import...</strong></td>
+			<td headers="description">Opens the Import launch configuration dialog so that you can import a builder to include it in the list.<p></p>
+			</p><p><img img="" src="../images/prop_builders_imprtlnchcnfg.png" alt="Import launch configuration">
+			<p></p></tr>
+	    <tr>
+			<td headers="option"><strong>Edit...</strong></td>
+			<td headers="description">Opens the Configure Builder dialog that lets you specify when to run the selected builder.<p></p>
+			</p><p><img img="" src="../images/prop_builders_editbldr.png" alt="Configure Builder">
+			<p></p>
+			<p>When you configure a builder, you have the following options:
+			<ul>
+				<li><strong>After a "Clean"</strong> - When enabled, the selected builder is scheduled to run after a <strong>clean</strong> operation occurs.
+				<li><strong>During manual builds</strong> - When enabled, the selected build is initiated when you explicitly select a menu item or press its corresponding shortcut key combination.
+				<li><strong>During auto builds</strong> - When enabled, automatic builds are performed as resources are saved (they are incremental and operate over an entire workspace). <strong>Note:</strong> running your project builder during auto builds is possible, although it is not recommended because of performance concerns.
+				<li><strong>During a "Clean"</strong> - When enabled, the selected builder is scheduled to run during a <strong>clean</strong> operation.
+			</ul>
+			</p></tr>
+	    <tr>
+			<td headers="option"><strong>Remove</strong></td>
+			<td headers="description">Removes the selected builder from the list.</tr>
+	    <tr>
+			<td headers="option"><strong>Up</strong></td>
+			<td headers="description">Moves the currently selected builder higher in the list to change the builder order.</tr>
+ 	    <tr>
+			<td headers="option"><strong>Down</strong></td>
+			<td headers="description">Moves the currently selected builder lower in the list to change the builder order.</tr>
+   </tbody>
+</table>
+
+<br>
+  <p><strong>Available for:</strong> Any projects, folders and files regardless of project kind.</p>
+
+<p><img src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21"><br>
+
+<ul>
+<li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
+<li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
+<li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
+   <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
+   <li>Settings page
+       <ul> 
+       <li><a href="cdt_u_prop_build_settings_tool.htm">     Tool Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_steps.htm">    Build Steps tab</a>
+       <li><a href="cdt_u_prop_build_settings_artifact.htm"> Build Artifact tab</a>
+       <li><a href="cdt_u_prop_build_settings_binparser.htm">Binary Parsers tab</a>
+       <li><a href="cdt_u_prop_build_settings_errparser.htm">Error Parsers tab</a>
+       </ul> 
+   <li><a href="cdt_u_prop_build_toolchain.htm">Tool chain editor page</a>
+   <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
+   </ul>
+<li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
+   <ul style="list-style-type: disc"> 
+   <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
+   <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
+   <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
+   <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
+   <li>Paths and Symbols page
+       <ul>
+       <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
+       <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
+       </ul>
+   </ul>
+<li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_refactoring_history.htm">C/C++ Project Properties, Refactoring History page</a>
+<li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
+</ul>
+</p>
+<p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
+
+</div></body>
+</html>

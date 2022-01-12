@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Building Manually</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+<div role="main"><h1>Building Manually</h1>
+<p>Manual builds let you choose the scope of a build, as well as
+options for building, or rebuilding projects. You can view the output
+of the make utility in the console.</p>
+<p><img src="../images/console_build.png"
+ alt="Sample build in console view"></p>
+<dl>
+  <dt>Incremental Builds</dt>
+  <dd>To incrementally build all open projects, you can select <strong>Project
+&gt; Build All</strong> or type <strong>CTRL+B</strong>.</dd>
+  <dt>Build Individual Projects</dt>
+  <dd>To build individual projects click <strong>Project &gt; Build Project</strong>.</dd>
+  <dt>Rebuild Projects</dt>
+  <dd>To rebuild a project right click on the project and select <strong>Rebuild
+Project</strong>.<br>
+    <strong>Note: </strong>This will rebuild projects that this project
+references as well, but will not rebuild projects that references this
+one.</dd>
+  <dt>Build Automatically</dt>
+  <dd>This performs a Build All whenever any project file is saved,
+such as your <span class="typewriter">makefile</span>. <br>
+    <strong>Tip: </strong>For C/C++ projects, this feature should be turned off.
+If there is a checkmark beside <strong>Build Automatically</strong> the feature
+is on. To turn it off, select <strong>Build Automatically</strong>.</dd>
+</dl>
+<p><strong>Tip: </strong>If you get the error message:</p>
+<p><samp>Exec error:Launching failed</samp></p>
+<p>then CDT cannot locate the build command, (usually <samp>make</samp>).
+Either your path is not configured correctly or you do not have <samp>make</samp>
+installed on your system.</p>
+<p><strong>Tip: </strong>The menubar item <strong>Project &gt; Build Working Set</strong>
+submenu for C/C++ projects simply creates a link to the build all
+target as defined in your makefile, and is no different from an <strong>Incremental
+Build</strong>.</p>
+<p><img src="../images/ngconcepts.gif" alt="Related concepts"
+ width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_build_over.htm">Build overview</a></p>
+<p><img src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
+<br>
+<a href="cdt_t_proj_build_set.htm">Defining Project Build settings</a><br>
+<a href="cdt_o_build_task.htm">Building projects</a></p>
+<p><img src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21">
+<br>
+<a href="../reference/cdt_u_newproj_buildset.htm">Make Builder page,
+C/C++ Properties window</a></p>
+<img src="../images/ng00_04a.gif" alt="IBM Copyright Statement">
+</div></body>
+</html>

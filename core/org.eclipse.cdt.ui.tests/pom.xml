@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (c) 2011, 2021 Contributors to the Eclipse Foundation
+
+   This program and the accompanying materials
+   are made available under the terms of the Eclipse Public License 2.0
+   which accompanies this distribution, and is available at
+   https://www.eclipse.org/legal/epl-2.0/
+
+   SPDX-License-Identifier: EPL-2.0
+-->
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.cdt</groupId>
+		<artifactId>cdt-parent</artifactId>
+		<version>10.5.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<version>5.5.300-SNAPSHOT</version>
+	<artifactId>org.eclipse.cdt.ui.tests</artifactId>
+	<packaging>eclipse-test-plugin</packaging>
+
+	<properties>
+		<extra.vmargs.indexer.timeout></extra.vmargs.indexer.timeout>
+		<extra.vmargs.displayhelper.timeoutmultipler></extra.vmargs.displayhelper.timeoutmultipler>
+		<skipTests>${cdt-ui.skip.tests}</skipTests>
+	</properties>
+
+	<!-- Uncommenting this is useful when the repo is built first then you want to run tests on this plugin only -->
+	<!-- <repositories>
+		<repository>
+			<id>cdt.repo</id>
+			<url>file:/${basedir}/../../releng/org.eclipse.cdt.repo/target/repository</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>-->
+
+	<profiles>
+		<profile>
+			<id>indexer-timeout-set</id>
+			<activation>
+				<property>
+					<name>indexer.timeout</name>
+				</property>
+			</activation>
+			<properties>
+				<extra.vmargs.indexer.timeout>-Dindexer.timeout=${indexer.timeout}</extra.vmargs.indexer.timeout>
+			</properties>
+		</profile>
+		<profile>
+			<id>display-timeout-multiplier-set</id>
+			<activation>
+				<property>
+					<name>org.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER</name>
+				</property>
+			</activation>
+			<properties>
+				<extra.vmargs.displayhelper.timeoutmultipler>-Dorg.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER=${org.eclipse.cdt.ui.testplugin.DisplayHelper.TIMEOUT_MULTIPLIER}</extra.vmargs.displayhelper.timeoutmultipler>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<useUIHarness>true</useUIHarness>
+					<useUIThread>true</useUIThread>
+					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs.indexer.timeout} ${extra.vmargs.displayhelper.timeoutmultipler}</argLine>
+					<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
+					<excludes>
+						<!-- The default Excludes omits nested static classes, this reenables them.
+							See org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.ArrayTests.NonIndexingTests
+							for an example of a test that would not be run otherwise.
+							For reference, the default exclude is "**/*$*"
+						-->
+						<exclude></exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<configuration>
+					<dependency-resolution>
+						<extraRequirements>
+							<requirement>
+								<type>eclipse-feature</type>
+								<id>org.eclipse.platform</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
+							<requirement>
+								<type>eclipse-feature</type>
+								<id>org.eclipse.cdt</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
+						</extraRequirements>
+					</dependency-resolution>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

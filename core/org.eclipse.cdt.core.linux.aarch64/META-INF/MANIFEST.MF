@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName.linux.aarch64
 Bundle-SymbolicName: org.eclipse.cdt.core.linux.aarch64;singleton:=true
-Bundle-Version: 6.0.400.qualifier
+Bundle-Version: 6.0.500.qualifier
 Bundle-Vendor: %providerName
 Fragment-Host: org.eclipse.cdt.core.native;bundle-version="[6.0.0,7.0.0)"
 Bundle-Localization: plugin

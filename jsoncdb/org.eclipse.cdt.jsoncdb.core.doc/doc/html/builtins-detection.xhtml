@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<title>Compiler Built-ins Detection Support Overview</title>
+<style type="text/css">
+table,
+th,
+td {
+	border: 1px solid black;
+}
+th,
+td {
+	padding: 2pt;
+}
+</style>
+</head>
+<body>
+	<h1>Compiler Built-ins Detection Support Overview</h1>
+	<p>JSON Compilation Database Parser support can detect compiler-built-in include paths and preprocessor macros.
+	</p>
+	
+	<h2>Invariant Built-ins Detection Support</h2>
+	<p>The following table shows the compilers and their supported features detected.</p>
+	<table id="overview_table" style="border-collapse:collapse">
+	<thead>
+	<tr>
+	<th>Compiler</th>
+	<th>Vendor</th>
+	<th>Macros</th>
+	<th>System<br/>include paths</th>
+	<th>Local<br/>include paths</th>
+	<th>MACOS Framework<br/>include paths</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+	<td>gcc</td>
+	<td>GNU Project</td>
+	<td>tested</td>
+	<td>tested</td>
+	<td>tested</td>
+	<td>NYI <a href="#fw-help-gcc">[1]</a></td>
+	</tr>
+	<tr>
+	<td>clang</td>
+	<td>LLVM Project</td>
+	<td>tested</td>
+	<td>tested</td>
+	<td>tested</td>
+	<td>NYI <a href="#fw-help-clang">[2]</a></td>
+	</tr>
+	<tr>
+	<td>cl</td>
+	<td>Microsoft</td>
+	<td>N/A</td>
+	<td>N/A</td>
+	<td>N/A</td>
+	<td>N/A</td>
+	</tr>
+      </tbody>
+      </table>
+	<p>Support status above is either:</p>
+	<dl>
+	<dt>tested</dt><dd>detection is known to work</dd>
+	<dt>implemented (impl)</dt><dd>support is implemented, but not (yet) known to work</dd>
+	<dt>not yet implemented (NYI)</dt><dd>support is not implemented</dd>
+	<dt>not available (N/A)</dt><dd>the compiler does not support detection (regarding the online docs only)</dd>
+	</dl>
+
+      <h3>Compilers supported through separate plug-ins</h3>
+      <!-- extra compilers go here -->
+      <anchor id="extra_detection_participant_builtins_list"/>
+
+	<h2>Enhanced Built-ins Detection Support</h2>
+	<p>Some compilers, mainly those of the GNU Compiler Collection and derivatives, report different built-ins
+	depending on the arguments passed to the compiler. These arguments specify a non-default language level
+	or specify non-standard default system include directories.
+	The table below shows an overview of the supported compilers and the recognized command-line options.</p>
+	<table id="overview_table_eh" style="border-collapse:collapse">
+	<thead>
+	<tr>
+	<th>Compiler</th>
+	<th>Vendor</th>
+	<th>Language Standard<br/>options</th>
+	<th>Non-Standard System<br/>include paths options</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+	<td>gcc</td>
+	<td>GNU Project</td>
+	<td><code>-std=</code>, <code>-ansi</code>: tested</td>
+	<td><code>--sysroot=</code>, <code>-isysroot=</code>, <code>--no-sysroot-prefix</code>: tested</td>
+	</tr>
+	<tr>
+	<td>clang</td>
+	<td>LLVM Project</td>
+	<td><code>-std=</code>, <code>-ansi</code>: tested</td>
+	<td><code>--sysroot=</code>, <code>-isysroot=</code>, <code>--no-sysroot-prefix</code>: tested</td>
+	</tr>
+	</tbody>
+	</table>
+	<p>Remarks:</p>
+	<ul style="list-style-type:none">
+	<li id="fw-help-gcc">[1] Help wanted! To implement this, the output of <code>gcc -E -P -dM -Wp,-v emty.c</code>
+	running	on OSX is needed.</li>
+	<li id="fw-help-clang">[2] Help wanted! To implement this, the output of <code>clang -E -P -dM -Wp,-v emty.c</code>
+	running	on OSX is needed.</li>
+	</ul>
+
+      <h3>Compilers supported through separate plug-ins</h3>
+      <!-- extra compilers go here -->
+      <anchor id="extra_detection_participant_builtins_enhanced_list"/>
+</body>
+</html>

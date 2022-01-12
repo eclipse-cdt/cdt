@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml"
+            primary="true"/>
+      <toc
+            file="tools.xml"
+            primary="true">
+      </toc>
+      <index path="index"/>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.autotools.docs.cheatsheets"
+         point="org.eclipse.ui.cheatsheets.cheatSheetContent">
+      <cheatsheet
+            category="org.eclipse.cdt-doc.category.tutorials"
+            contentFile="cheatsheets/autotools.xml"
+            id="org.eclipse.cdt.autotools-docs.cheatsheet3"
+            name="%AutotoolsCheatSheetName">
+      </cheatsheet>
+   </extension>
+
+</plugin>

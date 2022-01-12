@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<template type="TestTemplate" version="1.0" supplier="Symbian" revision="1.0" author="Symbian"
+		id="??" label="AppendToMBSStringOptionValue test" description="Testing Template Engines AppendToMBSStringOptionValue Process"
+		 help="help.html">
+
+	<process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
+		<simple name="name" value="$(projectName)" /> 
+		<simple name="location" value="$(location)" />
+		<simple name="artifactExtension" value="exe" />
+		<simple name="isCProject" value="false" />
+	</process>
+
+	<process type="org.eclipse.cdt.managedbuilder.core.SetMBSStringOptionValue">
+		<simple name="projectName" value="$(projectName)" />		
+		<complex-array name="resourcePaths">
+			<element>
+				<simple name="id" value="$(id)" />
+				<simple name="value" value="$(StringValue)" />
+				<simple name="path" value="" />
+			</element>
+		</complex-array>
+	</process>
+
+	<process type="org.eclipse.cdt.managedbuilder.core.AppendToMBSStringOptionValue">
+		<simple name="projectName" value="$(projectName)" />		
+		<complex-array name="resourcePaths">
+			<element>
+				<simple name="id" value="$(id)" />
+				<simple name="value" value="$(AppendStringValue)" />
+				<simple name="path" value="" />
+			</element>
+		</complex-array>
+	</process>
+
+</template>
+

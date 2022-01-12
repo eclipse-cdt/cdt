@@ -1,0 +1,45 @@
+<plugin>
+<extension point="org.eclipse.core.contenttype.contentTypes">
+		<content-type id="org.eclipse.cdt.meson" name="%content-type.meson"
+       base-type="org.eclipse.core.runtime.text" file-names="meson.build, meson_options.txt" />
+       <content-type id="org.eclipse.cdt.ninja" name="%content-type.ninja"
+       base-type="org.eclipse.core.runtime.text" file-extensions="ninja" />
+</extension>
+<extension
+      point="org.eclipse.tm4e.registry.grammars">
+   <grammar
+   		scopeName="source.meson"
+        path="syntaxes/meson.json" />
+   <scopeNameContentTypeBinding
+         contentTypeId="org.eclipse.cdt.meson"
+         scopeName="source.meson" />
+   <grammar
+   		scopeName="source.ninja"
+        path="syntaxes/ninja.tmLanguage" />
+   <scopeNameContentTypeBinding
+         contentTypeId="org.eclipse.cdt.ninja"
+         scopeName="source.ninja" />
+</extension>
+<extension
+         point="org.eclipse.ui.editors">
+      <editorContentTypeBinding
+            contentTypeId="org.eclipse.cdt.meson"
+            editorId="org.eclipse.ui.genericeditor.GenericEditor">
+      </editorContentTypeBinding>
+      <editorContentTypeBinding
+            contentTypeId="org.eclipse.cdt.ninja"
+            editorId="org.eclipse.ui.genericeditor.GenericEditor">
+      </editorContentTypeBinding>
+</extension>
+ <extension
+         point="org.eclipse.ui.genericeditor.presentationReconcilers">
+      <presentationReconciler
+            class="org.eclipse.tm4e.ui.text.TMPresentationReconciler"
+            contentType="org.eclipse.cdt.meson">
+      </presentationReconciler>
+      <presentationReconciler
+            class="org.eclipse.tm4e.ui.text.TMPresentationReconciler"
+            contentType="org.eclipse.cdt.ninja">
+      </presentationReconciler>
+</extension>
+</plugin>

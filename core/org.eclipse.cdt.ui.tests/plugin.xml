@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+     <extension
+         point="org.eclipse.cdt.ui.CHelpProvider">
+      <provider
+         class="org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider"
+         id="org.eclipse.cdt.ui.tests.chelp.extension.1"/>
+      <provider
+         class="org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider"
+         id="org.eclipse.cdt.ui.tests.chelp.extension.2"/>
+      <provider
+         class="org.eclipse.cdt.ui.tests.chelp.CHelpTestInfoProvider"
+         id="org.eclipse.cdt.ui.tests.chelp.extension.3"/>
+
+   </extension>
+   
+      <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="false"
+            class="org.eclipse.cdt.ui.tests.DOMAST.DOMAST"
+            icon="icons/sample.gif"
+            category="org.eclipse.cdt.ui.views"
+            name="DOM AST"
+            id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.ui.resourcePerspective">
+         <view
+               id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST"
+               ratio="0.5"
+               relationship="right"
+               relative="org.eclipse.ui.views.TaskList">
+         </view>
+      </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            targetID="#CEditorContext"
+            id="org.eclipse.cdt.ui.tests.cEditorContribution">
+         <action
+               label="Show IASTNode in DOM View"
+               class="org.eclipse.cdt.ui.tests.DOMAST.ShowInDOMViewAction"
+               menubarPath="additions"
+               id="org.eclipse.cdt.ui.tests.DOMAST.ShowInDOMViewAction1"/>
+      </viewerContribution>
+      <viewerContribution
+            id="org.eclipse.cdt.ui.CView1"
+            targetID="org.eclipse.cdt.ui.CView">
+         <action
+               label="Show in DOM AST"
+               class="org.eclipse.cdt.ui.tests.DOMAST.OpenDOMViewAction"
+               menubarPath="additions"
+               id="org.eclipse.cdt.ui.tests.DOMAST.OpenDOMViewAction"/>
+         <visibility>
+         	<or>
+				<objectState name="extension" value="cpp"/>
+				<objectState name="extension" value="CPP"/>
+				<objectState name="extension" value="c"/>
+				<objectState name="extension" value="C"/>
+				<objectState name="extension" value="cc"/>
+				<objectState name="extension" value="CC"/>
+				<objectState name="extension" value="cxx"/>
+				<objectState name="extension" value="CXX"/>
+         	</or>
+         </visibility>
+      </viewerContribution>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.CElementFilters">
+      <filter
+            targetId="org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"
+            name="Problem Filter"
+            enabled="false"
+            description="Filter Problems"
+            class="org.eclipse.cdt.ui.tests.DOMAST.ProblemHolderFilter"
+            id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.ProblemHolderFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"
+            name="Preprocessor Filter"
+            enabled="false"
+            description="Filter Preprocessor Statements"
+            class="org.eclipse.cdt.ui.tests.DOMAST.PreprocessorFilter"
+            id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.PreprocessorFilter">
+      </filter>
+      <filter
+            targetId="org.eclipse.cdt.ui.tests.DOMAST.DOMASTFilterGroup"
+            name="Include Statements Filter"
+            enabled="false"
+            description="Filter Include Statements"
+            class="org.eclipse.cdt.ui.tests.DOMAST.IncludeStatementFilter"
+            id="org.eclipse.cdt.ui.tests.DOMAST.DOMAST.IncludeStatementFilter">
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.ui.ProposalFilter">
+      <ProposalFilter
+            class="org.eclipse.cdt.ui.tests.text.contentassist.TestProposalFilter"
+            id="org.eclipse.cdt.ui.tests.TestProposalFilter"
+            name="Testing Completion Filter"/>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.templates">
+      <template
+            id="org.eclipse.cdt.ui.tests.extraPagesProvider"
+            location="resources/projectTemplates/testExtraPages/template.xml"
+            pagesAfterTemplateSelectionProvider="org.eclipse.cdt.ui.tests.templateengine.TestExtraPagesProvider"
+            projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+         <parentCategory
+               id="org.eclipse.cdt.ui.tests.uiTests">
+         </parentCategory>
+      </template>
+      <template
+            id="org.eclipse.cdt.ui.tests.testWidgets"
+            location="resources/projectTemplates/testWidgets/template.xml"
+            projectType="org.eclipse.cdt.build.core.buildArtefactType.exe">
+         <parentCategory
+               id="org.eclipse.cdt.ui.tests.uiTests">
+         </parentCategory>
+      </template>
+      <category
+            id="org.eclipse.cdt.ui.tests.uiTests"
+            label="UI Tests">
+      </category>
+   </extension>
+   
+   
+   <!-- documentation tool comment test owners -->
+   <extension
+         point="org.eclipse.cdt.ui.DocCommentOwner">
+     <owner id="org.cdt.test.DCOM1"
+         name="Test comment owner1"
+         singleline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+         multiline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+     />
+   </extension>
+    <extension
+         point="org.eclipse.cdt.ui.DocCommentOwner">
+      <owner  id="org.cdt.test.DCOM2"
+         name="Test comment owner1"
+           singleline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+         multiline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+         />
+   </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.DCOM3"
+             multiline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration"
+             name="Test comment owner1"
+             singleline="org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentViewerConfiguration">
+       </owner>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerA"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$A"
+             name="name_A"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$A">
+       </owner>
+    </extension>
+      <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerB"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$B"
+             name="name_B"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$B">
+       </owner>
+    </extension>
+      <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerC"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$C"
+             name="name_C"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$C">
+       </owner>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerABC"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$ABC"
+             name="name_ABC"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$ABC">
+       </owner>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerBDFG"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$BDFG"
+             name="name_BDFG"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$BDFG">
+       </owner>
+    </extension>
+    <extension
+          point="org.eclipse.cdt.ui.DocCommentOwner">
+       <owner
+             id="org.cdt.test.ownerPUNC"
+             multiline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$PUNC"
+             name="name_PUNC"
+             singleline="org.eclipse.cdt.ui.tests.text.doctools.TestGenericTagConfiguration$PUNC">
+       </owner>
+    </extension>
+    
+    <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+       <renameParticipant
+            class="org.eclipse.cdt.ui.tests.refactoring.rename.TestRenameParticipant"
+            name="TestRenameParticipant"
+            id="org.eclipse.cdt.ui.tests.TestRenameParticipant"> 
+          <enablement>
+             <with variable="affectedNatures">
+                <iterate operator="or">
+                   <equals value="org.eclipse.cdt.core.cnature"/>
+                </iterate>
+             </with>
+             <with variable="element">
+   	            <instanceof value="org.eclipse.cdt.core.dom.ast.IBinding"/>
+             </with>
+          </enablement>
+       </renameParticipant>
+   	</extension>    
+
+    <extension point="org.eclipse.core.filesystem.filesystems">
+        <filesystem
+            scheme="bug278632">
+            <run class="org.eclipse.cdt.ui.tests.text.BasicCEditorTest$Bug278632FileSystem"/>
+        </filesystem>
+    </extension>
+
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.eclipse.ui.tests.category.codeReduction"
+            name="%category.CodeReduction"/>
+      <command
+            name="%command.RemoveFunctionBodies.name"
+            categoryId="org.eclipse.ui.tests.category.codeReduction"
+            id="org.eclipse.cdt.ui.tests.removeFunctionBodies"/>
+      <command
+            name="%command.RemoveUnusedDeclarations.name"
+            categoryId="org.eclipse.ui.tests.category.codeReduction"
+            id="org.eclipse.cdt.ui.tests.removeUnusedDeclarations"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.ui.tests.reducer.RemoveFunctionBodiesHandler"
+		    commandId="org.eclipse.cdt.ui.tests.removeFunctionBodies"/>
+      <handler
+            class="org.eclipse.cdt.ui.tests.reducer.RemoveUnusedDeclarationsHandler"
+		    commandId="org.eclipse.cdt.ui.tests.removeUnusedDeclarations"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:#CEditorContext?after=org.eclipse.cdt.ui.source.menu">
+         <menu
+               id="org.eclipse.cdt.ui.tests.reduceCode"
+               label="%menu.ReduceCode.label">
+            <command
+                  commandId="org.eclipse.cdt.ui.tests.removeFunctionBodies"
+                  label="%command.RemoveFunctionBodies.label"
+                  style="push">
+            </command>
+            <command
+                  commandId="org.eclipse.cdt.ui.tests.removeUnusedDeclarations"
+                  label="%command.RemoveUnusedDeclarations.label"
+                  style="push">
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+
+   <extension
+         point="org.eclipse.cdt.ui.CCallHierarchy">
+      <CallHierarchyLabelProvider
+            class="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHLabelProvider"
+            id="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHLabelProvider">
+      </CallHierarchyLabelProvider>
+      <CallHierarchyContentProvider
+            class="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHContentProvider"
+            id="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHContentProvider">
+      </CallHierarchyContentProvider>
+   </extension>
+</plugin>

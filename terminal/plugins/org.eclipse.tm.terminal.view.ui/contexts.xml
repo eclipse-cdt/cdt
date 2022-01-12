@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Copyright (c) 2018 Red Hat and others.
+    This program and the accompanying materials
+    are made available under the terms of the Eclipse Public License 2.0
+    which accompanies this distribution, and is available at
+    https://www.eclipse.org/legal/epl-2.0/
+   
+    SPDX-License-Identifier: EPL-2.0
+ -->
+
+<contexts>
+   <context id="LaunchTerminalSettingsDialog">
+      <description>Select the terminal type and specify the connections settings to connect a new terminal.</description>
+   </context>
+   <context id="EncodingSelectionDialog">
+      <description>Select the new encoding for the active terminal.</description>
+   </context>
+   <context id="ExternalExecutablesDialog">
+      <description>Add or modify an external executable added to the 'Show in Local Terminal' context menu.</description>
+   </context>
+</contexts>

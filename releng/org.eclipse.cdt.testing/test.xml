@@ -1,0 +1,82 @@
+<project name="CDT Automated Tests" default="run" basedir=".">
+
+	<property name="cdt-core-loc" value="${eclipse-home}/cdt_core_folder"/>
+	<property name="cdt-ui-loc" value="${eclipse-home}/cdt_ui_folder"/>
+	<property name="cdt-mbs-core-loc" value="${eclipse-home}/cdt_mbs_core_folder"/>
+	<property name="cdt-mbs-ui-loc" value="${eclipse-home}/cdt_mbs_ui_folder"/>
+	<property name="cdt-vmargs" value=" -ea -Xms40m -Xmx1024m"/>
+	<property name="cdt-common-vmargs" value="-Dorg.eclipse.swt.browser.XULRunnerPath=/shared/common/mozilla-xulrunner181-1.8.1.4-30.ppc"/>
+	
+	<target name="init">
+		<echo message="library file: ${library-file}"/>
+	</target>
+
+	<target name="cleanup">
+	</target>
+
+	<target name="run" depends="init,suite">
+		<ant target="collect" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="includes" value="org*.xml"/>
+			<property name="output-file" value="org.eclipse.cdt.testing.xml"/>
+		</ant>
+	</target>
+
+	<target name="cdt-core" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-core-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.core.tests"/>
+			<property name="classname" value="org.eclipse.cdt.core.suite.AutomatedIntegrationSuite"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
+		</ant>
+	</target>
+
+	<target name="cdt-ui" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-ui-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.ui.tests"/>
+			<property name="classname" value="org.eclipse.cdt.ui.tests.AutomatedSuite"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
+		</ant>
+	</target>
+
+	<target name="cdt-mbs-core" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-mbs-core-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.core.tests"/>
+			<property name="classname" value="org.eclipse.cdt.managedbuilder.tests.suite.AllManagedBuildTests"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
+		</ant>
+	</target>
+
+	<target name="cdt-mbs-ui" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${cdt-mbs-ui-loc}"/>
+			<property name="plugin-name" value="org.eclipse.cdt.managedbuilder.ui.tests"/>
+			<property name="classname" value="org.eclipse.cdt.managedbuilder.ui.tests.suite.AllManagedBuildUITests"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
+		</ant>
+	</target>
+
+	<target name="cdt-codan" depends="init">
+		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+			<property name="data-dir" value="${eclipse-home}/cdt_codan_folder"/>
+			<property name="plugin-name" value="org.eclipse.cdt.codan.core.test"/>
+			<property name="classname" value="org.eclipse.cdt.codan.core.test.AutomatedIntegrationSuite"/>
+			<property name="vmargs" value="${cdt-vmargs}"/>
+			<property name="extraVMargs" value="${cdt-common-vmargs}"/>
+		</ant>
+	</target>
+
+	<target name="suite">
+		<antcall target="cdt-core"/>
+		<antcall target="cdt-ui"/>
+		<antcall target="cdt-mbs-core"/>
+		<antcall target="cdt-mbs-ui"/>
+		<antcall target="cdt-codan"/>
+	</target>
+
+</project>

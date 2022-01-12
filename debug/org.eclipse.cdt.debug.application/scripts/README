@@ -1,0 +1,62 @@
+The CDT Stand-alone Debugger brings up an minimal Eclipse instance which has all that
+is needed of the CDT plug-ins to debug a C/C++ executable.  Build is not supported.
+Editing is allowed, but you will need to rebuild outside the Stand-alone Debugger for
+those changes to manifest in your debugging session.
+
+To install the Stand-alone debugger locally in your $HOME directory, run the install.sh
+script found in the scripts sub-directory of the plugins directory in your Eclipse installation:
+
+  ./install.sh
+
+The install script will create a cdtdebugger directory in your $HOME directory.  This
+directory will contain a config.ini file, a dev.properties file, and a cdtdebug.sh script.
+The cdtdebug.sh script will start the debugger from the command-line.  The cdtdebug.sh script
+does not have to be located in the cdtdebugger directory and can be moved if you prefer.
+
+The script takes a few options which are mentioned below:
+
+-data : workspace to use for your Eclipse session if you do not want the default
+        $HOME/workspace-cdtdebug
+        
+-consoleLog : if you want error messages reported directly to the command console
+
+-a [pid] : specify attaching to an existing executable running on system.  If no pid is
+           specified, a dialog will be brought up to allow you to select an executable
+           from the list of existing processes.  The same dialog will be brought up if
+           the specified pid is invalid.  The pid is not used for a remote debugging 
+           session triggered by the -r option described below.
+           
+-b $PATH : path to build log for an executable.  This will be used to figure out
+           include paths and compilation flags.  This option assumes you will
+           be using the -e option described below.
+           
+-c $CPATH : path to core-file.  This option must precede a -e option to specify an
+            executable.
+            
+-e $PATH [args...] : path to your executable to debug plus any optional command line
+                     arguments to pass to main().  This option must be last and should
+                     not precede any other arguments as they will be treated as arguments
+                     to main.
+
+-r $ADDR:$PORT : remote debugging towards hostname or IP address $ADDR and IP port $PORT.
+                 The gdbserver must be running on the target and waiting for a connection.
+                 This option can be used at the same time as the -a option.  In such a case
+                 a Remote-Attach session will be started allowing the user to attach to 
+                 different processes on the remote target.  The user will need to press
+                 the 'connect' button or use the context-menu of the Debug view to choose 
+                 one or more processes to attach to. In this case the -e flag is optional, 
+                 and when not specified, a dialog will be used instead to prompt for the 
+                 binary's location. This option, when used without -a, will trigger a
+                 manual Remote debugging session to a single, pre-selected binary, and 
+                 therefore requires the use of the -e option to specify the location of
+                 the binary on the local machine that matches the one on the remote target.
+                     
+If no -a or -e option is specified, the last executable debugged via -e will be offered for
+debugging.  Otherwise, if this is the first time, a dialog will be presented to enter
+an executable, build log, and program arguments.
+
+  e.g. ~/cdtdebugger/cdtdebug.sh -b ~/build.log -e ~/myproject/bin/a.out arg1 arg2
+
+The cdtdebug.sh script that is found in the plug-in can also be run directly, but cannot
+be moved.  The one installed in the cdtdebugger directory on the other hand, can be moved.
+

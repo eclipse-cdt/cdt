@@ -1,0 +1,303 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.codan.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.cdt.codan.ui" id="checkers" name="Code Analysis Checkers"/>
+      </appinfo>
+      <documentation>
+         Define chckers for Code Analysis framework.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <choice>
+               <element ref="checker"/>
+               <element ref="category"/>
+            </choice>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="checker">
+      <annotation>
+         <documentation>
+            Checker Element. 
+Sets id, name and class that implements checker
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="problem"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Checker id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Checker class. Must implement IChecker.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.codan.core.model.IChecker"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  User Friendly name of the chcker, currently not used. Will default to a class name.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="problem">
+      <annotation>
+         <documentation>
+            Problem meta-data.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Error id. Should be prefixed by plugin name in general.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  User Friendly name of the error. Would be displyed to enable/disable a problem and get access to problem properties.
+Should be as short as possible, but recogniziable.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="defaultSeverity" use="default" value="Warning">
+            <annotation>
+               <documentation>
+                  Set defult problem severity. User can override later. Default is Warning.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="Error">
+                  </enumeration>
+                  <enumeration value="Warning">
+                  </enumeration>
+                  <enumeration value="Info">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="category" type="string">
+            <annotation>
+               <documentation>
+                  Category id for the problem. There are few that are defined in core codan plugin, other user defined. If none specified it would be &quot;Programming Problems&quot;.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/category/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="defaultEnabled" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  If problem is enabled in original profile. Default is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="messagePattern" type="string">
+            <annotation>
+               <documentation>
+                  Default error message pattern. Use java pattern notation (such as {0} to replace with first problem argument, and so on. To place single quote &apos; in a message - use quot symbol twice &apos;&apos;).
+For example message pattern 
+Invalid argument &apos;&apos;{0}&apos;&apos;
+
+would be printed as 
+
+Invalid argument &apos;xxx&apos;
+
+where xxx what checker would post as an argument for the problem.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Short description of the problem. Help user to understand that message means. Can be used as tooltip.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="markerType" type="string">
+            <annotation>
+               <documentation>
+                  Marker type to use to generate problem, default is the generic codan marker
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="multiple" type="boolean">
+            <annotation>
+               <documentation>
+                  Can user duplicate this problem to have multiple instances (each instance can have diffrent scope, arguments, severity, etc.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="category">
+      <annotation>
+         <documentation>
+            Category for problem. Allows to group problems for the user.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Unique qualified category id.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  User visible name of the category
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="parentCategory" type="string">
+            <annotation>
+               <documentation>
+                  Id of the parent category. Root is used if not specified.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/category/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         1.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         The following is an example of a single checker definition: 
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.cdt.codan.ui.checkers&quot;&gt;
+      &lt;checker
+            class=&quot;org.aaa.AssignmentInConditionChecker&quot;
+            id=&quot;org.aaa.AssignmentInConditionChecker&quot;
+            name=&quot;Possible Assignment in Condition instead of comparision&quot;&gt;
+      &lt;/checker&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+The following is an example of a checker that produces two types of errors:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.cdt.codan.ui.checkers&quot;&gt;
+
+      &lt;checker
+            class=&quot;org.aaa.NullPointerDereferenceChecker&quot;
+            id=&quot;org.aaa.NullPointerDereferenceChecker&quot;
+            name=&quot;Null Pointer Dereference checker&quot;&gt;
+      &lt;problem id=&quot;org.aaa.npe_must&quot; name=&quot;Null Pointer Dereference&quot;/ defaultSeverity=&quot;Error&quot;&gt;
+      &lt;problem id=&quot;org.aaa.npe_may&quot; name=&quot;Possible Null Pointer Dereference&quot;/&gt;
+      &lt;/checker&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

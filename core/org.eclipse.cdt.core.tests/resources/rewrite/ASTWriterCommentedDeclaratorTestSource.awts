@@ -1,0 +1,256 @@
+//!Commented DeclaratorTest 1
+//%CPP
+//TEST 1
+void foo()
+{
+    //TEST 2
+    struct B
+    {
+        int f();
+    };
+    int (B::*pb)() = &B::f;
+}
+
+
+//!Commented DeclaratorTest 2
+//%CPP
+/*TEST 1*/
+void foo()
+{
+    /*TEST 2*/
+    struct B
+    {
+        int f();
+    };
+    int (B::*pb)() = &B::f;
+}
+
+
+//!Commented CPPFunctionDeclaratorTest 1
+//%CPP
+char& operator [](unsigned int);
+
+//TEST 1
+TestClass::TestClass(int a) //TEST 2
+{
+    //TEST 3
+} //TEST 4
+
+
+//!Commented CPPFunctionDeclaratorTest 2
+//%CPP
+char& operator [](unsigned int);
+
+/*TEST 1*/
+TestClass::TestClass(int a) /*TEST 2*/
+{
+    /*TEST 3*/
+} /*TEST 4*/
+
+
+//!Commented CPPFunctionDeclaratorTest 3
+//%CPP
+char& operator [](unsigned int);
+
+//TEST 1
+TestClass::TestClass(int a)
+:alpha(a) //TEST 2
+{
+    //TEST 3
+} //TEST 4
+
+
+//!Commented CPPFunctionDeclaratorTest 4
+//%CPP
+char& operator [](unsigned int);
+
+/*TEST 1*/
+TestClass::TestClass(int a)
+:alpha(a) /*TEST 3*/
+{
+    /*TEST 4*/
+} /*TEST 5*/
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator1
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++;
+    }
+    catch (...){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator2
+//%CPP
+void foo()
+{
+    int i = 1;
+    //Test
+    try {
+        i++;
+    }
+    catch (...){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator3
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        //Test
+        i++;
+    }
+    catch (...){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator3b
+//%CPP
+void foo()
+{
+    int i = 1;
+    try //Test
+    {
+        i++;
+    }
+    catch (...){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator4
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        //Test
+        i++;
+    }
+    catch (...){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator5
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++; //Test
+    }
+    catch (...){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator6
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++;
+        //Test
+    }
+    catch (...){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator7
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++;
+    } //Test
+    catch (...){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator8
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++;
+    }
+    catch (...){
+        //Test
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator9
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++;
+    }
+    catch (...){
+        //Test
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator11
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++;
+    }
+    catch (...){
+    }
+    //Test
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator12
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++;
+    }
+    catch (Overflow oo){
+    }
+    catch (Matherr mm){
+    }
+}
+
+
+//!Commented ICPPASTFunctionTryBlockDeclarator13
+//%CPP
+void foo()
+{
+    int i = 1;
+    try {
+        i++;
+    }
+    catch (Overflow oo){
+    }
+    catch (Matherr mm){
+        //Test
+    }
+}
+
+

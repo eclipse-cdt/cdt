@@ -1,0 +1,681 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2013 Intel Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Intel Corporation - Initial API and implementation
+ * Samuel Hultgren (STMicroelectronics) - bug #217674
+ * Torbjörn Svensson (STMicroelectronics) - bug #528940
+ *******************************************************************************/
+package org.eclipse.cdt.managedbuilder.internal.buildmodel;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Vector;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildCommand;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildResource;
+import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
+import org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeMessages;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
+/**
+ * This is the main class for parallel internal builder implementation
+ *
+ * NOTE: This class is subject to change and discuss,
+ * and is currently available in experimental mode only
+ */
+public class ParallelBuilder {
+	public static final int STATUS_OK = 0;
+	public static final int STATUS_ERROR = 1;
+	public static final int STATUS_CANCELED = 2;
+	public static final int STATUS_INVALID = -1;
+	public static final long MAIN_LOOP_DELAY = 50L;
+
+	private static final String BUILDER_MSG_HEADER = "InternalBuilder.msg.header"; //$NON-NLS-1$
+	private static final String LINE_SEPARATOR = System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+
+	public static int lastThreadsUsed = 0; // use externally for report purposes only
+
+	protected IPath cwd;
+	protected GenDirInfo dirs;
+	protected IProgressMonitor monitor;
+	protected OutputStream out;
+	protected OutputStream err;
+	protected boolean resumeOnErrors;
+	protected boolean buildIncrementally;
+	protected HashSet<BuildQueueElement> unsorted = new HashSet<>();
+	protected HashMap<IBuildStep, BuildQueueElement> queueHash = new HashMap<>();
+	protected LinkedList<BuildQueueElement> queue = new LinkedList<>();
+	private IResourceRebuildStateContainer fRebuildStateContainer;
+	private IBuildDescription fDes;
+
+	/**
+	 * This class implements queue element
+	 */
+	protected class BuildQueueElement implements Comparable<BuildQueueElement> {
+		protected IBuildStep step;
+		protected int level;
+
+		public BuildQueueElement(IBuildStep _step, int _level) {
+			step = _step;
+			level = _level;
+		}
+
+		public IBuildStep getStep() {
+			return step;
+		}
+
+		public int getLevel() {
+			return level;
+		}
+
+		public void setLevel(int _level) {
+			level = _level;
+		}
+
+		@Override
+		public int hashCode() {
+			return step.hashCode();
+		}
+
+		@Override
+		public int compareTo(BuildQueueElement elem) {
+			if (elem == null)
+				throw new NullPointerException();
+
+			if (elem.getLevel() > level)
+				return -1;
+			if (elem.getLevel() < level)
+				return 1;
+			return 0;
+		}
+
+		/**
+		 * Updates level value
+		 */
+		public boolean check(IBuildStep _step, int _level) {
+			if (level < _level && step.equals(_step)) {
+				level = _level;
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		@Override
+		public String toString() {
+			return "[BuildQueueElement] " + DbgUtil.stepName(step) + " @ " + level; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * This class stores information about step being built
+	 */
+	protected class ActiveBuildStep {
+		protected IPath stepCwd;
+		protected GenDirInfo stepDirs;
+		protected IBuildStep step;
+		protected IBuildCommand[] cmds;
+		protected int activeCmd;
+		protected boolean done;
+		protected ProcessLauncher launcher;
+
+		public ActiveBuildStep(IBuildStep _step) {
+			step = _step;
+
+			if (dirs == null)
+				stepDirs = new GenDirInfo(step.getBuildDescription().getConfiguration());
+			else
+				stepDirs = dirs;
+			if (cwd == null)
+				stepCwd = step.getBuildDescription().getDefaultBuildDirLocation();
+			else
+				stepCwd = cwd;
+			cmds = step.getCommands(stepCwd, null, null, true);
+			activeCmd = -1;
+			done = false;
+			createOutDirs();
+		}
+
+		public boolean launchNextCmd(BuildProcessManager mgr) {
+			if (monitor.isCanceled()) {
+				done = true;
+				return false;
+			}
+			if (activeCmd + 1 >= cmds.length)
+				done = true;
+			else {
+				IBuildCommand cmd = cmds[++activeCmd];
+				launcher = mgr.launchProcess(cmd, stepCwd, monitor);
+				if (launcher != null)
+					return true;
+				activeCmd--;
+				done = true; // temporary
+			}
+			return false;
+		}
+
+		public boolean isDone() {
+			return done;
+		}
+
+		public IBuildStep getStep() {
+			return step;
+		}
+
+		public ProcessLauncher getLauncher() {
+			return launcher;
+		}
+
+		protected void createOutDirs() {
+			IBuildResource rcs[] = step.getOutputResources();
+
+			for (int i = 0; i < rcs.length; i++) {
+				dirs.createDir(rcs[i], new NullProgressMonitor());
+			}
+		}
+	}
+
+	/**
+	 * Build process is divided into following steps:
+	 * 1. Resources enqueueing & levelling
+	 * 2. Queue sorting
+	 * 3. Queue dispatching
+	 *
+	 * @param des Build description
+	 * @param cwd Working directory
+	 * @param dirs GenDirInfo?
+	 * @param out Output stream
+	 * @param err Error output stream
+	 * @param monitor Progress monitor
+	 * @param resumeOnErrors If true, build process will not stop when
+	 * compilation errors encountered
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 * @see #build(IBuildDescription, IPath, GenDirInfo, OutputStream, OutputStream, IProgressMonitor, boolean, boolean, IResourceRebuildStateContainer)
+	 */
+	static public int build(IBuildDescription des, IPath cwd, GenDirInfo dirs, OutputStream out, OutputStream err,
+			IProgressMonitor monitor, boolean resumeOnErrors, boolean buildIncrementally) {
+		return build(des, cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally, null);
+	}
+
+	/**
+	 * Build process is divided into following steps:
+	 * 1. Resources enqueueing & levelling
+	 * 2. Queue sorting
+	 * 3. Queue dispatching
+	 *
+	 * @param des Build description
+	 * @param cwd Working directory
+	 * @param dirs GenDirInfo?
+	 * @param out Output stream
+	 * @param err Error output stream
+	 * @param monitor Progress monitor
+	 * @param resumeOnErrors If true, build process will not stop when
+	 * compilation errors encountered
+	 * @param rs Rebuild state container
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 */
+	static public int build(IBuildDescription des, IPath cwd, GenDirInfo dirs, OutputStream out, OutputStream err,
+			IProgressMonitor monitor, boolean resumeOnErrors, boolean buildIncrementally,
+			IResourceRebuildStateContainer rs) {
+		int status = IBuildModelBuilder.STATUS_OK;
+		IConfiguration cfg = des.getConfiguration();
+		if (dirs == null)
+			dirs = new GenDirInfo(cfg);
+		if (cwd == null)
+			cwd = des.getDefaultBuildDirLocation();
+		int threads = 1;
+		if (cfg instanceof Configuration) {
+			threads = ((Configuration) cfg).getParallelNumber();
+		}
+
+		ParallelBuilder builder = new ParallelBuilder(cwd, dirs, out, err, monitor, resumeOnErrors, buildIncrementally,
+				rs, des);
+
+		status = builder.executePreBuildStep();
+		if (status != IBuildModelBuilder.STATUS_OK) {
+			return status;
+		}
+
+		builder.initRebuildStates();
+		builder.enqueueAll(des);
+		builder.sortQueue();
+		monitor.beginTask("", builder.queue.size()); //$NON-NLS-1$
+		BuildProcessManager buildProcessManager = new BuildProcessManager(out, err, true, threads);
+		status = builder.dispatch(buildProcessManager);
+		lastThreadsUsed = buildProcessManager.getThreadsUsed();
+		monitor.done();
+
+		if (status == IBuildModelBuilder.STATUS_OK) {
+			builder.clearRebuildStates();
+			status = builder.executePostBuildStep();
+		}
+
+		return status;
+	}
+
+	/**
+	 * Executes all pre build commands
+	 *
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 */
+	protected int executePreBuildStep() {
+		// Ensure that the target directory exist
+		cwd.toFile().mkdirs();
+
+		// Validate that the CWD is an actual directory
+		if (cwd.toFile().exists() && !cwd.toFile().isDirectory()) {
+			printMessage(ManagedMakeMessages.getFormattedString("ParallelBuilder.missingOutDir", "" + cwd), err); //$NON-NLS-1$ //$NON-NLS-2$
+			return IBuildModelBuilder.STATUS_ERROR_BUILD;
+		}
+
+		return executeStep(fDes.getInputStep());
+	}
+
+	/**
+	 * Executes all post build commands
+	 *
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 */
+	protected int executePostBuildStep() {
+		return executeStep(fDes.getOutputStep());
+	}
+
+	/**
+	 * Execute all the commands associated with step
+	 *
+	 * @param step The build step
+	 * @return the status of the operation, one of {@link ParallelBuilder#STATUS_OK},
+	 *         {@link ParallelBuilder#STATUS_ERROR}, {@link ParallelBuilder#STATUS_CANCELED}, or {@link
+	 *         ParallelBuilder#STATUS_INVALID}.
+	 */
+	protected int executeStep(IBuildStep step) {
+		if (hasResourceToBuild() && step != null) {
+			IProject project = (IProject) fDes.getConfiguration().getOwner();
+			IBuildCommand[] bcs = step.getCommands(cwd, null, null, true);
+			for (IBuildCommand bc : bcs) {
+				CommandBuilder cb = new CommandBuilder(bc, fRebuildStateContainer, project);
+				int status = cb.build(out, err, monitor);
+				if (status != IBuildModelBuilder.STATUS_OK) {
+					return status;
+				}
+			}
+		}
+
+		return IBuildModelBuilder.STATUS_OK;
+	}
+
+	/**
+	 * Checks if there is one or more resource that needs to be built
+	 *
+	 * @return True if one or more resource that needs to be built
+	 */
+	protected boolean hasResourceToBuild() {
+		if (buildIncrementally && fDes instanceof BuildDescription) {
+			IResourceDelta delta = ((BuildDescription) fDes).getDelta();
+			if (delta != null && delta.getAffectedChildren() != null && delta.getAffectedChildren().length <= 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private void initRebuildStates() {
+		if (fRebuildStateContainer == null) {
+			return;
+		}
+
+		fRebuildStateContainer.setState(0);
+
+		IBuildResource[] rcs = fDes.getResources();
+		putAll(fRebuildStateContainer, rcs, IRebuildState.NEED_REBUILD, true);
+	}
+
+	private void clearRebuildStates() {
+		if (fRebuildStateContainer == null) {
+			return;
+		}
+
+		fRebuildStateContainer.setState(0);
+	}
+
+	private static void putAll(IResourceRebuildStateContainer cbs, IBuildResource[] rcs, int state,
+			boolean rebuildRcOnly) {
+		for (IBuildResource rc : rcs) {
+			if (rebuildRcOnly && !rc.needsRebuild()) {
+				continue;
+			}
+
+			if (!rc.isProjectResource()) {
+				continue;
+			}
+
+			IPath fullPath = rc.getFullPath();
+			if (fullPath == null) {
+				continue;
+			}
+
+			cbs.setStateForFullPath(fullPath, state);
+		}
+	}
+
+	/**
+	 * Initializes parallel builder
+	 */
+	protected ParallelBuilder(IPath _cwd, GenDirInfo _dirs, OutputStream _out, OutputStream _err,
+			IProgressMonitor _monitor, boolean _resumeOnErrors, boolean _buildIncrementally,
+			IResourceRebuildStateContainer _fRebuildStateContainer, IBuildDescription _fDes) {
+		cwd = _cwd;
+		dirs = _dirs;
+		out = _out;
+		err = _err;
+		monitor = _monitor;
+		resumeOnErrors = _resumeOnErrors;
+		buildIncrementally = _buildIncrementally;
+		fRebuildStateContainer = _fRebuildStateContainer;
+		fDes = _fDes;
+	}
+
+	/**
+	 * Enqueues build steps, calculating their levels
+	 */
+	protected void enqueueAll(IBuildDescription des) {
+		enqueueSteps(des.getInputStep(), 0);
+	}
+
+	/**
+	 * Sorts the queue
+	 */
+	protected void sortQueue() {
+		for (BuildQueueElement elem : unsorted) {
+			queue.add(elem);
+		}
+		unsorted.clear();
+		unsorted = null;
+		queueHash.clear();
+		queueHash = null;
+
+		Collections.sort(queue);
+	}
+
+	/**
+	 * Enqueues build steps directly accessed from the given one. Each
+	 * new element will have level 1 if it needs rebuild and 0 otherwise.
+	 */
+	protected void enqueueSteps(IBuildStep step, int level) {
+		IBuildResource[] resources = step.getOutputResources();
+
+		for (int i = 0; i < resources.length; i++) {
+			IBuildStep steps[] = resources[i].getDependentSteps();
+			for (int j = 0; j < steps.length; j++) {
+				IBuildStep st = steps[j];
+				if (st != null && st.getBuildDescription().getOutputStep() != st) {
+					BuildQueueElement b = queueHash.get(st);
+					if (b != null) {
+						if (b.level < level)
+							b.setLevel(level);
+					} else {
+						//TODO: whether we need check isRemoved & needRebuild ?
+						if (!steps[j].isRemoved() && (!buildIncrementally || steps[j].needsRebuild())) {
+							addElement(steps[j], level);
+						}
+						enqueueSteps(steps[j], level + 1);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Adds new element to the build queue and step<->element hash map
+	 */
+	protected void addElement(IBuildStep step, int level) {
+		BuildQueueElement elem = new BuildQueueElement(step, level);
+		unsorted.add(elem);
+		queueHash.put(step, elem);
+	}
+
+	/**
+	 * Dispatches the build queue and returns build status
+	 */
+	protected int dispatch(BuildProcessManager mgr) {
+		int maxProcesses = mgr.getMaxProcesses();
+		Vector<ActiveBuildStep> active = new Vector<>(Math.min(maxProcesses, 10), 10);
+
+		int activeCount = 0;
+		int maxLevel = 0;
+		int status = STATUS_OK;
+		String errorMsg = null;
+
+		// Going into "infinite" main loop
+		main_loop: while (true) {
+			if (monitor.isCanceled()) {
+				status = STATUS_CANCELED;
+				errorMsg = CCorePlugin.getResourceString("CommandLauncher.error.commandCanceled"); //$NON-NLS-1$
+				break main_loop;
+			}
+			// Check build process states
+			ProcessLauncher launcher = mgr.queryStates();
+			if (launcher != null) {
+				// Build process has been canceled or failed to launch
+				if (launcher.queryState() == ProcessLauncher.STATE_CANCELED)
+					status = STATUS_CANCELED;
+				else
+					status = STATUS_INVALID;
+				errorMsg = launcher.getErrorMessage();
+				break main_loop;
+			}
+			// Everything goes OK.
+			boolean proceed = true;
+
+			// Check if there is room for new process
+			if (!mgr.hasEmpty()) {
+				proceed = false;
+			} else {
+				// Check "active steps" list for completed ones
+				for (ActiveBuildStep buildStep : active) {
+					ProcessLauncher pl = buildStep.getLauncher();
+					if (pl == null)
+						continue;
+					if (pl.queryState() == ProcessLauncher.STATE_DONE) {
+						// If process has terminated with error, break loop
+						// (except resumeOnErrors == true)
+
+						if (!resumeOnErrors && pl.getExitCode() != 0) {
+							status = STATUS_ERROR;
+							break main_loop;
+						}
+						// Try to launch next command for the current active step
+						if (buildStep.isDone())
+							continue;
+						if (buildStep.launchNextCmd(mgr)) {
+							// Command has been launched. Check if process pool is not maximized yet
+							if (!mgr.hasEmpty()) {
+								proceed = false;
+								break;
+							}
+						} else {
+							// Command has not been launched: step complete
+							refreshOutputs(buildStep.getStep());
+							activeCount--;
+							monitor.worked(1);
+						}
+					}
+				}
+			}
+
+			// If nothing to do, then sleep and continue main loop
+			if (!proceed) {
+				try {
+					Thread.sleep(MAIN_LOOP_DELAY);
+				} catch (InterruptedException e) {
+					// do nothing
+				}
+				continue main_loop;
+			}
+
+			// Check if we need to schedule another process
+			if (queue.size() != 0 && activeCount < maxProcesses) {
+				// Need to schedule another process
+				Iterator<BuildQueueElement> iter = queue.iterator();
+
+				// Iterate over build queue
+				while (iter.hasNext()) {
+					BuildQueueElement elem = iter.next();
+
+					// If "active steps" list reaches maximum, then break loop
+					if (activeCount == maxProcesses)
+						break;
+
+					// If current element's level exceeds maximum level of currently built
+					// resources, then stop iteration (we can not build it anyway)
+					if (elem.getLevel() > maxLevel + 1)
+						break;
+
+					//Check if all prerequisites are built
+					boolean prereqBuilt = true;
+					for (IBuildResource bldRes : elem.getStep().getInputResources()) {
+						IBuildStep step = bldRes.getProducerStep(); // step which produces input for curr
+						boolean built = true;
+						if (step != step.getBuildDescription().getInputStep()) {
+							for (ActiveBuildStep buildStep : active) {
+								if (buildStep != null && buildStep.getStep().equals(step) && !buildStep.isDone()) {
+									built = false;
+									break;
+								}
+							}
+						}
+						if (!built) {
+							prereqBuilt = false;
+							break;
+						}
+					}
+
+					if (prereqBuilt) {
+						// All prereqs are built
+						IBuildStep step = elem.getStep();
+
+						// Remove element from the build queue and add it to the
+						// "active steps" list.
+						iter.remove();
+						for (int i = 0; i < maxProcesses; i++) {
+							if (i >= active.size()) {
+								// add new item
+								ActiveBuildStep buildStep = new ActiveBuildStep(step);
+								active.add(buildStep);
+								if (buildStep.launchNextCmd(mgr))
+									activeCount++;
+								break;
+							}
+							if (active.get(i).isDone()) {
+								// replace old item
+								ActiveBuildStep buildStep = new ActiveBuildStep(step);
+								active.set(i, buildStep);
+								if (buildStep.launchNextCmd(mgr))
+									activeCount++;
+								break;
+							}
+						}
+
+						// Update maxLevel
+						if (elem.getLevel() > maxLevel)
+							maxLevel = elem.getLevel();
+						// We don't need to start new process immediately since
+						// it will be done on the next main loop iteration
+					}
+				}
+			}
+
+			// Now finally, check if we're done
+			if (activeCount <= 0 && queue.size() == 0)
+				break main_loop;
+		}
+
+		if (status != STATUS_OK && errorMsg != null)
+			printMessage(errorMsg, out);
+		return status;
+	}
+
+	/**
+	 * Prints output to the console
+	 */
+	protected void printMessage(String msg, OutputStream out) {
+		if (out != null) {
+			msg = ManagedMakeMessages.getFormattedString(BUILDER_MSG_HEADER, msg) + LINE_SEPARATOR;
+			try {
+				out.write(msg.getBytes());
+				out.flush();
+			} catch (IOException e) {
+				// do nothing
+			}
+		}
+	}
+
+	/**
+	 * Updates info about generated files (after step completed)
+	 */
+	protected void refreshOutputs(IBuildStep step) {
+		IProgressMonitor mon = new NullProgressMonitor();
+		IBuildResource outres[] = step.getOutputResources();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		for (int i = 0; i < outres.length; i++) {
+			IPath path = outres[i].getFullPath();
+			if (path != null) {
+				try {
+					root.getFile(path).refreshLocal(0, mon);
+				} catch (CoreException e) {
+				}
+			}
+		}
+
+		clearStepRebuildStep(step);
+	}
+
+	/**
+	 * Clear rebuild state for the step
+	 */
+	protected void clearStepRebuildStep(IBuildStep step) {
+		if (fRebuildStateContainer == null) {
+			return;
+		}
+
+		// Clear the rebuildstate for the step
+		IBuildResource outres[] = step.getOutputResources();
+		putAll(fRebuildStateContainer, outres, 0, false);
+		IBuildResource inres[] = step.getInputResources();
+		putAll(fRebuildStateContainer, inres, 0, false);
+	}
+
+}

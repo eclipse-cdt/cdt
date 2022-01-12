@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:id="introduction" xml:lang="en-US">
+  <title>Introduction</title>
+  <para>There are several freely available C and C++ development environments.
+  Most of them have the disadvantage that they require one particular
+  operating system. The Eclipse IDE was written as a cross-platform
+  development environment. Initially just written for Java, it also has a very
+  good C/C++ development mode.</para>
+  <para>If you have already tried (and I assume failed, otherwise you wouldn't
+  be reading this document) to install Eclipse CDT, you may want to go
+  directly to <xref linkend="problems"/>.</para>
+  <para>This document describes how to install everything necessary to develop
+  with C or C++ using only free tools on the three major operating systems
+  Windows, Linux, and Mac OS X. It uses the Eclipse IDE, which is the same on
+  all operating systems, thus providing a consistent user experience once
+  installed.</para>
+  <para>There are two versions of this document:</para>
+  <variablelist>
+    <varlistentry>
+      <term>The free online version</term>
+      <listitem>
+        <para>The <link xlink:href="http://max.berger.name/howto/cdt">free
+        version of Setting up Eclipse CDT on Windows, Linux/Unix, Mac OS
+        X</link> can be found on <link xlink:href="http://max.berger.name/">Max Bergers website</link>. It
+        will always be the previous major revision of the document.</para>
+      </listitem>
+    </varlistentry>
+    <varlistentry>
+      <term>A paid eBook version</term>
+      <listitem>
+        <para>The eBook version of Setting up Eclipse CDT on Windows,
+        Linux/Unix, Mac OS X is distributed through Amazon.com, Amazon.co.uk,
+        and Amazon.de. It will always be the current major revision of the
+        document.</para>
+        <itemizedlist>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.com/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=maxbergername-20">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.com</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.co.uk/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=httpmaxberg02-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.co.uk</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.de/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=httpmaxberger-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.de</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.fr/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=httpmaxberg06-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.fr</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.it/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=httpmaxberg08-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.it</link>
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              <link xlink:href="http://www.amazon.es/gp/product/B005NWQCJS/ref=as_li_ss_tl?ie=UTF8&amp;tag=maxbergername-21">Setting
+            up Eclipse CDT on Window, Linux/Unix, Mac OS X on
+            Amazon.es</link>
+            </para>
+          </listitem>
+        </itemizedlist>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+  <para>At this time, the eBook version contains updates for the following
+  items which are not yet in the free version:</para>
+  <itemizedlist>
+    <listitem>
+      <para>There are no updates in the ebook version at this time.</para>
+    </listitem>
+  </itemizedlist>
+  <para>Screenshots may still reflect older versions of the used software,
+  they are only updated if there is a significant change.</para>
+</section>

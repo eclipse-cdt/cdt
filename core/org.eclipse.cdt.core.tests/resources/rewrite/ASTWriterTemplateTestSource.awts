@@ -1,0 +1,123 @@
+//![temp.names] examples abschnitt 4/1
+//%CPP
+T* p1 = p->template alloc<100>();
+
+//![temp.names] examples abschnitt 4/2, didn't work cause of Bug# 164482
+//%CPP
+template<class T> 
+void f(T* p)
+{
+    T::template adjust<100>();
+}
+
+//![temp.alias] Template alias declaration
+//%CPP
+template<typename T> struct S
+{
+};
+template<typename T> using Alias = S<T>;
+Alias<int> sInt;
+
+//!Variadic Function Template
+//%CPP
+template<typename T, typename... Args> 
+void f(T t, Args... args)
+{
+    f(args...);
+}
+
+//!Variadic Class Template
+//%CPP
+template<typename... Args> struct S
+{
+    static const int size = sizeof...(Args);
+};
+
+//!Variable Template
+//%CPP
+template<typename T> constexpr T c = T{100};
+
+int f()
+{
+    return c<int>;
+}
+
+//!Field Template
+//%CPP
+struct S
+{
+    template<typename T> static constexpr T c = T{100};
+};
+
+int f()
+{
+    return S::c<int>;
+}
+
+//!Field Template in Template
+//%CPP
+template<typename T> struct S
+{
+    template<int I> static constexpr T c = T{I};
+};
+
+int f()
+{
+    return S<int>::template c<100>;
+}
+
+//!Type Template Parameter with class
+//%CPP
+template<class > 
+void f()
+{
+}
+
+//!Type Template Parameter with typename
+//%CPP
+template<typename > 
+void f()
+{
+}
+
+//!Variadic Type Template Parameter with class
+//%CPP
+template<class... > 
+void f()
+{
+}
+
+//!Variadic Type Template Parameter with typename
+//%CPP
+template<typename... > 
+void f()
+{
+}
+
+//!Template-template Template Parameter with class
+//%CPP
+template<template <typename > class > 
+void f()
+{
+}
+
+//!Template-template Template Parameter with typename
+//%CPP
+template<template <typename > typename > 
+void f()
+{
+}
+
+//!Variadic Template-template Template Parameter with class
+//%CPP
+template<template <typename > class... > 
+void f()
+{
+}
+
+//!Variadic Template-template Template Parameter with typename
+//%CPP
+template<template <typename > typename... > 
+void f()
+{
+}

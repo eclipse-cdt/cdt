@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='utf-8' ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>Autotools Plug-in User Guide - Make Targets</title>
+		<link type="text/css" rel="stylesheet" href="../../../book.css"/>
+	</head>
+	<body>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<th style="width: 100%" align="center" colspan="3">Make Targets</th>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Building.html" title="Building">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right">
+					<a href="Updating-This-Document.html" title="Updating This Document">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Building</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Updating This Document</td>
+			</tr>
+		</table><hr class="navigation-separator"/>
+		<h1 id="Make_Targets">Make Targets</h1>
+		<p>A Makefile has a set of targets that can be built.  Typically, every Makefile has an 
+			<b>all</b> target which builds all targets, but there may be optional targets as well.  A CDT Makefile project enables one to invoke the various make targets via the Make Targets dialog.  Since an Autotools project is a form of Makefile project, it too supports the Make Targets dialog.
+			Make Targets are important for an Autotool project because there are a large number of make targets added to the Makefile automatically by configuration.  Typically, a project is built by running 
+			<b>make all</b>, but it is installed by invoking 
+			<b>make install</b>.  The install target places files in standard locations; usually system directories on a Linux system.  For example, header files would be installed in /usr/include and made available to all users of the system.  The install prefix (/usr) can be overridden using the configure --prefix parameter or else by specifying prefix=xxxx on the call to make (e.g. make install prefix=/my/local/directory) so that testing can be performed without modifying the whole system.
+		</p>
+		<p>A regular CDT Makefile project requires users to add their own Make Targets, however, the Autotools plug-in analyzes the top-level Makefile for you and creates top-level Make Targets for the project.  As mentioned, these automatically added targets can be numerous.  If you wish to create targets to run in sub-directories of the main build directory, you must add these manually.  For example, you might wish to build docs in a lower-level sub-directory, but not for the entire project.</p>
+		<p>The Make Targets dialog can be displayed in two ways:</p>
+		<ol>
+			<li>Selecting a file or folder in a project and clicking on the Project -&gt; Make Target menu item</li>
+			<li>Right clicking on a file or folder in a project and selecting Make Target</li>
+		</ol>
+		<p>This brings up a sub-menu containing Create... and Build.... to either create a new Make Target or build an existing Make Target, respectively.</p>
+		<p>
+			<img border="0" src="images/AutotoolsMakeTargetMenu.png"/>
+		</p>
+		<p>Creating a Make Target is relatively straight-forward:</p>
+		<p>
+			<img border="0" src="images/AutotoolsCreateMakeTarget.png"/>
+		</p>
+		<p>There is nothing different in the Make Target dialog for Autotools, however, a few concepts need to be clarified.</p>
+		<p>For Make Targets added as part of the Project -&gt; Make Target menu item, the target is for the top-level Makefile for the current build.  This means that if you add a Make Target this way, it will persist across configurations and will try and run the 
+			<b>make</b> command in the top-level build location specified for the active configuration.
+		</p>
+		<p>Make Targets added by using the right-click Make Target menu are location sensitive.  This means that the 
+			<b>make</b> command will attempt to run in that directory where the right-click was performed, regardless of whether there is a Makefile present there.  Let's say you want to add your own Make Target that performed a 
+			<b>make all install</b> (i.e. you want to group multiple targets together into one).  If you are in configuration X with build directory build-X, you want to right-click in a directory that is build-X or a sub-directory of build-X.  This target will issue a 
+			<b>make all install</b> in that particular directory.  If you wanted the same target for another configuration, you would have to right-click in its build directory or lower and add another Make Target.  Obviously, for top-level Make Targets, using the Project -&gt; Make Target menu item makes the most sense since it applies to all configurations.  If you add a Make Target to a source directory, it will likely fail when run because it will try and run 
+			<b>make</b> in that directory which will probably only contain a Makefile.in or Makefile.am file and not a Makefile which is only generated at configure time.
+		</p>
+		<p>The Make Target dialog can be used to override various flags within the Makefile.  For example, to perform a 
+			<b>make install</b> and reset the prefix to /my/local/directory, you would first select the 
+			<b>install</b> target from the Build... dialog.
+		</p>
+		<p>
+			<img border="0" src="images/AutotoolsBuildMakeTarget.png"/>
+		</p>
+		<p>Then, you would click the Edit button to edit the Make Target.  You can then override the prefix by specifying its value after the 
+			<b>make</b> command.  You edit the build command by first un-checking "Use Builder Settings" which enables text entry.
+		</p>
+		<p>
+			<img border="0" src="images/AutotoolsModifyMakeTarget.png"/>
+		</p>
+		<p>The check-box that says "Run all project builders" should be left un-checked.  By default, we only want the CDT Makefile builder to run and not the Autotools configure builder or any other builder.</p><hr class="navigation-separator"/>
+		<table class="navigation" style="width: 100%;" border="0" summary="navigation">
+			<tr>
+				<td style="width: 20%" align="left">
+					<a href="Building.html" title="Building">
+						<img alt="Previous" border="0" src="../../../images/prev.gif"/>
+					</a>
+				</td>
+				<td style="width: 60%" align="center">
+					<a href="User-Guide.html" title="Autotools Plug-in User Guide">
+						<img alt="Autotools Plug-in User Guide" border="0" src="../../../images/home.gif"/>
+					</a>
+				</td>
+				<td style="width: 20%" align="right">
+					<a href="Updating-This-Document.html" title="Updating This Document">
+						<img alt="Next" border="0" src="../../../images/next.gif"/>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 20%" align="left" valign="top">Building</td>
+				<td style="width: 60%" align="center"></td>
+				<td style="width: 20%" align="right" valign="top">Updating This Document</td>
+			</tr>
+		</table>
+	</body>
+</html>

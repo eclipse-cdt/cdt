@@ -1,0 +1,674 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <!-- Local application launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+      </tab>
+      <tab id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.argumentsTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.arguments.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CArgumentsTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab 
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.environmentTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.environment.name"
+            class="org.eclipse.debug.ui.EnvironmentTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+         <placement after="org.eclipse.cdt.dsf.gdb.launch.argumentsTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.LocalApplicationCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.localApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.applicationLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.localCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+
+      <!-- Remote application launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.mainTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.RemoteApplicationCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.remoteApplicationLaunch.commonTab"
+            group="org.eclipse.cdt.launch.remoteApplicationLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+
+      <!-- Attach launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.attachLaunch.mainTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainAttachTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.attachLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.AttachCDebuggerTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.attachLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.attachLaunch.commonTab"
+            group="org.eclipse.cdt.launch.attachLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+        <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.attachCLaunch"/>
+        <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+      
+      <!-- PostMortem launch tabs-->
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.mainTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%launchTab.main.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CMainCoreTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.debuggerTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%launchTab.debugger.name"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CoreFileDebuggerTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
+         <placement after="org.eclipse.cdt.dsf.gdb.launch.mainTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.sourceLookupTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%launchTab.sourceLookup.name"
+            class="org.eclipse.debug.ui.sourcelookup.SourceLookupTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
+         <placement after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab"/>
+      </tab>
+      <tab
+            id="org.eclipse.cdt.dsf.gdb.launch.coreLaunch.commonTab"
+            group="org.eclipse.cdt.launch.postmortemLaunchTabGroup"
+            name="%launchTab.common.name"
+            class="org.eclipse.debug.ui.CommonTab">
+         <associatedDelegate delegate="org.eclipse.cdt.dsf.gdb.launch.coreCLaunch"/>
+         <placement after="org.eclipse.debug.ui.sourceLookupTab"/>
+      </tab>
+   </extension>
+   <extension point="org.eclipse.core.runtime.adapters">
+      <!-- Extenders providing their own subclass of GdbAdapterFactory must also extend GdbLaunch 
+           and declare that the extended versions adapt to all of these types. See class comment in
+           GdbAdapterFactory for more details. -->
+      <factory 
+        	class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbAdapterFactory" 
+	        adaptableType="org.eclipse.cdt.dsf.gdb.launching.GdbLaunch">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+         <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory"/>
+         <adapter type="org.eclipse.debug.core.commands.ITerminateHandler"/>
+         <adapter type="org.eclipse.cdt.debug.core.model.IConnectHandler"/>
+         <adapter type="org.eclipse.debug.core.commands.IDisconnectHandler"/>
+         <adapter type="org.eclipse.cdt.debug.core.model.IDebugNewExecutableHandler"/>
+	  </factory>         
+   </extension>	
+   
+   <extension point="org.eclipse.debug.ui.memoryRenderings">
+      <renderingBindings
+            defaultIds="org.eclipse.debug.ui.rendering.raw_memory"
+            primaryId="org.eclipse.debug.ui.rendering.raw_memory"
+            renderingIds="org.eclipse.debug.ui.rendering.raw_memory,org.eclipse.debug.ui.rendering.ascii,org.eclipse.debug.ui.rendering.signedint,org.eclipse.debug.ui.rendering.unsignedint,org.eclipse.debug.ui.rendering.hexint">
+         <enablement>
+            <instanceof value="org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock"/>
+         </enablement>
+      </renderingBindings>
+   </extension>
+
+   <extension point="org.eclipse.ui.propertyPages">
+         <page class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.CBreakpointGdbThreadFilterPage"
+            id="org.eclipse.cdt.dsf.gdb.breakpoint.filtering"
+            name="%breakpoints.property.filter">
+         <filter name="debugModelId" value="org.eclipse.cdt.dsf.gdb"/>
+         <enabledWhen>
+            <and>
+               <adapt type="org.eclipse.cdt.debug.core.model.ICBreakpoint"/>
+               <not>
+                  <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+               </not>
+            </and>
+         </enabledWhen>
+      </page>
+      <page class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.GDBTracepointPropertyPage"
+            id="org.eclipse.cdt.dsf.gdb.tracepoint.common"
+            name="%tracepoints.property.common">
+         <enabledWhen>
+            <or>
+	           <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+               <and>
+                  <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
+                  <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+               </and>
+            </or>
+         </enabledWhen>
+      </page>
+      <page class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.GDBDynamicPrintfPropertyPage"
+            id="org.eclipse.cdt.dsf.gdb.dynamicprintf.common"
+            name="%dynamicPrintf.property.common">
+         <enabledWhen>
+            <or>
+               <adapt type="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
+               <and>
+                  <instanceof value="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext"/>
+                  <test property="org.eclipse.cdt.debug.ui.createBreakpointAdapt" value="org.eclipse.cdt.debug.core.model.ICDynamicPrintf"/>
+               </and>
+            </or>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.ProcessPrompter"
+            code="100"
+            id="org.eclipse.cdt.dsf.gdb.ui.processPrompter"
+            plugin="org.eclipse.cdt.dsf.gdb.ui">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.CoreFilePrompter"
+            code="1001"
+            id="org.eclipse.cdt.dsf.gdb.ui.coreFilePrompter"
+            plugin="org.eclipse.cdt.dsf.gdb.ui">
+      </statusHandler>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.eclipse.cdt.dsf.gdb.ui.testIsGdbUIPluginActive">
+         <with
+               variable="org.eclipse.core.runtime.Platform">
+            <test
+                  args="org.eclipse.cdt.dsf.gdb.ui"
+                  property="org.eclipse.core.runtime.bundleState"
+                  value="ACTIVE">
+            </test>
+         </with>
+      </definition>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.ReverseDebuggingPropertyTester"
+            id="org.eclipse.cdt.dsf.gdb.ui.selectionReverseDebuggingTester"
+            namespace="org.eclipse.cdt.debug.ui"
+            properties="isReverseDebuggingEnabled"
+            type="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext">
+      </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page   
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.GdbDebugPreferencePage"
+            id="org.eclipse.cdt.dsf.gdb.ui.preferences"
+            name="%gdbPreferencePage.name">
+      </page> 
+   </extension>
+
+   <extension
+         point="org.eclipse.debug.ui.contextViewBindings">
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.debugModelContextBindings">
+      <modelContextBinding
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            debugModelId="org.eclipse.cdt.dsf.gdb">
+      </modelContextBinding>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepoints.TraceControlView"
+            icon="icons/full/view16/tracecontrol_view.gif"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view"
+            name="%view.traceControl.name">
+      </view>
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.osview.OSResourcesView"
+            id="org.eclipse.cdt.dsf.gdb.ui.osresources.view"
+            name="%view.osresources.name"
+            icon="icons/full/view16/osresources_view.gif">
+      </view>
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.DebugSourcesView"
+            icon="icons/full/view16/debugsources_view.gif"
+            id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view"
+            name="%view.debugsources.name"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.debug.ui.DebugView"
+               visible="false"
+               relationship="right"
+               id="org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view">
+         </viewShortcut>
+      </perspectiveExtension>
+      <!-- The debugger console view is not present in the debug perspective by default.
+		   This allows integrators to add their specific console view implementation as needed.
+		   Dsf-gdb relies on the default console implementation which we therefore associate to
+		   the debug perspective here, without interfering with integrations separated from dsf-gdb -->
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.debug.ui.debuggerConsoleView">
+         </viewShortcut>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.console.ConsoleView"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+   <extension
+       point="org.eclipse.ui.commands">
+      <command
+          description="%command.nextTraceRecord.description"
+          id="org.eclipse.cdt.dsf.gdb.ui.command.selectNextTraceRecord"
+          name="%command.nextTraceRecord.name">
+      </command>
+      <command
+          description="%command.prevTraceRecord.description"
+          id="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord"
+          name="%command.prevTraceRecord.name">
+      </command>
+      <command
+            description="%command.connect.description"
+            id="org.eclipse.cdt.dsf.gdb.ui.command.osview.connect"
+            name="%command.connect.name">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.SelectNextTraceRecordCommandHandler"
+            commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectNextTraceRecord">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.SelectPrevTraceRecordCommandHandler"
+            commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord">
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfLoadSymbolsCommandHandler"
+      		commandId="org.eclipse.cdt.debug.ui.command.loadSymbols">
+			 <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.ModulesVMNode$ModuleVMContext">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen> 
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.DsfLoadSymbolsCommandHandler"
+      		commandId="org.eclipse.cdt.debug.ui.command.loadAllSymbols">
+			 <activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.ModulesVMNode$ModuleVMContext">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen> 
+      </handler>
+            <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.AddLocalsExpressionCommandHandler"
+            commandId="org.eclipse.cdt.dsf.ui.addLocalsExpression">
+            <activeWhen>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.gdb.ui" value="ACTIVE"/>
+            </with>
+            </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.commands.AddRegistersExpressionCommandHandler"
+            commandId="org.eclipse.cdt.dsf.ui.addRegistersExpression">
+            <activeWhen>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.gdb.ui" value="ACTIVE"/>
+            </with>
+            </activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.osview.AttachProcessHandler"
+            commandId="org.eclipse.cdt.dsf.gdb.ui.command.osview.connect">
+            <activeWhen>
+            <with variable="selection">
+               <iterate operator="and">
+                  <adapt type="org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS2$IResourcesInformation"/>
+               </iterate>
+               <count value="+"/>
+            </with>
+            </activeWhen>
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+         <menuContribution
+            locationURI="toolbar:org.eclipse.cdt.dsf.gdb.ui.tracecontrol.view?after=additions">
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.startTracing"
+               icon="icons/full/obj16/starttracing.gif"
+               label="%toolbar.startTracing.name"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.stopTracing"
+               icon="icons/full/obj16/stoptracing.gif"
+               label="%toolbar.stopTracing.name"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectNextTraceRecord"
+               icon="icons/full/obj16/next_trace_record_nav.gif"
+               label="%toolbar.nextTraceRecord.label"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.cdt.dsf.gdb.ui.command.selectPreviousTraceRecord"
+               icon="icons/full/obj16/prev_trace_record_nav.gif"
+               label="%toolbar.prevTraceRecord.label"
+               style="push">
+         </command>
+         <command
+               commandId="org.eclipse.cdt.debug.ui.command.saveTraceData"
+               icon="icons/full/obj16/savetrace.gif"
+               label="%toolbar.saveTracing.name"
+               style="push">
+         </command>
+      </menuContribution>
+         <menuContribution
+               locationURI="toolbar:org.eclipse.cdt.dsf.gdb.ui.osresources.view?after=additions">
+            <command
+                  commandId="org.eclipse.cdt.dsf.gdb.ui.command.osview.connect"
+                  icon="platform:/plugin/org.eclipse.cdt.debug.ui/icons/obj16/connect.gif"
+                  label="%command.connect.label"
+                  style="push"
+                  tooltip="%command.connect.tooltip">
+            </command>
+         </menuContribution>
+         
+          <menuContribution allPopups="true" locationURI="popup:org.eclipse.cdt.dsf.gdb.ui.osresources.view?after=additions">                
+            <command
+                  commandId="org.eclipse.cdt.dsf.gdb.ui.command.osview.connect"
+                  icon="platform:/plugin/org.eclipse.cdt.debug.ui/icons/obj16/connect.gif"
+                  label="%command.connect.label"
+                  style="push"
+                  tooltip="%command.connect.tooltip">
+               <visibleWhen checkEnabled="true">
+               </visibleWhen>
+            </command>
+         </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+      <actionPage
+            actionType="org.eclipse.cdt.dsf.gdb.tracepointactions.CollectAction"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.CollectActionPage"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracepointactions.CollectActionPage">
+      </actionPage>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+      <actionPage
+            actionType="org.eclipse.cdt.dsf.gdb.tracepointactions.EvaluateAction"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.EvaluateActionPage"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracepointactions.EvaluateActionPage">
+      </actionPage>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.BreakpointActionPage">
+      <actionPage
+            actionType="org.eclipse.cdt.dsf.gdb.tracepointactions.WhileSteppingAction"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.WhileSteppingActionPage"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracepointactions.WhileSteppingActionPage">
+      </actionPage>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.TracepointActionsPropertyPage"
+            id="org.eclipse.cdt.dsf.gdb.ui.tracepointactions.tracepointActions"
+            name="%tracepoints.action.page.label">
+         <enabledWhen>
+               <adapt type="org.eclipse.cdt.debug.core.model.ICTracepoint"/>
+         </enabledWhen>
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+       <page
+             category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+             class="org.eclipse.cdt.dsf.gdb.internal.ui.tracepointactions.TracepointActionsPreferencePage"
+             id="org.eclipse.cdt.dsf.gdb.ui.preferences.TracepointActionsPreferencePage"
+             name="%tracepointActionsPrefPage.name">
+      </page> 
+      <page   
+            category="org.eclipse.cdt.dsf.gdb.ui.preferences"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.ReverseDebugPreferencePage"
+            id="org.eclipse.cdt.dsf.gdb.ui.preferences.reversedebugpreferences"
+            name="%reverseDebugPreferences.name">
+      </page>
+      <page
+            category="org.eclipse.cdt.dsf.gdb.ui.preferences"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.preferences.GdbConsolePreferencePage"
+            id="org.eclipse.cdt.dsf.gdb.ui.preferences.console.GdbConsolePreferencePage"
+            name="%console.preferences.name">
+      </page>
+   </extension>
+    <extension
+         point="org.eclipse.ui.console.consolePageParticipants">
+      <consolePageParticipant
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsolePageParticipant"
+            id="org.eclipse.cdt.dsf.gdb.ui.dsfGdbConsolePageParticipant">
+         <enablement>
+               <instanceof value="org.eclipse.ui.console.IOConsole"/>
+         </enablement>
+      </consolePageParticipant>
+   </extension>
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.cdt.dsf.gdb.ui.objectContribution.incompleteChildren"
+            objectClass="org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.GdbVariableVMNode$IncompleteChildrenVMC">
+         <action
+               class="org.eclipse.cdt.dsf.gdb.internal.ui.actions.FetchMoreChildrenAction"
+               id="org.eclipse.cdt.dsf.gdb.ui.action.fetchMoreChildren"
+               label="%action.fetchMoreChildren.label"
+               menubarPath="renderGroup">
+         </action>
+      </objectContribution>
+      <viewerContribution
+            id="org.eclipse.cdt.dsf.debug.ui.disassemblyRulerActions"
+            targetID="#DisassemblyPartRulerContext">
+         <action
+               class="org.eclipse.cdt.dsf.gdb.internal.ui.disassembly.AddDynamicPrintfRulerActionDelegate"
+               id="org.eclipse.cdt.dsf.gdb.ui.actions.RulerAddDynamicPrintfAction"
+               label="%action.addDynamicPrintf.label"
+               menubarPath="debug">
+         </action>
+      </viewerContribution>
+   </extension>   
+   <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.gdb.ui.ToggleTracepointsTargetFactory"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.ToggleTracepointsTargetFactory">
+         <enablement>
+            <and>   
+               <reference
+                     definitionId="org.eclipse.cdt.debug.ui.testIsTracepointActionSetActive">
+               </reference>      
+               <test
+                     property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
+               </test>
+            </and>  
+         </enablement>
+      </toggleTargetFactory>
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.gdb.ui.ToggleDynamicPrintfTargetFactory"
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints.ToggleDynamicPrintfTargetFactory">
+         <enablement>
+            <test
+                  property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
+            </test>
+         </enablement>
+      </toggleTargetFactory>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbStatusHandler"
+            code="20001"
+            id="org.eclipse.cdt.dsf.gdb.ui.statusHandler"
+            plugin="org.eclipse.cdt.dsf.gdb">
+      </statusHandler>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.statusHandlers">
+      <statusHandler
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.GdbStatusHandler"
+            code="10004"
+            id="org.eclipse.cdt.dsf.gdb.ui.statusHandler"
+            plugin="org.eclipse.cdt.dsf.gdb">
+      </statusHandler>
+   </extension>
+   <extension
+         point="org.eclipse.launchbar.ui.launchTargetTypeUI">
+      <launchTargetTypeUI
+            id="org.eclipse.cdt.dsf.gdb.remoteTCPLaunchTargetType"
+            labelProvider="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbRemoteTargetLabelProvider">
+      </launchTargetTypeUI>
+      <wizard2
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewGdbRemoteTCPTargetWizard"
+            icon="icons/full/obj16/connect.gif"
+            id="org.eclipse.cdt.dsf.gdb.remoteTCPLaunchTargetType"
+            name="GDB Remote TCP">
+      </wizard2>
+      <launchTargetTypeUI
+            id="org.eclipse.cdt.dsf.gdb.remoteSerialLaunchTargetType"
+            labelProvider="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbRemoteTargetLabelProvider">
+      </launchTargetTypeUI>
+      <wizard2
+            class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.NewGdbRemoteSerialTargetWizard"
+            icon="icons/full/obj16/connect.gif"
+            id="org.eclipse.cdt.dsf.gdb.remoteSerialLaunchTargetType"
+            name="GDB Remote Serial">
+      </wizard2>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.contextViewBindings">
+      <contextViewBinding
+            autoOpen="false"
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            viewId="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
+      </contextViewBinding>
+   </extension>
+    <extension point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view.refresh"
+            targetID="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
+         <action
+               class="org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesViewRefresh"
+               icon="icons/refresh.gif"
+               id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view.refresh"
+               label="%debugSourcesRefresh.name"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+    </extension>
+</plugin>

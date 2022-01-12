@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="Stand-alone Debugger User Guide">
+   <topic href="concepts/cdt_c_before_you_begin.htm" label="Before You Begin">
+   </topic>
+   <topic href="concepts/cdt_c_standalone_intro.htm" label="Introduction"/>
+   <topic label="Getting Started">
+   		<topic label="Starting the debugger" href="tasks/cdt_t_standalone_startup.htm"/>
+   </topic>
+   <topic label="Concepts">
+   	    <topic label="Debug Perspective" href="concepts/cdt_c_perspectives.htm"/>
+        <topic label="Debug" href="concepts/cdt_o_dbg_concepts.htm">
+                <topic label="BreakPoints" href="concepts/cdt_c_brkpnts.htm"/>
+                <topic label="Debug overview" href="concepts/cdt_c_over_dbg.htm"/>
+                <topic label="Debug information" href="concepts/cdt_c_dbg_info.htm"/>
+        </topic>
+	<topic label="Views in the C/C++ perspective" href="concepts/cdt_c_views.htm"/> 
+	<topic label="Code aids" href="concepts/cdt_o_code_entry.htm">
+		<topic label="Comments" href="concepts/cdt_c_comments.htm"/>
+		<topic label="Content Assist" href="concepts/cdt_c_content_assist.htm"/>
+		<topic label="Templates" href="concepts/cdt_c_templates.htm"/> 
+	</topic>
+	<topic label="Editing C/C++ files" href="concepts/cdt_o_edit.htm"> 
+		<topic label="C/C++ editor" href="concepts/cdt_c_editor.htm"/>
+	</topic>
+	<topic label="Navigation aids" href="concepts/cdt_o_nav.htm"> 
+		<topic label="Outline View" href="concepts/cdt_c_outlineview.htm"/> 
+		<topic label="Project File views" href="concepts/cdt_c_proj_file_views.htm"/> 
+		<topic label="C/C++ Search" href="concepts/cdt_c_search.htm"/> 
+		<topic label="Open Declaration" href="concepts/cdt_c_open_declarations.htm"/>
+	</topic>
+   </topic>
+   <topic label="Tasks">
+		<topic label="Using Run/Debug Configurations" href="tasks/cdt_o_run.htm">
+			<topic label="Creating or editing a run/debug configuration" href="tasks/cdt_o_run_config.htm">
+				<topic label="Selecting a run or debug configuration" href="tasks/cdt_t_run_config.htm"/>
+				<topic label="Creating a run or debug configuration" href="tasks/cdt_t_new_run_config.htm"/>
+				<topic label="Selecting an application to run or debug" href="tasks/cdt_t_run_main.htm"/>
+				<topic label="Specifying execution arguments" href="tasks/cdt_t_run_arg.htm"/>
+				<topic label="Setting environment variables" href="tasks/cdt_t_run_env.htm"/>
+				<topic label="Defining debug settings" href="tasks/cdt_t_run_dbg.htm"/>
+				<topic label="Specifying the location of source files" href="tasks/cdt_t_run_source.htm"/>
+				<topic label="Specifying the location of the run configuration" href="tasks/cdt_t_run_com.htm"/>
+			</topic>
+			
+			<topic label="Debugging" href="tasks/cdt_o_debug.htm">
+				<topic label="Debugging a program" href="tasks/cdt_t_debug_prog.htm"/>
+				<topic label="Debugging an existing executable" href="tasks/cdt_t_debug_exes.htm"/>
+				
+				<topic label="Using breakpoints, watchpoints, and breakpoint actions" href="tasks/cdt_o_brkpnts_watch.htm">
+					<topic label="Adding breakpoints" href="tasks/cdt_t_add_brkpnts.htm"/>
+					<topic label="Adding watchpoints" href="tasks/cdt_t_add_watch.htm"/>
+					<topic label="Adding breakpoint actions" href="tasks/cdt_t_add_brk_action.htm"/>
+					<topic label="Removing breakpoints and watchpoints" href="tasks/cdt_t_rem_wtch_brk.htm"/>
+					<topic label="Enabling or disable breakpoints and watchpoints" href="tasks/cdt_t_endis_able_brk_wtch.htm"/>
+					<topic label="Attaching or removing breakpoint actions" href="tasks/cdt_t_addrmv_brk_action.htm"/>
+				</topic>
+				
+				<topic label="Controlling debug execution" href="tasks/cdt_t_controldebug.htm"/>
+				<topic label="Stepping into assembler functions" href="tasks/cdt_t_disassembly.htm"/>
+				<topic label="Working with variables" href="tasks/cdt_t_variables.htm"/>
+				<topic label="Adding expressions" href="tasks/cdt_t_expressions.htm"/>
+				<topic label="Working with registers" href="tasks/cdt_t_registers.htm"/>
+				<topic label="Working with memory" href="tasks/cdt_t_memory.htm"/>
+			</topic>
+		</topic>
+		
+		<topic label="Searching the CDT" href="tasks/cdt_t_search.htm">
+			<topic label="Selection Searching for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
+			<topic label="Setting Source Folders" href="tasks/cdt_t_set_src_fold.htm"/>
+		</topic>
+		
+		<topic label="Include paths and macros for C/C++ indexer" href="tasks/cdt_t_sd.htm"/>
+   </topic>
+   <topic label="References">
+	<!-- VIEWS AND EDITOR TOPICS -->
+	<topic label="C/C++ Views and Editors" href="reference/cdt_o_views.htm">
+		<topic label="Selecting Views and Editors" href="reference/cdt_u_views.htm"/>
+		<topic label="C/C++ Projects view" href="reference/cdt_u_cproj_view.htm"/>	
+		<topic label="Project Explorer view" href="reference/cdt_u_project_explorer_view.htm"/>
+		<topic label="Outline view" href="reference/cdt_u_outline_view.htm"/>	
+		<topic label="Editor view" href="reference/cdt_u_editor_view.htm"/>
+		<topic label="Executables view" href="reference/cdt_u_view_executables.htm"/>	
+		<topic label="Console view" href="reference/cdt_u_console_view.htm"/>
+		<topic label="Tasks view" href="reference/cdt_u_tasks_view.htm"/>
+		<topic label="Properties view" href="reference/cdt_u_properties_view.htm"/>
+		<topic label="Search view" href="reference/cdt_u_search_view.htm"/>
+		<topic label="Call Hierarchy view" href="reference/cdt_u_call_hierarchy_view.htm"/>
+		<topic label="Type Hierarchy view" href="reference/cdt_u_type_hierarchy_view.htm"/>
+		<topic label="Include Browser view" href="reference/cdt_u_include_browser_view.htm"/>
+		<topic label="C/C++ Icons" href="reference/cdt_u_icons.htm"/>
+	</topic>
+	
+	<topic label="Debug views" href="reference/cdt_o_dbg_view.htm">
+		<topic label="Registers view" href="reference/cdt_u_registersview.htm"/>
+		<topic label="Memory view" href="reference/cdt_u_memoryview.htm"/>
+		<topic label="Traditional Memory Rendering preferences" href="reference/cdt_u_mem_view_pref.htm"/>
+		<topic label="Disassembly view" href="reference/cdt_u_dissassembly_view.htm"/>
+		<topic label="Modules view" href="reference/cdt_u_modules_view.htm"/>
+		<topic label="Signals view" href="reference/cdt_u_signals_view.htm"/>
+		<topic label="Debug view" href="reference/cdt_u_dbg_view.htm"/>
+		<topic label="Debug preferences" href="reference/cdt_u_dbg_pref.htm"/>
+	</topic>
+
+	<!-- MENUBAR TOPICS -->
+	<topic label="C/C++ Menubar" href="reference/cdt_o_menu.htm">
+		<topic label="File Menu" href="reference/cdt_u_m_file.htm"/>
+		<topic label="Window Menu" href="reference/cdt_u_m_window.htm"/>
+	<!--		<topic label="Help Menu" href="PLUGINS_ROOT/org.eclipse.platform.doc.user/reference/ref-61.htm"/> -->
+		<!-- <topic label="Edit Menu" href="reference/cdt_u_m_edit.htm"/> -->
+		<!-- <topic label="Source Menu" href="reference/cdt_u_m_source.htm"/> -->
+		<topic label="Search Menu" href="reference/cdt_u_m_search.htm"/>
+		<topic label="Run Menu" href="reference/cdt_u_m_run.htm"/>
+	</topic>
+	
+	<topic label="C/C++ Toolbar" href="reference/cdt_u_toolbar.htm"/>
+	<topic label="C/C++ Open Element" href="reference/cdt_u_open_element.htm"/>
+	<topic label="C/C++ Find and Replace" href="reference/cdt_u_find_replace.htm"/>
+	
+	<!-- PREFERENCE TOPICS -->
+	<topic label="C/C++ Preferences" href="reference/cdt_u_c_pref.htm">
+		<topic label="Appearance" href="reference/cdt_u_appearance_pref.htm"/>
+		
+		<topic label="Code Style preferences" href="reference/cdt_u_c_code_style_pref.htm">
+			<topic label="Code Templates" href="reference/cdt_u_c_code_templates_pref.htm"/>
+		</topic>
+		
+		<topic label="Debug preferences" href="reference/cdt_u_debug.htm">
+			<topic label="Breakpoint Actions" href="reference/cdt_u_dbg_brkpt_actions.htm"/>
+			<topic label="Source Lookup Path" href="reference/cdt_u_dbg_src.htm"/>
+			<topic label="GDB" href="reference/cdt_u_dsfgdb.htm"/>
+		</topic>
+		
+		<topic label="Editor preferences" href="reference/cdt_u_c_editor_gen.htm">
+			<topic label="Content Assist" href="reference/cdt_u_c_editor_con_assist.htm" >
+				<topic label="Advanced" href="reference/cdt_u_c_editor_con_assist_adv.htm"/>
+			</topic>
+			<topic label="Folding" href="reference/cdt_u_c_editor_folding.htm"/>
+			<topic label="Hovers" href="reference/cdt_u_c_editor_hov.htm"/>
+			<topic label="Mark Occurrences" href="reference/cdt_u_c_editor_mark_occurrences.htm"/>
+			<topic label="Save Actions" href="reference/cdt_u_c_editor_save_actions.htm"/>
+			<topic label="Scalability" href="reference/cdt_u_c_editor_scalability.htm"/>
+			<topic label="Syntax Coloring" href="reference/cdt_u_c_editor_color.htm"/>
+			<topic label="Templates" href="reference/cdt_u_code_temp.htm"/>
+			<topic label="Typing" href="reference/cdt_u_c_editor_typing.htm"/>
+		</topic>
+		
+		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
+		<topic label="Indexer" href="reference/cdt_u_indexer_preference.html"/>
+		<topic label="Language Mappings" href="reference/cdt_u_language_mapping_pref.htm"/>
+		
+		<topic label="Task Tags" href="reference/cdt_u_pref_task_tags.htm"/>
+	</topic>
+	
+	<!-- PROJECT PROPERTIES TOPICS -->
+	<topic label="C/C++ Properties" href="reference/cdt_u_properties.htm">
+		<topic label="C/C++ Project properties" href="reference/cdt_o_prop_proj.htm">
+			<topic label="Resource page" href="reference/cdt_u_prop_resource.htm"/>
+			<topic label="Common C/C++ Configurations handling">
+				<topic label="Manage Configurations dialog" href="reference/cdt_u_prop_manage_dialog.htm"/>
+				<topic label="Create Configuration dialog" href="reference/cdt_u_prop_manage_newdialog.htm"/>
+				<topic label="Rename Configuration dialog" href="reference/cdt_u_prop_manage_rendialog.htm"/>
+			</topic>  
+			<topic label="C/C++ General" href="reference/cdt_u_prop_general.htm">
+				<topic label="Documentation page  " href="reference/cdt_u_prop_general_doc.htm"/>
+				<topic label="File Types page      " href="reference/cdt_u_prop_general_typ.htm"/>
+				<topic label="Indexer page         " href="reference/cdt_u_prop_general_idx.htm"/>
+				<topic label="Language Mapping page" href="reference/cdt_u_prop_general_lng.htm"/>
+				<topic label="Preprocessor Include Paths, Macros, etc." href="reference/cdt_u_prop_general_scanner_discovery.htm">
+					<topic label="Entries tab" href="reference/cdt_u_prop_general_sd_entries.htm"/>
+					<topic label="Providers tab" href="reference/cdt_u_prop_general_sd_providers.htm"/>
+				</topic> 
+			</topic>  
+			<topic label="Project References page" href="reference/cdt_u_prop_ref.htm"/>
+			<topic label="Run/Debug Settings page" href="reference/cdt_u_prop_rundebug.htm"/>
+		</topic>
+
+		<topic label="C/C++ Folder properies" href="reference/cdt_o_prop_folder.htm">
+			<topic label="Resource page" href="reference/cdt_u_fprop_resource.htm"/>
+			<topic label="C/C++ Build">
+				<topic label="Settings page">
+					<topic label="Tool Settings tab" href="reference/cdt_u_fprop_toolsettings.htm"/>
+				</topic>  
+				<topic label="Tool chain editor page" href="reference/cdt_u_prop_build_toolchain.htm"/>
+			</topic>  
+			<topic label="C/C++ General" href="reference/cdt_u_prop_general.htm">
+				<topic label="Paths and Symbols page">
+					<topic label="Includes tab      " href="reference/cdt_u_prop_general_pns_inc.htm"/>
+					<topic label="Symbols tab       " href="reference/cdt_u_prop_general_pns_sym.htm"/>
+					<topic label="Libraries tab     " href="reference/cdt_u_prop_general_pns_lib.htm"/>
+					<topic label="Libraries path tab" href="reference/cdt_u_prop_general_pns_libpath.htm"/>
+					<topic label="Data Hierarchy tab" href="reference/cdt_u_prop_general_pns_hier.htm"/>
+				</topic> 
+				<topic label="Preprocessor Include Paths, Macros, etc." href="reference/cdt_u_prop_general_scanner_discovery.htm"/>
+			</topic>  
+			<topic label="Run/Debug Settings page" href="reference/cdt_u_prop_rundebug.htm"/>
+		</topic>
+
+		<topic label="C/C++ File Properties" href="reference/cdt_o_prop_file.htm">
+			<topic label="Resource page" href="reference/cdt_u_fprop_resource.htm"/>
+			<topic label="C/C++ General" href="reference/cdt_u_prop_general.htm">
+				<topic label="Preprocessor Include Paths, Macros, etc." href="reference/cdt_u_prop_general_scanner_discovery.htm"/>
+			</topic>  
+			<topic label="Run/Debug Settings page" href="reference/cdt_u_prop_rundebug.htm"/>
+		</topic>
+	</topic>
+	
+
+	<!-- RUN AND DEBUG TOPICS -->
+	<topic label="C/C++ Run and Debug" href="reference/cdt_o_run_dbg_pages.htm">
+		<topic label="Main" href="reference/cdt_u_run_dbg_main.htm"/>
+		<topic label="Arguments" href="reference/cdt_u_run_dbg_arg.htm"/>
+		<topic label="Environment" href="reference/cdt_u_run_dbg_env.htm"/>
+		<topic label="Debugger" href="reference/cdt_u_run_dbg_dbg.htm"/>
+		<topic label="Source" href="reference/cdt_u_run_dbg_srce.htm"/>
+		<topic label="Common" href="reference/cdt_u_run_dbg_comm.htm"/>
+	</topic>
+	
+	<topic label="C/C++ search page" href="reference/cdt_u_search.htm"/>
+   </topic>
+   <topic label="Legal" href="notices.html"/>
+   
+</toc>

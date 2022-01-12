@@ -1,0 +1,559 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html lang="en">
+<head>
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2007,2009 This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
+
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="STYLESHEET" href="../book.css"  type="text/css">
+<style>
+td {border-top: solid thin black;}
+img[alt] {}
+tr {vertical-align: top;}
+</style>
+<title>CDT 8.0 New and Noteworthy</title>
+</head>
+<body>
+<div role="main">
+<h1 id="top">CDT 8.0 - New and Noteworthy</h1>
+<p>See <a href="https://wiki.eclipse.org/CDT/User/NewIn80">What's new in CDT 8.0</a> on the CDT Wiki
+which may contain more recent information.
+</p>
+<table cellpadding="10" cellspacing="0" width="600">
+	<colgroup>
+		<col width="20%">
+		<col width="80%">
+	</colgroup>
+	<tbody>
+		<p><!-- ******************** Editor ********************** -->
+		<tr>
+			<td colspan="2"><a name="Editor"></a>
+				<div class="title">Editor</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Override_Markers</span></p>
+			</td>
+			<td>
+				<p>In C++ files, method declarations and definitions are annotated on the vertical bar using three types of symbols:</p>
+				<ul>
+					<li>Override (<i>green triangle</i>) indicating that a virtual method in one of base classes is overridden, 
+					</li>
+					<li>Implement (<i>empty blue triangle</i>) indicating that a pure virtual (abstract) method in one of base classes is overridden, 
+					</li>
+					<li>Shadow (<i>dark blue triangle</i>) indicating that a method in one of base classes <i>with the same paremeter set</i> is shadowed.
+					</li>
+				</ul>
+				<p><img src="../images/80/CDTOverrideMarkers.png" alt="Image:CDTOverrideMarkers.png"></img></p> 
+				</p>
+				<p>As in JDT, the annotations have the action which allows to go to the declaration in base. 
+				</p
+				><p>In case of multiple inheritance, the messages also contain the name of <i>direct</i> base class of the overriding method's class if the overrided method's class is further up the inheritance hierarchy. 
+				</p>
+				<p>Contrary to JDT, several messages are sometimes generated on one marker (e.g. when the same method is overridden through several base classes). 
+				</p>
+		</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Selection Expansion</span></p>
+			</td>
+			<td>
+				<p>The C++ editor now allows to expand the selection to enclosing, next and previous nodes of the AST, as well as restore the hierarchy. 
+				</p>
+				<p><img src="../images/80/CDTExpandSelection.png" alt="Image:CDTExpandSelection.png"></img></p> 
+				</p>
+				<p>The behaviour is strictly analogous to JDT and the actions are located in "Edit -&gt; Expand Selection To" menu. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Camel Case Completion</span></p>
+			</td>
+			<td>
+				<p>The C/C++ now supports camel case completion similar to the one of the JDT. The following additional features are available: 
+				</p>
+				<ul><li>underscore notation (I): <code>FB</code> matches <code>FooBar</code> as well as <code>FOO_BAR</code> or <code>Foo_Bar</code> 
+				</li><li>underscore notation (II): you can also type the underscore in the text, in which case matches are explicitly required to contain the underscore. <code>F_B</code> matches <code>FOO_BAR</code>, but not <code>FooBar</code>. 
+				</li><li>you don't need to specify all segments: It is OK to omit segments (not the first, however): <code>OTh</code> matches <code>OneTwoThree</code>, even though no characters for <code>Two</code> are specified. 
+				</li><li>a segment in the matching name can consist of only upper case letters: <code>IOT</code> matches <code>IONETWO</code>.
+				</li></ul>
+				<p><img src="../images/80/CDTCamelCaseCompletionDemo.png" alt="Image:CDTCamelCaseCompletionDemo.png"></img></p>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Configurable Name Style</span></p>
+			</td>
+			<td>
+				<p>User-configurable name styles for constants, variables, class fields, getters and setters, and for header, source and test files. 
+				</p>
+				<p><img src="../images/80/NameStyle.png" class="image" alt="Image:NameStyle.png"></img></p>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">New Code Formatting Options</span></p>
+			</td>
+			<td>
+				<p>New options for formatting of constructor initializer lists, stream output expressions, and inline comments. Numerous improvements to the code formatter. 
+				</p>
+				<p><img src="../images/80/CodeStyle.png" alt="Image:CodeStyle.png"></img></p>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">New Code Templates</span></p>
+			</td>
+			<td>
+				<p>New code templates for namespace and class declarations and for C++ test files. 
+				</p>
+				<p><img src="../images/80/CodeTemplates.png" alt="Image:CodeTemplates.png"></img></p>
+				</p>
+			</td>
+		</tr>
+
+		<!-- ******************** Codan ********************** -->
+		<tr>
+			<td colspan="2"><a name="Editor"></a>
+				<div class="title">Code Analysis (Codan)</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Unresolved Symbols</span></p>
+			</td>
+			<td>
+				<p>Codan now has a checker which generates Problems on instances of ProblemBindings in AST, generated by the Parser. This allows to reveal many errors while typing. 
+				</p><p>Quick fixes are provided for a subset of problems. As for now, the available fixes are: 
+				</p>
+				<ul><li>Name resolution problem: 
+				<ul><li>Create Local Variable 
+				</li><li>Create Field 
+				</li><li>Create Parameter
+				</li></ul>
+				</li></ul>
+				<p><img src="../images/80/CDTNameResolutionFix.png" alt="Image:CDTNameResolutionFix.png"></img></p>
+			</td>
+		</tr>
+
+		<!-- ******************** Refactoring ********************** -->
+		<tr>
+			<td colspan="2"><a name="Refactoring"></a>
+				<div class="title">Refactoring</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Rename Refactoring as Quick Fix</span></p>
+			</td>
+			<td>
+				<p><i>Rename in workspace</i> option in quick fix.</p>
+				<p><img src="../images/80/RenameInWorkspace.png" alt="Image:RenameInWorkspace.png"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Lightweight Rename Refactoring</span></p>
+			</td>
+			<td>
+				<p>JDT-style rename refactoring.</p>
+				<p><img src="../images/80/RenameRefactoring.png" alt="Image:RenameRefactoring.png"></img></p> 
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Toggle Function Definition</span></p>
+			</td>
+			<td>
+				<p>Toggle Function Definition moves a function definition inside an C/C++ source editor from one 
+				position to another and preserves correctness.
+				</p>
+				<p><img src="../images/80/Cdt_t_toggle_member.png" alt="Image:cdt_t_toggle_member.png"></img></p>
+			</td>
+		</tr>
+
+
+		<!-- ******************** Build ********************** -->
+		<tr>
+			<td colspan="2"><a name="Build"></a>
+				<div class="title">Build</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Build Console</span></p>
+			</td>
+			<td>
+				<ul><li>The "C-Build console" is now named "CDT Build Console" 
+				</li><li>It is now possible to open the CDT Build Console before performing a build. See <a href="https://bugs.eclipse.org/320765" class="external text" title="https://bugs.eclipse.org/320765" rel="nofollow">bug 320765</a>. Note that operations on the console will require the user to first select a project. The below screenshot shows the new access to the CDT Build Console.
+				</li></ul>
+				<p><img src="../images/80/CDTConsoleStart.jpg" alt="Image:CDTConsoleStart.jpg"></img></p>
+				<ul><li>"CDT Global Build Console" got introduced. This console combines output from all referenced projects being built in one view. See <a href="https://bugs.eclipse.org/309113" class="external text" title="https://bugs.eclipse.org/309113" rel="nofollow">bug 309113</a>.
+				</li></ul>
+				<p><img src="../images/80/CDTGlobalBuildConsole.jpg" alt="Image:CDTGlobalBuildConsole.jpg"></img></p>
+				<ul><li>Differentiate color highlighting in build output for error, warning and info problem markers. See <a href="https://bugs.eclipse.org/307211" class="external text" title="https://bugs.eclipse.org/307211" rel="nofollow">bug 307211</a>.
+				</li></ul>
+				<p><img src="../images/80/Bug_307211.png" alt="Image:Bug 307211.png"></img></p> 
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Error Parsers</span></p>
+			</td>
+			<td>
+				<ul><li>Added ability to reset individual error parsers in preferences. Also icons to indicate status, such as "user", "extension" icons and "wrench" overlay for customized parsers, <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=302720" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=302720" rel="nofollow">bug 302720</a>.
+				</li></ul>
+				<p><img src="../images/80/Bug-302720-ResetErrorParser.png" alt="Image:Bug-302720-ResetErrorParser.png"></img></p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Make Targets</span></p>
+			</td>
+			<td>
+				<ul><li>Rebuild Last Target F9 got a new option in preferences - to rebuild last target from a whole project including subfolders. This preference is the default now. <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=333113" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=333113" rel="nofollow">bug 333113</a>.
+				</li></ul>
+				<p><img src="../images/80/Bug-333113-LastMakeTarget.png" alt="Image:Bug-333113-LastMakeTarget.png"></img></p>
+				</p>
+				<ul><li>Source folders are shown in collapsed form now in Make Targets View, similarly as they are shown in Project Explorer. <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=339015" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=339015" rel="nofollow">bug 339015</a>.
+				</li></ul>
+				<p><img src="../images/80/Bug-339015-MakeTargetView-SrcRoots.png" alt="Image:Bug-339015-MakeTargetView-SrcRoots.png"></img></p>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Managed Build</span></p>
+			</td>
+			<td>
+				<ul><li>By default, there will be a space added after "-o" option and its value in compiler/linker commands in the generated makefiles. That stands for other applicable options as well. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=232373" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=232373" rel="nofollow">bug 232373</a>.
+				<pre>g++  -o "Hello.exe"  ./src/Hello.o
+				</li></ul>
+				</pre>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Scanner Discovery</span></p>
+			</td>
+			<td>
+				<ul><li>It is possible now to clear old built-in include paths and symbols left after compiler upgrade in Paths&amp;Symbols in project properties. The "Clear" button was introduced on "Scanner Discovery" page. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=206372" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=206372" rel="nofollow">bug 206372</a>. 
+				</li><li>You can now inspect the output of command to collect built-in compiler include paths and symbols, <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=342069" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=342069" rel="nofollow">bug 342069</a>.
+				</li></ul>
+				<p><img src="../images/80/DiscoveryTab.png" alt="Image:DiscoveryTab.png"></img></p>
+			</td>
+		</tr>
+
+
+		<!-- ******************** Debug ********************** -->
+		<tr>
+			<td colspan="2"><a name="Debug"></a>
+				<div class="title">Debug</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Project-less debugging</span></p>
+			</td>
+			<td>
+				<p>CDT can now be used to debug any binary, without needing to specify or even create a project in Eclipse. This is supported for all types of debugging (local, remote, attach, and post-mortem sessions). 
+				</p><p>Furthermore, for an attach session (local or remote), there is even no need to specify the binary; for a local attach, GDB can find the binary automatically, while for a remote attach, CDT will prompt for it when it needs it. 
+				</p>
+				<p><img src="../images/80/Noprojectdebug.png" alt="Image:Noprojectdebug.png"></img></p>
+				<p>This feature was completed April 26th, 2011 as part of <a href="https://bugs.eclipse.org/343861" class="external text" title="https://bugs.eclipse.org/343861" rel="nofollow">Bug 343861</a> 
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Support for full pretty-printing of complex structures</span></p>
+			</td>
+			<td>
+				<p>With the proper setup of GDB, DSF-GDB will now print complex structures such as Maps, Lists and Vectors, in a user-friendly fashion, within the Variables and Expressions views, as well as the advanced Debug hover of the Editor. See below on how to setup GDB for this feature to work. 
+				</p><p><br> <b>Without pretty-printing:</b> 
+				</p>
+				<p><img src="../images/80/NoPrettyPrint.png" alt="Image:NoPrettyPrint.png"></img></p>
+				<p><br> <b>With pretty-printing:</b> 
+				</p>
+				<p><img src="../images/80/FullPrettyPrint.png" alt="Image:FullPrettyPrint.png"></img></p>
+				<p><br> This feature has been contributed by Jens Elmenthaler to CDT 8.0 as of November 4th, 2010, as part of <a href="https://bugs.eclipse.org/302121" class="external text" title="https://bugs.eclipse.org/302121" rel="nofollow">Bug 302121</a> 
+				</p><p><br> <b>Configuring GDB for pretty-printing:</b> 
+				</p>
+				<ul><li>You will need to have python installed on your machine
+				</li></ul>
+				<ul><li>If you want to pretty-print STL structures, you will need the Python pretty-printers for STL. Check-out the latest Python libstdc++ printers to a place on your machine. (Note that you can create your own pretty-printers for any complex-structure). In a local directory, do:
+				<pre>   svn co svn://gcc.gnu.org/svn/gcc/trunk/libstdc++-v3/python
+				</pre>
+				</li></ul>
+				<ul><li>You will need to create a gdbinit file to tell GDB where the pretty-printers are. Create a gdbinit file with the following 6 lines. The path needs to match where the python module above was checked-out. So if checked out to: /home/marc/gdb_printers/, the path would be as written in the example:
+				<pre> python
+import sys
+sys.path.insert(0, '/home/marc/gdb_printers/python')
+from libstdcxx.v6.printers import register_libstdcxx_printers
+register_libstdcxx_printers (None)
+end
+				</pre>
+				</li></ul>
+				<ul><li>You will need GDB 7.0 or later. GDB 7.2 is recommended because it has some bug fixes for the pretty-printing.
+				</li></ul>
+				<ul><li>In your DSF-GDB launch, make sure you use the right GDB and the right gdbinit file
+				</li></ul>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Support for pending breakpoints</span></p>
+			</td>
+			<td>
+				<p>When a breakpoint is set in a dynamically-linked library that was not loaded yet, the breakpoint will now work, once the library is loaded. See <a href="https://bugs.eclipse.org/248595" class="external text" title="https://bugs.eclipse.org/248595" rel="nofollow">bug 248595</a>. This feature is currently only supported when using GDB 6.8 or later. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Showing cores in Debug view labels</span></p>
+			</td>
+			<td>
+				<p>By using the enhancements of GDB 7.1, DSF-GDB now shows the core on which each thread runs as an extra part of the Debug View label. The list of all cores on which a process is located is also added as a label. The below image shows the new feature. 
+				</p>
+				<p><img src="../images/80/CoreLabels.png" alt="Image:CoreLabels.png"></img></p>
+				</p><p>This feature has been implemented for CDT 8.0 as of July 6th, 2010, as part of <a href="https://bugs.eclipse.org/318230" class="external text" title="https://bugs.eclipse.org/318230" rel="nofollow">Bug 318230</a>. The feature will be enabled automatically as long as GDB 7.1 or greater is used. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Showing cores and owner in attach prompter</span></p>
+			</td>
+			<td>
+				<p>DSF-GDB now shows the owner of a process as an extra part of the process prompt for an attach session. The owner id will be shown starting with GDB 7.0. For a Remote attach session (using gdbserver --multi), the cores on which a process is located will also be shown. Showing the cores starts with GDB 7.1. The below image shows the new feature. 
+				</p><p><img src="../images/80/UserAndCores.jpg" alt="Image:UserAndCores.jpg"></img></p>
+				<p>This feature has been implemented for CDT 8.0 as of July 30th, 2010, as part of <a href="https://bugs.eclipse.org/318230#21" class="external text" title="https://bugs.eclipse.org/318230#21" rel="nofollow">Bug 318230 comment 21</a>. The feature will be enabled automatically as long as the proper version of GDB is used. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Pin &amp; Clone</span></p>
+			</td>
+			<td>
+				<p>Variables, Expressions, Registers, Disassembly, and Memory Browser now supports opening multiple instances, and pin the view input to the selected debug context(s) in the Debug view. This can be used, for example, to easily compare the data of different threads. 
+				</p>
+				<p><img src="../images/80/PinCloneDebug.png" alt="Image:PinCloneDebug.png"></img></p>
+				<p>This feature has been implemented for CDT 8.0 as of Feb 15th, 2011, as part of <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=327263" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=327263" rel="nofollow">Bug 327263</a>, <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=331781" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=331781" rel="nofollow">Bug 331781</a>, and <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=334566" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=334566" rel="nofollow">Bug 334566</a>. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Multi-process Debugging</span></p>
+			</td>
+			<td>
+				<p>CDT now supports debugging multiple processes in a single debug session. It allows to attach/detach and start/stop processes repeatedly and easily. 
+				</p><p>Requirements: 
+				</p>
+				<ul><li>GDB 7.2 or greater 
+				</li><li>Currently, only Non-Stop debugging sessions support multiple processes. 
+				</li><li>Note that this feature was developed and tested on Linux systems, and may not work on Windows.
+				</li></ul>
+				<p>To use multi-process debugging, simply launch an application as you normally would, locally or remotely, using gdbserver, and make sure to select Non-stop mode in the Debugger tab. Then, use the Debug View's "Connect" button to trigger a dialog with allows you to either attach to a running process, or to create a new process using the "New..." button. Currently, the "New..." button is only supported for Local debug sessions. 
+				</p>
+				<p><img src="../images/80/MultiAttachDialog.png" alt="Image:MultiAttachDialog.png"></img></p>
+				</p><p><br> 
+				</p><p>You will then have the newly selected process added to your debug session, where you can control it and examine it. You can use the "Disconnect" button to remove processes from your debug session, or you can use the "Connect" button to add new ones. 
+				</p>
+				<p><img src="../images/80/MultiProducerConsumer.png" alt="Image:MultiProducerConsumer.png"></img></p>
+				</p><p><br> 
+				</p><p>An option to automatically attach to a forked process is also available. This means that whenever any process you are currently debugging forks a new process, that new process will be added to your debug session. 
+				</p>
+				<p><img src="../images/80/AutoAttachOption.png" alt="Image:AutoAttachOption.png"></img></p>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">C/C++ Remote Application launch</span></p>
+			</td>
+			<td>
+				<p>The optional "C/C++ Remote Application" launch configuration type has been made permanent for CDT. 
+				</p>
+				<p><img src="../images/80/Debugconfig.jpg" alt="Image:Debugconfig.jpg"></img></p>
+				<p>The "GDB (DSF) Remote System Process" launch delegate has been renamed to "GDB (DSF) Manual Remote Debugging" and has been moved from "C/C++ Application" to "C/C++ Remote Application". As was the case for CDT 7.0, the optional RSE Remote Launch delegate of org.eclipse.cdt.launch.remote, is still part of "C/C++ Remote Application". 
+				</p><p>This optional remote launch now provides a new DSF-GDB-based launch delegate called "GDB (DSF) Automatic Remote Debugging". This launch is very similar to the existing "GDB (DSF) Manual Remote Debugging" delegate, except that the automatic one will automatically download the application to the remote target and start gdbserver with the application. 
+				</p>
+				<p><img src="../images/80/RemoteDelegates.jpg" alt="Image:RemoteDelegates.jpg"></img></p>
+				<p>By default, the user will be shown the "GDB (DSF) Manual Remote Debugging". However, if the optional feature of Remote Launch is installed, the default will automatically become the more feature-rich "GDB (DSF) Automatic Remote Debugging". 
+				</p><p>Finally, the run-mode RSE Remote Launch delegate no longer shows the Debugger or Source tabs, since they were not relevant, in run-mode. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">New set of preferences</span></p>
+			</td>
+			<td>
+				<p>A set of new preferences have been added to <i>Preferences-&gt;C/C++-&gt;Debug-&gt;GDB</i> to allow users to have a better debugging experience. These new preference are: 
+				</p>
+				<ul><li>Default GDB path and initialization file: default path for the location of GDB as well as for the GDB initialization file. 
+				</li><li>Default behavior for <i>Stop on startup</i>: default behavior to stop the execution on startup, and on what symbol. 
+				</li><li>Default Non-stop mode: default behavior to automatically enable non-stop mode or not. Non-stop mode allows to control the execution of threads and processes independently. 
+				</li><li>Default limit for GDB Traces: limits the amount of traces printed on the <i>gdb traces</i> console 
+				</li><li>Default enabling of pretty-printing: assuming a pretty-printing enabled GDB, automatically enabled pretty-printing in CDT 
+				</li><li>Default child limit for pretty-printing: default to control the amount of children automatically shown by a pretty-printer
+				</li></ul>
+				<p><img src="../images/80/DefaultGdbPreference.png" alt="Image:DefaultGdbPreference.png"></img></p>
+				<p><br> The values of most of these preferences will be used to populate the corresponding entries of the Debugger tab, whenever a new launch is created. 
+				</p>
+				<p><img src="../images/80/LaunchDefaultGdb.png" alt="Image:LaunchDefaultGdb.png"></img></p>
+				</p><p><br> This feature has been implemented for CDT 8.0 as as part of <a href="https://bugs.eclipse.org/120162" class="external text" title="https://bugs.eclipse.org/120162" rel="nofollow">Bug 120162</a>, <a href="https://bugs.eclipse.org/347245" class="external text" title="https://bugs.eclipse.org/347245" rel="nofollow">Bug 347245</a> and <a href="https://bugs.eclipse.org/335895" class="external text" title="https://bugs.eclipse.org/335895" rel="nofollow">Bug 335895</a>. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Extra node for debugged process no longer shown</span></p>
+			</td>
+			<td>
+				<p>The debugged process extra launch node has been removed from the Debug view. This node was felt to waste space, especially when dealing with multi-process debugging as we would have needed many of them. The Debug view already shows the debugged process as a container of threads, right below the launch node. 
+				</p>
+				<p><img src="../images/80/WithInferior.png" alt="Image:WithInferior.png"></img></p>
+			</td>
+		</tr>
+
+
+		<!-- ******************** API Changes and Migration ********************** -->
+		<tr>
+			<td colspan="2"><a name="api80"></a>
+			<div class="title">API Changes and Migration to CDT 8.0</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold"></span></p>
+			</td>
+			<td>
+				<p>The changes affecting compatibility are listed here. Keep in mind that this list likely does not list all the issues, only some of them. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">General</span></p>
+			</td>
+			<td>
+				<ol><li>Deprecated class org.eclipse.core.runtime.PluginVersionIdentifier has been changed to use org.osgi.framework.Version. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=318581" class="external text" title="https://bugs.eclipse.org/bugs/show_bug.cgi?id=318581" rel="nofollow">bug 318581</a> 
+				<ul><li>Affected packages: org.eclipse.cdt.managedbuilder.*. 
+				</li></ul>
+				</li><li><i>Use default</i> check box was removed from the New C++ Class dialog. Few protected members related to that check box were removed from org.eclipse.cdt.ui.wizards.NewClassCreationWizardPage class.
+				</li></ol>
+				<p><br> 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">DSF-GDB</span></p>
+			</td>
+			<td>
+				<ol><li>The interface org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo has four new methods. See <a href="https://bugs.eclipse.org/318230#c21" class="external text" title="https://bugs.eclipse.org/318230#c21" rel="nofollow">bug 318230 comment 21</a> 
+				<ul><li>String getUser() 
+				</li><li>String getType() 
+				</li><li>String getCores() 
+				</li><li>String getExecutable() 
+				</li></ul>
+				</li><li>The interface org.eclipse.cdt.dsf.gdb.service.command.IGDBControl has a new method: List&lt;String&gt; getFeatures(). See <a href="https://bugs.eclipse.org/322658" class="external text" title="https://bugs.eclipse.org/322658" rel="nofollow">bug 322658</a> 
+				</li><li>The interface org.eclipse.cdt.dsf.gdb.service.command.IGDBControl no longer has the three methods: start(...), restart(...) and canRestart(...). Those methods are moved to org.eclipse.cdt.dsf.gdb.service.IGDBProcesses and have a new signature. 
+				</li><li>org.eclipse.cdt.dsf.gdb.service.command.GDBControl and org.eclipse.cdt.dsf.gdb.service.command.GDBControl_7_0 no longer implement the five methods: start(...), restart(...), canRestart(...), startOrRestart(...), useContinueCommand(...) which are now implemented in org.eclipse.cdt.dsf.gdb.service.command.GDBProcesses and org.eclipse.cdt.dsf.gdb.service.command.GDBProcesses_7_0 
+				</li><li>All the constructors of class org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakInsert now take an extra parameter at the end of the parameter list: boolean allowPending. When this parameter is set to true, -break-insert will be used with the -f option, which asks GDB to make the breakpoint pending if the installation fails. This flag can only be enabled for GDB &gt;= 6.8. See <a href="https://bugs.eclipse.org/248595" class="external text" title="https://bugs.eclipse.org/248595" rel="nofollow">bug 248595</a> 
+				</li><li>The interface org.eclipse.cdt.dsf.debug.service.IProcesses.IMIProcesses has a new method: IMIContainerDMContext createContainerContextFromGroupId(...). See <a href="https://bugs.eclipse.org/317500" class="external text" title="https://bugs.eclipse.org/317500" rel="nofollow">bug 317500</a> 
+				</li><li>The file of constants org.eclipse.cdt.dsf.gdb.internal.ui.preferences.IGdbDebugPreferenceConstants has been removed. It was deprecated and had already been replaced by org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants 
+				</li><li>The interface org.eclipse.cdt.dsf.mi.service.IMIRunControl has a new method: IRunMode getRunMode(). See <a href="https://bugs.eclipse.org/334463" class="external text" title="https://bugs.eclipse.org/334463" rel="nofollow">bug 334463</a> 
+				</li><li>FinalLaunchSequence has dramatically changed. 
+				</li><li>GdbLaunch#addInferiorProcess() is removed. 
+				</li><li>GDBControl.InferiorInputOutputInitStep is removed. 
+				</li><li>GDBControl_7_0.InferiorInputOutputInitStep is removed. 
+				</li><li>The interface IMIRunControl has the new method isTargetAcceptingCommands() as part of <a href="https://bugs.eclipse.org/339047" class="external text" title="https://bugs.eclipse.org/339047" rel="nofollow">Bug 339047</a> 
+				</li><li>IGDBControl, GDBControl and GDBControl_7_0, no longer have the three methods: initInferiorInputOutput(), createInferiorProcess() and getInferiorProcess() as part of <a href="https://bugs.eclipse.org/237308" class="external text" title="https://bugs.eclipse.org/237308" rel="nofollow">Bug 237308</a> 
+				</li><li>MIInferiorProcess's constructors have changed, and many of its public methods are removed (getState(), getPid(), setPid(), etc) as part of <a href="https://bugs.eclipse.org/237308" class="external text" title="https://bugs.eclipse.org/237308" rel="nofollow">Bug 237308</a> 
+				</li><li>CommandFactory#createMIInferiorTTYSet() has changed signature as part of <a href="https://bugs.eclipse.org/237308" class="external text" title="https://bugs.eclipse.org/237308" rel="nofollow">Bug 237308</a> 
+				</li><li>The constructor to MIInferiorTTYSet has changed signature as part of <a href="https://bugs.eclipse.org/237308" class="external text" title="https://bugs.eclipse.org/237308" rel="nofollow">Bug 237308</a> 
+				</li><li>IGDBProcesses gets the new method attachDebuggerToProcess() as part of <a href="https://bugs.eclipse.org/237306" class="external text" title="https://bugs.eclipse.org/237306" rel="nofollow">Bug 237306</a> 
+				</li><li>GdbInferiorProcess no longer exists. Its base class, MIInferiorProcess should be used directly. 
+				</li><li>GDBBackend.doInitialize(), GDBControl.doInitialize() and GDBControl_7_0.doInitialize() are now private. Having them as public was a bug that would break versioning of the service. See <a href="https://bugs.eclipse.org/341465" class="external text" title="https://bugs.eclipse.org/341465" rel="nofollow">Bug 341465</a> 
+				</li><li>GDBControlDMContext no longer implements IBreakpointsTargetDMContext or IDisassemblyDMContext. Although not an API breaking change it has significant impacts. Mostly that code such as
+				</li></ol>
+				<pre>(IBreakpointsTargetDMContext)fCommandControl.getContext() // Will fail with an Invalid Cast exception
+(IDisassemblyDMContext)fCommandControl.getContext() // Will fail with an Invalid Cast exception
+				</pre>
+				<p>will now fail because the command control context is no longer an IBreakpointsTargetDMContext/IDisassemblyDMContext. Instead, MIContainerDMC now implements IBreakpointsTargetDMContext/IDisassemblyDMContext. This change was necessary to fully support multi-process and was done in <a href="https://bugs.eclipse.org/335324" class="external text" title="https://bugs.eclipse.org/335324" rel="nofollow">bug 335324</a> and <a href="https://bugs.eclipse.org/344298" class="external text" title="https://bugs.eclipse.org/344298" rel="nofollow">bug 344298</a>. 
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Codan</span></p>
+			</td>
+			<td>
+				<p>The class org.eclipse.cdt.codan.core.cxx.model.CxxModelsCache is no longer a singleton.</p>
+			</td>
+		</tr>
+
+
+		<!-- ******************** Bugs fixed ********************** -->
+		<tr>
+			<td colspan="2"><a name="bugs80"></a>
+			<div class="title">Bugs Fixed</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Fixed</span></p>
+			</td>
+			<td>Bugzilla tasks completed for this release: 
+				<a href="https://bugs.eclipse.org/bugs/buglist.cgi?query_format=advanced;bug_status=RESOLVED;bug_status=VERIFIED;bug_status=CLOSED;resolution=FIXED;target_milestone=7.0.1;target_milestone=7.0.2;target_milestone=7.0.3;target_milestone=8.0;product=CDT;classification=Tools">
+				  CDT 8.0 bug fixes</a>
+			</td>
+		</tr>
+
+		<!-- ******************** Known Limitations ********************** -->
+		<tr>
+			<td colspan="2"><a name="known_limitations"></a>
+			<div class="title">Known Limitations</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<p style="text-align:right"><span class="bold">Limitations</span></p>
+			</td>
+			<td>Cannot run or debug class in a project with GB18030 characters in workspace/project name.
+			  Most class libraries do not properly support the creation of a system process (via java.lang.Runtime.exec(...))
+			  when the specified command line contains GB18030 characters. This limitation means the scanner
+			  discovery mechanism and debugger cannot launch applications when the command line it generates
+			  contains GB18030 characters. Details in <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=308803">Bug 308803</a>
+			</td>
+		</tr>
+		
+	</tbody>
+</table>
+
+<p>To learn what's new in CDT releases see:</p>
+<p><a href="cdt_c_whatsnew.htm">CDT - New and Noteworthy</a></p>
+<p><a href="cdt_c_whatsnew_82.htm">CDT 8.2 - New and Noteworthy</a></p>
+<p><a href="cdt_c_whatsnew_81.htm">CDT 8.1 - New and Noteworthy</a></p>
+<p><a href="cdt_c_whatsnew_80.htm">CDT 8.0 - New and Noteworthy</a></p>
+<p><a href="cdt_c_whatsnew_70.htm">CDT 7.0 - New and Noteworthy</a></p>
+<p><a href="cdt_c_whatsnew_60.htm">CDT 6.0 - New and Noteworthy</a></p>
+<p><a href="https://wiki.eclipse.org/CDT/User/NewIn50">CDT 5.0 - New and Noteworthy</a></p>
+
+<p><a href="#top">Back to Top</a>
+
+<p>&nbsp;</p>
+</div>
+</body>
+</html>
+

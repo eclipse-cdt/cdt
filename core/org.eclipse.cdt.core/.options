@@ -1,0 +1,67 @@
+org.eclipse.cdt.core/debug=false
+
+# Reports model builder activity
+org.eclipse.cdt.core/debug/model=false
+
+# Reports parser activity
+org.eclipse.cdt.core/debug/parser=false
+
+# Prints parser stack traces
+org.eclipse.cdt.core/debug/parser/exceptions=false
+
+# Diagnostic tracing in CompositeValue class
+org.eclipse.cdt.core/debug/parser/CompositeValue=false
+
+# Reports statistics for building the structure to do resource lookups.
+org.eclipse.cdt.core/debug/resourceLookup=false
+
+# Reports scanner activity
+org.eclipse.cdt.core/debug/scanner=false
+
+# Reports scanner activity
+org.eclipse.cdt.core/debug/scanner/missingIncludeGuards=false
+
+# Reports search activity
+org.eclipse.cdt.core/debug/search=false
+
+# Reports search matches
+org.eclipse.cdt.core/debug/matchlocator=false
+
+# Reports delta processor tree activity
+org.eclipse.cdt.core/debug/deltaprocessor=false
+
+# Reports file type resolver activity
+org.eclipse.cdt.core/debug/typeresolver=false
+
+# Reports issues with locking the index
+org.eclipse.cdt.core/debug/index/locks=false
+
+# Diagnostic logging in the IndexFileSet class
+org.eclipse.cdt.core/debug/index/IndexFileSet=false
+
+# Reports events related to setting up the indexer for a project
+org.eclipse.cdt.core/debug/indexer/setup=false
+
+# Reports sequence of files indexed
+org.eclipse.cdt.core/debug/indexer/activity=false
+
+# Reports statistics for indexer
+org.eclipse.cdt.core/debug/indexer/statistics=false
+
+# Reports unresolved inclusions for indexer
+org.eclipse.cdt.core/debug/indexer/problems/inclusion=false
+
+# Reports scanner-problems for indexer (other than unresolved includes)
+org.eclipse.cdt.core/debug/indexer/problems/scanner=false
+
+# Reports syntax-problems for indexer
+org.eclipse.cdt.core/debug/indexer/problems/syntax=false
+
+# Reports problems for indexer, including inclusion-, scanner-, syntax- and resolution-problems.
+org.eclipse.cdt.core/debug/indexer/problems=false
+
+# Code formatter debugging
+org.eclipse.cdt.core/debug/formatter=false
+
+# ASTCache debugging
+org.eclipse.cdt.core/debug/ASTCache=false

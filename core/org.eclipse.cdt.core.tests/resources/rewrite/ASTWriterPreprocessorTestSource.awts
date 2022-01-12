@@ -1,0 +1,94 @@
+//!DefineObjectStyleMacroWithoutExpansion
+//%CPP
+#define LIFE_THE_UNIVERSE_AND_EVERYTHING
+
+//!DefineObjectStyleMacroWithExpansion
+//%CPP
+#define FOO int i = 1;
+
+//!DefineFunctionStyleMacro
+//%CPP
+#define BAR(a, b) a + b
+
+//!IfElfElseEndif
+//%CPP
+#if 1
+int a;
+#elif 0
+int b;
+#else
+int c;
+#endif
+
+
+//!Ifdef
+//%CPP
+#ifdef LIFE_THE_UNIVERS_AND_EVERYTHING
+#endif
+
+
+//!Ifndef
+//%CPP
+#ifndef LIFE_THE_UNIVERS_AND_EVERYTHING
+#define LIFE_THE_UNIVERS_AND_EVERYTHING
+#endif
+
+
+//!Undef
+//%CPP
+#define FOO
+#undef FOO
+
+//!Pragma
+//%CPP
+#pragma GCC poison printf sprintf fprintf
+
+//!Error
+//%CPP
+#error fehler
+
+//!ObjectMacroExpansion
+//%CPP
+#define FOO 3
+int main()
+{
+    int i = FOO;
+    return i;
+}
+
+
+//!DefineFunctionStyleMacro
+//%CPP
+#define BAR(a, b) a + b
+int i = BAR(1, 2);
+
+//!MacroExpansio2ExpansionsBug
+//%CPP
+#define HALLO(a, b) a + b
+int main()
+{
+    int i = HALLO(45, 2) + HALLO(1, 2);
+    return HALLO(i, i);
+}
+
+
+//!MacroExpansio3ExpansionsBug
+//%CPP
+#define HALLO(a, b) a + b
+int main()
+{
+    int i = HALLO(45, 2) + HALLO(1, 2) + HALLO(1, 2);
+    return HALLO(i, i);
+}
+
+
+//!MacroExpansio4ExpansionsBug
+//%CPP
+#define HALLO(a, b) a + b
+int main()
+{
+    int i = HALLO(45, 2) + HALLO(1, 2) + HALLO(1, 2) + HALLO(1, 2);
+    return HALLO(i, i);
+}
+
+

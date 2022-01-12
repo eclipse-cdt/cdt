@@ -1,0 +1,51 @@
+<?eclipse version="3.0"?>
+<plugin>
+ 
+    <extension point="org.eclipse.debug.ui.memoryRenderings">
+        <renderingType 
+            name="%renderingType.name"
+            id="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRendering"
+            class="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingTypeDelegate">
+        </renderingType>
+        <renderingBindings
+            renderingIds="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRendering"
+            defaultIds="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRendering">
+            <enablement>
+                <instanceof value="org.eclipse.debug.core.model.IMemoryBlockExtension"/>
+            </enablement>    
+        </renderingBindings>          
+    </extension>
+
+    <extension point="org.eclipse.ui.preferencePages">
+        <page
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+            class="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPreferencePage"
+            id="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPreferencePage"
+            name="%page.name"/>
+    </extension>
+    
+    <extension point="org.eclipse.core.runtime.preferences">
+        <initializer class="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPreferenceInitializer"/>
+    </extension>
+
+    <extension point="org.eclipse.ui.viewActions">
+        <viewContribution
+            targetID="org.eclipse.debug.ui.MemoryView"
+            id="org.eclipse.debug.ui.memoryView.toolbar">
+            <action
+                class="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPreferenceAction"
+                helpContextId="FPRenderingPreferenceAction_context"
+                id="org.eclipse.cdt.debug.ui.memory.floatingpoint.preferenceaction"
+                label="%FPRenderingPreferenceActionName"
+                menubarPath="additions"
+                style="push"
+                tooltip="%FPRenderingPreferenceActionName"/>
+        </viewContribution>
+    </extension>
+    
+    <extension point="org.eclipse.core.runtime.preferences">
+        <!-- preferences initialization for Floating Point Renderer persistant storage -->
+        <initializer class="org.eclipse.cdt.debug.ui.memory.floatingpoint.FPPreferenceConstants$Initializer"/>
+    </extension>
+
+</plugin>

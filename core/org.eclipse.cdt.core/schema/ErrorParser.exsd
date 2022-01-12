@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="ErrorParser" name="ErrorParser"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to contribute a new Error Parser. A Error Parser is used to parse errors/warnings/info from build output and populate Problems View with them.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="errorparser"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  ID of the extension point (Simple ID)
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="errorparser">
+      <complexType>
+         <sequence>
+            <element ref="pattern" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="context" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  ID of the error parser. If attribute is missing error parser ID is constructed appending Simple ID of extension to plugin ID.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  Name of the error parser. If this attribute is missing extension name is taken.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="default" value="org.eclipse.cdt.core.errorparsers.RegexErrorParser">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the Java class that implements &lt;samp&gt;org.eclipse.cdt.core.IErrorParser&lt;/samp&gt;
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.errorparsers.IErrorParser"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="pattern">
+      <annotation>
+         <documentation>
+            Use element &quot;pattern&quot; to configure  RegexErrorParser.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="severity" use="required">
+            <annotation>
+               <documentation>
+                  This attribute specifies which severity should be used to display the marker in Problems View. There are 3 levels of severity, &quot;Error&quot;, &quot;Warning&quot; and &quot;Info&quot;. The forth option, &quot;Ignore&quot; tells the system to stop checking the line against the other patterns without causing it to show up in the Problems View.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="Error">
+                  </enumeration>
+                  <enumeration value="Warning">
+                  </enumeration>
+                  <enumeration value="Info">
+                  </enumeration>
+                  <enumeration value="Ignore">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="regex" type="string" use="default" value="(.*)">
+            <annotation>
+               <documentation>
+                  Java regular expression which defines capturing groups for file-expr, line-expr and description-expr.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="file-expr" type="string">
+            <annotation>
+               <documentation>
+                  &quot;Replacement&quot; expression composed from capturing groups defined in regex to define the file.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="line-expr" type="string">
+            <annotation>
+               <documentation>
+                  &quot;Replacement&quot; expression composed from capturing groups defined in regex to define the line in file.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="description-expr" type="string" use="default" value="$1">
+            <annotation>
+               <documentation>
+                  &quot;Replacement&quot; expression composed from capturing groups defined in regex to define the description (i.e. &quot;$1: $2&quot;). It is possible to specify more than one capturing group in such expression.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="variable-expr" type="string">
+            <annotation>
+               <documentation>
+                  &quot;Replacement&quot; expression composed from capturing groups defined in regex to define variable. The value will be assigned to marker attributes but is not used by CDT currently.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="eat-processed-line" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  The attribute defines if a line matched by the pattern is prevented or allowed to be processed by the rest of the patterns. &quot;false&quot; allows several patterns to evaluate the same line.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="context">
+      <annotation>
+         <documentation>
+            Use this element to specify the context where an error parser can be used. If none is specified, the default context type will be &quot;build&quot;.
+An example of a context type is &quot;build&quot;. Only error parsers in this context are used to parse build output. You can see these error parsers in the &quot;C/C++&quot; &gt; &quot;Build&quot; &gt; &quot;Settings&quot; preference page.
+An error parser can be assigned to more than one context type. Clients contributing error parsers are free to define their own context types.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="type" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The type of context where an error parser can be used.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT 1.2
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         package org.eclipse.cdt.example.errorparser;&lt;br/&gt;
+&lt;br/&gt;
+import org.eclipse.cdt.core.IMarkerGenerator;&lt;br/&gt;
+import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;&lt;br/&gt;
+import org.eclipse.cdt.core.errorparsers.ErrorPattern;&lt;br/&gt;
+&lt;br/&gt;
+/**&lt;br/&gt;
+ * Simple error parser parsing lines of kind &quot;FILE,LINE:error DESCRIPTION&quot;&lt;br/&gt;
+ * Enable the errorparser in project Properties-&gt;C/C++ Build-&gt;Settings-&gt;Error Parsers&lt;br/&gt;
+ */&lt;br/&gt;
+public class SampleErrorParser extends AbstractErrorParser {&lt;br/&gt;
+ private static final ErrorPattern[] patterns = {&lt;br/&gt;
+  new ErrorPattern(&quot;(.*),(.*):error (.*)&quot;, 1, 2, 3, 0, IMarkerGenerator.SEVERITY_ERROR_RESOURCE),&lt;br/&gt;
+  new ErrorPattern(&quot;(.*),(.*):warning (.*)&quot;, 1, 2, 3, 0, IMarkerGenerator.SEVERITY_WARNING),&lt;br/&gt;
+  new ErrorPattern(&quot;(.*),(.*):info (.*)&quot;, 1, 2, 3, 0, IMarkerGenerator.SEVERITY_INFO),&lt;br/&gt;
+ };&lt;br/&gt;
+ /**&lt;br/&gt;
+  * Constructor to set the error pattern.&lt;br/&gt;
+  */&lt;br/&gt;
+ public SampleErrorParser() {&lt;br/&gt;
+  super(patterns);&lt;br/&gt;
+ }&lt;br/&gt;
+}&lt;br/&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         Plug-ins that want to extend this extension point must implement &lt;samp&gt;org.eclipse.cdt.core.IErrorParser&lt;/samp&gt; interface.
+&lt;br/&gt;
+For most cases it is sufficient to configure RegexErrorParser which is provided by default.
+Another good choice is to extend &lt;samp&gt;org.eclipse.cdt.core.errorparsers.AbstractErrorParser&lt;/samp&gt; as done in the example.
+&lt;br/&gt;
+ErrorParsers dealing with multi-line messages should implement &lt;samp&gt;org.eclipse.cdt.core.IErrorParser2&lt;/samp&gt; interface.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         For another example of implementation see org.eclipse.cdt.internal.errorparsers.GCCErrorParser
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2005, 2009 Andrew Gvozdev (Quoin Inc.) and others.&lt;br/&gt;
+This program and the accompanying materials&lt;br/&gt;
+are made available under the terms of the Eclipse Public License 2.0&lt;br/&gt;
+which accompanies this distribution, and is available at&lt;br/&gt;
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0&lt;br/&gt;
+      </documentation>
+   </annotation>
+</schema>

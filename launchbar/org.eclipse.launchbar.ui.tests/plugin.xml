@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabs">
+      <tab
+            class="org.eclipse.launchbar.ui.tests.internal.CustomLaunchConfigTab"
+            group="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup"
+            id="org.eclipse.launchbar.ui.tests.internal.MyCustomTab"
+            name="My Custom Tab">
+         <placement
+               after="org.eclipse.debug.ui.prototypeTab">
+         </placement>
+      </tab>
+   </extension>
+
+</plugin>

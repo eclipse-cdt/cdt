@@ -1,0 +1,36 @@
+/*******************************************************************************
+ * Copyright (c) 2005, 2012 QNX Software Systems and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     QNX - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.internal.core.pdom.db;
+
+import java.io.IOException;
+
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
+/**
+ * @author Doug Schaefer
+ */
+public class DBStatus extends Status {
+	/**
+	 * @param exception
+	 */
+	public DBStatus(IOException exception) {
+		super(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, "IOException", exception); //$NON-NLS-1$
+	}
+
+	public DBStatus(String msg) {
+		super(IStatus.ERROR, CCorePlugin.PLUGIN_ID, 0, msg, null);
+	}
+}

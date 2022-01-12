@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.examples.dsf.pda.ui.launcher.PDATabGroup"
+            description="Specify and launch a PDA(DSF) program"
+            id="org.eclipse.cdt.examples.dsf.pda.tabGroup"
+            type="org.eclipse.cdt.examples.dsf.pda.launchType"/>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            icon="icons/full/obj16/pda.gif"
+            configTypeID="org.eclipse.cdt.examples.dsf.pda.launchType"
+            id="org.eclipse.cdt.examples.dsf.pda.typeImage"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.cdt.examples.dsf.pda.ui.PDAAdapterFactory"
+            adaptableType="org.eclipse.cdt.examples.dsf.pda.launch.PDALaunch">
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider"/>
+         <adapter type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory"/>
+         <adapter type="org.eclipse.debug.ui.contexts.ISuspendTrigger"/>
+      </factory>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            filenames="*.pda"
+            class="org.eclipse.cdt.examples.dsf.pda.ui.editor.PDAEditor"
+            icon="icons/full/obj16/pda.gif"
+            default="true"
+            name="PDA(DSF) Editor"
+            id="org.eclipse.cdt.examples.dsf.pda.editor"
+            extensions="pda"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editorActions">
+      <editorContribution
+            targetID="org.eclipse.cdt.examples.dsf.pda.editor"
+            id="org.eclipse.cdt.examples.dsf.pda.rulerActions">
+         <action
+               label="Not Used"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               style="push"
+               actionID="RulerDoubleClick"
+               id="org.eclipse.cdt.examples.dsf.pda.doubleClickBreakpointAction"/>
+      </editorContribution>
+   </extension>
+   <extension
+           point="org.eclipse.ui.contexts">
+        <context
+              parentId="org.eclipse.debug.ui.debugging"
+              description="Debugging PDA(DSF) Programs"
+              name="Debugging PDA(DSF) Programs"
+              id="org.eclipse.cdt.examples.dsf.pda.debugging"/>
+     </extension>
+	  <extension
+	        point="org.eclipse.debug.ui.debugModelContextBindings">
+	     <modelContextBinding
+	           contextId="org.eclipse.cdt.examples.dsf.pda.debugging"
+	           debugModelId="org.eclipse.cdt.examples.dsf.pda.debugModel"/>
+	  </extension>
+	   <extension
+	         point="org.eclipse.debug.ui.contextViewBindings">
+	      <contextViewBinding
+	            contextId="org.eclipse.cdt.examples.dsf.pda.debugging"
+	            viewId="org.eclipse.debug.ui.ExpressionView"/>
+	   </extension>
+
+	<extension
+         point="org.eclipse.ui.popupMenus">           
+      <viewerContribution
+            targetID="org.eclipse.cdt.examples.dsf.pda.editor.rulerMenu"
+            id="org.eclipse.cdt.examples.dsf.pda.editor.rulerActions">
+         <action
+               label="Toggle Breakpoint"
+               class="org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate"
+               menubarPath="debug"
+               id="org.eclipse.cdt.examples.dsf.pda.editor.ruler.toggleBreakpointAction"/>
+      </viewerContribution>
+      <viewerContribution
+            targetID="org.eclipse.cdt.examples.dsf.pda.editor.contextMenu"
+            id="org.eclipse.cdt.examples.dsf.pda.editor.menuActions">
+         <action
+               label="Run to Line"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
+               menubarPath="additions"
+               id="org.eclipse.cdt.examples.dsf.pda.editor.context.runToLineAction"/>
+      </viewerContribution>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            class="org.eclipse.cdt.examples.dsf.pda.ui.breakpoints.PDAEditorAdapterFactory"
+            adaptableType="org.eclipse.cdt.examples.dsf.pda.ui.editor.PDAEditor">
+			<adapter type="org.eclipse.debug.ui.actions.IToggleBreakpointsTarget"/>
+      </factory>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.breakpointContribution">
+      <breakpointEditors
+            debugModelId="org.eclipse.cdt.examples.dsf.pda.debugModel"
+            markerType="org.eclipse.cdt.debug.core.cWatchpointMarker">
+         <attribute
+               fieldEditorFactory="org.eclipse.cdt.examples.dsf.pda.ui.breakpoints.PDAWatchpointFunctionFieldEditorFactory"
+               label="Function"
+               name="FUNCTION_NAME"
+               type="string">
+         </attribute>
+      </breakpointEditors>
+   </extension>
+</plugin>

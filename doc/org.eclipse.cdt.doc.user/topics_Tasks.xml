@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<!-- Defines topics that will be inserted under the C/C++ Development User Guide menu-->
+
+     <toc label="Tasks">
+		<topic label="Creating a project" href="tasks/cdt_t_proj_new.htm"/>
+		<topic label="Creating a project via a project template" href="tasks/cdt_t_proj_new_with_template.htm"/>
+		<topic label="Work with C or C++ project files" href="tasks/cdt_o_proj_files.htm">
+			<topic label="Display file members in the C/C++ Projects view" href="tasks/cdt_t_show_proj_files.htm"/>
+			<topic label="Converting a C or C++ nature for a project" href="tasks/cdt_t_conv_proj.htm"/>
+			<topic label="Create a C/C++ file" href="tasks/cdt_t_new_cpp.htm"/>
+			<topic label="Create a makefile" href="tasks/cdt_t_new_make.htm"/>
+			<topic label="Hide files of a given type" href="tasks/cdt_t_prvw_hide_files.htm"/>
+			<topic label="Converting CDT 1.x Projects" href="tasks/cdt_t_convert_cdt_proj.htm"/>
+			<topic label="Converting CDT 2.x Managed Make Projects" href="tasks/cdt_t_convert_mbs20_proj.htm"/>
+			<topic label="Adding Convert to a C/C++ Make Project to the New menu" href="tasks/cdt_t_add_custom_persp.htm"/>
+		</topic>
+		<topic label="Write code" href="tasks/cdt_o_write_code.htm">
+			<topic label="Customize the C/C++ editor" href="tasks/cdt_t_cust_cpp_editor.htm"/>
+			<topic label="Comment out code" href="tasks/cdt_t_comment_out.htm"/>
+			<topic label="Working with Content Assist" href="tasks/cdt_o_con_assist.htm">
+				<topic label="Using Content Assist" href="tasks/cdt_t_contentassist.htm"/>
+				<topic label="Creating and editing templates" href="tasks/cdt_t_add_codetemp.htm"/>
+				<topic label="Importing and exporting templates" href="tasks/cdt_t_imp_code_temp.htm"/>
+			</topic>
+			<topic label="Shift lines of code to the left or right" href="tasks/cdt_t_shift_code.htm"/>
+			<topic label="Navigate to C/C++ declarations by name" href="tasks/cdt_t_open_declarations.htm"/>
+			<topic href="tasks/cdt_t_refactoring.htm" label="Refactoring">
+      <topic href="tasks/cdt_t_rename.htm" label="Rename">
+      </topic>
+      <topic href="tasks/cdt_t_toggle.htm" label="Toggle Function Definition">
+      </topic>
+   </topic>
+		</topic>
+		<topic label="Building projects" href="tasks/cdt_o_build_task.htm">
+			<topic label="Renaming a project" href="tasks/cdt_t_proj_rename.htm"/>
+			<topic label="Defining Project Build settings" href="tasks/cdt_t_proj_build_set.htm"/>
+   <topic href="tasks/cdt_t_add_build_var.htm" label="Adding and Editing Build Variables">
+   </topic>
+			<topic label="Tuning Error Parsers" href="tasks/cdt_t_proj_error_parser.htm"/>
+			<topic label="Selecting a binary parser" href="tasks/cdt_t_proj_parser.htm"/>
+			<topic label="Adding Include paths and symbols" href="tasks/cdt_t_proj_paths.htm"/>
+			<topic label="Selecting a project type" href="tasks/cdt_t_proj_platf.htm"/>
+			<topic label="Building Manually" href="tasks/cdt_t_manualbuild.htm"/>
+			<topic label="Removing Build Automatically" href="tasks/cdt_t_autobuild.htm"/>
+			<topic label="Autosaving on a build" href="tasks/cdt_t_autosave.htm"/>
+			<topic label="Creating a make target" href="tasks/cdt_t_addmaketarget.htm"/>
+   <topic href="tasks/cdt_t_proj_referenced_configs.htm" label="Creating Project References">
+   </topic>
+			<topic label="Customizing the Console view" href="tasks/cdt_t_cbuild_pref.htm"/>
+			<topic label="Tracking down compilation errors" href="tasks/cdt_o_builderrors.htm">
+				<topic label="Jumping to errors" href="tasks/cdt_t_jumperror.htm"/>
+				<topic label="Filtering the Problems view" href="tasks/cdt_t_filtererror.htm"/>
+			</topic>
+		</topic>
+		<topic label="Running and debugging projects" href="tasks/cdt_o_run.htm">
+			<topic label="Creating or editing a run/debug configuration" href="tasks/cdt_o_run_config.htm">
+				<topic label="Selecting a run or debug configuration" href="tasks/cdt_t_run_config.htm"/>
+				<topic label="Creating a run or debug configuration" href="tasks/cdt_t_new_run_config.htm"/>
+				<topic label="Selecting an application to run or debug" href="tasks/cdt_t_run_main.htm"/>
+				<topic label="Specifying execution arguments" href="tasks/cdt_t_run_arg.htm"/>
+				<topic label="Setting environment variables" href="tasks/cdt_t_run_env.htm"/>
+				<topic label="Defining debug settings" href="tasks/cdt_t_run_dbg.htm"/>
+				<topic label="Specifying the location of source files" href="tasks/cdt_t_run_source.htm"/>
+				<topic label="Specifying the location of the run configuration" href="tasks/cdt_t_run_com.htm"/>
+			</topic>
+			
+			<topic label="Debugging" href="tasks/cdt_o_debug.htm">
+				<topic label="Debugging a program" href="tasks/cdt_t_debug_prog.htm"/>
+				<topic label="Debugging an existing executable" href="tasks/cdt_t_debug_exes.htm"/>
+				
+				<topic label="Using breakpoints, watchpoints, and breakpoint actions" href="tasks/cdt_o_brkpnts_watch.htm">
+					<topic label="Adding breakpoints" href="tasks/cdt_t_add_brkpnts.htm"/>
+					<topic label="Adding watchpoints" href="tasks/cdt_t_add_watch.htm"/>
+					<topic label="Adding breakpoint actions" href="tasks/cdt_t_add_brk_action.htm"/>
+					<topic label="Removing breakpoints and watchpoints" href="tasks/cdt_t_rem_wtch_brk.htm"/>
+					<topic label="Enabling or disable breakpoints and watchpoints" href="tasks/cdt_t_endis_able_brk_wtch.htm"/>
+					<topic label="Attaching or removing breakpoint actions" href="tasks/cdt_t_addrmv_brk_action.htm"/>
+				</topic>
+				
+				<topic label="Controlling debug execution" href="tasks/cdt_t_controldebug.htm"/>
+				<topic label="Stepping into assembler functions" href="tasks/cdt_t_disassembly.htm"/>
+				<topic label="Working with variables" href="tasks/cdt_t_variables.htm"/>
+				<topic label="Adding expressions" href="tasks/cdt_t_expressions.htm"/>
+				<topic label="Working with registers" href="tasks/cdt_t_registers.htm"/>
+				<topic label="Working with memory" href="tasks/cdt_t_memory.htm"/>
+			</topic>
+		</topic>
+		
+		<topic label="Searching the CDT" href="tasks/cdt_t_search.htm">
+			<topic label="Selection Searching for C/C++ elements" href="tasks/cdt_t_sel_search.htm"/>
+			<topic label="Setting Source Folders" href="tasks/cdt_t_set_src_fold.htm"/>
+		</topic>
+		
+		<topic label="Include paths and macros for C/C++ indexer" href="tasks/cdt_t_sd.htm"/>
+
+		<topic label="Using the Formatter Application" href="tasks/cdt_t_format_app.htm">
+			<topic label="Running the Formatter Application" href="tasks/cdt_t_format_app_run.htm"/>
+			<topic label="Generating a Config File for the Formatter Application" href="tasks/cdt_t_format_app_gen_config.htm"/>
+		</topic>
+</toc>

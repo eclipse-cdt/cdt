@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="templateAssociations" name="Template Associations"/>
+      </appInfo>
+      <documentation>
+         This extension-point allows developers to specify toolchains that should be enabled for selection for use with a pre-existing template. This solves the problem over how ISV&apos;s can have templates defined and shipped with CDT support their own toolchains, without having to modify CDT itself.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+         <documentation>
+            Each extension consists of a sequence of template elements, each of which define child elements for the new toolchains that should be enabled for selection during new project creation.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="template" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  The unique identifier for this extension
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="toolChain">
+      <annotation>
+         <documentation>
+            This element is used to reference an existing toolchain by its unique identifier.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of a toolchain contributed to the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension point.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="template">
+      <annotation>
+         <documentation>
+            This element references an existing template contribution&apos;s unique identifier in order that toolchains contributed separately to the template can be made selectable on project creation.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="toolChain" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The unique identifier of the template-contribution (the id in plugin.xml rather than the template.xml) that should have the specified additional toolchains enabled for selection during new project creation.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT 4.0
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         If you developed toolchain&apos;s with ids &quot;com.foobar.toolchain1.base&quot; and &quot;com.foobar.toolchain2.base&quot;, which you wanted enabled for the empty project type built into the cdt core, you could use the following to achieve this:
+&lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.cdt.core.templateAssociations&quot;&gt;
+   &lt;template id=&quot;org.eclipse.cdt.build.core.templates.EmptyProject&quot;&gt;
+      &lt;toolChain id=&quot;com.foobar.toolchain1.base&quot;/&gt;
+      &lt;toolChain id=&quot;com.foobar.toolchain2.base&quot;/&gt;
+   &lt;/template&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007 Symbian Software Limited and others.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+Contributors:
+Symbian - Initial API and implementation
+      </documentation>
+   </annotation>
+</schema>

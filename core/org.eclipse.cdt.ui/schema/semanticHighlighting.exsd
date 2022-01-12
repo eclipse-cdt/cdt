@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+
+<include schemaLocation="schema://org.eclipse.core.expressions/schema/expressionLanguage.exsd"/>
+
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="semanticHighligher" name="Semantic Highlighting"/>
+      </appInfo>
+      <documentation>
+         This extension point allows extensions to contribute to the semantic highlighting.
+&lt;p&gt;
+Extensions specify the priority of the highlighting, which determines the order in which the highlighting is invoked.
+&lt;/p&gt;
+&lt;p&gt;
+This extension point supports the &lt;code&gt;enablement&lt;/code&gt; tag. Properties to test on are:
+&lt;dl&gt;
+&lt;li&gt;projectNatures: type Collection; all project natures of the current project&lt;/li&gt;
+&lt;li&gt;languageId: type String; the result if ILanguage.getId on the token&apos;s ITranslationUnit&lt;/li&gt;
+&lt;/dl&gt;
+&lt;/p&gt;
+&lt;p&gt;
+Contributed highlightings will be visible in the Code tree of the &apos;C/C++ - Editor - Syntax Colouring&apos; preference page.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="semanticHighlighting" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="semanticHighlighting">
+      <complexType>
+         <sequence>
+            <element ref="enablement" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the Quick Fix processor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  A localized name of the Quick Fix processor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the class that implements this Semantic Highlighting. The
+class must be public and implement
+&lt;samp&gt;org.eclipse.cdt.ui.text.ISemanticHighlighter&lt;/samp&gt;
+with a public 0-argument constructor.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.text.ISemanticHighlighting"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The priority determines the order in which highlightings are given the opportunity to highlight a token.  Lower values are more important.
+The priorities of the built-in highlightings are available in &lt;code&gt;org.eclipse.cdt.internal.ui.editor.SemanticHighlightings.loadBuiltInSemanticHighlightings&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="preferenceKey" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A key to uniquely identify the highlighting&apos;s settings in the preference store.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="displayName" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name that is displayed for the highlighter in the Preferences window.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="defaultTextColor" type="string">
+            <annotation>
+               <documentation>
+                  The default text color of the contributed highlighting.  The value must be the integer RGB values (0-255) separated by commas.  E.g., &quot;127,0,85&quot;.  Defaults to &quot;0,0,0&quot; (black).
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultBold" type="boolean">
+            <annotation>
+               <documentation>
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultItalic" type="boolean">
+            <annotation>
+               <documentation>
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultStrikethrough" type="boolean">
+            <annotation>
+               <documentation>
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultUnderline" type="boolean">
+            <annotation>
+               <documentation>
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="defaultEnabled" type="boolean">
+            <annotation>
+               <documentation>
+                  Defaults to &lt;code&gt;false&lt;/code&gt;.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         8.2
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a Semantic Highligher contribution:
+&lt;p&gt;
+&lt;pre&gt;
+&lt;extension
+    point=&quot;org.eclipse.cdt.ui.semanticHighlighting&quot;
+    name=&quot;%extensionName&quot;
+    id=&quot;com.example.ui.semanticHighlightings&quot;&gt;
+    &lt;semanticHighlighting
+        id=&quot;com.example.ui.keywordHighlighting&quot;
+        priority=&quot;5&quot;
+        class=&quot;com.example.internal.ui.ExampleHighlighting&quot;
+        preferenceKey=&quot;example-keywords&quot;
+        displayName=&quot;%exampleHighlighting.displayName&quot;
+        defaultTextColor=&quot;127,0,85&quot;
+        defaultBold=&quot;true&quot;
+        defaultEnabled=&quot;true&quot;&gt;
+        &lt;enablement&gt;
+            &lt;with variable=&quot;projectNatures&quot;&gt;
+                &lt;iterate operator=&quot;or&quot;&gt;
+                    &lt;equals value=&quot;org.eclipse.cdt.core.ccnature&quot;/&gt;
+                &lt;/iterate&gt;
+            &lt;/with&gt;
+            &lt;with variable=&quot;languageId&quot;&gt;
+             &lt;or&gt;
+              &lt;equals value=&quot;org.eclipse.cdt.core.g++&quot;/&gt;
+              &lt;equals value=&quot;org.eclipse.cdt.core.gcc&quot;/&gt;
+             &lt;/or&gt;
+            &lt;/with&gt;
+        &lt;/enablement&gt;
+    &lt;/semanticHighlighting&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The contributed class must implement &lt;code&gt;org.eclipse.cdt.ui.text.ISemanticHighlighter&lt;/code&gt;
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2013 QNX Software Systems and others.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+
+</schema>

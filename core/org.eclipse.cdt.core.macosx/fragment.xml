@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment>
+
+    <extension
+         point="org.eclipse.cdt.core.ProcessList">
+      <processList
+      		platform="macosx"
+            class="org.eclipse.cdt.internal.core.macosx.ProcessList">
+      </processList>
+   </extension>
+</fragment>

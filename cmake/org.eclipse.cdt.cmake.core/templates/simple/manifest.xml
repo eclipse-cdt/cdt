@@ -1,0 +1,7 @@
+<templateManifest>
+	<file src="/templates/simple/CMakeLists.txt"
+		dest="/${projectName}/CMakeLists.txt"/>
+	<file src="/templates/simple/main.cpp"
+		dest="/${projectName}/${projectName}.cpp"
+		open="true"/>
+</templateManifest>

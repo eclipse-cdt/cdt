@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="HelpInfo" name="Allows contributing the map files to the map-file-based CDT CHelpProvider."/>
+      </appInfo>
+      <documentation>
+         Allows contributing the map files to the map-file-based CDT CHelpProvider.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="helpInfo" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="helpInfo">
+      <annotation>
+         <documentation>
+            Allows defining map-file path relative to the plugin directory.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="file" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Contains map-file path relative to the plugin directory.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="format" type="string">
+            <annotation>
+               <documentation>
+                  May contain ID of map file format.
+For now, there&apos;s only one (default) help map format.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT 4.0.2
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;extension
+  point=&quot;org.eclipse.cdt.ui.HelpInfo&quot;
+  id=&quot;org.eclipse.cdt.ui.help.cpp&quot;
+  name=&quot;C++ Help&quot;&gt;
+  &lt;helpInfo file=&quot;data1.xml&quot;/&gt;
+  &lt;helpInfo file=&quot;data2.xml&quot;/&gt;
+  &lt;helpInfo file=&quot;data3.xml&quot;/&gt;
+&lt;/extension&gt;
+      </documentation>
+   </annotation>
+</schema>

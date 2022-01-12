@@ -1,0 +1,7 @@
+#include "ResolvedName.h"
+
+namespace ns4 {
+
+A a;
+
+}

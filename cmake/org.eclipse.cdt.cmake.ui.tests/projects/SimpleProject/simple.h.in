@@ -1,0 +1,2 @@
+#define SimpleProject_VERSION_MAJOR @SimpleProject_VERSION_MAJOR@
+#define SimpleProject_VERSION_MINOR @SimpleProject_VERSION_MINOR@

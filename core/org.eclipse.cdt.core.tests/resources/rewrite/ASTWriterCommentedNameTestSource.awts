@@ -1,0 +1,86 @@
+//!Commented NameTest1
+//%CPP
+//Test
+int Hallo;
+
+//!Commented NameTest2
+//%CPP
+int Hallo; //Test
+
+//!Commented NameTest2
+//%CPP
+int Hallo /*Test*/;
+
+//!Commented QualifiedName1
+//%CPP
+//TEST
+int TestClass::Hallo;
+
+//!Commented QualifiedName1
+//%CPP
+int TestClass::Hallo; //TEST
+
+//!Commented QualifiedName1
+//%CPP
+int TestClass::Hallo /*Test*/;
+
+//!Commented OperatorName1
+//%CPP
+class Foo
+{
+public:
+    //Test
+    char& operator [](unsigned int);
+};
+
+//!Commented OperatorName2
+//%CPP
+class Foo
+{
+public:
+    char& operator [](unsigned int); //Test
+};
+
+//!Commented ConversionName1
+//%CPP
+class Foo
+{
+public:
+    //Test
+    operator int();
+};
+
+//!Commented ConversionName2
+//%CPP
+class Foo
+{
+public:
+    operator int(); //Test
+};
+
+//!Commented ConversionName3
+//%CPP
+class Foo
+{
+public:
+    operator int() /*Test*/;
+};
+
+//!Commented TemplateID1
+//%CPP
+//Test
+A::B<T> b;
+
+//!Commented TemplateID2
+//%CPP
+A::B<T> b; //Test
+
+//!Commented NestedTemplates1
+//%CPP
+//Test
+vector<vector<int> > vvi;
+
+//!Commented NestedTemplates2
+//%CPP
+vector<vector<int> > vvi; //Test
+

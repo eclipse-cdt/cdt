@@ -1,0 +1,79 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     QNX Software Systems - Initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
+ *******************************************************************************/
+package org.eclipse.cdt.utils.coff.parser;
+
+import java.io.IOException;
+
+import org.eclipse.cdt.utils.DefaultCygwinToolFactory;
+import org.eclipse.cdt.utils.ICygwinToolsFactroy;
+import org.eclipse.core.runtime.IPath;
+
+/**
+ * @deprecated Deprecated as of CDT 6.9. Use 64 bit version {@link CygwinPEParser64}.
+ * This class is planned for removal in next major release.
+ */
+@Deprecated
+public class CygwinPEParser extends PEParser {
+
+	private DefaultCygwinToolFactory toolFactory;
+
+	/**
+	 * @see org.eclipse.cdt.core.IBinaryParser#getFormat()
+	 */
+	@Override
+	public String getFormat() {
+		return "Cygwin PE"; //$NON-NLS-1$
+	}
+
+	@Override
+	protected IBinaryArchive createBinaryArchive(IPath path) throws IOException {
+		return new CygwinPEBinaryArchive(this, path);
+	}
+
+	@Override
+	protected IBinaryExecutable createBinaryExecutable(IPath path) {
+		return new CygwinPEBinaryExecutable(this, path, IBinaryFile.EXECUTABLE);
+	}
+
+	@Override
+	protected IBinaryObject createBinaryCore(IPath path) {
+		return new CygwinPEBinaryObject(this, path, IBinaryFile.CORE);
+	}
+
+	@Override
+	protected IBinaryObject createBinaryObject(IPath path) {
+		return new CygwinPEBinaryObject(this, path, IBinaryFile.OBJECT);
+	}
+
+	@Override
+	protected IBinaryShared createBinaryShared(IPath path) {
+		return new CygwinPEBinaryShared(this, path);
+	}
+
+	protected DefaultCygwinToolFactory createToolFactory() {
+		return new DefaultCygwinToolFactory(this);
+	}
+
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
+		if (adapter.isAssignableFrom(ICygwinToolsFactroy.class)) {
+			if (toolFactory == null) {
+				toolFactory = createToolFactory();
+			}
+			return adapter.cast(toolFactory);
+		}
+		return super.getAdapter(adapter);
+	}
+}

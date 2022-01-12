@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="org.eclipse.cdt.visualizer.ui.visualizer" name="Visualizer" schema="schema/org.eclipse.cdt.visualizer.ui.visualizer.exsd"/>
+
+   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+   <!-- Views                                                                       -->
+   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+   <!-- Visualizer View to host actual visualizers                                  -->
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.visualizer.ui.VisualizerView"
+            icon="icons/full/view16/visualizer_view.png"
+            id="org.eclipse.cdt.visualizer.view"
+            name="%view.visualizer.name">
+      </view>
+   </extension>
+   
+   <!-- Debug Perspective -->
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+            
+         <!-- add Visualizer View in same "slot" as outline view -->
+         <view
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="true"
+               relationship="stack"
+               id="org.eclipse.cdt.visualizer.view">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.visualizer.view">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+</plugin>

@@ -1,0 +1,1027 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension point="org.eclipse.debug.core.watchExpressionDelegates">
+      <watchExpressionDelegate 
+         	debugModel="org.eclipse.cdt.dsf.debug.ui"
+     		delegateClass="org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.WatchExpressionDelegate"/>
+  </extension>
+
+   <extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.eclipse.cdt.dsf.debug.internal.ui.PreferenceInitializer"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.viewActions">
+      <!-- Breakpoints View menu contributions -->
+      <viewContribution
+            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints.update.Refresh"
+            targetID="org.eclipse.debug.ui.BreakpointView">
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.cdt.dsf.debug.ui.breakpoints.viewmodel.update.actions.refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+
+      <!-- Variables View menu contributions -->
+      <viewContribution
+            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.variables.update.Refresh"
+            targetID="org.eclipse.debug.ui.VariableView">
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.cdt.dsf.debug.ui.variables.viewmodel.update.actions.refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+
+      <!-- Registers View menu contributions -->
+      <viewContribution
+            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.registers.update.Refresh"
+            targetID="org.eclipse.debug.ui.RegisterView">
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.cdt.dsf.debug.ui.registers.viewmodel.update.actions.refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+      
+      <!-- Expressions View menu contributions -->
+      <viewContribution
+            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.expressions.update.Refresh"
+            targetID="org.eclipse.debug.ui.ExpressionView">
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.cdt.dsf.debug.ui.expressions.viewmodel.update.actions.refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+
+      <!-- Debug View menu contributions -->
+      <viewContribution
+            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.debugview.update.Refresh"
+            targetID="org.eclipse.debug.ui.DebugView">
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
+               icon="icons/refresh.gif"
+               id="org.eclipse.cdt.dsf.debug.ui.debugview.viewmodel.update.actions.refresh"
+               label="%action.refresh.label"
+               toolbarPath="additions">
+         </action>
+      </viewContribution>
+      <viewContribution
+            id="org.eclipse.cdt.debug.ui.disassembly.toolbar"
+            targetID="org.eclipse.cdt.dsf.debug.ui.disassembly.view">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
+               icon="icons/toolbar_pinned.gif"
+               id="org.eclipse.pinclone.disassembly.pinDebugContext"
+               label="%PinView.name "
+               style="toggle"
+               toolbarPath="pinGroup">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
+               icon="icons/open_new.gif"
+               id="org.eclipse.pinclone.disassembly.clone"
+               label="%OpenNewView.name"
+               style="push"
+               toolbarPath="pinGroup">
+         </action>
+      </viewContribution>
+   </extension>
+
+   <extension 
+         point="org.eclipse.ui.menus">
+	   <!-- Debug view menu commands -->
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.DebugView?after=additions">
+         	 <separator name="additions" visible="false"/>
+           	 <separator name="updatePolicy" visible="true"/>
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.DebugView?after=updatePolicy">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.debugView_updatePolicies" 
+            	 label="%menu.threadsUpdatePolicy">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
+               </visibleWhen>    
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.UpdatePolicies"
+	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
+	           </dynamic>
+            </menu>
+       </menuContribution>      
+      
+	   <!-- Registers view menu commands -->
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.RegisterView?after=additions">
+         	 <separator name="additions" visible="false"/>
+           	 <separator name="formatting" visible="true"/>
+           	 <separator name="updatePolicy" visible="true"/>
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.RegisterView?after=updatePolicy">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_updatePolicies" 
+            	 label="%menu.updatePolicy">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.registersUpdatePolicies"
+	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
+	           </dynamic>
+            </menu>         
+            <!-- bug 251769 Hide update scopes in 1.1
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_updateScopes" 
+            	 label="%menu.updateScope">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.registersUpdateScopes"
+	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
+	           </dynamic>
+            </menu> 
+            -->
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.RegisterView?after=formatting">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_numberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.registersNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.RegisterView?after=variableGroup">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.registersView_elementNumberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.registersNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.ElementNumberFormatsContribution">
+	           </dynamic>
+               <separator
+                     name="numberFormatSep" visible="true">
+               </separator>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.restoreNumberFormatPreference"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.RestoreNumberFormatPreferenceContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+
+	   <!-- Variables view menu commands  -->
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.VariableView?after=additions">
+         	 <separator name="additions" visible="false"/>
+           	 <separator name="formatting" visible="true"/>
+           	 <separator name="updatePolicy" visible="true"/>
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.VariableView?after=updatePolicy">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_updatePolicies" 
+            	 label="%menu.updatePolicy">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.variablesUpdatePolicies"
+	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
+	           </dynamic>
+            </menu>         
+            <!-- bug 251769 Hide update scopes in 1.1
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_updateScopes" 
+            	 label="%menu.updateScope">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.variablesUpdateScopes"
+	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
+	           </dynamic>
+            </menu>         
+            -->
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.VariableView?after=formatting">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_numberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.variablesNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.VariableView?after=variableGroup">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.variablesView_elementNumberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.variablesNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.ElementNumberFormatsContribution">
+	           </dynamic>
+               <separator
+                     name="numberFormatSep" visible="true">
+               </separator>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.restoreNumberFormatPreference"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.RestoreNumberFormatPreferenceContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+
+	   <!-- Expressions view menu commands  -->
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=additions">
+         	 <separator name="additions" visible="false"/>
+           	 <separator name="formatting" visible="true"/>
+           	 <separator name="updatePolicy" visible="true"/>
+       </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=expressionGroup">
+          <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.ExpressionsView_addgroup" 
+            	 label="%menu.addGroup.label">
+               <visibleWhen checkEnabled="true">
+               </visibleWhen>
+         </menu> 
+       </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.cdt.dsf.debug.ui.ExpressionsView_addgroup">
+		     <command
+                 id="org.eclipse.cdt.dsf.ui.menu.addRegistersExpression"
+                 commandId="org.eclipse.cdt.dsf.ui.addRegistersExpression" 
+            	 label="%command.addRegisters.label">
+               <visibleWhen checkEnabled="true"/>
+            </command>       
+
+		     <command
+                 id="org.eclipse.cdt.dsf.ui.menu.addLocalsExpression"
+                 commandId="org.eclipse.cdt.dsf.ui.addLocalsExpression" 
+            	 label="%command.addLocals.label">
+            	 <visibleWhen checkEnabled="true"/>  
+            </command>
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=updatePolicy">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_updatePolicies" 
+            	 label="%menu.updatePolicy">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.expressionUpdatePolicies"
+	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesContribution">
+	           </dynamic>
+            </menu>         
+            <!-- bug 251769 Hide update scopes in 1.1
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_updateScopes" 
+            	 label="%menu.updateScope">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.expressionUpdateScopes"
+	               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdateScopesContribution">
+	           </dynamic>
+            </menu>         
+            -->
+       </menuContribution>
+       <menuContribution
+            locationURI="menu:org.eclipse.debug.ui.ExpressionView?after=formatting">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_numberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.expressionNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+       <menuContribution
+            locationURI="popup:org.eclipse.debug.ui.ExpressionView?after=expressionGroup">
+            <menu 
+                 id="org.eclipse.cdt.dsf.debug.ui.expressionsView_elementNumberFormats" 
+            	 label="%menu.numberFormat">
+               <visibleWhen checkEnabled="false">
+                  <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported"/>
+               </visibleWhen>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.expressionNumberFormats"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.ElementNumberFormatsContribution">
+	           </dynamic>
+               <separator
+                     name="numberFormatSep" visible="true">
+               </separator>
+               <dynamic
+	               id="org.eclipse.cdt.dsf.debug.ui.restoreNumberFormatPreference"
+	               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.RestoreNumberFormatPreferenceContribution">
+	           </dynamic>
+            </menu>         
+       </menuContribution>
+   </extension>  
+
+   <extension point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshHandler"
+            commandId="org.eclipse.ui.file.refresh">
+         <activeWhen>
+            <reference definitionId="org.eclipse.cdt.dsf.debug.ui.testAreUpdatePoliciesSupported"/>
+         </activeWhen>
+      </handler>
+
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.DsfViewMemoryHandler"
+      		commandId="org.eclipse.cdt.debug.ui.commands.viewMemory">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode$VariableExpressionVMC">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.actions.DsfAddRegisterGroupCommand"
+      		commandId="org.eclipse.cdt.debug.ui.command.addRegisterGroup">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			        <or>
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode$RegisterVMC">
+			            </instanceof>
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode$RegisterGroupVMC">
+			            </instanceof>
+			        </or>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.actions.DsfEditRegisterGroupCommand"
+      		commandId="org.eclipse.cdt.debug.ui.command.editRegisterGroup">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode$RegisterGroupVMC">
+			            </instanceof>
+			        </iterate>
+			        <count value="1">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.actions.DsfRemoveRegisterGroupsCommand"
+      		commandId="org.eclipse.cdt.debug.ui.command.removeRegisterGroups">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode$RegisterGroupVMC">
+			            </instanceof>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+      <handler
+      		class="org.eclipse.cdt.dsf.debug.internal.ui.actions.DsfRestoreRegisterGroupsCommand"
+      		commandId="org.eclipse.cdt.debug.ui.command.restoreRegisterGroups">
+			<activeWhen>
+			    <with variable="selection">
+			        <iterate operator="and">
+			        <or>
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterVMNode$RegisterVMC">
+			            </instanceof>
+			            <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.register.RegisterGroupVMNode$RegisterGroupVMC">
+			            </instanceof>
+			        </or>
+			        </iterate>
+			        <count value="+">
+			        </count>
+			    </with>
+			</activeWhen>
+      </handler>
+   </extension>
+   <extension point="org.eclipse.core.expressions.definitions">
+      <definition id="org.eclipse.cdt.dsf.debug.ui.testIsUpdateModesActionSetActive">
+         <and>
+            <with variable="activeContexts">
+               <iterate operator="or">
+                  <equals value="org.eclipse.cdt.dsf.debug.ui.updateModes"/>
+               </iterate>               
+            </with>
+         </and>
+      </definition>
+      <definition id="org.eclipse.cdt.dsf.debug.ui.testAreUpdatePoliciesSupported">
+         <and>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.ui"
+                   value="ACTIVE"/>
+            </with>
+            <or>
+			   <with variable="activePart">
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdatePoliciesSupported"/>					    
+         	   </with>
+		 	   <with variable="selection">
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdatePoliciesSupported"/>					    
+			   </with>
+			</or>
+	     </and>
+      </definition>
+      <definition id="org.eclipse.cdt.dsf.debug.ui.testAreUpdateScopesSupported">
+         <and>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.ui"
+                   value="ACTIVE"/>
+            </with>
+            <or>
+			   <with variable="activePart">
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdateScopesSupported"/>					    
+         	   </with>
+		 	   <with variable="selection">
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areUpdateScopesSupported"/>					    
+			   </with>
+			</or>
+	     </and>
+      </definition>
+      <definition
+            id="org.eclipse.cdt.dsf.debug.ui.testAreNumberFormatsSupported">
+         <and>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.ui"
+                   value="ACTIVE"/>
+            </with>
+            <or>
+			   <with variable="activePart">
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areNumberFormatsSupported"/>					    
+         	   </with>
+		 	   <with variable="selection">
+	              <test property="org.eclipse.cdt.dsf.debug.ui.areNumberFormatsSupported"/>					    
+			   </with>
+			</or>
+	     </and>
+      </definition>
+      <definition
+            id="org.eclipse.cdt.dsf.debug.ui.testAreElementNumberFormatsSupported">
+         <and>
+            <with variable="org.eclipse.core.runtime.Platform">
+               <test property="org.eclipse.core.runtime.bundleState"
+            	   args="org.eclipse.cdt.dsf.ui"
+                   value="ACTIVE"/>
+            </with>
+            <with variable="selection">
+               <count value="+">
+               </count>
+               <iterate operator="and">
+                  <test property="org.eclipse.cdt.dsf.debug.ui.areElementNumberFormatsSupported">
+                  </test>
+               </iterate>
+            </with>
+	     </and>
+      </definition>
+   </extension>  
+
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesPropertyTester"
+            id="org.eclipse.cdt.dsf.debug.ui.selectionUpdatePoliciesTester"
+            namespace="org.eclipse.cdt.dsf.debug.ui"
+            properties="areUpdatePoliciesSupported,isUpdatePolicyAvailable,isUpdatePolicyActive"
+            type="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.UpdatePoliciesPropertyTester"
+            id="org.eclipse.cdt.dsf.debug.ui.partUpdatePoliciesTester"
+            namespace="org.eclipse.cdt.dsf.debug.ui"
+            properties="areUpdatePoliciesSupported,isUpdatePolicyAvailable,isUpdatePolicyActive"
+            type="org.eclipse.debug.ui.IDebugView">
+      </propertyTester>
+
+      <propertyTester
+            class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsPropertyTester"
+            id="org.eclipse.cdt.dsf.debug.ui.selectionNumberFormatsTester"
+            namespace="org.eclipse.cdt.dsf.debug.ui"
+            properties="areNumberFormatsSupported,isNumberFormatAvailable,isNumberFormatActive,areElementNumberFormatsSupported"
+            type="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.NumberFormatsPropertyTester"
+            id="org.eclipse.cdt.dsf.debug.ui.partNumberFormatsTester"
+            namespace="org.eclipse.cdt.dsf.debug.ui"
+            properties="areNumberFormatsSupported,isNumberFormatAvailable,isNumberFormatActive"
+            type="org.eclipse.debug.ui.IDebugView">
+      </propertyTester>
+      <propertyTester
+			class="org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout.DebugViewLayoutTester"
+			id="org.eclipse.cdt.dsf.ui.debug.view.layout.DebugViewLayoutTester"
+			namespace="org.eclipse.cdt.debug.ui"
+			properties="isGroupDebugContextsVisible,isUngroupDebugContextsVisible"
+			type="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyToggleBreakpointTester"
+            id="org.eclipse.cdt.dsf.debug.ui.disassemblyViewToggleBreakpointTester"
+            namespace="org.eclipse.cdt.dsf.debug.ui"
+            properties="isDisassemblyViewSupportsCBreakpoint"
+            type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
+      </propertyTester>
+   </extension>
+	<extension 
+	    point="org.eclipse.debug.ui.detailPaneFactories">
+        <detailFactories
+             class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.numberformat.detail.NumberFormatDetailPaneFactory"
+             id="org.eclipse.cdt.dsf.debug.ui.viewmodel.detailPaneFactory">
+			<enablement>
+		        <with variable="selection">
+	        		<iterate>
+					    <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.numberformat.IFormattedValueVMContext"/>
+	        		</iterate>
+	      		</with>
+	      	</enablement>      
+        </detailFactories>
+        <detailFactories
+              class="org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.detail.ModuleDetailPaneFactory"
+              id="org.eclipse.cdt.dsf.debug.ui.viewmodel.moduleDetailPaneFactory">
+			<enablement>
+		        <with variable="selection">
+	        		<iterate>
+					    <instanceof value="org.eclipse.cdt.dsf.debug.ui.viewmodel.modules.ModulesVMNode$ModuleVMContext"/>
+	        		</iterate>
+	      		</with>
+	      	</enablement>      
+        </detailFactories>
+    </extension>
+
+   <extension point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%command.gotoPC.description"
+            id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoPC"
+            name="%command.gotoPC.name"/>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%command.gotoAddress.description"
+            id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"
+            name="%command.gotoAddress.name"/>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            defaultHandler="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.RulerToggleBreakpointHandler"
+            description="%command.rulerToggleBreakpoint.description"
+            id="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"
+            name="%command.rulerToggleBreakpoint.name">
+      </command>
+      <command
+            id="org.eclipse.cdt.dsf.ui.addLocalsExpression"
+            name="%command.addLocals.name"
+            categoryId="org.eclipse.debug.ui.category.run"
+            >
+      </command>
+	  <command
+            id="org.eclipse.cdt.dsf.ui.addRegistersExpression"
+            name="%command.addRegisters.name"
+            categoryId="org.eclipse.debug.ui.category.run"
+            >
+      </command>
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            defaultHandler="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.RulerJumpToMemoryHandler"
+            description="%command.jumpToMemory.description"
+            id="org.eclipse.cdt.debug.ui.memory.memorybrowser.jumpToMemory"
+            name="%command.jumpToMemory.name"/>
+   </extension>
+
+   <extension point="org.eclipse.ui.bindings">
+       <key sequence="HOME"
+            contextId="org.eclipse.cdt.dsf.debug.ui.disassembly.context"
+            commandId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoPC"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+       <key sequence="M1+G"
+            contextId="org.eclipse.cdt.dsf.debug.ui.disassembly.context"
+            commandId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.gotoAddress"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"/>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.contexts">
+      <context
+            description="%commandContext.description"
+            id="org.eclipse.cdt.dsf.debug.ui.disassembly.context"
+            name="%commandContext.name"
+            parentId="org.eclipse.debug.ui.debugging">
+      </context>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferenceConstants$Initializer"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            allowMultiple="true"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyView"
+            icon="icons/disassembly.gif"
+            id="org.eclipse.cdt.dsf.debug.ui.disassembly.view"
+            name="%disassemblyView.name">
+      </view>
+   </extension>
+
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.cdt.dsf.debug.internal.ui.preferences.DsfDebugPreferencePage"
+            id="org.eclipse.cdt.dsf.debug.ui.preferences"
+            name="%preferencePage.name">
+      </page>
+      <page
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.preferences.DisassemblyPreferencePage"
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
+            name="%disassemblyPreferencePage.name"
+            id="org.eclipse.cdt.dsf.debug.ui.disassembly.preferencePage"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.cdt.dsf.debug.ui.disassemblyRulerActions"
+            targetID="#DisassemblyPartRulerContext">
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.BreakpointPropertiesRulerActionDelegate"
+               id="org.eclipse.cdt.dsf.debug.ui.disassembly.breakpointProperties"
+               label="%action.breakpointProperties.label"
+               menubarPath="debug">
+         </action>
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.AddBreakpointRulerActionDelegate"
+               id="org.eclipse.debug.ui.actions.RulerAddBreakpointAction"
+               label="%action.addBreakpoint.label"
+               menubarPath="debug">
+         </action>
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.RulerToggleBreakpointActionDelegate"
+               definitionId="org.eclipse.cdt.dsf.debug.ui.disassembly.commands.rulerToggleBreakpoint"
+               id="org.eclipse.debug.ui.actions.RulerToggleBreakpointAction"
+               label="%action.toggleBreakpoint.label"
+               menubarPath="debug">
+         </action>
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.actions.RulerJumpToMemoryActionDelegate"
+               id="org.eclipse.debug.ui.actions.RulerJumpToMemoryAction"
+               label="%action.jumpToMemory.label"
+               menubarPath="debug">
+         </action>
+      </viewerContribution>
+   </extension>
+   
+    
+   <!-- memory update policy
+    <extension
+         point="org.eclipse.ui.viewActions">
+    <viewContribution
+            targetID="org.eclipse.debug.ui.MemoryView"
+            id="org.eclipse.debug.ui.memoryView.toolbar">
+    	<action
+           class="org.eclipse.cdt.dsf.debug.ui.memory.RefreshAction"
+           enablesFor="1"
+           icon="icons/refresh.gif"
+           id="org.eclipse.debug.ui.MemoryView.memoryViewRefresh"
+           label="Refresh"
+           toolbarPath="additions">
+         </action>
+         </viewContribution>
+    	<viewContribution
+            targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser"
+            id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.toolbar">
+	    	<action
+	           class="org.eclipse.cdt.dsf.debug.ui.memory.RefreshAction"
+	           enablesFor="1"
+	           icon="icons/refresh.gif"
+	           id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.memoryBrowserRefresh"
+	           label="Refresh"
+	           toolbarPath="additions">
+	         </action>
+         </viewContribution>
+    </extension>
+    <extension
+         point="org.eclipse.ui.viewActions">
+	    <viewContribution
+	            id="org.eclipse.debug.ui.MemoryView.updatepolicy"
+	            targetID="org.eclipse.debug.ui.MemoryView">
+	         <action
+	               class="org.eclipse.cdt.dsf.debug.ui.memory.SelectUpdatePolicyAction"
+	               id="org.eclipse.debug.ui.MemoryView.updatepolicy"
+	               label="Update Policy"
+	               menubarPath="additions">
+	         </action>
+	     </viewContribution>
+     </extension>
+     -->
+
+   <!-- Debug view context menu contributions -->
+   <extension point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="false"
+            id="org.eclipse.cdt.dsf.debug.ui.objectContribution.incompleteStack"
+            objectClass="org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.StackFramesVMNode$IncompleteStackVMContext">
+         <action
+               class="org.eclipse.cdt.dsf.debug.ui.viewmodel.launch.actions.ExpandStackAction"
+               id="org.eclipse.cdt.dsf.debug.ui.action.expandStack"
+               label="%action.expandStack.label"
+               menubarPath="renderGroup">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.cdt.dsf.debug.ui.updateModes"
+            label="%debugUpdateModes.label">
+         <action
+               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshAllRetargetAction"
+               definitionId="org.eclipse.cdt.dsf.debug.ui.refreshAll"
+               helpContextId="org.eclipse.cdt.dsf.debug.ui.refreshAll_context"
+               icon="icons/refreshall.gif"
+               id="org.eclipse.cdt.dsf.debug.ui.refreshAll"
+               label="%action.refreshAll.name"
+               menubarPath="window/additions"
+               toolbarPath="org.eclipse.ui.dd.dsf.debug.ui.actionSet.update_modes/debugUpdateModes">
+         </action>
+      </actionSet>
+   </extension>
+
+   <extension point="org.eclipse.ui.commands">
+      <command
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%command.refreshAll.description"
+            id="org.eclipse.cdt.dsf.debug.ui.refreshAll"
+            name="%command.refreshAll.name"/>
+   </extension>      
+      
+   <!-- Debug perspective extension -->
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.eclipse.debug.ui.DebugPerspective">
+         <view
+               relative="org.eclipse.ui.views.ContentOutline"
+               visible="false"
+               relationship="stack"
+               id="org.eclipse.cdt.dsf.debug.ui.disassembly.view">
+         </view>
+         <viewShortcut
+               id="org.eclipse.cdt.dsf.debug.ui.disassembly.view">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+   
+   <!-- Color preferences -->
+   <extension
+         point="org.eclipse.ui.themes">
+      <colorDefinition
+            categoryId="org.eclipse.debug.ui.presentation"
+            id="org.eclipse.cdt.dsf.ui.staledata.foreground"
+            isEditable="true"
+            label="%StaleData.foreground.label">
+         <colorFactory
+               class="org.eclipse.ui.themes.RGBBlendColorFactory">
+            <parameter
+                  name="color1"
+                  value="COLOR_LIST_FOREGROUND">
+            </parameter>
+            <parameter
+                  name="color2"
+                  value="COLOR_LIST_BACKGROUND">
+            </parameter>
+         </colorFactory>
+         <description>
+         	%StaleData.foreground.description
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            categoryId="org.eclipse.debug.ui.presentation"
+            id="org.eclipse.cdt.dsf.ui.staledata.background"
+            isEditable="true"
+            label="%StaleData.background.label">
+         <colorFactory
+               class="org.eclipse.ui.themes.RGBBlendColorFactory">
+            <parameter
+                  name="color1"
+                  value="128,128,128">
+            </parameter>
+            <parameter
+                  name="color2"
+                  value="COLOR_LIST_BACKGROUND">
+            </parameter>
+         </colorFactory>
+         <description>
+         	%StaleData.background.description
+         </description>
+      </colorDefinition>
+   </extension>
+   
+   <extension point="org.eclipse.core.runtime.adapters">
+      <factory 
+	       	class="org.eclipse.cdt.dsf.debug.internal.ui.SuspendResumeAdapterFactory" 
+	        adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.IVMContext">
+         <adapter type="org.eclipse.debug.core.model.ISuspendResume"/>
+	  </factory>
+       <factory
+            class="org.eclipse.cdt.dsf.debug.internal.ui.actions.RetargettableActionAdapterFactory"
+            adaptableType="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.provisional.IDisassemblyPart">
+         <adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IResumeAtLineTarget"/>
+         <adapter type="org.eclipse.cdt.debug.internal.ui.actions.IMoveToLineTarget"/>
+      </factory>	  
+   </extension>	
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.eclipse.cdt.debug.ui.disassembly.actions.popup"
+            targetID="#DisassemblyPartContext">
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.ResumeAtLineActionDelegate"
+               helpContextId="resume_at_line_action_context"
+               icon="icons/resume_at_line.gif"
+               id="org.eclipse.cdt.dsf.ui.actions.popup.ResumeAtLine"
+               label="%popup.resumeAtLine.label"
+               menubarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.cdt.debug.internal.ui.actions.MoveToLineActionDelegate"
+               helpContextId="move_to_line_action_context"
+               icon="icons/move_to_line.gif"
+               id="org.eclipse.cdt.dsf.ui.actions.popup.MoveToLine"
+               label="%popup.moveToLine.label"
+               menubarPath="additions">
+         </action>
+         <action
+               class="org.eclipse.debug.ui.actions.RunToLineActionDelegate"
+               definitionId="org.eclipse.debug.ui.commands.RunToLine"
+               helpContextId="run_to_line_action_context"
+               id="org.eclipse.cdt.dsf.ui.actions.popup.RunToLine"
+               label="%popup.runToLine.label"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
+
+   <extension point="org.eclipse.debug.ui.toggleBreakpointsTargetFactories">
+      <toggleTargetFactory
+            id="org.eclipse.cdt.dsf.ui.ToggleBreakpointsTargetFactory"
+            class="org.eclipse.cdt.dsf.debug.internal.ui.ToggleBreakpointsTargetFactory">
+          <enablement>
+            <!-- Enable the breakpoint toggle for DSF Disassembly -->
+             <test
+                   property="org.eclipse.cdt.dsf.debug.ui.isDisassemblyViewSupportsCBreakpoint">
+             </test>
+         </enablement>
+      </toggleTargetFactory>
+   </extension>
+
+   <!-- Adpater factory for common DSF debug text hover support.
+        This can be overridden by inidividual session adapters. 
+   -->
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+       <factory
+            adaptableType="org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext"
+            class="org.eclipse.cdt.dsf.debug.internal.ui.DebugTextHoverAdapterFactory">
+         <adapter type="org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover"/>
+      </factory>
+   </extension>
+   
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyEditor"
+            default="false"
+            icon="icons/disassembly.gif"
+            id="org.eclipse.cdt.dsf.ui.disassembly"
+            name="%disassemblyView.name">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.debug.ui.disassemblyRulerColumns">
+      <column
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.AddressRulerColumn"
+            enabled="true"
+            global="false"
+            id="org.eclipse.cdt.dsf.ui.disassemblyColumn.address"
+            includeInMenu="true"
+            name="%disassemblyRulerColumn.addresses">
+         <placement
+               gravity="0.9">
+         </placement>
+         <targetClass
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
+         </targetClass>
+      </column>
+      <column
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.FunctionOffsetRulerColumn"
+            enabled="false"
+            global="true"
+            id="org.eclipse.cdt.dsf.ui.disassemblyColumn.functionOffsets"
+            includeInMenu="true"
+            name="%disassemblyRulerColumn.functionOffsets">
+         <placement
+               gravity="0.9">
+            <after
+                  id="org.eclipse.cdt.dsf.ui.disassemblyColumn.address">
+            </after>
+            <after
+                  id="org.eclipse.cdt.dsf.ui.disassemblyColumn.opcodes">
+            </after>
+         </placement>
+         <targetClass
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
+         </targetClass>
+      </column>
+      <column
+            class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.OpcodeRulerColumn"
+            enabled="false"
+            global="true"
+            id="org.eclipse.cdt.dsf.ui.disassemblyColumn.opcodes"
+            includeInMenu="true"
+            name="%disassemblyRulerColumn.opcodes">
+         <placement
+               gravity="0.9">
+            <after
+                  id="org.eclipse.cdt.dsf.ui.disassemblyColumn.address">
+            </after>
+         </placement>
+         <targetClass
+               class="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
+         </targetClass>
+      </column>
+   </extension>
+ <!-- Hyperlinking support -->
+      <extension
+         point="org.eclipse.ui.workbench.texteditor.hyperlinkDetectors">
+       <hyperlinkDetector
+            activate="true"
+            class="org.eclipse.cdt.dsf.debug.ui.actions.DsfStepIntoSelectionHyperlinkDetector"
+            description="%stepIntoSelectionHyperlinkDetector.description"
+            id="org.eclipse.cdt.dsf.debug.ui.hyperlinkdetector.stepIntoSelection"
+            modifierKeys="M1+M3"
+            name="%stepIntoSelectionHyperlinkDetector.label"
+            targetId="org.eclipse.cdt.ui.cCode">            
+      </hyperlinkDetector>
+   </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.cdt.dsf.debug.ui.viewmodel.SimpleMapPersistableFactory"
+            id="org.eclipse.cdt.dsf.ui.simpleMapPersistableFactory">
+      </factory>
+   </extension>
+</plugin>

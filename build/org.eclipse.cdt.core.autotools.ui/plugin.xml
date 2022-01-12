@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.tools.templates.ui.templates">
+      <template
+            icon="icons/cdt_logo_48.png"
+            id="org.eclipse.cdt.core.autotools.ui.template1"
+            label="%autotoolsTemplate.label"
+            wizard="org.eclipse.cdt.core.autotools.ui.internal.NewAutotoolsProjectWizard">
+         <tagReference
+               id="org.eclipse.cdt.ui.cdtTag">
+         </tagReference>
+         <description>
+            %autotoolsTemplate.description
+         </description>
+      </template>
+   </extension>
+
+</plugin>

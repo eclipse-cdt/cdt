@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Debugging a program</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+
+<body>
+
+<div role="main"><h1>Debugging a program</h1>
+
+<p>To debug a program, a debug launch configuration is used.  The debug configuration contains information
+such as the executable being debugged, how to run the executable, and parameters for the debugger itself (in this
+case: gdb).  Once a launch configuration is created, it can be used again (e.g. relaunching the executable after
+the debug session is terminated).  By default, the Stand-alone Debugger creates a debug launch configuration for
+you when you specify an executable on the command-line or if you use the <strong>New Executable...</strong> dialog.</p>
+<p>There are multiple debug launch configuration types.  The most common, is the Local C/C++ Application configuration
+which is for running local applications and this is the configuration that the Stand-alone Debugger will set up
+for you when you specify an executable in either of the aforementioned ways.
+
+A local C/C++ launch configuration is normally tied to an Eclipse project which
+contains the executable you wish to debug.  You do not have to create an Eclipse project because the Stand-alone debugger also creates the Eclipse project on your behalf as part
+of importing your executable.  By default, this is usually the special <strong>Executables</strong>project which is set aside for this purpose, but if you have imported multiple
+executables at the same time, additional <strong>ExecutablesNNNN</strong> projects will be created to keep each executable
+in a separate project.  This is done to help the indexer keep track of the executable and all its associated source fiels.</p>
+<p>There are other C/C++ debug configuration types that you may wish to use such as:
+<ul>
+<li>C/C++ Attach to Application</li>
+<li>C/C++ Postmortem Debugger</li>
+</ul>
+<p>These additional launch configurations require that you create them manually.  To do this:</p>
+
+<ol>
+  <li>In  C/C++ Projects view, select a project.  The C/C++ Projects view is not visible by default when you
+  start the Stand-alone debugger.  You can access it
+  by using <strong>Window &gt; Show View &gt; C/C++ &gt; C/C++ Projects</strong>.  As mentioned, in most cases,
+  you will only see the <strong>Executables</strong> project.
+  </li>
+  <li>Click <strong>Run &gt; Debug Configurations...</strong>.</li>
+  <li>In the Debug Configurations dialog box, select a desired debug configuration type from the <strong>Configurations</strong> 
+  list.</li>
+  <li><p>Click the <strong>New</strong> button in the top left.</p></li>
+  <li>In the <strong>Name</strong> box, type a descriptive name for this debug configuration.</li>
+  <li>In the <strong>Project</strong> box, type the name of the project containing 
+        the application you want to debug.  If you had selected a project, this project will be filled
+        in for you.  In almost all cases, this will be the <strong>Executables</strong> project.</li>
+  <li>In the <strong>C/C++ Application</strong> box, type the name of the executable 
+        that you want to run.  This must be an application that has been imported into the project
+        or in the case of an Attach to Application configuration, this field can be empty. </li>
+  <li>Click <strong>Debug</strong>.<br><br>
+  <p>The debug perspective is opened and the  application window opens on 
+  top.  In the case of an attach configuration, a dialog will pop up to allow you to select a running application.</p></li>
+</ol>
+
+<p>For more information:</p>
+<ul><li>To specify the 
+    execution arguments an application uses and the working directory for a run 
+    configuration, see <a href="cdt_t_run_arg.htm">Specifying execution arguments</a>.</li><li>To set the environment variables 
+    and values to use when an application runs, see <a href="cdt_t_run_env.htm">
+    Setting environment variables</a></li>
+  <li>To select a debugger to use when debugging an application, see
+  <a href="cdt_t_run_dbg.htm">Selecting a debugger</a></li>
+  <li>To specify the location of source files used when debugging a C or C++ 
+  application, see <a href="cdt_t_run_source.htm">Specifying the location of 
+  source files</a></li>
+  <li>To specify where the run configuration is stored, how you access it and 
+  what perspective to open when running an application, see
+  <a href="cdt_t_run_com.htm">Specifying the location of the run configuration</a></li></ul>
+
+<p>To use a debug configuration:</p>
+
+<p>You can reuse a previously created debug launch configuration to debug your 
+program.</p>
+
+<ol>
+  <li>Click <strong>Run &gt; Debug</strong>.</li>
+  <li>In the Debug dialog box, select a debug configuration from the Configurations 
+  list.</li>
+  <li>Click <strong>Debug</strong>. </li>
+</ol>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_over_dbg.htm">Debug overview</a><br>
+<a href="../concepts/cdt_c_dbg_info.htm">Debug information</a></p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="cdt_o_debug.htm">Debugging</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="../reference/cdt_o_run_dbg_pages.htm">Run and Debug dialog box</a></p>
+<img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" >
+
+</div></body>
+
+</html>

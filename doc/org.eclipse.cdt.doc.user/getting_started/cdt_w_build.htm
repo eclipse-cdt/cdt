@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Language" content="en-us">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Building your project</title>
+  <link rel="stylesheet" type="text/css" href="../help.css">
+  <!-- 
+  <script language="JavaScript">
+function newWin(url) {
+	window.open(url, 'install_cdt', 'width=750, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
+}
+</script>
+ -->
+</head>
+<body>
+<div role="main"><h1>Building a project</h1>
+
+<p>The make output and build progress information displays in the
+    <a href="../reference/cdt_u_console_view.htm">Console</a> view. The <a href="../reference/cdt_u_make_targets_view.htm">Make Targets</a> view displays makefile actions, and the
+<a href="../reference/cdt_u_problems_view.htm">Problems</a> view displays compile warnings or errors.</p>
+<h2>To build a project:</h2>
+<ol>
+  <li>In the <strong>Project Explorer</strong> view, select your project. For the tutorial, you can   select the <strong>HelloWorld</strong> project you created earlier. <p><br></p></li>
+  <li>Click <strong>Project &gt; Build Project</strong>, or click the build icon <img src="../images/hammer-icon.png" alt="build icon"> on the toolbar.  
+  <br><br><p>If you see an error message, such as:</p><br>
+   <p><samp>&nbsp;&nbsp;&nbsp;(Cannot run program "make": Launching failed)</samp></p><br>
+  <p>then CDT cannot locate the build command, usually <samp class="typewriter">make</samp>.
+Either your path is not configured correctly, or you do not have <samp class="typewriter">make</samp>
+installed on your system.</p><br><br></li>
+<li>You can see in the <strong>Console</strong> view the output and results of the build command.
+Click on its tab to bring the view forward if it is not currently visible.
+If for some reason it's not present, you can open it by selecting <strong>Window > Show View > Console</strong>.
+<br>
+<br>
+<img src="../images/cdt_w_newmake03.png" alt="Console view in C/C++ Perspective" width="842" height="633"><br>
+</li>
+</ol>
+<p><img src="../images/ngconcepts.gif" alt="Related concepts"
+ width="143" height="21">
+<br>
+<a href="../concepts/cdt_c_projects.htm">CDT Projects</a><br>
+<a href="../concepts/cdt_c_build_over.htm">Build overview</a><br>
+</p>
+<p><img src="../images/ngtasks.gif" alt="Related tasks"
+ width="143" height="21">
+<br>
+<a href="../tasks/cdt_o_build_task.htm">Building projects</a><br>
+</p>
+<p><img src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21">
+<br>
+<a href="../reference/cdt_u_newproj_buildset.htm">Make Builder page,
+C/C++ Properties window</a><br>
+</p>
+<p> <a href="cdt_w_debug.htm">
+<img src="../images/ngnext.gif" width="16" height="16" alt="Next icon"></a> <strong><a
+ href="cdt_w_debug.htm">Next: Debugging a project</a></strong></p>
+<p> <a href="cdt_w_newmake.htm">
+<img src="../images/ngback.gif" width="16" height="16" alt="Previous icon"></a> <strong><a
+ href="cdt_w_newmake.htm">Back: Creating a makefile</a></strong></p>
+<p>
+<img src="../images/ng00_04a.gif" alt="QNX Copyright Statement"></p>
+</div></body>
+</html>

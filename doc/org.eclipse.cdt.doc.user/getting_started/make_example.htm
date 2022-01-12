@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>C++ Makefile example</title>
+</head>
+<body style="background-color:#ffffcc;">
+<div role="main">
+<p style="color:#0066ff">Copy the script below and paste it into the <strong>makefile</strong> file in the Editor view:</p>
+
+<pre>
+all: hello
+
+clean:
+	-rm main.o hello.exe hello
+
+hello: main.o
+	g++ -g -o hello main.o
+
+main.o: main.cpp
+	g++ -c -g main.cpp
+
+</pre>
+
+</div></body>
+</html>

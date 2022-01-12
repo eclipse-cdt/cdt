@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.debug.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.debug.core" id="BreakpointExtension" name="BreakpointExtension"/>
+      </appInfo>
+      <documentation>
+         This extension point defines a mechanism for defining a debug model specific extension to C breakpoints.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="breakpointExtension" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  a fully qualified identifier of the target extension point
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  an optional identifier of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  an optional name of the extension instance
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="breakpointExtension">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies a unique identifier for this breakpoint extension type.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="markerType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified identifier (id) of the corresponding marker definition for breakpoints that this extension applies to
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified name of the Java class that implements &lt;code&gt;ICBreakpointExtension&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.debug.core.model.ICBreakpointExtension"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="debugModelId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the fully qualified identifer (id) of the debug model that this extension applies to
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of a breakpoint extension extension point.
+
+&lt;p&gt;
+&lt;pre&gt;
+ &lt;extension point=&quot;org.eclipse.cdt.debug.BreakpointExtension&quot;&gt;
+  &lt;breakpointExtension
+   id=&quot;com.example.ExampleBreakpointExtension&quot;
+   markerType=&quot;com.example.ExampleBreakpointMarker&quot;
+   debugModeId=&quot;com.example.debug&quot;
+   class=&quot;com.example.BreakpointExtensionImpl&quot;&gt;
+  &lt;/breakpointExtension&gt;
+ &lt;/extension&gt;
+&lt;/pre&gt;
+&lt;/p&gt;
+
+In the example above, the specified type of breakpoint extension is implemented by the class &quot;com.example.BreakpointExtensionImpl&quot;.
+This extension is going to apply to breakpoints with markers extending  &quot;com.example.ExampleBreakpointMarker&quot;, and to debug model with ID of &quot;com.example.debug&quot;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Value of the attribute &lt;b&gt;class&lt;/b&gt; must be a fully qualified name of a Java class that implements the interface &lt;b&gt;org.eclipse.cdt.debug.core.model.ICBreakpointExtension&lt;/b&gt;, and which supplies a constructor with a single argument of type &lt;b&gt;org.eclipse.cdt.debug.core.model.ICBreakpoint&lt;/b&gt;.
+      </documentation>
+   </annotation>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007 Wind River Systems and others.&lt;br&gt;
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+&lt;a href=&quot;http://www.eclipse.org/legal/epl-2.0/&quot;&gt;https://www.eclipse.org/legal/epl-2.0/
+t;
+t;SPDX-License-Identifier: EPL-2.0&lt;/a&gt;
+      </documentation>
+   </annotation>
+
+</schema>

@@ -1,0 +1,11 @@
+push 0
+:main
+var n
+pop $n
+push $n
+push 1
+add
+dup
+push $n
+output
+branch_not_zero main

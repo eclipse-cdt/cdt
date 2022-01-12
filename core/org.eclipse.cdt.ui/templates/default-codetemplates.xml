@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/*******************************************************************************
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     Anton Leherbauer (Wind River Systems)
+ *	   Sergey Prigogin (Google)
+ *******************************************************************************/
+-->
+
+<templates>
+
+<template name="constructorcomment" id="org.eclipse.cdt.ui.text.codetemplates.constructorcomment" description="%CodeTemplates.constructorcomment" context="org.eclipse.cdt.ui.text.codetemplates.constructorcomment_context" enabled="true">/*
+ *
+ */</template>
+
+<template name="destructorcomment" id="org.eclipse.cdt.ui.text.codetemplates.destructorcomment" description="%CodeTemplates.destructorcomment" context="org.eclipse.cdt.ui.text.codetemplates.destructorcomment_context" enabled="true">/*
+ *
+ */</template>
+
+<template name="filecomment" id="org.eclipse.cdt.ui.text.codetemplates.filecomment" description="%CodeTemplates.filecomment" context="org.eclipse.cdt.ui.text.codetemplates.filecomment_context" enabled="true">/*
+ * ${file_name}
+ *
+ *  Created on: ${date}
+ *      Author: ${user}
+ */
+</template>
+
+<template name="typecomment" id="org.eclipse.cdt.ui.text.codetemplates.typecomment" description="%CodeTemplates.typecomment" context="org.eclipse.cdt.ui.text.codetemplates.typecomment_context" enabled="true">/*
+ *
+ */</template>
+ 
+<template name="fieldcomment" id="org.eclipse.cdt.ui.text.codetemplates.fieldcomment" description="%CodeTemplates.fieldcomment" context="org.eclipse.cdt.ui.text.codetemplates.fieldcomment_context" enabled="true">/*
+ *
+ */</template>
+ 
+<template name="methodcomment" id="org.eclipse.cdt.ui.text.codetemplates.methodcomment" description="%CodeTemplates.methodcomment" context="org.eclipse.cdt.ui.text.codetemplates.methodcomment_context" enabled="true">/*
+ *
+ */</template>
+
+<template name="%CodeTemplates.cppsourcefile" id="org.eclipse.cdt.ui.text.codetemplates.cppsourcefile" description="%CodeTemplates.cppsourcefile.desc" context="org.eclipse.cdt.core.cxxSource.contenttype_context" enabled="true">${filecomment}
+${includes}
+
+${namespace_begin}
+
+${declarations}
+
+${namespace_end}</template>
+
+<template name="%CodeTemplates.cpptestfile" id="org.eclipse.cdt.ui.text.codetemplates.cpptestfile" description="%CodeTemplates.cpptestfile.desc" context="org.eclipse.cdt.core.cxxSource.contenttype_context" enabled="true">${filecomment}
+${includes}
+
+${namespace_begin}
+
+${declarations}
+
+${namespace_end}</template>
+
+<template name="%CodeTemplates.cppheaderfile" id="org.eclipse.cdt.ui.text.codetemplates.cppheaderfile" description="%CodeTemplates.cppheaderfile.desc" context="org.eclipse.cdt.core.cxxHeader.contenttype_context" enabled="true">${filecomment}
+#ifndef ${include_guard_symbol}
+#define ${include_guard_symbol}
+
+${includes}
+
+${namespace_begin}
+
+${declarations}
+
+${namespace_end}
+
+#endif /* ${include_guard_symbol} */</template>
+
+<template name="%CodeTemplates.csourcefile" id="org.eclipse.cdt.ui.text.codetemplates.csourcefile" description="%CodeTemplates.csourcefile.desc" context="org.eclipse.cdt.core.cSource.contenttype_context" enabled="true">${filecomment}
+${includes}
+
+${declarations}</template>
+
+<template name="%CodeTemplates.cheaderfile" id="org.eclipse.cdt.ui.text.codetemplates.cheaderfile" description="%CodeTemplates.cheaderfile.desc" context="org.eclipse.cdt.core.cHeader.contenttype_context" enabled="true">${filecomment}
+#ifndef ${include_guard_symbol}
+#define ${include_guard_symbol}
+
+${includes}
+
+${declarations}
+
+#endif /* ${include_guard_symbol} */</template>
+
+<template name="namespace_begin" id="org.eclipse.cdt.ui.text.codetemplates.namespace_begin" description="%CodeTemplates.namespace_begin" context="org.eclipse.cdt.ui.text.codetemplates.namespace_context" enabled="true">namespace ${namespace_name} {</template>
+
+<template name="namespace_end" id="org.eclipse.cdt.ui.text.codetemplates.namespace_end" description="%CodeTemplates.namespace_end" context="org.eclipse.cdt.ui.text.codetemplates.namespace_context" enabled="true">} /* namespace ${namespace_name} */</template>
+
+<template name="class_body" id="org.eclipse.cdt.ui.text.codetemplates.class_body" description="%CodeTemplates.class_body" context="org.eclipse.cdt.ui.text.codetemplates.class_context" enabled="true">${declarations}</template>
+
+<template name="methodbody" id="org.eclipse.cdt.ui.text.codetemplates.methodbody" description="%CodeTemplates.methodstub" context="org.eclipse.cdt.ui.text.codetemplates.methodbody_context" enabled="true">&#9;// ${todo} %CodeTemplates.methodstub.tododesc
+&#9;${body_statement}</template>
+
+<template name="constructorbody" id="org.eclipse.cdt.ui.text.codetemplates.constructorbody" description="%CodeTemplates.constructorstub" context="org.eclipse.cdt.ui.text.codetemplates.constructorbody_context" enabled="true">&#9;// ${todo} %CodeTemplates.constructorstub.tododesc
+&#9;${body_statement}</template>
+
+<template name="destructorbody" id="org.eclipse.cdt.ui.text.codetemplates.destructorbody" description="%CodeTemplates.destructorstub" context="org.eclipse.cdt.ui.text.codetemplates.destructorbody_context" enabled="true">&#9;${body_statement}
+&#9;// ${todo} %CodeTemplates.destructorstub.tododesc</template>
+
+</templates>

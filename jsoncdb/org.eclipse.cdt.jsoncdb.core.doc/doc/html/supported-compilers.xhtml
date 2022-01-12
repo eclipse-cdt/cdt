@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+<title>Available Compiler Support for the JSON Compilation Database Parser</title>
+<style type="text/css">
+table, th, td {
+	border: 1px solid black;
+}
+th, td {
+	padding: 2pt;
+}
+</style>
+</head>
+<body>
+	<h1>Preprocessor Include Paths, Macros</h1>
+	<P>The C/C++/CUDA editors use the CDT indexer to improve syntax highlighting, allowing you to jump to
+	macro definitions and to browse through include files.
+	</P>
+	<p>The following table lists the compiler executables supported by the JSON Compilation Database Parser.</p>
+	<table id="overview_table" style="border-collapse:collapse">
+	<thead>
+	<tr>
+	<th>Compiler</th>
+	<th>Vendor/Standard</th>
+	<th>Language</th>
+	<th>Macros</th>
+	<th>Include directories</th>
+	<th>System include<br/>directories</th>
+    <th>Macros file</th>
+    <th>Include file</th>
+	<th>Compiler executables</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+	<td>gcc</td>
+	<td>GNU Project</td>
+	<td>C</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>Yes</td>
+    <td>Yes (-imacros)</td>
+    <td>Yes (-include)</td>
+	<td>cc, cc.exe, gcc, gcc.exe, <a href="#fw-gcc-cross">".+-gcc"</a>, <a href="#fw-gcc-cross">".+-gcc.exe"</a></td>
+	</tr>
+	<tr>
+	<td>g++</td>
+	<td>GNU Project</td>
+	<td>C++</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>Yes</td>
+    <td>Yes (-imacros)</td>
+    <td>Yes (-include)</td>
+	<td>c++, c++.exe, g++, g++.exe, <a href="#fw-g++-cross">".+-g\+\+"</a>, <a href="#fw-g++-cross">".+-g\+\+.exe"</a>
+	  , <a href="#fw-g++-cross">".+-c\+\+"</a>, <a href="#fw-g++-cross">".+-c\+\+.exe"</a></td>
+	</tr>
+	<tr>
+	<td>clang</td>
+	<td>LLVM Project</td>
+	<td>C</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>Yes</td>
+    <td>N/A</td>
+    <td>Yes (-include)</td>
+	<td>clang, clang.exe</td>
+	</tr>
+	<tr>
+	<td>clang++</td>
+	<td>LLVM Project</td>
+	<td>C++</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>Yes</td>
+    <td>N/A</td>
+    <td>Yes (-include)</td>
+	<td>clang++, clang++.exe</td>
+	</tr>
+	<tr>
+	<td>cc</td>
+	<td>POSIX</td>
+	<td>C</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>No</td>
+    <td>No</td>
+    <td>No</td>
+	<td>cc, cc.exe</td>
+	</tr>
+	<tr>
+	<td>c++</td>
+	<td>POSIX</td>
+	<td>C++</td>
+	<td>Yes</td>
+	<td>Yes</td>
+	<td>No</td>
+    <td>No</td>
+    <td>No</td>
+	<td>c++, c++.exe</td>
+	</tr>
+    </tbody>
+	</table>
+	<p>Remarks:</p>
+	<ul style="list-style-type:none">
+	<li id="fw-help-gcc-cross">".+-gcc" This representes a Java regular expression that also matches
+	a <a href="https://wiki.osdev.org/Target_Triplet#Structure">target triplet</a>, thus allowing to work with cross-compilers
+	named like e.g. <code>arm-none-eabi-gcc</code>.</li>
+	<li id="fw-help-gcc-cross">".+-g\+\+" This representes a Java regular expression that also matches
+	a <a href="https://wiki.osdev.org/Target_Triplet#Structure">target triplet</a>, thus allowing to work with cross-compilers
+	named like e.g. <code>arm-none-eabi-g++</code>.</li>
+	</ul>
+	<h3>Compilers supported through separate plug-ins</h3>
+	<!-- extra compilers go here -->
+	<anchor id="extra_detection_participant_list"/>
+
+	<h2>JSON Compilation Database Parser Compiler Built-ins detection</h2>
+	<p>This feature also tries to get the include paths and preprocessor macros 
+	<strong>built-in to the compiler</strong>.<br/>
+	Note that this works only for compilers that supporting it.
+	See <a href="builtins-detection.xhtml">built-ins detection</a> for supported compilers.
+	</p>
+</body>
+</html>

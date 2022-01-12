@@ -1,0 +1,968 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+
+<!-- =================================================================================== -->
+<!-- Obsolete extension point no longer in use, will be removed.                          -->
+<!-- =================================================================================== -->
+   <extension-point id="CProject" name="%CProject.name" schema="schema/CProject.exsd"/>
+<!-- =================================================================================== -->
+<!-- Extension Point:(work in progress) IConsole, customize a C Build console output     -->
+<!-- =================================================================================== -->
+   <extension-point id="CBuildConsole" name="%CBuildConsole.name" schema="schema/CBuildConsole.exsd"/>
+<!-- =================================================================================== -->
+<!-- Extension Point: IProcessList, returns a list of running processes                  -->
+<!-- =================================================================================== -->
+   <extension-point id="ProcessList" name="%ProcessList.name" schema="schema/ProcessList.exsd"/>
+<!-- =================================================================================== -->
+<!-- Extension Point: IErrorParser, error parsers use when building                      -->
+<!-- =================================================================================== -->
+   <extension-point id="ErrorParser" name="%ErrorParser.name" schema="schema/ErrorParser.exsd"/>
+<!-- =================================================================================== -->
+<!-- Extension Point: IBinaryParser, use to detect wheter an IFile is a binary           -->
+<!-- =================================================================================== -->
+   <extension-point id="BinaryParser" name="%BinaryParser.name" schema="schema/BinaryParser.exsd"/>
+<!-- =================================================================================== -->
+<!-- Extension Point: IPathEntryStore, use to provide a storage for PathEtnry            -->
+<!-- =================================================================================== -->
+   <extension-point id="PathEntryStore" name="%PathEntryStore.name"/>
+<!-- =================================================================================== -->
+<!-- Obsolete extension point, use the IPathEntry mechanism to provide include/macros    -->
+<!-- =================================================================================== -->
+   <extension-point id="ScannerInfoProvider" name="%ScannerInfoProvider.name" schema="schema/CExtensionGeneric.exsd"/>
+<!-- =================================================================================== -->
+<!-- PathEntryContainer initialization, this is part of the IPathEntry framework         -->
+<!-- =================================================================================== -->
+   <extension-point id="PathEntryContainerInitializer" name="%PathEntryContainerInitializer" schema="schema/PathEntryContainerInitializer.exsd"/>
+   <extension-point id="CodeFormatter" name="%CodeFormatter.name" schema="schema/CodeFormatter.exsd"/>
+   <extension-point id="CIndexer" name="%CIndexer.name" schema="schema/CIndexer.exsd"/>
+   <extension-point id="language" name="%language.name" schema="schema/language.exsd"/>
+   <extension-point id="CConfigurationDataProvider" name="%CConfigurationDataProvider.name" schema="schema/CConfigurationDataProvider.exsd"/>
+   <extension-point id="projectConverter" name="%projectConverter.name" schema="schema/projectConverter.exsd"/>
+   <extension-point id="CIndex" name="%CIndex.name" schema="schema/CIndex.exsd"/>
+   <extension-point id="externalSettingsProvider" name="%externalSettingsProvider.name" schema="schema/externalSettingsProvider.exsd"/>
+   <extension-point id="tagger" name="%tagger.name" schema="schema/tagger.exsd"/>
+   <extension-point id="PDOMASTProcessor" name="%PDOMASTProcessor.name" schema="schema/PDOMASTProcessor.exsd"/>
+<!-- =================================================================================== -->
+<!-- CProjectDescriptionStorage provides addition types of project description storage      -->
+<!-- =================================================================================== -->
+   <extension-point id="CProjectDescriptionStorage" name="%CProjectDescriptionStorage.name" schema="schema/CProjectDescriptionStorage.exsd"/>
+   
+<!-- =================================================================================== -->
+<!-- Define the list of the Binary Parser provided by the CDT                            -->
+<!-- =================================================================================== -->
+   <extension
+         id="ELF"
+         name="%ElfParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.elf.parser.ElfParser">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="GNU_ELF"
+         name="%GNUElfParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.elf.parser.GNUElfParser">
+         </run>
+      </cextension>
+   </extension>
+   <!-- Deprecated as of CDT 6.9. Use 64 bit version PEParser64 instead. 
+   This class is planned for removal in next major release. -->
+   <extension
+         id="PE"
+         name="%PEWindowsParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.coff.parser.PEParser">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="PE64"
+         name="%PE64WindowsParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.coff.parser.PEParser64">
+         </run>
+      </cextension>
+   </extension>
+   <!-- Deprecated as of CDT 6.9. Use 64 bit version CygwinPEParser64 instead. 
+   This class is planned for removal in next major release. -->
+   <extension
+         id="Cygwin_PE"
+         name="%CygwinPEParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.coff.parser.CygwinPEParser">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="Cygwin_PE64"
+         name="%CygwinPE64Parser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.coff.parser.CygwinPEParser64">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="XCOFF32"
+         name="%XCOFF32Parser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.xcoff.parser.XCOFF32Parser">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="SOM"
+         name="%SOMParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.som.parser.SOMParser">
+         </run>
+      </cextension>
+   </extension>
+   <!-- This is for backward compatibility: an Typo was introduce in on of the realease
+        and "ELF" instead of "Elf" -->
+   <extension
+         id="Elf"
+         name="%ElfParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <filter
+            name = "visibility"
+            value = "private">
+         </filter>
+         <run
+               class="org.eclipse.cdt.utils.elf.parser.ElfParser">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="MachO"
+         name="%MachOParser.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.macho.parser.MachOParser">
+         </run>
+      </cextension>
+   </extension>
+   <extension
+         id="MachO64"
+         name="%MachOParser64.name"
+         point="org.eclipse.cdt.core.BinaryParser">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.utils.macho.parser.MachOParser64">
+         </run>
+      </cextension>
+   </extension>
+<!-- =================================================================================== -->
+<!-- Define the list of Error Parser provided by the CDT                                 -->
+<!-- =================================================================================== -->
+   <extension
+         id="GCCErrorParser"
+         name="%CDTGNUCErrorParser.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.core.errorparsers.FixitErrorParser"
+            id="org.eclipse.cdt.core.GCCErrorParser"
+            name="%CDTGNUCErrorParser.name">
+         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUCErrorParser.regex.ReportedOnlyOnce" severity="Ignore"/>
+         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUCErrorParser.regex.ForEachFunctionItAppearsIn" severity="Ignore"/>
+         <pattern description-expr="" eat-processed-line="true" file-expr="" line-expr="" regex="%CDTGNUCErrorParser.regex.ReportedOnlyOncePerInputFile" severity="Ignore"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.ErrorUndeclared" severity="Error" variable-expr="$5"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.ErrorConflictingTypesFor" severity="Error" variable-expr="$5"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.ParseErrorBefore" severity="Error" variable-expr="$5"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.DefinedButNotUsed" severity="Warning" variable-expr="$5"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.WarningConflictingTypesFor" severity="Warning" variable-expr="$5"/>
+         <pattern description-expr="$5" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNULinkerErrorParser.regex.WarningDangerousFunction" severity="Warning" variable-expr="$6"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.InstantiatedFromHere" severity="Info"/>
+         <pattern
+               description-expr="$4"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr="$2"
+               regex="%CDTGNUCErrorParser.regex.SkippingInstantiationContexts"
+               severity="Info">
+         </pattern>
+         <pattern
+               description-expr="$4"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr="$2"
+               regex="%CDTGNUCErrorParser.regex.InConstexprExpansion"
+               severity="Info">
+         </pattern>
+         <pattern
+               description-expr="$7"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr="$2"
+               regex="%CDTGNUCErrorParser.regex.GenericError"
+               severity="Error"
+               variable-expr="$3"/>
+         <pattern description-expr="$7" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericWarning" severity="Warning"/>
+         <pattern description-expr="$9" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericInfo" severity="Info"/>
+         <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.OtherError" severity="Error"/>
+      </errorparser>
+   </extension>
+   <extension
+         id="GASErrorParser"
+         name="%CDTGNUAssemblerErrorParser.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            id="org.eclipse.cdt.core.GASErrorParser"
+            name="%CDTGNUAssemblerErrorParser.name"
+            class="org.eclipse.cdt.internal.errorparsers.GASErrorParser">
+      </errorparser>
+   </extension>
+   <extension
+         id="GLDErrorParser"
+         name="%CDTGNULinkerErrorParser.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.core.errorparsers.RegexErrorParser"
+            id="org.eclipse.cdt.core.GLDErrorParser"
+            name="%CDTGNULinkerErrorParser.name">
+         <pattern
+               description-expr="$3"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr=""
+               regex="%CDTGNULinkerErrorParser.regex.InFunction"
+               severity="Ignore"/>
+         <pattern
+               description-expr="$5"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr="$2"
+               regex="%CDTGNULinkerErrorParser.regex.WarningDangerousFunction"
+               severity="Warning"/>
+         <pattern
+               description-expr="$2"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr=""
+               regex="%CDTGNULinkerErrorParser.regex.TextWarning"
+               severity="Warning"/>
+         <pattern
+               description-expr="$2"
+               eat-processed-line="true"
+               file-expr="$1"
+               line-expr=""
+               regex="%CDTGNULinkerErrorParser.regex.TextError"
+               severity="Error"/>
+         <pattern
+               description-expr="$3"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="%CDTGNULinkerErrorParser.regex.ldInfo"
+               severity="Info"/>
+         <pattern
+               description-expr="$3"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="%CDTGNULinkerErrorParser.regex.ldWarning"
+               severity="Warning"/>
+         <pattern
+               description-expr="$3"
+               eat-processed-line="true"
+               file-expr=""
+               line-expr=""
+               regex="%CDTGNULinkerErrorParser.regex.ldError"
+               severity="Error"/>
+      </errorparser>
+   </extension>
+<!-- MakeErrorParser is deprecated as of CDT 7.0 (replaced with WorkingDirLocator and GmakeErrorParser) -->
+   <extension
+         id="MakeErrorParser"
+         name="%CDTGNUMakeErrorParser.name.deprecated"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            id="org.eclipse.cdt.core.MakeErrorParser"
+            name="%CDTGNUMakeErrorParser.name.deprecated"
+            class="org.eclipse.cdt.internal.errorparsers.MakeErrorParser">
+      </errorparser>
+   </extension>
+   <extension
+         id="WorkingDirLocator"
+         name="%CDTWorkingDirLocator.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.internal.errorparsers.CWDLocator"
+            id="org.eclipse.cdt.core.CWDLocator"
+            name="%CDTWorkingDirLocator.name">
+      </errorparser>
+   </extension>
+   <extension
+         id="GmakeErrorParser"
+         name="%CDTGNUMakeErrorParser.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            class="org.eclipse.cdt.core.errorparsers.RegexErrorParser"
+            id="org.eclipse.cdt.core.GmakeErrorParser"
+            name="%CDTGNUMakeErrorParser.name">
+         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*:.*Error.*\(ignored\)" severity="Info"/>
+         <pattern description-expr="make: $3" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="(.*):(\d*): (\*\*\* .*)" severity="Error"/>
+         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*: \*\*\* .*" severity="Error"/>
+         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*: Target (.*) not remade because of errors." severity="Error"/>
+         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*[Cc]ommand not found.*" severity="Error"/>
+         <pattern description-expr="$1" eat-processed-line="true" file-expr="" line-expr="" regex="Error:\s*(.*)" severity="Error"/>
+         <pattern description-expr="make: $3" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="(.*[Mm]akefile):(\d*): warning: (.*)" severity="Warning"/>
+         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*\[.*\] Error [-]{0,1}\d*.*" severity="Warning"/>
+         <pattern description-expr="make: $3" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="(.*):(\d*): (\S*: No such file or directory)" severity="Warning"/>
+         <pattern description-expr="$0" eat-processed-line="true" file-expr="" line-expr="" regex=".*make.*: Circular .* dependency dropped." severity="Warning"/>
+         <pattern description-expr="$1" eat-processed-line="true" file-expr="" line-expr="" regex="Warning:\s*(.*)" severity="Warning"/>
+      </errorparser>
+   </extension>
+   <extension
+         id="VCErrorParser"
+         name="%CDTVisualCErrorParser.name"
+         point="org.eclipse.cdt.core.ErrorParser">
+      <errorparser
+            id="org.eclipse.cdt.core.VCErrorParser"
+            name="%CDTVisualCErrorParser.name"
+            class="org.eclipse.cdt.internal.errorparsers.VCErrorParser">
+      </errorparser>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- CDT customized problem markers: C Problem markers                                   -->
+<!-- =================================================================================== -->
+   <extension
+         id="problem"
+         name="%CProblemMarker.name"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute name="externalLocation"/>
+   </extension>
+<!-- =================================================================================== -->
+<!-- CDT C Nature                                                                        -->
+<!-- =================================================================================== -->
+   <extension
+         id="cnature"
+         name="%cnature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.core.CProjectNature">
+         </run>
+      </runtime>
+   </extension>
+<!-- =================================================================================== -->
+<!-- CDT C++ Nature                                                                      -->
+<!-- =================================================================================== -->
+   <extension
+         id="ccnature"
+         name="%ccnature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.core.CCProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="GeneratePDOM"
+         name="%GeneratePDOMApplication.name"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            visible="true">
+         <run
+               class="org.eclipse.cdt.internal.core.pdom.export.GeneratePDOMApplication">
+         </run>
+      </application>
+   </extension>
+<!-- =================================================================================== -->
+<!-- Some well known C file extensions override for the team plugins                     -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            type="text"
+            extension="c">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="cc">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="cpp">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="cxx">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="h">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="hh">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="hpp">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="inc">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="o">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="a">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="so">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="dll">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="exe">
+      </fileTypes>
+      <fileTypes
+            type="binary"
+            extension="com">
+      </fileTypes>
+      <fileTypes
+            type="text"
+            extension="cproject">
+      </fileTypes>
+   </extension>
+<!-- =================================================================================== -->
+<!-- Some well known C file extensions override for the team plugins                     -->
+<!-- =================================================================================== -->
+   <extension
+         point="org.eclipse.team.core.ignore">
+      <ignore
+            enabled="true"
+            pattern="*.o">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.obj">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.a">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.so">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.dll">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.exe">
+      </ignore>
+      <ignore
+            enabled="true"
+            pattern="*.dylib">
+      </ignore>
+   </extension>
+<!-- =================================================================================== -->
+<!-- C/C++ Task marker                                                                   -->
+<!-- =================================================================================== -->
+   <extension
+         id="task"
+         name="%CTaskName"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.taskmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+<!-- =================================================================================== -->
+<!-- C/C++ indexer marker                                                                -->
+<!-- =================================================================================== -->
+   <extension
+         id="indexermarker"
+         name="%IndexerMarker"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Marker for problems in the PathEntries                                             -->
+<!-- =================================================================================== -->
+   <extension
+         id="pathentry_problem"
+         name="%PathEntryProblemMarker.name"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- .cproject Content Type                                                              -->
+<!-- =================================================================================== -->
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <file-association content-type="org.eclipse.core.runtime.xml" file-names=".cproject"/>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Define C/C++ files ContentTypes                                                     -->
+<!-- =================================================================================== -->
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+	  <!-- declares a content type for C source files -->
+	  <content-type id="cSource" name="%cSourceName"
+         base-type="org.eclipse.core.runtime.text"
+         file-extensions="c"
+         priority="high"/>
+	  <!-- declares a content type for C header files -->
+      <content-type id="cHeader" name="%cHeaderName" 
+          base-type="org.eclipse.cdt.core.cSource"
+		  file-extensions="h"          
+          priority="high"/>
+	  <!-- declares a content type for C++ source files -->
+      <content-type id="cxxSource" name="%cxxSourceName" 
+          base-type="org.eclipse.cdt.core.cSource"
+		  file-extensions="C,cpp,cxx,cc,c++"
+          priority="high"/>
+	  <!-- declares a content type for C++ header files -->
+      <content-type id="cxxHeader" name="%cxxHeaderName" 
+          base-type="org.eclipse.cdt.core.cxxSource"
+		  file-extensions="h,hpp,hh,hxx,inc"          
+          priority="high"/>
+	  <!-- declares a content type for ASM Source files -->
+      <content-type id="asmSource" name="%asmSourceName" 
+          base-type="org.eclipse.core.runtime.text"
+          file-extensions="S,s,asm,ASM"
+          priority="high"/>
+      <content-type id="binaryFile" name="%binaryFileName"
+          priority="high"/>
+   </extension>
+
+   <!-- The reserved filenames by the C++ standard -->
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="algorithm,array,atomic,bitset,cassert,ccomplex,cctype,cerrno,cfenv,cfloat,chrono,cinttypes"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="ciso646,climits,clocale,cmath,codecvt,complex,csetjmp,csignal,cstdarg,cstdbool,cstddef"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="cstdint,cstdio,cstdlib,cstring,ctime,cwchar,cwctype,deque,exception,forward_list,fstream"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="functional,future,hash_map,hash_set,initializer_list,iomanip,ios,iosfwd,iostream,istream"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="iterator,limits,list,locale,map,memory,mutex,new,numeric,ostream,queue,random,ratio,regex"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="set,sstream,stack,stdexcept,streambuf,string,strstream,system_error,thread,tuple"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="typeindex,typeinfo,type_traits,unordered_map,unordered_set,utility,valarray,vector"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="condition_variable,ctgmath,cuchar,scoped_allocator,cstdalign,shared_mutex"/>
+   </extension> 
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="any,execution,filesystem,memory_resource,optional,string_view,variant"/>
+   </extension> 
+ 
+<!-- =================================================================================== -->
+<!-- Initialize the preference for the Core Plugin                                       -->
+<!-- =================================================================================== -->
+   <extension point="org.eclipse.core.runtime.preferences">
+      <initializer class="org.eclipse.cdt.internal.core.CCorePreferenceInitializer"/>
+   </extension>
+   <extension
+   		 id="nullindexer"
+         name="%CDTIndexer.nullindexer"
+         point="org.eclipse.cdt.core.CIndexer">
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.PDOMNullIndexer"/>
+   </extension>
+   <extension
+         id="fastIndexer"
+         name="%fastIndexer.name"
+         point="org.eclipse.cdt.core.CIndexer">
+      <run class="org.eclipse.cdt.internal.core.pdom.indexer.PDOMFastIndexer"/>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="cdt_pathentry_var"
+            resolver="org.eclipse.cdt.internal.core.PathEntryVariableResolver"
+            description="%cdt_pathentry_var.description">
+      </variable>
+      <variable
+            description="%core_build_dir.description"
+            name="active_core_build_dir"
+            resolver="org.eclipse.cdt.internal.core.build.CBuildDirectoryResolver"
+            supportsArgument="true">
+      </variable>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="config_name"
+            resolver="org.eclipse.cdt.internal.core.ConfigurationNameVariableResolver"
+            description="%config_name_var.description">
+      </variable>
+   </extension>
+   <extension
+         point="org.eclipse.core.variables.dynamicVariables">
+      <variable
+            name="config_description"
+            resolver="org.eclipse.cdt.internal.core.ConfigurationDescriptionVariableResolver"
+            description="%config_description_var.description">
+      </variable>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CBuildConsole">
+      <CBuildConsole
+            class="org.eclipse.cdt.internal.core.SystemBuildConsole"
+            id="org.eclipse.cdt.core.systemConsole"/>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.language">
+      <language
+            class="org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage"
+            id="gcc"
+            name="%language.name.gcc">
+         <contentType id="org.eclipse.cdt.core.cSource"/>
+         <contentType id="org.eclipse.cdt.core.cHeader"/>
+      </language>
+      <language
+            class="org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage"
+            id="g++"
+            name="%language.name.gpp">
+         <contentType id="org.eclipse.cdt.core.cxxSource"/>
+         <contentType id="org.eclipse.cdt.core.cxxHeader"/>
+      </language>
+      <pdomLinkageFactory
+            class="org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory"
+            id="C"/>
+      <pdomLinkageFactory
+            class="org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory"
+            id="C++"/>
+      <language
+            class="org.eclipse.cdt.core.model.AssemblyLanguage"
+            id="assembly"
+            name="%language.name.asm">
+         <contentType id="org.eclipse.cdt.core.asmSource"/>
+      </language>
+   </extension>
+   <extension
+         id="defaultConfigDataProvider"
+         name="%defaultProvider.name"
+         point="org.eclipse.cdt.core.CConfigurationDataProvider">
+         <provider
+         	class="org.eclipse.cdt.internal.core.settings.model.PathEntryConfigurationDataProvider"
+         />
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.PathEntryContainerInitializer">
+      <pathEntryContainerInitializer
+            class="org.eclipse.cdt.internal.core.settings.model.ConfigBasedEntriesContainerInitializer"
+            id="org.eclipse.cdt.core.CFG_BASED_CONTAINER">
+      </pathEntryContainerInitializer>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CIndex">
+      <ExportProjectProvider
+            class="org.eclipse.cdt.core.index.export.ExternalExportProjectProvider">
+      </ExportProjectProvider>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Template engine extension points	 -->
+<!-- =================================================================================== -->
+   <extension-point id="templates" name="%templatesExtensionPoint.name" 
+                    schema="schema/templates.exsd"/>
+   <extension-point id="templateProcessTypes" name="%templateProcessTypes.name" schema="schema/templateProcessTypes.exsd"/>
+   <extension-point id="templateAssociations" name="%templateAssociations.name" schema="schema/templateAssociations.exsd"/>
+   <extension-point id="ScannerInfoProvider2" name="%scannerInfoProvider2.name" schema="schema/ScannerInfoProvider2.exsd"/>
+   <extension-point id="EFSExtensionProvider" name="%efsExtensionProvider.name" schema="schema/EFSExtensionProvider.exsd"/>
+   <extension-point id="RefreshExclusionFactory" name="%refreshExclusionFactory.name" schema="schema/RefreshExclusionFactory.exsd"/>
+   <extension-point id="LanguageSettingsProvider" name="%LanguageSettingsProvider.name" schema="schema/LanguageSettingsProvider.exsd"/>
+   <extension-point id="UNCPathConverter" name="%uncPathConverter.name" schema="schema/UNCPathConverter.exsd"/>
+   <extension-point id="ProblemMarkerFilter" name="%problemMarkerFilter.name" schema="schema/ProblemMarkerFilter.exsd"/>
+   <extension-point id="buildConfigProvider" name="buildConfigProvider" schema="schema/buildConfigProvider.exsd"/>
+   <extension-point id="toolChainProvider" name="Tool Chain Provider" schema="schema/toolChainProvider.exsd"/>
+   <extension-point id="CommandLauncherFactory" name="CommandLauncherFactory" schema="schema/CommandLauncherFactory.exsd"/>
+
+   <extension
+         point="org.eclipse.cdt.core.templateProcessTypes">
+      <processType
+            name="Copy"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.Copy">
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="Append"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.Append">
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="AddFile"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddFile">
+         <simple name="projectName"/>
+         <complex name="file">
+            <simple name="source"/>
+            <simple name="target"/>
+            <simple name="replaceable"/>
+         </complex>
+      </processType>
+      <processType
+            name="AddFiles"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddFiles">
+         <simple name="projectName"/>
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="CreateSourceFolder"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.CreateSourceFolder">
+         <simple name="projectName"/>
+         <simple name="path"/>
+      </processType>
+      <processType
+            name="CreateFolder"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.CreateFolder">
+         <simple name="projectName"/>
+         <simple name="path"/>
+      </processType>
+      <processType
+            name="AddLink"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddLink">
+         <simple name="projectName"/>
+         <simple name="filePath"/>
+         <simple name="targetPath"/>
+      </processType>
+      <processType
+            name="AppendCreate"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AppendCreate">
+         <simple name="projectName"/>
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="CreateResourceIdentifier"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.CreateResourceIdentifier">
+         <simple name="valueName"/>
+         <simple name="appName"/>
+      </processType>
+      <processType
+            name="AddFiles2"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddFiles">
+         <simple name="projectName"/>
+         <simple name="startPattern"/>
+         <simple name="endPattern"/>
+         <complexArray name="files">
+            <baseType>
+               <simple name="source"/>
+               <simple name="target"/>
+               <simple name="replaceable"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="AddNature"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.AddNature">
+         <simple
+               name="projectName">
+         </simple>
+         <simple
+               name="natureId">
+         </simple>
+      </processType>
+        <processType
+            name="SetEnvironmentVariable"
+            processRunner="org.eclipse.cdt.core.templateengine.process.processes.SetEnvironmentVariable">
+            <simple name="projectName"/>
+            <complexArray name="variables">
+                <baseType>
+                    <simple name="name"/>
+                    <simple name="value"/>
+                </baseType>
+            </complexArray>
+        </processType>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.CProjectDescriptionStorage">
+      <CProjectStorageType
+            class="org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorageFactory"
+            id="XmlProjectDescriptionStorage"
+            max_version="4.0.0"
+            name="%CProjectStorageType.singlefile.name"
+            version="4.0.0">
+      </CProjectStorageType>
+      <CProjectStorageType
+            class="org.eclipse.cdt.internal.core.settings.model.xml2.XmlProjectDescriptionStorage2Factory"
+            id="XmlProjectDescriptionStorage2"
+            max_version="5.0.0"
+            name="%CProjectStorageType.separatefile.name"
+            version="5.0.0">
+      </CProjectStorageType>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.RefreshExclusionFactory">
+      <exclusionFactory
+            exclusionClass="org.eclipse.cdt.internal.core.resources.ResourceExclusion"
+            factoryClass="org.eclipse.cdt.internal.core.resources.ResourceExclusionFactory">
+      </exclusionFactory>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.LanguageSettingsProvider">
+      <provider
+            class="org.eclipse.cdt.internal.core.language.settings.providers.ScannerInfoExtensionLanguageSettingsProvider"
+            id="org.eclipse.cdt.core.LegacyScannerInfoLanguageSettingsProvider"
+            name="%ScannerInfoExtensionLanguageSettingsProvider.name">
+      </provider>
+      <provider
+            class="org.eclipse.cdt.internal.core.language.settings.providers.PathEntryScannerInfoLanguageSettingsProvider"
+            id="org.eclipse.cdt.core.PathEntryScannerInfoLanguageSettingsProvider"
+            name="%PathEntryScannerInfoLanguageSettingsProvider.name">
+      </provider>
+      <provider
+            class="org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider"
+            id="org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider"
+            name="%ReferencedProjectsLanguageSettingsProvider.name">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filterMatchers">
+      <filterMatcher
+            argumentType="string"
+            class="org.eclipse.cdt.core.index.export.ExportIndexFileInfoMatcher"
+            description="FIle Info Matcher used by CDT&apos;s index exporter"
+            id="org.eclipse.cdt.core.exportIndexFileInfoMatcher"
+            name="Export Index File Info Matcher"
+            ordering="first">
+      </filterMatcher>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.adapters">
+      <factory
+            adaptableType="org.eclipse.core.resources.IBuildConfiguration"
+            class="org.eclipse.cdt.internal.core.build.CBuildConfigAdapterFactory">
+         <adapter
+               type="org.eclipse.cdt.core.build.ICBuildConfiguration">
+         </adapter>
+      </factory>
+   </extension>
+   <extension
+         id="CodeFormatter"
+         point="org.eclipse.core.runtime.applications">
+      <application>
+         <run class="org.eclipse.cdt.core.formatter.CodeFormatterApplication"/>
+      </application>
+   </extension>
+   <extension
+         id="cBuilder"
+         name="%CBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            callOnEmptyDelta="true"
+            isConfigurable="true"
+            supportsConfigurations="true">
+         <run
+               class="org.eclipse.cdt.core.build.CBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="org.eclipse.cdt.internal.core.build.CBuildPropertyTester"
+            id="buildPropertyTester"
+            namespace="org.eclipse.cdt.core.build"
+            properties="isSupported"
+            type="org.eclipse.core.resources.IResource">
+      </propertyTester>
+   </extension>
+
+</plugin>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright (c) 2011, 2021 Contributors to the Eclipse Foundation
+
+   This program and the accompanying materials
+   are made available under the terms of the Eclipse Public License 2.0
+   which accompanies this distribution, and is available at
+   https://www.eclipse.org/legal/epl-2.0/
+
+   SPDX-License-Identifier: EPL-2.0
+-->
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.cdt</groupId>
+		<artifactId>cdt-parent</artifactId>
+		<version>10.5.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<version>6.0.400-SNAPSHOT</version>
+	<artifactId>org.eclipse.cdt.core.win32.x86_64</artifactId>
+	<packaging>eclipse-plugin</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<resolver>p2</resolver>
+					<pomDependencies>consider</pomDependencies>
+					<environments>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
+						<id>attach-source</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<configuration>
+					<!-- When signing binaries, the result is not checked into repo, so the
+						 jgit timestamp provider cannot be used. This has the side effect
+						 that the version of this bundle needs to be incremented on each
+						 CDT release. -->
+					<timestampProvider>default</timestampProvider>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

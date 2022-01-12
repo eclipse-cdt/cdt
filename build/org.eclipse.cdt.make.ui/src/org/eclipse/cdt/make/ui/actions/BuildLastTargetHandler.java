@@ -1,0 +1,47 @@
+/*******************************************************************************
+ * Copyright (c) 2010, 2011 Axel Mueller and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Axel Mueller - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.make.ui.actions;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.handlers.HandlerUtil;
+
+/**
+ * Handler for {@link org.eclipse.cdt.make.ui.actions.BuildLastTargetAction}
+ *
+ * @since 7.0
+ *
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ */
+public class BuildLastTargetHandler extends AbstractHandler {
+
+	@Override
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		final BuildLastTargetAction buildAction = new BuildLastTargetAction();
+		ISelection selection = HandlerUtil.getCurrentSelection(event);
+		IWorkbenchPart part = HandlerUtil.getActivePart(event);
+		buildAction.setActivePart(null, part);
+		buildAction.selectionChanged(null, selection);
+
+		if (buildAction.isEnabled()) {
+			buildAction.run(null);
+		}
+		return null;
+	}
+
+}

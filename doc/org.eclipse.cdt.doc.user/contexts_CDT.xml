@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<contexts>
+
+<!-- 
+	PLUGINS LINKED TO THESE HELP CONTEXT IDs
+	plugin="org.eclipse.cdt.ui"
+-->
+
+<context id ="projects_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_cproj_view.htm"
+   	label="C/C++ Projects view"/>
+</context>
+<context id ="navigator_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_navigator_view.htm"
+   	label="Navigator view"/>
+</context>
+<context id ="outline_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_outline_view.htm"
+   	label="Outline view"/>
+</context>
+<context id ="make_targets_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_make_targets_view.htm"
+   	label="Make Targets view"/>
+</context>
+<context id ="editor_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_editor_view.htm"
+   	label="Editor view"/>
+</context>
+<context id ="problems_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_problems_view.htm"
+   	label="Problems view (C/C++)"/>
+</context>
+<context id ="tasks_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_tasks_view.htm"
+   	label="Tasks view"/>
+</context>
+<context id ="properties_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_properties_view.htm"
+   	label="Properties view"/>
+</context>
+<context id ="search_view">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_search_view.htm"
+   	label="Search view"/>
+</context>
+<context id ="find_replace">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_find_replace.htm"
+   	label="C/C++ Find and Replace"/>
+</context>
+<context id ="c_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_pref.htm"
+   	label="C/C++ Preferences"/>
+</context>
+<context id ="build_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_build_pref.htm"
+   	label="Build Console"/>
+</context>
+<context id ="code_temp">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_code_temp.htm"
+   	label="C/C++ Editor Templates Preferences"/>
+</context>
+<context id ="codeformatter_preference_page_context">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_code_style_pref.htm"
+   	label="C/C++ Code Style Preferences"/>
+</context>
+<context id ="c_editor_gen">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_editor_gen.htm"
+   	label="C/C++ Editor Advanced Preferences"/>
+</context>
+<context id ="c_editor_color">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_editor_color.htm"
+   	label="C/C++ Editor Syntax Coloring Preferences"/>
+</context>
+<context id ="c_editor_con_assist">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_editor_con_assist.htm"
+   	label="C/C++ Editor Content Assist Preferences"/>
+</context>
+<context id ="c_editor_hov">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_editor_hov.htm"
+   	label="C/C++ Editor Hovers Preferences"/>
+</context>
+<context id ="save_actions_preference_page_context">
+   <description>This page allows to configure editor save actions.</description>
+   <topic href="reference/cdt_u_c_editor_save_actions.htm"
+   	label="C/C++ Editor Save Actions Preferences"/>
+</context>
+<context id ="scalability_preference_page_context">
+   <description>This page allows to configure editor scalability mode options. The scalability mode helps to deal with very large source files.</description>
+   <topic href="reference/cdt_u_c_editor_scalability.htm"
+   	label="C/C++ Editor Scalability Preferences"/>
+</context>
+<context id ="c_editor_typing">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_editor_typing.htm"
+   	label="C/C++ Editor Typing Preferences"/>
+</context>
+<context id ="c_editor_folding">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_editor_folding.htm"
+   	label="C/C++ Editor Folding Preferences"/>
+</context>
+<context id ="c_file_types">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_c_file_types.htm"
+   	label="File Types"/>
+</context>
+<context id ="make_targets_pref">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_make_targets_pref.htm"
+   	label="Make Targets"/>
+</context>
+<context id ="newproj_buildset">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_newproj_buildset.htm"
+   	label="Make Builder"/>
+</context>
+<context id ="newproj_parser_error">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_newproj_parser_error.htm"
+   	label="Error Parser"/>
+</context>
+<context id ="newproj_parser_binary">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_newproj_parser_binary.htm"
+   	label="Binary Parser"/>
+</context>
+<context id ="discovery_preferences">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_discovery_preferences.htm"
+   	label="Discovery Options"/>
+</context>
+<context id ="cdt_u_pref_build_scanner_discovery">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_pref_build_scanner_discovery.htm"
+   	label="Scanner Discovery Preferences"/>
+</context>
+<context id ="cdt_u_prop_general_sd_entries">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_sd_entries.htm"
+   	label="Scanner Discovery Entries Tab"/>
+</context>
+<context id ="cdt_u_prop_general_sd_providers">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_sd_providers.htm"
+   	label="Scanner Discovery Providers Tab"/>
+</context>
+<context id ="man_prop_indexer">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_idx.htm"
+   	label="Indexer"/>
+</context>
+<context id ="std_prop_file_types">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_typ.htm"
+   	label="File Types"/>
+</context>
+<context id ="std_prop_include">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_pns_inc.htm"
+   	label="Include Paths and Symbols"/>
+</context>
+<context id ="std_prop_indexer">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_idx.htm"
+   	label="Indexer"/>
+</context>
+<context id ="std_prop_build">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build.htm"
+   	label="Make Builder"/>
+</context>
+<context id ="std_prop_error">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
+   	label="Error Parser"/>
+</context>
+<context id ="std_prop_binary">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
+   	label="Binary Parser"/>
+</context>
+<context id ="std_prop_discovery">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_discovery.htm"
+   	label="Discovery Options"/>
+</context>
+<context id ="std_prop_source">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_pns_src.htm"
+   	label="Source"/>
+</context>
+<context id ="std_prop_output">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_pns_out.htm"
+   	label="Output"/>
+</context>
+<context id ="std_prop_projects">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_exp.htm"
+   	label="Projects"/>
+</context>
+<context id ="std_prop_libraries">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_pns_lib.htm"
+   	label="Libraries"/>
+</context>
+<context id ="std_prop_containers">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_pns_sym.htm"
+   	label="Path Containers"/>
+</context>
+<context id ="std_prop_references">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_pns_ref.htm"
+   	label="Project References"/>
+</context>
+<context id ="new_proj_wiz">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_new_proj_wiz.htm"
+   	label="C/C++ New Project Wizard"/>
+</context>
+<context id ="new_proj_wiz_m_name">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_new_proj_wiz_name.htm"
+   	label="Name"/>
+</context>
+<context id ="new_proj_wiz_m_target">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_new_proj_wiz_type.htm"
+          label="Select a Project Type"/>
+</context>
+<context id ="new_proj_wiz_m_proj">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_ref.htm"
+   	label="Referenced Projects"/>
+</context>
+<context id ="new_proj_wiz_m_errorp">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
+   	label="Error Parsers"/>
+</context>
+<context id ="new_proj_wiz_m_cindexer">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_idx.htm"
+   	label="C/C++ Indexer"/>
+</context>
+<context id ="new_proj_wiz_s_name">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_new_proj_wiz_name.htm"
+   	label="Name"/>
+</context>
+<context id ="new_proj_wiz_s_proj">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_ref.htm"
+   	label="Referenced Projects"/>
+</context>
+<context id ="new_proj_wiz_s_errorp">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"
+   	label="Error Parsers"/>
+</context>
+<context id ="new_proj_wiz_s_binary">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"
+   	label="Binary Parser"/>
+</context>
+<context id ="new_proj_wiz_s_discovery">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_scanner_discovery.htm"
+   	label="Discovery Options"/>
+</context>
+<context id ="new_proj_wiz_s_cindexer">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_prop_general_idx.htm"
+   	label="C/C++ Indexer"/>
+</context>
+<context id ="run_dbg_main">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_run_dbg_main.htm"
+   	label="Main"/>
+</context>
+<context id ="run_dbg_arg">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_run_dbg_arg.htm"
+   	label="Arguments"/>
+</context>
+<context id ="run_dbg_env">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_run_dbg_env.htm"
+   	label="Environment"/>
+</context>
+<context id ="run_dbg_dbg">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_run_dbg_dbg.htm"
+   	label="Debugger"/>
+</context>
+<context id ="run_dbg_srce">
+   <description>Click below to see help.</description>
+   <topic href="reference/cdt_u_run_dbg_srce.htm"
+   	label="Source"/>
+</context>
+<context id ="run_dbg_comm">
+   <description>Click below to see help.</description>
+   <topic href="reference/run_dbg_comm"
+   	label="Common"/>
+</context>
+<context id ="cdt_u_search">
+   <description>Use the C/C++ Search to search for occurrences of C/C++ elements.</description>
+   <topic href="reference/cdt_u_search.htm"
+   	label="C/C++ search page"/>
+</context>
+<context id ="open_element_dialog_context">
+   <description>This dialog allows to open up the declaration of C/C++ classes, structures, unions, typedefs, enumerations, namespaces, functions, methods, variables and macros.</description>
+   <topic href="reference/cdt_u_open_element.htm"
+   	label="Open Element"/>
+</context>
+<context id="code_templates_preference_context">
+    <description>Specify the templates used for code generation and new files.</description>
+    <topic label="Code Templates Preferences" href="reference/cdt_u_c_code_templates_pref.htm"/>
+</context>
+<context id="toggle_mark_occurrences_action_context">
+    <description>Allows you to switch mark occurrences on and off.</description>
+</context>
+<context id="format_all_action">
+    <description>This command formats selected C/C++ source files.</description>
+</context>
+
+<context id="appearance_preference_page_context">
+    <description>Customize the appearance of C/C++ elements in viewers.</description>
+    <topic label="Appearance Preferences" href="reference/cdt_u_appearance_pref.htm"/>
+</context>
+
+<context id="cdt_u_prop_build">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build.htm" label="C/C++ Build"/> 
+</context>                         
+<context id="cdt_u_prop_build_variables">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_variables.htm" label="Build Variables"/> 
+   <topic href="tasks/cdt_t_add_build_var.htm" label="Adding and Editing Build Variables"/> 
+</context>
+<context id="cdt_u_prop_build_discovery">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_discovery.htm" label="Discovery Options"/> 
+</context>               
+<context id="cdt_u_prop_build_environment">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_environment.htm"    	
+   label="Environment tab"/> 
+</context>             
+<context id="cdt_u_prop_build_setting_tool">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_settings_tool.htm"    	
+   label="Tool Settings"/> 
+</context>            
+<context id="cdt_u_prop_build_setting_steps">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_settings_steps.htm"    	
+   label="Build Steps"/> 
+</context>           
+<context id="cdt_u_prop_build_setting_artifact">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_settings_artifact.htm"    	
+   label="Build Artifact"/>
+</context>        
+<context id="cdt_u_prop_build_setting_binparser">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_settings_binparser.htm"    	
+   label="Binary Parsers"/> 
+</context>       
+<context id="cdt_u_prop_build_setting_errparser">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_settings_errparser.htm"    	
+   label="Error Parsers"/> 
+</context>       
+<context id="cdt_u_prop_build_toolchain">
+   <description></description>
+   <topic href="reference/cdt_u_prop_build_toolchain.htm"    	
+   label="Tool Chain Editor"/> 
+</context>               
+<context id="cdt_u_prop_pns_inc">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_pns_inc.htm"    	
+   label="Include paths"/> 
+</context>                       
+<context id="cdt_u_prop_pns_sym">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_pns_sym.htm"    	
+   label="Symbols"/> </context>                       
+<context id="cdt_u_prop_pns_libpath">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_pns_libpath.htm"    	
+   label="Library paths"/> 
+</context>                   
+<context id="cdt_u_prop_pns_lib">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_pns_lib.htm"    	
+   label="Libraries"/> 
+</context>                       
+<context id="cdt_u_prop_pns_ref">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_pns_ref.htm"    	
+   label="References"/> 
+</context>                       
+<context id="cdt_u_prop_pns_src">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_pns_src.htm"    	
+   label="Source Location"/> 
+</context>                       
+<context id="cdt_u_prop_pns_out">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_pns_out.htm"    	
+   label="Output Locations"/> 
+</context>                       
+<context id="cdt_u_prop_resource">
+   <description></description>
+   <topic href="reference/cdt_u_prop_resource.htm"    	
+   label="Resource"/> 
+</context>                      
+<context id="cdt_u_prop_builders">
+   <description></description>
+   <topic href="reference/cdt_u_prop_builders.htm"    	
+   label="Builders"/> 
+</context>                      
+<context id="cdt_u_prop_general">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general.htm"    	
+   label="Common"/> 
+</context>                       
+<context id="cdt_u_prop_general_doc">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_doc.htm"    	
+   label="Documentation"/> 
+</context>                   
+<context id="cdt_u_prop_general_typ">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_typ.htm"    	
+   label="File Types"/> 
+</context>                   
+<context id="cdt_u_prop_general_idx">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_idx.htm"    	
+   label="Indexer"/> 
+</context>                   
+<context id="cdt_u_prop_general_lng">
+   <description></description>
+   <topic href="reference/cdt_u_prop_general_lng.htm"    	
+   label="Language Mappings"/> 
+</context>                   
+
+<context id="cdt_u_pref_multi_cfg">
+   <description></description>
+   <topic href="reference/cdt_u_pref_multi_cfg.htm"    	
+   label="Multi Configuration Edit tab"/> 
+</context>                   
+<context id="cdt_u_pref_prop_pages">
+   <description></description>
+   <topic href="reference/cdt_u_pref_prop_pages.htm"    	
+   label="Property Pages Settins tab"/> 
+</context>
+<context id="tasktags_preference_page_context" title="Task Tags (C/C++)">
+   <description>Create todo task tags.</description>
+   <topic href="reference/cdt_u_pref_task_tags.htm" label="Task Tags preference"/>
+</context>                   
+<context id="cdt_u_pref_wizard_defaults">
+   <description></description>
+   <topic href="reference/cdt_u_pref_wizard_defaults.htm"    	
+   label="CDT New Project Wizard Defaults tab"/> 
+</context>                   
+<context id="cdt_u_pref_wizard_toolchains">
+   <description></description>
+   <topic href="reference/cdt_u_pref_wizard_toolchains.htm"    	
+   label="Preferred Toolchains tab"/> 
+</context>                   
+
+<context id="type_hierarchy_view_context" title="About Type Hierarchy view">
+    <description>This view displays a type&apos;s hierarchy.</description>
+    <topic label="Type Hierarchy view" href="reference/cdt_u_type_hierarchy_view.htm"/>
+</context>
+<context id="call_hierarchy_view_context" title="About Call Hierarchy view">
+    <description>The Call Hierarchy shows all callers or callees of the given function.</description>
+    <topic label="Call Hierarchy view" href="reference/cdt_u_call_hierarchy_view.htm"/>
+</context>
+<context id="include_browser_view_context" title="About Include Browser view">
+    <description>This view displays include file relationships.</description>
+    <topic label="Include Browser view" href="reference/cdt_u_include_browser_view.htm"/>
+</context>
+<context id="cdt_t_conv_proj_context" title="Converting a C or C++ nature for a project">
+   <description>This wizard converts a project to a C/C++ project.</description>
+   <topic href="tasks/cdt_t_conv_proj.htm" label="Converting a C or C++ nature for a project"/>
+</context>
+<context id="cdt_creating_cpp_file_context" title="Creating your C++ file">
+   <topic href="getting_started/cdt_w_newcpp.htm" label="Creating your C++ file"/>
+</context>
+<context id="project_explorer_context" title="Project Explorer">
+   <description>The Project Explorer displays project information.</description>
+   <topic href="reference/cdt_u_project_explorer_view.htm" label="Project Explorer view"/>
+</context>
+<context id="content_outline_context" title="Outline">
+   <topic href="reference/cdt_u_outline_view.htm" label="Outline view"/>
+</context>
+
+<context id="indexer_preference_page" title="Indexer">
+   <description>Configure the C/C++ Indexer.</description>
+   <topic href="reference/cdt_u_indexer_preference.html" label="C/C++ Indexer preferences"/>
+</context>
+<context id="language_mapping_preference_page" title="Language Mappings">
+   <description>Customize the use of C/C++ language associations for the workspace.</description>
+   <topic href="reference/cdt_u_language_mapping_pref.htm" label="C/C++ Language Mapping preferences"/>
+</context>
+<context id="build_console_preference_page" title="Build Console">
+   <description>Customize the appearance of messages that appear in the Build Console.</description>
+   <topic href="reference/cdt_u_console_pref.htm" label="C/C++ Console preferences"/>
+</context>
+
+</contexts>

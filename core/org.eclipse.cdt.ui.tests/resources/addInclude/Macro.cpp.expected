@@ -1,0 +1,3 @@
+#include "Macro.h"
+
+int x = ONE;

@@ -1,0 +1,172 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="language" name="CDT Language"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to declare a language or language variant. Languages define how the C model of a file is created (e.g. to populate the outline view). It also provides hooks to override the low level parsing of translation units into an abstract syntax tree. Practically this is limited to C/C++ language variants only. Completely different languages cannot be modelled reasonably using this extension point.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <choice>
+               <element ref="language"/>
+               <element ref="pdomLinkageFactory"/>
+            </choice>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="language">
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="unbounded">
+            <element ref="contentType"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier of the language. Note that the identifier is prefixed with the ID of the contributing plug-in.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A human readable and translatable name of the language.
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class extending &lt;code&gt;org.eclipse.core.model.AbstractLanguage&lt;/code&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.core.model.AbstractLanguage"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="contentType">
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="pdomLinkageFactory">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The factory that creates linkage objects.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT 3.1
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+&lt;language
+      class=&quot;org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage&quot;
+      id=&quot;gcc&quot;
+      name=&quot;GNU C&quot;&gt;
+   &lt;contentType id=&quot;org.eclipse.cdt.core.cSource&quot;/&gt;
+   &lt;contentType id=&quot;org.eclipse.cdt.core.cHeader&quot;/&gt;
+&lt;/language&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Clients need to extend the abstract class &lt;code&gt;org.eclipse.core.model.AbstractLanguage&lt;/code&gt;.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         CDT comes with following built-in languages:
+&lt;code&gt;org.eclipse.cdt.core.language.gcc&lt;/code&gt; (GNU C) and 
+&lt;code&gt;org.eclipse.cdt.core.language.g++&lt;/code&gt; (GNU C++).
+&lt;p&gt;The respective language implementations are
+&lt;code&gt;org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage&lt;/code&gt; and
+&lt;code&gt;org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage&lt;/code&gt;
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2005, 2007 QNX Software Systems and others. 
+This program and the accompanying materials are made
+available under the terms of the Eclipse Public License 2.0 which
+accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+</schema>

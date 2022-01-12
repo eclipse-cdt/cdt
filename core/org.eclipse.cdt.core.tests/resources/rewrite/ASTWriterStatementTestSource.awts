@@ -1,0 +1,439 @@
+//!BreakStatementTest
+//%CPP
+void foo()
+{
+    while (true){
+        break;
+    }
+}
+
+
+//!CaseDefaultStatementTest
+//%CPP
+void foo()
+{
+    switch (1){
+        case 1:
+            return 1;
+        case 2:
+            return 2;
+        default:
+            return 3;
+    }
+}
+
+
+//!CompoundStatementTest
+//%CPP
+void foo()
+{
+    int i = 2;
+    {
+        int a = i;
+        {
+            a++;
+        }
+    }
+}
+
+
+//!ContinueStatementTest
+//%CPP
+void foo()
+{
+    while (true){
+        continue;
+    }
+}
+
+
+//!DeclarationStatementTest
+//%CPP
+void foo()
+{
+    int i = 2;
+    int a;
+}
+
+
+//!DoStatementTest
+//%CPP
+void foo()
+{
+    do{
+        continue;
+    } while (true);
+}
+
+
+//!ExpressionStatementTest
+//%CPP
+void foo()
+{
+    int i;
+    ++i;
+}
+
+
+//!ForStatementTest
+//%CPP
+void foo()
+{
+    for (int i = 0;i < 1;++i){
+        break;
+    }
+    for (;;){
+        break;
+    }
+    for (;int c = f();){
+        c++;
+    }
+}
+
+
+//!C ForStatement
+//%C
+void foo()
+{
+    int i;
+    for (i = 0;i < 1;++i){
+    }
+}
+
+
+//!Goto&LabelStatementTest
+//%CPP
+int f()
+{
+    badStyle:
+    goto badStyle;
+}
+
+//!CPP GNU Goto Expression Statement Test
+//%CPP GNU
+void f()
+{
+    void* labelPtr = &&foo;
+    goto *labelPtr;
+    foo:
+    return;
+}
+
+//!C GNU Goto Expression Statement Test
+//%CPP GNU
+void f()
+{
+    void* labelPtr = &&foo;
+    goto *labelPtr;
+    foo:
+    return;
+}
+
+//!IfStatementTest
+//%CPP
+int f()
+{
+    int i = 0;
+    if (i < 1){
+        ++i;
+    }else{
+        --i;
+    }
+    if (int c = f()){
+        c++;
+    }
+    return i;
+}
+
+
+//!BasicNoBraceIfStatementTest
+//%CPP
+int g()
+{
+    if (10 > 5)
+        return 1;
+
+    return 0;
+}
+
+//!C IfStatementTest
+//%C
+int g()
+{
+    if (10 > 5)
+        return 1;
+
+    return 0;
+}
+
+//!NullStatementTest
+//%CPP
+void f()
+{
+    ;
+}
+
+
+//!ReturnStatementTest
+//%CPP
+int f()
+{
+    return 1;
+}
+
+
+//!SwitchStatementTest
+//%CPP
+void foo()
+{
+    switch (1){
+        case 1:
+            return 1;
+        case 2:
+            return 2;
+        default:
+            return 3;
+    }
+}
+
+int foo()
+{
+    switch (int i = f()){
+        case 1:
+            ++i;
+            return 1;
+        case 2:
+            return 2;
+        default:
+            return 3;
+    }
+}
+
+
+//!CSwitchStatementTest
+//%C
+void foo()
+{
+    switch (1){
+        case 1:
+            return 1;
+        case 2:
+            return 2;
+        default:
+            return 3;
+    }
+}
+
+
+//!GNUSwitchStatementTest
+//%CPP
+int foo(int a)
+{
+    switch (a){
+        case 1:
+            return 1;
+        case 2 ... 4:
+            return 0;
+        default:
+            return -1;
+    }
+}
+
+
+//!GNUCSwitchStatementTest
+//%C
+int foo(int a)
+{
+    switch (a){
+        case 1:
+            return 1;
+        case 2 ... 4:
+            return 0;
+        default:
+            return -1;
+    }
+}
+
+
+//!WhileStatementTest
+//%CPP
+void foo()
+{
+    while (true){
+        break;
+    }
+}
+
+void fa()
+{
+    while (int i = f()){
+        ++i;
+        break;
+    }
+}
+
+void fb()
+{
+    while (true);
+
+}
+
+//!C WhileStatementTest
+//%C
+void foo()
+{
+    while (true){
+        break;
+    }
+}
+
+
+//!TryBlockStatement
+//%CPP
+int foo()
+{
+    try {
+        int i = 1;
+        try {
+            ++i;
+            return i;
+        }
+        catch (...){
+        }
+    }
+    catch (...){
+    }
+}
+
+
+//!MixedStatement
+//%CPP
+#define ZWO 2
+int foo()
+{
+    int i = 1;
+    if (i == ZWO){
+    }
+}
+//=
+int foo()
+{
+    int i = 1;
+    if (i == ZWO){
+    }
+}
+
+//!ArrayDeclarationStatementTest
+//%CPP
+string* newElements = new string[m_capacity];
+
+//!Basic Constexpr If
+//%CPP
+void f()
+{
+    constexpr bool b{false};
+    if constexpr (b){
+    }
+}
+
+//!Constexpr If with init-statement
+//%CPP
+void f()
+{
+    if constexpr (constexpr bool b{false};b){
+    }
+}
+
+//!Constexpr If with init-statement and declaration
+//%CPP
+void f()
+{
+    if constexpr (constexpr bool b{false};int k = 42){
+    }
+}
+
+//!If with init-statement
+//%CPP
+void f()
+{
+    if (bool b{false};b == true){
+    }
+}
+
+//!If with init-statement and declaration
+//%CPP
+void f()
+{
+    if (bool b{false};int k = 42){
+    }
+}
+
+//!If with constexpr init-statement and declaration
+//%CPP
+void f()
+{
+    if (constexpr bool b{false};int k = 42){
+    }
+}
+
+//!If with empty init-statement and declaration
+//%CPP
+void f()
+{
+    if (;int k = 42){
+    }
+}
+
+//!If with empty init-statement and expression
+//%CPP
+void f()
+{
+    int k{42};
+    if (;k == 42){
+    }
+}
+
+//!Constexpr If with empty init-statement and expression
+//%CPP
+void f()
+{
+    constexpr int k{42};
+    if constexpr (;k == 42){
+    }
+}
+
+//!Switch with emtpy init statement
+//%CPP
+void f()
+{
+    constexpr int k{42};
+    switch (;k){
+        case 42:
+            break;
+    }
+}
+
+//!Switch with init statement
+//%CPP
+void f()
+{
+    switch (constexpr int k{42};k){
+        case 42:
+            break;
+    }
+}
+
+//!Range-based for with structured binding
+//%CPP
+struct S
+{
+    int i;
+    float f;
+};
+
+void rangedBasedForContext()
+{
+    S esses[] = {S{}, S{}, S{}};
+    for (auto [l, r]: esses){
+    }
+}

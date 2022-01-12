@@ -1,0 +1,13 @@
+org.eclipse.cdt.ui/debug=false
+
+# Reports contentAssist activity
+org.eclipse.cdt.ui/debug/contentassist=false
+
+# Enables all semantic highlighting types
+org.eclipse.cdt.ui/debug/SemanticHighlighting=false
+
+# Enables debug information related to folding
+org.eclipse.cdt.ui/debug/folding=false
+
+# Enables debug information for header substitution in Organize Includes command.
+org.eclipse.cdt.ui/debug/includeOrganizer/headerSubstitution=false

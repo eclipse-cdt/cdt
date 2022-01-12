@@ -1,0 +1,36 @@
+//!NameTest
+//%CPP
+int Hallo;
+
+//!QualifiedName
+//%CPP
+int TestClass::Hallo;
+
+//!FullyQualifiedName
+//%CPP
+int ::name;
+
+//!OperatorName
+//%CPP
+class Foo
+{
+public:
+    char& operator [](unsigned int);
+};
+
+//!ConversionName
+//%CPP
+class Foo
+{
+public:
+    operator int();
+};
+
+//!TemplateID
+//%CPP
+A::B<T> b;
+
+//!NestedTemplates
+//%CPP
+vector<vector<int> > vvi;
+

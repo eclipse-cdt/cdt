@@ -1,0 +1,70 @@
+//!Commented TemplateFunction1
+//%CPP
+template<typename T> 
+int tempFunct(T p)
+{
+    ++p;
+    //Kommentar
+    p + 4;
+    return 0;
+}
+
+
+//!Commented TemplateFunction2
+//%CPP
+//Kommentar
+template<typename T> 
+int tempFunct(T p)
+{
+    ++p;
+    p + 4;
+    return 0;
+}
+
+
+//!Commented TemplateFunction3
+//%CPP
+template<typename T> 
+int tempFunct(T p)
+{
+    ++p;
+    p + 4;
+    return 0;
+} //Kommentar
+
+
+//!Commented ExpressionList1
+//%CPP
+void foo()
+{
+    int i, j, k;
+    //Test
+    i = 1, j = 2, k = 3;
+}
+
+
+//!Commented ExpressionList2
+//%CPP
+void foo()
+{
+    int i, j, k;
+    i = 1, j = 2, k = 3; //Test
+}
+
+
+//!Commented ExpressionList3
+//%CPP
+void foo(){
+    int i, j, k;
+    i = 1, j = 2, k = 3; //Test
+}
+
+
+//=
+void foo()
+{
+    int i, j, k;
+    i = 1, j = 2, k = 3; //Test
+}
+
+

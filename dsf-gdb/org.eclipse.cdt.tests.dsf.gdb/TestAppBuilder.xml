@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="makeTestApps">
+
+    <!-- properties -->
+    <property name="bin_dir" location="./data/launch/bin"/>
+    <property name="src_dir" location="./data/launch/src"/>
+
+    <!-- targets -->
+    <target name="makeTestApps" description="Create the binaries for the test applications">    
+            <exec executable="make" dir="${src_dir}" failifexecutionfails="false"/>
+     </target>
+
+    <condition property="binDirExists">
+        <available file="${bin_dir}" type="dir"/>
+    </condition>
+
+    <target name="clean" description="Delete Test Applications" if="binDirExists">
+        <delete>
+    	    <fileset dir="${bin_dir}" includes="*"/>
+        </delete>
+    </target>
+
+</project>

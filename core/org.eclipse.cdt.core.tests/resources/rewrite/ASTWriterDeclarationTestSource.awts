@@ -1,0 +1,230 @@
+//!ASMDeclarationTest
+//%CPP
+asm("movl %1, %%eax;");
+
+//!FunctionDefinitionTest
+//%CPP
+int foo()
+{
+    return 1;
+}
+
+
+//!SimpleDeclarationTest
+//%CPP
+int i = 2, y = 3;
+int b = 0;
+
+//!ExplicitTemplateInstantion
+//%CPP
+template class vector<int>;
+
+//!GPPExplicitTemplateInstantion
+//%CPP GNU
+static template class vector<int>;
+inline template class vector<int>;
+inline template class vector<int>;
+
+//!LinkageSpecification
+//%CPP
+extern "C" typedef void FUNC();
+
+
+//!NamespaceAlias
+//%CPP
+namespace kurz = somenamespace;
+
+//!NamespaceDefinition
+//%CPP
+namespace somenamespace
+{
+
+
+}
+
+//!TemplateDeclaration
+//%CPP
+template<class T> class vector
+{
+};
+
+//!NestedTemplateDeclaration
+//%CPP
+template<template <class T> class K> class vector
+{
+};
+
+//!TemplateSpecialization
+//%CPP
+template<typename T> class MyQueue;
+template<> class MyQueue<double>
+{
+    std::vector<double> data;
+
+public:
+    void Add(const double&);
+    void Remove();
+    void Print();
+};
+
+//!UsingDeclaration
+//%CPP
+struct A
+{
+    void f();
+    enum E{ e};
+    union 
+    {
+        int u;
+    };
+};
+struct B : A
+{
+    using A::f;
+    using typename A::e;
+    using A::u;
+};
+
+//!UsingDirective
+//%CPP
+using namespace B;
+
+
+//!VisibilityLabel
+//%CPP
+class A
+{
+public:
+    int hello();
+
+protected:
+    int b, c;
+
+private:
+    int p;
+};
+
+//!CommentBeforeSimpleDeclaration
+//%CPP
+//Comment
+int i = 2;
+
+//!Typename qualifier
+//%CPP
+typename T::A* a6;
+
+//!Variadic Template
+//%CPP
+template<typename... T> struct Tpl
+{
+};
+
+template<typename... T> 
+void foo(Tpl<T...>)
+{
+}
+
+//!Lambda init capture equals
+//%CPP
+int main()
+{
+    [c = {3, 3}] {
+    }
+    ;
+}
+
+//!Lambda init capture braces
+//%CPP
+int main()
+{
+    [c{3, 3}] {
+    }
+    ;
+}
+
+//!Lambda init capture parenthesis
+//%CPP
+int main()
+{
+    [c({3, 3})] {
+    }
+    ;
+}
+
+//!Lambda init equals by ref
+//%CPP
+int main()
+{
+    [&c = {3, 3}] {
+    }
+    ;
+}
+
+//!static_asserts with and without message
+//%CPP
+static_assert(true, "Should always pass");
+static_assert(sizeof (int) == 4);
+
+//!Inline namespace
+//%CPP
+inline namespace InlnNS
+{
+
+
+}
+
+//!Function definition with attributed parameters
+//%CPP
+void f([[attr1]] int p1, int [[attr2]] p2, [[attr3]] int p3)
+{
+}
+
+//!Attributed anonymous namespace
+//%CPP
+namespace [[foo]] 
+{
+
+
+}
+
+//!Mixed CPP and GNU attributes on named namespace
+//%CPP GNU
+namespace [[foo]] FOO __attribute__((__visibility__("default")))
+{
+
+
+}
+
+//!Attributed anonymous enum declaration
+//%CPP
+enum [[foo]] { };
+
+//!Attributed named enum declaration
+//%CPP
+enum [[foo]] X{ };
+
+//!Attributed anonymous enum with attributed base specifier
+//%CPP
+enum [[foo]]  : int [[bar]] { };
+
+//!Attributed scoped enum declaration with keyword struct
+//%CPP
+enum struct [[foo]] X{ };
+
+//!Attributed scoped enum declaration with keyword class
+//%CPP
+enum class [[foo]] X{ };
+
+//!Structured binding declarations
+//%CPP
+struct S
+{
+    int first, second, third;
+} s{};
+int arr[]{1, 2, 3};
+auto [a, b, c] = arr;
+auto [d, e, f]{s};
+auto [g, h, i](arr);
+auto& [j, k, l] = arr;
+const auto& [m, n, o] = S{};
+auto&& [p, q, r] = S{};

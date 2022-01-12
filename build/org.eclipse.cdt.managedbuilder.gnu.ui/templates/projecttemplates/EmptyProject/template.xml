@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<template type="ProjTempl" version="1.0" supplier="Eclipse.org" revision="1.0" author="Intel Corporation"
+		copyright="Copyright (c) 2007 Intel Corporation and others. This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at https://www.eclipse.org/legal/epl-2.0/"
+		id="EmptyProject" label="%EmptyProject.template.label" description="%EmptyProject.template.description"
+		 help="help.html">
+
+</template>
+

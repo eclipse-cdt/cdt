@@ -1,0 +1,217 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>C/C++ Project Properties, C/C++ Build</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+</head>
+<body>
+
+<div role="main"><h1>C/C++ Project Properties, C/C++ Build</h1>
+<p>This page serves as the main window that contains all builder-specific property pages.
+In addition, directly from this window you can define preferences for the <strong>Builder settings</strong> and <strong>Behaviour</strong> properties.
+</p>
+<p><strong>Note:</strong> Modifying some settings, such as the <strong>Generate makefiles automatically</strong> option, might affect other parameters (setting them from enabled to disabled in some situations)
+and, moreover, change the visibility of other property pages. 
+</p>
+
+<p><img img src="../images/prop_cbuild.png" alt="C/C++ Project Properties, C/C++ Build"></p>
+
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><strong>Builder settings preferences</strong></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr class="hidden">
+			<th id="option">Option</th>
+			<th id="description">Description</th>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Configuration</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for its description.</a></td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Manage configurations</strong></td>
+			<td headers="description"><a href="cdt_u_prop_all.htm">Click here for its description.</a></td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Builder type</strong></td>
+			<td headers="description">Specifies the type of builder to use: <strong>Internal builder</strong> (builds C/C++ programs using a compiler that implements the C/C++ Language Specification) and <strong>External builder</strong> (external tools let you configure and run programs and Ant buildfiles using the Workbench, which can saved and run at a later time to perform a build).</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Use default build command</strong></td>
+			<td headers="description">When enabled, this option indicates that you want to use the default <strong>make</strong> command. When disabled, it indicates the use of a new <strong>make</strong> command. This option is only available when the <strong>Build type</strong> option is set to <strong>External</strong>.</td>
+		</tr>
+				<tr>
+			<td headers="option"><strong>Build command</strong></td>
+			<td headers="description">Specifies the default command used to start the build utility for your specific toolchain. Use this field if you want to use a build utility other than the default <strong>make</strong> command (when the <strong>Use default build command</strong> is not selected the field is active, and when you use an external builder or a custom makefile, you can provide your specific commands).</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Variables</strong></td>
+			<td headers="description">Opens the Select build variable dialog where you can add environment variables and custom variables to the build command.
+			<p><img img src="../images/prop_cbuild_selbldvar.png" alt="C/C++ Project Properties, C/C++ Build, Select build variable"></p>
+			<br>
+     	</tr>
+		<tr>
+			<td headers="option"><strong>Generate Makefiles automatically</strong></td>
+			<td headers="description">When selected, Eclipse changes between two different CDT modes: it either uses the customer's makefile for the build (referred to as a 'Standard Make project' in CDT 3.x) if one exists, or it generate makefiles for the user (called 'Managed build project' in CDT 3.x). By default, this option is automatically set.</td>
+		</tr>		
+		<tr>
+			<td headers="option"><strong>Expand Env. Variable Refs in Makefiles</strong></td>
+			<td headers="description">Defines whether environment variables ( ${xxx} ) should be expanded in makefile. By default, this option is automatically set.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Build directory</strong></td>
+			<td headers="description">Defines the location where the build operation takes place. This location will contain the generated artifacts from the build process. This option is disabled when the <strong>Generate Makefiles automatically</strong> option is enabled.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Workspace</strong></td>
+			<td headers="description">Opens the Folder Selection dialog where you can select a workspace location for the project. This is the directory that will contain the plug-ins and features to build, including any generated artifacts. This button is only visible when <strong>Generate makefiles automatically</strong> is set not selected.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>File system</strong></td>
+			<td headers="description">Opens the file system navigator where you can specify another file system to use. This button is only visible when <strong>Generate makefiles automatically</strong> is set not selected.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Variables</strong></td>
+			<td headers="description">Opens the Select build variable dialog where you can select a variable to specify as an argument for the build directory, or create and configure simple build variables which you can reference in build configurations that support variables. This button is only visible when <strong>Generate makefiles automatically</strong> is set not selected.</td>
+		</tr>
+		</tbody>
+</table>
+
+<p><img img src="../images/prop_cbuild2.png" alt="C/C++ Project Properties, C/C++ Build"></p>
+
+
+<table cellpadding="5" cellspacing="0" border="1" >
+	<br>
+		<caption><strong>Behaviour preferences</strong></caption>
+	<br>	
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody> 
+		<tr class="hidden">
+			<th id="option2">Option</th>
+			<th id="description2">Description</th>
+		</tr>
+		<tr>
+			<td headers="option2"><strong>Stop on first build error</strong></td>
+			<td headers="description2">Stops building when Eclipse encounters an error. 
+			<p><strong>Note:</strong> If this option is not selected, it is helpful for building large projects because it tells <strong>make</strong> to continue making other independent rules even when one rule fails.</p></td>
+		</tr>
+		<tr>
+			<td headers="option2"><strong>Use parallel build</strong></td>
+			<td headers="description2">When enabled, this option indicates the activation of the generation of parallel builds.
+			
+			<p>If you enable this option, you need to determine the number of parallel jobs to perform:</p>
+			<ul>
+				<li><strong>Use optimal jobs number</strong> - Lets the system determine the optimal number of parallel jobs to perform.</li>
+				<li><strong>Use parallel jobs</strong> - Lets you specify the maximum number of parallel jobs to perform.</li>
+			</ul>
+		</td>
+		</tr>
+		<tr>
+			<td headers="option2"><strong>Workbench build behavior</strong></td>
+			<td headers="description2">By default, the following settings are what the builder uses when instructed to build, rebuild, clean, and so on.  You can change these settings so that new projects can use different targets if these defaults are not appropriate.</td>
+		</tr>
+		<tr>
+			<td headers="option2"><strong>Build on resource save (Auto build)</strong></td>
+			<td headers="description2">When selected, builds your project whenever resources are saved. By default, this option is selected and builds occur automatically each time resources are modified. When this option is not selected, a build occurs only manually using a menu item. If you require more control over when builds occur (for example, when a build should wait until you finish a large assortment of changes), disable this option and manually invoke builds yourself.</td>
+		</tr>
+					<tr>
+			<td headers="option2"><strong>make build target</strong> ( for Build on resource save (Auto build))</td>
+			<td headers="description2">To build your project when resources are saved and change the default <strong>make</strong> build target, enable the <strong>Build on resource save (Auto Build)</strong> option, and specify a new build target in the <strong>Make build target</strong> field.</td>
+		</tr>
+		<tr>
+			<td headers="option2"><strong>Variables</strong></td>
+			<td headers="description2">Opens the Select build variable dialog where you can add variables to the build command.
+			<p><img img src="../images/prop_cbuild_selbldvar.png" alt="C/C++ Project Properties, C/C++ Build, Select build variable"></p>
+		</tr>		
+		<tr>
+			<td headers="option2"><strong>Build (Incremental build)</strong></td>
+			<td headers="description2">Defines what the builder calls when an incremental build is performed. When this option is enabled, an incremental build occurs meaning that only resources that have changed since the last build are considered. If this option is disabled, a full build occurs, meaning that all resources within the scope of the build are considered.
+			</td>
+		</tr>
+			<tr>
+			<td headers="option2"><strong>make build target</strong> (for Build (Incremental build))</td>
+			<td headers="description2">To change the build default <strong>make</strong> build target, enable the <strong>Build (Incremental build)</strong> option, and specify a new build target in the <strong>Make build target</strong> field.</td>
+			</td>
+		</tr>
+		<tr>
+			<td headers="option2"><strong>Variables</strong></td>
+			<td headers="description2">Opens the Select build variable dialog where you can add variables to the <strong>make build target</strong> command.</td>
+		</tr>
+		<tr>
+			<td headers="option2"><strong>Clean</strong></td>
+			<td headers="description2">Defines what the builder calls when a clean is performed. The <strong>make clean</strong> is defined in the <strong>makefile</strong>.</td>
+		</tr>
+        <tr>
+			<td headers="option2"><strong>make build target</strong> (for Clean)</td>
+			<td headers="description2">To change the rebuild default <strong>make</strong> build target, enable the <strong>Clean</strong> option, and specify a new build target in the <strong>Make build target</strong> field.</td>
+			</td>
+		</tr>
+		<tr>
+			<td headers="option2"><strong>Variables</strong></td>
+			<td headers="description2">Opens the Select build variable dialog where you can add variables to the <strong>make build target</strong> command.</td></td>
+		</tr>
+		</tbody>
+</table>
+
+
+<p><img src="../images/ngref.gif" alt="Related reference"
+ width="143" height="21"><br>
+
+<ul>
+<li><a href="cdt_u_prop_resource.htm">Project Properties, Resource page</a>
+<li><a href="cdt_u_prop_builders.htm">Project Properties, Builders page</a>
+<li><a href="cdt_u_prop_build.htm">Project Properties, C/C++ Build category</a>
+   <ul style="list-style-type: disc">
+   <li><a href="cdt_u_prop_build_discovery.htm">Discovery options page</a>
+   <li><a href="cdt_u_prop_build_environment.htm">Environment page</a>
+   <li>Settings page
+       <ul> 
+       <li><a href="cdt_u_prop_build_settings_tool.htm">     Tool Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_container.htm">Container Settings tab</a>
+       <li><a href="cdt_u_prop_build_settings_steps.htm">    Build Steps tab</a>
+       <li><a href="cdt_u_prop_build_settings_artifact.htm"> Build Artifact tab</a>
+       <li><a href="cdt_u_prop_build_settings_binparser.htm">Binary Parsers tab</a>
+       <li><a href="cdt_u_prop_build_settings_errparser.htm">Error Parsers tab</a>
+       </ul> 
+   <li><a href="cdt_u_prop_build_toolchain.htm">Tool chain editor page</a>
+   <li><a href="cdt_u_prop_build_variables.htm">Variables page</a>
+   </ul>
+<li>Project Properties, <a href="cdt_u_prop_general.htm">C/C++ General category</a>
+   <ul style="list-style-type: disc"> 
+   <li><a href="cdt_u_prop_general_doc.htm">Documentation page</a>
+   <li><a href="cdt_u_prop_general_typ.htm">File Types page</a>
+   <li><a href="cdt_u_prop_general_idx.htm">Indexer page</a>
+   <li><a href="cdt_u_prop_general_lng.htm">Language Mapping page</a>
+   <li>Paths and Symbols page
+       <ul>
+       <li><a href="cdt_u_prop_general_pns_inc.htm">Includes tab</a>
+       <li><a href="cdt_u_prop_general_pns_sym.htm">Symbols tab</a>
+       <li><a href="cdt_u_prop_general_pns_libpath.htm">Libraries path tab</a>
+       <li><a href="cdt_u_prop_general_pns_src.htm">Source Location tab</a>
+       <li><a href="cdt_u_prop_general_pns_ref.htm">References tab</a>
+       </ul>
+   </ul>
+<li><a href="cdt_u_prop_ref.htm">C/C++ Project Properties, Project References page</a>
+<li><a href="cdt_u_prop_refactoring_history.htm">C/C++ Project Properties, Refactoring History page</a>
+<li><a href="cdt_u_prop_rundebug.htm">C/C++ Project Properties, Run/Debug Settings page</a>
+</ul>
+</p>
+
+
+<p><img src="../images/intl_07.gif" ALT="Intel Copyright Statement" ></p>
+
+
+</div></body>
+
+</html>

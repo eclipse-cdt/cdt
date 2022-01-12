@@ -1,0 +1,6 @@
+update.id=org.eclipse.linuxtools.cdt.autotools.feature.group
+update.range=(0,$version$)
+provides.99.namespace=org.eclipse.equinox.p2.iu
+provides.99.name=org.eclipse.linuxtools.cdt.autotools.feature.group
+provides.99.version=$version$
+

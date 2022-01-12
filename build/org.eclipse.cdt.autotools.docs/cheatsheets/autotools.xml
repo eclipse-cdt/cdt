@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cheatsheet title="GNU Autotools Project">
+   <intro>
+      <description>
+         This cheatsheet will introduce the GNU Autotools plugin by importing an existing project that uses Autotools.
+      </description>
+   </intro>
+   <item title="Check out the test project" dialog="true" skip="false">
+      <description>
+      </description>
+      <subitem label="From the main menu, select File -&gt; Import ... -&gt; Projects from CVS." skip="false">
+         <command serialization="org.eclipse.ui.file.import(importWizardId=org.eclipse.team.cvs.ui.newProjectCheckout)" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="If the following repository does not already exist, create it by selecting &quot;Create a new repository location&quot;, pressing &quot;Next&quot;, and filling in the following information:  Host:  sourceware.org Repository path:  /cvs/eclipse User: &lt;anonymous&gt; Connection type:  pserver" skip="true">
+      </subitem>
+      <subitem label="Press Next to advance to CVS module selection." skip="false">
+      </subitem>
+      <subitem label="Choose &quot;Use an existing module&quot; and open &quot;autotools&quot; and select &quot;sources&quot; in the populated list of projects." skip="false">
+      </subitem>
+      <subitem label="Press Next." skip="false">
+      </subitem>
+      <subitem label="Ensure &quot;Check out as a project configured using the New Project wizard&quot; is selected." skip="false">
+      </subitem>
+      <subitem label="Press Finish." skip="false">
+      </subitem>
+      <subitem label="Select C/C++ -&gt; C Project" skip="false">
+      </subitem>
+      <subitem
+            label="Within the C Project dialog, open the GNU Autotools category in the tree view and select &quot;Empty Project&quot;">
+      </subitem>
+      <subitem label="Give the project a name.  For this example, choose &quot;sources&quot;." skip="false">
+      </subitem>
+      <subitem label="Press Next." skip="false">
+      </subitem>
+      <subitem label="Press Finish." skip="false">
+      </subitem>
+      <subitem label="If asked to switch to C/C++ Perspective, select ok and choose to default this behavior" skip="false">
+      </subitem>
+   </item>
+   <item title="Build Project">
+      <description>
+      </description>
+      <subitem
+            label="Navigate to the project in the Project Explorer view by selecting the &quot;sources&quot; project you just created.">
+      </subitem>
+      <subitem
+            label="Open the Project pull-down from the main menu">
+      </subitem>
+      <subitem
+            label="If &quot;Build Automatically&quot; is not checked, select &quot;Build Project&quot;">
+      </subitem>
+   </item>
+   <item title="View build output" dialog="true" skip="false">
+      <description>
+         In the Console view, there is a button entitled &quot;Display Selected Console&quot;.  Its icon depicts a monitor with two lines of text on it.  Pressing this button will drop down to show all available consoles.  At this point, you should have three consoles:  one for configure output (&quot;Configure&quot;), one for build output (&quot;C-Build&quot;), and one for the binary output that you just ran (&quot;&lt;terminated&gt; sources ...&quot;).
+      </description>
+      <subitem label="View configure output by selecting the Configure console in the drop-down list." skip="false">
+      </subitem>
+      <subitem label="View build output by selecting the &quot;C-Build&quot; console in the drop-down list." skip="false">
+      </subitem>
+   </item>
+   <item title="Run the Hello World binary" dialog="true" skip="false">
+      <description>
+      </description>
+      <subitem label="Navigate to the project in the Project Explorer view by selecting the &quot;sources&quot; project you just created." skip="false">
+      </subitem>
+      <subitem label="Open the project by toggling the arrow to the left of the project name if it is not already open." skip="true">
+      </subitem>
+      <subitem label="Expand the &quot;Binaries&quot; virtual folder under the project." skip="false">
+      </subitem>
+      <subitem label="Select the binary itself.  This will be called &quot;a.out&quot; if you followed the example." skip="false">
+      </subitem>
+      <subitem label="Right-click on the binary itself and select &quot;Run As&quot; -&gt; &quot;Local C/C++ Application&quot;." skip="false">
+      </subitem>
+      <subitem label="Select &quot;gdb Debugger&quot; (the default) in the &quot;Launch Debug Configuration Selection&quot; dialog." skip="false">
+      </subitem>
+      <subitem label="Press OK." skip="false">
+      </subitem>
+   </item>
+   <item title="View output" dialog="true" skip="false">
+      <description>
+         The output of the program should be displayed in the Console view which should be one of the tabs visible in the bottom of the IDE.  If you made no modifications, it should read &quot;hello world&quot;.
+      </description>
+   </item>
+   <item title="Modify configure options" dialog="true" skip="false">
+      <description>
+      </description>
+      <subitem label="Select the project &quot;sources&quot; if it is not already selected in the Project Explorer." skip="false">
+      </subitem>
+      <subitem label="From the main menu, select Project -&gt; Properties." skip="false">
+      </subitem>
+      <subitem label="Expand &quot;Autotools&quot; and select &quot;Configure Settings&quot;." skip="false">
+      </subitem>
+      <subitem label="Under &quot;configure&quot;, select &quot;Advanced&quot;." skip="false">
+      </subitem>
+      <subitem label="In the &quot;Additional command-line options&quot; text box, enter &quot;--enable-option-x&quot;." skip="false">
+      </subitem>
+      <subitem label="Press OK." skip="false">
+      </subitem>
+   </item>
+   <item title="Finished!" dialog="true" skip="false">
+      <description>
+         <b>Congratulations!</b>
+You now have a simple GNU autotools project.
+      </description>
+   </item>
+</cheatsheet>

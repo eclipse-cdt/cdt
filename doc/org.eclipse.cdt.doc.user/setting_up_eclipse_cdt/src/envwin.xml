@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<section xmlns="http://docbook.org/ns/docbook" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:ns5="http://www.w3.org/1998/Math/MathML" xmlns:ns4="http://www.w3.org/1999/xhtml" xmlns:ns3="http://www.w3.org/2000/svg" xmlns:ns="http://docbook.org/ns/docbook" version="5.0" xsi:schemaLocation="http://docbook.org/ns/docbook http://www.docbook.org/xml/5.0/xsd/docbook.xsd" xml:id="envwin" xml:lang="en-US">
+  <title>Environment Variables</title>
+  <para>The next thing you need to do is set up your Path environment
+  variable. </para>
+  <para>On Windows 2000/XP, right-click on <computeroutput>My
+  Computer</computeroutput> and select
+  <computeroutput>Properties</computeroutput>. Then, select the
+  <computeroutput>Advanced</computeroutput> tab. There should be a button
+  called <computeroutput>Environment Variables</computeroutput>.</para>
+  <figure xml:id="systemproperties2k">
+    <title>Finding Environment Variables (Windows 2000)</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="systemproperties.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <figure xml:id="systempropertiesxp">
+    <title>Finding Environment Variables (Windows XP)</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="systempropertiesxp.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>In Windows Vista / Windows 7, Click on the Windows Logo, right click
+  on Computer, select Properties</para>
+  <figure xml:id="systempropertiesw7">
+    <title>Computer properties in Windows Vista / Windows 7</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="systempropertiesw71.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+    <para>In the control panel, select "Advances system settings"</para>
+  </figure>
+  <figure xml:id="systempropertiesw7_2">
+    <title>Finding the System Properties in Winows Vista / Winows 7</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="systempropertiesw72.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>Finally, click on "Environment Variables"</para>
+  <figure xml:id="environmentw7">
+    <title>Environment Variables in Windows Vista / Windows 7</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="systempropertiesw73.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>In the environment variables, there are two sections, one for the
+  local user (you) and one for the system. Depending on whether you want the
+  paths to be set for everyone, or for you, do one of the following:</para>
+  <para>
+    <emphasis>Warning: I had reports of people deleting their existing
+  Path environment variable! Please be very careful when editing an existing
+  value! By default, Windows has the whole line selected, resulting in
+  overwriting what was in there!</emphasis>
+  </para>
+  <para>If you want to set it for everyone, look for the variable
+  <computeroutput>Path</computeroutput> in the section <computeroutput>System
+  variables</computeroutput>. Click <computeroutput>Edit</computeroutput>.
+  There should already be some text in there, append
+  <command>;C:\MinGW\bin;C:\MinGW\msys\1.0\bin;</command> (or your appropriate
+  paths, e.g. <command>;C:\msys\1.0\bin;C:\mingw\bin</command> if you
+  installed MinGW 5 / MSys 1.0.11) to it, and select
+  <computeroutput>OK</computeroutput> multiple times. Please make sure that
+  you do not overwrite what was in there!</para>
+  <para>If you just want to set it for you, look for
+  <computeroutput>Path</computeroutput> in the upper section. It is very
+  likely not there yet. So select <computeroutput>New...</computeroutput> and
+  enter <command>C:\MinGW\bin;C:\MinGW\msys\1.0\bin</command> (or your
+  appropriate paths, see paragraph above). Then select
+  <computeroutput>OK</computeroutput> multiple times. Again, if there was a
+  setting before, do not delete it, but rather append your path!</para>
+  <figure xml:id="settingenvironment">
+    <title>Setting the Environment variables</title>
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="systempropertiesw74.png"/>
+        </imageobject>
+      </mediaobject>
+    </screenshot>
+  </figure>
+  <para>There seems to be a problem with a very long PATH environment variable
+  on some systems. According to reports, Eclipse will fail to compile and
+  build, where as compiling and building from a command window may work fine.
+  In this case, try to prepend the path to MinGW and MSYS rather than
+  appending it.</para>
+  <para>Congratulations. Now you have a complier and make set up on your
+  computer. Continue with <xref linkend="eclipse"/>.</para>
+  <para>Checkpoint: Open up a command terminal (cmd) and type:</para>
+  <programlisting>make --version
+g++ --version
+gcc --version</programlisting>
+  <para>Each one of these should work now. If not, you have either not
+  installed MSYS correctly or not set your path environment variable. Also,
+  try logging out and back in.</para>
+</section>

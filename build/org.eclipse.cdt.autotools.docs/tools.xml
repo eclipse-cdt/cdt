@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+
+<toc label="GNU Tools On-line Documentation">
+        <topic label="gcc"  href="https://gcc.gnu.org/onlinedocs/"/>
+        <topic label="binutils" href="https://sourceware.org/binutils/docs/"/>
+        <topic label="autoconf" href="https://www.gnu.org/software/autoconf/manual/html_node/index.html"/>
+        <topic label="automake" href="https://www.gnu.org/software/automake/manual/html_node/index.html"/>
+        <topic label="pkg-config" href="https://people.freedesktop.org/~dbn/pkg-config-guide.html"/>
+ <anchor id="moregnutools"/>
+</toc>

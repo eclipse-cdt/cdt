@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<template type="TestTemplate" version="1.0" supplier="Symbian" revision="1.0" author="Symbian"
+		id="??" label="ExcludeResources test" description="Testing Template Engines ExcludeResources Process"
+		 help="help.html">
+
+	<process type="org.eclipse.cdt.managedbuilder.core.NewManagedProject">
+		<simple name="name" value="$(projectName)" /> 
+		<simple name="location" value="$(location)" />
+		<simple name="artifactExtension" value="exe" />
+		<simple name="isCProject" value="false" />
+	</process>
+
+	<process type="org.eclipse.cdt.core.AddFiles">
+		<simple name="projectName" value="$(projectName)"/>
+		<complex-array name="files">
+			<element>
+				<simple name="source" value="Basename.h"/>
+				<simple name="target" value="$(baseName0).h"/>
+				<simple name="replaceable" value="true"/>
+			</element>
+			<element>
+				<simple name="source" value="Basename.cpp"/>
+				<simple name="target" value="$(baseName0).cpp"/>
+				<simple name="replaceable" value="true"/>
+			</element>
+			<element>
+				<simple name="source" value="Basename.h"/>
+				<simple name="target" value="$(baseName1).h"/>
+				<simple name="replaceable" value="true"/>
+			</element>
+			<element>
+				<simple name="source" value="Basename.cpp"/>
+				<simple name="target" value="$(baseName1).cpp"/>
+				<simple name="replaceable" value="true"/>
+			</element>
+			<element>
+				<simple name="source" value="Basename.h"/>
+				<simple name="target" value="$(baseName2).h"/>
+				<simple name="replaceable" value="true"/>
+			</element>
+			<element>
+				<simple name="source" value="Basename.cpp"/>
+				<simple name="target" value="$(baseName2).cpp"/>
+				<simple name="replaceable" value="true"/>
+			</element>
+		</complex-array>
+	</process>
+
+	<process type="org.eclipse.cdt.managedbuilder.core.ExcludeResources">
+        <simple name="projectName" value="$(projectName)"/>
+        <simple name="configIdPattern" value="$(configIdPattern)"/>
+		<simple-array name="filePatterns">
+			<element value="$(filePatterns0)"/>
+		</simple-array>
+        <simple name="invertConfigMatching" value="false"/>
+	</process>
+
+	<process type="org.eclipse.cdt.managedbuilder.core.ExcludeResources">
+        <simple name="projectName" value="$(projectName)"/>
+        <simple name="configIdPattern" value="$(configIdPattern)"/>
+		<simple-array name="filePatterns">
+			<element value="$(filePatterns1)"/>
+		</simple-array>
+        <simple name="invertConfigMatching" value="true"/>
+	</process>
+
+</template>
+

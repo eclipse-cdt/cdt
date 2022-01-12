@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>GDB Debugging Preferences</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+<body>
+
+<div role="main"><h1>GDB Debugging Preferences</h1>
+
+<p>Use this preferences panel to control how the CDT debugger behaves when debugging with GDB, 
+specifically when using a <em>GDB (DSF)</em> launcher. 
+<p><img src="../images/cdt_dsfgdb_preferences_page.png"  alt="GDB preferences panel"></p>
+
+
+<p><table border="1" cellpadding="4" cellspacing="0" width="700px" bordercolor="#DDDDDD" >
+	<caption><strong>GDB Preference Panel Options</strong></caption>
+	<colgroup>
+		<col width="20%" valign="top" >
+		<col width="30%" valign="top" >
+		<col width="50%" valign="top" >
+	</colgroup>
+ 	<tr>
+		<th id="category">Category</th>	
+		<th id="option">Option</th>	
+		<th id="description">Description</th>
+	</tr>
+
+	<! -------------------------------------------------------------------------------------------------- >
+	<! ----------------------------- Debug Configurations Defaults Category ----------------------------- >
+	<! -------------------------------------------------------------------------------------------------- >
+
+	<tr>
+		<td rowspan=6 valign="top" headers="category"><strong>Debug Configurations Defaults</strong></td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>GDB debugger</strong></td>
+		<td valign="top" headers="description">Specifies the GDB debugger binary that will be used by default for each 
+		newly created debug launch.  Using an absolute path will directly point to the binary (e.g, /home/user/myGdb), 
+		while using a binary name will have CDT look through the PATH variable for that binary (e.g., myGdb).  This can
+		be useful of your GDB binary is not named 'gdb'.  Each launch configuration allows to override this setting in
+		the Debugger tab.</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>GDB command file</strong></td>
+		<td valign="top" headers="description">Specifies the GDB debugger command file that will be used by default for each 
+		newly created debug launch.  This can be useful if you often/always want to use a GDB command file for your launches.
+		Each launch configuration allows to override this setting in the Debugger tab.</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Stop on startup</strong></td>
+		<td valign="top" headers="description">When checked, the CDT debugger will stop execution at the specified symbol when
+		launching or re-starting a process.  By default, this setting makes the CDT debugger stop when entering 'main'.</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Command timeout</strong></td>
+		<td valign="top" headers="description">When checked, the CDT debugger will abort the debug session if any command sent 
+		to GDB does not get an answer before the specified timeout.  Using this can prevent debug sessions from hanging forever 
+		when debugging un-reliable targets.
+		<p>
+		Using the <em>Advanced...</em> button allows to set a different timeout for individual commands.  A value of zero can be
+		used to specify "no timeout" for a particular command.  MI commands must start with a hyphen ('-').  
+		For example, '-target-select'.</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Non-stop mode</strong></td>
+		<td valign="top" headers="description">When checked, the CDT debugger will run in non-stop mode for each newly created 
+		debug launch.  <em>Non-stop</em> mode allows each thread of a debug session to be controlled independently. This allows to stop 
+		one or more threads while leaving others running. In contrast, <em>all-stop</em> mode interrupts and resumes all threads at the
+		same time.  Note that <em>non-stop</em> mode is only available starting with GDB 7.0.</td>
+	</tr>
+
+	<! -------------------------------------------------------------------------------------------------- >
+	<! ------------------------------------ General Behavior Category ----------------------------------- >
+	<! -------------------------------------------------------------------------------------------------- >
+	
+	<tr>
+		<td rowspan=7 valign="top" headers="category"><strong>General Behavior</strong></td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Terminate GDB when last process exits</strong></td>
+		<td valign="top" headers="description">When checked, the CDT debugger will terminate the GDB
+		process (on the host) after all the target processes it is debugging have terminated. Otherwise it 
+		will leave it running.  It can be useful to keep GDB running if you expect to want to attach or create
+		new processes to debug after the previously debugged processes have terminated.</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Use enhanced debug hover</strong></td>
+		<td valign="top" headers="description">When checked, hovering over an expression in the editor during a 
+		debug session will bring up an <em>enhanced</em> expression evaluation control. Otherwise, a more basic 
+		control is used. This, of course, assumes that you have the debugger's hovering capability turned on in 
+		C/C++ > Editor > Hovers. If not, this checkbox has no effect.<br>
+			<img src="../images/cdt_debug_hover_modes.png"  alt="debug hover modes"></td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Show only suspended threads in the Debug view</strong></td>
+		<td valign="top" headers="description">When checked, the Debug view will only show threads that are suspended.
+		When dealing with a large number of threads, this helps focus on the threads being inspected.  Obviously, 
+		this option is only valuable in <em>non-stop</em> mode, where some threads can run while others are stopped.</td>
+	</tr>	
+	<tr>
+		<td valign="top" headers="option"><strong>Use aggressive breakpoint filtering</strong></td>
+		<td valign="top" headers="description">When checked, the button "Show Breakpoints Supported by Selected Target"
+		of the Breakpoints view will only show the breakpoints that affect the currently selected C/C++ debug context 
+		(e.g., thread, process).  Otherwise, "Show Breakpoints Supported by Selected Target" will show all breakpoints
+		that are for any C/C++ target.<p>
+			<img src="../images/cdt_debug_bp_filter.png"  alt="Show Breakpoints Supported by Selected Target button"></td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Enable GDB traces</strong></td>
+		<td valign="top" headers="description">When checked, the debug session will produce an additional console which 
+		will contain all the gdb/mi activity. Basically, this details the interaction between the CDT debugger and GDB. 
+		This information is often critical when the debugger is not behaving as you expect. Include this console output
+		when submitting a bugzilla report against the CDT debugger.  It is recommended to keep this setting enabled at 
+		all times, as it does not cause any negative effect.
+		<p>
+		Once the number of characters specified by the <em>limit</em> field is reached, older trace lines will be discarded
+		gradually.  This is to avoid these traces consuming too much memory, for very long debug sessions.</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Display run-time type of variables</strong></td>
+		<td valign="top" headers="description">When checked, the CDT debugger will show the actual variable type (not the 
+		declared one) in Variables and Expressions views.  Not only does this allow to see what is the current run-time
+		type of a variable, but it allows to access fields that may not be in the base class.
+		Note that this feature will only work starting with GDB 7.5.</td>
+	</tr>
+
+	<! -------------------------------------------------------------------------------------------------- >
+	<! ----------------------------------- Pretty Printing Category ------------------------------------- >
+	<! -------------------------------------------------------------------------------------------------- >
+
+	<tr>
+		<td rowspan=3 valign="top" headers="category"><strong>Pretty Printing</strong></td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>Enable pretty printers in variable/expression tree</strong></td>
+		<td valign="top" headers="description">When checked, the CDT Debugger will display STL types in a user-friendly
+		fashion.  This can be seen in the Variables and Expressions views, as well as in the advanced editor hover.
+		For example, Maps, Lists and Vectors will be shown in an array-style format instead of showing the
+		details of the actual implementation of the data struture.  Note that <em>pretty printing</em> requires a GDB that
+		has python support enabled and the user of STL pretty-printers.</td>
+	</tr>
+	<tr>
+		<td valign="top" headers="option"><strong>For collections, initially limit child count to</strong></td>
+		<td valign="top" headers="description">When using pretty printing, collections (e.g., Maps, Lists, etc) can contain
+		a large number of elements.  Trying to display all this children at once can cause very poor responsiveness.  This
+		value will limit the number of children displayed initially, while allowing the user to manually request more
+		children directly from the view.</td>
+	</tr>	
+</table>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21"> <br>
+<hr >
+<p><img src="../images/ng00_04a.gif" ALT="IBM Copyright Statement" ></p>
+
+</div></body>
+
+</html>

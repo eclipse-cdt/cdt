@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            category="org.eclipse.cdt.ui.views"
+            class="org.eclipse.cdt.codan.ui.cfgview.views.ControlFlowGraphView"
+            icon="icons/decision.png"
+            id="org.eclipse.cdt.codan.ui.cfgview.views.ControlFlowGraphView"
+            name="Control Flow Graph">
+      </view>
+   </extension>
+
+</plugin>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<template type="TestTemplate" version="1.0" supplier="Symbian" revision="1.0" author="Symbian"
+		id="??" label="Create Resource Identifier test" description="CreateResourceIdentifier test"
+		 help="help.html">
+
+	<process type="org.eclipse.cdt.core.CreateResourceIdentifier">
+        <simple name="valueName"  value="$(valueName1)"/>
+        <simple name="appName"  value="$(appName1)"/>
+	</process>
+	
+	<process type="org.eclipse.cdt.core.CreateResourceIdentifier">
+        <simple name="valueName"  value="$(valueName2)"/>
+        <simple name="appName"  value="$(appName2)"/>
+	</process>
+	
+	<process type="org.eclipse.cdt.core.AddFile">
+		<simple name="projectName" value="$(projectName)"/>
+        <complex name="file">
+				<simple name="source" value="Basename.cpp"/>
+				<simple name="target" value="$(baseName1).cpp"/>
+				<simple name="replaceable" value="true"/>
+        </complex>
+	</process>
+
+	<process type="org.eclipse.cdt.core.AddFile">
+		<simple name="projectName" value="$(projectName)"/>
+        <complex name="file">
+				<simple name="source" value="Basename.cpp"/>
+				<simple name="target" value="$(baseName2).cpp"/>
+				<simple name="replaceable" value="true"/>
+        </complex>
+	</process>
+
+</template>
+

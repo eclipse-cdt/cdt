@@ -1,0 +1,603 @@
+/*******************************************************************************
+ * Copyright (c) 2004, 2015 IBM Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     IBM Corporation - initial implementation
+ *     Markus Schorn (Wind River Systems)
+ *     Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+ *     Anton Leherbauer (Wind River Systems)
+ *     Richard Eames
+ *******************************************************************************/
+package org.eclipse.cdt.internal.core.parser.scanner;
+
+import java.util.ArrayList;
+
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.core.parser.util.CharArrayMap;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+
+/**
+ * Used to evaluate expressions in preprocessor directives.
+ */
+public class ExpressionEvaluator {
+	public static class EvalException extends Exception {
+		private int fProblemID;
+		private char[] fProblemArg;
+
+		private EvalException(int problemID, char[] problemArg) {
+			fProblemID = problemID;
+			fProblemArg = problemArg;
+		}
+
+		public int getProblemID() {
+			return fProblemID;
+		}
+
+		public char[] getProblemArg() {
+			return fProblemArg;
+		}
+	}
+
+	private Token fTokens;
+	private CharArrayMap<PreprocessorMacro> fDictionary;
+	private ArrayList<IASTName> fMacrosInDefinedExpressions = new ArrayList<>();
+	private LocationMap fLocationMap;
+	private CPreprocessor fPreprocessor;
+
+	ExpressionEvaluator(CPreprocessor preprocessor) {
+		fPreprocessor = preprocessor;
+	}
+
+	public boolean evaluate(TokenList condition, CharArrayMap<PreprocessorMacro> macroDictionary, LocationMap map)
+			throws EvalException {
+		fTokens = condition.first();
+		fDictionary = macroDictionary;
+		fLocationMap = map;
+		fMacrosInDefinedExpressions.clear();
+		return expression() != 0;
+	}
+
+	public IASTName[] clearMacrosInDefinedExpression() {
+		IASTName[] result = fMacrosInDefinedExpressions.toArray(new IASTName[fMacrosInDefinedExpressions.size()]);
+		fMacrosInDefinedExpressions.clear();
+		return result;
+	}
+
+	private long expression() throws EvalException {
+		return conditionalExpression();
+	}
+
+	private long conditionalExpression() throws EvalException {
+		long r1 = logicalOrExpression();
+		if (LA() == IToken.tQUESTION) {
+			consume();
+			long r2 = expression();
+			if (LA() == IToken.tCOLON) {
+				consume();
+			} else {
+				throw new EvalException(IProblem.SCANNER_BAD_CONDITIONAL_EXPRESSION, null);
+			}
+			long r3 = conditionalExpression();
+			return r1 != 0 ? r2 : r3;
+		}
+		return r1;
+	}
+
+	private long logicalOrExpression() throws EvalException {
+		long r1 = logicalAndExpression();
+		while (LA() == IToken.tOR) {
+			consume();
+			long r2 = logicalAndExpression();
+			r1 = ((r1 != 0) || (r2 != 0)) ? 1 : 0;
+		}
+		return r1;
+	}
+
+	private long logicalAndExpression() throws EvalException {
+		long r1 = inclusiveOrExpression();
+		while (LA() == IToken.tAND) {
+			consume();
+			long r2 = inclusiveOrExpression();
+			r1 = ((r1 != 0) && (r2 != 0)) ? 1 : 0;
+		}
+		return r1;
+	}
+
+	private long inclusiveOrExpression() throws EvalException {
+		long r1 = exclusiveOrExpression();
+		while (LA() == IToken.tBITOR) {
+			consume();
+			long r2 = exclusiveOrExpression();
+			r1 = r1 | r2;
+		}
+		return r1;
+	}
+
+	private long exclusiveOrExpression() throws EvalException {
+		long r1 = andExpression();
+		while (LA() == IToken.tXOR) {
+			consume();
+			long r2 = andExpression();
+			r1 = r1 ^ r2;
+		}
+		return r1;
+	}
+
+	private long andExpression() throws EvalException {
+		long r1 = equalityExpression();
+		while (LA() == IToken.tAMPER) {
+			consume();
+			long r2 = equalityExpression();
+			r1 = r1 & r2;
+		}
+		return r1;
+	}
+
+	private long equalityExpression() throws EvalException {
+		long r1 = relationalExpression();
+		for (int t = LA(); t == IToken.tEQUAL || t == IToken.tNOTEQUAL; t = LA()) {
+			consume();
+			long r2 = relationalExpression();
+			if (t == IToken.tEQUAL) {
+				r1 = (r1 == r2) ? 1 : 0;
+			} else {
+				// t == tNOTEQUAL
+				r1 = (r1 != r2) ? 1 : 0;
+			}
+		}
+		return r1;
+	}
+
+	private long relationalExpression() throws EvalException {
+		long r1 = shiftExpression();
+		for (int t = LA(); t == IToken.tLT || t == IToken.tLTEQUAL || t == IToken.tGT || t == IToken.tGTEQUAL
+				|| t == IToken.tASSIGN; t = LA()) {
+			consume();
+			long r2 = shiftExpression();
+			switch (t) {
+			case IToken.tLT:
+				r1 = (r1 < r2) ? 1 : 0;
+				break;
+			case IToken.tLTEQUAL:
+				r1 = (r1 <= r2) ? 1 : 0;
+				break;
+			case IToken.tGT:
+				r1 = (r1 > r2) ? 1 : 0;
+				break;
+			case IToken.tGTEQUAL:
+				r1 = (r1 >= r2) ? 1 : 0;
+				break;
+			case IToken.tASSIGN:
+				throw new EvalException(IProblem.SCANNER_ASSIGNMENT_NOT_ALLOWED, null);
+			}
+		}
+		return r1;
+	}
+
+	private long shiftExpression() throws EvalException {
+		long r1 = additiveExpression();
+		for (int t = LA(); t == IToken.tSHIFTL || t == IToken.tSHIFTR; t = LA()) {
+			consume();
+			long r2 = additiveExpression();
+			if (t == IToken.tSHIFTL) {
+				r1 = r1 << r2;
+			} else {
+				// t == tSHIFTR
+				r1 = r1 >> r2;
+			}
+		}
+		return r1;
+	}
+
+	private long additiveExpression() throws EvalException {
+		long r1 = multiplicativeExpression();
+		for (int t = LA(); t == IToken.tPLUS || t == IToken.tMINUS; t = LA()) {
+			consume();
+			long r2 = multiplicativeExpression();
+			if (t == IToken.tPLUS) {
+				r1 = r1 + r2;
+			} else {
+				// t == tMINUS
+				r1 = r1 - r2;
+			}
+		}
+		return r1;
+	}
+
+	private long multiplicativeExpression() throws EvalException {
+		long r1 = unaryExpression();
+		for (int t = LA(); t == IToken.tSTAR || t == IToken.tDIV || t == IToken.tMOD; t = LA()) {
+			consume();
+			long r2 = unaryExpression();
+			if (t == IToken.tSTAR) {
+				r1 = r1 * r2;
+			} else if (r2 != 0) {
+				if (t == IToken.tDIV) {
+					r1 = r1 / r2;
+				} else {
+					r1 = r1 % r2; //tMOD
+				}
+			} else {
+				throw new EvalException(IProblem.SCANNER_DIVIDE_BY_ZERO, null);
+			}
+		}
+		return r1;
+	}
+
+	private long unaryExpression() throws EvalException {
+		switch (LA()) {
+		case IToken.tPLUS:
+			consume();
+			return unaryExpression();
+		case IToken.tMINUS:
+			consume();
+			return -unaryExpression();
+		case IToken.tNOT:
+			consume();
+			return unaryExpression() == 0 ? 1 : 0;
+		case IToken.tBITCOMPLEMENT:
+			consume();
+			return ~unaryExpression();
+		case IToken.tCHAR:
+		case IToken.tLCHAR:
+		case IToken.tUTF16CHAR:
+		case IToken.tUTF32CHAR:
+		case IToken.tINTEGER:
+			long val = getValue(fTokens);
+			consume();
+			return val;
+		case IToken.t_true:
+			consume();
+			return 1;
+		case IToken.t_false:
+			consume();
+			return 0;
+		case CPreprocessor.tDEFINED:
+			return handleDefined();
+		case CPreprocessor.t__HAS_FEATURE:
+			return handleHasFeature();
+		case CPreprocessor.t__HAS_INCLUDE:
+			return handleHasInclude(false);
+		case CPreprocessor.t__HAS_INCLUDE_NEXT:
+			return handleHasInclude(true);
+		case IToken.tLPAREN:
+			consume();
+			long r1 = expression();
+			if (LA() == IToken.tRPAREN) {
+				consume();
+				return r1;
+			}
+			throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null);
+		case IToken.tIDENTIFIER:
+			consume();
+			return 0;
+		// 16.1.4 alternate keywords are not replaced by a 0
+		case IToken.tAND:
+		case IToken.tOR:
+		case IToken.tBITOR:
+		case IToken.tBITORASSIGN:
+		case IToken.tXOR:
+		case IToken.tXORASSIGN:
+		case IToken.tAMPER:
+		case IToken.tAMPERASSIGN:
+		case IToken.tSTRING:
+		case IToken.tLSTRING:
+		case IToken.tUTF16STRING:
+		case IToken.tUTF32STRING:
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+
+		default:
+			// 16.1.4 keywords are replaced by 0
+			final char[] image = fTokens.getCharImage();
+			if (image.length > 0) {
+				final char c = image[0];
+				if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || c == '@')
+					return 0;
+			}
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+	}
+
+	private long handleDefined() throws EvalException {
+		boolean parenthesis = false;
+		consume();
+		if (LA() == IToken.tLPAREN) {
+			parenthesis = true;
+			consume();
+		}
+		if (LA() != IToken.tIDENTIFIER) {
+			throw new EvalException(IProblem.SCANNER_ILLEGAL_IDENTIFIER, null);
+		}
+		final char[] macroName = fTokens.getCharImage();
+		PreprocessorMacro macro = fDictionary.get(macroName);
+		int result = macro != null ? 1 : 0;
+		if (macro == null)
+			macro = new UndefinedMacro(macroName);
+
+		fMacrosInDefinedExpressions
+				.add(fLocationMap.encounterDefinedExpression(macro, fTokens.getOffset(), fTokens.getEndOffset()));
+		consume();
+		if (parenthesis) {
+			if (LA() != IToken.tRPAREN) {
+				throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null);
+			}
+			consume();
+		}
+		return result;
+	}
+
+	private long handleHasFeature() throws EvalException {
+		consume(); // '__has_feature'
+		if (LA() != IToken.tLPAREN) {
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+		consume(); // opening parenthesis
+		if (LA() != IToken.tIDENTIFIER) {
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+		final char[] featureName = fTokens.getCharImage();
+		boolean supported = fPreprocessor.getSupportedFeatures().contains(new String(featureName));
+		consume(); // feature name token
+		if (LA() != IToken.tRPAREN) {
+			throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null);
+		}
+		consume(); // closing parenthesis
+		return supported ? 1 : 0;
+	}
+
+	private long handleHasInclude(boolean isIncludeNext) throws EvalException {
+		consume(); // '__has_include'
+		if (LA() != IToken.tLPAREN) {
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+		consume(); // opening parenthesis
+
+		// We don't have a tSYSTEM_HEADER_NAME or tQUOTED_HEADER_NAME token type here, these only get created when
+		// executing an include directive. In the case of a tSTRING, we only have to extract the header name from the
+		// quotes (extractHeaderName) but for system header, we have to reassemble the string by concatenating the
+		// tokens.
+		// A possibly more elegant solution could be to generate tSYSTEM_HEADER_NAME or tQUOTED_HEADER_NAME (during
+		// internalFetchToken?) but this is more ambitious and intrusive (more refactoring), especially considering
+		// various cases like macro expansion.
+		String headerName;
+		boolean quoteInclude = false;
+		if (LA() == IToken.tLT) {
+			headerName = ""; //$NON-NLS-1$
+			while (fTokens.getType() != IToken.tGT) {
+				if (fTokens.getType() == IToken.tEND_OF_INPUT) {
+					throw new EvalException(IProblem.SCANNER_UNBOUNDED_STRING, null);
+				}
+				headerName += fTokens.getImage();
+				consume();
+			}
+			consume();
+			headerName += ">"; //$NON-NLS-1$
+			headerName = new String(fPreprocessor.extractHeaderName(headerName.toCharArray(), '<', '>', new int[2]));
+		} else if (LA() == IToken.tSTRING) {
+			quoteInclude = true;
+			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '"', '"', new int[2]));
+			consume();
+		} else {
+			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
+		}
+
+		if (LA() != IToken.tRPAREN) {
+			throw new EvalException(IProblem.SCANNER_MISSING_R_PAREN, null);
+		}
+		consume(); // closing parenthesis
+
+		boolean includePathExists = fPreprocessor.findInclusion(headerName, quoteInclude, isIncludeNext) != null;
+		return includePathExists ? 1 : 0;
+	}
+
+	private int LA() {
+		return fTokens.getType();
+	}
+
+	private void consume() {
+		fTokens = (Token) fTokens.getNext();
+		if (fTokens == null) {
+			fTokens = new Token(IToken.tEND_OF_INPUT, null, 0, 0);
+		}
+	}
+
+	long getValue(Token t) throws EvalException {
+		switch (t.getType()) {
+		case IToken.tCHAR:
+			return getChar(t.getCharImage(), 1);
+		case IToken.tLCHAR:
+		case IToken.tUTF16CHAR:
+		case IToken.tUTF32CHAR:
+			return getChar(t.getCharImage(), 2);
+		case IToken.tINTEGER:
+			return getNumber(t.getCharImage());
+		}
+		assert false;
+		return 1;
+	}
+
+	public static long getNumber(char[] image) throws EvalException {
+		// Integer constants written in binary are a non-standard extension
+		// supported by GCC since 4.3 and by some other C compilers
+		// They consist of a prefix 0b or 0B, followed by a sequence of 0 and 1 digits
+		// see http://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html
+
+		if (image.length > 1) {
+			if (image[0] == '0') {
+				switch (image[1]) {
+				case 'b':
+				case 'B':
+					return getNumber(image, 2, image.length, 2, IProblem.SCANNER_BAD_BINARY_FORMAT);
+
+				case 'x':
+				case 'X':
+					return getNumber(image, 2, image.length, 16, IProblem.SCANNER_BAD_HEX_FORMAT);
+
+				case '0':
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					return getNumber(image, 1, image.length, 8, IProblem.SCANNER_BAD_OCTAL_FORMAT);
+				}
+			}
+		}
+
+		return getNumber(image, 0, image.length, 10, IProblem.SCANNER_BAD_DECIMAL_FORMAT);
+	}
+
+	public static long getChar(char[] tokenImage, int i) throws EvalException {
+		if (i >= tokenImage.length) {
+			throw new EvalException(IProblem.SCANNER_BAD_CHARACTER, tokenImage);
+		}
+		final char c = tokenImage[i];
+		if (c != '\\') {
+			return c;
+		}
+
+		if (++i >= tokenImage.length) {
+			throw new EvalException(IProblem.SCANNER_BAD_CHARACTER, tokenImage);
+		}
+		final char d = tokenImage[i];
+		switch (d) {
+		case '\\':
+		case '"':
+		case '\'':
+			return d;
+		case 'a':
+			return 7;
+		case 'b':
+			return '\b';
+		case 'f':
+			return '\f';
+		case 'n':
+			return '\n';
+		case 'r':
+			return '\r';
+		case 't':
+			return '\t';
+		case 'v':
+			return 0xb;
+
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+			return getNumber(tokenImage, i, tokenImage.length - 1, 8, IProblem.SCANNER_BAD_OCTAL_FORMAT);
+
+		case 'x':
+		case 'u':
+		case 'U':
+			return getNumber(tokenImage, i + 1, tokenImage.length - 1, 16, IProblem.SCANNER_BAD_HEX_FORMAT);
+		default:
+			throw new EvalException(IProblem.SCANNER_BAD_CHARACTER, tokenImage);
+		}
+	}
+
+	private static long getNumber(char[] tokenImage, int from, int to, int base, int problemID) throws EvalException {
+		char c;
+		long result = 0;
+		int i = from;
+		if (from != to) {
+			for (; i < to; i++) {
+				if (tokenImage[i] == '\'') {
+					continue;
+				}
+
+				int digit = getDigit(tokenImage[i]);
+				if (digit >= base) {
+					break;
+				}
+				result = result * base + digit;
+			}
+
+			if (i >= to) {
+				return result; // return early
+			}
+
+			c = tokenImage[i];
+			if ('0' <= c && c <= '9') {
+				// A suffix cannot start with a number
+				throw new EvalException(problemID, tokenImage);
+			} else if (i == 2 && base != 10) {
+				// Possible that the prefix is bad.
+				i--;
+			}
+
+		} else {
+			/*
+			 * If we get in here, then the number literal is 2 characters,
+			 * but hasn't had the last character checked if it's a suffix
+			 */
+			i = 1;
+		}
+		// The rest should be a suffix
+		final int suffixStart = i;
+		for (; i < to; i++) {
+			switch (tokenImage[i]) {
+			case 'u':
+			case 'l':
+			case 'U':
+			case 'L':
+				break;
+			default:
+				c = tokenImage[i];
+				if (Character.isLetterOrDigit(c) || c == '_') {
+					char[] suffix = CharArrayUtils.subarray(tokenImage, suffixStart, -1);
+					throw new EvalException(IProblem.SCANNER_CONSTANT_WITH_BAD_SUFFIX, suffix);
+				}
+				throw new EvalException(problemID, tokenImage);
+			}
+		}
+		return result;
+	}
+
+	private static int getDigit(char c) {
+		switch (c) {
+		case '0':
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+		case '5':
+		case '6':
+		case '7':
+		case '8':
+		case '9':
+			return c - '0';
+		case 'a':
+		case 'b':
+		case 'c':
+		case 'd':
+		case 'e':
+		case 'f':
+			return c - 'a' + 10;
+		case 'A':
+		case 'B':
+		case 'C':
+		case 'D':
+		case 'E':
+		case 'F':
+			return c - 'A' + 10;
+		}
+		return Integer.MAX_VALUE;
+	}
+}

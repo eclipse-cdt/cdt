@@ -1,0 +1,6 @@
+bin
+@dot
+javaCompiler...args
+build.xml
+target
+/workspace/

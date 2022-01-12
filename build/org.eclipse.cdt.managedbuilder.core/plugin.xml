@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+     <extension-point id="ManagedBuildInfo" name="%extension-point.name" schema="schema/ManagedBuildTools.exsd"/>
+   <extension-point id="buildDefinitions" name="%extension-point.name.0" schema="schema/buildDefinitions.exsd"/>
+   <extension-point id="projectConverter" name="%extension-point.name.1" schema="schema/Converter.exsd"/>
+   <extension-point id="buildProperties" name="%extension-point.name.2" schema="schema/buildProperties.exsd"/>
+   <extension-point id="tcModificationInfo" name="%extension-point.name.3" schema="schema/tcModificationInfo.exsd"/>
+   
+
+<!-- =================================================================================== -->
+<!-- Extension Point: IScannerInfoProvider for the managed Builder                       -->
+<!-- =================================================================================== -->
+   <extension
+         id="ManagedBuildManager"
+         point="org.eclipse.cdt.core.ScannerInfoProvider">
+      <cextension>
+         <run
+               class="org.eclipse.cdt.managedbuilder.core.ManagedBuildManager">
+         </run>
+      </cextension>
+   </extension>
+<!-- =================================================================================== -->
+<!-- Extension Point: Makefile Generation Builder                                        -->
+<!-- =================================================================================== -->
+   <extension
+         id="genmakebuilder"
+         name="%CommonBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true"
+            callOnEmptyDelta="true"
+            isConfigurable="true">
+         <!--run
+               class="org.eclipse.cdt.managedbuilder.internal.core.GeneratedMakefileBuilder">
+         </run-->
+         <run
+               class="org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder">
+         </run>
+      </builder>
+   </extension>
+<!-- =================================================================================== -->
+<!-- Extension Point: Managed Build Project Nature                                       -->
+<!-- =================================================================================== -->
+   <extension
+         id="managedBuildNature"
+         name="%CDTBuildNature.name"
+         point="org.eclipse.core.resources.natures">
+      <requires-nature
+            id="org.eclipse.cdt.core.cnature">
+      </requires-nature>
+      <runtime>
+         <run
+               class="org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.cdt.managedbuilder.core.genmakebuilder">
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.PathEntryContainerInitializer">
+      <pathEntryContainerInitializer
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer"
+            id="org.eclipse.cdt.managedbuilder.MANAGED_CONTAINER"/>
+   </extension>
+   <extension
+         id="managedMake"
+         name="%CDTBuildProject.name"
+         point="org.eclipse.cdt.core.CProject">
+      <cproject
+            natureID="org.eclipse.cdt.managedbuilder.core.managedBuildNature"
+            class="org.eclipse.cdt.managedbuilder.internal.core.ManagedMakeProject"/>
+   </extension>
+   <extension
+         id="GCCManagedMakePerProjectProfile"
+         name="%extension.name"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            scope="project"/>
+      <buildOutputProvider>
+         <open/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser"/>
+      </buildOutputProvider>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD &quot;${plugin_state_location}/${specs_file}&quot;"
+               command="gcc"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCManagedMakePerProjectProfileCPP"
+         name="%extension.name.0"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            scope="project"/>
+      <buildOutputProvider>
+         <open/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser"/>
+      </buildOutputProvider>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD &quot;${plugin_state_location}/specs.cpp&quot;"
+               command="g++"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCManagedMakePerProjectProfileC"
+         name="%extension.name.1"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGCCScannerInfoCollector"
+            scope="project"/>
+      <buildOutputProvider>
+         <open/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser"/>
+      </buildOutputProvider>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-E -P -v -dD &quot;${plugin_state_location}/specs.c&quot;"
+               command="gcc"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCWinManagedMakePerProjectProfile"
+         name="%extension.name.2"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
+            scope="project"/>
+      <buildOutputProvider>
+         <open/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser"/>
+      </buildOutputProvider>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-c &apos;gcc -E -P -v -dD &quot;${plugin_state_location}/${specs_file}&quot;&apos;"
+               command="sh"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCWinManagedMakePerProjectProfileCPP"
+         name="%extension.name.3"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
+            scope="project"/>
+      <buildOutputProvider>
+         <open/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser"/>
+      </buildOutputProvider>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-c &apos;g++ -E -P -v -dD &quot;${plugin_state_location}/specs.cpp&quot;&apos;"
+               command="sh"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         id="GCCWinManagedMakePerProjectProfileC"
+         name="%extension.name.4"
+         point="org.eclipse.cdt.make.core.ScannerConfigurationDiscoveryProfile">
+      <scannerInfoCollector
+            class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.DefaultGnuWinScannerInfoCollector"
+            scope="project"/>
+      <buildOutputProvider>
+         <open/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedGCCScannerInfoConsoleParser"/>
+      </buildOutputProvider>
+      <scannerInfoProvider providerId="specsFile">
+         <run
+               arguments="-c &apos;gcc -E -P -v -dD &quot;${plugin_state_location}/specs.c&quot;&apos;"
+               command="sh"
+               class="org.eclipse.cdt.make.internal.core.scannerconfig2.GCCSpecsRunSIProvider"/>
+         <scannerInfoConsoleParser class="org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser"/>
+      </scannerInfoProvider>
+   </extension>
+   <extension
+         point="org.eclipse.team.core.fileTypes">
+      <fileTypes
+            extension="cdtbuild"
+            type="text"/>
+   </extension>
+
+<!-- =================================================================================== -->
+<!-- Define C/C++ "object" files ContentTypes                                            -->
+<!-- =================================================================================== -->
+  <extension point="org.eclipse.core.contenttype.contentTypes">
+	  <!-- declares a content type for object files -->
+	  <content-type
+         base-type="org.eclipse.cdt.core.binaryFile"
+         id="compiledObjectFile"
+         name="%objectFileName"
+         priority="high"/>
+	  <!-- declares a content type for executable files -->
+      <content-type
+            base-type="org.eclipse.cdt.core.binaryFile"
+            id="executableFile"
+            name="%executableName"
+            priority="high"/>
+	  <!-- declares a content type for static libraries -->
+      <content-type
+            base-type="org.eclipse.cdt.core.binaryFile"
+            id="staticLibrary"
+            name="%staticLibraryName"
+            priority="high"/>
+	  <!-- declares a content type for shared libraries -->
+      <content-type
+            base-type="org.eclipse.cdt.core.binaryFile"
+            id="sharedLibrary"
+            name="%sharedLibraryName"
+            priority="high"/>
+  </extension>
+
+  <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
+       file-extensions="obj,o"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.managedbuilder.core.executableFile"
+       file-extensions="exe,elf,out"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.managedbuilder.core.staticLibrary"
+       file-extensions="lib,a"/>
+   </extension> 
+
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.managedbuilder.core.sharedLibrary"
+       file-extensions="dll,so,dylib"/>
+   </extension>
+   <extension
+         id="configurationDataProvider"
+         name="%BuildSystem.name"
+         point="org.eclipse.cdt.core.CConfigurationDataProvider">
+         <provider
+         	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature;org.eclipse.cdt.managedbuilder.core.ScannerConfigNature"
+         	conflictingNatures="org.eclipse.cdt.make.core.makeNature;org.eclipse.cdt.make.core.ScannerConfigNature"
+         	class="org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider"
+         />
+   </extension>
+   <extension
+         id="ProjectConverter"
+         name="%ProjectConverter.name"
+         point="org.eclipse.cdt.core.projectConverter">
+         <converter
+         	owners="org.eclipse.cdt.managedbuilder.core.managedMake;org.eclipse.cdt.make.core.make"
+         	natures="org.eclipse.cdt.managedbuilder.core.managedBuildNature"
+         	class="org.eclipse.cdt.managedbuilder.internal.dataprovider.ProjectConverter"
+         />
+   </extension> 
+   
+      <extension
+         id="baseProperties"
+         name="%extension.name.5"
+         point="org.eclipse.cdt.managedbuilder.core.buildProperties">
+      <propertyType id="org.eclipse.cdt.build.core.buildType" name="%BuildProperty.type.name.buildType"/>
+      <propertyType id="org.eclipse.cdt.build.core.buildArtefactType" name="%BuildProperty.type.name.buildArtefactType"/>
+
+      <propertyValue 
+            property="org.eclipse.cdt.build.core.buildType" 
+            id="org.eclipse.cdt.build.core.buildType.debug" 
+            name="%BuildProperty.value.name.debug"/>
+      <propertyValue 
+            property="org.eclipse.cdt.build.core.buildType" 
+            id="org.eclipse.cdt.build.core.buildType.release" 
+            name="%BuildProperty.value.name.release"/>
+
+      <propertyValue 
+            property="org.eclipse.cdt.build.core.buildArtefactType" 
+            id="org.eclipse.cdt.build.core.buildArtefactType.exe" 
+            name="%BuildProperty.type.name.executable"/>
+      <propertyValue 
+            property="org.eclipse.cdt.build.core.buildArtefactType" 
+            id="org.eclipse.cdt.build.core.buildArtefactType.staticLib" 
+            name="%BuildProperty.type.name.staticLibrary"/>
+     <propertyValue 
+            property="org.eclipse.cdt.build.core.buildArtefactType" 
+            id="org.eclipse.cdt.build.core.buildArtefactType.sharedLib" 
+            name="%BuildProperty.type.name.sharedLibrary"/>
+
+      </extension>
+      
+         <extension
+         id="emptyConfigs"
+         name="%extension.name.6"
+         point="org.eclipse.cdt.managedbuilder.core.buildDefinitions">
+      <managedBuildRevision
+            fileVersion="4.0.0">
+      </managedBuildRevision>
+      <configuration
+            id="org.eclipse.cdt.build.core.emptycfg" 
+            languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;${Toolchain};org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
+            name="%cfg1_empty">
+      </configuration>
+
+	 <configuration
+        id="org.eclipse.cdt.build.core.prefbase.cfg"
+        languageSettingsProviders="org.eclipse.cdt.ui.UserLanguageSettingsProvider;org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider;${Toolchain};org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
+        name="%cfg1_base">
+	  <toolChain
+	  	id="org.eclipse.cdt.build.core.prefbase.toolchain"
+	  	name="%toolChain.name"
+	  	supportsManagedBuild="false"
+	  	isSystem="true">
+      <tool
+      	id="org.eclipse.cdt.build.core.settings.holder.libs"
+	  	supportsManagedBuild="false"
+      	name="%tool.name"
+      	errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser"
+      	isSystem="true">
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.libpaths"
+       		browseType="directory"
+      		name="%option.name"
+			valueType="libPaths"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.libfiles"
+      		name="%option.name.0"
+			valueType="libFiles"
+      		browseType="file"
+      	/>
+      	
+      	<!--option
+      		id="org.eclipse.cdt.build.core.settings.holder.libpaths"
+      		name="libraries"
+      		browseType="none"
+            valueType="libs"
+      	/-->
+      </tool>
+	  <builder
+	  	  isAbstract="false"
+	      id="org.eclipse.cdt.build.core.settings.default.builder"
+          command="make"
+          arguments=""
+          variableFormat="${=}"
+          isVariableCaseSensitive="true"
+          reservedMacroNames="ROOT,DEPS,OBJS,.*_SRCS,EXECUTABLES,SUBDIRS,LIBS,USER_OBJS,.*_INPUTS,.*_OUTPUTS"
+          buildfileGenerator="org.eclipse.cdt.managedbuilder.makegen.gnu2.GnuMakefileGenerator"
+          macroInputFileNameValue="$(notdir $&lt;)"
+          macroInputFileExtValue="$(suffix $(notdir $&lt;))"
+          macroInputFileBaseNameValue="$(basename $(notdir $&lt;))"
+          macroInputFileRelPathValue="$&lt;"
+          macroInputDirRelPathValue="$(dir $&lt;)"
+          macroOutputFileNameValue="$(notdir $@)"
+          macroOutputFileExtValue="$(suffix $(notdir $@))"
+          macroOutputFileBaseNameValue="$(basename $(notdir $@))"
+          macroOutputFileRelPathValue="$@"
+          macroOutputDirRelPathValue="$(dir $@)"
+          autoBuildTarget="all"
+          incrementalBuildTarget="all"
+          cleanBuildTarget="clean"
+          ignoreErrCmd="-k"
+          parallelBuildCmd="-j*"
+          errorParsers="org.eclipse.cdt.core.CWDLocator;org.eclipse.cdt.core.GmakeErrorParser"
+          name="%GNUMakeBuilder.name"
+          isSystem="true">
+   	  </builder>   
+	  	
+	  </toolChain>      
+	 </configuration>     
+
+      <tool
+      	id="org.eclipse.cdt.build.core.settings.holder"
+	  	supportsManagedBuild="false"
+      	name="%tool.name.0"
+      	errorParsers="org.eclipse.cdt.core.VCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser;org.eclipse.cdt.core.GCCErrorParser"
+      	isSystem="true">
+      	<inputType
+             id="org.eclipse.cdt.build.core.settings.holder.inType">
+      	</inputType>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.incpaths"
+      		name="%option.name.1"
+      		browseType="directory"
+      		valueType="includePath"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.symbols"
+      		name="%option.name.2"
+			valueType="definedSymbols"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.symbolfiles"
+      		name="%option.name.3"
+      		browseType="file"
+			valueType="symbolFiles"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.includefiles"
+      		name="%option.name.4"
+      		browseType="file"
+			valueType="includeFiles"
+      	/>
+
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.undef.incpaths"
+      		name="%option.name.5"
+      		browseType="directory"
+      		valueType="undefIncludePath"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.undef.symbols"
+      		name="%option.name.6"
+			valueType="undefDefinedSymbols"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.undef.symbolfiles"
+      		name="%option.name.7"
+      		browseType="file"
+			valueType="undefSymbolFiles"
+      	/>
+      	<option
+      		id="org.eclipse.cdt.build.core.settings.holder.undef.includefiles"
+      		name="%option.name.8"
+      		browseType="file"
+			valueType="undefIncludeFiles"
+      	/>
+
+      	<!--option
+      		id="org.eclipse.cdt.build.core.settings.holder.includes"
+      		name="holder for includes"
+      		valueType="includePath"
+      	/-->
+      </tool>
+      
+      <builder
+      	id="org.eclipse.cdt.build.core.internal.builder"
+      	name="%InternalBuilder.name">
+      </builder>
+      
+      <tool
+        id="org.eclipse.cdt.build.core.default.tool"
+        isAbstract="true"
+        isSystem="true"/>
+        
+      </extension>
+      
+   <extension
+         id="ScannerConfigNature"
+         name="%epScannerConfigNature.name"
+         point="org.eclipse.core.resources.natures">
+      <requires-nature
+            id="org.eclipse.cdt.managedbuilder.core.managedBuildNature">
+      </requires-nature>
+      <runtime>
+         <run
+               class="org.eclipse.cdt.build.core.scannerconfig.ScannerConfigNature">
+         </run>
+      </runtime>
+      <builder
+            id="org.eclipse.cdt.managedbuilder.core.ScannerConfigBuilder">
+      </builder>
+   </extension>
+   <extension
+         id="ScannerConfigBuilder"
+         name="%epScannerConfigBuilder.name"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            callOnEmptyDelta="true"
+            hasNature="true"
+            isConfigurable="true">
+         <run
+               class="org.eclipse.cdt.build.core.scannerconfig.ScannerConfigBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.make.core.MakeTargetBuilder">
+      <builder
+            builderID="org.eclipse.cdt.managedbuilder.core.genmakebuilder"
+            id="org.eclipse.cdt.build.MakeTargetBuilder">
+      </builder>
+   </extension>
+      
+   <extension
+         point="org.eclipse.cdt.core.templateProcessTypes">
+      <processType
+            name="NewManagedProject"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.NewManagedProject">
+         <simple name="name"/>
+         <simple
+               external="true"
+               name="location"
+               nullable="true"/>
+         <simple name="artifactExtension"/>
+         <simple external="true" name="isCProject"/>
+      </processType>
+      <processType
+            name="CreateIncludeFolder"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.CreateIncludeFolder">
+         <simple name="projectName"/>
+         <simple name="path"/>
+      </processType>
+      <processType
+            name="ExcludeResources"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.ExcludeResources">
+         <simple name="projectName"/>
+         <simple name="configIdPattern"/>
+         <simpleArray name="filePatterns"/>
+         <simple name="invertConfigMatching" />
+      </processType>
+      <processType
+            name="SetMBSStringOptionValue"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.SetMBSStringOptionValue">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simple name="value"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="SetMBSStringListOptionValues"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.SetMBSStringListOptionValues">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simpleArray name="values"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+     <processType
+            name="SetMBSBooleanOptionValue"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.SetMBSBooleanOptionValue">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simple name="value"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="AppendToMBSStringOptionValue"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.AppendToMBSStringOptionValue">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simple name="value"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+      <processType
+            name="AppendToMBSStringListOptionValues"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.AppendToMBSStringListOptionValues">
+         <simple name="projectName"/>
+         <complexArray name="resourcePaths">
+            <baseType>
+               <simple name="id"/>
+               <simpleArray name="values"/>
+               <simple name="path"/>
+            </baseType>
+         </complexArray>
+      </processType>
+            <processType
+            name="GenerateMakefileWithBuildDescription"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.GenerateMakefileWithBuildDescription">
+         <simple name="projectName"/>
+      </processType>
+        <processType
+            name="AddLanguageSettingsProvider"
+            processRunner="org.eclipse.cdt.managedbuilder.templateengine.processes.AddLanguageSettingsProvider">
+            <simple name="projectName"/>
+            <simpleArray name="languageSettingsProviderIds"/>
+        </processType>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.LanguageSettingsProvider">
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.MBSLanguageSettingsProvider"
+            id="org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"
+            name="%ManagedBuildSettingEntries.name">
+      </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuiltinSpecsDetector"
+            id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
+            name="%GCCBuiltinCompilerSettings.name"
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;"
+            prefer-non-shared="true">
+         <language-scope id="org.eclipse.cdt.core.gcc"/>
+         <language-scope id="org.eclipse.cdt.core.g++"/>
+      </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorCygwin"
+            id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorCygwin"
+            name="%GCCBuiltinCompilerSettingsCygwin.name"
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;"
+            prefer-non-shared="true">
+         <language-scope id="org.eclipse.cdt.core.gcc"/>
+         <language-scope id="org.eclipse.cdt.core.g++"/>
+      </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.GCCBuiltinSpecsDetectorMinGW"
+            id="org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetectorMinGW"
+            name="%GCCBuiltinCompilerSettingsMinGW.name"
+            parameter="${COMMAND} ${FLAGS} -E -P -v -dD &quot;${INPUTS}&quot;"
+            prefer-non-shared="true">
+         <language-scope id="org.eclipse.cdt.core.gcc"/>
+         <language-scope id="org.eclipse.cdt.core.g++"/>
+      </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser"
+            id="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"
+            name="%GCCBuildOutputParser.name"
+            parameter="(g?cc)|([gc]\+\+)|(clang)"
+            prefer-non-shared="true">
+      </provider>
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.language.settings.providers.CompilationDatabaseParser"
+            id="org.eclipse.cdt.managedbuilder.core.CompilationDatabaseParser"
+            name="%CompilationDatabaseParser.name"
+            prefer-non-shared="true">
+      </provider>
+   </extension>
+   <extension
+         id="scanner.discovery.problem"
+         name="%extension.name.8"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         id="headlessSettings"
+         name="%extension.name.9"
+         point="org.eclipse.cdt.core.externalSettingsProvider">
+      <provider
+            class="org.eclipse.cdt.managedbuilder.internal.core.HeadlessBuilderExternalSettingsProvider">
+      </provider>
+   </extension>
+
+</plugin>

@@ -1,0 +1,140 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.ui" id="workingSetConfigurations" name="Working Set Configurations"/>
+      </appInfo>
+      <documentation>
+         &lt;p&gt;
+&lt;b&gt;This extension point is internal to the CDT plug-in family.&lt;/b&gt;
+&lt;/p&gt;&lt;p&gt;
+Extension point for registration of project configuration factories for handling extended configuration options for custom project natures, in working set configurations.  These factories are responsible for creating the project configuration elements and the UI controllers for the Manage Working Set Configurations dialog.
+&lt;/p&gt;
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="projectConfigurationFactory"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="projectConfigurationFactory">
+      <annotation>
+         <documentation>
+            Registration of a factory for project configuration elements in working set configurations.  Factories are registered against project natures via nested &lt;tt&gt;&amp;lt;nature&amp;gt;&lt;/tt&gt; elements.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="projectNature"/>
+         </sequence>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for the project configuration factory.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Fully qualified name of the factory class.  It must implement the &lt;tt&gt;IWorkingSetProjectConfigurationFactory&lt;/tt&gt; interface.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.internal.ui.workingsets.IWorkingSetProjectConfigurationFactory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="projectNature">
+      <annotation>
+         <documentation>
+            A reference to a project nature.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The referenced project nature ID.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.natures/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         6.0
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+&lt;extension point=&quot;org.eclipse.cdt.ui.workingSetConfigurations&quot;&gt;
+  &lt;projectConfigurationFactory
+        id=&quot;org.example.myProject&quot;
+        class=&quot;org.example.MyProjectConfigurationFactory&quot;&gt;
+    &lt;nature id=&quot;org.example.myProjectNature&quot;/&gt;
+  &lt;/projectConfigurationFactory&gt;
+&lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="apiinfo"/>
+      </appInfo>
+      <documentation>
+         Registered project configuration factories are required to implement the &lt;tt&gt;org.eclipse.cdt.internal.ui.workingsets.IWorkingSetProjectConfigurationFactory&lt;/tt&gt; interface.
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2009 QNX Software Systems and others.
+      </documentation>
+   </annotation>
+</schema>

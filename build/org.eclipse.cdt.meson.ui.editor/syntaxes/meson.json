@@ -1,0 +1,167 @@
+{
+  "name": "Meson",
+  "scopeName": "source.meson",
+  "author": "Patrick Griffis",
+  "fileTypes": [
+    "meson.build",
+    "meson_options.txt"
+  ],
+  "uuid": "b3713e1e-4289-4e0c-88af-79e8876e5adb",
+  "patterns": [
+    {
+      "match": "\\#.*$",
+      "name": "comment.line.meson"
+    },
+    {
+      "include": "#string_quoted_single"
+    },
+    {
+      "match": "\\b(if|else|elif|endif|foreach|endforeach)\\b",
+      "name": "keyword.control.flow.meson"
+    },
+    {
+      "match": "\\b(and|not|or)\\b",
+      "name": "keyword.operator.logical.meson"
+    },
+    {
+      "match": "\\b(true|false)\\b",
+      "name": "constant.language.meson"
+    },
+    {
+      "match": "\\b([1-9]+[0-9]*\\.[0-9]*)",
+      "name": "constant.numeric.float.meson"
+    },
+    {
+      "match": "\\b([1-9]+[0-9]*|0)",
+      "name": "constant.numeric.integer.decimal.meson"
+    },
+    {
+      "match": "\\b(meson|host_machine|build_machine|target_machine)\\b",
+      "name": "support.variable.meson"
+    },
+    {
+      "match": "\\b([\\w_]+)\\s*(?=:)",
+      "name": "variable.parameter.function.keyword.meson"
+    },
+    {
+      "match": "<\\=|>\\=|\\=\\=|<|>|\\!\\=",
+      "name": "keyword.operator.comparison.meson"
+    },
+    {
+      "match": "\\+\\=",
+      "name": "keyword.operator.assignment.augmented.meson"
+    },
+    {
+      "match": "\\=",
+      "name": "keyword.operator.assignment.meson"
+    },
+    {
+      "match": "\\+|\\-|\\*|%|\\/",
+      "name": "keyword.operator.arithmetic.meson"
+    },
+    {
+      "match": "(?x)\\b(add_global_arguments|add_project_arguments|add_global_link_arguments|add_project_link_arguments|add_test_setup|add_languages|assert|benchmark|build_target|configuration_data|configure_file|custom_target|declare_dependency|dependency|environment|error|executable|generator|gettext|get_option|get_variable|files|find_library|find_program|include_directories|import|install_data|install_headers|install_man|install_subdir|is_variable|jar|join_paths|library|message|option|project|run_target|run_command|set_variable|subdir|subproject|shared_library|shared_module|static_library|test|vcs_tag\n)\\b\\s*(?=\\()",
+      "name": "support.function.builtin.meson"
+    }
+  ],
+  "repository": {
+    "constant_placeholder": {
+      "match": "(?i:(%(\\([a-z_]+\\))?#?0?\\-?[ ]?\\+?([0-9]*|\\*)(\\.([0-9]*|\\*))?([hL][a-z]|[a-z%]))|(\\{([!\\[\\].:\\w ]+)?\\}))",
+      "name": "constant.other.placeholder.meson"
+    },
+    "escaped_character": {
+      "captures": {
+          "1": {
+            "name": "constant.character.escape.newline.meson"
+          },
+          "2": {
+            "name": "constant.character.escape.backlash.meson"
+          },
+          "3": {
+            "name": "constant.character.escape.single-quote.meson"
+          },
+          "4": {
+            "name": "constant.character.escape.linefeed.meson"
+          },
+          "5": {
+            "name": "constant.character.escape.return.meson"
+          },
+          "6": {
+            "name": "constant.character.escape.tab.meson"
+          }
+      },
+      "match": "((\\\\\\n)|(\\\\\\\\)|(\\\\')|(\\\\n)|(\\\\r)|(\\\\t))"
+    },
+    "string_quoted_single": {
+      "patterns": [
+        {
+          "captures": {
+            "1": {
+              "name": "puncutation.definition.string.begin.meson"
+            },
+            "2": {
+              "name": "puncutation.definition.string.end.meson"
+            },
+            "3": {
+              "name": "meta.empty-string.single.meson"
+            }
+          },
+          "match": "(?<!')(')(('))(?!')",
+          "name": "string.quoted.single.single-line.meson"
+        },
+        {
+          "begin": "(''')",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.begin.meson"
+            }
+          },
+          "end": "((?<=''')(')''|''')",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.meson"
+            },
+            "2": {
+              "name": "meta.empty-string.single.meson"
+            }
+          },
+          "name": "string.quoted.single.block.meson",
+          "patterns": [
+            {
+              "include": "#constant_placeholder"
+            },
+            {
+              "include": "#escaped_character"
+            }
+          ]
+        },
+        {
+          "begin": "(')",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.begin.meson"
+            }
+          },
+          "end": "(')|(\\n)",
+          "endCaptures": {
+            "1": {
+              "name": "punctuation.definition.string.end.meson"
+            },
+            "2": {
+              "name": "invalid.illegal.unclosed-string.meson"
+            }
+          },
+          "name": "string.quoted.single.single-line.meson",
+          "patterns": [
+            {
+              "include": "#constant_placeholder"
+            },
+            {
+              "include": "#escaped_character"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

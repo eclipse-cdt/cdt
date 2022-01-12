@@ -1,0 +1,156 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.codan.checkers.ui" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.cdt.codan.checkers.ui" id="codanMarkerResolution" name="Codan Marker Resolution"/>
+      </appinfo>
+      <documentation>
+         Extension point to plugin quick fix for codan markers
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="resolution" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="universalResolution" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="resolution">
+      <annotation>
+         <documentation>
+            Contribute codan marker resolution
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Class that implement IMarkerResolution that provides a fix for the given problem
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.IMarkerResolution"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="problemId" type="string">
+            <annotation>
+               <documentation>
+                  Problem id of the problem for which quick fix is defined.
+If this is not codan problem (for example gcc error), it can be ommitted. Message pattern must be used in this case.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.codan.core.checkers/checker/problem/@id"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="messagePattern" type="string">
+            <annotation>
+               <documentation>
+                  If problem id is not enought to identity the fix messagePattern can be used to apply fix for given message
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="universalResolution">
+      <annotation>
+         <documentation>
+            A resolution that is applicable to all markers
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  A class that implements IMarkerResolution, providing a fix applicable to any problem
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.ui.IMarkerResolution"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         since 1.0
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         &lt;extension
+          point=&quot;org.eclipse.cdt.codan.checkers.ui.codanMarkerResolution&quot;&gt;
+       &lt;resolution
+             class=&quot;org.eclipse.cdt.codan.internal.checkers.ui.quickfix.CatchByReferenceQuickFix&quot;
+             problemId=&quot;org.eclipse.cdt.codan.internal.checkers.CatchByReference&quot;&gt;
+       &lt;/resolution&gt;
+    &lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         Programmatically resolution can be added using CatchByReferenceQuickFix.addResolution method.
+It is not API yet.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         see CatchByReferenceQuickFix
+      </documentation>
+   </annotation>
+
+
+</schema>

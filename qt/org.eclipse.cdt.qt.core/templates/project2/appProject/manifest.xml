@@ -1,0 +1,10 @@
+<templateManifest>
+	<file src="/templates/project2/appProject/main.cpp"
+		dest="/${projectName}/${projectName}.cpp"/>
+	<file src="/templates/project2/appProject/main.qml"
+		dest="/${projectName}/${projectName}.qml"/>
+	<file src="/templates/project2/appProject/main.pro"
+		dest="/${projectName}/${projectName}.pro"/>
+	<file src="/templates/project2/appProject/main.qrc"
+		dest="/${projectName}/${projectName}.qrc"/>
+</templateManifest>

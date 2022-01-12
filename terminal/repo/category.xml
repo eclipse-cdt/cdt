@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="org.eclipse.cdt.native">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.cdt.native.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.control.feature">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.control.feature.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.local.feature">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.local.feature.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.cdtserial.feature">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.cdtserial.feature.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.ssh.feature">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.ssh.feature.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.telnet.feature">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.telnet.feature.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.remote.feature">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.connector.remote.feature.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.view.feature">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.view.feature.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.feature">
+      <category name="terminal_main"/>
+   </feature>
+   <feature id="org.eclipse.tm.terminal.feature.source">
+      <category name="terminal_sdk"/>
+   </feature>
+   <category-def name="terminal_main" label="Terminal Features">
+      <description>
+         TM Terminal Features
+      </description>
+   </category-def>
+   <category-def name="terminal_sdk" label="Terminal SDK Features">
+      <description>
+         TM Terminal SDK Features
+      </description>
+   </category-def>
+</site>

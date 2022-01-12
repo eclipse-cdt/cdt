@@ -1,0 +1,148 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>CDT Importing an Existing Managed Make Project Tutorial</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+
+<script language="JavaScript">
+function newWin(url) {
+	window.open(url, 'install_cdt', 'width=950, height=700, menubar=no, toolbar=no, status=no, resizable=yes, location=no, scrollbars=yes');
+}
+</script>
+</head>
+<body>
+<div role="main"><h1>Tutorial: Importing an existing project</h1>
+
+<p>The following tutorial takes you though the process of importing a 'legacy' application using the CDT.</p>
+
+
+<p>Step 1: You want to create a single project that will reflect all of the components for the existing source tree.<br></p>
+<ol>
+	<li>Select <strong>File &gt; New &gt; Project</strong>.</li>
+	<li>For this tutorial, expand <strong>C/C++</strong> and select <strong>C++ project</strong>.
+	<p><br>
+	The <strong>New Project</strong> wizard displays. 
+	<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_import02.png')">Click
+	here to see an illustration (displayed in a separate window)</a>.</p>
+	<br></li>
+	<li>In the <strong>Project name</strong> field, type a name for the project.</li>
+	<li>Ensure that the <strong>Use default location</strong> option is not selected because here we will specify where the
+	resources reside in the file system, in a location other than your workspace. <br>
+	We assume this directory location already exists, and contains e.g. source files and makefile. If it does not exist, it
+	will be created.
+	<p>In this example, we will use an existing <code>hello.cpp</code> and its 
+	existing <code>hello.mak</code>  makefile, located in the directory <code>c:\brandon</code>.
+	<p>&nbsp;
+		<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon01.png')">Click
+	here to see an illustration (displayed in a separate window)</a>.</p>
+
+	</li>
+	<li>In the <strong>Location</strong> field, specify the path to the existing files for your project.</li>
+	<li>From the <strong>Project types</strong> list, expand <strong>Makefile Project</strong> and select <strong>Empty Project.</strong>.
+	<ul>
+		<li>To have sample source and a makefile created in your existing directory, select <strong>Hello World C++ Project</strong></li>
+	</ul></li>
+	<li>Make sure a toolchain is selected.</li>
+
+	<li>Click <strong>Next</strong>.
+	<p>&nbsp;</p></li>
+
+	<li>(Optional) On the <strong>Select Configurations</strong> page, select only the configurations you want created. Configurations
+	display for each toolchain selected on the previous page of the wizard.</li>
+	<li>Click <strong>Finish</strong> to close the dialog box.
+	<p>You will see the new project in the Project Explorer view. In addition, new 'dot' files have been created in
+	your legacy project's root directory, these are CDT project files.</p>
+	<ul>
+		<li>(Optional) To see these "hidden" files, open the view menu on the Project explorer view, and select
+		"Customize View." <br>
+		The view menu is activated via the small downward-pointing triangle in the upper right of the toolbar of the view.
+		<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_viewMenu.png')">Click here to see an
+		illustration (displayed in a separate window)</a>.</p>
+		<br></li>
+		<li>In the <strong>Available Customizations</strong> window, on the <strong>Filters</strong> tab, uncheck ".* resources."
+		<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_viewMenuFilters.png')">Click here to see an
+		illustration (displayed in a separate window)</a>.</p>
+		<br></li>
+		<li>The formerly hidden 'dot' files are now shown in the <strong>Project Explorer</strong>.
+		<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_viewMenuFilters2.png')">Click here to see an
+		illustration (displayed in a separate window)</a>.</p>
+		<br>
+		</li>
+		<li>Hit <strong>OK</strong> to close the dialog.</li>
+	</ul>
+	</li>
+</ol>
+
+<p>Step 2: You are now ready to build your project.<br></p>
+<ol>
+	<li>To build your project, select <strong>Project</strong> &gt; <strong>Build Project</strong>.
+	<br>You can also hit the hammer icon <img src="../images/hammer-icon.png" alt="build icon"> on the toolbar to
+	build the selected project.
+	<br>&nbsp;</br></li>
+	<li>You may see an error e.g. <code> "make: *** no rule to make target 'all'.</code>
+	<p>This is because, in our case, we didn't tell it where the makefile is, or its name.</p>
+	<ul>
+	<li>Open the project properties (right mouse on project name in the <strong>Project Explorer</strong> view
+	and select <strong>Properties</strong> at the bottom on the context menu).</li>
+	<li>On the C/C++ Build Page, on its <strong>Builder Settings</strong> tab, uncheck <q>Use default build command</q>
+	and change the <code>make</code> command to <code>make -f hello.mak</code>
+	since our makefile is not named the default <code>makefile</code>.
+	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon02.png')">Click
+	here to see an illustration (displayed in a separate window)</a>.</p>
+	</li>
+	<li>Click <strong>OK</strong> to close the <strong>Project Properties</strong> window.
+	</li>
+	<li>Your project will probably rebuild.  If not you can force a build via 
+	<strong>Project</strong> &gt; <strong>Build Project</strong>
+	or use the hammer icon <img src="../images/hammer-icon.png" alt="build icon">.
+	</li>
+	</ul>
+<p>After the project build completes, the results display in the <strong>Console</strong> view and new objects, such as binaries and includes, show in the <strong>Project Explorer</strong> view.</p>
+	<p>&nbsp;
+		<a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon03.png')">Click
+	here to see an illustration (displayed in a separate window)</a>.</p><br></li>
+	<li>Review the results to ensure that there are no errors.
+
+<p>&nbsp;
+<p></p>
+<strong>Note:</strong> By default, the indexer is set to <strong>Fast indexer</strong> for the project to parse your project in the same way that a compiler does; beginning with each compilation unit and parsing that file and all files that it includes, except that it parses each header file included in a project only once. This method provides the most accurate index information. For large projects using complex C++ code, this indexer can be slow. For example, if a header file is included and takes two compilation units, the parsing of the second unit reuses the results of parsing the first unit. This is similar to how precompiled headers work. The indexing of large projects using the Fast indexer uses fewer resources than the Full indexer, but the resulting index is not quite as accurate.
+<br>To change indexer settings, bring up the Indexer page in the Project Properties.
+<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_indexer.png')">Click here to see an illustration (displayed in a separate window)</a>.</p> <br>
+
+</br>
+</p>
+</li>
+</ol>
+
+<p>Step 3: You are now ready to run your application.</p>
+<ol>
+	<li>To run your application within the C/C++ Perspective, click <strong>Run &gt; Run Configurations...</strong><p>
+	    <p>The <strong>Run Configurations</strong> dialog displays.</p>
+	<li>To create a run configuration, select <strong>C/C++ Application</strong> and click the <strong>New</strong> icon.
+<li>Give your run configuration a name by entering a new name in the <strong>Name</strong> field at the top.
+<li>On the <strong>Main</strong> tab, select the project by clicking <strong>Browse</strong> opposite the <strong>Project</strong> field.
+	<ul>
+		<li>From the Project Selection window, select the project and click <strong>OK</strong>.
+	</ul><li>Select the new <strong>C/C++ Application</strong> you want to execute by clicking <strong>Search</strong>.
+<p>In our case it didn't find the file because it's in a nonstandard location.
+Use the <strong>Browse</strong> button to select the executable.  In our case also it's a nonstandard
+name, <code>hello.e</code> because that's what our makefile <code>hello.mak</code> built.</p>
+	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon04run.png')">Click
+	here to see an illustration (displayed in a separate window)</a>.</p>
+<ul>
+  <li>If you see the error <q>[Debugger]: No debugger available</q>, select the Debugger tab
+  and choose a valid debugger for your platform (e.g. gdb/mi).
+  </li>
+  </ul>
+
+
+<li>Click <strong>Run</strong> to save the run configuration and run it.
+	<p><a href="javascript:void(0)" onClick="newWin('../images/cdt_w_importBrandon04run2.png')">Click
+	here to see an illustration (displayed in a separate window)</a>.</p>
+<p>The application runs in the <strong>Console</strong> view. The <strong>Console</strong> also shows which application it is currently running in the title bar. You can configure the view to display different elements, such as user input elements using different colors.</p>
+</ol>
+<img src="../images/ng00_04a.gif" ALT="QNX Copyright Statement" >
+</div></body>
+</html>

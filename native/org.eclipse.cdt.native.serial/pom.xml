@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2018, 2021 Red Hat, Inc. and others.
+  This program and the accompanying materials
+  are made available under the terms of the Eclipse Public License 2.0
+  which accompanies this distribution, and is available at
+  https://www.eclipse.org/legal/epl-2.0/
+
+  SPDX-License-Identifier: EPL-2.0
+
+  Contributors:
+     Mat Booth (Red Hat) - initial implementation
+-->
+<project
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+    xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.eclipse.cdt</groupId>
+    <artifactId>cdt-parent</artifactId>
+    <version>10.5.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <version>1.2.400-SNAPSHOT</version>
+  <artifactId>org.eclipse.cdt.native.serial</artifactId>
+  <packaging>eclipse-plugin</packaging>
+
+	<profiles>
+		<profile>
+			<id>build-native.all</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>all</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" failOnError="true" dir="./native_src">
+											<arg value="rebuild" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native.docker</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>docker</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="docker" newenvironment="false" failOnError="true">
+										<!-- docker run -\-rm -t -v $(git rev-parse -\-show-toplevel):/work -w /work/$(git rev-parse -\-show-prefix) quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest  make -C native_src rebuild -->
+											<arg value="run" />
+											<arg value="--rm" />
+											<arg value="-t" />
+											<arg value="-v" />
+											<arg value="${project.basedir}/../..:/work" />
+											<arg value="-w" />
+											<arg value="/work/native/org.eclipse.cdt.native.serial" />
+											<arg value="quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest" />
+											<arg value="make" />
+											<arg value="-C" />
+											<arg value="native_src" />
+											<arg value="rebuild" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native.linux.x86_64</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>linux.x86_64</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./native_src">
+											<arg value="LIBS=../os/linux/x86_64/libserial.so" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>clean-natives</id>
+								<phase>clean</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./native_src">
+											<arg value="LIBS=../os/linux/x86_64/libserial.so" />
+											<arg value="clean" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>build-native.linux.ppc64le</id>
+			<activation>
+				<property>
+					<name>native</name>
+					<value>linux.ppc64le</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./native_src">
+											<arg value="LIBS=../os/linux/ppc64le/libserial.so" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>clean-natives</id>
+								<phase>clean</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" dir="./native_src">
+											<arg value="LIBS=../os/linux/ppc64le/libserial.so" />
+											<arg value="clean" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jniheaders</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.8.1</version>
+						<executions>
+							<execution>
+								<id>headers</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<compilerArgs>
+										<arg>-h</arg>
+										<arg>${project.basedir}/native_src/include</arg>
+									</compilerArgs>
+									<source>11</source>
+									<target>11</target>
+									<encoding>UTF-8</encoding>
+								</configuration>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>natives</id>
+								<phase>process-resources</phase>
+								<configuration>
+									<target>
+										<exec executable="make" newenvironment="false" failOnError="true" dir="./native_src">
+											<arg value="production" />
+										</exec>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-packaging-plugin</artifactId>
+				<configuration>
+					<!-- When signing binaries, the result is not checked into repo, so the
+						 jgit timestamp provider cannot be used. This has the side effect
+						 that the version of this bundle needs to be incremented on each
+						 CDT release. -->
+					<timestampProvider>default</timestampProvider>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

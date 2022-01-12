@@ -1,0 +1,13 @@
+<templateManifest>
+	<file src="/templates/autotools/README"
+		dest="/${projectName}/README"/>
+	<file src="/templates/autotools/configure.ac"
+		dest="/${projectName}/configure.ac"/>
+	<file src="/templates/autotools/Makefile.am"
+		dest="/${projectName}/Makefile.am"/>
+	<file src="/templates/autotools/src/main.c"
+		dest="/${projectName}/src/${projectName}.c"
+		open="true"/>
+	<file src="/templates/autotools/src/Makefile.am"
+		dest="/${projectName}/src/Makefile.am"/>				
+</templateManifest>

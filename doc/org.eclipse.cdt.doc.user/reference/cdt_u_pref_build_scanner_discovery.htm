@@ -1,0 +1,237 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+<meta name="copyright" content="Copyright (c) Andrew Gvozdev and others 2013,2013. This page is made available under license. For full details, see the LEGAL section in the documentation that contains this page.">
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Scanner Discovery Preferences</title>
+<link rel="stylesheet" type="text/css" href="../help.css">
+<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+
+<body>
+
+<div>
+<h1>Scanner Discovery Preferences</h1>
+
+<h2>General</h2>
+
+<p>
+Use the <strong>Discovery Tab</strong> on <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.BuildSettingProperties)")'>
+  Build</a> preference panel to define global scanner discovery options.
+</p>
+<p>
+In the Discovery tab you can see a list of <strong>Language Settings Providers</strong>. Language Settings Providers supply <strong>Language Settings</strong> such as include paths and preprocessor macros
+for the indexer and other components of CDT.
+</p>
+<p><img src="../images/scanner_discovery/sd_preferences.png" alt="Scanner Discovery Preferences Panel"></p>
+
+<p>
+A user can define some properties for global (or "shared") providers on this preference. Note that providers can be either shared or defined per configuration.
+Properties for non-shared providers can be defined in <a href="../reference/cdt_u_prop_general_scanner_discovery.htm">Project properties: Preprocessor Include Paths, Macros, etc.</a>
+</p>
+
+<table width="700px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><strong>Discovery tab</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody>
+		<tr style="text-align:center;">
+			<th id="group"><strong>Group</strong></th>
+			<th id="description"><strong>Description</strong></th>
+		</tr>
+		<tr valign="top">
+			<td headers="group"><strong>Language Settings Providers</strong></td>
+			<td headers="description">Lists the available language settings providers.</td>
+		</tr>
+		<tr valign="top">
+			<td headers="group"><strong>Clear Entries</strong></td>
+			<td headers="description">Click to clear all entries of the selected provider.
+				This operation takes effect after pressing "Apply" or "OK".
+				Normally this will trigger a rerun if the provider supplies built-in compiler settings.
+				Build output parsers will regain language settings after build while parsing new build output.
+				<br>This operation might be unavailable if the provider does not have any language settings.
+				Some providers may not have the capability to clear.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="group"><strong>Reset</strong></td>
+			<td headers="description">Click to reset options of the selected provider to default values. This operation also clears the provider entries.
+				The button can be enabled if some options in "Language Settings Provider Options" panel were changed.
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<br>
+<br>
+<table width="700px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><strong>Kinds of Language Settings Providers</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody>
+		<tr style="text-align:center;">
+			<th id="field"><strong>Provider</strong></th>
+			<td headers="group"><strong>Description</strong></td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Build Output Parser Provider</strong></td>
+			<td headers="description2">Build Output Parser Provider parses output of build
+				looking for include paths and macros passed to the compiler via compiler options.
+				Include files, macro files passed the the compiler and some other compiler options are normally also recognized.
+				<br>
+				For gcc, include paths commonly passed with "-I" option and macros with "-D" option.
+				The language settings found by BOP are available after the build is finished.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Builtin Compiler Settings Provider</strong></td>
+			<td headers="description2">Builtin Compiler Settings Provider launches the compiler with special options that instruct the compiler
+				to print built-in settings such as include paths to internal system headers and the list of internally predefined macros.
+				This provider is usually shared between projects in workspace and runs in background once.
+				When it is finished the language settings are available to all the projects between which it is shared.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Managed Build Language Settings Provider</strong></td>
+			<td headers="description2">MBS Provider supplies language settings provided by Managed Build System.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>User Language Settings Provider</strong></td>
+			<td headers="description2">A user has an opportunity to enter language settings manually using this provider.
+				User Language Settings Provider should be normally the first in the list so these settings override settings supplied by other providers.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Contributed PathEntry Containers</strong></td>
+			<td headers="description2">This provider is here for backward compatibility support of PathEntry Containers from older versions of CDT.
+				Using this method is not recommended.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Contributed ScannerInfo Entries</strong></td>
+			<td headers="description2">This provider is here for backward compatibility support of ScannerInfo Entries from older versions of CDT.
+				Using this method is not recommended.
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<br>
+
+<h2>Language Settings Providers Options</h2>
+<p>
+Language settings providers can have options that affect the behavior of a provider. These options are presented in "Language Settings Provider Options" panel.
+</p>
+
+<h3>Build Output Parser Options</h3>
+<p><img src="../images/scanner_discovery/sd_bop_options.png" alt="BOP Options Panel"></p>
+<table width="700px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><strong>Build Output Parser Options</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody>
+		<tr style="text-align:center;">
+			<th id="field"><strong>Provider</strong></th>
+			<td headers="group"><strong>Options</strong></td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Compiler command pattern</strong></td>
+			<td headers="description2">The pattern which is used to recognize compiler command in build output.
+				<br>Note that the pattern is Java regular expression pattern, it is NOT globbing pattern used to expand file name in command line.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Container to keep discovered entries</strong></td>
+			<td headers="description2">The discovered entries can be associated with the project, enclosing folder or the file itself.</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Use heuristics to resolve paths</strong></td>
+			<td headers="description2">The provider will try to find the best match for the discovered path in the project
+				or workspace trying several heuristics. If disabled, the discovered paths will stay as they appear in build output.
+			</td>
+		</tr>
+	</tbody>
+</table>
+<br>
+
+<h3>Builtin Compiler Settings Provider Options</h3>
+<p><img src="../images/scanner_discovery/sd_specs_detector_options.png" alt="Specs Detector Options Panel"></p>
+<table width="700px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><strong>Builtin Compiler Settings Provider Options</strong></caption>
+	<colgroup>
+		<col width="30%" valign="top" >
+		<col width="70%" valign="top" >
+	</colgroup>
+	<tbody>
+		<tr style="text-align:center;">
+			<th id="field"><strong>Provider</strong></th>
+			<td headers="group"><strong>Options</strong></td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Command to get compiler specs</strong></td>
+			<td headers="description2">The command to make the compiler print built-in settings.
+				Following variables are recognized:
+				<ul>
+					<li><strong>${COMMAND}</strong> - compiler command from the tool-chain, such as "gcc".</li>
+					<li><strong>${FLAGS}</strong> - applicable compiler flags from the tool-chain, such as language dialect flag "-std=c++0x".</li>
+					<li><strong>${INPUTS}</strong> - indicates normally an empty specs file required by the compiler.
+						If no such file exists the file gets created temporarily in Eclipse workspace plugin area.
+					</li>
+					<li><strong>${EXT}</strong> - an extension for the language to discover built-in settings.
+						A provider can be associated with multiple languages and it will run the command for each language.
+					</li>
+				</ul>
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Browse</strong></td>
+			<td headers="description2">Use this button to locate the compiler on the file system.
+				The result is put into "Command to get compiler specs" input field.
+			</td>
+		</tr>
+		<tr valign="top">
+			<td headers="field"><strong>Allocate console in the Console View</strong></td>
+			<td headers="description2">Enable to troubleshoot problems running the command.
+				When enabled, output of each run of the provider will be directed to a special console in the Console View.
+				See also <a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a> - Console View.
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<p>
+To see the entries a provider discovered, go to project properties (or the properties of the resource of interest), see
+<a href="../reference/cdt_u_prop_general_scanner_discovery.htm">Project properties: Preprocessor Include Paths, Macros, etc.</a>
+
+</p>
+
+<p>
+A hint: <strong>After compiler upgrade</strong> re-discover changed settings with "Clear Entries" of the appropriate provider.
+</p>
+
+
+<p><img src="../images/ngconcepts.gif" alt="Related concepts" width="143" height="21"><br>
+<a href="../concepts/cdt_c_scanner_discovery.htm">Scanner Discovery</a><br>
+<a href="../concepts/cdt_c_indexer.htm">C/C++ Indexer</a><br>
+</p>
+
+<p><img src="../images/ngtasks.gif" alt="Related tasks" width="143" height="21"><br>
+<a href="../tasks/cdt_t_sd.htm">Setting up include paths and macros for C/C++ indexer</a><br>
+</p>
+
+<p><img src="../images/ngref.gif" alt="Related reference" width="143" height="21"><br>
+<a href="../reference/cdt_u_prop_general_scanner_discovery.htm">C/C++ Project properties: Preprocessor Include Paths, Macros, etc.</a><br>
+</p>
+
+</div></body>
+
+</html>

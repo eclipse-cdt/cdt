@@ -1,0 +1,305 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="CIndex" name="CIndex"/>
+      </appInfo>
+      <documentation>
+         This extension point groups extensions to the index functionality in CDT
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <choice minOccurs="1" maxOccurs="unbounded">
+            <element ref="ExportProjectProvider"/>
+            <element ref="ReadOnlyPDOMProvider"/>
+            <element ref="ReadOnlyIndexFragmentProvider"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="ExportProjectProvider">
+      <annotation>
+         <documentation>
+            &lt;h2&gt;ExportProjectProvider&lt;/h2&gt;
+&lt;p&gt;
+This subelement of CIndex allows contribution of alternate IExportProjectProvider implementations. These can then be referenced by fully qualified class name in the command line tool (see option -pprovider).
+&lt;p&gt;
+&lt;b&gt;Invoking the application as a headless application&lt;/b&gt;
+This example ant file shows how to invoke the tool headlessly, the same approach would work from a shell or batch file.
+&lt;pre&gt;
+&lt;project name=&quot;Generate PDOM&quot; default=&quot;generate&quot;&gt;
+ &lt;target name=&quot;generate&quot;&gt;
+  &lt;!-- This script shows how to invoke the default project provider (ExternalExportProjectProvider) --&gt;
+  &lt;property name=&quot;pprovider&quot; value=&quot;org.eclipse.cdt.core.index.export.ExternalExportProjectProvider&quot;/&gt;
+  &lt;property name=&quot;target&quot; value=&quot;C:\ExportedPDOMs\acmeSDK_2_5.pdom&quot;/&gt; &lt;!-- Where the output pdom is to go --&gt;
+  &lt;property name=&quot;source&quot; value=&quot;E:\AcmeSDK\v2.5\inc&quot;/&gt; &lt;!-- e.g. the directory to source content from --&gt;
+  &lt;property name=&quot;id&quot; value=&quot;com.acme.mysdk.v2.5&quot;/&gt; &lt;!-- the id to store in the generate pdom --&gt;
+  
+  &lt;property name=&quot;eclipse.home&quot; value=&quot;C:\eclipse&quot;/&gt; &lt;!-- e.g. The eclipse installation to use. This installation must contain CDT 4.0+ plugins --&gt;
+  
+  &lt;java classname=&quot;org.eclipse.equinox.launcher.Main&quot;&gt;
+   &lt;classpath&gt;
+    &lt;fileset dir=&quot;${eclipse.home}/plugins&quot;&gt;
+     &lt;include name=&quot;*equinox.launcher*.jar&quot;/&gt;
+    &lt;/fileset&gt;
+   &lt;/classpath&gt;
+   &lt;arg value=&quot;-nosplash&quot;/&gt;
+   &lt;arg value=&quot;-exitdata&quot;/&gt;
+   &lt;arg value=&quot;-application&quot;/&gt;&lt;arg value=&quot;org.eclipse.cdt.core.GeneratePDOM&quot;/&gt;
+   &lt;arg value=&quot;-pprovider&quot;/&gt;&lt;arg value=&quot;${pprovider}&quot;/&gt;
+   &lt;arg value=&quot;-source&quot;/&gt;&lt;arg value=&quot;${source}&quot;/&gt;
+   &lt;arg value=&quot;-target&quot;/&gt;&lt;arg value=&quot;${target}&quot;/&gt;
+   &lt;arg value=&quot;-id&quot;/&gt;&lt;arg value=&quot;${id}&quot;/&gt;
+  &lt;/java&gt;
+ &lt;/target&gt;
+&lt;/project&gt;
+&lt;/pre&gt;
+&lt;p&gt;
+&lt;b&gt;Invoking the tool via an Eclipse Launch Configuration&lt;/b&gt;
+&lt;p&gt;
+Specify &quot;org.eclipse.cdt.core.GeneratePDOM&quot; as the application to launch
+&lt;p&gt;
+In the Argument tabs provide (for example)
+ -target C:\ExportedPDOMs\acmeSDK_2_5.pdom -source E:\AcmeSDK\v2.5\inc -include E:\this.h -id com.acme.mysdk.v2.5
+&lt;p&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of the IExportProjectProvider implementation to register.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.index.export.IExportProjectProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="ReadOnlyPDOMProvider">
+      <annotation>
+         <documentation>
+            &lt;h2&gt;ReadOnlyPDOMProvider&lt;/h2&gt;
+&lt;p&gt;
+This subelement of CIndex allows ISVs to contribute read-only prebuilt PDOM files to the CDT Index. The only information needed is the fully qualified class name of an implementatin of org.eclipse.cdt.core.index.IOfflinePDOMProvider. This implementation will be consulted during the eclipse session for the appropriate read-only content to make add to the logical index. The logical index is accessible via the org.eclipse.core.index.IIndex API.
+ 
+        An example of contributing a prebuilt read-only pdom:
+&lt;pre&gt;
+&lt;CIndex&gt;
+   &lt;ReadOnlyPDOMProvider class=&quot;com.acme.ide.index.AcmeSDKProvider&quot;/&gt;
+&lt;/CIndex&gt;
+&lt;/pre&gt;
+and the corresponding implementation
+&lt;pre&gt;
+package com.acme.ide.index.sdk;
+import org.eclipse.core.index.provider.IReadOnlyPDOMProvider;
+import org.eclipse.core.index.provider.IPDOMDescriptor;
+import org.eclipse.core.index.IIndexLocationConverter;
+import org.eclipse.core.index.URIRelativeLocationConverter;
+public class AcmeSDKProvider implements IReadOnlyPDOMProvider {
+    public boolean providesFor(ICProject project) {
+        // e.g. decide by looking for acme project nature
+        return AcmeNature.isAcmeProject(project);
+    }
+    public IPDOMDescriptor[] getDescriptors(ICConfigurationDescription config) {
+        final IPath sdkBase = AcmeSDKAPI.getSDKBase(config);
+        return new IPDOMDescriptor[] { new IPDOMDescriptor() {
+            public IIndexLocationConverter getIndexLocationConverter() {
+                return new URIRelativeLocationConverter(URIUtil.toURI(sdkBase));
+            }
+            public IPath getLocation() {
+                IPath path = sdkBase.append(AcmeSDKAPI.getPrebuiltPDOMFilename(config));
+                return path;
+            }
+        }};
+    }
+}
+&lt;/pre&gt;
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="FragmentProviderUsage"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of the IReadOnlyPDOMProvider implementation to register.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.core.index.provider.IReadOnlyPDOMProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="ReadOnlyIndexFragmentProvider">
+      <annotation>
+         <documentation>
+            &lt;h2&gt;ReadOnlyIndexFragmentProvider&lt;/h2&gt;
+&lt;p&gt;
+This subelement of CIndex allows ISVs to contribute read-only index fragments to the CDT Index. This extension point imposes no limitations on how the index information is collected and stored. The index fragments may, for example, be based on data dynamically fetched from a remote server.
+&lt;p&gt;
+The only information needed for this extension point is the fully qualified name of a class implementing the org.eclipse.cdt.core.index.IIndexFragmentProvider interface. This class will be consulted during the eclipse session for the appropriate read-only content to add to the logical index. The logical index is accessible via the org.eclipse.core.index.IIndex API.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="0" maxOccurs="1">
+            <element ref="FragmentProviderUsage"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The fully qualified name of a class implementing IIndexFragmentProvider.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.internal.core.index.provider.IIndexFragmentProvider"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="FragmentProviderUsage">
+      <annotation>
+         <documentation>
+            Defines for which tools  the fragment provider shall be used.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="navigation" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for performing &apos;Open Declaration&apos; and &apos;Open Element&apos;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="content_assist" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for performing content-assist.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="add_import" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for performing &apos;Add Import&apos;.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="call_hierarchy" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for populating the call hierarchy.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="type_hierarchy" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for populating the type hierarchy.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="include_browser" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for populating the include browser.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="search" type="boolean" use="required">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for C/C++ searches.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="editor" type="boolean">
+            <annotation>
+               <documentation>
+                  Whether the fragment provider shall be used for C/C++ editor.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         4.0
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         See subelement documentation
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         See subelement documentation
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007, 2011 Symbian Software Systems and others.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         Index content provided by ISVs under this extension point will be accessible via the logical index org.eclipse.core.index.IIndex API
+For export functionality, see package org.eclipse.cdt.core.index.export
+      </documentation>
+   </annotation>
+</schema>

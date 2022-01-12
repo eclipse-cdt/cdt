@@ -1,0 +1,104 @@
+/*******************************************************************************
+ * Copyright (c) 2008, 2011 Intel Corporation and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Intel Corporation - Initial API and implementation
+ *******************************************************************************/
+package org.eclipse.cdt.internal.core.cdtvariables;
+
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
+import org.eclipse.cdt.core.cdtvariables.IStorableCdtVariables;
+import org.eclipse.cdt.core.cdtvariables.IUserVarSupplier;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.IDynamicVariable;
+
+/**
+ * Wrapper for UserDefinedMacroSupplier methods
+ * Note that only config-level macros are supported.
+ */
+public class UserVarSupplier implements IUserVarSupplier {
+	private static final int CTX = ICoreVariableContextInfo.CONTEXT_CONFIGURATION;
+	private static UserVarSupplier sup = null;
+
+	/**
+	 * @return an instance of this class.
+	 */
+	public static UserVarSupplier getInstance() {
+		if (sup == null)
+			sup = new UserVarSupplier();
+		return sup;
+	}
+
+	@Override
+	public ICdtVariable createMacro(ICdtVariable copy, ICConfigurationDescription contextData) {
+		return CdtVariableManager.fUserDefinedMacroSupplier.createMacro(copy, CTX, contextData);
+	}
+
+	@Override
+	public ICdtVariable createMacro(String macroName, int type, String value, ICConfigurationDescription contextData) {
+		return CdtVariableManager.fUserDefinedMacroSupplier.createMacro(macroName, type, value, CTX, contextData);
+	}
+
+	@Override
+	public ICdtVariable createMacro(String macroName, int type, String[] value,
+			ICConfigurationDescription contextData) {
+		return CdtVariableManager.fUserDefinedMacroSupplier.createMacro(macroName, type, value, CTX, contextData);
+	}
+
+	@Override
+	public void deleteAll(ICConfigurationDescription contextData) {
+		CdtVariableManager.fUserDefinedMacroSupplier.deleteAll(CTX, contextData);
+	}
+
+	@Override
+	public ICdtVariable deleteMacro(String name, ICConfigurationDescription contextData) {
+		return CdtVariableManager.fUserDefinedMacroSupplier.deleteMacro(name, CTX, contextData);
+	}
+
+	@Override
+	public ICdtVariable[] getMacros(ICConfigurationDescription contextData) {
+		return CdtVariableManager.fUserDefinedMacroSupplier.getMacros(CTX, contextData);
+	}
+
+	@Override
+	public void setMacros(ICdtVariable[] m, ICConfigurationDescription contextData) {
+		CdtVariableManager.fUserDefinedMacroSupplier.setMacros(m, CTX, contextData);
+	}
+
+	/* check whether variable is dynamic */
+	@Override
+	public boolean isDynamic(ICdtVariable v) {
+		if (v instanceof EclipseVariablesVariableSupplier.EclipseVarMacro) {
+			EclipseVariablesVariableSupplier.EclipseVarMacro evar = (EclipseVariablesVariableSupplier.EclipseVarMacro) v;
+			if (evar.getVariable() instanceof IDynamicVariable)
+				return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void storeWorkspaceVariables(boolean force) {
+		CdtVariableManager.fUserDefinedMacroSupplier.storeWorkspaceVariables(force);
+	}
+
+	@Override
+	public IStorableCdtVariables getWorkspaceVariablesCopy() {
+		return CdtVariableManager.fUserDefinedMacroSupplier.getWorkspaceVariablesCopy();
+	}
+
+	@Override
+	public boolean setWorkspaceVariables(IStorableCdtVariables vars) throws CoreException {
+		if (vars instanceof StorableCdtVariables)
+			return CdtVariableManager.fUserDefinedMacroSupplier.setWorkspaceVariables((StorableCdtVariables) vars);
+		else
+			return false;
+	}
+}

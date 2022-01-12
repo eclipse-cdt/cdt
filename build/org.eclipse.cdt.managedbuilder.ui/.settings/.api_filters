@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.managedbuilder.ui" version="2">
+    <resource path="src/org/eclipse/cdt/managedbuilder/ui/properties/DiscoveryTab.java" type="org.eclipse.cdt.managedbuilder.ui.properties.DiscoveryTab">
+        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
+            <message_arguments>
+                <message_argument value="IBuildInfoContainer"/>
+                <message_argument value="DiscoveryTab"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -1,0 +1,94 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html lang="en">
+
+<head>
+	<meta http-equiv="Content-Language" content="en-us">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Editor Scalability preferences</title>
+	<link rel="stylesheet" type="text/css" href="../help.css">
+	<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js"></script>
+</head>
+<body>
+
+<div role="main"><h1>Scalability preferences</h1>
+
+<p>Use the <img src="../images/command_link.png" alt="" > <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.cdt.ui.preferences.CScalabilityPreferences)")'>Scalability</a> preference panel to configure options for dealing with large source files.</p>
+<p><img src="../images/editor_scalability_preferences.png"  alt="Scalability Preferences"></p>
+
+<table width="600px" cellpadding="5" cellspacing="0" border="1" >
+	<caption><strong>Scalability Preference Options</strong></caption>
+	<colgroup>
+		<col width="35%" valign="top" >
+		<col width="65%" valign="top" >
+	</colgroup>
+	<thead>
+		<tr>
+			<th id="option"><strong>Option</strong></th>
+			<th id="description"><strong>Description</strong></th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td headers="option"><strong>Alert me when scalability mode will be turned on</strong></td>
+			<td headers="description">If enabled, an information dialog pops up when a large file is opened 
+			with the C/C++ Editor which exceeds the specified line limit.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Enable scalability mode options when the number of lines in the file is more than</strong></td>
+			<td headers="description">If the number of lines in a file exceeds the specified number the C/C++ Editor will 
+			enable scalability mode and all scalability mode options below will take effect.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Enable all scalability mode options</strong></td>
+			<td headers="description">If enabled, all options below are enabled, too.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Disable editor live parsing</strong></td>
+			<td headers="description">If enabled, parsing while typing will be disabled. 
+			This disables also other features like Outline view, semantic highlighting, folding, etc.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Disable semantic highlighting</strong></td>
+			<td headers="description">If enabled, C/C++ identifiers will not be colored.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Disable syntax coloring</strong></td>
+			<td headers="description">If enabled, no coloring of keywords, comments and literals is done.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Disable parsing-based content assist proposals</strong></td>
+			<td headers="description">If enabled, content assist proposals which require parsing the file will not be available.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Disable content assist auto-activation</strong></td>
+			<td headers="description">If enabled, content assist will not be activated automatically on trigger sequences, like '.', '::' or '->'.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Skip trivial expressions in initializer lists</strong></td>
+			<td headers="description">If enabled, trivial initializers in initializer lists are skipped while parsing. 
+			This improves parsing and indexing performance when very large initializer lists are present.</td>
+		</tr>
+		<tr>
+			<td headers="option"><strong>Maximum number of trivial expressions in initializer lists to parse</strong></td>
+			<td headers="description">Specifies the maximum number of trivial initializers in initializer lists to parse. 
+			Any trivial initializer-clauses beyond that number are skipped. 
+			This option is only available if <i>Skip trivial expressions in initializer lists</i> is enabled.</td>
+		</tr>
+	</tbody>
+</table>
+
+<p><img src="../images/ngconcepts.gif" ALT="Related concepts" width="143" height="21"> <br>
+<a href="../concepts/cdt_o_code_entry.htm">Coding aids</a></p>
+<p><img src="../images/ngtasks.gif" ALT="Related tasks" width="143" height="21">
+<br>
+<a href="../tasks/cdt_t_cust_cpp_editor.htm">Customizing the C/C++ editor</a><br>
+<a href="../tasks/cdt_o_con_assist.htm">Working with Content Assist</a></p>
+<p><img src="../images/ngref.gif" ALT="Related reference" width="143" height="21">
+<br>
+<a href="cdt_o_ceditor_pref.htm">C/C++ editor preferences</a></p>
+<a href="cdt_u_c_code_style_pref.htm">Code Style preferences</a><p></p>
+<img src="../images/ng00_07.gif" ALT="IBM Copyright Statement" >
+
+</div></body>
+
+</html>

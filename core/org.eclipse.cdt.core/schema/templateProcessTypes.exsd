@@ -1,0 +1,281 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.cdt.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.cdt.core" id="templateProcessTypes" name="Processes Extension point"/>
+      </appInfo>
+      <documentation>
+         This extension point is to be extended to define new processes to be used in template descriptors by template writers.
+      </documentation>
+   </annotation>
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+         <documentation>
+            One or more elements of processType should be added as children to this element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="processType" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="processType">
+      <annotation>
+         <documentation>
+            This element defines a single process. A process is analogous to a procedure with a set of parameters. In similar terms, one can say that this element defines the prototype of this process procedure. One needs to specify all the parameters expected by this process. In the eventual template xml, one needs to specify arguments for the process matching the types and order of these parameters.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="unbounded">
+               <element ref="simple"/>
+               <element ref="simpleArray"/>
+               <element ref="complex"/>
+               <element ref="complexArray"/>
+            </choice>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The value of this attribute is used (fully qualified with the namespace in which the extension is declared), to uniquely identify this processType. e.g. a value such as AddFiles will mean that the usage in the template.xml should be something like &amp;lt;process type=&quot;&amp;lt;plugin_id&amp;gt;.AddFiles&amp;gt;
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="processRunner" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class that extends org.eclipse.cdt.core.templateengine.process.ProcessRunner abstract class and implements all its abstract methods. This is the code that actually processes.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="org.eclipse.cdt.templateengine.process.ProcessRunner"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="simple">
+      <annotation>
+         <documentation>
+            A simple string parameter. In the eventual template xml, one needs to specify the same name as the value of the name attribute of a simple argument alongwith the corresponding value attribute.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the parameter. This should be used exactly as is in the name attribute of a simple argument in the template xml.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="external" type="boolean">
+            <annotation>
+               <documentation>
+                  This is an optional attribute. If specified with a true value, it implies that the template xml need not mention this argument for this param. The attribute does not have any meaning in the context of a child of a complex param or of a child of a complexArray param.
+Another thing to note is that arguments corresponding to external=true type params, if not mentioned in the template xml, should be supplied directly through the ValueStore with the key as the param&apos;s name.
+If not mentioned, this attribute&apos;s is treated as false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="nullable" type="boolean">
+            <annotation>
+               <documentation>
+                  This is an optional attribute. If specified with a true value, it implies that the template xml need not mention the value attribute of the argument for this param. The attribute does not have any meaning in the context of a child of a complex param or of a child of a complexArray param.
+If not mentioned, this attribute&apos;s is treated as false.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="simpleArray">
+      <annotation>
+         <documentation>
+            A simple string array parameter. In the eventual template xml, one needs to specify the same name as the value of the name attribute of a simple-array argument alongwith the corresponding element children, one child per array element with the corresponding value attribute.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the parameter. This should be used exactly as is in the name attribute of a simple-array argument in the template xml.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="complex">
+      <annotation>
+         <documentation>
+            A complex parameter that groups together any number of simple, simpleArray, complex, complexArray parameters. This is equivalent of an object parameter. In the eventual template xml, one needs to specify the same name as the value of the name attribute of a simple argument alongwith the corresponding children, each child matching the type of the corresponding child of this element.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <choice>
+               <element ref="simple"/>
+               <element ref="simpleArray"/>
+               <element ref="complex"/>
+               <element ref="complexArray"/>
+            </choice>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the parameter. This should be used exactly as is in the name attribute of a complex argument in the template xml.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="complexArray">
+      <annotation>
+         <documentation>
+            A complex array parameter. Each element of this parameter is of the same base complex type as specified by the baseType child of this element. In the eventual template xml, one needs to specify the same name as the value of the name attribute of a complex-array argument alongwith the corresponding element children, one child per array element with the corresponding complex type arguments (based on baseType definition).
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="baseType"/>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the parameter. This should be used exactly as is in the name attribute of a complex-array argument in the template xml.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+   <element name="baseType">
+      <annotation>
+         <documentation>
+            This is not a direct parameter of a process. This simply acts as a complex grouping of parameters to be used as the base type of complexArray parameters.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <choice>
+               <element ref="simple"/>
+               <element ref="simpleArray"/>
+               <element ref="complex"/>
+               <element ref="complexArray"/>
+            </choice>
+         </sequence>
+      </complexType>
+   </element>
+   <annotation>
+      <appInfo>
+         <meta.section type="since"/>
+      </appInfo>
+      <documentation>
+         CDT 4.0
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         The following is an example of the extension point usage:
+&lt;p&gt;
+&lt;pre&gt;
+   &lt;extension
+         id=&quot;processExample&quot;
+         name=&quot;Process Example&quot;
+         point=&quot;org.eclipse.cdt.core.templateengine.processTypes&quot;&gt;
+        &lt;processType
+            name=&quot;NewManagedProject&quot;
+            processRunner=&quot;org.eclipse.cdt.core.templateengine.process.processes.NewManagedProject&quot;&gt;
+         &lt;simple name=&quot;name&quot;/&gt;
+         &lt;simple
+               external=&quot;true&quot;
+               name=&quot;projectType&quot;/&gt;
+         &lt;simple
+               external=&quot;true&quot;
+               name=&quot;location&quot;
+               nullable=&quot;true&quot;/&gt;
+         &lt;simple name=&quot;targetType&quot;/&gt;
+        &lt;/processType&gt;
+        &lt;processType
+            name=&quot;SetMBSBooleanOptionValue&quot;
+            processRunner=&quot;org.eclipse.cdt.core.templateengine.process.processes.SetMBSBooleanOptionValue&quot;&gt;
+         &lt;simple name=&quot;projectName&quot;/&gt;
+         &lt;complexArray name=&quot;resourcePaths&quot;&gt;
+            &lt;baseType&gt;
+               &lt;simple name=&quot;id&quot;/&gt;
+               &lt;simple name=&quot;value&quot;/&gt;
+               &lt;simple name=&quot;path&quot;/&gt;
+            &lt;/baseType&gt;
+         &lt;/complexArray&gt;
+        &lt;/processType&gt;
+        &lt;processType
+            name=&quot;AddFile&quot;
+            processRunner=&quot;org.eclipse.cdt.core.templateengine.process.processes.AddFile&quot;&gt;
+         &lt;simple name=&quot;projectName&quot;/&gt;
+         &lt;complex name=&quot;file&quot;&gt;
+            &lt;simple name=&quot;source&quot;/&gt;
+            &lt;simple name=&quot;target&quot;/&gt;
+            &lt;simple name=&quot;replaceable&quot;/&gt;
+         &lt;/complex&gt;
+        &lt;/processType&gt;
+        &lt;processType
+            name=&quot;AppendToMBSStringListOptionValues&quot;
+            processRunner=&quot;org.eclipse.cdt.core.templateengine.process.processes.AppendToMBSStringListOptionValues&quot;&gt;
+         &lt;simple name=&quot;projectName&quot;/&gt;
+         &lt;complexArray name=&quot;resourcePaths&quot;&gt;
+            &lt;baseType&gt;
+               &lt;simple name=&quot;id&quot;/&gt;
+               &lt;simpleArray name=&quot;values&quot;/&gt;
+               &lt;simple name=&quot;path&quot;/&gt;
+            &lt;/baseType&gt;
+         &lt;/complexArray&gt;
+        &lt;/processType&gt;
+    &lt;/extension&gt;
+&lt;/pre&gt;
+For more details on how to define your own templates, please check examples provided under
+&lt;samp&gt;org.eclipse.cdt.gnu.templates&lt;/samp&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         An implementation of this extension point is supplied in &lt;samp&gt;org.eclipse.cdt.core.templateengine&lt;/samp&gt;
+      </documentation>
+   </annotation>
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2007 Symbian Software Limited and others.
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+Contributors:
+Bala Torati (Symbian) - Initial API and implementation
+      </documentation>
+   </annotation>
+</schema>

@@ -1,0 +1,9 @@
+org.eclipse.cdt.dsf/debug = false
+org.eclipse.cdt.dsf/debug/executor = false
+org.eclipse.cdt.dsf/debug/executorName = 
+org.eclipse.cdt.dsf/debug/monitors = false
+org.eclipse.cdt.dsf/debugCache = false
+org.eclipse.cdt.dsf/debug/session = false
+org.eclipse.cdt.dsf/debug/session/listeners = false
+org.eclipse.cdt.dsf/debug/session/dispatches = false
+org.eclipse.cdt.dsf/debug/session/modelAdapters = false

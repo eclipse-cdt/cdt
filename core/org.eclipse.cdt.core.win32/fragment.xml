@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<fragment>
+
+     <extension
+         point="org.eclipse.cdt.core.ProcessList">
+      <processList
+	      	platform="win32"
+            class="org.eclipse.cdt.internal.core.win32.ProcessList">
+      </processList>
+   </extension>
+     <extension
+           point="org.eclipse.cdt.core.native.WindowsRegistry">
+        <windowsRegistry
+              class="org.eclipse.cdt.internal.core.win32.WindowsRegistryImpl"
+              platform="win32">
+        </windowsRegistry>
+     </extension>
+</fragment>

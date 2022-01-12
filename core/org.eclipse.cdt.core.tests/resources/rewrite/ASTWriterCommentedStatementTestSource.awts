@@ -1,0 +1,660 @@
+//!Commented BreakStatementTest 1
+//%CPP
+void foo()
+{
+    while (true){
+        //TEST  1
+        break; //TEST 2
+    }
+}
+
+
+//!Commented BreakStatementTest 2
+//%CPP
+void foo()
+{
+    while (true){
+        /*TEST 1*/
+        break; /*TEST 2*/
+    }
+}
+
+
+//!Commented CompoundStatementTest 1
+//%CPP
+void foo()
+{
+    int i = 2;
+    //TEST 1
+    {
+        //TEST 2
+        int a = i;
+        {
+            //TEST 3
+            a++;
+            //TEST 4
+        } //TEST 5
+        //TEST 6
+    } //TEST 7
+}
+
+
+//!Commented CompoundStatementTest 2
+//%CPP
+void foo()
+{
+    int i = 2;
+    /*TEST 1*/
+    {
+        /*TEST 2*/
+        int a = i;
+        {
+            /*TEST 3*/
+            a++;
+            /*TEST 4*/
+        } /*TEST 5*/
+        /*TEST 6*/
+    } /*TEST 7*/
+}
+
+
+//!Commented ContinueStatementTest 1
+//%CPP
+void foo()
+{
+    while (true){
+        //TEST 1
+        continue; //TEST 2
+    }
+}
+
+
+//!Commented ContinueStatementTest 2
+//%CPP
+void foo()
+{
+    while (true){
+        /*TEST 1*/
+        continue; /*TEST 2*/
+    }
+}
+
+
+//!Commented DeclarationStatementTest 1
+//%CPP
+void foo()
+{
+    //TEST 1
+    int i = 2; //TEST 2
+    //TEST 3
+    int a; //TEST 4
+    //TEST 5
+}
+
+
+//!Commented DeclarationStatementTest 2
+//%CPP
+void foo()
+{
+    /*TEST 1*/
+    int i = 2; /*TEST 2*/
+    /*TEST 3*/
+    int a; /*TEST 4*/
+    /*TEST 5*/
+}
+
+
+//!Commented DoStatementTest 1
+//%CPP
+void foo()
+{
+    //TEST 1
+    do{ //TEST 2
+        continue; //TEST 3
+        //TEST 4
+    } while (true); //TEST 5
+}
+
+
+//=
+void foo()
+{
+    //TEST 1
+    do{
+        //TEST 2
+        continue; //TEST 3
+        //TEST 4
+    } while (true); //TEST 5
+}
+
+
+//!Commented DoStatementTest 2
+//%CPP
+void foo()
+{
+    /*TEST 1*/
+    do{ /*TEST 2*/
+        continue; /*TEST 3*/
+        /*TEST 4*/
+    } while (true); /*TEST 5*/
+}
+
+
+//=
+void foo()
+{
+    /*TEST 1*/
+    do{
+        /*TEST 2*/
+        continue; /*TEST 3*/
+        /*TEST 4*/
+    } while (true); /*TEST 5*/
+}
+
+
+//!Commented DoStatementTest 3
+//%CPP
+void foo()
+{
+    do{
+        continue;
+    } while (true); /*TEST 1*/
+}
+
+
+//!Commented ExpressionsStatement1
+//%CPP
+void foo()
+{
+    bar1();
+    //TEST
+    bar2();
+}
+
+
+//!Commented ExpressionsStatement2
+//%CPP
+void foo()
+{
+    //TEST
+    bar1();
+    bar2();
+}
+
+
+//!Commented ExpressionsStatement3
+//%CPP
+void foo()
+{
+    bar1();
+    bar2();
+    //TEST
+}
+
+
+//!Commented ForStatementTest 1
+//%CPP
+void foo()
+{
+    //TEST 1
+    for (int i = 0;i < 1;++i){ //TEST 2
+        break; //TEST 3
+    } //TEST 4
+}
+
+
+//=
+void foo()
+{
+    //TEST 1
+    for (int i = 0;i < 1;++i){
+        //TEST 2
+        break; //TEST 3
+    } //TEST 4
+}
+
+
+//!Commented ForStatementTest 2
+//%CPP
+void foo()
+{
+    /*TEST 1*/
+    for (int i = 0;i < 1;++i){ /*TEST 2*/
+        break; /*TEST 3*/
+    } /*TEST 4*/
+}
+
+
+//=
+void foo()
+{
+    /*TEST 1*/
+    for (int i = 0;i < 1;++i){
+        /*TEST 2*/
+        break; /*TEST 3*/
+    } /*TEST 4*/
+}
+
+
+//!Commented ForStatementTest 3
+//%CPP
+void foo()
+{
+    for (int i = 0;i < 1;++i){
+        break;
+    } /*TEST 4*/
+}
+
+
+//!Commented GotoStatement1
+//%CPP
+void foo()
+{
+    start:
+    bar();
+    //TEST
+    goto start;
+}
+
+
+//!Commented GotoStatement2
+//%CPP
+void foo()
+{
+    start:
+    bar();
+    goto start; //TEST
+}
+
+
+//!Commented GotoStatement3
+//%CPP
+void foo()
+{
+    start:
+    bar();
+    goto /*TEST*/ start;
+}
+
+
+//=
+void foo()
+{
+    start:
+    bar();
+    goto /*TEST*/
+    start;
+}
+
+
+//!Commented GotoStatement4
+//%CPP
+void foo()
+{
+    start:
+    bar();
+    goto //TEST
+    start;
+}
+
+
+//!Commented GotoStatement5
+//%CPP
+void foo()
+{
+    start:
+    bar();
+    goto /*TEST*/
+    start;
+}
+
+
+//!Commented LabelStatement1
+//%CPP
+void foo()
+{
+    //Test
+    start:
+    bar();
+    goto start;
+}
+
+
+//!Commented LabelStatement2
+//%CPP
+void foo()
+{
+    start: //Test
+    bar();
+    goto start;
+}
+
+
+//=
+void foo()
+{
+    start:
+    //Test
+    bar();
+    goto start;
+}
+
+
+//!Commented LabelStatement3
+//%CPP
+void foo()
+{
+    start: /*Test*/
+    bar();
+    goto start;
+}
+
+
+//=
+void foo()
+{
+    start:
+    /*Test*/
+    bar();
+    goto start;
+}
+
+
+//!Commented LabelStatement4
+//%CPP
+void foo()
+{
+    start:
+    //Test
+    bar();
+    goto start;
+}
+
+
+//!Commented LabelStatement5
+//%CPP
+void foo()
+{
+    start:
+    bar(); //Test
+    goto start;
+}
+
+
+//!Commented IfStatementTest 1
+//%CPP
+int f()
+{
+    if (int c = f()){
+        c++;
+    } //TEST 1
+    return i;
+}
+
+
+//!Commented IfStatementTest 2
+//%CPP
+int f()
+{
+    int i = 0;
+    //TEST 1
+    if (i < 1){
+        //TEST 3
+        ++i;
+        //TEST 4
+    }else{
+        //TEST 5
+        --i;
+        //TEST 6
+    } //TEST 7
+    if (int c = f()){
+        c++;
+    } //TEST 8
+    return i;
+}
+
+
+//!Commented IfStatementTest 3
+//%CPP
+int f()
+{
+    int i = 0;
+    /*TEST 1*/
+    if (i < 1){
+        /*TEST 1*/
+        ++i;
+        /*TEST 1*/
+    }else{
+        /*TEST 1*/
+        --i;
+        /*TEST 1*/
+    } /*TEST 1*/
+    if (int c = f()){
+        c++;
+    } /*TEST 1*/
+    return i;
+}
+
+
+//!Commented IfStatementTest 4
+//%CPP
+int g()
+{
+    if (10 > 5) //TEST 1
+        return 1; //TEST 2
+
+    return 0;
+}
+
+//=
+int g()
+{
+    if (10 > 5)
+        //TEST 1
+        return 1; //TEST 2
+
+    return 0;
+}
+
+//!Commented IfStatementTest 5
+//%CPP
+int g()
+{
+    if (10 > 5) /*TEST 1*/
+        return 1; /*TEST 2*/
+
+    return 0;
+}
+
+//=
+int g()
+{
+    if (10 > 5)
+        /*TEST 1*/
+        return 1; /*TEST 2*/
+
+    return 0;
+}
+
+//!NullStatementTest
+//%CPP
+void f()
+{
+    ;
+}
+
+
+//!Commented ReturnStatement1
+//%CPP
+void foo()
+{
+    return; //Test
+}
+
+
+//!Commented ReturnStatement2
+//%CPP
+void foo()
+{
+    return 5; //Test
+}
+
+
+//!Commented ReturnStatement3
+//%CPP
+void foo()
+{
+    //Test
+    return 1 + 1;
+}
+
+
+//!Commented SwitchStatementTest 1
+//%CPP
+void foo()
+{
+    //TEST 1
+    switch (1){
+        //TEST 2
+        case 1: //TEST 3
+            return 1; //TEST 4
+        case 2:
+            return 2;
+        default: //TEST 5
+            return 3;
+            //TEST 6
+    } //TEST 7
+}
+
+
+//!Commented SwitchStatementTest 2
+//%CPP
+void foo()
+{
+    /*TEST 1*/
+    switch (1){ /*TEST 2*/
+        /*TEST 3*/
+        case 1: /*TEST 4*/
+            return 1; /*TEST 5*/
+        case 2:
+            return 2;
+        default: /*TEST 6*/
+            return 3;
+            /*TEST 7*/
+    } /*TEST 8*/
+}
+
+
+//=
+void foo()
+{
+    /*TEST 1*/
+    switch (1){
+        /*TEST 2*/
+        /*TEST 3*/
+        case 1: /*TEST 4*/
+            return 1; /*TEST 5*/
+        case 2:
+            return 2;
+        default: /*TEST 6*/
+            return 3;
+            /*TEST 7*/
+    } /*TEST 8*/
+}
+
+
+//!Commented SwitchStatementTest 3
+//%CPP
+void foo()
+{
+    switch (1){
+        case 1:
+            return 1;
+        case 2:
+            return 2;
+        default:
+            return 3;
+    } /*TEST 8*/
+}
+
+
+//!Commented WhileStatementTest 1
+//%CPP
+void foo()
+{
+    //TEST 1
+    while (true){ //TEST 2
+        //TEST 3
+        break; //TEST 4
+        //TEST 5
+    } //TEST 6
+}
+
+
+//=
+void foo()
+{
+    //TEST 1
+    while (true){
+        //TEST 2
+        //TEST 3
+        break; //TEST 4
+        //TEST 5
+    } //TEST 6
+}
+
+
+//!Commented WhileStatementTest 2
+//%CPP
+void foo()
+{
+    /*TEST 1*/
+    while (true){ /*TEST 2*/
+        /*TEST 3*/
+        break; /*TEST 4*/
+        /*TEST 5*/
+    } /*TEST 6*/
+}
+
+
+//=
+void foo()
+{
+    /*TEST 1*/
+    while (true){
+        /*TEST 2*/
+        /*TEST 3*/
+        break; /*TEST 4*/
+        /*TEST 5*/
+    } /*TEST 6*/
+}
+
+
+//!Commented WhileStatementTest 3
+//%CPP
+void foo()
+{
+    while (true){
+        break;
+    } /*TEST 6*/
+}
+
+
+//!TryBlockStatement
+//%CPP
+int foo()
+{
+    try {
+        int i = 1;
+        try {
+            ++i;
+            return i;
+        }
+        catch (...){
+        }
+    }
+    catch (...){
+    }
+}
+
+

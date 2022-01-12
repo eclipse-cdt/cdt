@@ -1,0 +1,252 @@
+//!CCastExpression
+//%C
+int i = (int)'A';
+
+//!CPPCastExpression
+//%CPP
+TestClass* i = dynamic_cast<TestClass*>(tc);
+TestClass* i = static_cast<TestClass*>(tc);
+TestClass* i = reinterpret_cast<TestClass*>(tc);
+TestClass* i = const_cast<TestClass*>(tc);
+
+//!ArraySubscrition
+//%C GNU
+int i = arr[0];
+int i = arr[y];
+
+//!CPPBinaryExpression
+//%CPP
+int i = 1 * x;
+int i = 1 / x;
+int i = 1 % x;
+int i = 1 + x;
+int i = 1 - x;
+int i = 1 << x;
+int i = 1 >> x;
+bool b = 1 < x;
+bool b = 1 > x;
+bool b = 1 <= x;
+bool b = 1 >= x;
+int i = 1 & x;
+int i = 1 ^ x;
+int i = 1 | x;
+bool b = 1 && x;
+bool b = 1 || x;
+int i = x;
+
+void foo()
+{
+    i *= x;
+}
+
+void foo()
+{
+    i /= x;
+}
+
+void foo()
+{
+    1 %= x;
+}
+
+void foo()
+{
+    1 += x;
+}
+
+void foo()
+{
+    1 -= x;
+}
+
+void foo()
+{
+    1 <<= x;
+}
+
+void foo()
+{
+    1 >>= x;
+}
+
+void foo()
+{
+    1 &= x;
+}
+
+void foo()
+{
+    1 |= x;
+}
+
+bool b = 1 == x;
+bool b = 1 != x;
+int i = a.x;
+int i = a->x;
+
+//!BinaryExpression with MacroExpansions
+//%CPP
+#define ZWO 2
+int i = ZWO + 2;
+int i = 2 + ZWO;
+//= Preprocessor-Direkrive wird nur bei VP-Translationunits geschrieben
+int i = ZWO + 2;
+int i = 2 + ZWO;
+
+//!GPPBinaryExpression
+//%CPP GNU
+int i = 1 <? x;
+int i = 1 >? x;
+
+//!ConditionalExpression
+//%CPP
+int a = 1 < 2 ? 2 : 3;
+
+//!ExpressionList
+//%CPP
+int a = 1, b = 2, c = 3;
+
+//!FieldReference
+//%CPP
+int i = tc->a;
+int y = tc.getI();
+
+//!CPPFieldReference
+//%CPP
+int i = tc->template get_new<int>();
+int y = tc.template get_new<int>();
+
+//!FunctionCall
+//%CPP
+int a = tc.getI();
+
+//!IdExpression
+//%CPP
+int i = a;
+
+//!LiteralExpression
+//%CPP
+int i = 1;
+int i = 'a';
+string s = "abc";
+
+//!CPPLiteralExpression
+//%CPP
+TestClass* tc = this;
+bool b = true;
+bool b = false;
+
+//!UnaryExpression
+//%CPP
+int i = ++a;
+int i = --a;
+int i = +a;
+int i = -a;
+int* b = &a;
+int i = *b;
+int i = ~b;
+bool b = !false;
+int i = sizeof a;
+int i = a--;
+int i = a++;
+int i = (b);
+
+//!CPPUnaryExpression
+//%CPP
+void f()
+{
+    throw "Fehler";
+}
+
+type_info c = typeid (a);
+
+//!CPPUnaryExpression without operand Bug 318552
+//%CPP
+void rethrow()
+{
+    try {
+        int i = 1;
+        throw i;
+    }
+    catch (int j){
+        throw ;
+    }
+}
+
+
+//!TypeIdExpression
+//%CPP
+int d = sizeof (int);
+
+//!CPPTypeIdExpression
+//%CPP
+type_info c = typeid (int);
+
+//!CPPDeleteExpression
+//%CPP
+void f()
+{
+    delete tc;
+}
+
+
+//!CPPNewExpression
+//%CPP
+TestClass* tc = new TestClass();
+
+//!CPPSimpleTypeConstructorExpression
+//%CPP
+int i = int(1);
+
+//!CPP LiteralExpression with string literal
+//%CPP
+int main()
+{
+    using namespace std::string_literals;
+    auto str = "foobar"s;
+}
+
+//!CPP LiteralExpression with user defined literal
+//%CPP
+constexpr long double operator ""_deg(long double deg)
+{
+    return deg * 3.141592 / 180;
+}
+
+int main()
+{
+    double x = 90.0_deg;
+}
+
+//!Star this lambda capture
+//%CPP
+struct S
+{
+    void foo()
+    {
+        [*this] {
+        }
+        ;
+    }
+};
+
+//!This lambda capture
+//%CPP
+struct S
+{
+    void foo()
+    {
+        [this] {
+        }
+        ;
+    }
+};
+
+//!Operator sizeofParameterPack
+//%CPP
+template<typename... T> 
+void f(T... a)
+{
+    if (sizeof...(a)){
+    }
+}

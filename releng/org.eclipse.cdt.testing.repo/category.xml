@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.eclipse.cdt.testing_0.0.0.qualifier.jar" id="org.eclipse.cdt.testing" version="0.0.0">
+      <category name="main"/>
+   </feature>
+   <feature url="features/org.eclipse.cdt.testing.source_0.0.0.qualifier.jar" id="org.eclipse.cdt.testing.source" version="0.0.0">
+      <category name="main"/>
+   </feature>
+   <category-def name="main" label="C/C++ Development Tooling Tests"/>
+</site>

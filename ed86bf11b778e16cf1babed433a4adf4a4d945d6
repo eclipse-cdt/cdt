@@ -1,0 +1,428 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd9bc832_bc9175cc",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/actions/AddGlobalsActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Don\u0027t forget to add copyright headers.",
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fe7e35d8_436974c8",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/actions/AddGlobalsActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "For my own reference (though it may be useful to add it as a comment) the SHA1 of that file was c799394ac5 before it was deleted in commit ff7f25b94d9d",
+      "range": {
+        "startLine": 57,
+        "startChar": 39,
+        "endLine": 57,
+        "endChar": 63
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a1b892c4_13b96b93",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/actions/AddGlobalsActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 372,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "To match comment on GlobalVariableService line 99 - this has a potential race condition.",
+      "range": {
+        "startLine": 372,
+        "startChar": 0,
+        "endLine": 372,
+        "endChar": 85
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "34d697e1_1a47e194",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/actions/AddGlobalsActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 377,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "This code is suspect - syncExec are generally bad and can cause deadlocks. Also the surrounding method needs to be in the UI thread already as it is creating UI elements. So the simple fix may be just to remove the syncexec code?\n\nI can\u0027t see in the original code any use of syncExec",
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e27e682b_610bad9d",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/actions/AddGlobalsActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 379,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Probably should respect if a user hits cancel, or explain why not here. (Althought on second thought this line is probably commented out for same issue as I commented above)",
+      "range": {
+        "startLine": 379,
+        "startChar": 9,
+        "endLine": 379,
+        "endChar": 32
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c4df6777_3a91dd49",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/actions/AddGlobalsActionDelegate.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 399,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "TODO: Log this at least.",
+      "range": {
+        "startLine": 399,
+        "startChar": 0,
+        "endLine": 399,
+        "endChar": 23
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "12266633_85fd5767",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/datamodel/GlobalVariableDMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Why implement IAdaptable if always return null?",
+      "range": {
+        "startLine": 58,
+        "startChar": 15,
+        "endLine": 58,
+        "endChar": 25
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "36040c55_cabac76f",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Can this API be updated to use a DataRequestMonitor? At the moment you aren\u0027t doing anything async, but in the future someone may want to.\n\nAlso, this code is not thread safe - fGlobals is modified on the executor thread, but AFAICT how it is used today it is read on the UI thread.",
+      "range": {
+        "startLine": 99,
+        "startChar": 0,
+        "endLine": 99,
+        "endChar": 76
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "02e9c390_00dd48ec",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 103,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Can this return an unmodifiable list or an array?",
+      "range": {
+        "startLine": 103,
+        "startChar": 9,
+        "endLine": 103,
+        "endChar": 17
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "de8ce3ae_0fca510c",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "What does this do? Looks like dead code (along with line 122 and 127). i.e. I think you can just do lines 113-120 - but even then the array that is used is always empty?\n\n(Am I misreading this method?)",
+      "range": {
+        "startLine": 108,
+        "startChar": 50,
+        "endLine": 108,
+        "endChar": 77
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "636f5221_364b083b",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "This code is thread safe - i.e. it should be commented as such. @ThreadSafe but maybe ThreadSafeAndProhibitedFromDsfExecutor if you don\u0027t want to provide the check if it is already running in executor thread.",
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "68e09b54_6ea7b0d2",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/dsf/GlobalVariableService.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "This case feels like a bug / race condition. if fGlobals is owned by executor thread,it should not be accessed outside of it.\n\nProbably consider create the new ArrayList in initialize method or at class init time.",
+      "range": {
+        "startLine": 233,
+        "startChar": 0,
+        "endLine": 233,
+        "endChar": 47
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "5823d473_06ef13dd",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/viewmodel/GdbGlobalVariableVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "I haven\u0027t reviewed this class - it will be easier to review hopefully once integrated as it now contains lots of copied code.",
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "fac73570_c3c00cfd",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/viewmodel/GlobalVariableVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "I haven\u0027t reviewed this class - it will be easier to review hopefully once integrated as it now contains lots of copied code.",
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b0b60da1_d055ebf6",
+        "filename": "dsf-gdb/com.ashling.riscfree.globalvariable.view/src/com/ashling/riscfree/globalvariable/view/viewmodel/GlobalVariableVMNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1192,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Out of date comment",
+      "range": {
+        "startLine": 1192,
+        "startChar": 42,
+        "endLine": 1192,
+        "endChar": 51
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "7401af64_196aa184",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1229,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Once properly integrated this method will need an @since",
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a382bb09_f13c70d9",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/CommandFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1230,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "minor - this file should have methods alphabetically sorted.",
+      "range": {
+        "startLine": 1230,
+        "startChar": 44,
+        "endLine": 1230,
+        "endChar": 45
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "ff012bc2_d3947ed3",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/commands/MIInfoVariables.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Have you considered using --max-results to limit the chance of having so many variables returned that performance is affected?",
+      "range": {
+        "startLine": 26,
+        "startChar": 13,
+        "endLine": 26,
+        "endChar": 28
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "032e87d0_524356dc",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIGlobalVariableInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "Future :-) applies to multiple files",
+      "range": {
+        "startLine": 2,
+        "startChar": 26,
+        "endLine": 2,
+        "endChar": 27
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67fb76e5_e5f0d0ed",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/output/MIGlobalVariableInfo.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 170,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-12T15:54:17Z",
+      "side": 1,
+      "message": "To match API style of other MI Info classes would be to return GlobalVariableInfo[] - however I don\u0027t really like the returning of arrays and much prefer lists myself so I am ok with changing this convention.\n\nHowever if you return a list, it should be an unmodifiable list.",
+      "range": {
+        "startLine": 170,
+        "startChar": 8,
+        "endLine": 170,
+        "endChar": 32
+      },
+      "revId": "ed86bf11b778e16cf1babed433a4adf4a4d945d6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

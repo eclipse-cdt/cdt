@@ -23,7 +23,7 @@
 
 	<artifactId>org.eclipse.cdt.debug.gdbjtag</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<version>7.0.600-SNAPSHOT</version>
+	<version>7.0.700-SNAPSHOT</version>
 
 	<build>
 		<plugins>

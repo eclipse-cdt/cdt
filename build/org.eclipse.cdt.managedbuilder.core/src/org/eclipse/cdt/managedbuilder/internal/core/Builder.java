@@ -1295,16 +1295,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public void setArguments(String newArgs) {
-		if (getArguments().equals(newArgs))
-			return;
-
-		if (newArgs != null) {
-			String stopOnErrCmd = getStopOnErrCmd(isStopOnError());
-			String parallelCmd = isParallelBuildOn() ? getParallelizationCmd(getParallelizationNum()) : EMPTY_STRING;
-
-			newArgs = removeCmd(newArgs, stopOnErrCmd);
-			newArgs = removeCmd(newArgs, parallelCmd);
-		}
 		setArgumentsAttribute(newArgs);
 	}
 

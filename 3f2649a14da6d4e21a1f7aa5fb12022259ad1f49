@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "35b69494_0fe06ee8",
+        "filename": "pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-13T09:42:21Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it be cleaner to do like what was done with terminal, i.e. have a pom.xml in the remote sub-directory?",
+      "revId": "3f2649a14da6d4e21a1f7aa5fb12022259ad1f49",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

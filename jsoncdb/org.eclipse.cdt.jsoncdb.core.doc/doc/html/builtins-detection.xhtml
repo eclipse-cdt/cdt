@@ -84,6 +84,7 @@ td {
 	<th>Vendor</th>
 	<th>Language Standard<br/>options</th>
 	<th>Non-Standard System<br/>include paths options</th>
+    <th>Other options</th>
 	</tr>
 	</thead>
 	<tbody>
@@ -92,12 +93,17 @@ td {
 	<td>GNU Project</td>
 	<td><code>-std=</code>, <code>-ansi</code>: tested</td>
 	<td><code>--sysroot=</code>, <code>-isysroot=</code>, <code>--no-sysroot-prefix</code>: tested</td>
+    <td><code>-fPIC</code>, <code>-fpic</code>, <code>-fPIE</code>, <code>-fpie</code>
+    <code>-fstack-protector*</code>, <code>-march=</code>, <code>-march=</code>, <code>-mcpu=</code>,
+    <code>-mtune=</code>, <code>-pthread</code>
+    </td>
 	</tr>
 	<tr>
 	<td>clang</td>
 	<td>LLVM Project</td>
 	<td><code>-std=</code>, <code>-ansi</code>: tested</td>
 	<td><code>--sysroot=</code>, <code>-isysroot=</code>, <code>--no-sysroot-prefix</code>: tested</td>
+    <td></td>
 	</tr>
 	</tbody>
 	</table>

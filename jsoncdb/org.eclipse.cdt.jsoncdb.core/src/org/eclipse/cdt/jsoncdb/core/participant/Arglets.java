@@ -491,7 +491,7 @@ public final class Arglets {
 	public static class Target_Clang extends BuiltinDetctionArgsGeneric implements IArglet {
 		private static final Matcher[] optionMatchers = {
 				/* "--target=" triple */
-				Pattern.compile("--target=\\w+(-\\w+)*").matcher("") }; //$NON-NLS-1$ //$NON-NLS-2$
+				Pattern.compile("--target=\\w+(-\\w+)*").matcher(EMPTY_STR) }; //$NON-NLS-1$
 
 		/*-
 		* @see de.marw.cmake.cdt.lsp.IArglet#processArgs(java.lang.String)
@@ -510,7 +510,12 @@ public final class Arglets {
 	public static class LangStd_GCC extends BuiltinDetctionArgsGeneric implements IArglet {
 		@SuppressWarnings("nls")
 		private static final Matcher[] optionMatchers = { Pattern.compile("-std=\\S+").matcher(EMPTY_STR),
-				Pattern.compile("-ansi").matcher(EMPTY_STR), };
+				Pattern.compile("-ansi").matcher(EMPTY_STR),
+				Pattern.compile("-fPIC", Pattern.CASE_INSENSITIVE).matcher(EMPTY_STR),
+				Pattern.compile("-fPIE", Pattern.CASE_INSENSITIVE).matcher(EMPTY_STR),
+				Pattern.compile("-fstack-protector\\S+").matcher(EMPTY_STR),
+				Pattern.compile("-march=\\\\S+").matcher(EMPTY_STR), Pattern.compile("-mcpu=\\\\S+").matcher(EMPTY_STR),
+				Pattern.compile("-mtune=\\\\S+").matcher(EMPTY_STR), Pattern.compile("-pthread").matcher(EMPTY_STR), };
 
 		/*-
 		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)

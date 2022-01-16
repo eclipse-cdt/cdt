@@ -48,4 +48,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/jsoncdb/core/participant/Arglets.java" type="org.eclipse.cdt.jsoncdb.core.participant.Arglets">
+        <filter comment="Incorrectly named class that could not have been used is getting an API filter rather than old @deprecated API" id="338886760">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core.participant.Arglets.SystemIncludePath_armcc"/>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core_1.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

@@ -395,11 +395,19 @@ public final class Arglets {
 	////////////////////////////////////////////////////////////////////
 	// compiler built-ins detection
 	////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @deprecated use <code>BuiltinDetectionArgsGeneric</code> instead
+	 */
+	@Deprecated
+	public static abstract class BuiltinDetctionArgsGeneric extends BuiltinDetectionArgsGeneric {
+	}
+
 	/**
 	 * A tool argument parser capable to parse arguments from the command-line that
 	 * affect built-in detection.
 	 */
-	public static abstract class BuiltinDetctionArgsGeneric {
+	public static abstract class BuiltinDetectionArgsGeneric {
 		/**
 		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet#processArgument(IArgumentCollector,
 		 *      IPath, String)
@@ -460,7 +468,7 @@ public final class Arglets {
 	 * A tool argument parser capable to parse a GCC option to specify paths
 	 * {@code --sysrooot}.
 	 */
-	public static class Sysroot_GCC extends BuiltinDetctionArgsGeneric implements IArglet {
+	public static class Sysroot_GCC extends BuiltinDetectionArgsGeneric implements IArglet {
 		@SuppressWarnings("nls")
 		private static final Matcher[] optionMatchers = {
 				/* "--sysroot=" quoted directory */
@@ -488,7 +496,7 @@ public final class Arglets {
 	 * A tool argument parser capable to parse a Clang option to specify the compilation target {@code --target}.
 	 * @since 1.1
 	 */
-	public static class Target_Clang extends BuiltinDetctionArgsGeneric implements IArglet {
+	public static class Target_Clang extends BuiltinDetectionArgsGeneric implements IArglet {
 		private static final Matcher[] optionMatchers = {
 				/* "--target=" triple */
 				Pattern.compile("--target=\\w+(-\\w+)*").matcher(EMPTY_STR) }; //$NON-NLS-1$
@@ -507,7 +515,7 @@ public final class Arglets {
 	 * A tool argument parser capable to parse a GCC option to specify the language
 	 * standard {@code -std=xxx}.
 	 */
-	public static class LangStd_GCC extends BuiltinDetctionArgsGeneric implements IArglet {
+	public static class LangStd_GCC extends BuiltinDetectionArgsGeneric implements IArglet {
 		@SuppressWarnings("nls")
 		private static final Matcher[] optionMatchers = { Pattern.compile("-std=\\S+").matcher(EMPTY_STR),
 				Pattern.compile("-ansi").matcher(EMPTY_STR),

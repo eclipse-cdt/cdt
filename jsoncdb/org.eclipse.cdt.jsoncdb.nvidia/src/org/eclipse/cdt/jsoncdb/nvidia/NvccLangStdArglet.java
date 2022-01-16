@@ -12,7 +12,7 @@ package org.eclipse.cdt.jsoncdb.nvidia;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.jsoncdb.core.participant.Arglets.BuiltinDetctionArgsGeneric;
+import org.eclipse.cdt.jsoncdb.core.participant.Arglets.BuiltinDetectionArgsGeneric;
 import org.eclipse.cdt.jsoncdb.core.participant.IArglet;
 import org.eclipse.core.runtime.IPath;
 
@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IPath;
  * A tool argument parser capable to parse a nvcc option to specify the language
  * standard {@code --std=xxx}.
  */
-public class NvccLangStdArglet extends BuiltinDetctionArgsGeneric implements IArglet {
+public class NvccLangStdArglet extends BuiltinDetectionArgsGeneric implements IArglet {
 	private static final Matcher[] optionMatchers = { Pattern.compile("--std \\S+").matcher(""), //$NON-NLS-1$ //$NON-NLS-2$
 			Pattern.compile("-std \\S+").matcher(""), }; //$NON-NLS-1$ //$NON-NLS-2$
 

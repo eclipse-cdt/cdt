@@ -16,6 +16,24 @@
       "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "b1fd3d8d_ad8c924e",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/participant/Arglets.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2022-01-17T20:13:05Z",
+      "side": 1,
+      "message": "The version dump is in the previous gerrit #189676\n:",
+      "parentUuid": "d057d8a3_8eb8e001",
+      "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -52,6 +52,24 @@
       "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "31703c5c_5d739b45",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/participant/Arglets.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2022-01-18T20:46:45Z",
+      "side": 1,
+      "message": "I checked the step-by-step tutorial and found out that already had API tooling enabled for my workspace. But I had enable baseline \u0027CDT\u0027, not \u0027CDT baseline\u0027 and I also forgot to refresh. After doing it I only see the errors on Arglets.java and MANIFEST.MF.\n\nI would appreciate if you help me with this since I never used the API tooling before.",
+      "parentUuid": "39625cb9_e837869f",
+      "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

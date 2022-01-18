@@ -34,6 +34,24 @@
       "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "39625cb9_e837869f",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/participant/Arglets.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-18T18:22:14Z",
+      "side": 1,
+      "message": "That gerrit only bumped the service segment. I see a bunch of API errors with this patchset applied, all probably quite easily resolved and I can help you do that, just not today. Once I automate this it will be better as the build will show it and you won\u0027t be subject to misconfigured workspace.\n\nThere is some step-by-step on what needs to be done when a new version of CDT is released on wiki https://wiki.eclipse.org/CDT/policy#Using_API_Tooling\n\nNote I see two sets of errors - one set looks suspicious to me (like a but in API tooling) and if you agree you can just use commented filters to omit the errors;\n\nThe major version should be incremented in version 1.1.100, since API breakage occurred since version 1.1.0\nThe type org.eclipse.cdt.jsoncdb.core.CompileCommandsJsonParser in org.eclipse.cdt.jsoncdb.core_1.1.100 is no longer an API\nThe type org.eclipse.cdt.jsoncdb.core.IParserPreferencesAccess in org.eclipse.cdt.jsoncdb.core_1.1.100 is no longer an API\nThe type org.eclipse.cdt.jsoncdb.core.IParserPreferences in org.eclipse.cdt.jsoncdb.core_1.1.100 is no longer an API\nThe type org.eclipse.cdt.jsoncdb.core.IParserPreferencesMetadata in org.eclipse.cdt.jsoncdb.core_1.1.100 is no longer an API\nThe type org.eclipse.cdt.jsoncdb.core.ISourceFileInfoConsumer in org.eclipse.cdt.jsoncdb.core_1.1.100 is no longer an API\nThe type org.eclipse.cdt.jsoncdb.core.ParseRequest in org.eclipse.cdt.jsoncdb.core_1.1.100 is no longer an API\n\n\nBut these ones seem directly related\n\nMissing @since tag on BuiltinDetectionArgsGeneric\nThe member type org.eclipse.cdt.jsoncdb.core.participant.Arglets.SystemIncludePath_armcc in org.eclipse.cdt.jsoncdb.core_1.1.100 has been removed\nThe superclass hierarchy for org.eclipse.cdt.jsoncdb.core.participant.Arglets.LangStd_GCC has been reduced\nThe superclass hierarchy for org.eclipse.cdt.jsoncdb.core.participant.Arglets.Sysroot_GCC has been reduced\nThe superclass hierarchy for org.eclipse.cdt.jsoncdb.core.participant.Arglets.Target_Clang has been reduced",
+      "parentUuid": "b1fd3d8d_ad8c924e",
+      "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

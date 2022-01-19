@@ -11,7 +11,6 @@ RM := rm
 -include Sources/sub\ sources/subdir.mk
 -include Sources/subdir.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C_DEPS)),)
@@ -41,7 +40,7 @@ all: main-build
 main-build: test1DepCalc3
 
 # Tool invocations
-test1DepCalc3: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+test1DepCalc3: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
 	gcc  -o "test1DepCalc3" $(OBJS) $(USER_OBJS) $(LIBS)

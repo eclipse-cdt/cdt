@@ -10,7 +10,6 @@ RM := rm -rf
 -include sources.mk
 -include Functions/subdir.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C++_DEPS)),)
@@ -55,7 +54,7 @@ all: main-build
 main-build: Test21CXX
 
 # Tool invocations
-Test21CXX: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+Test21CXX: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
 	g++  -o "Test21CXX" $(OBJS) $(USER_OBJS) $(LIBS)

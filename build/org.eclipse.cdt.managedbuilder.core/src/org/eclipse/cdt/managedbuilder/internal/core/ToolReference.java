@@ -1464,4 +1464,9 @@ public class ToolReference implements IToolReference {
 	public void setOutputPrefixForPrimaryOutput(String prefix) {
 		setOutputPrefix(prefix);
 	}
+
+	@Override
+	public String[] getExtraFlags(int optionType) {
+		return new String[0];
+	}
 }

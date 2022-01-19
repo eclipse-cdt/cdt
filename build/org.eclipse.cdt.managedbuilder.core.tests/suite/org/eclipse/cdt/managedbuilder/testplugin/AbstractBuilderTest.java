@@ -219,7 +219,6 @@ public abstract class AbstractBuilderTest {
 		resources.add(buildDir);
 		if (externalBuilder) {
 			resources.add(buildDir.getFile("makefile"));
-			resources.add(buildDir.getFile("objects.mk"));
 			resources.add(buildDir.getFile("sources.mk"));
 		}
 		for (String obj : objs) {

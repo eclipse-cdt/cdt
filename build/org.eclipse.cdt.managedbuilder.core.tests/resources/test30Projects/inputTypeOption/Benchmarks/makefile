@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C_DEPS)),)
@@ -39,7 +38,7 @@ all: main-build
 main-build: inputTypeOption
 
 # Tool invocations
-inputTypeOption: $(OBJS) C:\An\ Absolute\ Path\ With\ Spaces\foo.linker $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+inputTypeOption: $(OBJS) C:\An\ Absolute\ Path\ With\ Spaces\foo.linker $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: org.eclipse.cdt.managedbuilder.core.tests.inputTypeOptionMakefileRenderingTest.c.linker'
 	gcc --linkerInputTypeOption="C:\An Absolute Path With Spaces\foo.linker" -o "inputTypeOption" $(OBJS) $(USER_OBJS) $(LIBS)

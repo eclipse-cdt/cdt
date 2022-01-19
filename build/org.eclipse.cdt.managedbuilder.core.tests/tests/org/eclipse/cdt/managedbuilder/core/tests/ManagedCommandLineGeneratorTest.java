@@ -332,9 +332,13 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 
 			String[] libs = config.getLibs(config.getArtifactExtension());
 			assertEquals(Arrays.asList("-optLibs=\"val4;COCG2;\"").toString(), Arrays.asList(libs).toString());
+			assertEquals(Arrays.asList(libs).toString(),
+					Arrays.asList(tool.getExtraFlags(IOption.LIBRARIES)).toString());
 
 			String[] userObjs = config.getUserObjects(config.getArtifactExtension());
 			assertEquals(Arrays.asList("-optUserObjs=\"val5;COCG2;\"").toString(), Arrays.asList(userObjs).toString());
+			assertEquals(Arrays.asList(userObjs).toString(),
+					Arrays.asList(tool.getExtraFlags(IOption.OBJECTS)).toString());
 
 			ManagedBuildTestHelper.removeProject("COCG2");
 		} catch (Exception e) {

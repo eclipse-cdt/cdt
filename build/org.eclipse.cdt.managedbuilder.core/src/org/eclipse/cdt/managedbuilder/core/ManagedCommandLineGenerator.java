@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 
 /**
@@ -29,6 +33,8 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 	private static final String OUTPUT_PREFIX_PRM_NAME = "OUTPUT_PREFIX"; //$NON-NLS-1$
 	private static final String OUTPUT_PRM_NAME = "OUTPUT"; //$NON-NLS-1$
 	private static final String INPUTS_PRM_NAME = "INPUTS"; //$NON-NLS-1$
+	private static final String LIBS_PRM_NAME = "LIBS"; //$NON-NLS-1$
+	private static final String USER_OBJS_PRM_NAME = "USER_OBJS"; //$NON-NLS-1$
 
 	private String makeVariable(String variableName) {
 		return "${" + variableName + "}"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -61,9 +67,43 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 			inputsStr = inputsStr.trim();
 		}
 
+		String[] libs = tool.getLibs();
+		String libsStr = stringArrayToString(libs);
+
+		String[] userObjs = tool.getUserObjs();
+		String userObjsStr = stringArrayToString(userObjs);
+
 		String flagsStr = stringArrayToString(flags);
 
 		String command = commandLinePattern;
+
+		// Start of workaround for GNU ld that requires additional objects and libraries to be last on command line
+		// Need to update "flags" in order to make the change visible outside the makefile generator.
+		// NOTE: Do not update the flagsStr as it would render the options listed twice!
+		int userObjsIdx = command.indexOf(makeVariable(USER_OBJS_PRM_NAME));
+		int libsIdx = command.indexOf(makeVariable(LIBS_PRM_NAME));
+		if (libsIdx >= 0 && userObjsIdx >= 0) {
+			List<String> flagsList = new ArrayList<>();
+			flagsList.addAll(Arrays.asList(flags));
+			if (libsIdx < userObjsIdx) { // ${LIBS} prior to ${USER_OBJS} on command line
+				flagsList.addAll(Arrays.asList(libs));
+				flagsList.addAll(Arrays.asList(userObjs));
+			} else { // ${USER_OBJS} prior to ${LIBS} on command line
+				flagsList.addAll(Arrays.asList(userObjs));
+				flagsList.addAll(Arrays.asList(libs));
+			}
+			flags = flagsList.toArray(new String[flagsList.size()]);
+		} else if (libsIdx >= 0) { // Only ${LIBS} on command line
+			List<String> flagsList = new ArrayList<>();
+			flagsList.addAll(Arrays.asList(flags));
+			flagsList.addAll(Arrays.asList(libs));
+			flags = flagsList.toArray(new String[flagsList.size()]);
+		} else if (userObjsIdx >= 0) { // Only ${USER_OBJS} on command line
+			List<String> flagsList = new ArrayList<>();
+			flagsList.addAll(Arrays.asList(flags));
+			flagsList.addAll(Arrays.asList(userObjs));
+			flags = flagsList.toArray(new String[flagsList.size()]);
+		}
 
 		command = command.replace(makeVariable(CMD_LINE_PRM_NAME), commandName);
 		command = command.replace(makeVariable(FLAGS_PRM_NAME), flagsStr);
@@ -71,6 +111,8 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 		command = command.replace(makeVariable(OUTPUT_PREFIX_PRM_NAME), outputPrefix);
 		command = command.replace(makeVariable(OUTPUT_PRM_NAME), outputName);
 		command = command.replace(makeVariable(INPUTS_PRM_NAME), inputsStr);
+		command = command.replace(makeVariable(LIBS_PRM_NAME), libsStr);
+		command = command.replace(makeVariable(USER_OBJS_PRM_NAME), userObjsStr);
 
 		command = command.replace(makeVariable(CMD_LINE_PRM_NAME.toLowerCase()), commandName);
 		command = command.replace(makeVariable(FLAGS_PRM_NAME.toLowerCase()), flagsStr);
@@ -78,6 +120,8 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 		command = command.replace(makeVariable(OUTPUT_PREFIX_PRM_NAME.toLowerCase()), outputPrefix);
 		command = command.replace(makeVariable(OUTPUT_PRM_NAME.toLowerCase()), outputName);
 		command = command.replace(makeVariable(INPUTS_PRM_NAME.toLowerCase()), inputsStr);
+		command = command.replace(makeVariable(LIBS_PRM_NAME.toLowerCase()), libsStr);
+		command = command.replace(makeVariable(USER_OBJS_PRM_NAME.toLowerCase()), userObjsStr);
 
 		return toManagedCommandLineInfo(tool, command.trim(), commandLinePattern, commandName, flags, outputFlag,
 				outputPrefix, outputName, inputResources);

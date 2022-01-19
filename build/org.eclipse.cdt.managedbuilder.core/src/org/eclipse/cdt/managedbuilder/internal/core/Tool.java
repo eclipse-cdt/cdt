@@ -74,6 +74,8 @@ import org.eclipse.cdt.managedbuilder.internal.macros.BuildfileMacroSubstitutor;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfoProvider;
+import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
@@ -103,7 +105,7 @@ import org.osgi.framework.Version;
 public class Tool extends HoldsOptions
 		implements ITool, IOptionCategory, IMatchKeyProvider<Tool>, IRealBuildObjectAssociation {
 
-	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
+	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} ${USER_OBJS} ${LIBS}"; //$NON-NLS-1$
 	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
 
 	//property name for holding the rebuild state
@@ -4250,5 +4252,132 @@ public class Tool extends HoldsOptions
 	public IOptionCategoryApplicability getApplicabilityCalculator() {
 		// Tool does not have any ApplicabilityCalculator.
 		return null;
+	}
+
+	@Override
+	public String[] getLibs() {
+		Vector<String> libs = new Vector<>();
+
+		// Look for the lib option type
+		for (IOption option : getOptions()) {
+			try {
+				if (option.getValueType() == IOption.LIBRARIES) {
+
+					// check to see if the option has an applicability calculator
+					IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
+
+					if (applicabilityCalculator == null
+							|| applicabilityCalculator.isOptionUsedInCommandLine(this, this, option)) {
+						boolean generateDefaultCommand = true;
+						IOptionCommandGenerator commandGenerator = option.getCommandGenerator();
+						if (commandGenerator != null) {
+							SupplierBasedCdtVariableSubstitutor macroSubstitutor = new BuildfileMacroSubstitutor(null,
+									EMPTY_STRING, WHITE_SPACE);
+							IMacroContextInfoProvider provider = BuildMacroProvider.getDefault();
+							IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_OPTION,
+									new OptionContextData(option, this));
+							if (info != null) {
+								macroSubstitutor.setMacroContextInfo(info);
+								String command = commandGenerator.generateCommand(option, macroSubstitutor);
+								if (command != null) {
+									libs.add(command);
+									generateDefaultCommand = false;
+								}
+							}
+						}
+
+						if (generateDefaultCommand) {
+							String command = option.getCommand();
+							String[] allLibs = option.getLibraries();
+							for (int j = 0; j < allLibs.length; j++) {
+								try {
+									String resolved[] = ManagedBuildManager.getBuildMacroProvider()
+											.resolveStringListValueToMakefileFormat(allLibs[j], " ", //$NON-NLS-1$
+													" ", //$NON-NLS-1$
+													IBuildMacroProvider.CONTEXT_OPTION,
+													new OptionContextData(option, this));
+									if (resolved != null && resolved.length > 0) {
+										for (int k = 0; k < resolved.length; k++) {
+											String string = resolved[k];
+											if (string.length() > 0) {
+												libs.add(command + string);
+											}
+										}
+									}
+								} catch (BuildMacroException e) {
+									// TODO: report error
+									continue;
+								}
+							}
+						}
+					}
+				}
+			} catch (BuildException | CdtVariableException e) {
+				// TODO: report error
+				continue;
+			}
+		}
+		return libs.toArray(new String[libs.size()]);
+	}
+
+	@Override
+	public String[] getUserObjs() {
+		Vector<String> objs = new Vector<>();
+
+		// Look for the user object option type
+		for (IOption option : getOptions()) {
+			try {
+				if (option.getValueType() == IOption.OBJECTS) {
+					// check to see if the option has an applicability calculator
+					IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
+
+					if (applicabilityCalculator == null
+							|| applicabilityCalculator.isOptionUsedInCommandLine(this, this, option)) {
+						boolean generateDefaultCommand = true;
+						IOptionCommandGenerator commandGenerator = option.getCommandGenerator();
+						if (commandGenerator != null) {
+							SupplierBasedCdtVariableSubstitutor macroSubstitutor = new BuildfileMacroSubstitutor(null,
+									EMPTY_STRING, WHITE_SPACE);
+							IMacroContextInfoProvider provider = BuildMacroProvider.getDefault();
+							IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_OPTION,
+									new OptionContextData(option, this));
+							if (info != null) {
+								macroSubstitutor.setMacroContextInfo(info);
+								String command = commandGenerator.generateCommand(option, macroSubstitutor);
+								if (command != null) {
+									objs.add(command);
+									generateDefaultCommand = false;
+								}
+							}
+						}
+
+						if (generateDefaultCommand) {
+							String unresolved[] = option.getUserObjects();
+							if (unresolved != null && unresolved.length > 0) {
+								for (int k = 0; k < unresolved.length; k++) {
+									try {
+										String resolved[] = ManagedBuildManager.getBuildMacroProvider()
+												.resolveStringListValueToMakefileFormat(unresolved[k], "", //$NON-NLS-1$
+														" ", //$NON-NLS-1$
+														IBuildMacroProvider.CONTEXT_OPTION,
+														new OptionContextData(option, this));
+										if (resolved != null && resolved.length > 0) {
+											objs.addAll(Arrays.asList(resolved));
+										}
+									} catch (BuildMacroException e) {
+										// TODO: report error
+										continue;
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (BuildException | CdtVariableException e) {
+				// TODO: report error
+				continue;
+			}
+		}
+		return objs.toArray(new String[objs.size()]);
 	}
 }

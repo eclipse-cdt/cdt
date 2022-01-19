@@ -34,6 +34,47 @@
       "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "623c1ca4_90aebac0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-01-19T21:29:43Z",
+      "side": 1,
+      "message": "Yes, a fair point. A third option would be to generalize your implementation for any type of IOption using a single new method:\n\n  public String[] getExtraFlags(int optionType)\n\nFor compatibility with existing tool XML, the default ManagedCommandLineGenerator would call this method twice to retrieve IOption.OBJECTS and IOption.LIBRARIES and use the results to replace an {EXTRA_FLAGS} token in the default command line pattern (see other comment).\n\nThis implementation would allow extenders to declare linker tools which require user objects and libraries to be specified in separate parts of the command line.",
+      "parentUuid": "804b9dea_de9004bc",
+      "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "3e86622d_5cd8e36d",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-01-19T21:29:43Z",
+      "side": 1,
+      "message": "I don\u0027t think these belong in the default pattern. It would be confusing to see them in the pattern for a non-linker tool. Ideally, they would be declared in \u003ctool commandLinePattern\u003d\"...\"\u003e XML if needed. But if we omit them, we will break existing XML tool definitions. Perhaps we can combine them and generalize in the default pattern to reduce possible confusion:\n\n${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} ${EXTRA_FLAGS}",
+      "range": {
+        "startLine": 108,
+        "startChar": 118,
+        "endLine": 108,
+        "endChar": 138
+      },
+      "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

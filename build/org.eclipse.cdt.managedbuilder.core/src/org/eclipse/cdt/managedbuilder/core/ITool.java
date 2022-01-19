@@ -714,4 +714,9 @@ public interface ITool extends IHoldsOptions {
 	void setHidden(boolean hidden);
 
 	String getUniqueRealName();
+
+	/**
+	 * @since 9.3
+	 */
+	public String[] getExtraFlags(int optionType);
 }

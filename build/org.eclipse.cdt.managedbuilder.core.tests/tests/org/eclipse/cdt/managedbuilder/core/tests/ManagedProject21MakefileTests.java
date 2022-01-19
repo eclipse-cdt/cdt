@@ -248,8 +248,8 @@ public class ManagedProject21MakefileTests extends TestCase {
 	 * tests 2.1 style tool integration for a single file executable
 	 */
 	public void testSingleFileExe() {
-		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("sources.mk"),
+				Path.fromOSString("subdir.mk") };
 		IProject[] projects = createProjects("singleFileExe", null, null, true);
 		buildProjects("singleFileExe", projects, makefiles);
 	}
@@ -258,8 +258,8 @@ public class ManagedProject21MakefileTests extends TestCase {
 	 * tests 2.1 style tool integration for a two file SO
 	 */
 	public void testTwoFileSO() {
-		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk") };
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("sources.mk"),
+				Path.fromOSString("subdir.mk") };
 		IProject[] projects = createProjects("twoFileSO", null, null, true);
 		buildProjects("twoFileSO", projects, makefiles);
 	}
@@ -268,8 +268,8 @@ public class ManagedProject21MakefileTests extends TestCase {
 	 * tests 2.1 style tool integration for multiple source files & a resource configuration
 	 */
 	public void testMultiResConfig() {
-		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"), Path.fromOSString("source1/subdir.mk"),
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("sources.mk"),
+				Path.fromOSString("subdir.mk"), Path.fromOSString("source1/subdir.mk"),
 				Path.fromOSString("source2/subdir.mk"), Path.fromOSString("source2/source21/subdir.mk") };
 		IProject[] projects = createProjects("multiResConfig", null, null, true);
 		buildProjects("multiResConfig", projects, makefiles);
@@ -280,7 +280,7 @@ public class ManagedProject21MakefileTests extends TestCase {
 	 */
 	public void testLinkedLib() throws IOException {
 		boolean succeeded = false;
-		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
+		IPath[] makefiles = { Path.fromOSString("makefile"),
 				//Path.fromOSString("subdir.mk")   // Can't compare this yet since it contains absolute paths!
 				Path.fromOSString("sources.mk") };
 		IPath[] linkedFiles = { Path.fromOSString("f1.c"), Path.fromOSString("f2.c"), Path.fromOSString("test_ar.h") };
@@ -309,11 +309,11 @@ public class ManagedProject21MakefileTests extends TestCase {
 	 */
 	public void testLinkedFolder() throws IOException {
 		boolean succeeded = false;
-		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("subdir.mk"), Path.fromOSString("sources.mk") };
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("subdir.mk"),
+				Path.fromOSString("sources.mk") };
 		IPath[] linkedFiles = { Path.fromOSString("f1.c"), Path.fromOSString("f2.c"), Path.fromOSString("test_ar.h"),
-				Path.fromOSString("Benchmarks/makefile"), Path.fromOSString("Benchmarks/objects.mk"),
-				Path.fromOSString("Benchmarks/subdir.mk"), Path.fromOSString("Benchmarks/sources.mk") };
+				Path.fromOSString("Benchmarks/makefile"), Path.fromOSString("Benchmarks/subdir.mk"),
+				Path.fromOSString("Benchmarks/sources.mk") };
 		File srcDirFile = CTestPlugin.getFileInPlugin(new Path("resources/test21Projects/linkedFolder/"));
 		IPath srcDir = Path.fromOSString(srcDirFile.toString());
 		IPath tmpSubDir = Path.fromOSString("CDTMBSTest");

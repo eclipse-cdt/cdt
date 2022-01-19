@@ -12,7 +12,6 @@ RM := rm -rf
 -include source2/subdir.mk
 -include source1/subdir.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(CC_DEPS)),)
@@ -54,7 +53,7 @@ all: main-build
 main-build: multiResConfig
 
 # Tool invocations
-multiResConfig: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+multiResConfig: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.cpp'
 	g++  -o "multiResConfig" $(OBJS) $(USER_OBJS) $(LIBS)

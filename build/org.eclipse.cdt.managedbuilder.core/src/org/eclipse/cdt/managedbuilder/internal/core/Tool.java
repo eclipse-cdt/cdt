@@ -74,6 +74,8 @@ import org.eclipse.cdt.managedbuilder.internal.macros.BuildfileMacroSubstitutor;
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
 import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfoProvider;
+import org.eclipse.cdt.managedbuilder.internal.macros.OptionContextData;
+import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
@@ -103,7 +105,7 @@ import org.osgi.framework.Version;
 public class Tool extends HoldsOptions
 		implements ITool, IOptionCategory, IMatchKeyProvider<Tool>, IRealBuildObjectAssociation {
 
-	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"; //$NON-NLS-1$
+	public static final String DEFAULT_PATTERN = "${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} ${EXTRA_FLAGS}"; //$NON-NLS-1$
 	public static final String DEFAULT_CBS_PATTERN = "${COMMAND}"; //$NON-NLS-1$
 
 	//property name for holding the rebuild state
@@ -4250,5 +4252,103 @@ public class Tool extends HoldsOptions
 	public IOptionCategoryApplicability getApplicabilityCalculator() {
 		// Tool does not have any ApplicabilityCalculator.
 		return null;
+	}
+
+	@Override
+	public String[] getExtraFlags(int optionType) {
+		if (optionType != IOption.LIBRARIES && optionType != IOption.OBJECTS) {
+			// Early exit to avoid performance penalty
+			return new String[0];
+		}
+
+		Vector<String> flags = new Vector<>();
+		for (IOption option : getOptions()) {
+			try {
+				if (option.getValueType() != optionType) {
+					continue;
+				}
+
+				// check to see if the option has an applicability calculator
+				IOptionApplicability applicabilityCalculator = option.getApplicabilityCalculator();
+
+				if (applicabilityCalculator == null
+						|| applicabilityCalculator.isOptionUsedInCommandLine(this, this, option)) {
+					boolean generateDefaultCommand = true;
+					IOptionCommandGenerator commandGenerator = option.getCommandGenerator();
+					if (commandGenerator != null) {
+						SupplierBasedCdtVariableSubstitutor macroSubstitutor = new BuildfileMacroSubstitutor(null,
+								EMPTY_STRING, WHITE_SPACE);
+						IMacroContextInfoProvider provider = BuildMacroProvider.getDefault();
+						IMacroContextInfo info = provider.getMacroContextInfo(BuildMacroProvider.CONTEXT_OPTION,
+								new OptionContextData(option, this));
+						if (info != null) {
+							macroSubstitutor.setMacroContextInfo(info);
+							String command = commandGenerator.generateCommand(option, macroSubstitutor);
+							if (command != null) {
+								flags.add(command);
+								generateDefaultCommand = false;
+							}
+						}
+					}
+
+					if (generateDefaultCommand) {
+						switch (optionType) {
+						case IOption.LIBRARIES: {
+							String command = option.getCommand();
+							String[] libs = option.getLibraries();
+							for (String lib : libs) {
+								try {
+									String resolved[] = ManagedBuildManager.getBuildMacroProvider()
+											.resolveStringListValueToMakefileFormat(lib, " ", //$NON-NLS-1$
+													" ", //$NON-NLS-1$
+													IBuildMacroProvider.CONTEXT_OPTION,
+													new OptionContextData(option, this));
+									if (resolved != null && resolved.length > 0) {
+										for (String string : resolved) {
+											if (!string.isEmpty()) {
+												flags.add(command + string);
+											}
+										}
+									}
+								} catch (BuildMacroException e) {
+									// TODO: report error
+									continue;
+								}
+							}
+							break;
+						}
+						case IOption.OBJECTS: {
+							String userObjs[] = option.getUserObjects();
+							if (userObjs != null && userObjs.length > 0) {
+								for (String userObj : userObjs) {
+									try {
+										String resolved[] = ManagedBuildManager.getBuildMacroProvider()
+												.resolveStringListValueToMakefileFormat(userObj, "", //$NON-NLS-1$
+														" ", //$NON-NLS-1$
+														IBuildMacroProvider.CONTEXT_OPTION,
+														new OptionContextData(option, this));
+										if (resolved != null && resolved.length > 0) {
+											flags.addAll(Arrays.asList(resolved));
+										}
+									} catch (BuildMacroException e) {
+										// TODO: report error
+										continue;
+									}
+								}
+							}
+							break;
+						}
+						default:
+							// Cannot happen
+							break;
+						}
+					}
+				}
+			} catch (BuildException | CdtVariableException e) {
+				// TODO: report error
+				continue;
+			}
+		}
+		return flags.toArray(new String[flags.size()]);
 	}
 }

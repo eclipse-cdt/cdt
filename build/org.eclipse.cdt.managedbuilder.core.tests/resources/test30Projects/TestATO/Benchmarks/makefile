@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include objects.mk
 
 -include ../makefile.defs
 
@@ -33,7 +32,7 @@ all: main-build
 main-build: TestATO.out
 
 # Tool invocations
-TestATO.out: $(OBJS) $(OPT_SRCS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+TestATO.out: $(OBJS) $(OPT_SRCS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: AssignToOption Executable Linker'
 	ATOL -opt../TestATO1.opt -opt../TestATO2.opt -o "TestATO.out" $(OBJS)

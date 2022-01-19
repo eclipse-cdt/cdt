@@ -184,8 +184,8 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	 * test for dependency calculation as a side-effect of compilation
 	 */
 	public void test1DepCalc2() {
-		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("sources.mk"),
+				Path.fromOSString("subdir.mk"),
 				//  This file is different using Cygwin vs GCC
 				//Path.fromOSString("main.d"),
 				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),
@@ -199,8 +199,8 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	 * test for dependency calculation using Echo, a 2nd conmpilation step, and post-processing
 	 */
 	public void test1DepCalc3() {
-		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("sources.mk"),
+				Path.fromOSString("subdir.mk"),
 				//  This file is different using Cygwin vs GCC
 				//Path.fromOSString("main.d"),
 				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),
@@ -214,8 +214,8 @@ public class ManagedBuildDependencyCalculatorTests extends TestCase {
 	 * test for dependency calculation that uses a separate, pre-build, step to generate dependency files
 	 */
 	public void test1DepCalcPreBuild() {
-		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("objects.mk"),
-				Path.fromOSString("sources.mk"), Path.fromOSString("subdir.mk"),
+		IPath[] makefiles = { Path.fromOSString("makefile"), Path.fromOSString("sources.mk"),
+				Path.fromOSString("subdir.mk"),
 				//  This file is different using Cygwin vs GCC
 				//Path.fromOSString("main.d"),
 				Path.fromOSString("Sources/subdir.mk"), Path.fromOSString("Sources/func1.d"),

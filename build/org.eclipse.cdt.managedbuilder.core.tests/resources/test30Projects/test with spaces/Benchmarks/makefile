@@ -10,7 +10,6 @@ RM := rm -rf
 -include sources.mk
 -include sub\ folder\ with\ spaces/subdir.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C_DEPS)),)
@@ -40,7 +39,7 @@ all: main-build
 main-build: testwithspaces.exe
 
 # Tool invocations
-testwithspaces.exe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+testwithspaces.exe: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C Linker'
 	gcc  -o "testwithspaces.exe" $(OBJS) $(USER_OBJS) $(LIBS)

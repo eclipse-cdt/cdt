@@ -69,8 +69,8 @@ public class BuildSystem40Tests extends TestCase {
 	}
 
 	public void test40() throws Exception {
-		String[] makefiles = { "makefile", "objects.mk", "sources.mk", "d1/subdir.mk", "d1/d2/subdir.mk",
-				"d1/d2/d3/subdir.mk", "d1_1/subdir.mk", "d1_1/d2_1/subdir.mk", "dir1/dd/excluded_c/subdir.mk",
+		String[] makefiles = { "makefile", "sources.mk", "d1/subdir.mk", "d1/d2/subdir.mk", "d1/d2/d3/subdir.mk",
+				"d1_1/subdir.mk", "d1_1/d2_1/subdir.mk", "dir1/dd/excluded_c/subdir.mk",
 				"dir1/dd/excluded_c/asd/subdir.mk", "dir1/dd/ff/subdir.mk", };
 		IProject[] projects = createProjects("test_40", null, null, true);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();

@@ -9,7 +9,6 @@ RM := rm
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include objects.mk
 
 -include ../makefile.defs
 
@@ -33,7 +32,7 @@ all: main-build
 main-build: testMacroSupportInBuildDefinitions.tar
 
 # Tool invocations
-testMacroSupportInBuildDefinitions.tar: $(BAR_FILES) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+testMacroSupportInBuildDefinitions.tar: $(BAR_FILES) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Bar Tool'
 	tar cvf $@ $(BAR_FILES)

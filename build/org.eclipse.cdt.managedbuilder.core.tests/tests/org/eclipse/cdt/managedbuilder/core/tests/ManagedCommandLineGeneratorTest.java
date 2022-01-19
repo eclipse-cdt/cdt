@@ -43,6 +43,7 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 			"${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT}",
 			"${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}",
 			"${command} ${flags} ${output_flag}${output_prefix}${output} ${WRONG_VAR_NAME}" };
+	private static String TEST_TOOL_ID = "test.four.dot.zero.cdt.managedbuild.tool.gnu.c.linker";
 	private static String COMMAND_VAL = "[command]";
 	private static String FLAGS_VAL = "[flags]";
 	private static String[] FLAGS_ARRAY_VAL = FLAGS_VAL.split("\\s");
@@ -72,10 +73,11 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 	}
 
 	public final void testGenerateCommandLineInfoPatterns() {
+		ITool tool = ManagedBuildManager.getExtensionTool(TEST_TOOL_ID);
 		IManagedCommandLineGenerator gen = new ManagedCommandLineGenerator();
 		IManagedCommandLineInfo info = null;
 		for (int i = 0; i < testCommandLinePatterns.length; i++) {
-			info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
+			info = gen.generateCommandLineInfo(tool, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
 					OUTPUT_VAL, INPUTS_ARRAY_VAL, testCommandLinePatterns[i]);
 			assertNotNull(info);
 			if (i < commandLineEtalonesForPatterns.length) {
@@ -85,54 +87,56 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 	}
 
 	public final void testGenerateCommandLineInfoDoublePattern() {
+		ITool tool = ManagedBuildManager.getExtensionTool(TEST_TOOL_ID);
 		IManagedCommandLineGenerator gen = new ManagedCommandLineGenerator();
 
-		IManagedCommandLineInfo info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL,
+		IManagedCommandLineInfo info = gen.generateCommandLineInfo(tool, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL,
 				OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, "${OUTPUT_FLAG} ${OUTPUT_FLAG}");
 		assertNotNull(info);
 		assertEquals(OUTPUT_FLAG_VAL + " " + OUTPUT_FLAG_VAL, info.getCommandLine());
 	}
 
 	public final void testGenerateCommandLineInfoParameters() {
+		ITool tool = ManagedBuildManager.getExtensionTool(TEST_TOOL_ID);
 		IManagedCommandLineGenerator gen = new ManagedCommandLineGenerator();
 
-		IManagedCommandLineInfo info = gen.generateCommandLineInfo(null, "", FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL,
+		IManagedCommandLineInfo info = gen.generateCommandLineInfo(tool, "", FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL,
 				OUTPUT_PREFIX_VAL, OUTPUT_VAL, INPUTS_ARRAY_VAL, null);
 		assertNotNull(info);
 		assertEquals(FLAGS_VAL + " " + OUTPUT_FLAG_VAL + " " + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " " + "\""
 				+ INPUTS_VAL + "\"", info.getCommandLine());
 
-		info = gen.generateCommandLineInfo(null, COMMAND_VAL, new String[0], OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
+		info = gen.generateCommandLineInfo(tool, COMMAND_VAL, new String[0], OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
 				OUTPUT_VAL, INPUTS_ARRAY_VAL, null);
 		assertNotNull(info);
 		assertEquals(COMMAND_VAL + "  " + OUTPUT_FLAG_VAL + " " + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " "
 				+ "\"" + INPUTS_VAL + "\"", info.getCommandLine());
 
-		info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, "", OUTPUT_PREFIX_VAL, OUTPUT_VAL,
+		info = gen.generateCommandLineInfo(tool, COMMAND_VAL, FLAGS_ARRAY_VAL, "", OUTPUT_PREFIX_VAL, OUTPUT_VAL,
 				INPUTS_ARRAY_VAL, null);
 		assertNotNull(info);
 		assertEquals(COMMAND_VAL + " " + FLAGS_VAL + "  " + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL + "\"" + " " + "\""
 				+ INPUTS_VAL + "\"", info.getCommandLine());
 
-		info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, "", OUTPUT_VAL,
+		info = gen.generateCommandLineInfo(tool, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, "", OUTPUT_VAL,
 				INPUTS_ARRAY_VAL, null);
 		assertNotNull(info);
 		assertEquals(COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + " " + "\"" + OUTPUT_VAL + "\"" + " " + "\""
 				+ INPUTS_VAL + "\"", info.getCommandLine());
 
-		info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, "",
+		info = gen.generateCommandLineInfo(tool, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL, "",
 				INPUTS_ARRAY_VAL, null);
 		assertNotNull(info);
 		assertEquals(COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + " " + OUTPUT_PREFIX_VAL + " " + "\""
 				+ INPUTS_VAL + "\"", info.getCommandLine());
 
-		info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
+		info = gen.generateCommandLineInfo(tool, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
 				OUTPUT_VAL, new String[0], null);
 		assertNotNull(info);
 		assertEquals(COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + " " + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL
 				+ "\"", info.getCommandLine());
 
-		info = gen.generateCommandLineInfo(null, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
+		info = gen.generateCommandLineInfo(tool, COMMAND_VAL, FLAGS_ARRAY_VAL, OUTPUT_FLAG_VAL, OUTPUT_PREFIX_VAL,
 				OUTPUT_VAL, null, null);
 		assertNotNull(info);
 		assertEquals(COMMAND_VAL + " " + FLAGS_VAL + " " + OUTPUT_FLAG_VAL + " " + OUTPUT_PREFIX_VAL + "\"" + OUTPUT_VAL
@@ -332,9 +336,13 @@ public class ManagedCommandLineGeneratorTest extends TestCase {
 
 			String[] libs = config.getLibs(config.getArtifactExtension());
 			assertEquals(Arrays.asList("-optLibs=\"val4;COCG2;\"").toString(), Arrays.asList(libs).toString());
+			assertEquals(Arrays.asList(libs).toString(),
+					Arrays.asList(tool.getExtraFlags(IOption.LIBRARIES)).toString());
 
 			String[] userObjs = config.getUserObjects(config.getArtifactExtension());
 			assertEquals(Arrays.asList("-optUserObjs=\"val5;COCG2;\"").toString(), Arrays.asList(userObjs).toString());
+			assertEquals(Arrays.asList(userObjs).toString(),
+					Arrays.asList(tool.getExtraFlags(IOption.OBJECTS)).toString());
 
 			ManagedBuildTestHelper.removeProject("COCG2");
 		} catch (Exception e) {

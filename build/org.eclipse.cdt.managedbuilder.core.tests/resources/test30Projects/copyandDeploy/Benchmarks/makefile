@@ -10,7 +10,6 @@ RM := rm -rf
 -include sources.mk
 -include Functions/subdir.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C_DEPS)),)
@@ -43,14 +42,14 @@ all: main-build
 main-build: TestCopyandDeploy
 
 # Tool invocations
-TestCopyandDeploy: $(EXECUTABLES) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+TestCopyandDeploy: $(EXECUTABLES) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Deploy tool'
 	cp $(EXECUTABLES) "TestCopyandDeploy"
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-USER_OBJS.foo: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+USER_OBJS.foo: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Invoking: MBS30.linker.gnu.c'
 	gcc  -o "USER_OBJS.foo" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building: $@'

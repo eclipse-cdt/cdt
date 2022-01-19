@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C_DEPS)),)
@@ -39,7 +38,7 @@ all: main-build
 main-build: liblinkedFolder.a
 
 # Tool invocations
-liblinkedFolder.a: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+liblinkedFolder.a: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.archiver.gnu'
 	ar -r  "liblinkedFolder.a" $(OBJS) $(USER_OBJS) $(LIBS)

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "425e8f42_37783e5c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-01-19T17:02:37Z",
+      "side": 1,
+      "message": "I am wondering if it would be cleaner to put all the specialization in the custom command line generator. Could the generator call ITool.getOptions() and iterate to find the user objs and libs?",
+      "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

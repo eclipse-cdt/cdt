@@ -61,10 +61,10 @@ all: main-build
 main-build: test_40
 
 # Tool invocations
-test_40: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+test_40: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS) uo2
 	@echo 'Building target: $@'
 	@echo 'Invoking: Test 4.0 ToolName.linker.gnu.cpp'
-	g++ -Llib/path/2 -o "test_40" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -Llib/path/2 -o "test_40" $(OBJS) $(USER_OBJS) $(LIBS) uo2 -llib2
 	@echo 'Finished building target: $@'
 	@echo ' '
 

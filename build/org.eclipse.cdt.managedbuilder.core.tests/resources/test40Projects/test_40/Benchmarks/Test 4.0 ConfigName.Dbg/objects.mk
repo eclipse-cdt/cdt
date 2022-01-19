@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-USER_OBJS := uo1
+USER_OBJS :=
 
-LIBS := -llib1
+LIBS :=
 

@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b16f179c_087053b1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-19T11:02:01Z",
+      "side": 1,
+      "message": "Should this method be named like this or some other name?\nShould there be a default implementation or should the method or should it perhaps be placed in a ITool2 interface that extends ITool to not cause problems? I highly doubt that someone is re-implementing the ITool interface, so maybe we can get away with it?",
+      "range": {
+        "startLine": 721,
+        "startChar": 17,
+        "endLine": 721,
+        "endChar": 24
+      },
+      "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d318deeb_1c28963a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-19T11:02:01Z",
+      "side": 1,
+      "message": "Same as the comment above",
+      "range": {
+        "startLine": 726,
+        "startChar": 17,
+        "endLine": 726,
+        "endChar": 28
+      },
+      "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "c936b266_b24f173f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-19T11:02:01Z",
+      "side": 1,
+      "message": "Should the variables be hard-coded like this?",
+      "range": {
+        "startLine": 108,
+        "startChar": 118,
+        "endLine": 108,
+        "endChar": 138
+      },
+      "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "04d849f9_43ed083b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4258,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-19T11:02:01Z",
+      "side": 1,
+      "message": "The implementation is copied from Configuration.getLibs() with the minor change of bracers and the loop at 4262.",
+      "range": {
+        "startLine": 4258,
+        "startChar": 17,
+        "endLine": 4258,
+        "endChar": 24
+      },
+      "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b73e41cd_68109789",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4324,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-19T11:02:01Z",
+      "side": 1,
+      "message": "The implementation is copied from Configuration.getUserObjs() with the minor change of bracers and the loop at 4328.",
+      "range": {
+        "startLine": 4324,
+        "startChar": 17,
+        "endLine": 4324,
+        "endChar": 28
+      },
+      "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    }
+  ]
+}

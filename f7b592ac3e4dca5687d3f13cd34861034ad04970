@@ -16,6 +16,24 @@
       "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "804b9dea_de9004bc",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-19T17:58:41Z",
+      "side": 1,
+      "message": "Well, sure we could do that. The downside is that the logic on calling IOptionCommandGenerator would be put in two different classes, Tool and ManagedCommandLineGenerator (and also the Configuration class, but that should be deprecated). My attempt here was to keep that information internal to the Tool class, but if it\u0027s better or not is hard to say.\n\nI guess this would mean that you would have to implement the logic yourself if you do no extend the ManagedCommandLineGenerator class but instead implement the IManagedCommandLineGenerator interface, but that might be fine too...\n\nWhat would you prefer John?",
+      "parentUuid": "425e8f42_37783e5c",
+      "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

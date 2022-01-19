@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(C++_DEPS)),)
@@ -54,7 +53,7 @@ all: main-build
 main-build: test20.exe
 
 # Tool invocations
-test20.exe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+test20.exe: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cygwin C++ Linker'
 	g++  -o "test20.exe" $(OBJS) $(USER_OBJS) $(LIBS)

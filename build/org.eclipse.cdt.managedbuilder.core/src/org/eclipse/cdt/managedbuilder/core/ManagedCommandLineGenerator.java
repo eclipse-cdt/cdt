@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core;
 
+import java.util.stream.Stream;
+
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 
 /**
@@ -29,6 +31,7 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 	private static final String OUTPUT_PREFIX_PRM_NAME = "OUTPUT_PREFIX"; //$NON-NLS-1$
 	private static final String OUTPUT_PRM_NAME = "OUTPUT"; //$NON-NLS-1$
 	private static final String INPUTS_PRM_NAME = "INPUTS"; //$NON-NLS-1$
+	private static final String EXTRA_FLAGS_PRM_NAME = "EXTRA_FLAGS"; //$NON-NLS-1$
 
 	private String makeVariable(String variableName) {
 		return "${" + variableName + "}"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -65,12 +68,21 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 
 		String command = commandLinePattern;
 
+		// Workaround GNU ld limitation that requires additional objects and libraries to be last on command line
+		String[] extraFlags = mergeArrays(tool.getExtraFlags(IOption.OBJECTS), tool.getExtraFlags(IOption.LIBRARIES));
+		String extraFlagsStr = stringArrayToString(extraFlags);
+
+		// Need to update "flags" in order to make the change visible outside the makefile generator.
+		// NOTE: Do not update the flagsStr as it would render the options listed twice!
+		flags = mergeArrays(flags, extraFlags);
+
 		command = command.replace(makeVariable(CMD_LINE_PRM_NAME), commandName);
 		command = command.replace(makeVariable(FLAGS_PRM_NAME), flagsStr);
 		command = command.replace(makeVariable(OUTPUT_FLAG_PRM_NAME), outputFlag);
 		command = command.replace(makeVariable(OUTPUT_PREFIX_PRM_NAME), outputPrefix);
 		command = command.replace(makeVariable(OUTPUT_PRM_NAME), outputName);
 		command = command.replace(makeVariable(INPUTS_PRM_NAME), inputsStr);
+		command = command.replace(makeVariable(EXTRA_FLAGS_PRM_NAME), extraFlagsStr);
 
 		command = command.replace(makeVariable(CMD_LINE_PRM_NAME.toLowerCase()), commandName);
 		command = command.replace(makeVariable(FLAGS_PRM_NAME.toLowerCase()), flagsStr);
@@ -78,6 +90,7 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 		command = command.replace(makeVariable(OUTPUT_PREFIX_PRM_NAME.toLowerCase()), outputPrefix);
 		command = command.replace(makeVariable(OUTPUT_PRM_NAME.toLowerCase()), outputName);
 		command = command.replace(makeVariable(INPUTS_PRM_NAME.toLowerCase()), inputsStr);
+		command = command.replace(makeVariable(EXTRA_FLAGS_PRM_NAME.toLowerCase()), extraFlagsStr);
 
 		return toManagedCommandLineInfo(tool, command.trim(), commandLinePattern, commandName, flags, outputFlag,
 				outputPrefix, outputName, inputResources);
@@ -147,5 +160,9 @@ public class ManagedCommandLineGenerator implements IManagedCommandLineGenerator
 			return ""; //$NON-NLS-1$
 		}
 		return String.join(WHITESPACE, array);
+	}
+
+	private String[] mergeArrays(String[]... arrays) {
+		return Stream.of(arrays).flatMap(Stream::of).toArray(String[]::new);
 	}
 }

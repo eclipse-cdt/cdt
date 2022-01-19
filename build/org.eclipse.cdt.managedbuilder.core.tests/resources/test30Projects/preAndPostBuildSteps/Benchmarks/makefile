@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(CC_DEPS)),)
@@ -52,7 +51,7 @@ all:
 main-build: preAndPostBuildSteps
 
 # Tool invocations
-preAndPostBuildSteps: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+preAndPostBuildSteps: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MBS30.linker.gnu.cpp'
 	g++  -o "preAndPostBuildSteps" $(OBJS) $(USER_OBJS) $(LIBS)

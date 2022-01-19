@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include objects.mk
 
 ifneq ($(MAKECMDGOALS),clean)
 ifneq ($(strip $(CC_DEPS)),)
@@ -51,7 +50,7 @@ all: main-build
 main-build: libtestDoubleSO.so
 
 # Tool invocations
-libtestDoubleSO.so: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+libtestDoubleSO.so: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: linker.gnu.cpp'
 	g++ -shared -o "libtestDoubleSO.so" $(OBJS) $(USER_OBJS) $(LIBS)

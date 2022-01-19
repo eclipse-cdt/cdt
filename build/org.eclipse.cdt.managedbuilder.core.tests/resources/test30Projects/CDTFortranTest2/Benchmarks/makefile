@@ -10,7 +10,6 @@ RM := rm -rf
 -include sources.mk
 -include module/subdir.mk
 -include Sources/subdir.mk
--include objects.mk
 
 -include ../makefile.defs
 
@@ -34,7 +33,7 @@ all: main-build
 main-build: CDTFortranTest2
 
 # Tool invocations
-CDTFortranTest2: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+CDTFortranTest2: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Linker'
 	mylink  -o "CDTFortranTest2" $(OBJS) $(USER_OBJS) $(LIBS)

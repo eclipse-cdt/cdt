@@ -44,6 +44,8 @@ import java.util.TreeSet;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.CSourceEntry;
@@ -972,12 +974,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		populateTopMakefile(makefileHandle, true);
 		checkCancel();
 
-		// Now finish up by adding all the object files
-		IPath objFilePath = topBuildDir.append(OBJECTS_MAKFILE);
-		IFile objsFileHandle = createFile(objFilePath);
-		populateObjectsMakefile(objsFileHandle);
-		checkCancel();
-
 		// How did we do
 		if (!getInvalidDirList().isEmpty()) {
 			status = new MultiStatus(ManagedBuilderCorePlugin.getUniqueIdentifier(), IStatus.WARNING, "", //$NON-NLS-1$
@@ -1027,67 +1023,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 
 		// Save the files
 		save(makeBuf, modMakefile);
-	}
-
-	/**
-	 * The makefile generator generates a Macro for each type of output, other than final artifact,
-	 * created by the build.
-	 *
-	 * @param fileHandle The file that should be populated with the output
-	 */
-	protected void populateObjectsMakefile(IFile fileHandle) throws CoreException {
-
-		// Master list of "object" dependencies, i.e. dependencies between input files and output files.
-		StringBuffer macroBuffer = new StringBuffer();
-		List<String> valueList;
-		macroBuffer.append(addGenericHeader());
-
-		// Map of macro names (String) to its definition (List of Strings)
-		HashMap<String, List<String>> outputMacros = new HashMap<>();
-
-		// Add the predefined LIBS, USER_OBJS macros
-
-		// Add the libraries this project depends on
-		valueList = new ArrayList<>();
-		String[] libs = config.getLibs(buildTargetExt);
-		for (String lib : libs) {
-			valueList.add(lib);
-		}
-		outputMacros.put("LIBS", valueList); //$NON-NLS-1$
-
-		// Add the extra user-specified objects
-		valueList = new ArrayList<>();
-		String[] userObjs = config.getUserObjects(buildTargetExt);
-		for (String obj : userObjs) {
-			valueList.add(obj);
-		}
-		outputMacros.put("USER_OBJS", valueList); //$NON-NLS-1$
-
-		//  Write every macro to the file
-		for (Entry<String, List<String>> entry : outputMacros.entrySet()) {
-			macroBuffer.append(entry.getKey()).append(" :="); //$NON-NLS-1$
-			valueList = entry.getValue();
-			for (String path : valueList) {
-				// These macros will also be used within commands.
-				// Make all the slashes go forward so they aren't
-				// interpreted as escapes and get lost.
-				// See https://bugs.eclipse.org/163672.
-				path = path.replace('\\', '/');
-
-				path = ensurePathIsGNUMakeTargetRuleCompatibleSyntax(path);
-
-				macroBuffer.append(WHITESPACE);
-				macroBuffer.append(path);
-			}
-			// terminate the macro definition line
-			macroBuffer.append(NEWLINE);
-			// leave a blank line before the next macro
-			macroBuffer.append(NEWLINE);
-		}
-
-		// For now, just save the buffer that was populated when the rules were created
-		save(macroBuffer, fileHandle);
-
 	}
 
 	protected void populateSourcesMakefile(IFile fileHandle) throws CoreException {
@@ -1267,8 +1202,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 				buffer.append(escapeWhitespaces(dir)).append(SEPARATOR);
 			buffer.append(MODFILE_NAME).append(NEWLINE);
 		}
-
-		buffer.append("-include objects.mk").append(NEWLINE).append(NEWLINE); //$NON-NLS-1$
 
 		// Include generated dependency makefiles if non-empty AND a "clean" has not been requested
 		if (!buildDepVars.isEmpty()) {
@@ -1763,8 +1696,15 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		}
 		buildRule += calculatedDependencies;
 		buildRule += WHITESPACE + MAKEFILE_NAME; // makefile itself
-		buildRule += WHITESPACE + OBJECTS_MAKFILE; // objects.mk
 		buildRule += WHITESPACE + "$(OPTIONAL_TOOL_DEPS)"; //$NON-NLS-1$ // Optional dep to generated makefile extension files
+
+		// Depend on additional object files for the tool, if any
+		String[] additionalObjects = tool.getExtraFlags(IOption.OBJECTS);
+		if (additionalObjects.length > 0) {
+			buildRule += WHITESPACE + Stream.of(additionalObjects) //
+					.map(this::ensurePathIsGNUMakeTargetRuleCompatibleSyntax) //
+					.collect(Collectors.joining(WHITESPACE));
+		}
 
 		// We can't have duplicates in a makefile
 		if (getRuleList().contains(buildRule)) {
@@ -1797,8 +1737,17 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 			}
 			String[] cmdInputs = inputs.toArray(new String[inputs.size()]);
 			IManagedCommandLineGenerator gen = tool.getCommandLineGenerator();
+			String commandLinePattern = tool.getCommandLinePattern();
+			if (!commandLinePattern.contains("${EXTRA_FLAGS}")) { //$NON-NLS-1$
+				String[] objs = tool.getExtraFlags(IOption.OBJECTS);
+				String[] libs = tool.getExtraFlags(IOption.LIBRARIES);
+				if (objs.length > 0 || libs.length > 0) {
+					// Tool command line pattern would expect legacy "$(USER_OBJS)" or "$(LIBS)" make-symbols to be appended.
+					commandLinePattern = commandLinePattern + " ${EXTRA_FLAGS}"; //$NON-NLS-1$
+				}
+			}
 			IManagedCommandLineInfo cmdLInfo = gen.generateCommandLineInfo(tool, command, flags, outflag, outputPrefix,
-					primaryOutputs, cmdInputs, tool.getCommandLinePattern());
+					primaryOutputs, cmdInputs, commandLinePattern);
 
 			// The command to build
 			String buildCmd = null;

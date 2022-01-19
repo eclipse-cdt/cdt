@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include subdir.mk
--include objects.mk
 
 -include ../makefile.defs
 
@@ -33,7 +32,7 @@ all: main-build
 main-build: CDTFortranTest1.exe
 
 # Tool invocations
-CDTFortranTest1.exe: $(OBJS) $(USER_OBJS) makefile objects.mk $(OPTIONAL_TOOL_DEPS)
+CDTFortranTest1.exe: $(OBJS) $(USER_OBJS) makefile $(OPTIONAL_TOOL_DEPS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Linker'
 	mylink  -o "CDTFortranTest1.exe" $(OBJS) $(USER_OBJS) $(LIBS)

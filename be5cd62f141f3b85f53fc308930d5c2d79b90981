@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4bf46c3d_17e5b619",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-20T21:19:37Z",
+      "side": 1,
+      "message": "This command still contains the $(LIBS) and $(USER_OBJS) make symbols. Is this a problem?",
+      "range": {
+        "startLine": 97,
+        "startChar": 40,
+        "endLine": 97,
+        "endChar": 54
+      },
+      "revId": "be5cd62f141f3b85f53fc308930d5c2d79b90981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "d867c0ae_ef291378",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2101,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-20T21:19:37Z",
+      "side": 1,
+      "message": "How should we handle when the command line pattern is defined in the XML and it does not contain the ${EXTRA_FLAGS} part?\nWithout doing anything, the build will be broken as the $(USER_OBJS) and $(LIBS) are no longer populated in the objects.mk, at least not for the GnuMakefileGenerator that is placed in the gnu2 package. Maybe that\u0027s fine regardless?",
+      "range": {
+        "startLine": 2101,
+        "startChar": 9,
+        "endLine": 2101,
+        "endChar": 27
+      },
+      "revId": "be5cd62f141f3b85f53fc308930d5c2d79b90981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

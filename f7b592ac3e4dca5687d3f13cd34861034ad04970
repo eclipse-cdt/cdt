@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "e6a867cf_7568e0b7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-20T21:19:37Z",
+      "side": 1,
+      "message": "I attempted to generalize the two functions into one. Take a look and see if it\u0027s okay.",
+      "parentUuid": "32e92f10_be7d157f",
+      "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3e86622d_5cd8e36d",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
         "patchSetId": 3
@@ -117,6 +135,30 @@
       "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "67ba2e7f_cc952fbf",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-20T21:19:37Z",
+      "side": 1,
+      "message": "Pattern updated in accordance in PS4.",
+      "parentUuid": "81180ace_476a8848",
+      "range": {
+        "startLine": 108,
+        "startChar": 118,
+        "endLine": 108,
+        "endChar": 138
+      },
+      "revId": "f7b592ac3e4dca5687d3f13cd34861034ad04970",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

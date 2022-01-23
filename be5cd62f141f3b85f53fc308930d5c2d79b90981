@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1397ddee_af76bea9",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-23T12:43:08Z",
+      "side": 1,
+      "message": "Might work, but see other comment for other issues of doing this.",
+      "parentUuid": "8b06f834_3c628a0a",
+      "range": {
+        "startLine": 75,
+        "startChar": 2,
+        "endLine": 75,
+        "endChar": 59
+      },
+      "revId": "be5cd62f141f3b85f53fc308930d5c2d79b90981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "4bf46c3d_17e5b619",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 4
@@ -60,6 +84,30 @@
       "side": 1,
       "message": "It looks like these are added for the target tool only. Assuming that the target tool is the linker is a behaviour that we are trying to eliminate. Hopefully we can remove these hard-coded additions to the command line pattern.\n\nDoes your current patch handle linker tool dependencies OK?",
       "parentUuid": "4bf46c3d_17e5b619",
+      "range": {
+        "startLine": 97,
+        "startChar": 40,
+        "endLine": 97,
+        "endChar": 54
+      },
+      "revId": "be5cd62f141f3b85f53fc308930d5c2d79b90981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "a023be95_1ac35663",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-23T12:43:08Z",
+      "side": 1,
+      "message": "I think the $(LIBS) and $(USER_OBJS) needs to be stripped from the command line, otherwise the else clause from the above comment would put the arguments 2 times on the command line, once for the \"command \u003d command + ...\" part and once from the make expanded symbols.\n\nOne thing to keep in mind there is also that this implementation is used in both for the old deprecated public makefile generator and for the internal one, so we should try to avoid breaking the deprecated version. Ḯ\u0027m not convinced that there is a way forward that will not cause problems in either way for those two implementations...\n\nHmm. No, it does not handle dependencies. I think I either need to update the makefile generator to also fetch the IOption.OBJECTS from the ITool instance. Actually, the IOptionCommandGenerator associated with options of type IOption.OBJECTS cannot generate anything but a path. If it were to do that (same condition today), the makefile would simply be invalid. I suppose that\u0027s a limitation that we could accept. I\u0027ll upload a new PS with this added later today or perhaps tomorrow.",
+      "parentUuid": "c32e666f_f8675c2e",
       "range": {
         "startLine": 97,
         "startChar": 40,

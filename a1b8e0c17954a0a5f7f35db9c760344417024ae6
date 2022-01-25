@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9e32595a_820da54c",
+        "filename": "dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/command/ICommandControlService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-25T17:54:29Z",
+      "side": 1,
+      "message": "I believe this should have been here from the start.\nCan you confirm?",
+      "range": {
+        "startLine": 88,
+        "startChar": 2,
+        "endLine": 88,
+        "endChar": 12
+      },
+      "revId": "a1b8e0c17954a0a5f7f35db9c760344417024ae6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

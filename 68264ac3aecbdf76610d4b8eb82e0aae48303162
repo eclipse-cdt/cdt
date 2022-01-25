@@ -70,6 +70,24 @@
       "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bae46a99_e595e8d9",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/participant/Arglets.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-25T20:24:22Z",
+      "side": 1,
+      "message": "Hi Martin - I have pushed a new set of patches that resolves the issues. Note that the inheritance of the fixed class name had to be swapped around so that subclasses would continue to have the old name in their type hierarchy.",
+      "parentUuid": "31703c5c_5d739b45",
+      "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

@@ -85,6 +85,7 @@ public interface ICommandControlService extends ICommandControl, IDsfService {
 	 * @since 2.10
 	 */
 	default public void flushAllCachesAndRefresh(RequestMonitor rm) {
+		rm.done();
 	}
 
 }

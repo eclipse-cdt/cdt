@@ -1,0 +1,21 @@
+/*******************************************************************************
+ * Copyright (c) 2022 Kichwa Coders Canada Inc. and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ ******************************************************************************/
+
+IEclipsePreferences#org-eclipse-cdt-make-ui:org-eclipse-cdt-make-ui {
+	preferences:
+		"org.eclipse.cdt.make.ui.editor.comment=98,98,98"
+		"org.eclipse.cdt.make.ui.editor.keyword=221,40,103"
+		"org.eclipse.cdt.make.ui.editor.macro_ref=121,171,255"
+		"org.eclipse.cdt.make.ui.editor.macro_def=255,191,38"
+		"org.eclipse.cdt.make.ui.editor.function=18,144,195"
+		"org.eclipse.cdt.make.ui.editor.default=200,200,200"
+		"org.eclipse.cdt.make.ui.editor.matching.brackets.color=170,170,170"
+}

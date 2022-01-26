@@ -34,6 +34,24 @@
       "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "dfb21487_a76fbe76",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/participant/Arglets.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-01-26T00:36:21Z",
+      "side": 0,
+      "message": "OK - an commented api exclusion seems fine to me for this case.",
+      "parentUuid": "00d7dbe5_331a78ca",
+      "revId": "68264ac3aecbdf76610d4b8eb82e0aae48303162",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

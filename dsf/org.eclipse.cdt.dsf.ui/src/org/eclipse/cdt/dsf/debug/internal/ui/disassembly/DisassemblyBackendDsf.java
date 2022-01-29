@@ -25,6 +25,7 @@ import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils
 
 import java.math.BigInteger;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly2;
@@ -1306,5 +1308,24 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	@Override
 	protected void handleError(IStatus status) {
 		DsfUIPlugin.log(status);
+	}
+
+	@Override
+	public void clearCaches() {
+		final DsfExecutor executor = getSession().getExecutor();
+		executor.execute(new DsfRunnable() {
+			@Override
+			public void run() {
+				List.of(IStack.class, IDisassembly.class, IExpressions.class, IRunControl.class, IRegisters.class,
+						ISourceLookup.class).forEach((clazz) -> {
+							Object o = getService(clazz);
+							if (o instanceof ICachingService) {
+								ICachingService cs = (ICachingService) o;
+								cs.flushCache(getExecutionDMContext());
+							}
+						});
+			}
+		});
+
 	}
 }

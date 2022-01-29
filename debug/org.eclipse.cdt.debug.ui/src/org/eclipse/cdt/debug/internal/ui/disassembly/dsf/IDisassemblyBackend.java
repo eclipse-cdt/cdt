@@ -218,4 +218,10 @@ public interface IDisassemblyBackend {
 	 * @return the last know address, -1 if unknown
 	 */
 	BigInteger getLastKnownAddress();
+
+	/**
+	 * Requests that the backend clear any caches that it has so that refresh operations obtain fresh data.
+	 */
+	default void clearCaches() {
+	}
 }

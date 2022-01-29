@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e9d1171e_bef87e7c",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-01-29T21:16:15Z",
+      "side": 1,
+      "message": "I think there needs to be some kind of check that fTargetContext is the same context that event belongs to, but I find no way to go from ICommandControlDMContext to IExecutionDMContext or the other way around.",
+      "range": {
+        "startLine": 469,
+        "startChar": 2,
+        "endLine": 469,
+        "endChar": 49
+      },
+      "revId": "8668586498029a60228da26506a2f06ff4e9f342",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

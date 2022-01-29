@@ -71,6 +71,7 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlRefreshAllDMEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -457,6 +458,15 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			return fServicesTracker.getService(serviceClass);
 		}
 		return null;
+	}
+
+	@DsfServiceEventHandler
+	public void handleEvent(ICommandControlRefreshAllDMEvent event) {
+		if (fTargetContext == null) {
+			return;
+		}
+
+		fCallback.asyncExec(() -> fCallback.refresh());
 	}
 
 	@DsfServiceEventHandler

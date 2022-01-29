@@ -3278,8 +3278,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 	@Override
 	public void refresh() {
 		asyncExec(() -> {
-			fPCLastAddress = getTopAddress();
-			refreshView(10);
+			updatePC(PC_UNKNOWN);
 		});
 	}
 }

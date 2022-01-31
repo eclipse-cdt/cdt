@@ -1,0 +1,278 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.remote.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.remote.core" id="remoteServices" name="Remote Services"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to add a remote services provider.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
+      <complexType>
+         <sequence minOccurs="1" maxOccurs="unbounded">
+            <element ref="connectionType" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="connectionTypeService" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="connectionService" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="processService" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="connectionType">
+      <annotation>
+         <appInfo>
+            <meta.element labelAttribute="name"/>
+         </appInfo>
+         <documentation>
+            A connection type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A unique identifier for this remote service
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A human readable name for the remote service
+               </documentation>
+               <appInfo>
+                  <meta.attribute translatable="true"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="scheme" type="string">
+            <annotation>
+               <documentation>
+                  An EFS scheme name for this service
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="canAdd" type="boolean">
+            <annotation>
+               <documentation>
+                  Can you add connections using the API. Default is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="canEdit" type="boolean">
+            <annotation>
+               <documentation>
+                  Can a connection be changed using the API. Default is true.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="canRemove" type="boolean">
+            <annotation>
+               <documentation>
+                  Can a connection be removed using the API.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="connectionTypeService">
+      <annotation>
+         <documentation>
+            This is a service that implements the given service interface for a given connection type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="connectionTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The remote services that this service applies to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.remote.core.remoteServices/connectionType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="service" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The interface class that this service implements. The service is found by calling the getService() method on the IRemoteServices object with this interface class as the parameter.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="factory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The factory class used to instantiate the service.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.remote.core.IRemoteServices$Service$Factory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="connectionService">
+      <annotation>
+         <documentation>
+            This is a service that implements the given service interface for connections of a given connection type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="connectionTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The connection type for the connections that this service applies to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.remote.core.remoteServices/connectionType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="service" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The interface class that this service implements. The service is found by calling the getService() method on the IRemoteConnection object with this interface class as the parameter.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="factory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The factory class used to instantiate the service.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.remote.core.IRemoteConnection$Service$Factory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="processService">
+      <annotation>
+         <documentation>
+            This is a service that implements the given service interface for processes of a given connection type.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="connectionTypeId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The connection type for the connections that this service applies to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.remote.core.remoteServices/connectionType/@id"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="service" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The interface class that this service implements. The service is found by calling the getService() method on the IRemoteProcess object with this interface class as the parameter.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+         <attribute name="factory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The factory class used to instantiate the service.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.remote.core.IRemoteProcess$Service$Factory"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <annotation>
+      <appInfo>
+         <meta.section type="examples"/>
+      </appInfo>
+      <documentation>
+         &lt;pre&gt;
+   &lt;extension
+         point=&quot;org.eclipse.remote.core.remoteServices&quot;&gt;
+      &lt;remoteServices
+            class=&quot;org.eclipse.remote.internal.core.services.local.LocalServicesFactory&quot;
+            id=&quot;org.eclipse.ptp.remote.LocalServices&quot;
+            name=&quot;Local&quot;
+            scheme=&quot;file&quot;&gt;
+      &lt;/remoteServices&gt;
+   &lt;/extension&gt;
+&lt;/pre&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="apiInfo"/>
+      </appInfo>
+      <documentation>
+         The value of the class attribute must implement &lt;samp&gt;org.eclipse.remote.core.IRemoteServicesFactory&lt;/samp&gt;.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="implementation"/>
+      </appInfo>
+      <documentation>
+         The remote package provides a remote services implementation for local services.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appInfo>
+         <meta.section type="copyright"/>
+      </appInfo>
+      <documentation>
+         Copyright (c) 2013 IBM Corporation and others. This program and the accompanying materials are made available under the terms of the Eclipse Public License 2.0 which accompanies this distribution, and is available at https://www.eclipse.org/legal/epl-2.0/
+      </documentation>
+   </annotation>
+
+</schema>

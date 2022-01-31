@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.eclipse.cdt</groupId>
+		<artifactId>cdt-parent</artifactId>
+		<version>10.6.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<version>1.1.100-SNAPSHOT</version>
+  <artifactId>org.eclipse.remote.doc.isv</artifactId>
+	<packaging>eclipse-plugin</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
+						<id>attach-source</id>
+						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>build-doc</id>
+			<activation>
+				<property>
+					<name>!skipDoc</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho.extras</groupId>
+						<artifactId>tycho-document-bundle-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<executions>
+							<execution>
+								<id>eclipse-javadoc</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>javadoc</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.basedir}/html/reference/api
+									</outputDirectory>
+									<javadocOptions>
+										<includes>
+											<include>org.eclipse.cdt.remote.*</include>
+											<include>org.eclipse.remote.*</include>
+										</includes>
+										<excludes>
+											<exclude>org.eclipse.remote.internal.*</exclude>
+											<exclude>org.eclipse.remote.*.internal.*</exclude>
+											<exclude>org.eclipse.cdt.remote.internal.*</exclude>
+											<exclude>org.eclipse.cdt.remote.*.internal.*</exclude>
+										</excludes>
+										<additionalArguments>
+											<additionalArgument>-windowtitle "Eclipse CDT org.eclipse.remote API Specification"</additionalArgument>
+											<additionalArgument>-doctitle "Eclipse CDT org.eclipse.remote API Specification"
+											</additionalArgument>
+											<additionalArgument>-link "https://docs.oracle.com/en/java/javase/11/docs/api/"</additionalArgument>
+											<additionalArgument>-linkoffline ../../org.eclipse.platform.doc.isv/reference/api
+											</additionalArgument>
+											<additionalArgument>-public</additionalArgument>
+											<additionalArgument>-header "Eclipse CDT's org.eclipse.remote 10.6.0"
+											</additionalArgument>
+											<additionalArgument>-bottom "Copyright (c) IBM Corp. and others 2004, 2021. All Rights Reserved."</additionalArgument>
+											<additionalArgument>-tag 'noimplement:a:Restriction:'</additionalArgument>
+											<additionalArgument>-tag 'noextend:a:Restriction:'</additionalArgument>
+											<additionalArgument>-tag 'noreference:a:Restriction:'</additionalArgument>
+											<additionalArgument>-tag 'noinstantiate:a:Restriction:'</additionalArgument>
+											<additionalArgument>-tag 'nooverride:a:Restriction:'</additionalArgument>
+										</additionalArguments>
+									</javadocOptions>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>fake-doc</id>
+			<activation>
+				<property>
+					<name>skipDoc</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<configuration>
+									<target>
+										<touch file="index/indexed_docs" mkdirs="true" />
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

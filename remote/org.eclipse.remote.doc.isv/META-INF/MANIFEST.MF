@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eclipse Remote Development documentation plug-in
+Bundle-SymbolicName: org.eclipse.remote.doc.isv;singleton:=true
+Bundle-Version: 1.1.100.qualifier
+Bundle-Vendor: Eclipse PTP
+Require-Bundle: org.eclipse.remote.console,
+ org.eclipse.remote.core,
+ org.eclipse.remote.jsch.core,
+ org.eclipse.remote.jsch.ui,
+ org.eclipse.remote.serial.core,
+ org.eclipse.remote.serial.ui,
+ org.eclipse.remote.telnet.core,
+ org.eclipse.remote.telnet.ui,
+ org.eclipse.remote.ui

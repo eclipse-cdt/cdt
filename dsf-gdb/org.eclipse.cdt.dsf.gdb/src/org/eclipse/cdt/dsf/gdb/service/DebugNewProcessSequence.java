@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Ericsson and others.
+ * Copyright (c) 2011, 2022 Ericsson and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Marc Khouzam (Ericsson) - Support setting the path in which the core file
  *                               dialog should start (Bug 362039)
  *     Sergey Prigogin (Google) - Bug 381804
+ *     John Dallaway - Initialize memory data before remote connection (Bug 578323)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -103,12 +104,14 @@ public class DebugNewProcessSequence extends ReflectionSequence {
 					"stepSetExecutable", //$NON-NLS-1$
 					"stepSetArguments", //$NON-NLS-1$
 
-					// For remote non-attach only
-					"stepRemoteConnection", //$NON-NLS-1$
 					// For post-mortem launch only
 					"stepSpecifyCoreFile", //$NON-NLS-1$
 
 					"stepInitializeMemory", //$NON-NLS-1$
+
+					// For remote non-attach only
+					"stepRemoteConnection", //$NON-NLS-1$
+
 					"stepStartTrackingBreakpoints", //$NON-NLS-1$
 					"stepStartExecution", //$NON-NLS-1$
 					"stepCleanupBaseSequence", //$NON-NLS-1$

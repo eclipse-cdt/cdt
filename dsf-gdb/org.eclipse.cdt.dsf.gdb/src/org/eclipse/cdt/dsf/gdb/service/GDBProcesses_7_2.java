@@ -333,7 +333,9 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 							public void execute(final RequestMonitor rm) {
 								// The remote session is already connected to the process
 								// Bug 528145
-								if (fBackend.getSessionType() != SessionType.REMOTE) {
+								if (fBackend.getSessionType() == SessionType.REMOTE) {
+									rm.done();
+								} else {
 									getProcessesBeingDebugged(procCtx,
 											new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
 												@Override
@@ -362,8 +364,6 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 													super.handleSuccess();
 												}
 											});
-								} else {
-									rm.done();
 								}
 							}
 						},
@@ -477,7 +477,9 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 							public void execute(RequestMonitor rm) {
 								// This call end the current attach to the gdbserver in remote session
 								// Bug 528145
-								if (fBackend.getSessionType() != SessionType.REMOTE) {
+								if (fBackend.getSessionType() == SessionType.REMOTE) {
+									rm.done();
+								} else {
 									// For non-stop mode, we do a non-interrupting attach
 									// Bug 333284
 									boolean shouldInterrupt = true;
@@ -492,8 +494,6 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 											extraNewline);
 									fCommandControl.queueCommand(miTargetAttach,
 											new ImmediateDataRequestMonitor<MIInfo>(rm));
-								} else {
-									rm.done();
 								}
 							}
 

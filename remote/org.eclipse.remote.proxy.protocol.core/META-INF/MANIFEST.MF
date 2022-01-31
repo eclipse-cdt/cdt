@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.remote.proxy.protocol.core;singleton:=true
+Bundle-Version: 2.0.100.qualifier
+Bundle-Activator: org.eclipse.remote.internal.proxy.protocol.core.Activator
+Bundle-Vendor: %pluginProvider
+Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.remote.proxy.protocol.core,
+ org.eclipse.remote.proxy.protocol.core.exceptions
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Import-Package: org.eclipse.core.filesystem,
+ org.eclipse.core.filesystem.provider,
+ org.eclipse.core.runtime,
+ org.osgi.framework

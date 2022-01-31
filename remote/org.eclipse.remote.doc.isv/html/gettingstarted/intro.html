@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Getting started</title>
+	<link rel="stylesheet" type="text/css" href="../../css/style.css">
+</head>
+
+<body>
+<h1>Introduction</h1>
+<p>The purpose of remote services API is to provide a programming interface to remote services that is agnostic to the actual remote services implementation. Currently the only implementation supported of SSH protocol uses JSch(Java Secure Channel) project (<a href="http://www.jcraft.com/jsch/">www.jcraft.com/jsch</a>). An implementation for the local system (where Eclipse is run) and Telnet protocol are also provided.</p>
+<p>The API is generic enough so that it is possible to use it for all remote or local operations. This is useful for situations where both a remote and local mode should be provided, but the programmer wants to avoid two separate code paths.</p> 
+
+<h1>Types of services</h1>
+<p>The API is divided into two types of remote services: UI and non-UI.</p>
+<p>UI services are for activities such as file browsing that require use of the UI. In particular, it provides a main preference page (under "Remote Development > Remote Connections") which allow connections to be created, edited, removed, opened, and closed. </p>
+<p>Non-UI services are purely programmatic, they provides a set of core services for manipulating remote resources. The non-UI services can be used independently of the UI services.</p>
+
+<h1>Remote Services Plugins</h1>
+
+<p>The remote services are divided into two plugins. These plugins should have no dependencies other than the platform.</p>
+<ul>
+  <li>org.eclipse.remote.core - provides non-UI remote services</li>
+  <li>org.eclipse.remote.ui - provides UI remote services</li>
+</ul>
+
+<p>Remote service implementations provide the actual remote functionality using a particular remote protocol. These are supplied as a set of adapter plugins.
+
+<p>As of version 2.0.1, there is currently one implementation of SSH protocol using JSch:</p>
+
+<ul>
+  <li>org.eclipse.remote.jsch.core</li>
+  <li>org.eclipse.remote.jsch.ui</li>
+</ul>
+
+<p>The Telnet protocol implementation and UI widgets are provided by the plugins:</p>
+<ul>
+  <li>org.eclipse.remote.telnet.core</li>
+  <li>org.eclipse.remote.telnet.ui</li>
+</ul>
+ 
+<p>These plugins are dependent on the remote services implementations, but are optional for the remote services API. The API will automatically detect the installed plugins.</p> 
+
+</body>
+</html>

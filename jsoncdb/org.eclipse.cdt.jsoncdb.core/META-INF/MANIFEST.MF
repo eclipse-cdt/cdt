@@ -4,7 +4,7 @@ Bundle-Name: %bundleName
 Bundle-Description: %bundleDescription
 Bundle-Copyright: %Bundle-Copyright
 Bundle-SymbolicName: org.eclipse.cdt.jsoncdb.core;singleton:=true
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11

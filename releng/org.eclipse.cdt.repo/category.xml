@@ -254,6 +254,36 @@
    <bundle id="org.eclipse.cdt.jsoncdb.nvidia.source">
       <category name="extra-jsoncdb"/>
    </bundle>
+   <feature id="org.eclipse.remote">
+      <category name="remote"/>
+   </feature>
+   <feature id="org.eclipse.remote.source">
+      <category name="remote_sdk"/>
+   </feature>
+   <feature id="org.eclipse.remote.serial">
+      <category name="remote"/>
+   </feature>
+   <feature id="org.eclipse.remote.serial.source">
+      <category name="remote_sdk"/>
+   </feature>
+   <feature id="org.eclipse.remote.console">
+      <category name="remote"/>
+   </feature>
+   <feature id="org.eclipse.remote.console.source">
+      <category name="remote_sdk"/>
+   </feature>
+   <feature id="org.eclipse.remote.telnet">
+      <category name="remote"/>
+   </feature>
+   <feature id="org.eclipse.remote.telnet.source">
+      <category name="remote_sdk"/>
+   </feature>
+   <feature id="org.eclipse.remote.proxy">
+      <category name="remote"/>
+   </feature>
+   <feature id="org.eclipse.remote.proxy.source">
+      <category name="remote_sdk"/>
+   </feature>
    <category-def name="main" label="CDT Main Features"/>
    <category-def name="extra" label="CDT Optional Features"/>
    <category-def name="launchbar" label="LaunchBar"/>
@@ -274,4 +304,6 @@
          Additional compilers support for the JSON CDB parser.
       </description>
    </category-def>
+   <category-def name="remote" label="Remote Services"/>
+   <category-def name="remote_sdk" label="Remote Services SDK"/>
 </site>

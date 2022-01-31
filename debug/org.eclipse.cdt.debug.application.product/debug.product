@@ -11,7 +11,7 @@
 
    SPDX-License-Identifier: EPL-2.0
 -->
-<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="10.5.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="10.6.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/org.eclipse.cdt.debug.application/icons/about.png"/>
@@ -196,8 +196,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="javax.servlet.jsp"/>
       <plugin id="javax.xml"/>
       <plugin id="javax.xml.stream"/>
-      <plugin id="net.bytebuddy.byte-buddy"/>
-      <plugin id="net.bytebuddy.byte-buddy-agent"/>
       <plugin id="org.apache.batik.constants"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.i18n"/>
@@ -207,6 +205,9 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.apache.commons.jxpath"/>
       <plugin id="org.apache.commons.logging"/>
       <plugin id="org.apache.felix.scr"/>
+      <plugin id="org.apache.httpcomponents.client5.httpclient5"/>
+      <plugin id="org.apache.httpcomponents.core5.httpcore5"/>
+      <plugin id="org.apache.httpcomponents.core5.httpcore5-h2"/>
       <plugin id="org.apache.httpcomponents.httpclient"/>
       <plugin id="org.apache.httpcomponents.httpcore"/>
       <plugin id="org.apache.jasper.glassfish"/>
@@ -256,15 +257,13 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.aarch64" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.net"/>
       <plugin id="org.eclipse.core.net.linux" fragment="true"/>
-      <plugin id="org.eclipse.core.net.linux.x86_64" fragment="true"/>
-      <!-- Does not exist, see Bug 566638: plugin id="org.eclipse.core.net.linux.aarch64" fragment="true"/ -->
       <plugin id="org.eclipse.core.net.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
       <plugin id="org.eclipse.core.runtime"/>
@@ -300,7 +299,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.ecf.filetransfer"/>
       <plugin id="org.eclipse.ecf.identity"/>
       <plugin id="org.eclipse.ecf.provider.filetransfer"/>
-      <plugin id="org.eclipse.ecf.provider.filetransfer.httpclient45"/>
+      <plugin id="org.eclipse.ecf.provider.filetransfer.httpclient5"/>
       <plugin id="org.eclipse.ecf.provider.filetransfer.ssl" fragment="true"/>
       <plugin id="org.eclipse.ecf.ssl" fragment="true"/>
       <plugin id="org.eclipse.emf.common"/>
@@ -343,7 +342,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.security"/>
       <plugin id="org.eclipse.equinox.security.linux" fragment="true"/>
-      <plugin id="org.eclipse.equinox.security.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.equinox.security.macosx" fragment="true"/>
       <plugin id="org.eclipse.equinox.security.ui"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator"/>
@@ -422,6 +420,10 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
    </configurations>
 
    <repositories>
+      <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
+      <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
+      <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
+      <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
       <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
    </repositories>
 

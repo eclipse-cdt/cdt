@@ -10,9 +10,12 @@
 package org.eclipse.cdt.jsoncdb.arm;
 
 import org.eclipse.cdt.jsoncdb.core.participant.Arglets;
+import org.eclipse.cdt.jsoncdb.core.participant.Arglets.IncludePathGeneric;
+import org.eclipse.cdt.jsoncdb.core.participant.Arglets.NameOptionMatcher;
 import org.eclipse.cdt.jsoncdb.core.participant.DefaultToolCommandlineParser;
 import org.eclipse.cdt.jsoncdb.core.participant.DefaultToolDetectionParticipant;
 import org.eclipse.cdt.jsoncdb.core.participant.IArglet;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * armcc C & C++.
@@ -29,10 +32,31 @@ public class ArmccToolDetectionParticipant extends DefaultToolDetectionParticipa
 	private static class ToolCommandlineParser extends DefaultToolCommandlineParser {
 
 		private static final IArglet[] arglets = { new Arglets.IncludePath_C_POSIX(), new Arglets.MacroDefine_C_POSIX(),
-				new Arglets.MacroUndefine_C_POSIX(), new Arglets.SystemIncludePath_armcc() };
+				new Arglets.MacroUndefine_C_POSIX(), new SystemIncludePath_armcc() };
 
 		private ToolCommandlineParser() {
 			super(null, new ArmccBuiltinDetectionBehavior(), arglets);
+		}
+	}
+
+	/**
+	 * A tool argument parser capable to parse a armcc-compiler system include path
+	 * argument: {@code -Jdir}.
+	 */
+	/* package */ static class SystemIncludePath_armcc extends IncludePathGeneric implements IArglet {
+		@SuppressWarnings("nls")
+		static final NameOptionMatcher[] optionMatchers = {
+				/* quoted directory */
+				new NameOptionMatcher("-J" + "([\"'])(.+?)\\1", 2),
+				/* unquoted directory */
+				new NameOptionMatcher("-J" + "([^\\s]+)", 1), };
+
+		/*-
+		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
+		 */
+		@Override
+		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
+			return processArgument(true, resultCollector, cwd, argsLine, optionMatchers);
 		}
 	}
 }

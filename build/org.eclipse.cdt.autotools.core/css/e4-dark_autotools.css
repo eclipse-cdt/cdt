@@ -1,0 +1,28 @@
+/*******************************************************************************
+ * Copyright (c) 2022 Kichwa Coders Canada Inc. and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ ******************************************************************************/
+
+IEclipsePreferences#org-eclipse-cdt-autotools-core:org-eclipse-cdt-autotools-core {
+	preferences:
+		"org.eclipse.cdt.autotools.ui.autoconf.editor.comment=98,98,98"
+		"org.eclipse.cdt.autotools.ui.autoconf.editor.keyword=221,40,103"
+		"org.eclipse.cdt.autotools.ui.autoconf.editor.var_ref=121,171,255"
+		"org.eclipse.cdt.autotools.ui.autoconf.editor.var_set=255,191,38"
+		"org.eclipse.cdt.autotools.ui.autoconf.editor.acmacro=13,64,209"
+		"org.eclipse.cdt.autotools.ui.autoconf.editor.ammacro=13,209,64"
+		"org.eclipse.cdt.autotools.ui.autoconf.editor.codeseq=18,144,195"
+		"org.eclipse.cdt.autotools.ui.autoconf.editor.default=200,200,200"
+		"org.eclipse.cdt.autotools.ui.automake.editor.comment=98,98,98"
+		"org.eclipse.cdt.autotools.ui.automake.editor.keyword=221,40,103"
+		"org.eclipse.cdt.autotools.ui.automake.editor.macro_ref=121,171,255"
+		"org.eclipse.cdt.autotools.ui.automake.editor.macro_def=255,191,38"
+		"org.eclipse.cdt.autotools.ui.automake.editor.function=18,144,195"
+		"org.eclipse.cdt.autotools.ui.automake.editor.default=200,200,200"
+}

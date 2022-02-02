@@ -55,7 +55,7 @@ public final class ParserDetection {
 	 */
 	private static List<IToolDetectionParticipant> parserDetectors;
 
-	static void init() {
+	private static synchronized void init() {
 		if (parserDetectors == null) {
 			parserDetectors = new ArrayList<>(22);
 

@@ -131,7 +131,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			tracker.dispose();
 			return disassSvc != null;
 		}
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				try {
@@ -419,7 +419,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				return runControl.isSuspended(fTargetContext);
 			}
 		}
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				try {
@@ -564,7 +564,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			public void handleCompleted() {
 				final BigInteger finalStartAddress = getData();
 				if (mixed) {
-					final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<IMixedInstruction[]>(
+					final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<>(
 							executor, null) {
 						@Override
 						public void handleCompleted() {
@@ -616,8 +616,8 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						});
 					}
 				} else {
-					final DataRequestMonitor<IInstruction[]> disassemblyRequest = new DataRequestMonitor<IInstruction[]>(
-							executor, null) {
+					final DataRequestMonitor<IInstruction[]> disassemblyRequest = new DataRequestMonitor<>(executor,
+							null) {
 						@Override
 						public void handleCompleted() {
 							if (!isCanceled() && getData() != null) {
@@ -934,10 +934,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		Object sourceElement = null;
 		final ISourceLookupDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
 		final DsfExecutor executor = getSession().getExecutor();
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Object> rm) {
-				final DataRequestMonitor<Object> request = new DataRequestMonitor<Object>(executor, rm) {
+				final DataRequestMonitor<Object> request = new DataRequestMonitor<>(executor, rm) {
 					@Override
 					protected void handleSuccess() {
 						rm.setData(getData());
@@ -984,7 +984,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		if (!hasFrameContext()) {
 			return null;
 		}
-		Query<BigInteger> query = new Query<BigInteger>() {
+		Query<BigInteger> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<BigInteger> rm) {
 				evaluateAddressExpression(symbol, suppressError, rm);
@@ -1082,10 +1082,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		// try reverse lookup
 		final ISourceLookupDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
 		final DsfExecutor executor = getSession().getExecutor();
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
-				final DataRequestMonitor<String> request = new DataRequestMonitor<String>(executor, rm) {
+				final DataRequestMonitor<String> request = new DataRequestMonitor<>(executor, rm) {
 					@Override
 					protected void handleSuccess() {
 						rm.setData(getData());
@@ -1108,8 +1108,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		final IDisassemblyDMContext context = DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
 
 		final String finalFile = debuggerPath;
-		final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<IMixedInstruction[]>(
-				executor, null) {
+		final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<>(executor, null) {
 			@Override
 			public void handleCompleted() {
 				final IMixedInstruction[] data = getData();
@@ -1151,7 +1150,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			return null;
 		}
 		final DsfExecutor executor = DsfSession.getSession(fDsfSessionId).getExecutor();
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
 				IExecutionDMContext exeCtx = DMContexts.getAncestorOfType(fTargetFrameContext,
@@ -1202,7 +1201,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		}
 		final DsfExecutor executor = DsfSession.getSession(fDsfSessionId).getExecutor();
 
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
 				IExecutionDMContext exeCtx = DMContexts.getAncestorOfType(fTargetFrameContext,

@@ -376,7 +376,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		}
 
 		private boolean shouldCancelSelectionChange() {
-			Query<Boolean> delaySelectionChangeQuery = new Query<Boolean>() {
+			Query<Boolean> delaySelectionChangeQuery = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<Boolean> rm) {
 					IExecutionDMContext execCtx = DMContexts.getAncestorOfType(fFrameData.fDmc,

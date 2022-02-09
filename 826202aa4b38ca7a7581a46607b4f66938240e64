@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "df4c4908_5294fe49",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 3281,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-02-09T21:54:53Z",
+      "side": 1,
+      "message": "Solely doing this does cause the view to refetch the $pc from the IStack service, but the IStack service has a cache that needs to be flushed first or else the old $pc will be shown. Depending on how refresh() is called may or may not lead to the cache being cleared first.\n\nI have an update to this patch which clears out the cache.",
+      "revId": "826202aa4b38ca7a7581a46607b4f66938240e64",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

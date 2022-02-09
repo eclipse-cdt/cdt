@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a4a1a06_de6b0cf9",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/ui/sourcelookup/DsfSourceDisplayAdapter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 991,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-02-09T21:54:56Z",
+      "side": 1,
+      "message": "I changed this to @noreference so that this isn\u0027t part of API and reverted minor version bump.",
+      "revId": "8a02a9673355ee3abdb83e16aca2775f499320ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

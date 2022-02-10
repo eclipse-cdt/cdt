@@ -71,18 +71,32 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 	protected static final String REGEX_CMD_PATH_BSLASH_QUOTE_END = ")\\1\\s";
 
 	/**
-	 * the Matchers to match the name of the tool (including its path, BUT WITHOUT
+	 * the Patterns to match the name of the tool (including its path, BUT WITHOUT
 	 * its filename extension) on a given command-line
 	 */
-	private final Matcher[] toolNameMatchers;
-	private final Matcher[] toolNameMatchersBackslash;
+	private final Pattern[] toolNamePatterns;
+	private final Pattern[] toolNamePatternsBackslash;
 
 	/**
 	 * the Matcher that matches the name of the tool (including its path AND its
 	 * filename extension) on a given command-line or {@code null}
+	 *
+	 * @deprecated Use toolNamePatternsExt instead
 	 */
+	@Deprecated(forRemoval = true)
 	protected final Matcher[] toolNameMatchersExt;
+	/**
+	 * @deprecated Use toolNamePatternsExtBackslash instead
+	 */
+	@Deprecated(forRemoval = true)
 	protected final Matcher[] toolNameMatchersExtBackslash;
+
+	/**
+	 * the Pattern that matches the name of the tool (including its path AND its
+	 * filename extension) on a given command-line or {@code null}
+	 */
+	private final Pattern[] toolNamePatternsExt;
+	private final Pattern[] toolNamePatternsExtBackslash;
 
 	/**
 	 * the corresponding parser for the tool arguments
@@ -174,39 +188,48 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 		this.alsoHandleNtfsPaths = alsoHandleNtfsPaths;
 		this.extensionRegex = extensionRegex;
 
-		this.toolNameMatchers = new Matcher[] {
+		this.toolNamePatterns = new Pattern[] {
 				Pattern.compile(String.format(Locale.ROOT, "%s%s%s", REGEX_CMD_PATH_SLASH_QUOTE, basenameRegex,
-						REGEX_CMD_PATH_SLASH_QUOTE_END)).matcher(""),
+						REGEX_CMD_PATH_SLASH_QUOTE_END)),
 				Pattern.compile(String.format(Locale.ROOT, "%s%s%s", REGEX_CMD_PATH_SLASH, basenameRegex,
-						REGEX_CMD_PATH_SLASH_END)).matcher("") };
+						REGEX_CMD_PATH_SLASH_END)) };
 		if (alsoHandleNtfsPaths) {
-			this.toolNameMatchersBackslash = new Matcher[] {
+			this.toolNamePatternsBackslash = new Pattern[] {
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s", REGEX_CMD_PATH_BSLASH_QUOTE, basenameRegex,
-							REGEX_CMD_PATH_BSLASH_QUOTE_END)).matcher(""),
+							REGEX_CMD_PATH_BSLASH_QUOTE_END)),
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s", REGEX_CMD_PATH_BSLASH, basenameRegex,
-							REGEX_CMD_PATH_BSLASH_END)).matcher("") };
+							REGEX_CMD_PATH_BSLASH_END)) };
 		} else {
-			this.toolNameMatchersBackslash = new Matcher[] {};
+			this.toolNamePatternsBackslash = new Pattern[] {};
 		}
 
 		if (extensionRegex != null) {
-			this.toolNameMatchersExt = new Matcher[] {
+			this.toolNamePatternsExt = new Pattern[] {
 					Pattern.compile(String.format(Locale.ROOT, "%s%s\\.%s%s", REGEX_CMD_PATH_SLASH_QUOTE, basenameRegex,
-							extensionRegex, REGEX_CMD_PATH_SLASH_QUOTE_END)).matcher(""),
+							extensionRegex, REGEX_CMD_PATH_SLASH_QUOTE_END)),
 					Pattern.compile(String.format(Locale.ROOT, "%s%s\\.%s%s", REGEX_CMD_PATH_SLASH, basenameRegex,
-							extensionRegex, REGEX_CMD_PATH_SLASH_END)).matcher("") };
+							extensionRegex, REGEX_CMD_PATH_SLASH_END)) };
 			if (alsoHandleNtfsPaths) {
-				this.toolNameMatchersExtBackslash = new Matcher[] {
+				this.toolNamePatternsExtBackslash = new Pattern[] {
 						Pattern.compile(String.format(Locale.ROOT, "%s%s\\.%s%s", REGEX_CMD_PATH_BSLASH_QUOTE,
-								basenameRegex, extensionRegex, REGEX_CMD_PATH_BSLASH_QUOTE_END)).matcher(""),
+								basenameRegex, extensionRegex, REGEX_CMD_PATH_BSLASH_QUOTE_END)),
 						Pattern.compile(String.format(Locale.ROOT, "%s%s\\.%s%s", REGEX_CMD_PATH_BSLASH, basenameRegex,
-								extensionRegex, REGEX_CMD_PATH_BSLASH_END)).matcher("") };
+								extensionRegex, REGEX_CMD_PATH_BSLASH_END)) };
 			} else {
-				this.toolNameMatchersExtBackslash = new Matcher[] {};
+				this.toolNamePatternsExtBackslash = new Pattern[] {};
 			}
 		} else {
-			this.toolNameMatchersExt = new Matcher[] {};
-			this.toolNameMatchersExtBackslash = new Matcher[] {};
+			this.toolNamePatternsExt = new Pattern[] {};
+			this.toolNamePatternsExtBackslash = new Pattern[] {};
+		}
+
+		toolNameMatchersExt = new Matcher[toolNamePatternsExt.length];
+		for (int i = 0; i < toolNameMatchersExt.length; i++) {
+			toolNameMatchersExt[i] = toolNamePatternsExt[i].matcher("");
+		}
+		toolNameMatchersExtBackslash = new Matcher[toolNamePatternsExtBackslash.length];
+		for (int i = 0; i < toolNameMatchersExtBackslash.length; i++) {
+			toolNameMatchersExtBackslash[i] = toolNamePatternsExtBackslash[i].matcher((""));
 		}
 	}
 
@@ -225,8 +248,8 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 		if (matchBackslash && !canHandleNtfsPaths()) {
 			return Optional.empty();
 		}
-		for (Matcher matcher : matchBackslash ? toolNameMatchersBackslash : toolNameMatchers) {
-			Optional<MatchResult> result = matcherMatches(matcher, commandLine);
+		for (Pattern pattern : matchBackslash ? toolNamePatternsBackslash : toolNamePatterns) {
+			Optional<MatchResult> result = patternMatches(pattern, commandLine);
 			if (result.isPresent()) {
 				return result;
 			}
@@ -242,23 +265,23 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 			return Optional.empty();
 		}
 
-		Matcher[] toolNameMatchers;
+		Pattern[] toolNamePatterns;
 		if (matchBackslash) {
-			toolNameMatchers = new Matcher[] {
+			toolNamePatterns = new Pattern[] {
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s%s", REGEX_CMD_PATH_BSLASH_QUOTE, basenameRegex,
-							versionRegex, REGEX_CMD_PATH_BSLASH_QUOTE_END)).matcher(""),
+							versionRegex, REGEX_CMD_PATH_BSLASH_QUOTE_END)),
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s%s", REGEX_CMD_PATH_BSLASH, basenameRegex,
-							versionRegex, REGEX_CMD_PATH_BSLASH_END)).matcher("") };
+							versionRegex, REGEX_CMD_PATH_BSLASH_END)) };
 		} else {
-			toolNameMatchers = new Matcher[] {
+			toolNamePatterns = new Pattern[] {
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s%s", REGEX_CMD_PATH_SLASH_QUOTE, basenameRegex,
-							versionRegex, REGEX_CMD_PATH_SLASH_QUOTE_END)).matcher(""),
+							versionRegex, REGEX_CMD_PATH_SLASH_QUOTE_END)),
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s%s", REGEX_CMD_PATH_SLASH, basenameRegex,
-							versionRegex, REGEX_CMD_PATH_SLASH_END)).matcher("") };
+							versionRegex, REGEX_CMD_PATH_SLASH_END)) };
 		}
 
-		for (Matcher matcher : toolNameMatchers) {
-			Optional<MatchResult> result = matcherMatches(matcher, commandLine);
+		for (Pattern pattern : toolNamePatterns) {
+			Optional<MatchResult> result = patternMatches(pattern, commandLine);
 			if (result.isPresent()) {
 				return result;
 			}
@@ -271,8 +294,8 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 		if (matchBackslash && !canHandleNtfsPaths()) {
 			return Optional.empty();
 		}
-		for (Matcher matcher : matchBackslash ? toolNameMatchersExtBackslash : toolNameMatchersExt) {
-			Optional<MatchResult> result = matcherMatches(matcher, commandLine);
+		for (Pattern pattern : matchBackslash ? toolNamePatternsExtBackslash : toolNamePatternsExt) {
+			Optional<MatchResult> result = patternMatches(pattern, commandLine);
 			if (result.isPresent()) {
 				return result;
 			}
@@ -288,23 +311,23 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 			return Optional.empty();
 		}
 
-		Matcher[] toolNameMatchers;
+		Pattern[] toolNamePatterns;
 		if (matchBackslash) {
-			toolNameMatchers = new Matcher[] {
+			toolNamePatterns = new Pattern[] {
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s\\.%s%s", REGEX_CMD_PATH_BSLASH_QUOTE,
-							basenameRegex, versionRegex, extensionRegex, REGEX_CMD_PATH_BSLASH_QUOTE_END)).matcher(""),
+							basenameRegex, versionRegex, extensionRegex, REGEX_CMD_PATH_BSLASH_QUOTE_END)),
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s\\.%s%s", REGEX_CMD_PATH_BSLASH, basenameRegex,
-							versionRegex, extensionRegex, REGEX_CMD_PATH_BSLASH_END)).matcher("") };
+							versionRegex, extensionRegex, REGEX_CMD_PATH_BSLASH_END)) };
 		} else {
-			toolNameMatchers = new Matcher[] {
+			toolNamePatterns = new Pattern[] {
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s\\.%s%s", REGEX_CMD_PATH_SLASH_QUOTE,
-							basenameRegex, versionRegex, extensionRegex, REGEX_CMD_PATH_SLASH_QUOTE_END)).matcher(""),
+							basenameRegex, versionRegex, extensionRegex, REGEX_CMD_PATH_SLASH_QUOTE_END)),
 					Pattern.compile(String.format(Locale.ROOT, "%s%s%s\\.%s%s", REGEX_CMD_PATH_SLASH, basenameRegex,
-							versionRegex, extensionRegex, REGEX_CMD_PATH_SLASH_END)).matcher("") };
+							versionRegex, extensionRegex, REGEX_CMD_PATH_SLASH_END)) };
 		}
 
-		for (Matcher matcher : toolNameMatchers) {
-			Optional<MatchResult> result = matcherMatches(matcher, commandLine);
+		for (Pattern pattern : toolNamePatterns) {
+			Optional<MatchResult> result = patternMatches(pattern, commandLine);
 			if (result.isPresent()) {
 				return result;
 			}
@@ -313,11 +336,11 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 	}
 
 	/**
-	 * Gets, whether the specified Matcher for the tool arguments can properly parse
+	 * Gets, whether the specified Pattern for the tool arguments can properly parse
 	 * the specified command-line string. If so, the remaining arguments of the
 	 * command-line are returned.
 	 *
-	 * @param matcher     the matcher that performs the match a regular expression
+	 * @param pattern     the pattern that performs the match a regular expression
 	 *                    that matches the version string in the name of the tool to
 	 *                    detect.
 	 * @param commandLine the command-line to match
@@ -325,8 +348,8 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 	 *         command-line string. Otherwise, if the tool name matches, a
 	 *         MatchResult holding the de-composed command-line is returned.
 	 */
-	private Optional<DefaultToolDetectionParticipant.MatchResult> matcherMatches(Matcher matcher, String commandLine) {
-		matcher.reset(commandLine);
+	private Optional<DefaultToolDetectionParticipant.MatchResult> patternMatches(Pattern pattern, String commandLine) {
+		Matcher matcher = pattern.matcher(commandLine);
 		if (matcher.lookingAt()) {
 			return Optional.of(new DefaultToolDetectionParticipant.MatchResult(matcher.group(REGEX_GROUP_CMD),
 					commandLine.substring(matcher.end())));

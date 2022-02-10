@@ -9,6 +9,7 @@
 
 package org.eclipse.cdt.jsoncdb.core.participant;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -124,8 +125,8 @@ public interface IToolDetectionParticipant {
 		 *                  command
 		 */
 		public MatchResult(String command, String arguments) {
-			this.command = command;
-			this.arguments = arguments;
+			this.command = Objects.requireNonNull(command, "command"); //$NON-NLS-1$
+			this.arguments = Objects.requireNonNull(arguments, "arguments"); //$NON-NLS-1$
 		}
 
 		/**

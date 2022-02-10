@@ -57,34 +57,36 @@ public class ResponseFileArglets {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
 				final Matcher matcher = oMatcher.matcher;
 
-				matcher.reset(argsLine);
-				if (matcher.lookingAt()) {
-					String fname = matcher.group(oMatcher.nameGroup);
-					final int consumed = matcher.end();
-					if ("<<".equals(fname)) { //$NON-NLS-1$
-						// see https://github.com/15knots/cmake4eclipse/issues/94
-						// Handle '@<< compiler-args <<' syntax: The file '<<' does not exist, arguments
-						// come from argsline.
-						// so we just do not open the non-existing file
+				synchronized (matcher) {
+					matcher.reset(argsLine);
+					if (matcher.lookingAt()) {
+						String fname = matcher.group(oMatcher.nameGroup);
+						final int consumed = matcher.end();
+						if ("<<".equals(fname)) { //$NON-NLS-1$
+							// see https://github.com/15knots/cmake4eclipse/issues/94
+							// Handle '@<< compiler-args <<' syntax: The file '<<' does not exist, arguments
+							// come from argsline.
+							// so we just do not open the non-existing file
+							return consumed;
+						}
+
+						IPath path = Path.fromOSString(fname);
+						if (!path.isAbsolute()) {
+							// relative path, prepend CWD
+							fname = parserHandler.getCompilerWorkingDirectory().append(path).toOSString();
+						}
+
+						// parse file
+						java.nio.file.Path fpath = Paths.get(fname);
+						try {
+							String args2 = new String(Files.readAllBytes(fpath));
+							parserHandler.parseArguments(args2);
+						} catch (IOException e) {
+							// swallow exception for now
+							e.printStackTrace();
+						}
 						return consumed;
 					}
-
-					IPath path = Path.fromOSString(fname);
-					if (!path.isAbsolute()) {
-						// relative path, prepend CWD
-						fname = parserHandler.getCompilerWorkingDirectory().append(path).toOSString();
-					}
-
-					// parse file
-					java.nio.file.Path fpath = Paths.get(fname);
-					try {
-						String args2 = new String(Files.readAllBytes(fpath));
-						parserHandler.parseArguments(args2);
-					} catch (IOException e) {
-						// swallow exception for now
-						e.printStackTrace();
-					}
-					return consumed;
 				}
 			}
 			return 0;// no input consumed

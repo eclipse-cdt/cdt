@@ -99,13 +99,8 @@ public final class Arglets {
 		/**
 		 * Constructor.
 		 *
-		 * @param pattern    - regular expression pattern being parsed by the parser.
-		 * @param nameGroup  - capturing group number defining name of an entry.
-		 * @param valueGroup - capturing group number defining value of an entry.
-		 */
-		/**
-		 * @param pattern
-		 * @param nameGroup
+		 * @param pattern  regular expression pattern being parsed by the parser.
+		 * @param nameGroup the number of the value group
 		 * @param valueGroup the number of the value group, or {@code -1} for a pattern
 		 *                   that does not recognize a macro value
 		 */
@@ -136,13 +131,15 @@ public final class Arglets {
 			for (NameValueOptionMatcher oMatcher : optionMatchers) {
 				final Matcher matcher = oMatcher.matcher;
 
-				matcher.reset(args);
-				if (matcher.lookingAt()) {
-					final String name = matcher.group(oMatcher.nameGroup);
-					final String value = oMatcher.valueGroup == -1 ? null : matcher.group(oMatcher.valueGroup);
-					resultCollector.addDefine(name, value);
-					final int end = matcher.end();
-					return end;
+				synchronized (matcher) {
+					matcher.reset(args);
+					if (matcher.lookingAt()) {
+						final String name = matcher.group(oMatcher.nameGroup);
+						final String value = oMatcher.valueGroup == -1 ? null : matcher.group(oMatcher.valueGroup);
+						resultCollector.addDefine(name, value);
+						final int end = matcher.end();
+						return end;
+					}
 				}
 			}
 			return 0;// no input consumed
@@ -159,14 +156,16 @@ public final class Arglets {
 		 */
 		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,
 				NameOptionMatcher optionMatcher) {
-			final Matcher oMatcher = optionMatcher.matcher;
+			final Matcher matcher = optionMatcher.matcher;
 
-			oMatcher.reset(argsLine);
-			if (oMatcher.lookingAt()) {
-				final String name = oMatcher.group(1);
-				resultCollector.addUndefine(name);
-				final int end = oMatcher.end();
-				return end;
+			synchronized (matcher) {
+				matcher.reset(argsLine);
+				if (matcher.lookingAt()) {
+					final String name = matcher.group(1);
+					resultCollector.addUndefine(name);
+					final int end = matcher.end();
+					return end;
+				}
 			}
 			return 0;// no input consumed
 		}
@@ -187,23 +186,25 @@ public final class Arglets {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
 				final Matcher matcher = oMatcher.matcher;
 
-				matcher.reset(argsLine);
-				if (matcher.lookingAt()) {
-					String name = matcher.group(oMatcher.nameGroup);
-					// workaround for relative path by cmake bug
-					// https://gitlab.kitware.com/cmake/cmake/issues/13894 : prepend cwd
-					IPath path = Path.fromOSString(name);
-					if (!path.isAbsolute()) {
-						// prepend CWD
-						name = cwd.append(path).toOSString();
+				synchronized (matcher) {
+					matcher.reset(argsLine);
+					if (matcher.lookingAt()) {
+						String name = matcher.group(oMatcher.nameGroup);
+						// workaround for relative path by cmake bug
+						// https://gitlab.kitware.com/cmake/cmake/issues/13894 : prepend cwd
+						IPath path = Path.fromOSString(name);
+						if (!path.isAbsolute()) {
+							// prepend CWD
+							name = cwd.append(path).toOSString();
+						}
+						if (isSystemIncludePath) {
+							resultCollector.addSystemIncludePath(name);
+						} else {
+							resultCollector.addIncludePath(name);
+						}
+						final int end = matcher.end();
+						return end;
 					}
-					if (isSystemIncludePath) {
-						resultCollector.addSystemIncludePath(name);
-					} else {
-						resultCollector.addIncludePath(name);
-					}
-					final int end = matcher.end();
-					return end;
 				}
 			}
 			return 0;// no input consumed
@@ -223,12 +224,14 @@ public final class Arglets {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
 				final Matcher matcher = oMatcher.matcher;
 
-				matcher.reset(argsLine);
-				if (matcher.lookingAt()) {
-					String name = matcher.group(oMatcher.nameGroup);
-					resultCollector.addIncludeFile(name);
-					final int end = matcher.end();
-					return end;
+				synchronized (matcher) {
+					matcher.reset(argsLine);
+					if (matcher.lookingAt()) {
+						String name = matcher.group(oMatcher.nameGroup);
+						resultCollector.addIncludeFile(name);
+						final int end = matcher.end();
+						return end;
+					}
 				}
 			}
 			return 0;// no input consumed
@@ -248,12 +251,14 @@ public final class Arglets {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
 				final Matcher matcher = oMatcher.matcher;
 
-				matcher.reset(argsLine);
-				if (matcher.lookingAt()) {
-					String name = matcher.group(oMatcher.nameGroup);
-					resultCollector.addMacroFile(name);
-					final int end = matcher.end();
-					return end;
+				synchronized (matcher) {
+					matcher.reset(argsLine);
+					if (matcher.lookingAt()) {
+						String name = matcher.group(oMatcher.nameGroup);
+						resultCollector.addMacroFile(name);
+						final int end = matcher.end();
+						return end;
+					}
 				}
 			}
 			return 0;// no input consumed

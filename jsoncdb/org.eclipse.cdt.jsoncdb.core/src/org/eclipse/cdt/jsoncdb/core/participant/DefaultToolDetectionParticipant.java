@@ -326,10 +326,12 @@ public class DefaultToolDetectionParticipant implements IToolDetectionParticipan
 	 *         MatchResult holding the de-composed command-line is returned.
 	 */
 	private Optional<DefaultToolDetectionParticipant.MatchResult> matcherMatches(Matcher matcher, String commandLine) {
-		matcher.reset(commandLine);
-		if (matcher.lookingAt()) {
-			return Optional.of(new DefaultToolDetectionParticipant.MatchResult(matcher.group(REGEX_GROUP_CMD),
-					commandLine.substring(matcher.end())));
+		synchronized (matcher) {
+			matcher.reset(commandLine);
+			if (matcher.lookingAt()) {
+				return Optional.of(new DefaultToolDetectionParticipant.MatchResult(matcher.group(REGEX_GROUP_CMD),
+						commandLine.substring(matcher.end())));
+			}
 		}
 		return Optional.empty();
 	}

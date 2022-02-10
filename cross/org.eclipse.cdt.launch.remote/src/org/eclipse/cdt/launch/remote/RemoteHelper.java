@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2009, 2015 MontaVista Software, Inc. and others.
+ * Copyright (c) 2009, 2022 MontaVista Software, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  * Anna Dushistova (Mentor Graphics) - changed spaceEscapify visibility
  * Anna Dushistova (MontaVista)      - [318051][remote debug] Terminating when "Remote shell" process is selected doesn't work
  * Wainer Moschetta(IBM)             - [452356] replace RSE with org.eclipse.remote
+ * John Dallaway                     - [578680] Use shell-specific command delimiter
  ********************************************************************************/
 
 package org.eclipse.cdt.launch.remote;
@@ -35,6 +36,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.debug.core.ILaunch;
@@ -53,6 +55,7 @@ public class RemoteHelper {
 
 	private final static String EXIT_CMD = "exit"; //$NON-NLS-1$
 	private final static String CMD_DELIMITER = ";"; //$NON-NLS-1$
+	private final static String CMD_DELIMITER_WIN32 = "&"; //$NON-NLS-1$
 
 	public static IRemoteConnection getRemoteConnectionByName(String remoteConnection) {
 		if (remoteConnection == null)
@@ -197,17 +200,18 @@ public class RemoteHelper {
 		String realRemoteCommand = arguments == null ? spaceEscapify(remoteCommandPath)
 				: spaceEscapify(remoteCommandPath) + " " + arguments; //$NON-NLS-1$
 
-		String remoteCommand = realRemoteCommand + CMD_DELIMITER + EXIT_CMD + "\r\n"; //$NON-NLS-1$
-
-		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
-			remoteCommand = prelaunchCmd + CMD_DELIMITER + remoteCommand;
-
 		IRemoteConnection conn = getCurrentConnection(config);
 		if (!conn.isOpen()) {
 			conn.open(monitor);
 		}
 
 		IRemoteCommandShellService shellService = conn.getService(IRemoteCommandShellService.class);
+		String remoteOsName = shellService.getRemoteConnection().getProperty(IRemoteConnection.OS_NAME_PROPERTY);
+		String cmdDelimiter = Platform.OS_WIN32.equals(remoteOsName) ? CMD_DELIMITER_WIN32 : CMD_DELIMITER;
+		String remoteCommand = realRemoteCommand + cmdDelimiter + EXIT_CMD + "\r\n"; //$NON-NLS-1$
+		if (!prelaunchCmd.trim().equals("")) //$NON-NLS-1$
+			remoteCommand = prelaunchCmd + cmdDelimiter + remoteCommand;
+
 		IRemoteProcess p = null;
 		p = shellService.getCommandShell(IRemoteProcessBuilder.ALLOCATE_PTY);
 		OutputStream os = p.getOutputStream();

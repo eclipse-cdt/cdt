@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 PalmSource, Inc. and others.
+ * Copyright (c) 2006, 2022 PalmSource, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@
  * Dan Ungureanu          (Freescale) - [428367] [remote launch] Fix missing title for Properties dialog
  * Alvaro Sanchez-Leon     (Ericsson) - [430313] [remote] Auto Remote Debug - Unable to download to folder
  * Iulia Vasii            (Freescale) - [370768] new 'Edit...' button to access connection properties
+ * John Dallaway                      - [578680] Accommodate Windows-style absolute paths
  *******************************************************************************/
 package org.eclipse.cdt.launch.remote.tabs;
 
@@ -163,7 +164,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		}
 
 		/* Verify that the remote executable file name is absolute. */
-		Path remoteProgPath = Path.forPosix(remoteProgName);
+		Path remoteProgPath = new Path(remoteProgName);
 		if (!remoteProgPath.isAbsolute()) {
 			setErrorMessage(REMOTE_PROG_NOT_ABSOLUTE);
 			return false;

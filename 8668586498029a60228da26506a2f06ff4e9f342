@@ -70,6 +70,30 @@
       "revId": "8668586498029a60228da26506a2f06ff4e9f342",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "e2b5ca48_97d1749d",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyBackendDsf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 469,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-02-14T16:38:11Z",
+      "side": 1,
+      "message": "Based on the last comment, I\u0027ll mark this as resolved and mark the gerrit ready for merge.",
+      "parentUuid": "09cdc1ff_2d1e8ef2",
+      "range": {
+        "startLine": 469,
+        "startChar": 2,
+        "endLine": 469,
+        "endChar": 49
+      },
+      "revId": "8668586498029a60228da26506a2f06ff4e9f342",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

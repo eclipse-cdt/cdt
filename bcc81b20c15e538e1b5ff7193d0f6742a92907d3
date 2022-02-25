@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "854e596a_90d80e39",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1166,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-02-25T16:42:34Z",
+      "side": 1,
+      "message": "url is always null here - meaning that only the last icon is saved in the map and only it is disposed.\n\nI have a gerrit for that in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/191230",
+      "revId": "bcc81b20c15e538e1b5ff7193d0f6742a92907d3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

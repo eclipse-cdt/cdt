@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "604058f3_fd33f58b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/PluginResources.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 67162
+      },
+      "writtenOn": "2022-03-08T19:57:45Z",
+      "side": 1,
+      "message": "Suggestion: transform \"{0}:{1}\" into \"{0} \u003c{1}\u003e\" to make it consistent with the way project label is decorated with the build configuration in Project Explorer?",
+      "revId": "449a5e7959a298066b15f6bfcf138bd3bdf204af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

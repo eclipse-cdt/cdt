@@ -16,6 +16,24 @@
       "revId": "449a5e7959a298066b15f6bfcf138bd3bdf204af",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "66685a07_e6f6efa7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/PluginResources.properties",
+        "patchSetId": 4
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-03-08T22:10:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "604058f3_fd33f58b",
+      "revId": "449a5e7959a298066b15f6bfcf138bd3bdf204af",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": false
     }
   ]
 }

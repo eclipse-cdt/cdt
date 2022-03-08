@@ -87,6 +87,30 @@
       "revId": "2dc59c9e95b649fa08523e978ab642ebd88fa3c1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9985737b_7fcef919",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/CommonBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 589,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-03-08T15:48:17Z",
+      "side": 1,
+      "message": "At the moment I want to get the stackoverflow issue resolved in the first instance. Adding an error marker seems to have stalled the completion of this gerrit. I will bring this up to date and change to a warning.",
+      "parentUuid": "d0b5bf90_5c3e6629",
+      "range": {
+        "startLine": 589,
+        "startChar": 4,
+        "endLine": 589,
+        "endChar": 28
+      },
+      "revId": "2dc59c9e95b649fa08523e978ab642ebd88fa3c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
     }
   ]
 }

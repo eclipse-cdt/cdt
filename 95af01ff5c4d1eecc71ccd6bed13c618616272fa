@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7db6e767_207749a5",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-09T17:08:31Z",
+      "side": 1,
+      "message": "How does this work?\nWhat if you do a remote connection but you end up in a cygwin shell or something? Would that still trigger the CMD_DELIMITER_WIN32? If so, I suppose that would be wrong.",
+      "range": {
+        "startLine": 210,
+        "startChar": 24,
+        "endLine": 210,
+        "endChar": 101
+      },
+      "revId": "95af01ff5c4d1eecc71ccd6bed13c618616272fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "0bdfe02d_07f8554a",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-09T17:08:31Z",
+      "side": 1,
+      "message": "isEmpty()?",
+      "range": {
+        "startLine": 212,
+        "startChar": 26,
+        "endLine": 212,
+        "endChar": 37
+      },
+      "revId": "95af01ff5c4d1eecc71ccd6bed13c618616272fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    }
+  ]
+}

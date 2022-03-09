@@ -120,6 +120,30 @@
     },
     {
       "key": {
+        "uuid": "88a17317_c166f304",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-09T18:55:55Z",
+      "side": 1,
+      "message": "I added the dependency part (sorry for the delay!).\nAs I wrote above; it assumes that IOption.OBJECTS will always generate a single path per entry in the array. If there is a need for a option command generator to generate multiple files for a single entry, then the logic in GnuMakefileGenerator will not work.",
+      "parentUuid": "a023be95_1ac35663",
+      "range": {
+        "startLine": 97,
+        "startChar": 40,
+        "endLine": 97,
+        "endChar": 54
+      },
+      "revId": "be5cd62f141f3b85f53fc308930d5c2d79b90981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "d867c0ae_ef291378",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
         "patchSetId": 4

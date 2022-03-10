@@ -55,9 +55,8 @@ public class ResponseFileArglets {
 		@Override
 		public int process(IParserHandler parserHandler, String argsLine) {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
-				final Matcher matcher = oMatcher.matcher;
+				final Matcher matcher = oMatcher.pattern.matcher(argsLine);
 
-				matcher.reset(argsLine);
 				if (matcher.lookingAt()) {
 					String fname = matcher.group(oMatcher.nameGroup);
 					final int consumed = matcher.end();

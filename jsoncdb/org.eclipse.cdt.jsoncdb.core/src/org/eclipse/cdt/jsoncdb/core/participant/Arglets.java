@@ -62,7 +62,13 @@ public final class Arglets {
 	 * @author Martin Weber
 	 */
 	public static class NameOptionMatcher {
+		/**
+		 * Do not use the matcher field, it is not thread safe. Instead use pattern.matcher(input).
+		 * @deprecated
+		 */
+		@Deprecated(forRemoval = true)
 		final Matcher matcher;
+		final Pattern pattern;
 		final int nameGroup;
 
 		/**
@@ -72,14 +78,15 @@ public final class Arglets {
 		 * @param nameGroup - capturing group number defining name of an entry.
 		 */
 		public NameOptionMatcher(String pattern, int nameGroup) {
-			this.matcher = Pattern.compile(pattern).matcher(EMPTY_STR);
+			this.pattern = Pattern.compile(pattern);
+			this.matcher = this.pattern.matcher(EMPTY_STR);
 			this.nameGroup = nameGroup;
 		}
 
 		@SuppressWarnings("nls")
 		@Override
 		public String toString() {
-			return "NameOptionMatcher [matcher=" + this.matcher + ", nameGroup=" + this.nameGroup + "]";
+			return "NameOptionMatcher [pattern=" + this.pattern + ", nameGroup=" + this.nameGroup + "]";
 		}
 	}
 
@@ -99,13 +106,8 @@ public final class Arglets {
 		/**
 		 * Constructor.
 		 *
-		 * @param pattern    - regular expression pattern being parsed by the parser.
-		 * @param nameGroup  - capturing group number defining name of an entry.
-		 * @param valueGroup - capturing group number defining value of an entry.
-		 */
-		/**
-		 * @param pattern
-		 * @param nameGroup
+		 * @param pattern  regular expression pattern being parsed by the parser.
+		 * @param nameGroup the number of the value group
 		 * @param valueGroup the number of the value group, or {@code -1} for a pattern
 		 *                   that does not recognize a macro value
 		 */
@@ -117,7 +119,7 @@ public final class Arglets {
 		@SuppressWarnings("nls")
 		@Override
 		public String toString() {
-			return "NameValueOptionMatcher [matcher=" + this.matcher + ", nameGroup=" + this.nameGroup + ", valueGroup="
+			return "NameValueOptionMatcher [pattern=" + this.pattern + ", nameGroup=" + this.nameGroup + ", valueGroup="
 					+ this.valueGroup + "]";
 		}
 	}
@@ -134,9 +136,8 @@ public final class Arglets {
 		protected final int processArgument(IArgumentCollector resultCollector, String args,
 				NameValueOptionMatcher[] optionMatchers) {
 			for (NameValueOptionMatcher oMatcher : optionMatchers) {
-				final Matcher matcher = oMatcher.matcher;
+				final Matcher matcher = oMatcher.pattern.matcher(args);
 
-				matcher.reset(args);
 				if (matcher.lookingAt()) {
 					final String name = matcher.group(oMatcher.nameGroup);
 					final String value = oMatcher.valueGroup == -1 ? null : matcher.group(oMatcher.valueGroup);
@@ -159,9 +160,8 @@ public final class Arglets {
 		 */
 		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,
 				NameOptionMatcher optionMatcher) {
-			final Matcher oMatcher = optionMatcher.matcher;
+			final Matcher oMatcher = optionMatcher.pattern.matcher(argsLine);
 
-			oMatcher.reset(argsLine);
 			if (oMatcher.lookingAt()) {
 				final String name = oMatcher.group(1);
 				resultCollector.addUndefine(name);
@@ -185,9 +185,8 @@ public final class Arglets {
 		protected final int processArgument(boolean isSystemIncludePath, IArgumentCollector resultCollector, IPath cwd,
 				String argsLine, NameOptionMatcher[] optionMatchers) {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
-				final Matcher matcher = oMatcher.matcher;
+				final Matcher matcher = oMatcher.pattern.matcher(argsLine);
 
-				matcher.reset(argsLine);
 				if (matcher.lookingAt()) {
 					String name = matcher.group(oMatcher.nameGroup);
 					// workaround for relative path by cmake bug
@@ -221,9 +220,8 @@ public final class Arglets {
 		protected final int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine,
 				NameOptionMatcher[] optionMatchers) {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
-				final Matcher matcher = oMatcher.matcher;
+				final Matcher matcher = oMatcher.pattern.matcher(argsLine);
 
-				matcher.reset(argsLine);
 				if (matcher.lookingAt()) {
 					String name = matcher.group(oMatcher.nameGroup);
 					resultCollector.addIncludeFile(name);
@@ -246,9 +244,8 @@ public final class Arglets {
 		protected final int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine,
 				NameOptionMatcher[] optionMatchers) {
 			for (NameOptionMatcher oMatcher : optionMatchers) {
-				final Matcher matcher = oMatcher.matcher;
+				final Matcher matcher = oMatcher.pattern.matcher(argsLine);
 
-				matcher.reset(argsLine);
 				if (matcher.lookingAt()) {
 					String name = matcher.group(oMatcher.nameGroup);
 					resultCollector.addMacroFile(name);

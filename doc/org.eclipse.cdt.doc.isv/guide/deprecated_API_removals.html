@@ -70,6 +70,12 @@
     <li><a href="#GnuMakefileGeneratorAPI">GnuMakefileGenerator is no longer part of API</a></li>
     <li><a href="#Spawner.signals">The Spawner signal constants are nolonger API</a></li>
   </ol>
+  <p>
+    Planned Removals after March 2024
+  </p>
+  <ol>
+    <li><a href="#ArgletsMatcher">java.util.regex.Matcher use in JSONCDB API will be removed</a></li>
+  </ol>
 
   <p>
     API Changes prior to CDT 10.0 / 2020-09.
@@ -524,6 +530,23 @@
     <li>INT</li>
     <li>CTRLC</li>
   </ul>
+
+
+  <h3>API Removals after March 2024</h3>
+
+  <h3>1. <a name="ArgletsMatcher">java.util.regex.Matcher use in JSONCDB API will be removed</a></h3>
+  <p>
+    The following fields will be removed from the API as it is not thread safe. Use the patten instead and call matcher(input) to obtain a matcher.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.jsoncdb.core.participant.Arglets.NameOptionMatcher.matcher</li>
+    <li>org.eclipse.cdt.jsoncdb.core.participant.DefaultToolDetectionParticipant.toolNameMatchersExt</li>
+    <li>org.eclipse.cdt.jsoncdb.core.participant.DefaultToolDetectionParticipant.toolNameMatchersExtBackslash</li>
+  </ul>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=578683" target="_blank">Bug 578683</a>.
+  </p>
+
 </body>
 
 </html>

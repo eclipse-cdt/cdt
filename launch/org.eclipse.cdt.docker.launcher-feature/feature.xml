@@ -30,8 +30,7 @@
    </license>
 
    <requires>
-      <import plugin="org.eclipse.linuxtools.docker.core"/>
-      <import plugin="org.eclipse.linuxtools.docker.ui"/>
+      <import feature="org.eclipse.linuxtools.docker.feature" version="5.6.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin

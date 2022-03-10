@@ -15,7 +15,7 @@ import os
 import hashlib
 import subprocess
 
-LONG_MAX = (1 << 64) - 1
+UINT32_MAX = (1 << 32) - 1
 DEBUG = True
 
 def usage(msg=None):
@@ -65,7 +65,7 @@ sha1.update(data)
 debug("Content hashed: {}".format(sha1.hexdigest()))
 
 # Set the SOURCE_DATE_EPOCH environment variable to the hash value
-os.environ["SOURCE_DATE_EPOCH"] = str(int(sha1.hexdigest(), base=16) % LONG_MAX)
+os.environ["SOURCE_DATE_EPOCH"] = str(int(sha1.hexdigest(), base=16) % UINT32_MAX)
 debug("SOURCE_DATE_EPOCH: {}".format(os.environ["SOURCE_DATE_EPOCH"]))
 
 # Run the compiler with the environement variable set

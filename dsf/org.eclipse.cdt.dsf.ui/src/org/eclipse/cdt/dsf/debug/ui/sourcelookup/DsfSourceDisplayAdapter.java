@@ -43,6 +43,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.sourcelookup.DsfSourceLookupParticipant;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController;
 import org.eclipse.cdt.dsf.debug.ui.viewmodel.SteppingController.ISteppingControlParticipant;
@@ -376,7 +377,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 		}
 
 		private boolean shouldCancelSelectionChange() {
-			Query<Boolean> delaySelectionChangeQuery = new Query<Boolean>() {
+			Query<Boolean> delaySelectionChangeQuery = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<Boolean> rm) {
 					IExecutionDMContext execCtx = DMContexts.getAncestorOfType(fFrameData.fDmc,
@@ -984,6 +985,28 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 	@DsfServiceEventHandler
 	public void eventDispatched(SteppingTimedOutEvent e) {
 		startAnnotationClearingJob(e.getDMContext());
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	@DsfServiceEventHandler
+	public void eventDispatched(final ICommandControlService.ICommandControlRefreshAllDMEvent e) {
+		if (DEBUG) {
+			System.out.println("[DsfSourceDisplayAdapter] eventDispatched e=" + e); //$NON-NLS-1$
+		}
+		// trigger source display immediately (should be optional?)
+		Display.getDefault().asyncExec(() -> {
+			Object context = DebugUITools.getDebugContext();
+			if (context instanceof IDMVMContext) {
+				final IDMContext dmc = ((IDMVMContext) context).getDMContext();
+				if (dmc instanceof IFrameDMContext && DMContexts.isAncestorOf(dmc, e.getDMContext())) {
+					IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					doDisplaySource((IFrameDMContext) dmc, page, false, true);
+					return;
+				}
+			}
+		});
 	}
 
 	@DsfServiceEventHandler

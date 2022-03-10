@@ -23,6 +23,7 @@ package org.eclipse.cdt.managedbuilder.internal.core;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -104,6 +105,7 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 
 	private boolean fBuildErrOccured;
 	private Set<String> builtRefConfigIds = new HashSet<>();
+	private Set<String> scheduledConfigIds = new HashSet<>();
 
 	public CommonBuilder() {
 	}
@@ -438,6 +440,7 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 
 		fBuildSet.start(this);
 		builtRefConfigIds.clear();
+		scheduledConfigIds.clear();
 
 		IProject project = getProject();
 
@@ -488,6 +491,7 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 			if (status.getSeverity() != IStatus.OK)
 				throw new CoreException(status);
 
+			scheduledConfigIds.add(activeCfg.getId());
 			IConfiguration rcfgs[] = getReferencedConfigs(builders);
 
 			monitor.beginTask("", num + rcfgs.length); //$NON-NLS-1$
@@ -520,6 +524,8 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 					build(kind, new CfgBuildInfo(builders[i], isForeground), new SubProgressMonitor(monitor, 1));
 				}
 			}
+
+			scheduledConfigIds.remove(activeCfg.getId());
 		}
 
 		if (isForeground)
@@ -581,6 +587,13 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 		for (IConfiguration cfg : cfgs) {
 			IProject project = cfg.getOwner().getProject();
 			fBuildSet.getCfgIdSet(project, true).add(cfg.getId());
+
+			if (scheduledConfigIds.contains(cfg.getId())) {
+				ManagedBuilderCorePlugin.log(new Status(IStatus.WARNING, ManagedBuilderCorePlugin.getUniqueIdentifier(),
+						MessageFormat.format(ManagedMakeMessages.getString("CommonBuilder.circular_dependency"), //$NON-NLS-1$
+								project.getName(), cfg.getName())));
+				continue;
+			}
 
 			if (!builtRefConfigIds.contains(cfg.getId())) {
 				if (VERBOSE) {

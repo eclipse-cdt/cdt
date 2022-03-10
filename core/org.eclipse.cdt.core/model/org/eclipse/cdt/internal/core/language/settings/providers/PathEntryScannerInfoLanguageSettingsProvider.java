@@ -118,6 +118,8 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 			}
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
+		} finally {
+			pathEntryStore.close();
 		}
 
 		Set<ICLanguageSettingEntry> lsEntries = new LinkedHashSet<>();

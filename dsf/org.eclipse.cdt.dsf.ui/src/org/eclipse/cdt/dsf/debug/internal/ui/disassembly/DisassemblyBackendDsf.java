@@ -25,6 +25,7 @@ import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils
 
 import java.math.BigInteger;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,7 @@ import org.eclipse.cdt.dsf.concurrent.ImmediateDataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly.IDisassemblyDMContext;
 import org.eclipse.cdt.dsf.debug.service.IDisassembly2;
@@ -71,6 +73,7 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMData;
+import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlRefreshAllDMEvent;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
@@ -131,7 +134,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			tracker.dispose();
 			return disassSvc != null;
 		}
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				try {
@@ -419,7 +422,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 				return runControl.isSuspended(fTargetContext);
 			}
 		}
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				try {
@@ -457,6 +460,15 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			return fServicesTracker.getService(serviceClass);
 		}
 		return null;
+	}
+
+	@DsfServiceEventHandler
+	public void handleEvent(ICommandControlRefreshAllDMEvent event) {
+		if (fTargetContext == null) {
+			return;
+		}
+
+		fCallback.asyncExec(() -> fCallback.refresh());
 	}
 
 	@DsfServiceEventHandler
@@ -564,7 +576,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			public void handleCompleted() {
 				final BigInteger finalStartAddress = getData();
 				if (mixed) {
-					final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<IMixedInstruction[]>(
+					final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<>(
 							executor, null) {
 						@Override
 						public void handleCompleted() {
@@ -616,8 +628,8 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 						});
 					}
 				} else {
-					final DataRequestMonitor<IInstruction[]> disassemblyRequest = new DataRequestMonitor<IInstruction[]>(
-							executor, null) {
+					final DataRequestMonitor<IInstruction[]> disassemblyRequest = new DataRequestMonitor<>(executor,
+							null) {
 						@Override
 						public void handleCompleted() {
 							if (!isCanceled() && getData() != null) {
@@ -934,10 +946,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		Object sourceElement = null;
 		final ISourceLookupDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
 		final DsfExecutor executor = getSession().getExecutor();
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Object> rm) {
-				final DataRequestMonitor<Object> request = new DataRequestMonitor<Object>(executor, rm) {
+				final DataRequestMonitor<Object> request = new DataRequestMonitor<>(executor, rm) {
 					@Override
 					protected void handleSuccess() {
 						rm.setData(getData());
@@ -984,7 +996,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		if (!hasFrameContext()) {
 			return null;
 		}
-		Query<BigInteger> query = new Query<BigInteger>() {
+		Query<BigInteger> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<BigInteger> rm) {
 				evaluateAddressExpression(symbol, suppressError, rm);
@@ -1082,10 +1094,10 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		// try reverse lookup
 		final ISourceLookupDMContext ctx = DMContexts.getAncestorOfType(fTargetContext, ISourceLookupDMContext.class);
 		final DsfExecutor executor = getSession().getExecutor();
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
-				final DataRequestMonitor<String> request = new DataRequestMonitor<String>(executor, rm) {
+				final DataRequestMonitor<String> request = new DataRequestMonitor<>(executor, rm) {
 					@Override
 					protected void handleSuccess() {
 						rm.setData(getData());
@@ -1108,8 +1120,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		final IDisassemblyDMContext context = DMContexts.getAncestorOfType(fTargetContext, IDisassemblyDMContext.class);
 
 		final String finalFile = debuggerPath;
-		final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<IMixedInstruction[]>(
-				executor, null) {
+		final DataRequestMonitor<IMixedInstruction[]> disassemblyRequest = new DataRequestMonitor<>(executor, null) {
 			@Override
 			public void handleCompleted() {
 				final IMixedInstruction[] data = getData();
@@ -1151,7 +1162,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 			return null;
 		}
 		final DsfExecutor executor = DsfSession.getSession(fDsfSessionId).getExecutor();
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
 				IExecutionDMContext exeCtx = DMContexts.getAncestorOfType(fTargetFrameContext,
@@ -1202,7 +1213,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		}
 		final DsfExecutor executor = DsfSession.getSession(fDsfSessionId).getExecutor();
 
-		Query<FormattedValueDMData> query = new Query<FormattedValueDMData>() {
+		Query<FormattedValueDMData> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<FormattedValueDMData> rm) {
 				IExecutionDMContext exeCtx = DMContexts.getAncestorOfType(fTargetFrameContext,
@@ -1307,5 +1318,24 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	@Override
 	protected void handleError(IStatus status) {
 		DsfUIPlugin.log(status);
+	}
+
+	@Override
+	public void clearCaches() {
+		final DsfExecutor executor = getSession().getExecutor();
+		executor.execute(new DsfRunnable() {
+			@Override
+			public void run() {
+				List.of(IStack.class, IDisassembly.class, IExpressions.class, IRunControl.class, IRegisters.class,
+						ISourceLookup.class).forEach((clazz) -> {
+							Object o = getService(clazz);
+							if (o instanceof ICachingService) {
+								ICachingService cs = (ICachingService) o;
+								cs.flushCache(getExecutionDMContext());
+							}
+						});
+			}
+		});
+
 	}
 }

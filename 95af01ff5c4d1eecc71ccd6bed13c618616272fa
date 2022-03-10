@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "5c54fc5b_5cbedb70",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-03-10T11:36:05Z",
+      "side": 1,
+      "message": "The local shell is provided by org.eclipse.remote.internal.core.services.local.LocalCommandShellService which is hard-coded to use cmd.exe on Windows.\n\nYes, it is theoretically possible to connect to a remote Windows host which provides a Unix-like shell. We could enhance the test as follows:\n\nPlatform.OS_WIN32.equals(remoteOsName) \u0026\u0026 (shellService instanceof LocalCommandShellService)",
+      "parentUuid": "7db6e767_207749a5",
+      "range": {
+        "startLine": 210,
+        "startChar": 24,
+        "endLine": 210,
+        "endChar": 101
+      },
+      "revId": "95af01ff5c4d1eecc71ccd6bed13c618616272fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
         "uuid": "0bdfe02d_07f8554a",
         "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2022-03-09T17:08:31Z",
       "side": 1,
       "message": "isEmpty()?",
+      "range": {
+        "startLine": 212,
+        "startChar": 26,
+        "endLine": 212,
+        "endChar": 37
+      },
+      "revId": "95af01ff5c4d1eecc71ccd6bed13c618616272fa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
+      "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "bf78835a_71b6007c",
+        "filename": "cross/org.eclipse.cdt.launch.remote/src/org/eclipse/cdt/launch/remote/RemoteHelper.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 212,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-03-10T11:36:05Z",
+      "side": 1,
+      "message": "ACK. This is code relocated from line 202.",
+      "parentUuid": "0bdfe02d_07f8554a",
       "range": {
         "startLine": 212,
         "startChar": 26,

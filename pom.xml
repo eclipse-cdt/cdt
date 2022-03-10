@@ -20,7 +20,7 @@
 
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>cdt-parent</artifactId>
-	<version>10.5.0-SNAPSHOT</version>
+	<version>10.6.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>CDT Parent</name>
 
@@ -31,10 +31,10 @@
 			 tested or supported. -->
 		<required-maven-version>3.6.3</required-maven-version>
 		<tycho-version>2.5.0</tycho-version>
-		<cbi-plugins.version>1.3.1</cbi-plugins.version>
+		<cbi-plugins.version>1.3.2</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
-		<simrel-site>https://download.eclipse.org/staging/2021-12/</simrel-site>
+		<simrel-site>https://download.eclipse.org/staging/2022-03/</simrel-site>
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -47,7 +47,7 @@
 
 		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/cdt/org.eclipse.cdt</tycho.scmUrl>
 		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.4/cdt-10.4.1/</comparator.repo>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.5/cdt-10.5.0/</comparator.repo>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want
 		     to avoid baseline replace and compare, especially if you have different versions of Java than
 			 the baseline was built with. This is the default.
@@ -255,6 +255,38 @@
 		<module>tools.templates/org.eclipse.tools.templates.core</module>
 		<module>tools.templates/org.eclipse.tools.templates.freemarker</module>
 		<module>tools.templates/org.eclipse.tools.templates.ui</module>
+
+		<!-- Remote bundles -->
+		<module>remote/org.eclipse.remote.core</module>
+		<module>remote/org.eclipse.remote.jsch.core</module>
+		<module>remote/org.eclipse.remote.jsch.ui</module>
+		<module>remote/org.eclipse.remote.ui</module>
+		<!-- Proxy bundles -->
+		<module>remote/org.eclipse.remote.proxy.core</module>
+		<module>remote/org.eclipse.remote.proxy.ui</module>
+		<module>remote/org.eclipse.remote.proxy.protocol.core</module>
+		<module>remote/org.eclipse.remote.proxy.server.core</module>
+		<module>remote/org.eclipse.remote.proxy.server.product</module>
+		<module>remote/org.eclipse.remote.proxy.server.linux.x86_64</module>
+		<module>remote/org.eclipse.remote.proxy.server.linux.ppc64le</module>
+		<module>remote/org.eclipse.remote.proxy.server.macosx.x86_64</module>
+		<!-- Main feature -->
+		<module>remote/org.eclipse.remote-feature</module>
+		<!-- Proxy feature -->
+		<module>remote/org.eclipse.remote.proxy-feature</module>
+		<!-- Console Terminal feature -->
+		<module>remote/org.eclipse.remote.console</module>
+		<module>remote/org.eclipse.remote.console-feature</module>
+		<!-- Serial Port feature -->
+		<module>remote/org.eclipse.remote.serial.core</module>
+		<module>remote/org.eclipse.remote.serial.ui</module>
+		<module>remote/org.eclipse.remote.serial-feature</module>
+		<!-- Telnet feature -->
+		<module>remote/org.eclipse.remote.telnet.core</module>
+		<module>remote/org.eclipse.remote.telnet.ui</module>
+		<module>remote/org.eclipse.remote.telnet-feature</module>
+		<!-- Documentation -->
+		<module>remote/org.eclipse.remote.doc.isv</module>
 
 		<module>terminal</module>
 
@@ -679,6 +711,15 @@
 							<arch>aarch64</arch>
 						</environment>
 					</environments>
+					<dependency-resolution>
+						<extraRequirements>
+							<requirement>
+								<type>eclipse-plugin</type>
+								<id>org.eclipse.ui.ide</id>
+								<versionRange>0.0.0</versionRange>
+							</requirement>
+						</extraRequirements>
+					</dependency-resolution>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -725,6 +766,10 @@
 								<plugin id="net.sourceforge.lpg.lpgjavaruntime"/>
 								<plugin id="org.eclipse.ant.optional.junit"/>
 								<plugin id="org.eclipse.cdt.testing"/>
+								<plugin id="org.eclipse.remote.proxy.server.linux.x86_64"/>
+								<plugin id="org.eclipse.remote.proxy.server.linux.ppc64le"/>
+								<plugin id="org.eclipse.remote.proxy.server.macosx.x86_64"/>
+								<plugin id="org.eclipse.remote.doc.isv"/>
 							</excludes>
 						</configuration>
 					</execution>

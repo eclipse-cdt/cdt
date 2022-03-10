@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.remote.proxy.server.linux.ppc64le
+Bundle-Version: 1.0.100.qualifier
+Bundle-Vendor: %pluginProvider
+Bundle-Localization: plugin

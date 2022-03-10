@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.connector.ssh;singleton:=true
-Bundle-Version: 4.7.100.qualifier
+Bundle-Version: 4.7.200.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.connector.ssh.activator.UIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",

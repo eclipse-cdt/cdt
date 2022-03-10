@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Remote Proxy Tests
+Bundle-SymbolicName: org.eclipse.remote.proxy.tests
+Bundle-Version: 1.0.100.qualifier
+Bundle-Activator: org.eclipse.remote.proxy.tests.Activator
+Bundle-Vendor: Eclipse PTP
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ org.eclipse.core.filesystem,
+ org.eclipse.remote.core,
+ org.eclipse.remote.proxy.core,
+ org.junit,
+ org.eclipse.remote.proxy.protocol.core
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-ActivationPolicy: lazy
+Import-Package: com.jcraft.jsch;version="0.1.53",
+ org.eclipse.jsch.core,
+ org.eclipse.jsch.ui

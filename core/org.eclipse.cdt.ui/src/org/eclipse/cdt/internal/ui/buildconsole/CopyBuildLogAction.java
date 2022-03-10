@@ -80,7 +80,8 @@ public class CopyBuildLogAction extends Action {
 			}
 
 			// open file dialog
-			FileDialog dialog = new FileDialog(shell, SWT.NONE);
+			FileDialog dialog = new FileDialog(shell, SWT.SAVE);
+			dialog.setOverwrite(true);
 			dialog.setText(ConsoleMessages.CopyLog_ChooseDestination);
 
 			String destLocation = dialog.open();

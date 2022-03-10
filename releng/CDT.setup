@@ -166,23 +166,23 @@
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/eclipse/updates/4.21/R-4.21-202109060500/"/>
+            url="https://download.eclipse.org/eclipse/updates/4.23-I-builds/I20220105-1800/"/>
         <repository
-            url="https://download.eclipse.org/egit/updates"/>
+            url="https://download.eclipse.org/egit/updates-6.0/"/>
         <repository
-            url="https://download.eclipse.org/linuxtools/update-docker-5.4.0/"/>
+            url="https://download.eclipse.org/linuxtools/update-docker-5.5.0/"/>
         <repository
-            url="https://download.eclipse.org/lsp4e/releases/0.19.0/"/>
+            url="https://download.eclipse.org/lsp4e/releases/0.20.1/"/>
         <repository
-            url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.25/"/>
+            url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.28/"/>
         <repository
-            url="https://download.eclipse.org/mylyn/docs/releases/3.0.40/"/>
+            url="https://download.eclipse.org/mylyn/docs/releases/3.0.41/"/>
         <repository
-            url="http://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956"/>
+            url="https://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956"/>
         <repository
-            url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
+            url="https://download.eclipse.org/tm4e/releases/0.4.3/"/>
         <repository
-            url="https://download.eclipse.org/tools/cdt/releases/10.4/cdt-10.4.1">
+            url="https://download.eclipse.org/tools/cdt/releases/10.5/cdt-10.5.0/">
           <annotation>
             <detail
                 key="description">
@@ -194,7 +194,7 @@
           </annotation>
         </repository>
         <repository
-            url="https://download.eclipse.org/tools/orbit/downloads/2021-09/"/>
+            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository/"/>
         <repository
             url="https://download.eclipse.org/tools/ptp/builds/remote/3.0/2021-09/"/>
       </repositoryList>
@@ -321,15 +321,15 @@
           <repository
               url="https://download.eclipse.org/modeling/emf/emf/builds/release/latest/"/>
           <repository
-              url="https://download.eclipse.org/mylyn/docs/releases/3.0.40/"/>
+              url="https://download.eclipse.org/mylyn/docs/releases/3.0.41/"/>
           <repository
-              url="http://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956"/>
+              url="https://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956"/>
           <repository
               url="https://download.eclipse.org/technology/swtbot/releases/3.1.0/"/>
           <repository
-              url="https://download.eclipse.org/tm4e/releases/0.4.1/"/>
+              url="https://download.eclipse.org/tm4e/releases/0.4.3/"/>
           <repository
-              url="https://download.eclipse.org/tools/cdt/releases/10.4/cdt-10.4.1/">
+              url="https://download.eclipse.org/tools/cdt/releases/10.5/cdt-10.5.0/">
             <annotation>
               <detail
                   key="description">
@@ -338,7 +338,7 @@
             </annotation>
           </repository>
           <repository
-              url="https://download.eclipse.org/tools/orbit/downloads/drops/R20211122181901/repository/"/>
+              url="https://download.eclipse.org/tools/orbit/downloads/drops/R20211213173813/repository/"/>
           <repository
               url="https://download.eclipse.org/tools/ptp/builds/remote/3.0/2021-09"/>
           <repository

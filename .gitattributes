@@ -163,3 +163,4 @@ cdtOptions text
 # file permission +x
 *.py text
 *.xhtml text
+*.entitlements text

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.jsoncdb.core" version="2">
+    <resource path="src/org/eclipse/cdt/jsoncdb/core/CompileCommandsJsonParser.java" type="org.eclipse.cdt.jsoncdb.core.CompileCommandsJsonParser">
+        <filter comment="&quot;A PDE bug incorrectly reports this as no longer API, yet it is still API. Appears to be because the last release was the first to make this package API" id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core.CompileCommandsJsonParser"/>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core_1.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/jsoncdb/core/IParserPreferences.java" type="org.eclipse.cdt.jsoncdb.core.IParserPreferences">
+        <filter comment="&quot;A PDE bug incorrectly reports this as no longer API, yet it is still API. Appears to be because the last release was the first to make this package API" id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core.IParserPreferences"/>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core_1.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/jsoncdb/core/IParserPreferencesAccess.java" type="org.eclipse.cdt.jsoncdb.core.IParserPreferencesAccess">
+        <filter comment="&quot;A PDE bug incorrectly reports this as no longer API, yet it is still API. Appears to be because the last release was the first to make this package API" id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core.IParserPreferencesAccess"/>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core_1.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/jsoncdb/core/IParserPreferencesMetadata.java" type="org.eclipse.cdt.jsoncdb.core.IParserPreferencesMetadata">
+        <filter comment="&quot;A PDE bug incorrectly reports this as no longer API, yet it is still API. Appears to be because the last release was the first to make this package API" id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core.IParserPreferencesMetadata"/>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core_1.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/jsoncdb/core/ISourceFileInfoConsumer.java" type="org.eclipse.cdt.jsoncdb.core.ISourceFileInfoConsumer">
+        <filter comment="&quot;A PDE bug incorrectly reports this as no longer API, yet it is still API. Appears to be because the last release was the first to make this package API" id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core.ISourceFileInfoConsumer"/>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core_1.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/jsoncdb/core/ParseRequest.java" type="org.eclipse.cdt.jsoncdb.core.ParseRequest">
+        <filter comment="&quot;A PDE bug incorrectly reports this as no longer API, yet it is still API. Appears to be because the last release was the first to make this package API" id="305365105">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core.ParseRequest"/>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core_1.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/jsoncdb/core/participant/Arglets.java" type="org.eclipse.cdt.jsoncdb.core.participant.Arglets">
+        <filter comment="Incorrectly named class that could not have been used is getting an API filter rather than old @deprecated API" id="338886760">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core.participant.Arglets.SystemIncludePath_armcc"/>
+                <message_argument value="org.eclipse.cdt.jsoncdb.core_1.2.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.eclipse.remote.console" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.eclipse.remote.console" id="org.eclipse.remote.console.toolbar" name="Terminal Console Toolbar Contributions"/>
+      </appinfo>
+      <documentation>
+         This extension point allows contributions to the TerminalConsole for various types of connections. It associates an action id with a connection type and factory.
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="action" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="action">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Identifier for this action
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="connectionType" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The connection type this Action applies to
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="actionFactory" type="string" use="required">
+            <annotation>
+               <documentation>
+                  A class implementing IConsoleActionFactory to be called to create the Action
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.remote.console.actions.IConsoleActionFactory"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+            &lt;extension
+         point=&quot;org.eclipse.remote.console.toolbar&quot;&gt;
+      &lt;action
+            actionFactory=&quot;com.example.actions.MyActionFactory&quot;
+            connectionType=&quot;org.eclipse.remote.serial.core.connectionType&quot;
+            id=&quot;com.example.actions.MyAction&quot;&gt;
+      &lt;/action&gt;
+   &lt;/extension&gt;
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         The value of the actionFactory attribute must implement the abstract class &lt;code&gt;org.eclipse.remote.console.ConsoleAction&lt;/code&gt;
+
+The value of the connectionType attribute should reference the id of a connectionType under the org.eclipse.remote.core.remoteServices extension point.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         The package itself does not have any predefined toolbar contributions.
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="copyright"/>
+      </appinfo>
+      <documentation>
+         /*******************************************************************************
+ * Copyright (c) 2016 QNX Software Systems and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * QNX Software Systems - Initial API and implementation
+ *******************************************************************************/
+      </documentation>
+   </annotation>
+
+</schema>

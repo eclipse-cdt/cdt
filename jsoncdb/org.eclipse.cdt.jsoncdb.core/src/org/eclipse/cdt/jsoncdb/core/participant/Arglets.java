@@ -365,29 +365,6 @@ public final class Arglets {
 	}
 
 	////////////////////////////////////////////////////////////////////
-	/**
-	 * A tool argument parser capable to parse a armcc-compiler system include path
-	 * argument: {@code -Jdir}.
-	 */
-	// TODO move this to the arm plugin
-	public static class SystemIncludePath_armcc extends IncludePathGeneric implements IArglet {
-		@SuppressWarnings("nls")
-		static final NameOptionMatcher[] optionMatchers = {
-				/* quoted directory */
-				new NameOptionMatcher("-J" + "([\"'])(.+?)\\1", 2),
-				/* unquoted directory */
-				new NameOptionMatcher("-J" + "([^\\s]+)", 1), };
-
-		/*-
-		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
-		 */
-		@Override
-		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
-			return processArgument(true, resultCollector, cwd, argsLine, optionMatchers);
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////
 	// POSIX compatible option parsers
 	////////////////////////////////////////////////////////////////////
 
@@ -395,15 +372,29 @@ public final class Arglets {
 	////////////////////////////////////////////////////////////////////
 	// compiler built-ins detection
 	////////////////////////////////////////////////////////////////////
+
+	/**
+	 * @deprecated use <code>BuiltinDetectionArgsGeneric</code> instead
+	 */
+	@Deprecated
+	public static abstract class BuiltinDetctionArgsGeneric {
+		protected int processArgument(IArgumentCollector resultCollector, String argsLine, Matcher[] optionMatchers) {
+			throw new IllegalStateException(
+					"This class is deprecated - extend class BuiltinDetectionArgsGeneric instead"); //$NON-NLS-1$
+		}
+	}
+
 	/**
 	 * A tool argument parser capable to parse arguments from the command-line that
 	 * affect built-in detection.
+	 * @since 1.2
 	 */
-	public static abstract class BuiltinDetctionArgsGeneric {
+	public static abstract class BuiltinDetectionArgsGeneric extends BuiltinDetctionArgsGeneric {
 		/**
 		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet#processArgument(IArgumentCollector,
 		 *      IPath, String)
 		 */
+		@Override
 		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,
 				Matcher[] optionMatchers) {
 			for (Matcher matcher : optionMatchers) {
@@ -460,7 +451,7 @@ public final class Arglets {
 	 * A tool argument parser capable to parse a GCC option to specify paths
 	 * {@code --sysrooot}.
 	 */
-	public static class Sysroot_GCC extends BuiltinDetctionArgsGeneric implements IArglet {
+	public static class Sysroot_GCC extends BuiltinDetectionArgsGeneric implements IArglet {
 		@SuppressWarnings("nls")
 		private static final Matcher[] optionMatchers = {
 				/* "--sysroot=" quoted directory */
@@ -488,10 +479,10 @@ public final class Arglets {
 	 * A tool argument parser capable to parse a Clang option to specify the compilation target {@code --target}.
 	 * @since 1.1
 	 */
-	public static class Target_Clang extends BuiltinDetctionArgsGeneric implements IArglet {
+	public static class Target_Clang extends BuiltinDetectionArgsGeneric implements IArglet {
 		private static final Matcher[] optionMatchers = {
 				/* "--target=" triple */
-				Pattern.compile("--target=\\w+(-\\w+)*").matcher("") }; //$NON-NLS-1$ //$NON-NLS-2$
+				Pattern.compile("--target=\\w+(-\\w+)*").matcher(EMPTY_STR) }; //$NON-NLS-1$
 
 		/*-
 		* @see de.marw.cmake.cdt.lsp.IArglet#processArgs(java.lang.String)
@@ -507,10 +498,15 @@ public final class Arglets {
 	 * A tool argument parser capable to parse a GCC option to specify the language
 	 * standard {@code -std=xxx}.
 	 */
-	public static class LangStd_GCC extends BuiltinDetctionArgsGeneric implements IArglet {
+	public static class LangStd_GCC extends BuiltinDetectionArgsGeneric implements IArglet {
 		@SuppressWarnings("nls")
 		private static final Matcher[] optionMatchers = { Pattern.compile("-std=\\S+").matcher(EMPTY_STR),
-				Pattern.compile("-ansi").matcher(EMPTY_STR), };
+				Pattern.compile("-ansi").matcher(EMPTY_STR),
+				Pattern.compile("-fPIC", Pattern.CASE_INSENSITIVE).matcher(EMPTY_STR),
+				Pattern.compile("-fPIE", Pattern.CASE_INSENSITIVE).matcher(EMPTY_STR),
+				Pattern.compile("-fstack-protector\\S+").matcher(EMPTY_STR),
+				Pattern.compile("-march=\\\\S+").matcher(EMPTY_STR), Pattern.compile("-mcpu=\\\\S+").matcher(EMPTY_STR),
+				Pattern.compile("-mtune=\\\\S+").matcher(EMPTY_STR), Pattern.compile("-pthread").matcher(EMPTY_STR), };
 
 		/*-
 		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)

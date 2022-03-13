@@ -257,6 +257,16 @@
                category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
                defaultEnabled="true"
                defaultSeverity="Error"
+               description="%problem.description.14"
+               id="org.eclipse.cdt.codan.internal.checkers.TemplateInstantiationProblem"
+               markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
+               messagePattern="%problem.messagePattern.14"
+               name="%problem.name.14">
+         </problem>
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+               defaultEnabled="true"
+               defaultSeverity="Error"
                description="%problem.description.11"
                id="org.eclipse.cdt.codan.internal.checkers.MethodResolutionProblem"
                markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"

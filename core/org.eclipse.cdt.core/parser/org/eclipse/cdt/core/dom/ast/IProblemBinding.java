@@ -67,6 +67,8 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
 	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENTS = BINDING_INVALID_TEMPLATE_ARGUMENTS;
 	/** @since 8.1 */
 	public static final int SEMANTIC_INVALID_STRUCTURED_BINDING_INITIALIZER = BINDING_INVALID_STRUCTURED_BINDING_INITIALIZER;
+	/** @since 8.4 */
+	public static final int SEMANTIC_INVALID_TEMPLATE_INSTANTIATION = BINDING_INVALID_TEMPLATE_INSTANTIATION;
 
 	/**
 	 * @deprecated There may be additional problems.

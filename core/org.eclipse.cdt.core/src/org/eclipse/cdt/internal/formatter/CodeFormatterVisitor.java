@@ -4932,15 +4932,15 @@ public class CodeFormatterVisitor extends ASTVisitor implements ICPPASTVisitor, 
 	 * Collect source positions of no-format sections in the given translation unit.
 	 *
 	 * @param translationUnit  the {@link IASTTranslationUnit}, may be <code>null</code>
-	 * @return a {@link List} of {@link Position}s
+	 * @return a modifiable {@link List} of {@link Position}s
 	 */
 	private List<InactivePosition> collectNoFormatCodePositions(IASTTranslationUnit translationUnit) {
 		if (translationUnit == null || !this.preferences.use_fomatter_comment_tag) {
-			return Collections.emptyList();
+			return new ArrayList<>();
 		}
 		String fileName = translationUnit.getFilePath();
 		if (fileName == null) {
-			return Collections.emptyList();
+			return new ArrayList<>();
 		}
 		List<InactivePosition> positions = new ArrayList<>();
 		int inactiveCodeStart = -1;

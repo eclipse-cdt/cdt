@@ -4803,4 +4803,18 @@ public class CodeFormatterTest extends BaseUITestCase {
 	public void testLambdaWithoutParens_Bug564273() throws Exception {
 		assertFormatterResult();
 	}
+
+	//#ifdef AAA
+	//#define BBB
+	//#endif
+
+	//#ifdef AAA
+	//#define BBB
+	//#endif
+	public void testCodeFormatterTagsOff_Bug579261() throws Exception {
+		// Tests that when there is an inactive block of code that code formatter doesn't fail when
+		// tags are disabled
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, DefaultCodeFormatterConstants.FALSE);
+		assertFormatterResult();
+	}
 }

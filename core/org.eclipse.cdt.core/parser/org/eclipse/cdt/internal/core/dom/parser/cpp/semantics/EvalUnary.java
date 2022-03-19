@@ -399,6 +399,11 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
+		//		if (fOperator == IASTUnaryExpression.op_sizeofParameterPack) {
+		//			//TODO: Something like EvalUnaryTypeID ?
+		//			return instantiateSizeofParameterPack(context);
+		//		}
+
 		if (fOperator == op_integerPack && context.getPackOffset() != -1) {
 			return new EvalFixed(getType(), ValueCategory.PRVALUE, IntegralValue.create(context.getPackOffset()));
 		}

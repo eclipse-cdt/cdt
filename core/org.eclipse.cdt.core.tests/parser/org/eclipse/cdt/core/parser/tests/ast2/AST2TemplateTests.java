@@ -9285,6 +9285,139 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		assertSameType(CommonCPPTypes.int_, waldo);
 	}
 
+	//	template <int> struct foo;
+	//	template <> struct foo<2> { typedef int type; };
+	//
+	//	template <typename... T>
+	//	using alias = typename foo<sizeof...(T)>::type;
+	//
+	//	template <typename... U>
+	//	struct caller {
+	//	    typedef alias<int, U...> type;
+	//	};
+	//
+	//	template<typename caller<int>::type = 0>
+	//	void function() {
+	//	}
+	//
+	//	int main() {
+	//	  function<0>();
+	//	}
+	public void testSizeofParameterPack_574196() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <int> struct foo;
+	//	template <> struct foo<3> { typedef int type; };
+	//
+	//	template <typename... T>
+	//	using alias = typename foo<sizeof...(T)>::type;
+	//
+	//	template <typename... U>
+	//	struct caller {
+	//	    typedef alias<int,U..., U...> type;
+	//	};
+	//
+	//	template<typename caller<int>::type = 0>
+	//	void function() {
+	//	}
+	//
+	//	int main() {
+	//	  function<0>();
+	//	}
+	public void testSizeofParameterPack_574196_2() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <int> struct foo;
+	//	template <> struct foo<3> { typedef int type; };
+	//
+	//	template <typename... T>
+	//	using alias = typename foo<sizeof...(T)>::type;
+	//
+	//	template <typename... U>
+	//	struct caller {
+	//	    typedef alias<U..., int, U...> type;
+	//	};
+	//
+	//	template<typename caller<int>::type = 0>
+	//	void function() {
+	//	}
+	//
+	//	int main() {
+	//	  function<0>();
+	//	}
+	public void testSizeofParameterPack_574196_3() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <int> struct foo;
+	//	template <> struct foo<2> { typedef int type; };
+	//
+	//	template <typename V, typename... T>
+	//	using alias = typename foo<sizeof...(T)>::type;
+	//
+	//	template <typename... U>
+	//	struct caller {
+	//	    typedef alias<int, int, U...> type;
+	//	};
+	//
+	//	template<typename caller<int>::type = 0>
+	//	void function() {
+	//	}
+	//
+	//	int main() {
+	//	  function<0>();
+	//	}
+	public void testSizeofParameterPack_574196_4() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <int> struct foo;
+	//	template <> struct foo<2> { typedef int type; };
+	//
+	//	template <typename V, int... T>
+	//	using myalias = typename foo<sizeof...(T)>::type;
+	//
+	//	template <int... U>
+	//	struct caller {
+	//	    typedef myalias<int, 0, U...> type;
+	//	};
+	//
+	//	template<typename caller<0>::type = 4321>
+	//	void function() {
+	//	}
+	//
+	//	int main() {
+	//	  function<1234>();
+	//	}
+	//TODO: Handle non-type parameter pack
+	//	public void testSizeofParameterPack_574196_5() throws Exception {
+	//		parseAndCheckBindings();
+	//	}
+
+	//	template <int> struct foo;
+	//	template <> struct foo<0> { typedef int type; };
+	//
+	//	template <typename V, typename... T>
+	//	using myalias = typename foo<sizeof...(T)>::type;
+	//
+	//	template <typename... U>
+	//	struct caller {
+	//	    typedef myalias<int, U...> type;
+	//	};
+	//
+	//	template<typename caller<>::type = 4321>
+	//	void function() {
+	//	}
+	//
+	//	int main() {
+	//	  function<1234>();
+	//	}
+	public void testSizeofParameterPack_574196_6() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <int, class>
 	//	struct A {};
 	//

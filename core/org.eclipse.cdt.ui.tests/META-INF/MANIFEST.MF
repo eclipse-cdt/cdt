@@ -41,7 +41,10 @@ Require-Bundle: org.eclipse.jface.text,
  org.eclipse.e4.core.contexts;bundle-version="[1.8.300,2.0.0)",
  org.mockito,
  org.hamcrest.core,
- org.hamcrest.library
+ org.hamcrest.library,
+ org.mockito.mockito-core;bundle-version="4.5.0",
+ net.bytebuddy.byte-buddy;bundle-version="1.12.9",
+ org.objenesis;bundle-version="3.2.0"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-11

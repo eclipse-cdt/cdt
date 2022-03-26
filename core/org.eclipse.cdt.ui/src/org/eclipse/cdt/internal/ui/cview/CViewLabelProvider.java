@@ -46,24 +46,27 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof IncludeReferenceProxy) {
-			final IIncludeReference ref = ((IncludeReferenceProxy) element).getReference();
-			final IPath uriPathLocation = ref.getPath().makeAbsolute();
-			final IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot()
-					.findContainersForLocationURI(URIUtil.toURI(uriPathLocation));
-			if (containers.length > 0) {
+			final var irp = ((IncludeReferenceProxy) element);
+			final ICProject prj = irp.getReference().getCProject();
+			final IPath uriPathLocation = irp.getPath().makeAbsolute();
+			final IContainer[] containers = (prj == null) ? null
+					: ResourcesPlugin.getWorkspace().getRoot()
+							.findContainersForLocationURI(URIUtil.toURI(uriPathLocation));
+
+			if (prj != null && containers != null && containers.length > 0) {
 				// bug 192707, prefer the project the reference belongs to.
-				final ICProject prj = ref.getCProject();
-				if (prj != null) {
-					for (int i = 0; i < containers.length; i++) {
-						final IContainer container = containers[i];
-						final IProject project = container.getProject();
-						// in case the path is empty, the container is the workspace root and project is null.
-						if (project != null && project.equals(prj.getProject())) {
-							return container.getFullPath().makeRelative().toString();
-						}
+
+				IPath p = containers[0].getFullPath();
+
+				for (var container : containers) {
+					final IProject project = container.getProject();
+					// in case the path is empty, the container is the workspace root and project is null.
+					if (project != null && project.equals(prj.getProject())) {
+						p = container.getFullPath();
+						break;
 					}
 				}
-				IPath p = containers[0].getFullPath();
+
 				p = (p.isRoot()) ? uriPathLocation : p.makeRelative();
 				return decorateText(p.toString(), element);
 			}
@@ -104,22 +107,31 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	public Image getImage(Object element) {
 		String imageKey = null;
 		if (element instanceof IncludeReferenceProxy) {
-			IIncludeReference reference = ((IncludeReferenceProxy) element).getReference();
-			IPath path = reference.getPath();
-			ICProject cproject = reference.getCProject();
-			IProject project = (cproject != null) ? cproject.getProject() : null;
-			for (IContainer containerInclude : ResourcesPlugin.getWorkspace().getRoot()
-					.findContainersForLocationURI(URIUtil.toURI(path.makeAbsolute()))) {
-				IProject projectInclude = containerInclude.getProject();
-				boolean isProjectRelative = projectInclude != null && projectInclude.equals(project);
-				imageKey = LanguageSettingsImages.getImageKey(ICSettingEntry.INCLUDE_PATH,
-						ICSettingEntry.VALUE_WORKSPACE_PATH, isProjectRelative);
-				if (isProjectRelative) {
-					break;
+			final var irp = ((IncludeReferenceProxy) element);
+			ICProject cproject = irp.getReference().getCProject();
+			IPath path = irp.getPath();
+			IProject project = (cproject == null) ? null : cproject.getProject();
+			if (project != null) {
+				final var cIncludes = ResourcesPlugin.getWorkspace().getRoot()
+						.findContainersForLocationURI(URIUtil.toURI(path.makeAbsolute()));
+
+				for (IContainer containerInclude : cIncludes) {
+					IProject projectInclude = containerInclude.getProject();
+					boolean isProjectRelative = projectInclude != null && projectInclude.equals(project);
+					imageKey = LanguageSettingsImages.getImageKey(ICSettingEntry.INCLUDE_PATH,
+							ICSettingEntry.VALUE_WORKSPACE_PATH, isProjectRelative);
+					if (isProjectRelative) {
+						break;
+					}
 				}
 			}
 			if (imageKey == null) {
-				imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER;
+				//Only show include-folder-image if it is an actual include-folder
+				if (irp.isIncludePath()) {
+					imageKey = CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER;
+				} else {
+					imageKey = CDTSharedImages.IMG_OBJS_FOLDER;
+				}
 			}
 		} else if (element instanceof IIncludeReference) {
 			imageKey = CDTSharedImages.IMG_OBJS_CFOLDER;

@@ -820,6 +820,29 @@ public class PreferenceConstants {
 	public static final String CVIEW_SEPARATE_HEADER_AND_SOURCE = "org.eclipse.cdt.ui.cview.separateheaderandsource"; //$NON-NLS-1$
 
 	/**
+	 * A preference whose actual value does not matter, but changing it forces the C content providers in CView and Navigator to refresh
+	 * <p>
+	 * To force the refresh, simply set this preference to a new value.
+	 * <p>
+	 * Value is of type ${@code Integer}
+	 * @noreference This field is not intended to be referenced by clients.
+	 * @since 7.4
+	 */
+	public static final String CVIEW_FORCE_REFRESH = "org.eclipse.cdt.ui.cview.ForceRefresh"; //$NON-NLS-1$
+
+	/**
+	 * Request the C content providers in CView and Navigator to refresh.
+	 * @noreference This field is not intended to be referenced by clients.
+	 * @since 7.4
+	 */
+	public static final void cViewForceRefresh() {
+		IPreferenceStore preferenceStore = PreferenceConstants.getPreferenceStore();
+		int val = preferenceStore.getInt(PreferenceConstants.CVIEW_FORCE_REFRESH);
+		val++;
+		preferenceStore.setValue(PreferenceConstants.CVIEW_FORCE_REFRESH, val);
+	}
+
+	/**
 	 * A named preference that controls whether the sorting order of source files should be changed
 	 * in the C/C++ Projects view and the Project Explorer view when they are excluded from build.
 	 * <p>

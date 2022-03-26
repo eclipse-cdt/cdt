@@ -821,6 +821,8 @@ public class CView extends ViewPart
 				((CElementContentProvider) provider).setMacroGrouping(groupMacros);
 			}
 			refreshViewer = true;
+		} else if (property.equals(PreferenceConstants.CVIEW_FORCE_REFRESH)) {
+			refreshViewer = true;
 		}
 
 		if (refreshViewer) {

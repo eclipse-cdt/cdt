@@ -14,11 +14,15 @@
 
 package org.eclipse.cdt.internal.ui.cview;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -56,14 +60,35 @@ public class IncludeRefContainer extends CElementGrouping {
 	public Object[] getChildren(Object o) {
 		try {
 			IIncludeReference[] references = fCProject.getIncludeReferences();
-			IncludeReferenceProxy[] proxies = new IncludeReferenceProxy[references.length];
-			for (int i = 0; i < proxies.length; ++i) {
-				proxies[i] = new IncludeReferenceProxy(this, references[i]);
+			if (true) { // TODO connect condition to preference or remove else block
+				Map<String, IncludeReferenceProxy> roots = new TreeMap<>();
+				for (IIncludeReference reference : references) {
+					addPath(roots, reference);
+				}
+				return roots.values().toArray();
+			} else {
+				IncludeReferenceProxy[] proxies = new IncludeReferenceProxy[references.length];
+				for (int i = 0; i < proxies.length; ++i) {
+					proxies[i] = new IncludeReferenceProxy(this, this, references[i], null);
+				}
+				return proxies;
 			}
-			return proxies;
 		} catch (CModelException e) {
 		}
 		return NO_CHILDREN;
+	}
+
+	private void addPath(Map<String, IncludeReferenceProxy> roots, IIncludeReference reference) {
+		// TODO add device (Windows C:\) handling???
+		IPath path = reference.getPath();
+		String[] segments = path.segments();
+		// TODO handle segments.length == 0??
+		IncludeReferenceProxy node = roots.computeIfAbsent(segments[0],
+				segment -> new IncludeReferenceProxy(this, this, null, segment));
+		for (int i = 1; i < segments.length; i++) {
+			node = node.getChild(segments[i]);
+		}
+		node.setIncludeReference(reference);
 	}
 
 	/* (non-Javadoc)

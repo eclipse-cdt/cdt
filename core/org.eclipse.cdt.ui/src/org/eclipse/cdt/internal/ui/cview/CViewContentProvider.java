@@ -236,15 +236,15 @@ public class CViewContentProvider extends CElementContentProvider {
 				return false;
 			}
 		} else if (element instanceof IncludeReferenceProxy) {
-			IIncludeReference reference = ((IncludeReferenceProxy) element).getReference();
-			IContainer container = ResourcesPlugin.getWorkspace().getRoot()
-					.getContainerForLocation(reference.getPath());
+			IncludeReferenceProxy includeReferenceProxy = (IncludeReferenceProxy) element;
+			IPath reference = includeReferenceProxy.getPath();
+			IContainer container = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(reference);
 			if (container != null) {
 				// do not allow to navigate to workspace containers inside "Includes" node
 				return false;
 			}
 
-			return reference.hasChildren();
+			return includeReferenceProxy.hasChildren();
 		}
 		return super.hasChildren(element);
 	}

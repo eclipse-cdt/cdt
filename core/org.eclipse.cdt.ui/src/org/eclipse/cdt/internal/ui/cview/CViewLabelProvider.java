@@ -46,13 +46,13 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	@Override
 	public String getText(Object element) {
 		if (element instanceof IncludeReferenceProxy) {
-			final IIncludeReference ref = ((IncludeReferenceProxy) element).getReference();
-			final IPath uriPathLocation = ref.getPath().makeAbsolute();
+			final IPath ref = ((IncludeReferenceProxy) element).getPath();
+			final IPath uriPathLocation = ref.makeAbsolute();
 			final IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot()
 					.findContainersForLocationURI(URIUtil.toURI(uriPathLocation));
 			if (containers.length > 0) {
 				// bug 192707, prefer the project the reference belongs to.
-				final ICProject prj = ref.getCProject();
+				final ICProject prj = null; // TODO fix this ref.getCProject();
 				if (prj != null) {
 					for (int i = 0; i < containers.length; i++) {
 						final IContainer container = containers[i];
@@ -104,9 +104,8 @@ public class CViewLabelProvider extends AppearanceAwareLabelProvider {
 	public Image getImage(Object element) {
 		String imageKey = null;
 		if (element instanceof IncludeReferenceProxy) {
-			IIncludeReference reference = ((IncludeReferenceProxy) element).getReference();
-			IPath path = reference.getPath();
-			ICProject cproject = reference.getCProject();
+			IPath path = ((IncludeReferenceProxy) element).getPath();
+			ICProject cproject = null; // TODO fix this reference.getCProject();
 			IProject project = (cproject != null) ? cproject.getProject() : null;
 			for (IContainer containerInclude : ResourcesPlugin.getWorkspace().getRoot()
 					.findContainersForLocationURI(URIUtil.toURI(path.makeAbsolute()))) {

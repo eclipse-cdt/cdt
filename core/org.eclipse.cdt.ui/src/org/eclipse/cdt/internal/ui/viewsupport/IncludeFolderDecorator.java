@@ -36,8 +36,7 @@ public class IncludeFolderDecorator implements ILightweightLabelDecorator {
 		boolean isAccesible = true;
 
 		if (element instanceof IncludeReferenceProxy) {
-			IIncludeReference reference = ((IncludeReferenceProxy) element).getReference();
-			IPath path = reference.getPath();
+			IPath path = ((IncludeReferenceProxy) element).getPath();
 			IContainer container = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(path);
 			if (container != null) {
 				isAccesible = container.isAccessible();

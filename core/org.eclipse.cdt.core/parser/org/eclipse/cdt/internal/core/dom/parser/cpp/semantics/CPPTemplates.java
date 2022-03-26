@@ -298,7 +298,8 @@ public class CPPTemplates {
 					return result;
 			}
 
-			return instantiatePrimaryTemplate(template, arguments, new InstantiationContext(map), isDefinition);
+			return instantiatePrimaryTemplate(template, arguments, new InstantiationContext(map), isDefinition,
+					isExplicitSpecialization);
 		} catch (DOMException e) {
 			return e.getProblem();
 		}
@@ -443,7 +444,8 @@ public class CPPTemplates {
 	 * May return {@code null}.
 	 */
 	private static IBinding instantiatePrimaryTemplate(ICPPPartiallySpecializable template,
-			ICPPTemplateArgument[] arguments, InstantiationContext context, boolean isDef) throws DOMException {
+			ICPPTemplateArgument[] arguments, InstantiationContext context, boolean isDef,
+			boolean isExplicitSpecialization) throws DOMException {
 		assert !(template instanceof ICPPClassTemplatePartialSpecialization);
 		ICPPTemplateInstance instance = getInstance(template, arguments, isDef);
 		if (instance != null) {
@@ -451,7 +453,7 @@ public class CPPTemplates {
 		}
 
 		IBinding owner = template.getOwner();
-		instance = createInstance(owner, template, context.getParameterMap(), arguments);
+		instance = createInstance(owner, template, context.getParameterMap(), arguments, isExplicitSpecialization);
 		addInstance(template, arguments, instance);
 		return instance;
 	}
@@ -899,6 +901,11 @@ public class CPPTemplates {
 
 	public static ICPPTemplateInstance createInstance(IBinding owner, ICPPTemplateDefinition template,
 			ICPPTemplateParameterMap tpMap, ICPPTemplateArgument[] args) {
+		return createInstance(owner, template, tpMap, args, false);
+	}
+
+	public static ICPPTemplateInstance createInstance(IBinding owner, ICPPTemplateDefinition template,
+			ICPPTemplateParameterMap tpMap, ICPPTemplateArgument[] args, boolean isExplicitSpecialization) {
 		if (owner instanceof ICPPSpecialization) {
 			ICPPTemplateParameterMap map = ((ICPPSpecialization) owner).getTemplateParameterMap();
 			if (map != null) {
@@ -937,8 +944,9 @@ public class CPPTemplates {
 			IValue value;
 			IASTNode point = CPPSemantics.getCurrentLookupPoint();
 			ICPPASTDeclarator decl = ASTQueries.findAncestorWithType(point, ICPPASTDeclarator.class);
-			if (point instanceof IASTName && ((IASTName) point).getRoleOfName(false) == IASTNameOwner.r_definition
-					&& decl != null && decl.getInitializer() != null) {
+			if (isExplicitSpecialization && point instanceof IASTName
+					&& ((IASTName) point).getRoleOfName(false) == IASTNameOwner.r_definition && decl != null
+					&& decl.getInitializer() != null) {
 				// Explicit specialization.
 				value = SemanticUtil.getValueOfInitializer(decl.getInitializer(), type);
 			} else {

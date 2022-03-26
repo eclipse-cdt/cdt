@@ -374,4 +374,37 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);
 	}
+
+	//	template<bool _Test>
+	//	struct enable_if {
+	//	};
+	//
+	//	template <>
+	//	struct enable_if<true> {
+	//	  using typwe = int;
+	//	};
+	//
+	//	template <class ... _Traits>
+	//	inline constexpr bool trait_v = true;
+	//
+	//	template<class _Tx>
+	//	struct function_impl {
+	//	  template<class ... _Traits>
+	//	  using typse = typename enable_if<trait_v<_Traits...>>::typwe;
+	//	};
+	//
+	//	template <class _Fty>
+	//	class function : public function_impl<_Fty> {
+	//	public:
+	//	  template<class _Fx, typename function_impl<_Fty>::template typse<> = 0>
+	//	  function(_Fx _func) {
+	//	  }
+	//	};
+	//
+	//	int main() {
+	//	  function<void> func(0);
+	//	}
+	public void testVariableInstanceInImplicitName() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 QNX Software Systems and others.
+ * Copyright (c) 2000, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,94 +14,123 @@
 
 package org.eclipse.cdt.internal.ui.cview;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IIncludeReference;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 
-/**
- * @author User
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class IncludeReferenceProxy extends CElementGrouping {
-
+	private final Map<String, IncludeReferenceProxy> children = new TreeMap<>();
+	private String segment;
+	private Object parent;
 	IncludeRefContainer includeRefContainer;
 	IIncludeReference reference;
 
-	public IncludeReferenceProxy(IncludeRefContainer parent, IIncludeReference reference) {
+	public IncludeReferenceProxy(Object parent, IncludeRefContainer includeRefContainer, IIncludeReference reference,
+			String segment) {
 		super(0);
+		this.parent = parent;
+		this.includeRefContainer = includeRefContainer;
 		this.reference = reference;
-		this.includeRefContainer = parent;
+		this.segment = segment;
 	}
 
-	public IIncludeReference getReference() {
-		return reference;
+	public boolean isIncludePath() {
+		return reference != null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-	 */
+	public void addChild(IncludeReferenceProxy cld) {
+		assert cld.parent == this;
+		children.put(cld.segment, cld);
+	}
+
+	public void setIncludeReference(IIncludeReference reference) {
+		// Probably an error for two points in the hierarchy to have same IIncludeReference?
+		//assert this.reference == null : "Ref is: " + this.toString() + "but getting " + reference.toString(); //$NON-NLS-1$ //$NON-NLS-2$
+		this.reference = reference;
+	}
+
+	public IPath getPath() {
+		if (parent instanceof IncludeReferenceProxy) {
+			IncludeReferenceProxy includeReferenceProxy = (IncludeReferenceProxy) parent;
+			IPath path = includeReferenceProxy.getPath();
+			return path.append(segment);
+		}
+		return new Path(segment);
+	}
+
 	@Override
 	public Object[] getChildren(Object object) {
 		try {
-			return reference.getChildren();
+			List<Object> combined = new ArrayList<>();
+			// TODO the sorter puts the children after the include files/subdirs.
+			// So case where /usr/include and /usr/include/x86_64-linux-gnu are both in the include
+			// paths I think that x86_64-linux-gnu should be at the top, but it
+			// currently is at the bottom
+			combined.addAll(children.values());
+			if (reference != null) {
+				combined.addAll(Arrays.asList(reference.getChildren()));
+			}
+			return combined.toArray();
 		} catch (CModelException e) {
-			// We should log the error.
+			// We should log the error. // XXX: Maybe 18 years later we can decide we don't need to :-)
 		}
 		return NO_CHILDREN;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_INCLUDES_FOLDER);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object object) {
-		return getIncludeRefContainer();
+		return parent;
 	}
 
 	public IncludeRefContainer getIncludeRefContainer() {
 		return includeRefContainer;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (!(obj instanceof IncludeReferenceProxy)) {
-			return false;
-		}
-		IncludeReferenceProxy other = (IncludeReferenceProxy) obj;
-		return reference.equals(other.reference);
-	}
-
-	/*
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
-		return reference.hashCode();
+		return Objects.hash(parent, reference, segment);
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		IncludeReferenceProxy other = (IncludeReferenceProxy) obj;
+		return Objects.equals(parent, other.parent) && Objects.equals(reference, other.reference)
+				&& Objects.equals(segment, other.segment);
+	}
+
+	public boolean hasChildren() {
+		return !children.isEmpty() || (reference != null && reference.hasChildren());
+	}
+
 	@Override
 	public String toString() {
+		if (segment != null) {
+			return segment;
+		}
+		assert reference != null;
 		return reference.toString();
 	}
+
 }

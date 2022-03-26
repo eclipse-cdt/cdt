@@ -1716,6 +1716,39 @@
            <groupMarker name="build"/>
         </menu>
      </objectContribution>
+     
+           <objectContribution
+            adaptable="false"
+            id="org.eclipse.cdt.ui.IncludeContribution"
+            objectClass="org.eclipse.cdt.internal.ui.cview.IncludeRefContainer">
+         <menu
+               id="org.eclipse.cdt.make.ui.incmenu"
+               label="Include Grouping"
+               path="includeSortGroup">
+            <groupMarker
+                  name="gm1">
+            </groupMarker>
+         </menu>
+         <action
+               class="org.eclipse.cdt.internal.ui.actions.IncludeGroupAction"
+               enablesFor="1"
+               id="org.eclipse.cdt.make.ui.incgroup.list"
+               label="List"
+               menubarPath="org.eclipse.cdt.make.ui.incmenu/gm1">
+         </action>
+         <action
+               class="org.eclipse.cdt.internal.ui.actions.IncludeGroupAction"
+               id="org.eclipse.cdt.make.ui.incgroup.once"
+               label="once"
+               menubarPath="org.eclipse.cdt.make.ui.incmenu/gm1">
+         </action>
+         <action
+               class="org.eclipse.cdt.internal.ui.actions.IncludeGroupAction"
+               id="org.eclipse.cdt.make.ui.incgroup.possible"
+               label="If possible"
+               menubarPath="org.eclipse.cdt.make.ui.incmenu/gm1">
+         </action>
+      </objectContribution>
    </extension>
 
    <extension

@@ -85,6 +85,8 @@ public class CNavigatorContentProvider extends CViewContentProvider implements I
 				boolean groupMacros = newValue instanceof Boolean ? ((Boolean) newValue).booleanValue() : false;
 				setMacroGrouping(groupMacros);
 				refreshViewer = true;
+			} else if (property.equals(PreferenceConstants.CVIEW_FORCE_REFRESH)) {
+				refreshViewer = true;
 			}
 
 			if (refreshViewer && getViewer() != null) {

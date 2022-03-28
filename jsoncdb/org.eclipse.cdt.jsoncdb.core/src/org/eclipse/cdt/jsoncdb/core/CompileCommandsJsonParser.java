@@ -346,7 +346,7 @@ public class CompileCommandsJsonParser {
 		Map<String, String> effectiveDefines = Stream
 				.concat(builtinDefines.entrySet().stream(), fileResult.getDefines().entrySet().stream())
 				.collect(Collectors.toMap(stringPooler.compose(Map.Entry::getKey),
-						stringPooler.compose(Map.Entry::getValue)));
+						stringPooler.compose(Map.Entry::getValue), (e1, e2) -> e1));
 		List<String> includePaths = Stream
 				.concat(fileResult.getIncludePaths().stream(), builtinDetectorsResult.getIncludePaths().stream())
 				.map(stringPooler).collect(Collectors.toList());

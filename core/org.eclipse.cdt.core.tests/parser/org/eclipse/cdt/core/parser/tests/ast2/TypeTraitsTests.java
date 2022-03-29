@@ -18,6 +18,8 @@ import java.io.IOException;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
@@ -28,11 +30,18 @@ import junit.framework.TestSuite;
  */
 public class TypeTraitsTests extends AST2TestBase {
 
+	private boolean fUseClang = false;
+
 	public TypeTraitsTests() {
 	}
 
 	public TypeTraitsTests(String name) {
 		super(name);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		fUseClang = false;
 	}
 
 	public static TestSuite suite() {
@@ -42,6 +51,15 @@ public class TypeTraitsTests extends AST2TestBase {
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
 		String code = getAboveComment();
 		return new AST2AssertionHelper(code, true);
+	}
+
+	@Override
+	public ScannerInfo createTestScannerInfo(ScannerKind scannerKind) {
+		ScannerInfo scannerInfo = super.createTestScannerInfo(scannerKind);
+		if (fUseClang) {
+			scannerInfo.getDefinedSymbols().put("__clang__", "1");
+		}
+		return scannerInfo;
 	}
 
 	//	struct A {
@@ -327,5 +345,46 @@ public class TypeTraitsTests extends AST2TestBase {
 		assertTrue(TypeTraits.isTriviallyCopyable(f.getType()));
 		IVariable g = helper.assertNonProblemOnFirstIdentifier("g;");
 		assertFalse(TypeTraits.isTriviallyCopyable(g.getType()));
+	}
+
+	//	class Foo
+	//	{
+	//	public:
+	//	void func();
+	//	};
+	//
+	//	template<typename>
+	//	struct PM_traits {};
+	//
+	//	template<class T, class U>
+	//	struct PM_traits<U T::*> {
+	//	    using member_type = U;
+	//	};
+	//
+	//	template<bool>
+	//	struct Test {
+	//	  static const bool false_var = true;
+	//	};
+	//
+	//	template<>
+	//	struct Test<true> {
+	//	  static const bool true_var = true;
+	//	};
+	//
+	//	int main()
+	//	{
+	//	    Test<__is_function(PM_traits<decltype(&Foo::func)>::member_type)>::true_var;
+	//
+	//	    auto lambda = [](){};
+	//	    Test<__is_function(decltype(lambda))>::false_var;
+	//	    void (*funcPtr);
+	//	    Test<__is_function(decltype(funcPtr))>::false_var;
+	//	    Test<__is_function(int)>::false_var;
+	//	    Test<__is_function(Foo)>::false_var;
+	//	    return 0;
+	//	}
+	public void testIsFunction() throws Exception {
+		fUseClang = true;
+		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);
 	}
 }

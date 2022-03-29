@@ -192,7 +192,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang, ScannerKind scannerKind,
 			boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
 		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), lang,
-				ParserMode.COMPLETE_PARSE, createScannerInfo(scannerKind));
+				ParserMode.COMPLETE_PARSE, createTestScannerInfo(scannerKind));
 		configureScanner(scanner);
 		AbstractGNUSourceCodeParser parser = null;
 		if (lang == ParserLanguage.CPP) {
@@ -247,6 +247,10 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		default:
 			return SCANNER_INFO;
 		}
+	}
+
+	public ScannerInfo createTestScannerInfo(ScannerKind scannerKind) {
+		return createScannerInfo(scannerKind);
 	}
 
 	protected void configureScanner(IScanner scanner) {

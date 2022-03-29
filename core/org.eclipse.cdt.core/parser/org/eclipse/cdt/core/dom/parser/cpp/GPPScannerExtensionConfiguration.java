@@ -44,6 +44,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static final int VERSION_8_0 = version(8, 0);
 	private static final int VERSION_10_0 = version(10, 0);
 	private static final int VERSION_11_1 = version(11, 1);
+	private static final int VERSION_14_0 = version(14, 0);
 	private static GPPScannerExtensionConfiguration CONFIG = new GPPScannerExtensionConfiguration();
 	private static GPPScannerExtensionConfiguration CONFIG_4_2 = new GPPScannerExtensionConfiguration(VERSION_4_2);
 	private static GPPScannerExtensionConfiguration CONFIG_4_3 = new GPPScannerExtensionConfiguration(VERSION_4_3);
@@ -54,6 +55,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static GPPScannerExtensionConfiguration CONFIG_8_0 = new GPPScannerExtensionConfiguration(VERSION_8_0);
 	private static GPPScannerExtensionConfiguration CONFIG_10_0 = new GPPScannerExtensionConfiguration(VERSION_10_0);
 	private static GPPScannerExtensionConfiguration CONFIG_11_1 = new GPPScannerExtensionConfiguration(VERSION_11_1);
+	private static GPPScannerExtensionConfiguration CONFIG_14_0 = new GPPScannerExtensionConfiguration(VERSION_14_0);
 	private static GPPScannerExtensionConfiguration CONFIG_CLANG = new GPPScannerExtensionConfiguration(
 			CompilerType.Clang, 0 /* version is ignored for now */);
 	private static GPPScannerExtensionConfiguration CONFIG_CLANG_CL = new GPPScannerExtensionConfiguration(
@@ -211,6 +213,9 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				addKeyword(GCCKeywords.cp__is_nothrow_assignable, IGCCToken.tTT_is_nothrow_assignable);
 				addKeyword(GCCKeywords.cp__is_nothrow_constructible, IGCCToken.tTT_is_nothrow_constructible);
 			}
+			if (version >= VERSION_14_0) {
+				addKeyword(GCCKeywords.cp__is_function, IGCCToken.tTT_is_function);
+			}
 		} else if (compiler == CompilerType.Clang || compiler == CompilerType.ClangCl) {
 			// As documented at
 			// http://clang.llvm.org/docs/LanguageExtensions.html#checks-for-type-trait-primitives.
@@ -246,7 +251,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			addKeyword(GCCKeywords.cp__is_enum, IGCCToken.tTT_is_enum);
 			addKeyword(GCCKeywords.cp__is_final, IGCCToken.tTT_is_final);
 			// __is_floating_point
-			// __is_function
+			addKeyword(GCCKeywords.cp__is_function, IGCCToken.tTT_is_function);
 			// __is_fundamental
 			// __is_integral
 			// __is_interface_class

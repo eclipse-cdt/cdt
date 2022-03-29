@@ -114,4 +114,6 @@ public class GCCKeywords {
 			cp__is_assignable = "__is_assignable".toCharArray(),
 			cp__is_nothrow_assignable = "__is_nothrow_assignable".toCharArray(),
 			cp__is_nothrow_constructible = "__is_nothrow_constructible".toCharArray();
+	/** @since 8.4 */
+	public static final char[] cp__is_function = "__is_function".toCharArray();
 }

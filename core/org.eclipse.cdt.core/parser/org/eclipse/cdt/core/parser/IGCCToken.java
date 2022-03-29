@@ -112,4 +112,6 @@ public interface IGCCToken extends IToken {
 	int tTT_is_nothrow_constructible = FIRST_RESERVED_IGCCToken + 41;
 	/** @since 8.1 */
 	int tTT_has_unique_object_representations = FIRST_RESERVED_IGCCToken + 42;
+	/** @since 8.4 */
+	int tTT_is_function = FIRST_RESERVED_IGCCToken + 43;
 }

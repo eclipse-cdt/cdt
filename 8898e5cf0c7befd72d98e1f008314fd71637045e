@@ -33,6 +33,65 @@
       "message": "\u003e Patch Set 1: Verified+1\n\u003e \n\u003e Build Successful \n\nI\u0027m surprised that this build was successful. I did expect the jar content to be different and thus, the version bump should be required.",
       "revId": "8898e5cf0c7befd72d98e1f008314fd71637045e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4de8f0d_745c78db",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-03-31T12:34:56Z",
+      "side": 1,
+      "message": "I don\u0027t think so - similar to META-INF, if it is in the bin it doesn\u0027t need to be in source jar too.\n\nThe about.html is the exception because we want that in the source jar itself.",
+      "parentUuid": "aa7d444d_dd9b6639",
+      "revId": "8898e5cf0c7befd72d98e1f008314fd71637045e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "976dc327_5f478565",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-03-31T12:34:56Z",
+      "side": 1,
+      "message": "I haven\u0027t started on the 10.7 checklist - so all the bundles are baselined against wrong version. Please feel free to submit and when I bump bundles I will bump this one too.",
+      "parentUuid": "372bc900_ab77317a",
+      "revId": "8898e5cf0c7befd72d98e1f008314fd71637045e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e8d52aee_0670f4fd",
+        "filename": "build/org.eclipse.cdt.make.ui/build.properties",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-03-31T12:34:56Z",
+      "side": 1,
+      "message": "This doesn\u0027t seem right -was it also supposed to be css?",
+      "range": {
+        "startLine": 20,
+        "startChar": 15,
+        "endLine": 20,
+        "endChar": 19
+      },
+      "revId": "8898e5cf0c7befd72d98e1f008314fd71637045e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa7d444d_dd9b6639",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-31T10:32:16Z",
+      "side": 1,
+      "message": "@Jonah: Should the .css files be included in the \"source build\" too or just in the \"binary build\"?",
+      "revId": "8898e5cf0c7befd72d98e1f008314fd71637045e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

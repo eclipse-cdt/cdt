@@ -76,6 +76,14 @@ IEclipsePreferences#org-eclipse-cdt-ui:org-eclipse-cdt-ui {
 		"semanticHighlighting.typedef.bold=true"
 		"semanticHighlighting.typeParameter.color=191,164,164"
 		"semanticHighlighting.typeParameter.enabled=true"
+		"buildConsoleInfoStreamColor=18,144,195"
+		"buildConsoleOutputStreamColor=200,200,200"
+		"buildConsoleErrorStreamColor=221,40,103"
+		"buildConsoleBackgroundColor=47,47,47"
+		"buildConsoleProblemBackgroundColor=221,40,103"
+		"buildConsoleProblemWarningBackgroundColor=255,191,38"
+		"buildConsoleProblemInfoBackgroundColor=47,47,47"
+		"buildConsoleProblemHighlightedColor=0,0,0"
 }
 
 

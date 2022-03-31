@@ -33,6 +33,8 @@ import org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContaine
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -56,6 +58,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.themes.ITheme;
 
 /**
  * Creates an information control to display an expression in a hover control.
@@ -430,8 +433,21 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 			fViewer.addViewerUpdateListener(fViewerUpdateListener);
 
-			setForegroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			setBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			ITheme currentTheme = PlatformUI.getWorkbench().getThemeManager().getCurrentTheme();
+			ColorRegistry colorRegistry = currentTheme.getColorRegistry();
+
+			Color fg = colorRegistry.get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);
+			if (fg == null) {
+				fg = getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);
+			}
+
+			Color bg = colorRegistry.get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);
+			if (bg == null) {
+				bg = getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
+			}
+
+			setForegroundColor(fg);
+			setBackgroundColor(bg);
 		}
 
 		/**

@@ -16,6 +16,23 @@
       "message": "@Jonah: Should the .css files be included in the \"source build\" too or just in the \"binary build\"?",
       "revId": "8898e5cf0c7befd72d98e1f008314fd71637045e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "372bc900_ab77317a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-31T11:34:21Z",
+      "side": 1,
+      "message": "\u003e Patch Set 1: Verified+1\n\u003e \n\u003e Build Successful \n\nI\u0027m surprised that this build was successful. I did expect the jar content to be different and thus, the version bump should be required.",
+      "revId": "8898e5cf0c7befd72d98e1f008314fd71637045e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

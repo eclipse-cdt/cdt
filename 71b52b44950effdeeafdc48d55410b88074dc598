@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e5c45c1_73f5a4e2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-31T10:54:07Z",
+      "side": 1,
+      "message": "\u003e Patch Set 5:\n\u003e \n\u003e I have run this up on Windows and tested both user objects and libraries. It is working well for new projects.\n\u003e \n\u003e How to we support existing CDT managed build projects that use the gnu2/GnuMakefileGenerator but have modified the command line pattern?\n\u003e \n\u003e There is also the case of 3rd party toolchain descriptions that use the gnu2/GnuMakefileGenerator but provide their own command line pattern for the linker.\n\u003e \n\u003e It seems we need to detect whether the effective command line pattern contains \"${EXTRA_FLAGS}\" and process appropriately.\n\nI have not forgotten this topic.\nI just returned from a few weeks of vacation and am slowly getting back on track again. I will have to think a bit about the concerns you raised above. I hope I will have an answer for you this week.",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

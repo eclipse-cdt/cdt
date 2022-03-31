@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8137e75_c93bf641",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-31T10:17:31Z",
+      "side": 1,
+      "message": "Did I forget something?\n\nWhen I refreshed my workspace in Eclipse, the target definition was broken due to that the 10.5 release was archived.",
+      "revId": "553eb84cb135674214c7dbb7dfbb53dad10523a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

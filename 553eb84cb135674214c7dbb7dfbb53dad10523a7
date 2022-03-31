@@ -16,6 +16,24 @@
       "message": "Did I forget something?\n\nWhen I refreshed my workspace in Eclipse, the target definition was broken due to that the 10.5 release was archived.",
       "revId": "553eb84cb135674214c7dbb7dfbb53dad10523a7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "471e7fa2_938e9ea1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-03-31T14:29:06Z",
+      "side": 1,
+      "message": "I don\u0027t think you missed anything on a quick look.\n\nBut I don\u0027t know why the archiving caused a problem. It didn\u0027t cause issue for me. The Eclipse webmaster has setup transparent redirects from items missing on download.eclipse.org to archive.eclipse.org. It sounds like you may have uncovered a bug there.\n\nAnyway I will get to the prep for 10.7 soon, but you can merge this in the meantime.",
+      "parentUuid": "c8137e75_c93bf641",
+      "revId": "553eb84cb135674214c7dbb7dfbb53dad10523a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

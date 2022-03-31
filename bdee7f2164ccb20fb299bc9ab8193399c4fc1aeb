@@ -16,6 +16,46 @@
       "message": "Torbjörn - while looking at other dark mode issue can you review this patch too that Dominic has submitted?",
       "revId": "bdee7f2164ccb20fb299bc9ab8193399c4fc1aeb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "652483f9_b396794d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-31T15:08:24Z",
+      "side": 1,
+      "message": "I tested this and it looks like it works.\nI would like to avoid the lambda if possible as it would make it easier to debug in case of questions later on...\nLambdas are good, but should be used where they make a big difference. I don\u0027t think that\u0027s the case here.",
+      "revId": "bdee7f2164ccb20fb299bc9ab8193399c4fc1aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fb44b2e0_3122d3ae",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/ExpressionInformationControlCreator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 444,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-03-31T15:08:24Z",
+      "side": 1,
+      "message": "It would be easier to debug in the future if you avoided the lambda here.\nSomething like this should be equal but easier to debug. I doubt it will be slower than the lambda in this case.\n\n```\nColor fg \u003d colorRegistry.get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);\nif (fg \u003d\u003d null) {\n\tfg \u003d getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND);\n}\n\nColor bg \u003d colorRegistry.get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);\nif (bg \u003d\u003d null) {\n\tbg \u003d getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND);\n}\nsetForegroundColor(fg);\nsetBackgroundColor(bg);\n```\n\nWDYT?",
+      "range": {
+        "startLine": 441,
+        "startChar": 3,
+        "endLine": 444,
+        "endChar": 90
+      },
+      "revId": "bdee7f2164ccb20fb299bc9ab8193399c4fc1aeb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

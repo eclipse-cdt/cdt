@@ -169,6 +169,30 @@
       },
       "revId": "553eb84cb135674214c7dbb7dfbb53dad10523a7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "41429007_82007d48",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-01T18:02:17Z",
+      "side": 1,
+      "message": "😭\nAlways something that\u0027s missed...\n\nTo avoid anyone having issues, I fixed it in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192429.\nThanks John for spotting it!",
+      "parentUuid": "1ed47aef_70a08ddf",
+      "range": {
+        "startLine": 3,
+        "startChar": 35,
+        "endLine": 3,
+        "endChar": 38
+      },
+      "revId": "553eb84cb135674214c7dbb7dfbb53dad10523a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

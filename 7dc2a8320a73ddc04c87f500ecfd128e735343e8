@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cab73db8_ec2bbb41",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-01T09:18:24Z",
+      "side": 1,
+      "message": "Tested this on Windows with dark theme and it looks good.",
+      "revId": "7dc2a8320a73ddc04c87f500ecfd128e735343e8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

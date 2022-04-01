@@ -448,6 +448,11 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 			setForegroundColor(fg);
 			setBackgroundColor(bg);
+
+			if (fDetailPane != null && DefaultDetailPane.ID.equals(fDetailPane.getCurrentPaneID())) {
+				fDetailPane.getCurrentControl().setForeground(fg);
+				fDetailPane.getCurrentControl().setBackground(bg);
+			}
 		}
 
 		/**

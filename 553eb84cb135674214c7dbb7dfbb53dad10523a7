@@ -89,6 +89,23 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4497d28_c5cfa30f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-01T16:03:34Z",
+      "side": 1,
+      "message": "Please go ahead. This change is one part of the 10.7 prep work, so it can be done now, especially as current state is interferring with you now.",
+      "revId": "553eb84cb135674214c7dbb7dfbb53dad10523a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4d9e99c2_a63363b3",
@@ -102,6 +119,30 @@
       "writtenOn": "2022-04-01T16:01:18Z",
       "side": 1,
       "message": "Increment to 115 ?",
+      "range": {
+        "startLine": 3,
+        "startChar": 35,
+        "endLine": 3,
+        "endChar": 38
+      },
+      "revId": "553eb84cb135674214c7dbb7dfbb53dad10523a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1ed47aef_70a08ddf",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-01T16:03:34Z",
+      "side": 1,
+      "message": "Yes - I missed that bit of housekeeping during the review. It can mean that Eclipse PDE doesn\u0027t acknowledge the change in the file.\n\nI will fix next week when I start the checklist for 10.7 - either of you can feel free to fix it in the meantime.",
+      "parentUuid": "4d9e99c2_a63363b3",
       "range": {
         "startLine": 3,
         "startChar": 35,

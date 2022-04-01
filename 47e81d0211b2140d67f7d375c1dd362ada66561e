@@ -51,6 +51,24 @@
       "parentUuid": "f4aa316c_b97367c8",
       "revId": "47e81d0211b2140d67f7d375c1dd362ada66561e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "07e846e7_d1a512af",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-01T19:40:26Z",
+      "side": 1,
+      "message": "I think I\u0027ve managed to get all colors visible now.\nCan you take a look at this new proposal?\n\nI\u0027m not good with colors, but at least it\u0027s possible to read the text now without selecting everything in the view.",
+      "parentUuid": "7bb6faf9_cb518c1d",
+      "revId": "47e81d0211b2140d67f7d375c1dd362ada66561e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

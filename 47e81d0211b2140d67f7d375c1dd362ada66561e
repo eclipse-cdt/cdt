@@ -33,6 +33,24 @@
       "message": "I would say those colors aren\u0027t better:\n\nWith your change:\nhttps://imgur.com/7VA4Xr7.png\n\nWithout them:\nhttps://i.imgur.com/S7GI5Rr.png\n\nThis is the text of my source file (standard managed make) from the screenshot. I am pretty sure it covers all 4 combinations of fg/bg.\n\n //#define AAA\n\n #ifdef AAA\n #define BBB\n #endif\n\n int main() {\n\tprintf();\n }\n\n\n\n",
       "revId": "47e81d0211b2140d67f7d375c1dd362ada66561e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7bb6faf9_cb518c1d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-01T09:57:48Z",
+      "side": 1,
+      "message": "Ah, it\u0027s the error parsers that trigger the different kind of partitions.\nI\u0027d say that the major problem with the console view is that there is no way to have a different foreground color for the warning/error lines than for normal output.\nIn the case of light theme, that would be black color for the foreground.\nIn the case of dark theme, that would be grey color for the foreground.\n\nWhat shades of red and yellow would work for that?\nFrom what I could find out yesterday, it appears that most views are using 200,200,200 as the color for text (light grey).\n\nI\u0027ve also to find out a way to trigger the usage of \"buildConsoleProblemInfoBackgroundColor\".",
+      "parentUuid": "f4aa316c_b97367c8",
+      "revId": "47e81d0211b2140d67f7d375c1dd362ada66561e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

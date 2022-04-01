@@ -106,6 +106,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "46402c93_008e70ac",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-01T16:04:18Z",
+      "side": 1,
+      "message": "\u003e Please go ahead. This change is one part of the 10.7 prep work, so it can be done now, especially as current state is interferring with you now\n\nThat had been a draft comment that I hadn\u0027t published - out of date now.",
+      "parentUuid": "c4497d28_c5cfa30f",
+      "revId": "553eb84cb135674214c7dbb7dfbb53dad10523a7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4d9e99c2_a63363b3",

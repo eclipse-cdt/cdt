@@ -16,6 +16,23 @@
       "message": "I don\u0027t know how to trigger the use of most of these colors.\n@Jonah: Can you take a look and see if you think this looks okay?",
       "revId": "47e81d0211b2140d67f7d375c1dd362ada66561e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4aa316c_b97367c8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-01T01:01:40Z",
+      "side": 1,
+      "message": "I would say those colors aren\u0027t better:\n\nWith your change:\nhttps://imgur.com/7VA4Xr7.png\n\nWithout them:\nhttps://i.imgur.com/S7GI5Rr.png\n\nThis is the text of my source file (standard managed make) from the screenshot. I am pretty sure it covers all 4 combinations of fg/bg.\n\n //#define AAA\n\n #ifdef AAA\n #define BBB\n #endif\n\n int main() {\n\tprintf();\n }\n\n\n\n",
+      "revId": "47e81d0211b2140d67f7d375c1dd362ada66561e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -33,6 +33,10 @@ import org.eclipse.debug.internal.ui.views.variables.details.IDetailPaneContaine
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.AbstractInformationControl;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
@@ -50,6 +54,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
@@ -125,6 +130,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		 */
 		private Object fVariable;
 
+		private IPresentationContext fContext;
 		private TreeModelViewer fViewer;
 		private SashForm fSashForm;
 		private Composite fDetailPaneComposite;
@@ -188,8 +194,8 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 			@Override
 			public void paneChanged(String newPaneID) {
 				if (DefaultDetailPane.ID.equals(newPaneID)) {
-					fDetailPane.getCurrentControl()
-							.setBackground(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+					fDetailPane.getCurrentControl().setForeground(getSystemForegroundColor());
+					fDetailPane.getCurrentControl().setBackground(getSystemBackgroundColor());
 				}
 			}
 
@@ -265,7 +271,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		private IDialogSettings getDialogSettings(boolean create) {
 			IDialogSettings settings = DsfUIPlugin.getDefault().getDialogSettings();
 			IDialogSettings section = settings.getSection(this.getClass().getName());
-			if (section == null & create) {
+			if (section == null && create) {
 				section = settings.addNewSection(this.getClass().getName());
 			}
 			return section;
@@ -289,6 +295,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		@Override
 		public void dispose() {
 			persistSettings(getShell());
+			fContext.dispose();
 			super.dispose();
 		}
 
@@ -339,8 +346,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 			// update presentation context
 			AbstractDebugView view = getViewToEmulate();
-			IPresentationContext context = new ExpressionHoverPresentationContext(
-					IDsfDebugUIConstants.ID_EXPRESSION_HOVER);
+			fContext = new ExpressionHoverPresentationContext(IDsfDebugUIConstants.ID_EXPRESSION_HOVER);
 			if (view != null) {
 				// copy over properties
 				IPresentationContext copy = ((TreeModelViewer) view.getViewer()).getPresentationContext();
@@ -348,14 +354,14 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 					String[] properties = copy.getProperties();
 					for (int i = 0; i < properties.length; i++) {
 						String key = properties[i];
-						context.setProperty(key, copy.getProperty(key));
+						fContext.setProperty(key, copy.getProperty(key));
 					}
 				} catch (NoSuchMethodError e) {
 					// ignore
 				}
 			}
 
-			fViewer = new TreeModelViewer(fSashForm, SWT.MULTI | SWT.VIRTUAL | SWT.FULL_SELECTION, context);
+			fViewer = new TreeModelViewer(fSashForm, SWT.MULTI | SWT.VIRTUAL | SWT.FULL_SELECTION, fContext);
 			fViewer.setAutoExpandLevel(fExpansionLevel);
 
 			if (view != null) {
@@ -430,8 +436,8 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 
 			fViewer.addViewerUpdateListener(fViewerUpdateListener);
 
-			setForegroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_FOREGROUND));
-			setBackgroundColor(getShell().getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+			setForegroundColor(getSystemForegroundColor());
+			setBackgroundColor(getSystemBackgroundColor());
 		}
 
 		/**
@@ -537,7 +543,6 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		public void viewerInputComplete(IViewerInputUpdate update) {
 			fViewer.setInput(fVariable = update.getInputElement());
 		}
-
 	}
 
 	protected final boolean fShowDetailPane;
@@ -570,6 +575,28 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 	@Override
 	public IInformationControl createInformationControl(Shell parent) {
 		return new ExpressionInformationControl(parent, false);
+	}
+
+	private static Color getSystemForegroundColor() {
+		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+		Color foreground = colorRegistry.get(JFacePreferences.INFORMATION_FOREGROUND_COLOR);
+
+		if (foreground == null) {
+			return JFaceColors.getInformationViewerForegroundColor(Display.getDefault());
+		}
+
+		return foreground;
+	}
+
+	public static Color getSystemBackgroundColor() {
+		ColorRegistry colorRegistry = JFaceResources.getColorRegistry();
+		Color background = colorRegistry.get(JFacePreferences.INFORMATION_BACKGROUND_COLOR);
+
+		if (background == null) {
+			return JFaceColors.getInformationViewerBackgroundColor(Display.getDefault());
+		}
+
+		return background;
 	}
 
 }

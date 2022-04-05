@@ -63,7 +63,7 @@ final class CPPResourceChangeListener implements IResourceChangeListener {
 	private static void sendFileEvents(LanguageServerWrapper wrapper, List<FileEvent> fileEvents) {
 		if (!fileEvents.isEmpty()) {
 			DidChangeWatchedFilesParams params = new DidChangeWatchedFilesParams(fileEvents);
-			wrapper.getServer().getWorkspaceService().didChangeWatchedFiles(params);
+			wrapper.getInitializedServer().join().getWorkspaceService().didChangeWatchedFiles(params);
 		}
 	}
 

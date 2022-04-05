@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d249393_078f6eba",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-05T23:27:30Z",
+      "side": 1,
+      "message": "I\u0027m not a dark mode user normally, but I find the contrast between warning and background very hard to read still - same for error https://imgur.com/kqL8PwP.png . Info in legible. \n\nI think the foreground colour should be brighter, e.g. https://i.imgur.com/tDQlYao.png\n\t\t\"buildConsoleOutputStreamColor\u003d240,240,240\"\n\t\t\n\t\t\nor darken the red/yellow. e.g. https://imgur.com/TWwvaz5.png\n\t\t\"buildConsoleProblemBackgroundColor\u003d130,6,12\"\n\t\t\"buildConsoleProblemWarningBackgroundColor\u003d150,88,11\"\n\nI would vote for the last one.\n\n+1 on fixing the inactive code background (in my screenshots too)\n",
+      "revId": "15d5fc4101f5226fc8b63a5434e06c6da6536b22",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

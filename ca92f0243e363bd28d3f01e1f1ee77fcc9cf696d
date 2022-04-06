@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11ee0177_763db05b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-06T10:31:06Z",
+      "side": 1,
+      "message": "As we are in sync, I guess I can merge this gerrit as soon as the Jenkins jobs give +1, or is there anything else that I should do for this one?",
+      "revId": "ca92f0243e363bd28d3f01e1f1ee77fcc9cf696d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

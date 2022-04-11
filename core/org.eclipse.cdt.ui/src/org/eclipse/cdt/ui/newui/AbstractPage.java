@@ -74,6 +74,8 @@ import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -92,8 +94,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -199,16 +199,8 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	protected boolean isFile = false;
 
 	// tabs
-	/**
-	 * @deprecated This field was never meant to be API. This field will be made private.
-	 */
-	@Deprecated(forRemoval = true)
-	protected TabFolder folder;
-	/**
-	 * @deprecated This field was never meant to be API. This field will be made private.
-	 */
-	@Deprecated(forRemoval = true)
-	protected ArrayList<InternalTab> itabs = new ArrayList<>();
+	private CTabFolder folder;
+	private List<InternalTab> itabs = new ArrayList<>();
 	/**
 	 * @deprecated This field was never meant to be API. This field will be made private.
 	 */
@@ -217,11 +209,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 
 	private static boolean isNewOpening = true;
 
-	/**
-	 * @deprecated This class was never meant to be API. This class will be made private.
-	 */
-	@Deprecated(forRemoval = true)
-	protected class InternalTab {
+	private class InternalTab {
 		Composite comp;
 		String text;
 		String tip;
@@ -236,9 +224,12 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 			tip = _tip;
 		}
 
-		public TabItem createOn(TabFolder f) {
+		/**
+		 * @since 7.3
+		 */
+		public CTabItem createOn(CTabFolder f) {
 			if (tab.canBeVisible()) {
-				TabItem ti = new TabItem(f, SWT.NONE);
+				CTabItem ti = new CTabItem(f, SWT.NONE);
 				ti.setText(text);
 				if (tip != null)
 					ti.setToolTipText(tip);
@@ -398,7 +389,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		itabs.clear();
 		if (!isSingle()) {
 			parentComposite.setLayout(new FillLayout());
-			folder = new TabFolder(parentComposite, SWT.NONE);
+			folder = new CTabFolder(parentComposite, SWT.NONE);
 			//			folder.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 		loadExtensionsSynchronized(parentComposite);
@@ -409,7 +400,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 			folder.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
-					if (folder.getSelection().length > 0) {
+					if (folder.getSelection() != null) {
 						updateSelectedTab();
 					}
 				}
@@ -418,9 +409,9 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 				int selectedTab = 0;
 				Class<? extends ICPropertyTab> recentTab = recentTabs.get(getClass());
 				if (recentTab != null) {
-					TabItem[] tabs = folder.getItems();
+					CTabItem[] tabs = folder.getItems();
 					for (int i = 0; i < tabs.length; i++) {
-						TabItem control = tabs[i];
+						CTabItem control = tabs[i];
 						if (recentTab.isInstance(control.getData())) {
 							selectedTab = i;
 							break;
@@ -434,7 +425,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	}
 
 	private void updateSelectedTab() {
-		ICPropertyTab newTab = (ICPropertyTab) folder.getSelection()[0].getData();
+		ICPropertyTab newTab = (ICPropertyTab) folder.getSelection().getData();
 		if (newTab != null && currentTab != newTab) {
 			recentTabs.put(getClass(), newTab.getClass());
 			if (currentTab != null)
@@ -1287,13 +1278,13 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 				return;
 			}
 			boolean willAdd = false;
-			TabItem[] ts = folder.getItems();
+			CTabItem[] ts = folder.getItems();
 			int x = folder.getSelectionIndex();
 			String currHeader = (x == -1) ? null : ts[x].getText();
 			for (int i = 0; i < itabs.size(); i++) {
 				InternalTab itab = itabs.get(i);
-				TabItem ti = null;
-				for (TabItem element2 : ts) {
+				CTabItem ti = null;
+				for (CTabItem element2 : ts) {
 					if (element2.isDisposed())
 						continue;
 					if (element2.getData() == itab.tab) {
@@ -1317,11 +1308,11 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 				for (int j = 0; j < ts.length; j++)
 					if (ts[j] != null && !ts[j].isDisposed())
 						ts[j].dispose();
-				TabItem ti = null;
+				CTabItem ti = null;
 				for (int i = 0; i < itabs.size(); i++) {
 					InternalTab itab = itabs.get(i);
 					if (itab.tab.canBeVisible()) {
-						TabItem currTI = itab.createOn(folder);
+						CTabItem currTI = itab.createOn(folder);
 						if (currHeader != null && currHeader.equals(itab.text))
 							ti = currTI;
 					}

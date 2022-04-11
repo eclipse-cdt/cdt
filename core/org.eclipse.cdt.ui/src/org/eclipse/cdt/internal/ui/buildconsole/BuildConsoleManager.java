@@ -46,6 +46,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -409,7 +410,12 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 		if (v == null)
 			return;
 		Display display = Display.getDefault();
-		display.asyncExec(() -> v.getTextWidget().redraw());
+		display.asyncExec(() -> {
+			StyledText widget = v.getTextWidget();
+			if (widget != null && !widget.isDisposed()) {
+				widget.redraw();
+			}
+		});
 	}
 
 	public IBuildConsoleStreamDecorator getStreamDecorator(int type) throws CoreException {

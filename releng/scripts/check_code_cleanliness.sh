@@ -56,6 +56,7 @@ ${DIR}/check_glibc_dependencies.sh
 ##
 # Make sure all versions have been bumped appropriately compared to the baseline
 ##
+java -XX:+PrintFlagsFinal -version 
 logfile=baseline-compare-and-replace.log
 echo "Running 'mvn verify -P baseline-compare-and-replace' to make sure all versions"
 echo "have been appropriately incremented. The check output is very verbose, so it is"

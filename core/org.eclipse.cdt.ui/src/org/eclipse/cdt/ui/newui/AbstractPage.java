@@ -74,6 +74,8 @@ import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -204,11 +206,13 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	 */
 	@Deprecated(forRemoval = true)
 	protected TabFolder folder;
+	private CTabFolder cTabFolder;
 	/**
 	 * @deprecated This field was never meant to be API. This field will be made private.
 	 */
 	@Deprecated(forRemoval = true)
 	protected ArrayList<InternalTab> itabs = new ArrayList<>();
+	private ArrayList<InternalCTab> internalCTabs = new ArrayList<>();
 	/**
 	 * @deprecated This field was never meant to be API. This field will be made private.
 	 */
@@ -229,6 +233,22 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		ICPropertyTab tab;
 
 		InternalTab(Composite _comp, String _text, Image _image, ICPropertyTab _tab, String _tip) {
+			throw new UnsupportedOperationException("InternalTab has been marked for removal from API"); //$NON-NLS-1$
+		}
+
+		public TabItem createOn(TabFolder f) {
+			throw new UnsupportedOperationException("InternalTab has been marked for removal from API"); //$NON-NLS-1$
+		}
+	}
+
+	private class InternalCTab {
+		Composite comp;
+		String text;
+		String tip;
+		Image image;
+		ICPropertyTab tab;
+
+		InternalCTab(Composite _comp, String _text, Image _image, ICPropertyTab _tab, String _tip) {
 			comp = _comp;
 			text = _text;
 			image = _image;
@@ -236,9 +256,12 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 			tip = _tip;
 		}
 
-		public TabItem createOn(TabFolder f) {
+		/**
+		 * @since 7.3
+		 */
+		public CTabItem createOn(CTabFolder f) {
 			if (tab.canBeVisible()) {
-				TabItem ti = new TabItem(f, SWT.NONE);
+				CTabItem ti = new CTabItem(f, SWT.NONE);
 				ti.setText(text);
 				if (tip != null)
 					ti.setToolTipText(tip);
@@ -395,46 +418,46 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		parentComposite = new Composite(c, SWT.NONE);
 		parentComposite.setLayoutData(gd = new GridData(GridData.FILL_BOTH));
 		gd.widthHint = 600;
-		itabs.clear();
+		internalCTabs.clear();
 		if (!isSingle()) {
 			parentComposite.setLayout(new FillLayout());
-			folder = new TabFolder(parentComposite, SWT.NONE);
+			cTabFolder = new CTabFolder(parentComposite, SWT.NONE);
 			//			folder.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
 		}
 		loadExtensionsSynchronized(parentComposite);
 
 		// Set listener after data load, to avoid firing
 		// selection event on not-initialized tab items
-		if (folder != null) {
-			folder.addSelectionListener(new SelectionAdapter() {
+		if (cTabFolder != null) {
+			cTabFolder.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(org.eclipse.swt.events.SelectionEvent event) {
-					if (folder.getSelection().length > 0) {
+					if (cTabFolder.getSelection() != null) {
 						updateSelectedTab();
 					}
 				}
 			});
-			if (folder.getItemCount() > 0) {
+			if (cTabFolder.getItemCount() > 0) {
 				int selectedTab = 0;
 				Class<? extends ICPropertyTab> recentTab = recentTabs.get(getClass());
 				if (recentTab != null) {
-					TabItem[] tabs = folder.getItems();
+					CTabItem[] tabs = cTabFolder.getItems();
 					for (int i = 0; i < tabs.length; i++) {
-						TabItem control = tabs[i];
+						CTabItem control = tabs[i];
 						if (recentTab.isInstance(control.getData())) {
 							selectedTab = i;
 							break;
 						}
 					}
 				}
-				folder.setSelection(selectedTab);
+				cTabFolder.setSelection(selectedTab);
 				updateSelectedTab();
 			}
 		}
 	}
 
 	private void updateSelectedTab() {
-		ICPropertyTab newTab = (ICPropertyTab) folder.getSelection()[0].getData();
+		ICPropertyTab newTab = (ICPropertyTab) cTabFolder.getSelection().getData();
 		if (newTab != null && currentTab != newTab) {
 			recentTabs.put(getClass(), newTab.getClass());
 			if (currentTab != null)
@@ -764,9 +787,9 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		if (desc == null || desc.isCdtProjectCreating())
 			return false;
 
-		Iterator<InternalTab> it = itabs.iterator();
+		Iterator<InternalCTab> it = internalCTabs.iterator();
 		while (it.hasNext()) {
-			InternalTab tab = it.next();
+			InternalCTab tab = it.next();
 			if (tab != null) {
 				ICPropertyTab tabtab = tab.tab;
 				if (tabtab instanceof AbstractCPropertyTab && ((AbstractCPropertyTab) tabtab).isIndexerAffected()) {
@@ -891,11 +914,11 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 			populateConfigurations();
 		}
 
-		if (itabs.size() < 1)
+		if (internalCTabs.size() < 1)
 			return;
 
-		if (currentTab == null && folder.getItemCount() > 0) {
-			Object ob = folder.getItem(0).getData();
+		if (currentTab == null && cTabFolder.getItemCount() > 0) {
+			Object ob = cTabFolder.getItem(0).getData();
 			currentTab = (ICPropertyTab) ob;
 		}
 		if (currentTab != null)
@@ -1132,9 +1155,9 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	}
 
 	protected void forEach(int m, Object pars) {
-		Iterator<InternalTab> it = itabs.iterator();
+		Iterator<InternalCTab> it = internalCTabs.iterator();
 		while (it.hasNext()) {
-			InternalTab tab = it.next();
+			InternalCTab tab = it.next();
 			if (tab != null)
 				tab.tab.handleTabEvent(m, pars);
 		}
@@ -1217,19 +1240,19 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 			// note that name, image and tooltip
 			// are ignored for single page.
 			page.createControls(parent, this);
-			InternalTab itab = new InternalTab(parent, EMPTY_STR, null, page, null);
-			itabs.add(itab);
+			InternalCTab itab = new InternalCTab(parent, EMPTY_STR, null, page, null);
+			internalCTabs.add(itab);
 			currentTab = page;
 			return true; // don't load other tabs
 		}
 		String _name = element.getAttribute(TEXT_NAME);
 		String _tip = element.getAttribute(TIP_NAME);
 
-		Composite _comp = new Composite(folder, SWT.NONE);
+		Composite _comp = new Composite(cTabFolder, SWT.NONE);
 		page.createControls(_comp, this);
-		InternalTab itab = new InternalTab(_comp, _name, _img, page, _tip);
-		itab.createOn(folder);
-		itabs.add(itab);
+		InternalCTab itab = new InternalCTab(_comp, _name, _img, page, _tip);
+		itab.createOn(cTabFolder);
+		internalCTabs.add(itab);
 		return false;
 	}
 
@@ -1278,22 +1301,22 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		// tabs adding will be made by re-creation
 		// of all elements, to preserve their order
 		case ICPropertyTab.MANAGEDBUILDSTATE:
-			if (folder == null) {
-				if (itabs == null || itabs.size() == 0)
+			if (cTabFolder == null) {
+				if (internalCTabs == null || internalCTabs.size() == 0)
 					return;
-				ICPropertyTab t = itabs.get(0).tab;
+				ICPropertyTab t = internalCTabs.get(0).tab;
 				if (!t.canBeVisible())
 					t.handleTabEvent(ICPropertyTab.VISIBLE, null);
 				return;
 			}
 			boolean willAdd = false;
-			TabItem[] ts = folder.getItems();
-			int x = folder.getSelectionIndex();
+			CTabItem[] ts = cTabFolder.getItems();
+			int x = cTabFolder.getSelectionIndex();
 			String currHeader = (x == -1) ? null : ts[x].getText();
-			for (int i = 0; i < itabs.size(); i++) {
-				InternalTab itab = itabs.get(i);
-				TabItem ti = null;
-				for (TabItem element2 : ts) {
+			for (int i = 0; i < internalCTabs.size(); i++) {
+				InternalCTab itab = internalCTabs.get(i);
+				CTabItem ti = null;
+				for (CTabItem element2 : ts) {
 					if (element2.isDisposed())
 						continue;
 					if (element2.getData() == itab.tab) {
@@ -1317,17 +1340,17 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 				for (int j = 0; j < ts.length; j++)
 					if (ts[j] != null && !ts[j].isDisposed())
 						ts[j].dispose();
-				TabItem ti = null;
-				for (int i = 0; i < itabs.size(); i++) {
-					InternalTab itab = itabs.get(i);
+				CTabItem ti = null;
+				for (int i = 0; i < internalCTabs.size(); i++) {
+					InternalCTab itab = internalCTabs.get(i);
 					if (itab.tab.canBeVisible()) {
-						TabItem currTI = itab.createOn(folder);
+						CTabItem currTI = itab.createOn(cTabFolder);
 						if (currHeader != null && currHeader.equals(itab.text))
 							ti = currTI;
 					}
 				}
 				if (ti != null)
-					folder.setSelection(ti);
+					cTabFolder.setSelection(ti);
 			}
 			break;
 		}

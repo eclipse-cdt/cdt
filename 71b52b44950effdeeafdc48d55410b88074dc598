@@ -16,6 +16,23 @@
       "message": "\u003e Patch Set 5:\n\u003e \n\u003e I have run this up on Windows and tested both user objects and libraries. It is working well for new projects.\n\u003e \n\u003e How to we support existing CDT managed build projects that use the gnu2/GnuMakefileGenerator but have modified the command line pattern?\n\u003e \n\u003e There is also the case of 3rd party toolchain descriptions that use the gnu2/GnuMakefileGenerator but provide their own command line pattern for the linker.\n\u003e \n\u003e It seems we need to detect whether the effective command line pattern contains \"${EXTRA_FLAGS}\" and process appropriately.\n\nI have not forgotten this topic.\nI just returned from a few weeks of vacation and am slowly getting back on track again. I will have to think a bit about the concerns you raised above. I hope I will have an answer for you this week.",
       "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "357f47e5_81721b0b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-11T12:09:08Z",
+      "side": 1,
+      "message": "\u003e Patch Set 5:\n\u003e \n\u003e I have run this up on Windows and tested both user objects and libraries. It is working well for new projects.\n\u003e \n\u003e How to we support existing CDT managed build projects that use the gnu2/GnuMakefileGenerator but have modified the command line pattern?\n\u003e \n\u003e There is also the case of 3rd party toolchain descriptions that use the gnu2/GnuMakefileGenerator but provide their own command line pattern for the linker.\n\u003e \n\u003e It seems we need to detect whether the effective command line pattern contains \"${EXTRA_FLAGS}\" and process appropriately.\n\nAfter finally having some time to go into depth about this, I\u0027m still not sure what is the correct approach here.\n\nIf we ensure that the commandLinePattern always contains the \"${EXTRA_FLAGS}\" symbol, then there is no way to remove it, using XML only, if needed. This would mean that what\u0027s written in the extension point is not the full truth.\nOn the other hand, if we do not do it, some projects will fail to link, or in worst case, succeed on linking but fail at runtime.\n\nWhat is the best approach here? Is it to override the XML string and always append if not present or leave it up to the extender to fix..?\n\n\"Correcting\" the pattern is as simple as an if-statement in Tool:getCommandLinePattern() unless I\u0027m missing something.\n\n@John: What\u0027s your opinion on this?\n\nBtw, this is the same as the review comment I wrote in Tool.java on line 2099 in PS4.",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

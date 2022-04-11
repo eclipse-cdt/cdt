@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "74274e03_c9f9993b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-11T17:50:23Z",
+      "side": 1,
+      "message": "\u003e https://ci.eclipse.org/cdt/job/cdt-verify-terminal-only-pipeline/162/ : FAILURE\n\nI don\u0027t understand this failure - it is resolved on the next commit though so I am not spending much time on it.\n",
+      "revId": "e8d924bb9a6624110f34850eefef2f55dfa0abc6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

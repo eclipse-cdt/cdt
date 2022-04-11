@@ -24,14 +24,14 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
@@ -75,12 +75,12 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 	@Override
 	protected Control createContents(Composite parent) {
 		PixelConverter pixelConverter = new PixelConverter(parent);
-		final TabFolder folder = new TabFolder(parent, SWT.NONE);
+		final CTabFolder folder = new CTabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 
 		for (int i = 0; i < fTabs.length; i++) {
-			TabItem item = new TabItem(folder, SWT.NONE);
+			CTabItem item = new CTabItem(folder, SWT.NONE);
 			item.setText(fTabLabels[i]);
 			Composite composite = new Composite(folder, SWT.NONE);
 			FillLayout layout = new FillLayout();
@@ -91,6 +91,7 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 			item.setData(fTabs[i]);
 			fTabs[i].createContents(composite);
 		}
+		folder.setSelection(0);
 		Dialog.applyDialogFont(folder);
 		folder.addSelectionListener(new SelectionListener() {
 			@Override

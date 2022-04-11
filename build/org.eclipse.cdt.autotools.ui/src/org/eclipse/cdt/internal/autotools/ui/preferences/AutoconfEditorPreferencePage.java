@@ -30,6 +30,8 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -41,8 +43,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 
@@ -259,21 +259,22 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 		getOverlayStore().load();
 		getOverlayStore().start();
 
-		TabFolder folder = new TabFolder(parent, SWT.NONE);
+		CTabFolder folder = new CTabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		TabItem item = new TabItem(folder, SWT.NONE);
+		CTabItem item = new CTabItem(folder, SWT.NONE);
+		folder.setSelection(0);
 		item.setText(AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.syntax")); //$NON-NLS-1$
 		item.setControl(createSyntaxPage(folder));
 
-		item = new TabItem(folder, SWT.NONE);
+		item = new CTabItem(folder, SWT.NONE);
 		item.setText(AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.folding")); //$NON-NLS-1$
 		item.setControl(createFoldingTabContent(folder));
 
 		// Allow end-user to select which version of autoconf to use for hover help
 		// and syntax checking of macros.
-		item = new TabItem(folder, SWT.NONE);
+		item = new CTabItem(folder, SWT.NONE);
 		item.setText(AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.version")); //$NON-NLS-1$
 		item.setControl(createVersionTabContent(folder));
 
@@ -447,7 +448,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 		return colorComposite;
 	}
 
-	private Composite createFoldingTabContent(TabFolder folder) {
+	private Composite createFoldingTabContent(CTabFolder folder) {
 		Composite composite = new Composite(folder, SWT.NULL);
 		// assume parent page uses griddata
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_FILL);
@@ -474,7 +475,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 		return composite;
 	}
 
-	private Composite createVersionTabContent(TabFolder folder) {
+	private Composite createVersionTabContent(CTabFolder folder) {
 		Composite composite = new Composite(folder, SWT.NULL);
 		// assume parent page uses griddata
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_CENTER | GridData.VERTICAL_ALIGN_FILL);

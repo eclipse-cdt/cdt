@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,8 +37,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage {
@@ -145,8 +145,8 @@ public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE, str);
 	}
 
-	protected void createGdbserverSettingsTab(TabFolder tabFolder) {
-		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+	protected void createGdbserverSettingsTab(CTabFolder tabFolder) {
+		CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
 		tabItem.setText(Messages.Gdbserver_Settings_Tab_Name);
 
 		Composite comp = new Composite(tabFolder, SWT.NULL);
@@ -239,11 +239,8 @@ public class RemoteDSFGDBDebuggerPage extends GdbDebuggerPage {
 		fRemoteTimeoutValueText.setEnabled(fRemoteTimeoutEnabledCheckbox.getSelection());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse.swt.widgets.TabFolder)
-	 */
 	@Override
-	public void createTabs(TabFolder tabFolder) {
+	public void createTabs(CTabFolder tabFolder) {
 		super.createTabs(tabFolder);
 		createGdbserverSettingsTab(tabFolder);
 	}

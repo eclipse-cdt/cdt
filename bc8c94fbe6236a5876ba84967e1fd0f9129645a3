@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0de95f32_d0ec4022",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-11T23:35:34Z",
+      "side": 1,
+      "message": "To get this to pass code cleanliness better I updated how memory is allocated in all the pipelines https://github.com/eclipse-cdt/cdt-infra/commit/76f80f59815ceab13e5e644790b41eca233beb4b\n\nThe terminal failure is covered in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192665\nThe unstable tests are covered in https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d579669",
+      "revId": "bc8c94fbe6236a5876ba84967e1fd0f9129645a3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

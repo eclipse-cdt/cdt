@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "54885ab6_f9a38285",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-11T18:10:30Z",
+      "side": 1,
+      "message": "Well - something has changed in Tycho between 2.5.0 and 2.7.1 that leads to this error:\n\n13:50:36  [ERROR] Failed to execute goal org.eclipse.tycho:tycho-packaging-plugin:2.7.1:package-feature (default-package-feature) on project org.eclipse.tm.terminal.connector.local.feature: Execution default-package-feature of goal org.eclipse.tycho:tycho-packaging-plugin:2.7.1:package-feature failed: Neither raw version nor format was specified: null -\u003e [Help 1]\n\n\nThis is known issue https://github.com/eclipse/tycho/issues/876",
+      "revId": "322022a7865e587d778cf9a40600ad56cbde7cdb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

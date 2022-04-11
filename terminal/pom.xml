@@ -44,6 +44,8 @@
 				<module>../core/org.eclipse.cdt.core.win32</module>
 				<module>../core/org.eclipse.cdt.core.win32.x86_64</module>
 				<module>../native/org.eclipse.cdt.native.serial</module>
+				<module>../remote/org.eclipse.remote.core</module>
+				<module>../remote/org.eclipse.remote.ui</module>
 				<module>../releng/org.eclipse.cdt.native-feature</module>
 			</modules>
 		</profile>

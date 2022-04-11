@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0156773_5c3c3f8a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-11T16:56:51Z",
+      "side": 1,
+      "message": "Is it okay to do all these in one commit or should I divide this into smaller pieces? All the classes that are changed are either in an internal package or or the member is private in the class.\nThe only exception is RemoteDSFGDBDebuggerPage that inherits GdbDebuggerPage that is in an internal package.",
+      "revId": "3965591b16504c8e760fdcc7054a4171e7a56a12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

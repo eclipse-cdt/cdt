@@ -16,6 +16,24 @@
       "message": "How can we handle the AbstractPage?\nIt contains the same fault as the other classes in gerrit https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192655, but this class is is not in an internal package and the TabFolder/TabItem fields are exposed to sub-classes.\n\nObviously, the PS1 alone is not the good solution!",
       "revId": "1016f93b17a701a57922cfcbb31af153f18e9e30",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e8a79bae_9246907e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-11T18:00:15Z",
+      "side": 1,
+      "message": "\u003e How can we handle the AbstractPage?\n\nCDT 11.0 :-)\n\nThis is one that feels like solving it under the constraints of API to be super time consuming and hardly worth it (assuming you don\u0027t have some overly pressing need!)",
+      "parentUuid": "c0020025_9ed59ef3",
+      "revId": "1016f93b17a701a57922cfcbb31af153f18e9e30",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

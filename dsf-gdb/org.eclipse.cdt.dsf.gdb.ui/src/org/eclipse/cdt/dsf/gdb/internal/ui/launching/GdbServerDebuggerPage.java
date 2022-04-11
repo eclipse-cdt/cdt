@@ -29,12 +29,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 /**
  * The dynamic debugger tab for remote launches using gdb server.
@@ -71,8 +71,8 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		createRemoteTimeoutFields();
 	}
 
-	protected void createConnectionTab(TabFolder tabFolder) {
-		TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+	protected void createConnectionTab(CTabFolder tabFolder) {
+		CTabItem tabItem = new CTabItem(tabFolder, SWT.NONE);
 		tabItem.setText(LaunchUIMessages.getString("GDBServerDebuggerPage.10")); //$NON-NLS-1$
 		Composite comp1 = ControlFactory.createCompositeEx(tabFolder, 1, GridData.FILL_BOTH);
 		((GridLayout) comp1.getLayout()).makeColumnsEqualWidth = false;
@@ -260,7 +260,7 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 	}
 
 	@Override
-	public void createTabs(TabFolder tabFolder) {
+	public void createTabs(CTabFolder tabFolder) {
 		super.createTabs(tabFolder);
 		createConnectionTab(tabFolder);
 	}

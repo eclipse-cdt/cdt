@@ -18,11 +18,11 @@ import org.eclipse.cdt.codan.core.model.IProblemWorkingCopy;
 import org.eclipse.cdt.codan.internal.ui.CodanUIMessages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 /**
  * Composite for problem customisable parameters
@@ -47,12 +47,13 @@ public class CustomizeProblemComposite extends Composite {
 		this.setLayout(new GridLayout(1, false));
 		this.problem = selectedProblem;
 		this.resource = resource;
-		final TabFolder tabFolder = new TabFolder(this, SWT.TOP);
+		final CTabFolder tabFolder = new CTabFolder(this, SWT.TOP);
 		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
 		// createMainTab(tabFolder);
 		createParamtersTab(tabFolder, combined);
 		createScopeTab(tabFolder);
 		createLaunchingTab(tabFolder);
+		tabFolder.setSelection(0);
 	}
 
 	public void save(IProblemWorkingCopy problem) {
@@ -64,8 +65,8 @@ public class CustomizeProblemComposite extends Composite {
 	/**
 	 * @param tabFolder
 	 */
-	private void createParamtersTab(TabFolder tabFolder, boolean combined) {
-		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
+	private void createParamtersTab(CTabFolder tabFolder, boolean combined) {
+		CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NULL);
 		tabItem1.setText(CodanUIMessages.CustomizeProblemComposite_TabParameters);
 		parametersTab = new Composite(tabFolder, SWT.NONE);
 		tabItem1.setControl(parametersTab);
@@ -77,8 +78,8 @@ public class CustomizeProblemComposite extends Composite {
 	/**
 	 * @param tabFolder
 	 */
-	private void createScopeTab(TabFolder tabFolder) {
-		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
+	private void createScopeTab(CTabFolder tabFolder) {
+		CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NULL);
 		tabItem1.setText(CodanUIMessages.CustomizeProblemComposite_TabScope);
 		Composite comp = new Composite(tabFolder, SWT.NONE);
 		tabItem1.setControl(comp);
@@ -87,8 +88,8 @@ public class CustomizeProblemComposite extends Composite {
 		scopeComposite.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false));
 	}
 
-	private void createLaunchingTab(TabFolder tabFolder) {
-		TabItem tabItem1 = new TabItem(tabFolder, SWT.NULL);
+	private void createLaunchingTab(CTabFolder tabFolder) {
+		CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NULL);
 		tabItem1.setText(CodanUIMessages.CustomizeProblemComposite_LaunchingTab);
 		Composite comp = new Composite(tabFolder, SWT.NONE);
 		tabItem1.setControl(comp);

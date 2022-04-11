@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "52935ead_04a43a4d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-11T20:56:14Z",
+      "side": 1,
+      "message": ":-( Failure due to java heap space\n\n[ERROR] Failed to execute goal org.eclipse.tycho:tycho-p2-repository-plugin:2.7.1:archive-repository (default-archive-repository) on project org.eclipse.cdt.repo: Error packing p2 repository: Problem creating zip: Execution exception: Java heap space -\u003e [Help 1]\n",
+      "revId": "e09a19e818a6a3791dcbc14fd50732727768bb1a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

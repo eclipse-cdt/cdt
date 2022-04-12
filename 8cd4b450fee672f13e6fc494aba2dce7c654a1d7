@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bc9f5078_e51ff112",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-12T11:08:59Z",
+      "side": 1,
+      "message": "I noticed that the org.eclipse.remote.telnet.core.tests plugin was not really a plugin in my workspace. It appears that the .classpath and .project file was never included. Was it an oversight during the repository import or is there a reason?\n\nThe files I added in this changeset was snatched from another test plugin in the remote sub-tree, I suppose that would work...",
+      "revId": "8cd4b450fee672f13e6fc494aba2dce7c654a1d7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

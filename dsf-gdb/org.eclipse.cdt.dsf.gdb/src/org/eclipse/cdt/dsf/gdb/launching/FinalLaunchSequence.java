@@ -655,7 +655,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	/**
 	 * If we are dealing with an remote attach session, perform the attach to debugger.
 	 * Bug 528145
-	 * @since 6.5
+	 * @since 6.6
 	 */
 	@Execute
 	public void stepAttachRemoteToDebugger(final RequestMonitor requestMonitor) {

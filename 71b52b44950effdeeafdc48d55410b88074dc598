@@ -51,6 +51,24 @@
       "parentUuid": "357f47e5_81721b0b",
       "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "70a771c2_f8b3295d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-12T17:37:51Z",
+      "side": 1,
+      "message": "This gerrit does not touch the inclusion of LIBS or USER_OBJS on the command line. All it does it avoid generating the objects.mk that defines the content of the symbols. If the tool still has references to any of the two make symbols, then they will still be added to the command line, but make will resolve them to nothing.\n\nThe content of these two symbols are mapped by the XML magic, so there is no code that does anything particular on a tool that is a linker.\n\n\nIf it\u0027s acceptable that there is *no* way to remove the ${EXTRA_FLAGS} from the command line defined on a tool, we can easily append it if it\u0027s not there already. All that is needed for this \"fix\" is adding 3 lines of code in the Tool#getCommandLinePattern() method.\n\n\nMy main concern here is how to identify a usage where the implementation does not want the ${EXTRA_FLAGS} part, for some reason, from a legacy implementation where it was not available.\nLet\u0027s discuss this during the meeting tomorrow.",
+      "parentUuid": "1902d90e_f7d94adc",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

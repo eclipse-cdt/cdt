@@ -182,7 +182,9 @@ public abstract class AbstractContentAssistTest extends BaseUITestCase {
 
 		ContentAssistResult r = invokeContentAssist(offset, length, isCompletion, isTemplate, filterResults);
 
-		String[] resultStrings = toStringArray(r.results, compareType);
+		List<String> resultStringList = new ArrayList<>(Arrays.asList(toStringArray(r.results, compareType)));
+		resultStringList.removeIf(string -> string != null && string.contains(".settings"));
+		String[] resultStrings = resultStringList.toArray(String[]::new);
 		if (!checkOrder) {
 			Arrays.sort(expected);
 			Arrays.sort(resultStrings);

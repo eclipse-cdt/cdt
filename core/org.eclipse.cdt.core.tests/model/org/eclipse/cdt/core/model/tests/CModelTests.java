@@ -295,12 +295,18 @@ public class CModelTests extends TestCase {
 		testProject.accept(new ICElementVisitor() {
 			@Override
 			public boolean visit(ICElement element) throws CoreException {
+				if (".settings".equals(element.getElementName())) {
+					return false;
+				}
 				actual.add("visit " + element.getResource().getName());
 				return true;
 			}
 
 			@Override
 			public void leave(ICElement element) throws CoreException {
+				if (".settings".equals(element.getElementName())) {
+					return;
+				}
 				actual.add("leave " + element.getResource().getName());
 			}
 		});
@@ -335,6 +341,7 @@ public class CModelTests extends TestCase {
 			ISourceRoot sourceRoot = (ISourceRoot) cSourceRoots.get(0);
 
 			List<ICElement> cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
+			cContainers.removeIf(element -> ".settings".equals(element.getElementName()));
 			assertEquals(1, cContainers.size());
 			assertEquals("test", cContainers.get(0).getElementName());
 
@@ -373,6 +380,7 @@ public class CModelTests extends TestCase {
 			sourceRoot = (ISourceRoot) cSourceRoots.get(0);
 
 			cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
+			cContainers.removeIf(element -> ".settings".equals(element.getElementName()));
 			assertEquals(1, cContainers.size());
 			assertEquals("test", cContainers.get(0).getElementName());
 
@@ -421,6 +429,7 @@ public class CModelTests extends TestCase {
 			ISourceRoot sourceRoot = (ISourceRoot) cSourceRoots.get(0);
 
 			List<ICElement> cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
+			cContainers.removeIf(element -> ".settings".equals(element.getElementName()));
 			assertEquals(1, cContainers.size());
 			assertEquals(subFolder.getName(), cContainers.get(0).getElementName());
 
@@ -456,6 +465,7 @@ public class CModelTests extends TestCase {
 			sourceRoot = (ISourceRoot) cSourceRoots.get(0);
 
 			cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
+			cContainers.removeIf(element -> ".settings".equals(element.getElementName()));
 			assertEquals(1, cContainers.size());
 			assertEquals(subFolder.getName(), cContainers.get(0).getElementName());
 

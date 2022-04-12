@@ -52,6 +52,24 @@
       "parentUuid": "b022e5be_63d2881b",
       "revId": "39c6f63bf49b8ad7e25c525a949dba448257bdbf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ebe4563f_f209d0aa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-12T17:21:35Z",
+      "side": 1,
+      "message": "I don\u0027t know - Eclipse Platform is moving to GitHub so regardless all these processes will be updated soon.",
+      "parentUuid": "1864f1a5_e0b18e43",
+      "revId": "39c6f63bf49b8ad7e25c525a949dba448257bdbf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

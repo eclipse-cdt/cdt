@@ -16,6 +16,23 @@
       "message": "I think you overlooked the fact that there was new API in this class.\nWaiting for Jenkins to verify that the version change is correct. (Noticed using the baseline check in Eclipse)",
       "revId": "93b4b0b22226ffd8645edd5106cbe011c95bc5c4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cdea5645_e31614d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-12T11:58:41Z",
+      "side": 1,
+      "message": "Thanks.",
+      "revId": "93b4b0b22226ffd8645edd5106cbe011c95bc5c4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

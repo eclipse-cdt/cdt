@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "26471e12_f36f9436",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-12T07:29:19Z",
+      "side": 1,
+      "message": "As the build errors is related to the target platform update and not this changeset, I\u0027ll merge this anyway.",
+      "revId": "bf2b387598277aaba0d73c8655a45aacf5282a12",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

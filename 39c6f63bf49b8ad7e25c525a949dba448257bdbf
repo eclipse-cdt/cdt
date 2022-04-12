@@ -34,6 +34,24 @@
       "parentUuid": "2c6f61d6_48191a6c",
       "revId": "39c6f63bf49b8ad7e25c525a949dba448257bdbf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1864f1a5_e0b18e43",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-12T17:14:47Z",
+      "side": 1,
+      "message": "Thanks.\nI\u0027ll hold the merge a few days to see if there is any more reply on https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d579665. Do you know if it\u0027s expected to remove the \"needinfo\" keyword as I\u0027ve provided a snippet for the problem?",
+      "parentUuid": "b022e5be_63d2881b",
+      "revId": "39c6f63bf49b8ad7e25c525a949dba448257bdbf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

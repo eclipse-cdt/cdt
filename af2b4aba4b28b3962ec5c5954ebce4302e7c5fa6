@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "853387a2_fb9929d0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-12T17:12:48Z",
+      "side": 1,
+      "message": "Build failures related to changes in target platform.",
+      "revId": "af2b4aba4b28b3962ec5c5954ebce4302e7c5fa6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

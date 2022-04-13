@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "551afe30_b5fcbb93",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 409,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T18:31:55Z",
+      "side": 1,
+      "message": "Not strictly necessary - but I moved the typecast here so that when we move to Java 17 (hopefully) the code cleanups will automatically catch this and turn it into:\n\n if (fGdbJtagDevice instanceof IGDBJtagConnection device) {",
+      "revId": "6c835d79a403f5afe6029e9b39e2b61bb209e155",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ffd40b72_b2ab8b29",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 373,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T18:31:55Z",
+      "side": 1,
+      "message": "I\u0027m not sure I rebased this bit correctly.",
+      "revId": "6c835d79a403f5afe6029e9b39e2b61bb209e155",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

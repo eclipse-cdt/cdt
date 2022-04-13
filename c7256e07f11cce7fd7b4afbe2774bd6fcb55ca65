@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c5059fcb_35776492",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T18:31:55Z",
+      "side": 1,
+      "message": "Rebase done - over to you John if you have time to pick it up.",
+      "revId": "c7256e07f11cce7fd7b4afbe2774bd6fcb55ca65",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

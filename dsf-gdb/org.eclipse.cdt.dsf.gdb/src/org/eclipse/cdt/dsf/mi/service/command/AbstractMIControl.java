@@ -101,6 +101,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	private TxThread fTxThread;
 	private RxThread fRxThread;
 	private ErrorThread fErrorThread;
+	private final int fNumberOfConcurrentCommands;
 
 	// MI did not always support the --thread/--frame options
 	// This boolean is used to know if we should use -thread-select and -stack-select-frame instead
@@ -190,6 +191,15 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 			fUseThreadAndFrameOptions = true;
 		}
 		fCommandFactory = factory;
+
+		if (isWorkaroundForBufferedMIStreamNeeded()) {
+			fNumberOfConcurrentCommands = 1;
+		} else {
+			fNumberOfConcurrentCommands = NUMBER_CONCURRENT_COMMANDS;
+		}
+		// TODO: For debugging purpose
+		GdbPlugin.logErrorMessage(
+				"Concurrent commands: " + fNumberOfConcurrentCommands + " for " + getClass().getSimpleName());
 	}
 
 	/**
@@ -381,7 +391,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 			fCommandQueue.add(handle);
 			processCommandQueued(handle);
 
-			if (fRxCommands.size() < NUMBER_CONCURRENT_COMMANDS) {
+			if (fRxCommands.size() < fNumberOfConcurrentCommands) {
 				// In a separate dispatch cycle.  This allows command listeners
 				// to respond to the command queued event.
 				getExecutor().execute(new DsfRunnable() {
@@ -1263,5 +1273,12 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 		// Issue a refresh event for any services or UI that is not an ICachingService
 		getSession().dispatchEvent(new RefreshAllDMEvent(getContext()), getProperties());
 		rm.done();
+	}
+
+	/**
+	 * @since 6.6
+	 */
+	protected boolean isWorkaroundForBufferedMIStreamNeeded() {
+		return false;
 	}
 }

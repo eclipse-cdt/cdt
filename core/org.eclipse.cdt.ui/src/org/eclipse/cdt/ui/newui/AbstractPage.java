@@ -175,12 +175,15 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	protected boolean isFile = false;
 
 	// tabs
+	@Deprecated(forRemoval = true)
 	protected TabFolder folder;
+	@Deprecated(forRemoval = true)
 	protected ArrayList<InternalTab> itabs = new ArrayList<>();
 	protected ICPropertyTab currentTab;
 
 	private static boolean isNewOpening = true;
 
+	@Deprecated(forRemoval = true)
 	protected class InternalTab {
 		Composite comp;
 		String text;

@@ -34,6 +34,29 @@
       "parentUuid": "a8672d4a_624afe3d",
       "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "718820c8_2b69e21b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_12_0.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T19:41:40Z",
+      "side": 1,
+      "message": "Incorrect comment - it looks like this came from the 7.12 version, in 7.12 it was a new final launch sequence needed.",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 46
+      },
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

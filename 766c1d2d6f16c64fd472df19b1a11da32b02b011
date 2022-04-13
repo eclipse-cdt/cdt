@@ -54,6 +54,41 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ede40b5_d7ccf4e0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T20:48:43Z",
+      "side": 1,
+      "message": "My 2 cents.",
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bb1942c1_dd649dc4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T20:48:43Z",
+      "side": 1,
+      "message": "\u003e Another possibility would be to accept the penalty and never allow concurrent commands...\n\nIf done just for Linux host, then ok - and in GDBControl_12_0 allow the concurrent again.",
+      "parentUuid": "594a66db_b159de1b",
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "627f158c_e6a1f9e1",
@@ -79,6 +114,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "42f02fc0_0fc7dd47",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T20:48:43Z",
+      "side": 1,
+      "message": "api filter and new minor version.",
+      "parentUuid": "627f158c_e6a1f9e1",
+      "range": {
+        "startLine": 103,
+        "startChar": 1,
+        "endLine": 106,
+        "endChar": 68
+      },
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4039c0e4_1aaa6d3f",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_12_0.java",
         "patchSetId": 2
@@ -90,6 +149,30 @@
       "writtenOn": "2022-04-13T19:52:44Z",
       "side": 1,
       "message": "Maybe I should change this to 2022 and ST too?",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 30
+      },
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f5ca9385_a196aecf",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_12_0.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T20:48:43Z",
+      "side": 1,
+      "message": "Yes.",
+      "parentUuid": "4039c0e4_1aaa6d3f",
       "range": {
         "startLine": 2,
         "startChar": 17,

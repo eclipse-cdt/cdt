@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "01f91442_13a53f6f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-13T18:43:28Z",
+      "side": 1,
+      "message": "I tried to start a runtime where I\u0027ve updated the two fields and the class to be private and it works (except that the API tooling is complaining about the incompatibility), thus, the types are not leaked inside CDT anyway.",
+      "revId": "5c181e6d68b4a09d59957b93b9540c0c903bba39",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

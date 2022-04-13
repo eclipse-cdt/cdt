@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Copyright: %Bundle-Copyright
 Bundle-SymbolicName: org.eclipse.cdt.jsoncdb.hpenonstop.tests
-Bundle-Version: 1.0.100.qualifier
+Bundle-Version: 1.0.200.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Fragment-Host: org.eclipse.cdt.jsoncdb.hpenonstop
 Import-Package: org.junit

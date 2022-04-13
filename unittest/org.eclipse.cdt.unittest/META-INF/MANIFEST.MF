@@ -3,7 +3,7 @@ Automatic-Module-Name: org.eclipse.cdt.unittest
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.unittest;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.unittest.CDTUnitTestPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName

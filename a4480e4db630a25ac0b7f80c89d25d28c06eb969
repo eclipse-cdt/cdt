@@ -16,6 +16,24 @@
       "message": "Cool script @Jonah. But how you have noticed that these resources are out of date? I\u0027ve seen no notification in cross-project or related channels.",
       "revId": "a4480e4db630a25ac0b7f80c89d25d28c06eb969",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "00ddc225_ab2c71d7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-13T17:44:18Z",
+      "side": 1,
+      "message": ":-( I missed that, can you provide a reference. I did this for https://gitlab.eclipse.org/eclipsefdn/it/websites/eclipse.org/-/issues/90 (the gerrit with the actual change is https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192713/3)",
+      "parentUuid": "14a715cc_5106de53",
+      "revId": "a4480e4db630a25ac0b7f80c89d25d28c06eb969",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

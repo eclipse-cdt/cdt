@@ -38,6 +38,47 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "594a66db_b159de1b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-13T19:48:52Z",
+      "side": 1,
+      "message": "Would it be cleaner to do the opposite?\n\nI have always considered it part of the downstream projects releng process  to check if there are new classes in the DSF-GDB world that needs to be sub-classed in order for their add-ons to work as expected.\nAnother possibility would be to accept the penalty and never allow concurrent commands...",
+      "parentUuid": "a8672d4a_624afe3d",
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "627f158c_e6a1f9e1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GdbDebugServicesFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-13T19:48:52Z",
+      "side": 1,
+      "message": "My API tooling complains here:\n\nThe field org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory.GDB_9_0_VERSION has been added to a class\n\nThe field org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory.GDB_12_0_VERSION has been added to a class\n\nIs this expected? 6.6.0 is the plugin version, so it has already been incremented to allow new API...\nShould I add a problem filter for the 2 new constants? Or what\u0027s the correct approach?",
+      "range": {
+        "startLine": 103,
+        "startChar": 1,
+        "endLine": 106,
+        "endChar": 68
+      },
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "718820c8_2b69e21b",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/command/GDBControl_12_0.java",
         "patchSetId": 2

@@ -16,6 +16,23 @@
       "message": "I tried to start a runtime where I\u0027ve updated the two fields and the class to be private and it works (except that the API tooling is complaining about the incompatibility), thus, the types are not leaked inside CDT anyway.",
       "revId": "5c181e6d68b4a09d59957b93b9540c0c903bba39",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e6a0b05_655c78c8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2022-04-14T08:45:59Z",
+      "side": 1,
+      "message": "Looks good to me. Triggered a build on patchset 2 as the Verified +1 got lost due to the commit message update",
+      "revId": "5c181e6d68b4a09d59957b93b9540c0c903bba39",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

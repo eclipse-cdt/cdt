@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "42f23c93_169281e5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T17:02:09Z",
+      "side": 1,
+      "message": "@Jonah, I think you can abandon this gerrit now, or do you see any reason to keep it?",
+      "revId": "f8b694511d0022d2392e6cc5be4b20a4af790596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

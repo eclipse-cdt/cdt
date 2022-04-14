@@ -239,6 +239,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "3c5a3862_88283356",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T21:13:08Z",
+      "side": 1,
+      "message": "I suppose the best way is what I will push in PS5 in a few sec then. This was my first thought, but then I say the 3 puts inside the processNextQueuedCommand() method and thought it was not good enough.",
+      "parentUuid": "7885e1c9_7e4c7b76",
+      "range": {
+        "startLine": 758,
+        "startChar": 6,
+        "endLine": 758,
+        "endChar": 22
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d478822f_ddb77e60",
@@ -360,6 +384,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "599ba1e3_1d4a0102",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1293,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T21:13:08Z",
+      "side": 1,
+      "message": "ACK",
+      "parentUuid": "8cf2f0ed_f92aef76",
+      "range": {
+        "startLine": 1293,
+        "startChar": 11,
+        "endLine": 1293,
+        "endChar": 33
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "5e22bc70_649cf082",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 4
@@ -466,6 +514,30 @@
       "side": 1,
       "message": "The 10.2.90 is pre-release of 10.3 - that particular one is from 20210621. So it is from the GDB 10 branch, after the most recent release. Probably has ARM specific commits on it too.\n\nWith a little nudge ARM may backport the GDB fix and release another 10.2.90 release with it fixed, then it becomes even harder to test for in CDT, see this line for a past example:\n\n\t\tif (compareVersionWith(GDB_7_2_VERSION) \u003e\u003d 0 || \"6.8.50.20090414\".equals(fVersion)) { //$NON-NLS-1$",
       "parentUuid": "8d7496d9_3687e937",
+      "range": {
+        "startLine": 1318,
+        "startChar": 46,
+        "endLine": 1318,
+        "endChar": 53
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "51178596_06b7290e",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1318,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T21:13:08Z",
+      "side": 1,
+      "message": "Hm. I think the \"20090414\" in your 6.8.50 example is the BFD version. (see gdbsupport/create-version.sh in the GDB source tree)\nIf it\u0027s the BFD version, then there is nothing that differentiate 2 version of GDB during the development cycle...\nIf you think it\u0027s okay, lets just ignore all the 12.0.x versions and just set 12.1 as the boundary.\n\nBtw, I think Arm is well into the GCC11 track now and I do not expect to see another 10.x delivery. They will likely want to take a look at fixing GDB 11.x (whatever version they decide to use).",
+      "parentUuid": "745b87a9_4c2aaade",
       "range": {
         "startLine": 1318,
         "startChar": 46,

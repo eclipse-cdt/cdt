@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "2dfcf303_05ddf1d0",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/JtagUi.properties",
+        "patchSetId": 7
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T16:44:23Z",
+      "side": 1,
+      "message": "Use GDB\u0027\u0027s extended-remote\n\nNote the two \u0027 in the string. With only one, it will treat the rest of the string as literal and not do any {1} replacement and so on (not that it matters for this particular string, but anyway).\nThe same problem exists for other strings in the same file, so maybe not that important.",
+      "range": {
+        "startLine": 78,
+        "startChar": 80,
+        "endLine": 78,
+        "endChar": 105
+      },
+      "revId": "6c6f8b96b879b5ce7b292c57cc12837859306596",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95efdea9_e93df0dd",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T16:44:23Z",
+      "side": 0,
+      "message": "Why are the NON-NLS tags removed in this method?",
+      "range": {
+        "startLine": 213,
+        "startChar": 75,
+        "endLine": 213,
+        "endChar": 89
+      },
+      "revId": "7400e22b1fbe0d451481e01298d9bfb2d2a5c402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

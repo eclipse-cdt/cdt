@@ -90,6 +90,46 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "44211946_cd38e79c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-14T17:06:47Z",
+      "side": 1,
+      "message": "@Torbjörn, I will wait a short while for any comments before proceeding.",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a62e444b_ed1d0ec1",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-14T17:06:47Z",
+      "side": 1,
+      "message": "Since this is API, I think we need a default implementation returning null. We might use a null value to indicate that ${EXTRA_FLAGS} should be appended to the command line pattern if necessary.",
+      "range": {
+        "startLine": 721,
+        "startChar": 17,
+        "endLine": 721,
+        "endChar": 30
+      },
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6f86e0d9_08db5dcb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 5

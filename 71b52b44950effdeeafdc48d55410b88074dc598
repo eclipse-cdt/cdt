@@ -73,6 +73,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "b4b106d3_dbeb4035",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-14T17:01:49Z",
+      "side": 1,
+      "message": "Regarding compatibility with legacy toolchain descriptions:\n* Consumers of the older public GnuMakefileGenerator are not affected\n* The modified GnuMakefileGenerator is internal and fairly new so arguably reasonable to modify\n* The modified ManagedCommandLineGenerator is API and typically extended rather than replaced\n* The main area of concern is toolchain descriptions which override the default command line pattern or where a user has overridden this within a project. Within the modified GnuMakefileGenerator, I think we could detect the case where a tool is providing \"extra flags\" but the command line pattern does not include \"${EXTRA_FLAGS}\" and append the extra flags to the command line.",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6f86e0d9_08db5dcb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 5

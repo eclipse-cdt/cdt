@@ -397,7 +397,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	}
 
 	private void processNextQueuedCommand() {
-		if (!fCommandQueue.isEmpty()) {
+		if (fRxCommands.isEmpty() && !fCommandQueue.isEmpty()) {
 			final CommandHandle handle = fCommandQueue.remove(0);
 			if (handle != null) {
 				processCommandSent(handle);

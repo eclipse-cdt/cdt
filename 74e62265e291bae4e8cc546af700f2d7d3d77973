@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "67349bf1_1f3e72a6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T22:27:01Z",
+      "side": 1,
+      "message": "I cherry-picked the commit to cdt_10_6 branch in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192764 with the protected -\u003e private change.\nLets discuss in there if we will make a 10.6.1 release with it.",
+      "revId": "74e62265e291bae4e8cc546af700f2d7d3d77973",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

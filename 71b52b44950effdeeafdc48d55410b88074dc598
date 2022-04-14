@@ -69,6 +69,29 @@
       "parentUuid": "1902d90e_f7d94adc",
       "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f86e0d9_08db5dcb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-14T16:46:04Z",
+      "side": 1,
+      "message": "Notes: The \"flags\" array is use for read-only presentation of \"All options\" in the Tool Settings UI. These flags are presented in \"All options\" even if ${FLAGS} is not present in the command line pattern. Formally, we could observe the order of ${FLAGS} and ${EXTRA_FLAGS} in the command line pattern and use this information to decide whether to append or to prepend \"extraFlags\".\n\nPerhaps we should make the merging of extraFlags to the flags[] unconditional since the presence of other flags in this array is also unconditional.",
+      "range": {
+        "startLine": 78,
+        "startChar": 3,
+        "endLine": 78,
+        "endChar": 41
+      },
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

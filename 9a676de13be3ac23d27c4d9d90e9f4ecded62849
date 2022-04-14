@@ -1,0 +1,182 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "73f65d04_c0952fc8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "Finally been able to reproduce this.\nFor some reason, the issue does not appear on an updated Gentoo system, but it does happen on a Ubuntu 20.04 system. I\u0027ve verified that the PS4 works on a Ubuntu 20.04 system with a faulty arm-none-eabi-gdb binary by overriding the string returned by \"--version\" in a wrapper shell script with this content:\n\n```\n#!/bin/bash\nif [ \"x$1\" \u003d \"x--version\" ]; then\n    #echo \"GNU gdb (GNU Arm Embedded Toolchain 10.3-2021.10) 10.2.90.20210621-git\"\n    echo \"GNU gdb (GNU Arm Embedded Toolchain 10.3-2021.10) 12.1\"\n    exit 0\nfi\nexec arm-none-eabi-gdb \"$@\"\n```\n\nPlease review and see if there is anything that can be implemented in a better way.",
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "98b5905f_8f49b309",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 443,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "Here is one command that can be queued.",
+      "range": {
+        "startLine": 443,
+        "startChar": 7,
+        "endLine": 443,
+        "endChar": 34
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e33fefdc_8bc13d2d",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 453,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "And here is another one for the same command that got queued.",
+      "range": {
+        "startLine": 453,
+        "startChar": 7,
+        "endLine": 453,
+        "endChar": 34
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f84b0d7_7bbbd39b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 464,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "And finally, we add the requested command.\n\nWorst case scenario us that there are at least 3 commands queued at the same time.\nI\u0027m not sure if there can be more or it\u0027s only these 3, but 3 is enough for the concurrency problem!\n\nThe only way to protect against this is to handle every attempt to queue in the fTxCommands or where we take from the queue. I think it\u0027s cleaner to do it where the items are taken from the queue and that\u0027s what\u0027s implemented in TxThread#run().",
+      "range": {
+        "startLine": 464,
+        "startChar": 4,
+        "endLine": 464,
+        "endChar": 28
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "046fb1e7_22e60897",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "Are there any better way to achieve the delay here?",
+      "range": {
+        "startLine": 758,
+        "startChar": 6,
+        "endLine": 758,
+        "endChar": 22
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d478822f_ddb77e60",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1293,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "I\u0027ve put this as a separate private method as it might be useful in sub-classes in the future to identify the GDB version for similar workarounds. Feels like the heavy artillery to do a sub-class for these types of issues.",
+      "range": {
+        "startLine": 1293,
+        "startChar": 11,
+        "endLine": 1293,
+        "endChar": 33
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5e22bc70_649cf082",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1317,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "Somewhere between the 8.3.x and the 8.4/9.0 version, the breaking change was introduced. To avoid incorrectly mark 8.3.x (stable releases) as broken, I decided to go with 8.3.50 (the development version for the increment).",
+      "range": {
+        "startLine": 1317,
+        "startChar": 45,
+        "endLine": 1317,
+        "endChar": 51
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5aa057d1_1a034393",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1318,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "Am using 12.0.51 here as there is no way to identify the commit within the 12.0.50 version (all have the same version number).",
+      "range": {
+        "startLine": 1318,
+        "startChar": 46,
+        "endLine": 1318,
+        "endChar": 53
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

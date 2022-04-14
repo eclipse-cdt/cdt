@@ -89,6 +89,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "80e13861_d1e1d038",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T15:42:25Z",
+      "side": 1,
+      "message": "I revisited the entire sub-class concept and decided to to a different way. Please review and see what you think.",
+      "parentUuid": "bb1942c1_dd649dc4",
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "627f158c_e6a1f9e1",

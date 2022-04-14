@@ -215,6 +215,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "7885e1c9_7e4c7b76",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T20:27:57Z",
+      "side": 1,
+      "message": "Yes - you are correct in your analysis. The original code did not do a good job of limiting to 3 outstanding commands.\n\n\u003e If the call path to queueCommand() is fast enough\n\nYour conclusion is correct - if multiple queueCommands are done in the same dispatch cycle then the check \"if (fRxCommands.size() \u003c fNumberOfConcurrentCommands) {\" will not be done at a usefule time. I think that can be easily resolved by moving it into the DsfRunnable. \n\n\u003e RxThread.processMIOutput\n\nActually how this call is done all the pending command can be added, much more than 3 even IIUC - That is because its call to processNextQueuedCommand is unconditional. Many operations to GDB causes multiple lines of reply. Even the \"(gdb)\" prompt after each normal response will cause an extra processNextQueuedCommand to be run. \n\nSo yes as we need to limit it more strictly then having it at another time is important.\n\n\n---- \n\nTherefore with the understanding that something else needs to be done besides reducing fNumberOfConcurrentCommands to 1 this is my comment on this bit of code.\n\nIt would be best to not busy-wait, but ignoring that... We shouldn\u0027t have org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl.TxThread.run() block on anything other than fTxCommands.take otherwise the thread can hang and the fTerminatorHandle will never be read (see comment on line 746). Perhaps not a problem if fStoppedCommandProcessing is also checked here - make it volatile if you do that as it will be accessed from multiple threads with such a change.\n\nSo we should try to block fTxCommands from getting more than 1 item in it at once (apart from case on line 420 which I really don\u0027t think there are many if any cases in practice of).\n\nSomething like https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192763 is sort of ok - it leaves a small race condition in TxThread.run between the fTxCommands.take and the fRxCommands.put.",
+      "parentUuid": "e97b7d36_adea62a0",
+      "range": {
+        "startLine": 758,
+        "startChar": 6,
+        "endLine": 758,
+        "endChar": 22
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d478822f_ddb77e60",
@@ -312,6 +336,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "8cf2f0ed_f92aef76",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1293,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T20:27:57Z",
+      "side": 1,
+      "message": "private in 10.6.1 and protected in 10.7.",
+      "parentUuid": "52bfdb81_d1cfff28",
+      "range": {
+        "startLine": 1293,
+        "startChar": 11,
+        "endLine": 1293,
+        "endChar": 33
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "5e22bc70_649cf082",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 4
@@ -394,6 +442,30 @@
       "side": 1,
       "message": "Okay. I was uncertain as the Arm provided GDB is claiming to be \"10.2.90.20210621-git\" for the 10.3-2021.10 Arm delivery.\nI\u0027m not aware of what version scheme that GDB is using, so I don\u0027t know what 10.2.90 means here.",
       "parentUuid": "0ea96a27_7e70f918",
+      "range": {
+        "startLine": 1318,
+        "startChar": 46,
+        "endLine": 1318,
+        "endChar": 53
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "745b87a9_4c2aaade",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1318,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T20:27:57Z",
+      "side": 1,
+      "message": "The 10.2.90 is pre-release of 10.3 - that particular one is from 20210621. So it is from the GDB 10 branch, after the most recent release. Probably has ARM specific commits on it too.\n\nWith a little nudge ARM may backport the GDB fix and release another 10.2.90 release with it fixed, then it becomes even harder to test for in CDT, see this line for a past example:\n\n\t\tif (compareVersionWith(GDB_7_2_VERSION) \u003e\u003d 0 || \"6.8.50.20090414\".equals(fVersion)) { //$NON-NLS-1$",
+      "parentUuid": "8d7496d9_3687e937",
       "range": {
         "startLine": 1318,
         "startChar": 46,

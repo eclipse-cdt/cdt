@@ -37,6 +37,29 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "8a0a3144_e8614b37",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T18:57:36Z",
+      "side": 1,
+      "message": "I don\u0027t know if it makes much sense to keep this as it can take a long time before the DsfRunnable instance is executed. The check needs to be done after too!\nSee my comment on line 758.",
+      "range": {
+        "startLine": 397,
+        "startChar": 3,
+        "endLine": 397,
+        "endChar": 58
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "cc77e1ca_4d6abc01",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 4
@@ -168,6 +191,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "e97b7d36_adea62a0",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T18:57:36Z",
+      "side": 1,
+      "message": "I took another look and if we ignore the fact that sometime, even if rare, there can be 3 commands in the pipe without waiting for response (just old debuggers?) then there is still a possibility to have more than one command sent.\n\nThe method processNextQueuedCommand() can be executed from 2 call paths:\n1. From the RxThread.processMIOutput method as the last step to feed anything new to the GDB client.\n2. From queueCommand() method to signal that there are new commands in the queue.\n\nIf the call path to queueCommand() is fast enough, then there could be several instances of the inline DsfRunnable class waiting to be executed by the DsfExecutor instance. As each of these runables would see that there is at least one new command in the fCommandQueue, they would all push one of these commands to fTxCommands and that would generate too many GDB commands to be sent at once by the TxThread.\n\n\nOne possible solution is to have the while-sleep block in the TxThread.run() method to catch it or the check for the concurrent commands need to be placed inside processNextQueuedCommand() method. If the check in queueCommand() should be left there or removed (as it doesn\u0027t do what is expected at the current placement) is another story.\nIf we go for the move of the concurrency check, then we could still send too many commands in the case as per your comment on line 420. I suppose it\u0027s a matter of how strict we want the concurrency check to be. :)\n\nLet me know what you think!",
+      "parentUuid": "91bcc1bd_5a324305",
+      "range": {
+        "startLine": 758,
+        "startChar": 6,
+        "endLine": 758,
+        "endChar": 22
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d478822f_ddb77e60",
@@ -241,6 +288,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "52bfdb81_d1cfff28",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1293,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T18:57:36Z",
+      "side": 1,
+      "message": "I suppose we could have them private in the 10.6.1 and protected in 10.7? Or would it be better to keep them as private regardless?",
+      "parentUuid": "cd2c6229_27d9d892",
+      "range": {
+        "startLine": 1293,
+        "startChar": 11,
+        "endLine": 1293,
+        "endChar": 33
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "5e22bc70_649cf082",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 4
@@ -299,6 +370,30 @@
       "side": 1,
       "message": "This is fine - 12.0.50 is a dev only version number anyway. The release will be 12.1.",
       "parentUuid": "5aa057d1_1a034393",
+      "range": {
+        "startLine": 1318,
+        "startChar": 46,
+        "endLine": 1318,
+        "endChar": 53
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d7496d9_3687e937",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1318,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T18:57:36Z",
+      "side": 1,
+      "message": "Okay. I was uncertain as the Arm provided GDB is claiming to be \"10.2.90.20210621-git\" for the 10.3-2021.10 Arm delivery.\nI\u0027m not aware of what version scheme that GDB is using, so I don\u0027t know what 10.2.90 means here.",
+      "parentUuid": "0ea96a27_7e70f918",
       "range": {
         "startLine": 1318,
         "startChar": 46,

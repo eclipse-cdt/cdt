@@ -22,6 +22,30 @@
       },
       "revId": "7400e22b1fbe0d451481e01298d9bfb2d2a5c402",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8a3b2447_f2ad75bb",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.ui/src/org/eclipse/cdt/debug/gdbjtag/ui/GDBJtagDSFDebuggerTab.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 213,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T16:51:40Z",
+      "side": 0,
+      "message": "user error during rebase. I hope @John will fix it as the UI change caused me the most merge trouble (as noted later down in this file). The original patchset was from before we had formatting standards + there were lots of other changes to the file.\n\nTo be clear, I haven\u0027t tested this change - I may have tested it 4 years ago, can\u0027t remember.",
+      "parentUuid": "95efdea9_e93df0dd",
+      "range": {
+        "startLine": 213,
+        "startChar": 75,
+        "endLine": 213,
+        "endChar": 89
+      },
+      "revId": "7400e22b1fbe0d451481e01298d9bfb2d2a5c402",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

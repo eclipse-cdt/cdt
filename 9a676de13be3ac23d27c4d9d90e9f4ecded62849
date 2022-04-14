@@ -37,6 +37,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "cc77e1ca_4d6abc01",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 420,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T17:23:22Z",
+      "side": 1,
+      "message": "This if statements is almost always false. fUseThreadAndFrameOptions \u003d\u003d true for GDB \u003e\u003d 7 and only the CLI commands and Raw Commands has supportsThreadAndFrameOptions \u003d\u003d false.\n\nAs a result for almost all command there isn\u0027t a problem. Further, even if CLI or Raw command is used, they would have to have a specific thread/frame other than the current one for the select commands to be sent.",
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "98b5905f_8f49b309",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 4
@@ -127,6 +144,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": true,
+      "key": {
+        "uuid": "91bcc1bd_5a324305",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 758,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T17:23:22Z",
+      "side": 1,
+      "message": "I don\u0027t think this is actually needed because of comment on line 420.",
+      "parentUuid": "046fb1e7_22e60897",
+      "range": {
+        "startLine": 758,
+        "startChar": 6,
+        "endLine": 758,
+        "endChar": 22
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": false,
       "key": {
         "uuid": "d478822f_ddb77e60",
@@ -176,6 +217,30 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "cd2c6229_27d9d892",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1293,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T17:23:22Z",
+      "side": 1,
+      "message": "If we release this for 10.6.1 then these protected methods need to become private.",
+      "parentUuid": "ee429a9f_552b6298",
+      "range": {
+        "startLine": 1293,
+        "startChar": 11,
+        "endLine": 1293,
+        "endChar": 33
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "5e22bc70_649cf082",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 4
@@ -210,6 +275,30 @@
       "writtenOn": "2022-04-14T15:42:25Z",
       "side": 1,
       "message": "Am using 12.0.51 here as there is no way to identify the commit within the 12.0.50 version (all have the same version number).",
+      "range": {
+        "startLine": 1318,
+        "startChar": 46,
+        "endLine": 1318,
+        "endChar": 53
+      },
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ea96a27_7e70f918",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 1318,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T17:23:22Z",
+      "side": 1,
+      "message": "This is fine - 12.0.50 is a dev only version number anyway. The release will be 12.1.",
+      "parentUuid": "5aa057d1_1a034393",
       "range": {
         "startLine": 1318,
         "startChar": 46,

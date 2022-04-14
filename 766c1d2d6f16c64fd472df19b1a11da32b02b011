@@ -107,6 +107,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7c256f57_f51f3e1f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-14T17:23:22Z",
+      "side": 1,
+      "message": "This is fine by me. With the protected methods subclasses can override.",
+      "parentUuid": "80e13861_d1e1d038",
+      "revId": "766c1d2d6f16c64fd472df19b1a11da32b02b011",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "627f158c_e6a1f9e1",

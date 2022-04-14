@@ -107,6 +107,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0b39adf3_2f96419c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T21:58:55Z",
+      "side": 1,
+      "message": "I agree on the first 3 bullets.\nI tried to implement your 4th bullet in PS6, please check if that is in line with your thought.",
+      "parentUuid": "b4b106d3_dbeb4035",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a62e444b_ed1d0ec1",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
         "patchSetId": 5
@@ -130,6 +148,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "d9a9a313_c8d0af1b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T21:58:55Z",
+      "side": 1,
+      "message": "If there should be a default implementation, I suppose it should return \"new String[0]\". Or do you see a particular use-case where we would need to differentiate no-extra-flags from not-implemented? And, do you see anyone actually implementing ITool without extending one of the CDT classes? :)\nAnyway, done in PS6 as an array with 0 elements.",
+      "parentUuid": "a62e444b_ed1d0ec1",
+      "range": {
+        "startLine": 721,
+        "startChar": 17,
+        "endLine": 721,
+        "endChar": 30
+      },
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6f86e0d9_08db5dcb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 5
@@ -141,6 +183,30 @@
       "writtenOn": "2022-04-14T16:46:04Z",
       "side": 1,
       "message": "Notes: The \"flags\" array is use for read-only presentation of \"All options\" in the Tool Settings UI. These flags are presented in \"All options\" even if ${FLAGS} is not present in the command line pattern. Formally, we could observe the order of ${FLAGS} and ${EXTRA_FLAGS} in the command line pattern and use this information to decide whether to append or to prepend \"extraFlags\".\n\nPerhaps we should make the merging of extraFlags to the flags[] unconditional since the presence of other flags in this array is also unconditional.",
+      "range": {
+        "startLine": 78,
+        "startChar": 3,
+        "endLine": 78,
+        "endChar": 41
+      },
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9a4ca89c_a913dbf0",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T21:58:55Z",
+      "side": 1,
+      "message": "I suppose we could. IIRC, I did it this way to be non-intrusive for extenders since it would require the ${EXTRA_FLAGS} to be in the commandLinePattern.\n\nWhen looking at this with the task to implement what you wrote, I think we should just unconditionally merge them as it will make the code so much easier. I don\u0027t see too much gain in adding the complexity. For example, what should be done in \"${FLAGS}\" is missing from the command line pattern? With the current implementation, it does not matter, flags is still flags... With the ordering - well, it depends ;)\nCan we agree to unconditionally merge the 2 arrays after the flagsStr has been created on line 67?\nI\u0027ll do it like that in the next PS - we can always change it if you think some other solution is better.",
+      "parentUuid": "6f86e0d9_08db5dcb",
       "range": {
         "startLine": 78,
         "startChar": 3,

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "08fa156c_d910c54a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T09:09:50Z",
+      "side": 1,
+      "message": "It did not quite work as expected. Added some debugging prints in PS3 that will be removed before the changeset is submitted.\nI currently am unable to trigger the defect at my home system, but there is one system (without a CDT runtime) at the office that triggers the defect every time. Until I\u0027ve sorted out why the GDB client shutdown early with the changeset applied, I\u0027d like to hold of on the submit.",
+      "revId": "e7fd27661bcf672430a02262b98a49e9ff573498",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

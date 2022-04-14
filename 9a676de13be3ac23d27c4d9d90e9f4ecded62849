@@ -20,6 +20,23 @@
     {
       "unresolved": false,
       "key": {
+        "uuid": "fe09b33a_ad5215e6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-14T16:34:34Z",
+      "side": 1,
+      "message": "\u003e Build Failed \n\u003e \n\u003e https://ci.eclipse.org/cdt/job/cdt-verify-code-cleanliness-pipeline/3693/ : FAILURE.\n\n@Jonah: Have you also been getting these kind of errors on and off for the past few weeks? Is there anything wrong with our Jenkins jobs?\nI\u0027ve retriggered the job to get the correct verdict.\n",
+      "revId": "9a676de13be3ac23d27c4d9d90e9f4ecded62849",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
         "uuid": "98b5905f_8f49b309",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/mi/service/command/AbstractMIControl.java",
         "patchSetId": 4

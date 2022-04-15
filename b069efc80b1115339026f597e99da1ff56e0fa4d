@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "83e62276_396b17c1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-15T00:54:37Z",
+      "side": 1,
+      "message": "This is ok. Before we can release 10.6.1 we need to do the branch prep work - the branch is building now, but it need version bumps and compare + replace and a bunch of other stuff done to it - see https://github.com/eclipse-cdt/cdt-infra/issues/53 for the last such checklist.\n\nAs a side note - up until now we have bumped every single feature on a patch release, which has always struck me as a little overkill. It would be nice to actually only bump features that have changed, so that users are presented with a much shorter list of features. What happens now is all the CDT features show as updating, even if only a single bundle has actually changed. \n\n\n",
+      "revId": "b069efc80b1115339026f597e99da1ff56e0fa4d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5ce2477_627dd195",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-15T11:16:17Z",
+      "side": 1,
+      "message": "I tried to do a smaller set of updates, but as the version of /pom.xml is needed for the baseline compare, all other pom.xml needs to point to this new version and that brings all the different feature/plugins with it.\n\nWhile doing the update, I noticed that org.eclipse.cdt.debug.dap ships a lot of files that should likely not be part of the jar file. The first build of this changeset should show it (unless it\u0027s a problem with my local build!).\n\nI also noticed several plugins/features that have a pom.xml while I see no obvious reason for it. Tycho should be able to generate that content automatically.",
+      "revId": "26841b33a69509c05456d97778b6238706187f3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

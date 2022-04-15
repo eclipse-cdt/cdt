@@ -16,6 +16,23 @@
       "message": "I tried to do a smaller set of updates, but as the version of /pom.xml is needed for the baseline compare, all other pom.xml needs to point to this new version and that brings all the different feature/plugins with it.\n\nWhile doing the update, I noticed that org.eclipse.cdt.debug.dap ships a lot of files that should likely not be part of the jar file. The first build of this changeset should show it (unless it\u0027s a problem with my local build!).\n\nI also noticed several plugins/features that have a pom.xml while I see no obvious reason for it. Tycho should be able to generate that content automatically.",
       "revId": "26841b33a69509c05456d97778b6238706187f3b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4be0b40f_0973a313",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-15T12:31:00Z",
+      "side": 1,
+      "message": "Apparently, running the build on Jenkins produces a different set of files that differ.\n\nJenkins (https://ci.eclipse.org/cdt/job/cdt-verify-code-cleanliness-pipeline/3702/artifact/baseline-compare-and-replace.log):\n```\n[ERROR] Failed to execute goal org.eclipse.tycho:tycho-p2-plugin:2.5.0:p2-metadata (baselinereplace-p2-metadata) on project org.eclipse.cdt.debug.dap: baseline and build artifacts have same version but different contents\n[ERROR]    no-classifier: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/build/config.gypi: different\n[ERROR] -\u003e [Help 1]\n```\n\n\nMy local build using docker:\n```\n[ERROR] Failed to execute goal org.eclipse.tycho:tycho-p2-plugin:2.5.0:p2-metadata (baselinereplace-p2-metadata) on project org.eclipse.cdt.debug.dap: baseline and build artifacts have same version but different contents\n[ERROR]    no-classifier: different\n[ERROR]       debug-servers/node_modules/.yarn-integrity: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/build/Release/.deps/Release/obj.target/node-addon-api/src/nothing.o.d: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/build/config.gypi: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/node-addon-api/src/node-api.target.mk: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/node-addon-api/src/nothing.target.mk: different\n[ERROR] -\u003e [Help 1]\n```\n\n\nRegardless, I\u0027m not sure that the appropriate solution is to bump the version as that would include a different binary although the plugin should not be changed.",
+      "revId": "26841b33a69509c05456d97778b6238706187f3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

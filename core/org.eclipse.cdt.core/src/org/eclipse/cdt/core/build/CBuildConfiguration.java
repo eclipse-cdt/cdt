@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 QNX Software Systems and others.
+ * Copyright (c) 2015, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -729,7 +729,24 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		synchronized (scannerInfoLock) {
 			info = scannerInfoCache.getScannerInfo(resource);
 		}
-		if (info == null || info.getIncludePaths().length == 0) {
+		// Following is a kludge to fix Bug 579668 whereby sometimes a timing
+		// bug occurs and scanner info for a project that specifies a container target
+		// has not initialized the include paths correctly to point to copied includes
+		// from the image target.  We check to see if org.eclipse.cdt.docker.launcher is
+		// found in the include paths which is the .plugin directory where we copy headers
+		// to in the .metadata folder.
+		boolean needsFixing = false;
+		if (info != null && info.getIncludePaths().length > 0 && toolChain != null
+				&& toolChain.getId().startsWith("gcc-img-sha")) { //$NON-NLS-1$
+			needsFixing = true;
+			for (String includePath : info.getIncludePaths()) {
+				if (includePath.contains("org.eclipse.cdt.docker.launcher")) { //$NON-NLS-1$
+					needsFixing = false;
+					break;
+				}
+			}
+		}
+		if (info == null || info.getIncludePaths().length == 0 || needsFixing) {
 			ICElement celement = CCorePlugin.getDefault().getCoreModel().create(resource);
 			if (celement instanceof ITranslationUnit) {
 				try {

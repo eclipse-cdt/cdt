@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "acac81c7_0cff9a55",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-15T12:23:54Z",
+      "side": 1,
+      "message": "If we go for a 10.6.1 release, maybe we should include this one too in order to avoid the FileNotFoundException for /css/e4-dark_autotools.css and /css/e4-dark_make.css on each launch of Eclipse.",
+      "revId": "c4920f78f9ed65b38a578541d79f214c1407568f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

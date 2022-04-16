@@ -215,6 +215,30 @@
       },
       "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "731227d9_506b89a4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-16T18:13:32Z",
+      "side": 1,
+      "message": "Yes. Let\u0027s unconditionally merge the two arrays. I am less concerned about the ordering. The main objective of the \"All options\" UI is simply to provide some sort of feedback as to which flags are active.",
+      "parentUuid": "9a4ca89c_a913dbf0",
+      "range": {
+        "startLine": 78,
+        "startChar": 3,
+        "endLine": 78,
+        "endChar": 41
+      },
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

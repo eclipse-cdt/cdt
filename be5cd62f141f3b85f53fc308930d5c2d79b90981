@@ -50,6 +50,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "765c3de9_f71aff7b",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-16T21:39:38Z",
+      "side": 1,
+      "message": "Is this comment still relevant?",
+      "parentUuid": "1397ddee_af76bea9",
+      "range": {
+        "startLine": 75,
+        "startChar": 2,
+        "endLine": 75,
+        "endChar": 59
+      },
+      "revId": "be5cd62f141f3b85f53fc308930d5c2d79b90981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4bf46c3d_17e5b619",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 4

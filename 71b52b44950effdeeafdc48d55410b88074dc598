@@ -123,6 +123,60 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8b24e4b_ff2741d6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-16T21:39:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0b39adf3_2f96419c",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9055a63c_259ae5c2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-16T21:39:38Z",
+      "side": 1,
+      "message": "Discussion continued in other comment.",
+      "parentUuid": "70a771c2_f8b3295d",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ea7c4f3_faf17778",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-16T21:39:38Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "44211946_cd38e79c",
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a62e444b_ed1d0ec1",
@@ -160,6 +214,30 @@
       "side": 1,
       "message": "If there should be a default implementation, I suppose it should return \"new String[0]\". Or do you see a particular use-case where we would need to differentiate no-extra-flags from not-implemented? And, do you see anyone actually implementing ITool without extending one of the CDT classes? :)\nAnyway, done in PS6 as an array with 0 elements.",
       "parentUuid": "a62e444b_ed1d0ec1",
+      "range": {
+        "startLine": 721,
+        "startChar": 17,
+        "endLine": 721,
+        "endChar": 30
+      },
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ec24ff74_1a212a34",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-16T21:39:38Z",
+      "side": 1,
+      "message": "Is the default implementation in PS6 good enough?",
+      "parentUuid": "d9a9a313_c8d0af1b",
       "range": {
         "startLine": 721,
         "startChar": 17,

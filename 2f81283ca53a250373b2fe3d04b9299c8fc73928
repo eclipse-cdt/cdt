@@ -1,6 +1,7 @@
 {
   "comments": [
     {
+      "unresolved": true,
       "key": {
         "uuid": "b16f179c_087053b1",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
@@ -20,10 +21,34 @@
         "endChar": 24
       },
       "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
-      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
-      "unresolved": true
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6823a354_a4b45bbf",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-16T21:39:38Z",
+      "side": 1,
+      "message": "Not relevant anymore.",
+      "parentUuid": "b16f179c_087053b1",
+      "range": {
+        "startLine": 721,
+        "startChar": 17,
+        "endLine": 721,
+        "endChar": 24
+      },
+      "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "d318deeb_1c28963a",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
@@ -43,10 +68,34 @@
         "endChar": 28
       },
       "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
-      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
-      "unresolved": true
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "56035f55_8c733ae6",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 726,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-16T21:39:38Z",
+      "side": 1,
+      "message": "Not relevant anymore.",
+      "parentUuid": "d318deeb_1c28963a",
+      "range": {
+        "startLine": 726,
+        "startChar": 17,
+        "endLine": 726,
+        "endChar": 28
+      },
+      "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
       "key": {
         "uuid": "c936b266_b24f173f",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
@@ -66,10 +115,34 @@
         "endChar": 138
       },
       "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
-      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
-      "unresolved": true
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "383e9f2e_e6c8f90c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-16T21:39:38Z",
+      "side": 1,
+      "message": "Not relevant anymore.",
+      "parentUuid": "c936b266_b24f173f",
+      "range": {
+        "startLine": 108,
+        "startChar": 118,
+        "endLine": 108,
+        "endChar": 138
+      },
+      "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
       "key": {
         "uuid": "04d849f9_43ed083b",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
@@ -89,10 +162,10 @@
         "endChar": 24
       },
       "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
-      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
-      "unresolved": false
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
       "key": {
         "uuid": "b73e41cd_68109789",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Tool.java",
@@ -112,8 +185,7 @@
         "endChar": 28
       },
       "revId": "2f81283ca53a250373b2fe3d04b9299c8fc73928",
-      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31",
-      "unresolved": false
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

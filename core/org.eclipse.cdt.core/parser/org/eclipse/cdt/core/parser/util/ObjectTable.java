@@ -174,7 +174,7 @@ public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {
 	 */
 	@Override
 	public Iterator<T> iterator() {
-		return new Iterator<T>() {
+		return new Iterator<>() {
 			int nextIndex;
 
 			@Override

@@ -64,7 +64,7 @@ public class GdbResumeWithoutSignalCommand extends AbstractDebugCommand implemen
 			return;
 		}
 
-		Query<Object> query = new Query<Object>() {
+		Query<Object> query = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Object> rm) {
 				IRunControl runControl = fTracker.getService(IRunControl.class);

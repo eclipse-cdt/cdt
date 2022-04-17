@@ -36,7 +36,7 @@ public class MkdirCommand extends AbstractRemoteCommand<Void> {
 		/*
 		 * Now create directory
 		 */
-		SftpCallable<Void> c = new SftpCallable<Void>() {
+		SftpCallable<Void> c = new SftpCallable<>() {
 			@Override
 			public Void call() throws JSchException, SftpException {
 				getChannel().mkdir(fRemotePath.toString());

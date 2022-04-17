@@ -33,7 +33,7 @@ import org.eclipse.ui.PlatformUI;
 public class TerminalsViewMementoHandler {
 	// The list of items to save. See the workbench listener implementation
 	// in o.e.tm.terminal.view.ui.activator.UIPlugin.
-	private final List<CTabItem> saveables = new ArrayList<CTabItem>();
+	private final List<CTabItem> saveables = new ArrayList<>();
 
 	/**
 	 * Sets the list of saveable items.
@@ -154,7 +154,7 @@ public class TerminalsViewMementoHandler {
 			IMemento[] connections = memento.getChildren("connection"); //$NON-NLS-1$
 			for (IMemento connection : connections) {
 				// Create the properties container that holds the terminal properties
-				Map<String, Object> properties = new HashMap<String, Object>();
+				Map<String, Object> properties = new HashMap<>();
 
 				// Set the view id attributes
 				properties.put(ITerminalsConnectorConstants.PROP_ID, id);

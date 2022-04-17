@@ -32,6 +32,7 @@ public class GetEnvCommand extends AbstractCommand<Map<String, String>> {
 		this.in = new DataInputStream(conn.getCommandChannel().getInputStream());
 	}
 
+	@Override
 	public Map<String, String> call() throws ProxyException {
 		try {
 			final StreamChannel chan = openChannel();
@@ -49,7 +50,7 @@ public class GetEnvCommand extends AbstractCommand<Map<String, String>> {
 			}
 
 			int len = resultStream.readInt();
-			Map<String, String> env = new HashMap<String, String>(len);
+			Map<String, String> env = new HashMap<>(len);
 			for (int i = 0; i < len; i++) {
 				String key = resultStream.readUTF();
 				String value = resultStream.readUTF();

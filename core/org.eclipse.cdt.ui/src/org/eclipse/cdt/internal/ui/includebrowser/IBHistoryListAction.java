@@ -52,7 +52,7 @@ public class IBHistoryListAction extends Action {
 			setTitle(IBMessages.IBHistoryListAction_HistoryDialog_title);
 			String[] buttonLabels = new String[] { IBMessages.IBHistoryListAction_Remove_label, };
 
-			IListAdapter<ITranslationUnit> adapter = new IListAdapter<ITranslationUnit>() {
+			IListAdapter<ITranslationUnit> adapter = new IListAdapter<>() {
 				@Override
 				public void customButtonPressed(ListDialogField<ITranslationUnit> field, int index) {
 					doCustomButtonPressed();

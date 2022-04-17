@@ -92,7 +92,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 */
 	private static final String PREF_WARN_ABOUT_EMPTY_ASSIST_CATEGORY = "EmptyDefaultAssistCategory"; //$NON-NLS-1$
 
-	private static final Comparator<CompletionProposalCategory> ORDER_COMPARATOR = new Comparator<CompletionProposalCategory>() {
+	private static final Comparator<CompletionProposalCategory> ORDER_COMPARATOR = new Comparator<>() {
 		@Override
 		public int compare(CompletionProposalCategory d1, CompletionProposalCategory d2) {
 			return d1.getSortOrder() - d2.getSortOrder();

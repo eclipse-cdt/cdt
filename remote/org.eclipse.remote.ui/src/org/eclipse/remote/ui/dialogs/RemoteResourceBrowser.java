@@ -217,7 +217,7 @@ public class RemoteResourceBrowser extends Dialog implements IRunnableContext {
 		if (fResourceBrowserWidget != null) {
 			return fResourceBrowserWidget.getResources();
 		}
-		return new ArrayList<IFileStore>();
+		return new ArrayList<>();
 	}
 
 	@Override

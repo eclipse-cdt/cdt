@@ -46,7 +46,7 @@ public class MILogActionEnabler implements ILogActionEnabler {
 	@Override
 	public String evaluateExpression(final String expression) throws Exception {
 		// Use a Query to synchronize the call
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> drm) {
 				final IExpressions expressionService = fServiceTracker.getService(IExpressions.class);

@@ -171,7 +171,7 @@ public class CPathIncludeSymbolEntryPage extends CPathIncludeSymbolEntryBasePage
 		super(CPathEntryMessages.IncludeSymbolEntryPage_title);
 		fContext = context;
 		IncludeSymbolAdapter adapter = new IncludeSymbolAdapter();
-		fIncludeSymPathsList = new TreeListDialogField<CPElementGroup>(adapter, buttonLabel,
+		fIncludeSymPathsList = new TreeListDialogField<>(adapter, buttonLabel,
 				new CPElementLabelProvider(true, false)) {
 
 			@Override

@@ -115,7 +115,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 	 */
 	@Override
 	public boolean canConnect() {
-		Query<Boolean> canConnectQuery = new Query<Boolean>() {
+		Query<Boolean> canConnectQuery = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Boolean> rm) {
 				IProcesses procService = fTracker.getService(IProcesses.class);
@@ -271,7 +271,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
 	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, final IRequest request) throws CoreException {
-		Query<Boolean> connectQuery = new Query<Boolean>() {
+		Query<Boolean> connectQuery = new Query<>() {
 			@Override
 			public void execute(final DataRequestMonitor<Boolean> rm) {
 				connect(new RequestMonitor(fExecutor, rm) {
@@ -521,7 +521,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 		// Prompt the user to choose one or more processes
 		new PromptForPidJob(LaunchUIMessages.getString("ProcessPrompter.PromptJob"), //$NON-NLS-1$
 				processes.toArray(new IProcessExtendedInfo[processes.size()]), debuggedProcesses,
-				new DataRequestMonitor<Object>(fExecutor, rm) {
+				new DataRequestMonitor<>(fExecutor, rm) {
 					@Override
 					protected void handleCancel() {
 						rm.cancel();

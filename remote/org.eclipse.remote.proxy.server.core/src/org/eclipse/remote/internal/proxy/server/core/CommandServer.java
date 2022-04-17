@@ -51,6 +51,7 @@ public class CommandServer implements Runnable {
 		this.cmdOut = new DataOutputStream(chan.getOutputStream());
 	}
 
+	@Override
 	public void run() {
 		new Thread("cmd reader") { //$NON-NLS-1$
 			@Override
@@ -169,12 +170,12 @@ public class CommandServer implements Runnable {
 		int ioChanId = in.readByte();
 		int errChanId = in.readByte();
 		int length = in.readInt();
-		List<String> command = new ArrayList<String>(length);
+		List<String> command = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
 			command.add(in.readUTF());
 		}
 		length = in.readInt();
-		Map<String, String> env = new HashMap<String, String>(length);
+		Map<String, String> env = new HashMap<>(length);
 		for (int i = 0; i < length; i++) {
 			String key = in.readUTF();
 			String val = in.readUTF();

@@ -95,7 +95,7 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 
 	public boolean canDebugNewExecutable() {
 
-		Query<Boolean> canDebugQuery = new Query<Boolean>() {
+		Query<Boolean> canDebugQuery = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Boolean> rm) {
 				IProcesses procService = fTracker.getService(IProcesses.class);
@@ -157,7 +157,7 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 
 	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {

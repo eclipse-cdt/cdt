@@ -47,7 +47,7 @@ public class CSourceNotFoundDescriptionFactory implements IAdapterFactory {
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType.equals(ICSourceNotFoundDescription.class) && adaptableObject instanceof IFrameDMContext) {
 			final IFrameDMContext frameDMC = (IFrameDMContext) adaptableObject;
-			Query<IStack.IFrameDMData> query = new Query<IStack.IFrameDMData>() {
+			Query<IStack.IFrameDMData> query = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<IStack.IFrameDMData> rm) {
 					DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),

@@ -39,7 +39,7 @@ public class StreamChannelManager implements Runnable {
 
 	private class Sender implements Runnable {
 		private OutputStream out;
-		private BlockingQueue<ByteArrayOutputStream> queue = new LinkedBlockingQueue<ByteArrayOutputStream>();
+		private BlockingQueue<ByteArrayOutputStream> queue = new LinkedBlockingQueue<>();
 		private boolean running = true;
 
 		public Sender(OutputStream out) {
@@ -344,10 +344,9 @@ public class StreamChannelManager implements Runnable {
 	private final static int SERVER_ID_MASK = 1 << 15;
 	private final static int MAX_CHANNELS = SERVER_ID_MASK >> 1;
 
-	private final Map<Integer, StreamChannel> channels = (Map<Integer, StreamChannel>) Collections
+	private final Map<Integer, StreamChannel> channels = Collections
 			.synchronizedMap(new HashMap<Integer, StreamChannel>());
-	private final List<IChannelListener> listeners = (List<IChannelListener>) Collections
-			.synchronizedList(new ArrayList<IChannelListener>());
+	private final List<IChannelListener> listeners = Collections.synchronizedList(new ArrayList<IChannelListener>());
 
 	private Set<Short> usedIds = new HashSet<>();
 	private int nextUnusedChannelId;

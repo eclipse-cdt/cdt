@@ -69,7 +69,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 	 * The set of CPPVariable objects for which initial value computation is in progress on each thread.
 	 * This is used to guard against recursion during initial value computation.
 	 */
-	private static final ThreadLocal<Set<CPPVariable>> fInitialValueInProgress = new ThreadLocal<Set<CPPVariable>>() {
+	private static final ThreadLocal<Set<CPPVariable>> fInitialValueInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<CPPVariable> initialValue() {
 			return new HashSet<>();

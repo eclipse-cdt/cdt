@@ -51,7 +51,7 @@ public class ExpressionVMProviderContentStragegy extends DefaultVMContentProvide
 	private void updateExpressionWithNode(final IExpressionVMNode node, final IExpressionUpdate update) {
 		// Call the expression node to parse the expression and fill in the value.
 		node.update(new VMExpressionUpdate(update, update.getExpression(),
-				new ViewerDataRequestMonitor<Object>(getVMProvider().getExecutor(), update) {
+				new ViewerDataRequestMonitor<>(getVMProvider().getExecutor(), update) {
 					@Override
 					protected void handleSuccess() {
 						// Check if the evaluated node has child expression nodes.
@@ -63,17 +63,18 @@ public class ExpressionVMProviderContentStragegy extends DefaultVMContentProvide
 								update.getExpression());
 
 						if (matchingNode != null && !matchingNode.equals(node)) {
-							updateExpressionWithNode(matchingNode, new VMExpressionUpdate(
-									update.getElementPath().createChildPath(getData()), update.getViewerInput(),
-									update.getPresentationContext(), update.getExpression(),
-									new ViewerDataRequestMonitor<Object>(getVMProvider().getExecutor(), update) {
+							updateExpressionWithNode(matchingNode,
+									new VMExpressionUpdate(update.getElementPath().createChildPath(getData()),
+											update.getViewerInput(), update.getPresentationContext(),
+											update.getExpression(),
+											new ViewerDataRequestMonitor<>(getVMProvider().getExecutor(), update) {
 
-										@Override
-										protected void handleSuccess() {
-											update.setExpressionElement(getData());
-											update.done();
-										}
-									}));
+												@Override
+												protected void handleSuccess() {
+													update.setExpressionElement(getData());
+													update.done();
+												}
+											}));
 						} else {
 							update.setExpressionElement(getData());
 							update.done();

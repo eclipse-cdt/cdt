@@ -239,13 +239,13 @@ public class CPPTemplates {
 
 	// Infrastructure to protect against rogue template metaprograms that don't terminate.
 	private static final int TEMPLATE_INSTANTIATION_DEPTH_LIMIT = 128;
-	private static final ThreadLocal<Integer> fTemplateInstantiationDepth = new ThreadLocal<Integer>() {
+	private static final ThreadLocal<Integer> fTemplateInstantiationDepth = new ThreadLocal<>() {
 		@Override
 		protected Integer initialValue() {
 			return 0;
 		}
 	};
-	private static final ThreadLocal<Set<TypeInstantiationRequest>> instantiationsInProgress = new ThreadLocal<Set<TypeInstantiationRequest>>() {
+	private static final ThreadLocal<Set<TypeInstantiationRequest>> instantiationsInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<TypeInstantiationRequest> initialValue() {
 			return new HashSet<>();

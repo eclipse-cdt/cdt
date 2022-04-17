@@ -14,9 +14,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.StreamChannelManager;
 import org.eclipse.remote.proxy.protocol.core.StreamChannelManager.IChannelListener;
-import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 
 public class Server {
 	private volatile boolean running;

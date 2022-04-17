@@ -33,6 +33,7 @@ public class DeleteCommand extends AbstractCommand<Void> {
 		this.path = path;
 	}
 
+	@Override
 	public Void call() throws ProxyException {
 		try {
 			out.writeByte(Protocol.PROTO_COMMAND);

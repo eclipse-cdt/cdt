@@ -64,7 +64,7 @@ public class GdbReverseResumeCommand extends AbstractDebugCommand implements IRe
 			return;
 		}
 
-		Query<Object> reverseResume = new Query<Object>() {
+		Query<Object> reverseResume = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Object> rm) {
 				IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
@@ -99,7 +99,7 @@ public class GdbReverseResumeCommand extends AbstractDebugCommand implements IRe
 			return false;
 		}
 
-		Query<Boolean> canReverseResume = new Query<Boolean>() {
+		Query<Boolean> canReverseResume = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Boolean> rm) {
 				IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);

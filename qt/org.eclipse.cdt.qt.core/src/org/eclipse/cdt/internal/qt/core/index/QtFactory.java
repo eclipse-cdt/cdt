@@ -104,7 +104,7 @@ public class QtFactory {
 		}
 	}
 
-	private static final CDTIndex.Accessor<QtVersion> QtVersionAccessor = new CDTIndex.Accessor<QtVersion>() {
+	private static final CDTIndex.Accessor<QtVersion> QtVersionAccessor = new CDTIndex.Accessor<>() {
 		@Override
 		public QtVersion access(IIndex index) throws CoreException {
 			// Multiple macros might be found, sort the values and choose the highest version.

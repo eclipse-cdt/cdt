@@ -190,7 +190,7 @@ public class CPPClassSpecialization extends CPPSpecialization
 	private ICPPClassSpecializationScope specScope;
 	private ObjectMap specializationMap = ObjectMap.EMPTY_MAP;
 	private ICPPBase[] bases;
-	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<Set<IBinding>>() {
+	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<IBinding> initialValue() {
 			return new HashSet<>();

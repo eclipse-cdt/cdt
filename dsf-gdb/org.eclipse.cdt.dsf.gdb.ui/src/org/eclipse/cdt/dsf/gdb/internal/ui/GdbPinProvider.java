@@ -133,7 +133,7 @@ public class GdbPinProvider implements IPinProvider {
 		IThreadDMData data = null;
 		final DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fSession.getId());
 		try {
-			Query<IThreadDMData> query = new Query<IThreadDMData>() {
+			Query<IThreadDMData> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<IThreadDMData> rm) {
 					final IProcesses processes = tracker.getService(IProcesses.class);

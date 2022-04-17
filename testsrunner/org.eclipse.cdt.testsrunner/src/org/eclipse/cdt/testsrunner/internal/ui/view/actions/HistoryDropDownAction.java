@@ -103,7 +103,7 @@ public class HistoryDropDownAction extends Action {
 		 * Fills the testing sessions history list.
 		 */
 		private void createHistoryList() {
-			IListAdapter<ITestingSession> adapter = new IListAdapter<ITestingSession>() {
+			IListAdapter<ITestingSession> adapter = new IListAdapter<>() {
 				@Override
 				public void customButtonPressed(ListDialogField<ITestingSession> field, int index) {
 					doCustomButtonPressed(index);

@@ -23,10 +23,12 @@ public class Activator extends Plugin {
 
 	private static Plugin plugin;
 
+	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		plugin = this;
 	}
 
+	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		plugin = null;
 	}

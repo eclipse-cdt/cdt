@@ -107,7 +107,7 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 			((DsfExecutable) callable).setSubmitted();
 		}
 
-		return new Callable<V>() {
+		return new Callable<>() {
 			@Override
 			@SuppressWarnings("unchecked")
 			public V call() throws Exception {

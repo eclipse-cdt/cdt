@@ -137,7 +137,7 @@ public class TransactionTests {
 	public void singleTransactionTest() throws InterruptedException, ExecutionException {
 		final TestSingleTransaction testTransaction = new TestSingleTransaction();
 		// Request data from cache
-		Query<Integer> q = new Query<Integer>() {
+		Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Integer> rm) {
 				testTransaction.request(rm);
@@ -160,7 +160,7 @@ public class TransactionTests {
 
 		final TestSumTransaction testTransaction = new TestSumTransaction();
 		// Request data from cache
-		Query<Integer> q = new Query<Integer>() {
+		Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Integer> rm) {
 				testTransaction.request(rm);

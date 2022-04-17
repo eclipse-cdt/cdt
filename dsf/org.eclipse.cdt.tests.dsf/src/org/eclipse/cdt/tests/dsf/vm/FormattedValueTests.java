@@ -185,7 +185,7 @@ abstract public class FormattedValueTests extends TestCase
 	}
 
 	private void initializeService(final IDsfService service) throws InterruptedException, ExecutionException {
-		Query<Object> initQuery = new Query<Object>() {
+		Query<Object> initQuery = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				rm.setData(new Object());
@@ -227,7 +227,7 @@ abstract public class FormattedValueTests extends TestCase
 	}
 
 	private void shutdownService(final IDsfService service) throws InterruptedException, ExecutionException {
-		Query<Object> shutdownQuery = new Query<Object>() {
+		Query<Object> shutdownQuery = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				rm.setData(new Object());

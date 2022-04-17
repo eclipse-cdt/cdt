@@ -100,7 +100,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 				final IExecutionDMContext execContext = DMContexts.getAncestorOfType(dmContext,
 						IExecutionDMContext.class);
 				if (execContext != null) {
-					Query<Boolean> query = new Query<Boolean>() {
+					Query<Boolean> query = new Query<>() {
 						@Override
 						protected void execute(DataRequestMonitor<Boolean> rm) {
 							DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
@@ -197,7 +197,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 			return false;
 		}
 
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Boolean> rm) {
 				DsfServicesTracker servicesTracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),

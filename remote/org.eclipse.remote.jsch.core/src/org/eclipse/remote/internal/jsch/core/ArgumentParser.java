@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ArgumentParser {
 	private static List<String> parseCommandline(String commandline) {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		StringCharacterIterator iterator = new StringCharacterIterator(commandline);
 
 		for (iterator.first(); iterator.current() != CharacterIterator.DONE; iterator.next()) {
@@ -136,7 +136,7 @@ public class ArgumentParser {
 	 *
 	 */
 	public ArgumentParser(List<String> tokenList) {
-		this.tokens = new ArrayList<String>(tokenList);
+		this.tokens = new ArrayList<>(tokenList);
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class ArgumentParser {
 	 *
 	 */
 	public ArgumentParser(String command, List<String> parameterList) {
-		this.tokens = new ArrayList<String>();
+		this.tokens = new ArrayList<>();
 		this.tokens.add(command);
 		this.tokens.addAll(parameterList);
 	}
@@ -317,7 +317,7 @@ public class ArgumentParser {
 		if (this.tokens.size() == 0) {
 			return null;
 		}
-		return new ArrayList<String>(this.tokens.subList(1, this.tokens.size()));
+		return new ArrayList<>(this.tokens.subList(1, this.tokens.size()));
 	}
 
 	/**
@@ -344,7 +344,7 @@ public class ArgumentParser {
 	 * @return The List
 	 */
 	public List<String> getTokenList() {
-		return new ArrayList<String>(this.tokens);
+		return new ArrayList<>(this.tokens);
 	}
 
 	/**

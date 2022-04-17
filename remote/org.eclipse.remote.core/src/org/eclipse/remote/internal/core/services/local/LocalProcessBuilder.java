@@ -47,7 +47,7 @@ public class LocalProcessBuilder extends AbstractRemoteProcessBuilder {
 	private static final String ATTR_CLASS = "class"; //$NON-NLS-1$
 
 	private final IProcessFactory fProcessFactory;
-	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
+	private final Map<String, String> fRemoteEnv = new HashMap<>();
 
 	private Process localProcess;
 	private PTY pty;

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06b16b32_1a22acd7",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T12:30:11Z",
+      "side": 1,
+      "message": "I got an idea to keep the objects.mk, but have it contain empty definitions for the variables.\nThe reason I\u0027m considering this way is to reduce the impact on existing projects and the test cases. Is this a good idea or is it better to simply get rid of the objects.mk file?",
+      "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

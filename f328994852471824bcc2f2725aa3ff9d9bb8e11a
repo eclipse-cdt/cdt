@@ -16,6 +16,24 @@
       "message": "I noticed that these tests were failing on my development system. Is there any reason to not remove the project in a try { ... } finally { ... } way?",
       "revId": "f328994852471824bcc2f2725aa3ff9d9bb8e11a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "95a1b064_6ee06a2b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-17T16:35:10Z",
+      "side": 1,
+      "message": "I think they should be removed - and I have made such changes as I have come across them - https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192689\n\nBut I haven\u0027t gone out of my way to look for such cases.",
+      "parentUuid": "5cbb2ea8_b2c97a3d",
+      "revId": "f328994852471824bcc2f2725aa3ff9d9bb8e11a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

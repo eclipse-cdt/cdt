@@ -51,7 +51,7 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
 		DsfSession session = DsfSession.getSession(fContext.getSessionId());
 		if (session != null && session.isActive()) {
 			try {
-				Query<Boolean> query = new Query<Boolean>() {
+				Query<Boolean> query = new Query<>() {
 					@Override
 					protected void execute(DataRequestMonitor<Boolean> rm) {
 						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
@@ -84,7 +84,7 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
 		if (session != null && session.isActive()) {
 			Throwable exception = null;
 			try {
-				Query<Object> query = new Query<Object>() {
+				Query<Object> query = new Query<>() {
 					@Override
 					protected void execute(final DataRequestMonitor<Object> rm) {
 						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
@@ -125,7 +125,7 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
 		DsfSession session = DsfSession.getSession(fContext.getSessionId());
 		if (session != null && session.isActive()) {
 			try {
-				Query<Boolean> query = new Query<Boolean>() {
+				Query<Boolean> query = new Query<>() {
 					@Override
 					protected void execute(DataRequestMonitor<Boolean> rm) {
 						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),
@@ -158,7 +158,7 @@ public class MoveToLine implements IMoveToLine, IMoveToAddress {
 		if (session != null && session.isActive()) {
 			Throwable exception = null;
 			try {
-				Query<Object> query = new Query<Object>() {
+				Query<Object> query = new Query<>() {
 					@Override
 					protected void execute(final DataRequestMonitor<Object> rm) {
 						DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),

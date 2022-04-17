@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 public class SignificantMacros implements ISignificantMacros {
 	public static final char[] DEFINED = { 0 };
 	public static final char[] UNDEFINED = { 1 };
-	private static final Comparator<char[]> SORTER = new Comparator<char[]>() {
+	private static final Comparator<char[]> SORTER = new Comparator<>() {
 		@Override
 		public int compare(char[] s1, char[] s2) {
 			return CharArrayUtils.compare(s1, s2);

@@ -28,7 +28,7 @@ public class OpenConnectionHandler extends AbstractHandler {
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 		if (selection != null && selection instanceof IStructuredSelection) {
 			// Get the manageable connections from the selection
-			final List<IRemoteConnection> connections = new ArrayList<IRemoteConnection>();
+			final List<IRemoteConnection> connections = new ArrayList<>();
 			@SuppressWarnings("unchecked")
 			Iterator<Object> i = ((IStructuredSelection) selection).iterator();
 			while (i.hasNext()) {

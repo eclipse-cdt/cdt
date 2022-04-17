@@ -73,6 +73,7 @@ public class ServerGetInputStreamCommand extends AbstractServerCommand {
 		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
+	@Override
 	public void exec() throws ProxyException {
 		try {
 			InputStream in = new BufferedInputStream(

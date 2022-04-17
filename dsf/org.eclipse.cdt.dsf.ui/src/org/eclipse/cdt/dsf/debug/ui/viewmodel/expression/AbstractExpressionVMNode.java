@@ -80,7 +80,7 @@ public abstract class AbstractExpressionVMNode extends AbstractDMVMNode implemen
 						} else {
 							final List<Object> elements = getData();
 
-							final MultiRequestMonitor<DataRequestMonitor<Boolean>> multiRm = new MultiRequestMonitor<DataRequestMonitor<Boolean>>(
+							final MultiRequestMonitor<DataRequestMonitor<Boolean>> multiRm = new MultiRequestMonitor<>(
 									getExecutor(), null) {
 								@Override
 								protected void handleCompleted() {

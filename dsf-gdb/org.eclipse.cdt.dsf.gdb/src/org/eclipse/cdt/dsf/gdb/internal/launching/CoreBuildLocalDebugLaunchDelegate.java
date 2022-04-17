@@ -104,7 +104,7 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 
 		gdbLaunch.addCLIProcess(gdbLaunch.getGDBPath().toOSString() + " (" + gdbVersion + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
-		Query<Object> ready = new Query<Object>() {
+		Query<Object> ready = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Object> rm) {
 				DsfServicesTracker tracker = new DsfServicesTracker(

@@ -176,7 +176,7 @@ public class PDAPlugin extends Plugin {
 			if (launch instanceof PDALaunch && !((PDALaunch) launch).isShutDown()) {
 				final PDALaunch pdaLaunch = (PDALaunch) launch;
 
-				Query<Object> launchShutdownQuery = new Query<Object>() {
+				Query<Object> launchShutdownQuery = new Query<>() {
 					@Override
 					protected void execute(DataRequestMonitor<Object> rm) {
 						pdaLaunch.shutdownServices(rm);

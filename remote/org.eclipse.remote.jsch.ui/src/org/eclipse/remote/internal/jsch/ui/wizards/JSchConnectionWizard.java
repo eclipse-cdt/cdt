@@ -39,6 +39,7 @@ public class JSchConnectionWizard extends Wizard implements IRemoteUIConnectionW
 		addPage(fPage);
 	}
 
+	@Override
 	public IRemoteConnectionWorkingCopy open() {
 		WizardDialog dialog = new WizardDialog(fShell, this);
 		dialog.setBlockOnOpen(true);
@@ -63,14 +64,17 @@ public class JSchConnectionWizard extends Wizard implements IRemoteUIConnectionW
 		return true;
 	}
 
+	@Override
 	public void setConnection(IRemoteConnectionWorkingCopy connection) {
 		fPage.setConnection(connection);
 	}
 
+	@Override
 	public void setConnectionName(String name) {
 		fPage.setConnectionName(name);
 	}
 
+	@Override
 	public void setInvalidConnectionNames(Set<String> names) {
 		fPage.setInvalidConnectionNames(names);
 	}

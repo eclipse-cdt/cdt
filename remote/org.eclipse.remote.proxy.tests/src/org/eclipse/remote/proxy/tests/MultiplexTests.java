@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 import org.eclipse.remote.proxy.protocol.core.StreamChannelManager;
 import org.eclipse.remote.proxy.protocol.core.StreamChannelManager.IChannelListener;
-import org.eclipse.remote.proxy.protocol.core.StreamChannel;
 
 import junit.framework.TestCase;
 
@@ -154,8 +154,8 @@ public class MultiplexTests extends TestCase {
 			final PipedOutputStream outClnt = new PipedOutputStream(inSvr);
 			final PipedOutputStream outSvr = new PipedOutputStream(inClnt);
 
-			final List<List<Integer>> clntSentBufs = new ArrayList<List<Integer>>();
-			final List<List<Integer>> clntRecvBufs = new ArrayList<List<Integer>>();
+			final List<List<Integer>> clntSentBufs = new ArrayList<>();
+			final List<List<Integer>> clntRecvBufs = new ArrayList<>();
 
 			final Thread[][] clntReaders = new Thread[NUM_THREADS][NUM_CHANS_PER_THREAD];
 			final Thread[][] clntWriters = new Thread[NUM_THREADS][NUM_CHANS_PER_THREAD];
@@ -207,7 +207,7 @@ public class MultiplexTests extends TestCase {
 	private List<StreamChannel> runChannelTest(final StreamChannelManager mpx, final Thread[] testers,
 			final Thread[][] readers, final Thread[][] writers, final List<List<Integer>> sentBufs,
 			final List<List<Integer>> recvBufs) throws IOException {
-		final List<StreamChannel> channels = new ArrayList<StreamChannel>();
+		final List<StreamChannel> channels = new ArrayList<>();
 		for (int i = 0; i < NUM_THREADS; i++) {
 			final int thread = i;
 			testers[i] = new Thread("client test thread " + thread) {

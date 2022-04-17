@@ -156,7 +156,7 @@ public class JSchConnectionProxyFactory {
 					} catch (IOException e) {
 						Activator.log(e);
 					}
-				};
+				}
 			}.start();
 		}
 

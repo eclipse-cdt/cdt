@@ -65,7 +65,7 @@ public class DsfQueryTests {
 
 	@Test
 	public void simpleGetTest() throws InterruptedException, ExecutionException {
-		Query<Integer> q = new Query<Integer>() {
+		Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Integer> rm) {
 				rm.setData(1);
@@ -89,7 +89,7 @@ public class DsfQueryTests {
 	public void getErrorTest() throws InterruptedException, ExecutionException {
 		final String error_message = "Test Error";
 
-		Query<Integer> q = new Query<Integer>() {
+		Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Integer> rm) {
 				rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
@@ -119,7 +119,7 @@ public class DsfQueryTests {
 
 	@Test
 	public void doneExceptionTest() throws InterruptedException, ExecutionException {
-		Query<Integer> q = new Query<Integer>() {
+		Query<Integer> q = new Query<>() {
 			@SuppressWarnings("deprecation")
 			@Override
 			protected void execute(DataRequestMonitor<Integer> rm) {
@@ -147,7 +147,7 @@ public class DsfQueryTests {
 
 	@Test
 	public void getWithMultipleDispatchesTest() throws InterruptedException, ExecutionException {
-		Query<Integer> q = new Query<Integer>() {
+		Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 				fExecutor.execute(new DsfRunnable() {
@@ -175,7 +175,7 @@ public class DsfQueryTests {
 
 	@Test(expected = ExecutionException.class)
 	public void exceptionOnGetTest() throws InterruptedException, ExecutionException {
-		Query<Integer> q = new Query<Integer>() {
+		Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 				rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, -1, "", null)); //$NON-NLS-1$
@@ -195,7 +195,7 @@ public class DsfQueryTests {
 
 	@Test
 	public void cancelBeforeWaitingTest() throws InterruptedException, ExecutionException {
-		final Query<Integer> q = new Query<Integer>() {
+		final Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 				fail("Query was cancelled, it should not be called."); //$NON-NLS-1$
@@ -229,7 +229,7 @@ public class DsfQueryTests {
 		final DataRequestMonitor<?>[] rmHolder = new DataRequestMonitor<?>[1];
 		final Boolean[] cancelCalled = new Boolean[] { Boolean.FALSE };
 
-		final Query<Integer> q = new Query<Integer>() {
+		final Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 				synchronized (rmHolder) {
@@ -298,7 +298,7 @@ public class DsfQueryTests {
 
 	@Test
 	public void getTimeoutTest() throws InterruptedException, ExecutionException {
-		final Query<Integer> q = new Query<Integer>() {
+		final Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 				// Call done with a delay of 1 second, to avoid stalling the tests.

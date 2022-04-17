@@ -478,7 +478,7 @@ public class DsfMemoryBlockRetrieval extends PlatformObject implements IMemoryBl
 	protected BigInteger resolveMemoryAddress(final IDMContext dmc, final String expression) throws DebugException {
 
 		// Use a Query to "synchronize" the downstream calls
-		Query<BigInteger> query = new Query<BigInteger>() {
+		Query<BigInteger> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<BigInteger> drm) {
 				// Lookup for the ExpressionService

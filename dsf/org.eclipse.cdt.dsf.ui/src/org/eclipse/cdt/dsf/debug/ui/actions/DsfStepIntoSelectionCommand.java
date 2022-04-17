@@ -118,7 +118,7 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand
 
 		if (fSession != null && fSession.isActive()) {
 			try {
-				Query<Boolean> query = new Query<Boolean>() {
+				Query<Boolean> query = new Query<>() {
 					@Override
 					protected void execute(DataRequestMonitor<Boolean> rm) {
 						IRunControl3 runControl = fTracker.getService(IRunControl3.class);
@@ -149,7 +149,7 @@ public class DsfStepIntoSelectionCommand extends AbstractDebugCommand
 		if (fSession != null && fSession.isActive()) {
 			Throwable exception = null;
 			try {
-				Query<Object> query = new Query<Object>() {
+				Query<Object> query = new Query<>() {
 					@Override
 					protected void execute(final DataRequestMonitor<Object> rm) {
 						IRunControl3 runControl = fTracker.getService(IRunControl3.class);

@@ -62,7 +62,7 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 	@Override
 	public Map<String, String> environment() {
 		if (remoteEnv == null) {
-			remoteEnv = new HashMap<String, String>(proxyConnection.getEnv());
+			remoteEnv = new HashMap<>(proxyConnection.getEnv());
 		}
 		return remoteEnv;
 	}
@@ -89,7 +89,7 @@ public class ProxyProcessBuilder extends AbstractRemoteProcessBuilder {
 			/*
 			 * If environment has not been touched, then don't send anything
 			 */
-			final Map<String, String> env = new HashMap<String, String>();
+			final Map<String, String> env = new HashMap<>();
 			if (remoteEnv != null) {
 				env.putAll(remoteEnv);
 			}

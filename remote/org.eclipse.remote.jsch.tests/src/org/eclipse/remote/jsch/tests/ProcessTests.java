@@ -9,8 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
@@ -21,6 +19,8 @@ import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.RemoteProcessAdapter;
 import org.eclipse.remote.internal.jsch.core.JSchConnection;
+
+import junit.framework.TestCase;
 
 public class ProcessTests extends TestCase {
 	private static final String USERNAME = "test"; //$NON-NLS-1$

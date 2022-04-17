@@ -279,7 +279,7 @@ public class CPPVisitor extends ASTQueries {
 	// Thread-local set of declarators for which auto types are being created.
 	// Used to prevent infinite recursion while processing invalid self-referencing
 	// auto-type declarations.
-	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators = new ThreadLocal<Set<IASTDeclarator>>() {
+	private static final ThreadLocal<Set<IASTDeclarator>> autoTypeDeclarators = new ThreadLocal<>() {
 		@Override
 		protected Set<IASTDeclarator> initialValue() {
 			return new HashSet<>();

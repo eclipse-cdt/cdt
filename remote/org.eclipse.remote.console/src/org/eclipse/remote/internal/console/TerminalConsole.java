@@ -69,6 +69,7 @@ public class TerminalConsole extends AbstractConsole implements ITerminalConsole
 		final String name = nameBuff.toString();
 		if (!name.equals(getName())) {
 			UIJob job = new UIJob("updating name") { //$NON-NLS-1$
+				@Override
 				public IStatus runInUIThread(IProgressMonitor monitor) {
 					TerminalConsole.this.setName(name);
 					return Status.OK_STATUS;
@@ -79,6 +80,7 @@ public class TerminalConsole extends AbstractConsole implements ITerminalConsole
 		}
 	}
 
+	@Override
 	public IPageBookViewPage createPage(IConsoleView view) {
 		view.setFocus();
 		return new TerminalConsolePage(this, encoding);

@@ -235,7 +235,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 			final DataRequestMonitor<IDMContext> rm) {
 		final IMIContainerDMContext containerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
-		DataRequestMonitor<MIInfo> attachRm = new ImmediateDataRequestMonitor<MIInfo>(rm) {
+		DataRequestMonitor<MIInfo> attachRm = new ImmediateDataRequestMonitor<>(rm) {
 			@Override
 			protected void handleSuccess() {
 				GDBProcesses.super.attachDebuggerToProcess(procCtx, new ImmediateDataRequestMonitor<IDMContext>(rm) {
@@ -602,7 +602,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		createConsole(containerDmc, restart, new ImmediateRequestMonitor(requestMonitor) {
 			@Override
 			protected void handleSuccess() {
-				final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<MIInfo>(getExecutor(),
+				final DataRequestMonitor<MIInfo> execMonitor = new DataRequestMonitor<>(getExecutor(),
 						requestMonitor) {
 					@Override
 					protected void handleSuccess() {

@@ -74,7 +74,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	// may need a corresponding adjustment, and this stores the adjusted offset.
 	private int fAdjustedParseOffset = -1;
 
-	private Lazy<Integer> fContextInfoPosition = new Lazy<Integer>() {
+	private Lazy<Integer> fContextInfoPosition = new Lazy<>() {
 		@Override
 		protected Integer calculateValue() {
 			return guessContextInformationPosition();
@@ -83,7 +83,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 
 	private final Lazy<ITranslationUnit> fTU;
 
-	private final Lazy<Integer> fParseOffset = new Lazy<Integer>() {
+	private final Lazy<Integer> fParseOffset = new Lazy<>() {
 		@Override
 		protected Integer calculateValue() {
 			int result = doCalculate();
@@ -196,7 +196,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		return null;
 	}
 
-	private final Lazy<IASTCompletionNode> fCN = new Lazy<IASTCompletionNode>() {
+	private final Lazy<IASTCompletionNode> fCN = new Lazy<>() {
 		@Override
 		protected IASTCompletionNode calculateValue() {
 			int offset = getParseOffset();
@@ -253,7 +253,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
-	private final Lazy<Boolean> afterOpeningAngleBracket = new Lazy<Boolean>() {
+	private final Lazy<Boolean> afterOpeningAngleBracket = new Lazy<>() {
 		@Override
 		protected Boolean calculateValue() {
 			final int parseOffset = getParseOffset();
@@ -264,7 +264,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
-	private final Lazy<Boolean> afterOpeningParenthesisOrBrace = new Lazy<Boolean>() {
+	private final Lazy<Boolean> afterOpeningParenthesisOrBrace = new Lazy<>() {
 		@Override
 		protected Boolean calculateValue() {
 			final int invocationOffset = getInvocationOffset();
@@ -295,7 +295,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
-	private final Lazy<Boolean> inUsingDeclaration = new Lazy<Boolean>() {
+	private final Lazy<Boolean> inUsingDeclaration = new Lazy<>() {
 		/**
 		 * Checks whether the invocation offset is inside a using-declaration.
 		 *
@@ -331,7 +331,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
-	private final Lazy<Boolean> followedBySemicolon = new Lazy<Boolean>() {
+	private final Lazy<Boolean> followedBySemicolon = new Lazy<>() {
 		@Override
 		protected Boolean calculateValue() {
 			final IDocument doc = getDocument();
@@ -342,7 +342,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
-	private final Lazy<Boolean> followedByOpeningParen = new Lazy<Boolean>() {
+	private final Lazy<Boolean> followedByOpeningParen = new Lazy<>() {
 		@Override
 		protected Boolean calculateValue() {
 			final IDocument doc = getDocument();
@@ -353,7 +353,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
-	private final Lazy<String> functionParameterDelimiter = new Lazy<String>() {
+	private final Lazy<String> functionParameterDelimiter = new Lazy<>() {
 		@Override
 		protected String calculateValue() {
 			String propertyKey = DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_DECLARATION_PARAMETERS;
@@ -362,7 +362,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		}
 	};
 
-	private final Lazy<String> templateParameterDelimiter = new Lazy<String>() {
+	private final Lazy<String> templateParameterDelimiter = new Lazy<>() {
 		@Override
 		protected String calculateValue() {
 			String propertyKey = DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_TEMPLATE_PARAMETERS;
@@ -387,7 +387,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 		fIsCompletion = isCompletion;
 		fIsContextInformationStyle = !isCompletion;
 		fIsAutoActivated = isAutoActivated;
-		fTU = new Lazy<ITranslationUnit>() {
+		fTU = new Lazy<>() {
 			@Override
 			protected ITranslationUnit calculateValue() {
 				return CUIPlugin.getDefault().getWorkingCopyManager().getWorkingCopy(fEditor.getEditorInput());
@@ -402,7 +402,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	 */
 	public CContentAssistInvocationContext(final ITranslationUnit unit, boolean isCompletion) {
 		super();
-		fTU = new Lazy<ITranslationUnit>() {
+		fTU = new Lazy<>() {
 			@Override
 			protected ITranslationUnit calculateValue() {
 				return unit;

@@ -42,6 +42,7 @@ public class ServerGetEnvCommand extends AbstractServerCommand {
 		this.result = new DataOutputStream(chan.getOutputStream());
 	}
 
+	@Override
 	public void exec() throws ProxyException {
 		new Thread(new CommandRunner()).start();
 	}

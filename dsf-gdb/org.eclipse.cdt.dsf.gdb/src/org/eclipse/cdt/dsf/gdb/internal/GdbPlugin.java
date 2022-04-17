@@ -114,7 +114,7 @@ public class GdbPlugin extends Plugin {
 			if (launch instanceof GdbLaunch && ((GdbLaunch) launch).getSession().isActive()) {
 				final GdbLaunch gdbLaunch = (GdbLaunch) launch;
 
-				Query<Object> launchShutdownQuery = new Query<Object>() {
+				Query<Object> launchShutdownQuery = new Query<>() {
 					@Override
 					protected void execute(DataRequestMonitor<Object> rm) {
 						gdbLaunch.shutdownSession(rm);

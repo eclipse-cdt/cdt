@@ -51,7 +51,7 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 	private ResourceBundle fBundle;
 	// Annotations at the ruler's current line of activity, keyed by their presentation layer,
 	// in decreasing order (i.e. top to bottom).
-	private static Comparator<Integer> decreasingOrder = new Comparator<Integer>() {
+	private static Comparator<Integer> decreasingOrder = new Comparator<>() {
 		@Override
 		public int compare(Integer a, Integer b) {
 			return b - a;

@@ -167,22 +167,59 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	/*
 	 * Bookeeping variables
 	 */
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
+	@Deprecated(forRemoval = true)
 	protected boolean noContentOnPage = false;
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
+	@Deprecated(forRemoval = true)
 	protected boolean displayedConfig = false;
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
+	@Deprecated(forRemoval = true)
 	protected IResource internalElement = null;
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
+	@Deprecated(forRemoval = true)
 	protected boolean isProject = false;
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
+	@Deprecated(forRemoval = true)
 	protected boolean isFolder = false;
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
+	@Deprecated(forRemoval = true)
 	protected boolean isFile = false;
 
 	// tabs
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
 	@Deprecated(forRemoval = true)
 	protected TabFolder folder;
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
 	@Deprecated(forRemoval = true)
 	protected ArrayList<InternalTab> itabs = new ArrayList<>();
+	/**
+	 * @deprecated This field was never meant to be API. This field will be made private.
+	 */
+	@Deprecated(forRemoval = true)
 	protected ICPropertyTab currentTab;
 
 	private static boolean isNewOpening = true;
 
+	/**
+	 * @deprecated This class was never meant to be API. This class will be made private.
+	 */
 	@Deprecated(forRemoval = true)
 	protected class InternalTab {
 		Composite comp;

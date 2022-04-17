@@ -48,14 +48,14 @@
     <li><a href="#deductionremovedin10.0.0">ICPPASTDeductionGuide and ICPPASTParameterListOwner removed in CDT 10.0.1</a></li>
   </ol>
   <p>
-    Planned Removals after June 2022
+    Planned Removals after June 2022 or on the next major version of Eclipe CDT.
   </p>
   <ol>
     <li><a href="#binaryparsers">32-bit Binary parsers with 64-bit replacements</a></li>
     <li><a href="#baudrate">BaudRate enum in org.eclipse.cdt.serial</a></li>
   </ol>
   <p>
-    Planned Removals after June 2023
+    Planned Removals after June 2023 or on the next major version of Eclipe CDT.
   </p>
   <ol>
     <li><a href="#gdbBackendDebuggerCommandLine">Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb</a></li>
@@ -64,17 +64,23 @@
     <li><a href="#GnuMakefileGenerator.addDefaultHeader">Changed methods from static to non-static</a></li>
   </ol>
   <p>
-    Planned Removals after December 2023
+    Planned Removals after December 2023 or on the next major version of Eclipe CDT.
   </p>
   <ol>
     <li><a href="#GnuMakefileGeneratorAPI">GnuMakefileGenerator is no longer part of API</a></li>
     <li><a href="#Spawner.signals">The Spawner signal constants are nolonger API</a></li>
   </ol>
   <p>
-    Planned Removals after March 2024
+    Planned Removals after March 2024 or on the next major version of Eclipe CDT.
   </p>
   <ol>
     <li><a href="#ArgletsMatcher">java.util.regex.Matcher use in JSONCDB API will be removed</a></li>
+  </ol>
+  <p>
+    Planned Removals after June 2024 or on the next major version of Eclipe CDT.
+  </p>
+  <ol>
+    <li><a href="#newUIAbstractPage">org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields</a></li>
   </ol>
 
   <p>
@@ -547,6 +553,34 @@
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=578683" target="_blank">Bug 578683</a>.
   </p>
 
+  <h3>API Removals after June 2024</h3>
+
+  <h3>1. <a name="newUIAbstractPage">org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields</a></h3>
+  <p>
+    The following fields will be removed from the API of org.eclipse.cdt.ui.newui.AbstractPage as they were never intended to be accessible by the design. As far as the current CDT developers know, no one is using this API.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.noContentOnPage</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.displayedConfig</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.internalElement</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.isProject</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.isFolder</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.isFile</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.folder</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.itabs</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.currentTab</li>
+  </ul>
+  <p>
+    In addition, the following inner class wil be removed from the API.
+    <ul>
+      <li>org.eclipse.cdt.ui.newui.AbstractPage.InternalTab</li>
+    </ul>
+  </p>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=579666" target="_blank">Bug 579666</a>.
+  </p>
+
+  
 </body>
 
 </html>

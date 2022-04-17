@@ -16,6 +16,23 @@
       "message": "Recently, I\u0027ve started to get NPE\u0027s when running runtime. I don\u0027t know the reason to why the NPE happens in this code, but it looks legit to have a null check here.\nComments?",
       "revId": "5cc5aab0ba760df0be087eac52891d807cdce8f6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66abbb21_a4340e88",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-17T19:17:14Z",
+      "side": 1,
+      "message": "I wonder what changed (not enough to do a deep dive) that means 14 years after this code was written that it is now causing NPEs. Anyway, this change is fine so go ahead with it.",
+      "revId": "5cc5aab0ba760df0be087eac52891d807cdce8f6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -51,7 +51,7 @@ public class THHistoryListAction extends Action {
 			setTitle(Messages.THHistoryListAction_HistoryList_title);
 			String[] buttonLabels = new String[] { Messages.THHistoryListAction_Remove, };
 
-			IListAdapter<ICElement> adapter = new IListAdapter<ICElement>() {
+			IListAdapter<ICElement> adapter = new IListAdapter<>() {
 				@Override
 				public void customButtonPressed(ListDialogField<ICElement> field, int index) {
 					doCustomButtonPressed();

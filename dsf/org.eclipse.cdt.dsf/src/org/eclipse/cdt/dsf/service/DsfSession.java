@@ -542,7 +542,8 @@ public class DsfSession {
 				} catch (IllegalAccessException e) {
 					DsfPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1,
 							"Security exception when calling a service event handler method", e)); //$NON-NLS-1$
-					assert false : "IServiceEventListener.ServiceHandlerMethod method not accessible, is listener declared public?"; //$NON-NLS-1$
+					assert false
+							: "IServiceEventListener.ServiceHandlerMethod method not accessible, is listener declared public?"; //$NON-NLS-1$
 				} catch (InvocationTargetException e) {
 					DsfPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1,
 							"Invocation exception when calling a service event handler method", e)); //$NON-NLS-1$

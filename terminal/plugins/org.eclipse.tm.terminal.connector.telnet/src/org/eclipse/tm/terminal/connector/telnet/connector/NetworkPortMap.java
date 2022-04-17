@@ -53,7 +53,7 @@ public class NetworkPortMap {
 	}
 
 	public List<String> getNameTable() {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		for (int i = 0; i < fPortMap.length; i++) {
 			names.add(fPortMap[i][0]);
 		}

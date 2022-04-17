@@ -33,7 +33,7 @@ public class CharArrayObjectMap<T> extends CharTable {
 	/**
 	 * An empty immutable {@code CharArrayObjectMap}.
 	 */
-	public static final CharArrayObjectMap<?> EMPTY_MAP = new CharArrayObjectMap<Object>(0) {
+	public static final CharArrayObjectMap<?> EMPTY_MAP = new CharArrayObjectMap<>(0) {
 		@Override
 		public Object clone() {
 			return this;

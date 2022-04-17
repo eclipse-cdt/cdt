@@ -39,7 +39,7 @@ public class EvalUtil {
 	 * The set of ICPPVariable objects for which initial value computation is in progress on each thread.
 	 * This is used to guard against recursion during initial value computation.
 	 */
-	private static final ThreadLocal<Set<ICPPVariable>> fInitialValueInProgress = new ThreadLocal<Set<ICPPVariable>>() {
+	private static final ThreadLocal<Set<ICPPVariable>> fInitialValueInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<ICPPVariable> initialValue() {
 			return new HashSet<>();

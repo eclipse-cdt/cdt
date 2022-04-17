@@ -13,10 +13,10 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfoCollector;
 
 /**
  * A {link IBuiltinsOutputProcessor} for the GNU C and GNU C++ compiler and derivatives.

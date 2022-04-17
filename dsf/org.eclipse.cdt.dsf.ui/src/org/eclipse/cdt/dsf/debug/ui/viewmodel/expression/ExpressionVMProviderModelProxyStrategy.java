@@ -97,22 +97,22 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
 							buildNodeDeltaForExpression(matchingNode, expression, expressionElementIdx, event,
 									parentDelta, path, rm);
 						} else {
-							getExpressionVMProvider().update(new VMExpressionUpdate(parentDelta,
-									getVMProvider().getPresentationContext(), expression,
-									new DataRequestMonitor<Object>(getVMProvider().getExecutor(), rm) {
-										@Override
-										protected void handleSuccess() {
-											buildDeltaForExpressionElement(node, expression, getData(),
-													expressionElementIdx, event, parentDelta, path, rm);
-										}
+							getExpressionVMProvider().update(
+									new VMExpressionUpdate(parentDelta, getVMProvider().getPresentationContext(),
+											expression, new DataRequestMonitor<>(getVMProvider().getExecutor(), rm) {
+												@Override
+												protected void handleSuccess() {
+													buildDeltaForExpressionElement(node, expression, getData(),
+															expressionElementIdx, event, parentDelta, path, rm);
+												}
 
-										@Override
-										protected void handleErrorOrWarning() {
-											// Avoid propagating the error to avoid processing the delta by
-											// all nodes.
-											rm.done();
-										}
-									}));
+												@Override
+												protected void handleErrorOrWarning() {
+													// Avoid propagating the error to avoid processing the delta by
+													// all nodes.
+													rm.done();
+												}
+											}));
 						}
 					}
 				});

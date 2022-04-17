@@ -533,8 +533,8 @@ public class MemoryBrowser extends ViewPart
 				// out the rendering in the tab with either a new one or an
 				// existing one already associated with that memory space.
 				String oldMemorySpaceId = (String) activeFolder.getSelection().getData(KEY_MEMORY_SPACE);
-				assert oldMemorySpaceId == null || !oldMemorySpaceId.equals(
-						NA_MEMORY_SPACE_ID) : "should be null reference or an explicit, valid memory space ID (not including '----')"; //$NON-NLS-1$
+				assert oldMemorySpaceId == null || !oldMemorySpaceId.equals(NA_MEMORY_SPACE_ID)
+						: "should be null reference or an explicit, valid memory space ID (not including '----')"; //$NON-NLS-1$
 				if ((oldMemorySpaceId != null && !oldMemorySpaceId.equals(memorySpaceId))
 						|| (oldMemorySpaceId == null && memorySpaceId != null)) {
 					try {

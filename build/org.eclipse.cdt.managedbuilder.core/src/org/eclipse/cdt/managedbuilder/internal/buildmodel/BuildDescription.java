@@ -1424,7 +1424,7 @@ public class BuildDescription implements IBuildDescription {
 							depFiles = new IPath[1];
 							depFiles[0] = new Path(
 									buildRc.getLocation().segment(buildRc.getLocation().segmentCount() - 1))
-											.removeFileExtension().addFileExtension("d"); //$NON-NLS-1$
+									.removeFileExtension().addFileExtension("d"); //$NON-NLS-1$
 						}
 
 						if (depFiles != null) {

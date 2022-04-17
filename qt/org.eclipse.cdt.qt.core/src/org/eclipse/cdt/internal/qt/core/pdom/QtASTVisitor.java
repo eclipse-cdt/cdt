@@ -307,8 +307,8 @@ public class QtASTVisitor extends ASTVisitor {
 
 		IASTName refName = expansion.getMacroReference();
 		String param = m.group(1);
-		for (int offset = m.start(1), end = param.length(); !param.isEmpty(); offset += end, param = param
-				.substring(end)) {
+		for (int offset = m.start(1),
+				end = param.length(); !param.isEmpty(); offset += end, param = param.substring(end)) {
 			m = qualNameRegex.matcher(param);
 			if (!m.matches())
 				break;

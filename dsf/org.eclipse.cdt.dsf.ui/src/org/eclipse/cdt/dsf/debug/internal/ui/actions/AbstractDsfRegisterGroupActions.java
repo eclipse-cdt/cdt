@@ -202,7 +202,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 	protected boolean canAddRegisterGroup(IWorkbenchPart part, IStructuredSelection selection) {
 		try {
 			final SelectionDMContext selectionContext = new SelectionDMContext(selection);
-			Query<Boolean> query = new Query<Boolean>() {
+			Query<Boolean> query = new Query<>() {
 				@Override
 				protected void execute(DataRequestMonitor<Boolean> rm) {
 					IRegisters2 registersService;
@@ -267,7 +267,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 				return false;
 			}
 
-			Query<Boolean> query = new Query<Boolean>() {
+			Query<Boolean> query = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<Boolean> rm) {
 					IRegisters2 registersService;
@@ -346,7 +346,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 		}
 
 		//Prepare to Query the service and check if the selected groups can be removed
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				IRegisters2 regService;
@@ -422,7 +422,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 		}
 
 		//Prepare to Query the service
-		Query<Boolean> query = new Query<Boolean>() {
+		Query<Boolean> query = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Boolean> rm) {
 				IRegisters2 regService;

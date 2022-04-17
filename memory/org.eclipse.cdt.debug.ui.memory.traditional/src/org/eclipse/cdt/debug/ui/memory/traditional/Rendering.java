@@ -715,8 +715,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public void refresh() {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
-					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: TraditionalRenderingMessages.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			if (fCache != null) {
 				queueRequest(fViewportAddress, getViewportEndAddress());
@@ -725,8 +725,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public void archiveDeltas() {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
-					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: TraditionalRenderingMessages.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			if (fCache != null) {
 				queueRequestArchiveDeltas();
@@ -900,8 +900,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		// bytes will be fetched from cache
 		@Override
 		public TraditionalMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
-					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: TraditionalRenderingMessages.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			//calculate the number of units needed for the number of requested bytes
 			int rem = (bytesRequested % getAddressableSize()) > 0 ? 1 : 0;
@@ -944,23 +944,23 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public boolean containsEditedCell(BigInteger address) {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
-					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: TraditionalRenderingMessages.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			return fEditBuffer.containsKey(address);
 		}
 
 		private TraditionalMemoryByte[] getEditedMemory(BigInteger address) {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
-					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: TraditionalRenderingMessages.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			return fEditBuffer.get(address);
 		}
 
 		@Override
 		public void clearEditBuffer() {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
-					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: TraditionalRenderingMessages.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			fEditBuffer.clear();
 			Rendering.this.redrawPanes();
@@ -968,8 +968,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public void writeEditBuffer() {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
-					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: TraditionalRenderingMessages.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			Set<BigInteger> keySet = fEditBuffer.keySet();
 			Iterator<BigInteger> iterator = keySet.iterator();
@@ -999,8 +999,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public void setEditedValue(BigInteger address, TraditionalMemoryByte[] bytes) {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
-					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: TraditionalRenderingMessages.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			fEditBuffer.put(address, bytes);
 			Rendering.this.redrawPanes();

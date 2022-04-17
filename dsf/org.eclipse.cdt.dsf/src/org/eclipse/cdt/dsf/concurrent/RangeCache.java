@@ -162,7 +162,7 @@ abstract public class RangeCache<V> {
 
 		List<Request> requests = getRequests(offset, count);
 
-		RequestCache<List<V>> range = new RequestCache<List<V>>(fExecutor) {
+		RequestCache<List<V>> range = new RequestCache<>(fExecutor) {
 			@Override
 			protected void retrieve(DataRequestMonitor<List<V>> rm) {
 				new RangeTransaction(offset, count).request(rm);

@@ -364,7 +364,8 @@ public class FormattedValueVMUtil {
 			final String activeFormat = _activeFormat; // null means we don't need to know what the active format is
 
 			if (update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT)) {
-				assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
+				assert activeFormat != null
+						: "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
 				update.setProperty(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT, activeFormat);
 			}
 
@@ -376,7 +377,8 @@ public class FormattedValueVMUtil {
 			boolean activeFormatValueRequested = false; // does the update object ask for PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE?
 			boolean activeFormatValueHandled = false; // have we come across a specific format request that is the active format?
 			if (update.getProperties().contains(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE)) {
-				assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
+				assert activeFormat != null
+						: "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
 				activeFormatValueRequested = true; // we may end up making an additional run
 			}
 

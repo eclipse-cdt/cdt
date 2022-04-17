@@ -325,7 +325,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 				|| getLineForTag("INCR_X") == tracepoint.getLineNumber());
 		String[] actionNames = ((String) tracepoint.getMarker()
 				.getAttribute(BreakpointActionManager.BREAKPOINT_ACTION_ATTRIBUTE))
-						.split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
+				.split(TracepointActionManager.TRACEPOINT_ACTION_DELIMITER);
 		for (String name : actionNames) {
 			ITracepointAction a = tam.findAction(name);
 			assertNotNull(a);

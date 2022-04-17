@@ -971,7 +971,8 @@ public class ExecutablesManager extends PlatformObject
 			synchronized (executablesMap) {
 				for (Executable executableRemoved : executablesRemoved) {
 					List<Executable> execs = executablesMap.get(executableRemoved.getProject());
-					assert execs != null : "considering the list was used in populating 'executablesRemoved', how could it be gone now?"; //$NON-NLS-1$
+					assert execs != null
+							: "considering the list was used in populating 'executablesRemoved', how could it be gone now?"; //$NON-NLS-1$
 					if (execs != null) {
 						execs.remove(executableRemoved);
 					}

@@ -91,7 +91,7 @@ public class AttachProcessHandler extends AbstractHandler {
 			return false;
 		}
 
-		Query<Boolean> canConnectQuery = new Query<Boolean>() {
+		Query<Boolean> canConnectQuery = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Boolean> rm) {
 				BundleContext c = GdbUIPlugin.getDefault().getBundle().getBundleContext();

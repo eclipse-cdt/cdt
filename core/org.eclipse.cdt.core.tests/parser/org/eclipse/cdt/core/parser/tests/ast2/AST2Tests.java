@@ -2533,7 +2533,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug80978() throws Exception {
 		ICASTArrayModifier mod = (ICASTArrayModifier) ((IASTArrayDeclarator) ((IASTStandardFunctionDeclarator) ((IASTSimpleDeclaration) parse(
 				getAboveComment(), C).getDeclarations()[0]).getDeclarators()[0]).getParameters()[0].getDeclarator())
-						.getArrayModifiers()[0];
+				.getArrayModifiers()[0];
 		assertTrue(mod.isConst());
 		assertTrue(mod.isVariableSized());
 		assertFalse(mod.isStatic());
@@ -2846,7 +2846,7 @@ public class AST2Tests extends AST2TestBase {
 	public void testBug84250() throws Exception {
 		assertTrue(((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) parse(
 				"void f() { int (*p) [2]; }", C).getDeclarations()[0]).getBody()).getStatements()[0]) //$NON-NLS-1$
-						.getDeclaration() instanceof IASTSimpleDeclaration);
+				.getDeclaration() instanceof IASTSimpleDeclaration);
 	}
 
 	// struct s1 { struct s2 *s2p; /* ... */ }; // D1

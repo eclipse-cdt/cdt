@@ -160,53 +160,50 @@ public class NameStyleBlock extends OptionsConfigurationBlock {
 		Category codeCategory = new Category(PreferencesMessages.NameStyleBlock_code_node);
 		new Category(PreferencesMessages.NameStyleBlock_constant_node,
 				PreferencesMessages.NameStyleBlock_constant_node_description, EXAMPLE_CONSTANT_NAME, codeCategory)
-						.setCapitalizationKey(KEY_CONSTANT_CAPITALIZATION)
-						.setWordDelimiterKey(KEY_CONSTANT_WORD_DELIMITER).setPrefixKey(KEY_CONSTANT_PREFIX)
-						.setSuffixKey(KEY_CONSTANT_SUFFIX).setNameValidator(IDENTIFIER_VALIDATOR);
+				.setCapitalizationKey(KEY_CONSTANT_CAPITALIZATION).setWordDelimiterKey(KEY_CONSTANT_WORD_DELIMITER)
+				.setPrefixKey(KEY_CONSTANT_PREFIX).setSuffixKey(KEY_CONSTANT_SUFFIX)
+				.setNameValidator(IDENTIFIER_VALIDATOR);
 		new Category(PreferencesMessages.NameStyleBlock_variable_node,
 				PreferencesMessages.NameStyleBlock_variable_node_description, EXAMPLE_VARIABLE_NAME, codeCategory)
-						.setCapitalizationKey(KEY_VARIABLE_CAPITALIZATION)
-						.setWordDelimiterKey(KEY_VARIABLE_WORD_DELIMITER).setPrefixKey(KEY_VARIABLE_PREFIX)
-						.setSuffixKey(KEY_VARIABLE_SUFFIX).setNameValidator(IDENTIFIER_VALIDATOR);
+				.setCapitalizationKey(KEY_VARIABLE_CAPITALIZATION).setWordDelimiterKey(KEY_VARIABLE_WORD_DELIMITER)
+				.setPrefixKey(KEY_VARIABLE_PREFIX).setSuffixKey(KEY_VARIABLE_SUFFIX)
+				.setNameValidator(IDENTIFIER_VALIDATOR);
 		Category fieldCategory = new Category(PreferencesMessages.NameStyleBlock_field_node,
 				PreferencesMessages.NameStyleBlock_field_node_description, EXAMPLE_FIELD_NAME, codeCategory)
-						.setCapitalizationKey(KEY_FIELD_CAPITALIZATION).setWordDelimiterKey(KEY_FIELD_WORD_DELIMITER)
-						.setPrefixKey(KEY_FIELD_PREFIX).setSuffixKey(KEY_FIELD_SUFFIX)
-						.setNameValidator(IDENTIFIER_VALIDATOR);
+				.setCapitalizationKey(KEY_FIELD_CAPITALIZATION).setWordDelimiterKey(KEY_FIELD_WORD_DELIMITER)
+				.setPrefixKey(KEY_FIELD_PREFIX).setSuffixKey(KEY_FIELD_SUFFIX).setNameValidator(IDENTIFIER_VALIDATOR);
 		new Category(PreferencesMessages.NameStyleBlock_method_node,
 				PreferencesMessages.NameStyleBlock_method_node_description, EXAMPLE_METHOD_NAME, codeCategory)
-						.setCapitalizationKey(KEY_METHOD_CAPITALIZATION).setWordDelimiterKey(KEY_METHOD_WORD_DELIMITER)
-						.setPrefixKey(KEY_METHOD_PREFIX).setSuffixKey(KEY_METHOD_SUFFIX)
-						.setNameValidator(IDENTIFIER_VALIDATOR);
+				.setCapitalizationKey(KEY_METHOD_CAPITALIZATION).setWordDelimiterKey(KEY_METHOD_WORD_DELIMITER)
+				.setPrefixKey(KEY_METHOD_PREFIX).setSuffixKey(KEY_METHOD_SUFFIX).setNameValidator(IDENTIFIER_VALIDATOR);
 		new Category(PreferencesMessages.NameStyleBlock_getter_node,
 				PreferencesMessages.NameStyleBlock_getter_node_description, EXAMPLE_FIELD_NAME, codeCategory)
-						.setCapitalizationKey(KEY_GETTER_CAPITALIZATION).setWordDelimiterKey(KEY_GETTER_WORD_DELIMITER)
-						.setPrefixKey(KEY_GETTER_PREFIX).setAlternativePrefixKey(KEY_GETTER_PREFIX_FOR_BOOLEAN)
-						.setSuffixKey(KEY_GETTER_SUFFIX).setSeedNameGenerator(fieldCategory)
-						.setNameValidator(IDENTIFIER_VALIDATOR).setTrimFieldName(true);
+				.setCapitalizationKey(KEY_GETTER_CAPITALIZATION).setWordDelimiterKey(KEY_GETTER_WORD_DELIMITER)
+				.setPrefixKey(KEY_GETTER_PREFIX).setAlternativePrefixKey(KEY_GETTER_PREFIX_FOR_BOOLEAN)
+				.setSuffixKey(KEY_GETTER_SUFFIX).setSeedNameGenerator(fieldCategory)
+				.setNameValidator(IDENTIFIER_VALIDATOR).setTrimFieldName(true);
 		new Category(PreferencesMessages.NameStyleBlock_setter_node,
 				PreferencesMessages.NameStyleBlock_setter_node_description, EXAMPLE_FIELD_NAME, codeCategory)
-						.setCapitalizationKey(KEY_SETTER_CAPITALIZATION).setWordDelimiterKey(KEY_SETTER_WORD_DELIMITER)
-						.setPrefixKey(KEY_SETTER_PREFIX).setSuffixKey(KEY_SETTER_SUFFIX)
-						.setSeedNameGenerator(fieldCategory).setNameValidator(IDENTIFIER_VALIDATOR)
-						.setTrimFieldName(true);
+				.setCapitalizationKey(KEY_SETTER_CAPITALIZATION).setWordDelimiterKey(KEY_SETTER_WORD_DELIMITER)
+				.setPrefixKey(KEY_SETTER_PREFIX).setSuffixKey(KEY_SETTER_SUFFIX).setSeedNameGenerator(fieldCategory)
+				.setNameValidator(IDENTIFIER_VALIDATOR).setTrimFieldName(true);
 		new IncludeGuardCategory(codeCategory);
 		Category fileCategory = new Category(PreferencesMessages.NameStyleBlock_files_node);
 		new Category(PreferencesMessages.NameStyleBlock_cpp_header_node,
 				PreferencesMessages.NameStyleBlock_cpp_header_node_description, EXAMPLE_CLASS_NAME, fileCategory)
-						.setCapitalizationKey(KEY_CPP_HEADER_CAPITALIZATION)
-						.setWordDelimiterKey(KEY_CPP_HEADER_WORD_DELIMITER).setPrefixKey(KEY_CPP_HEADER_PREFIX)
-						.setSuffixKey(KEY_CPP_HEADER_SUFFIX).setNameValidator(FILENAME_VALIDATOR);
+				.setCapitalizationKey(KEY_CPP_HEADER_CAPITALIZATION).setWordDelimiterKey(KEY_CPP_HEADER_WORD_DELIMITER)
+				.setPrefixKey(KEY_CPP_HEADER_PREFIX).setSuffixKey(KEY_CPP_HEADER_SUFFIX)
+				.setNameValidator(FILENAME_VALIDATOR);
 		new Category(PreferencesMessages.NameStyleBlock_cpp_source_node,
 				PreferencesMessages.NameStyleBlock_cpp_source_node_description, EXAMPLE_CLASS_NAME, fileCategory)
-						.setCapitalizationKey(KEY_CPP_SOURCE_CAPITALIZATION)
-						.setWordDelimiterKey(KEY_CPP_SOURCE_WORD_DELIMITER).setPrefixKey(KEY_CPP_SOURCE_PREFIX)
-						.setSuffixKey(KEY_CPP_SOURCE_SUFFIX).setNameValidator(FILENAME_VALIDATOR);
+				.setCapitalizationKey(KEY_CPP_SOURCE_CAPITALIZATION).setWordDelimiterKey(KEY_CPP_SOURCE_WORD_DELIMITER)
+				.setPrefixKey(KEY_CPP_SOURCE_PREFIX).setSuffixKey(KEY_CPP_SOURCE_SUFFIX)
+				.setNameValidator(FILENAME_VALIDATOR);
 		new Category(PreferencesMessages.NameStyleBlock_cpp_test_node,
 				PreferencesMessages.NameStyleBlock_cpp_test_node_description, EXAMPLE_CLASS_NAME, fileCategory)
-						.setCapitalizationKey(KEY_CPP_TEST_CAPITALIZATION)
-						.setWordDelimiterKey(KEY_CPP_TEST_WORD_DELIMITER).setPrefixKey(KEY_CPP_TEST_PREFIX)
-						.setSuffixKey(KEY_CPP_TEST_SUFFIX).setNameValidator(FILENAME_VALIDATOR);
+				.setCapitalizationKey(KEY_CPP_TEST_CAPITALIZATION).setWordDelimiterKey(KEY_CPP_TEST_WORD_DELIMITER)
+				.setPrefixKey(KEY_CPP_TEST_PREFIX).setSuffixKey(KEY_CPP_TEST_SUFFIX)
+				.setNameValidator(FILENAME_VALIDATOR);
 		return new Category[] { codeCategory, fileCategory };
 	}
 

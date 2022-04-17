@@ -63,7 +63,7 @@ public class RemoteFileWidget extends Composite {
 	private IRemoteConnection fRemoteConnection;
 
 	private final ListenerList fModifyListeners = new ListenerList();
-	private final Map<String, String> fPreviousSelections = new HashMap<String, String>();
+	private final Map<String, String> fPreviousSelections = new HashMap<>();
 
 	public RemoteFileWidget(Composite parent, int style, int flags, String title, String defaultPath) {
 		super(parent, style);

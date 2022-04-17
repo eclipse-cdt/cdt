@@ -86,8 +86,8 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 			assert false : "action should not have been available for object " + obj; //$NON-NLS-1$
 		} else if (selection instanceof StructuredSelection) {
 			// Not sure why, but sometimes we get an extraneous empty StructuredSelection. Seems harmless enough
-			assert ((StructuredSelection) selection)
-					.getFirstElement() == null : "action installed in unexpected type of view/part"; //$NON-NLS-1$
+			assert ((StructuredSelection) selection).getFirstElement() == null
+					: "action installed in unexpected type of view/part"; //$NON-NLS-1$
 		} else {
 			assert false : "action installed in unexpected type of view/part"; //$NON-NLS-1$
 		}

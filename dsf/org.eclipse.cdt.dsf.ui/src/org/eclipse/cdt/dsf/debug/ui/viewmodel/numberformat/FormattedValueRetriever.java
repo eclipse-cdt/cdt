@@ -437,7 +437,8 @@ public class FormattedValueRetriever {
 					elementFormatMap);
 
 			if (update.getProperties().contains(PROP_ACTIVE_FORMAT)) {
-				assert activeFormat != null : "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
+				assert activeFormat != null
+						: "Our caller should have provided the available formats if this property was specified; given available formats, an 'active' nomination is guaranteed."; //$NON-NLS-1$
 				update.setProperty(PROP_ACTIVE_FORMAT, activeFormat);
 			}
 			List<String> requestedFormats = calcRequestedFormats(update, activeFormat, availableFormatsMap.get(update));

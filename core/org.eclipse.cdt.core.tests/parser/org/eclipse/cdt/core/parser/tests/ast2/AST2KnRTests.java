@@ -595,7 +595,7 @@ public class AST2KnRTests extends AST2TestBase {
 				.getParameterDeclarations()[0]).getDeclarators()[1].getName();
 		IASTName list3 = ((IASTIdExpression) ((IASTArraySubscriptExpression) ((IASTUnaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) getinp
 				.getBody()).getStatements()[0]).getExpression()).getOperand1()).getOperand()).getArrayExpression())
-						.getName();
+				.getName();
 
 		assertEquals(prompt1.resolveBinding(), prompt2.resolveBinding());
 		assertEquals(list1.resolveBinding(), list2.resolveBinding());
@@ -673,10 +673,10 @@ public class AST2KnRTests extends AST2TestBase {
 				.getParameterDeclarations()[0]).getDeclarators()[0].getName();
 		IASTName lemp_name3 = ((IASTIdExpression) ((IASTFieldReference) ((IASTArraySubscriptExpression) ((IASTFieldReference) ((IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) f_def
 				.getBody()).getStatements()[0]).getExpression()).getOperand1()).getFieldOwner()).getArrayExpression())
-						.getFieldOwner()).getName();
+				.getFieldOwner()).getName();
 		IASTName symbols_name2 = ((IASTFieldReference) ((IASTArraySubscriptExpression) ((IASTFieldReference) ((IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) f_def
 				.getBody()).getStatements()[0]).getExpression()).getOperand1()).getFieldOwner()).getArrayExpression())
-						.getFieldName();
+				.getFieldName();
 		IASTName lambda_name2 = ((IASTFieldReference) ((IASTBinaryExpression) ((IASTExpressionStatement) ((IASTCompoundStatement) f_def
 				.getBody()).getStatements()[0]).getExpression()).getOperand1()).getFieldName();
 

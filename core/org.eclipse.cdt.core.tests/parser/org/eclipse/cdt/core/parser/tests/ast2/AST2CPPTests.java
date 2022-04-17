@@ -4716,7 +4716,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
 		ICPPASTCastExpression dynamic_cast = (ICPPASTCastExpression) ((IASTEqualsInitializer) ((IASTSimpleDeclaration) ((IASTDeclarationStatement) ((IASTCompoundStatement) ((IASTFunctionDefinition) tu
 				.getDeclarations()[2]).getBody()).getStatements()[0]).getDeclaration()).getDeclarators()[0]
-						.getInitializer()).getInitializerClause();
+				.getInitializer()).getInitializerClause();
 
 		assertEquals(dynamic_cast.getOperator(), ICPPASTCastExpression.op_dynamic_cast);
 	}

@@ -102,7 +102,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	 */
 	private void initServices(final PDALaunch pdaLaunch, final String program) throws CoreException {
 		// Synchronization object to use when waiting for the services initialization.
-		Query<Object> initQuery = new Query<Object>() {
+		Query<Object> initQuery = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				pdaLaunch.initializeServices(program, rm);
@@ -125,7 +125,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 
 	private void createProcess(final PDALaunch pdaLaunch) throws CoreException {
 		// Synchronization object to use when waiting for the services initialization.
-		Query<Object[]> initQuery = new Query<Object[]>() {
+		Query<Object[]> initQuery = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object[]> rm) {
 				DsfServicesTracker tracker = new DsfServicesTracker(PDAPlugin.getBundleContext(),

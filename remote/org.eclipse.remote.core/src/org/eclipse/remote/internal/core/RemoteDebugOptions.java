@@ -48,7 +48,7 @@ public class RemoteDebugOptions implements DebugOptionsListener {
 	}
 
 	private RemoteDebugOptions(BundleContext context) {
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(DebugOptions.LISTENER_SYMBOLICNAME, RemoteCorePlugin.getUniqueIdentifier());
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}

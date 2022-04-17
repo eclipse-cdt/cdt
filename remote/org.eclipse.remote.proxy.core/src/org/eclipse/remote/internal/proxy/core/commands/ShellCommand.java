@@ -33,6 +33,7 @@ public class ShellCommand extends AbstractCommand<Void> {
 		this.ioChan = ioChan;
 	}
 
+	@Override
 	public Void call() throws ProxyException {
 		try {
 			out.writeByte(Protocol.PROTO_COMMAND);

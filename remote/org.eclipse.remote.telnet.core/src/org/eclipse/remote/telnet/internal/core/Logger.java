@@ -60,7 +60,7 @@ public final class Logger implements DebugOptionsListener {
 	}
 
 	private Logger(BundleContext context) {
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(DebugOptions.LISTENER_SYMBOLICNAME, Activator.PLUGIN_ID);
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}

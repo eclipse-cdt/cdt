@@ -27,7 +27,7 @@ public class ServerGetPropertiesCommand extends AbstractServerCommand {
 		@Override
 		public void run() {
 			try {
-				Map<String, String> props = new HashMap<String, String>();
+				Map<String, String> props = new HashMap<>();
 				props.put(IRemoteConnection.FILE_SEPARATOR_PROPERTY,
 						System.getProperty(IRemoteConnection.FILE_SEPARATOR_PROPERTY));
 				props.put(IRemoteConnection.PATH_SEPARATOR_PROPERTY,
@@ -58,6 +58,7 @@ public class ServerGetPropertiesCommand extends AbstractServerCommand {
 		this.result = new DataOutputStream(chan.getOutputStream());
 	}
 
+	@Override
 	public void exec() throws ProxyException {
 		new Thread(new CommandRunner()).start();
 	}

@@ -166,7 +166,7 @@ public class BreakpointVMProvider extends AbstractCachingVMProvider {
 
 	private final Map<TreePath, ContainerBreakpointsCache> fContainerBreakpointsCacheMap = new HashMap<>();
 
-	private DataCache<IBreakpoint[]> fFilteredBreakpointsCache = new DataCache<IBreakpoint[]>(getExecutor()) {
+	private DataCache<IBreakpoint[]> fFilteredBreakpointsCache = new DataCache<>(getExecutor()) {
 		@Override
 		protected void retrieve(org.eclipse.cdt.dsf.concurrent.DataRequestMonitor<IBreakpoint[]> rm) {
 			calcFileteredBreakpoints(rm);

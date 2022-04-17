@@ -114,7 +114,7 @@ public class GdbShowVersionHandler implements IShowVersionHandler {
 								str = "======= GDB version: " + getData() + " ======="; //$NON-NLS-1$ //$NON-NLS-2$
 							} else {
 								str = "Could not obtain GDB version.  Error: " + //$NON-NLS-1$
-								getStatus();
+										getStatus();
 							}
 							funcService.notify(context.get(), str, new RequestMonitor(fExecutor, null) {
 								@Override

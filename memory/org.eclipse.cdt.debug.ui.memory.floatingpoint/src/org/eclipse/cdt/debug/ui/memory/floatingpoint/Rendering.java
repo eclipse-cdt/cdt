@@ -700,8 +700,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public void refresh() {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : FPRenderingMessages
-					.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: FPRenderingMessages.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			if (fCache != null) {
 				queueRequest(fViewportAddress, getViewportEndAddress());
@@ -710,8 +710,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public void archiveDeltas() {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : FPRenderingMessages
-					.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: FPRenderingMessages.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			if (fCache != null) {
 				queueRequestArchiveDeltas();
@@ -1055,8 +1055,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public FPMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : FPRenderingMessages
-					.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: FPRenderingMessages.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			if (containsEditedCell(address)) // Cell size cannot be switched during an edit
 				return getEditedMemory(address);
@@ -1096,29 +1096,29 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public boolean containsEditedCell(BigInteger address) {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : FPRenderingMessages
-					.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: FPRenderingMessages.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 			return fEditBuffer.containsKey(address);
 		}
 
 		public FPMemoryByte[] getEditedMemory(BigInteger address) {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : FPRenderingMessages
-					.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: FPRenderingMessages.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 			return fEditBuffer.get(address);
 		}
 
 		@Override
 		public void clearEditBuffer() {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : FPRenderingMessages
-					.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: FPRenderingMessages.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 			fEditBuffer.clear();
 			Rendering.this.redrawPanes();
 		}
 
 		@Override
 		public void writeEditBuffer() {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : FPRenderingMessages
-					.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: FPRenderingMessages.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 
 			Set<BigInteger> keySet = fEditBuffer.keySet();
 			Iterator<BigInteger> iterator = keySet.iterator();
@@ -1147,8 +1147,8 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		@Override
 		public void setEditedValue(BigInteger address, FPMemoryByte[] bytes) {
-			assert Thread.currentThread().equals(Display.getDefault().getThread()) : FPRenderingMessages
-					.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
+			assert Thread.currentThread().equals(Display.getDefault().getThread())
+					: FPRenderingMessages.getString("CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
 			fEditBuffer.put(address, bytes);
 			Rendering.this.redrawPanes();
 		}
@@ -2009,7 +2009,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 					// Construct the edit mode message
 					statusLineMessage = NLS.bind(FPRenderingMessages.getString("FPRendering.EDIT_MODE"), //$NON-NLS-1$
 							(insertMode() ? FPRenderingMessages.getString("FPRendering.EDIT_MODE_INSERT") : //$NON-NLS-1$
-					FPRenderingMessages.getString("FPRendering.EDIT_MODE_OVERWRITE"))); //$NON-NLS-1$
+									FPRenderingMessages.getString("FPRendering.EDIT_MODE_OVERWRITE"))); //$NON-NLS-1$
 				} else {
 					// 'null' = clear the message
 					statusLineMessage = null;

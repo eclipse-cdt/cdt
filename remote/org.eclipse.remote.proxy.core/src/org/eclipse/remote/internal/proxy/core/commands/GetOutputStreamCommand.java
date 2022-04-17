@@ -36,6 +36,7 @@ public class GetOutputStreamCommand extends AbstractCommand<OutputStream> {
 		this.path = path;
 	}
 
+	@Override
 	public OutputStream call() throws ProxyException {
 		try {
 			StreamChannel chan = openChannel();

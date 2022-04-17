@@ -141,7 +141,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
 			for (int i = 0; i < updates.length; i++) {
 				final IHasChildrenUpdate update = updates[i];
 
-				final MultiRequestMonitor<DataRequestMonitor<Boolean>> hasChildrenMultiRequestMon = new MultiRequestMonitor<DataRequestMonitor<Boolean>>(
+				final MultiRequestMonitor<DataRequestMonitor<Boolean>> hasChildrenMultiRequestMon = new MultiRequestMonitor<>(
 						getVMProvider().getExecutor(), null) {
 					@Override
 					protected void handleCompleted() {

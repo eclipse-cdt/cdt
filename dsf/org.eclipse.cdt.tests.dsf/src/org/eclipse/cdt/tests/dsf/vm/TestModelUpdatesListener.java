@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.TreePath;
  */
 public class TestModelUpdatesListener extends ViewerUpdatesListener {
 
-	private final static Comparator<String> fStringComparator = new Comparator<String>() {
+	private final static Comparator<String> fStringComparator = new Comparator<>() {
 
 		@Override
 		public int compare(String s1, String s2) {
@@ -63,7 +63,7 @@ public class TestModelUpdatesListener extends ViewerUpdatesListener {
 		};
 	};
 
-	private final static Comparator<TreePath> fTestElementVMCComparator = new Comparator<TreePath>() {
+	private final static Comparator<TreePath> fTestElementVMCComparator = new Comparator<>() {
 		@Override
 		public int compare(TreePath p1, TreePath p2) {
 			int l1 = p1.getSegmentCount();

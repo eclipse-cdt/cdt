@@ -51,7 +51,7 @@ public class CVariable extends PlatformObject implements ICInternalBinding, IVar
 	 * The set of CVariable objects for which initial value computation is in progress on each thread.
 	 * This is used to guard against recursion during initial value computation.
 	 */
-	private static final ThreadLocal<Set<CVariable>> fInitialValueInProgress = new ThreadLocal<Set<CVariable>>() {
+	private static final ThreadLocal<Set<CVariable>> fInitialValueInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<CVariable> initialValue() {
 			return new HashSet<>();

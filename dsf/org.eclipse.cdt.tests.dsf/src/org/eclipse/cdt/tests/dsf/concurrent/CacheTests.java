@@ -556,7 +556,7 @@ public class CacheTests {
 		};
 
 		// Request data from cache
-		Query<Integer> q = new Query<Integer>() {
+		Query<Integer> q = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 
@@ -625,7 +625,7 @@ public class CacheTests {
 		// Create a client request with a badly behaved cancel implementation.
 		final RequestMonitor[] rmBad = new RequestMonitor[1];
 		final boolean qBadCanceled[] = new boolean[] { false };
-		Query<Integer> qBad = new Query<Integer>() {
+		Query<Integer> qBad = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
 				rmBad[0] = new RequestMonitor(ImmediateExecutor.getInstance(), rm) {

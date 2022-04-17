@@ -115,7 +115,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		String[] buttonLabels = new String[] { CUIMessages.BinaryParserBlock_button_up,
 				CUIMessages.BinaryParserBlock_button_down };
 
-		IListAdapter<BinaryParserConfiguration> listAdapter = new IListAdapter<BinaryParserConfiguration>() {
+		IListAdapter<BinaryParserConfiguration> listAdapter = new IListAdapter<>() {
 
 			@Override
 			public void customButtonPressed(ListDialogField<BinaryParserConfiguration> field, int index) {
@@ -131,8 +131,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 			}
 		};
 
-		binaryList = new CheckedListDialogField<BinaryParserConfiguration>(listAdapter, buttonLabels,
-				new BinaryParserLabelProvider()) {
+		binaryList = new CheckedListDialogField<>(listAdapter, buttonLabels, new BinaryParserLabelProvider()) {
 
 			@Override
 			protected int getListStyle() {

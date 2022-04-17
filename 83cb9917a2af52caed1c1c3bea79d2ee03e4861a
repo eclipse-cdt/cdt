@@ -18,6 +18,47 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "abc3c57b_df4d7efa",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T21:21:03Z",
+      "side": 1,
+      "message": "If it\u0027s binary compatible, then +2!",
+      "parentUuid": "6541f054_59af6beb",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2bb8eda_e83ec176",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T21:21:03Z",
+      "side": 1,
+      "message": "List? :)",
+      "range": {
+        "startLine": 215,
+        "startChar": 9,
+        "endLine": 215,
+        "endChar": 18
+      },
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3a7d87c9_a7552933",
@@ -35,6 +76,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "59e99203_8d443d6d",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T21:21:03Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "3a7d87c9_a7552933",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bbb4d964_6e9f7420",
@@ -48,6 +107,93 @@
       "writtenOn": "2022-04-17T19:12:24Z",
       "side": 1,
       "message": "...this method is part of API, but I hope no one would be calling it.",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc584f85_50b1e939",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T21:21:03Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "bbb4d964_6e9f7420",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a90e846b_5ee6e28b",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 792,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T21:21:03Z",
+      "side": 1,
+      "message": "Maybe this block should be updated to the less anchient way? The same applies to several places below.\n\n```\nfor (InternalCTab tab : interalCTabs) {\n  ...\n}\n```",
+      "range": {
+        "startLine": 790,
+        "startChar": 2,
+        "endLine": 792,
+        "endChar": 32
+      },
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78eeae50_0c99c396",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 917,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T21:21:03Z",
+      "side": 1,
+      "message": "isEmpty() whould be more efficient?",
+      "range": {
+        "startLine": 917,
+        "startChar": 20,
+        "endLine": 917,
+        "endChar": 30
+      },
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a1180a7_6bb3962c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1305,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T21:21:03Z",
+      "side": 1,
+      "message": "internalCTabs.isEmpty()\n\nI don\u0027t think the null check is required here. Also, internalCTabs should perhaps be marked \"final\"?",
+      "range": {
+        "startLine": 1305,
+        "startChar": 8,
+        "endLine": 1305,
+        "endChar": 58
+      },
       "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }

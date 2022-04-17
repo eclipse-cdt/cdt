@@ -87,7 +87,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 	 * The set of types currently being loaded from the index on each thread, represented as record numbers.
 	 * This is used to guard against infinite recursion while loading types.
 	 */
-	private static final ThreadLocal<Set<Long>> fLoadTypeInProgress = new ThreadLocal<Set<Long>>() {
+	private static final ThreadLocal<Set<Long>> fLoadTypeInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<Long> initialValue() {
 			return new HashSet<>();

@@ -71,7 +71,7 @@ public class ProxyConnectionPage extends WizardPage {
 
 	private String fInitialName = "Remote Host"; //$NON-NLS-1$
 	private Set<String> fInvalidConnectionNames;
-	private final Map<String, String> fInitialAttributes = new HashMap<String, String>();
+	private final Map<String, String> fInitialAttributes = new HashMap<>();
 	private IRemoteConnectionWorkingCopy fConnection;
 
 	private final IRemoteConnectionType fConnectionType;

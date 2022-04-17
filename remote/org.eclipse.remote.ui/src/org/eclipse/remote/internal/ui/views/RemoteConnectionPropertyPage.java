@@ -24,7 +24,7 @@ public class RemoteConnectionPropertyPage extends PropertyPage {
 		if (element instanceof IRemoteConnection) {
 			connection = (IRemoteConnection) element;
 		} else if (element instanceof IAdaptable) {
-			connection = (IRemoteConnection) ((IAdaptable) element).getAdapter(IRemoteConnection.class);
+			connection = ((IAdaptable) element).getAdapter(IRemoteConnection.class);
 		}
 
 		if (connection != null) {

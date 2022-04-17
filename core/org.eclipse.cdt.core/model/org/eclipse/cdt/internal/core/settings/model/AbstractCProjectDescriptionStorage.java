@@ -70,7 +70,7 @@ public abstract class AbstractCProjectDescriptionStorage {
 	protected volatile IProject project;
 
 	/** Flag used to detect if setProjectDescription(...) is called by the thread already in a setProjectDescription(...) */
-	final private ThreadLocal<Boolean> setProjectDescriptionOperationRunning = new ThreadLocal<Boolean>() {
+	final private ThreadLocal<Boolean> setProjectDescriptionOperationRunning = new ThreadLocal<>() {
 		@Override
 		protected Boolean initialValue() {
 			return false;

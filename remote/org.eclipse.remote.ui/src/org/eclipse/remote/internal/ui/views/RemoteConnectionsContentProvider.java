@@ -16,9 +16,9 @@ package org.eclipse.remote.internal.ui.views;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 import org.eclipse.remote.core.IRemoteConnectionChangeListener;
 import org.eclipse.remote.core.IRemoteServicesManager;
+import org.eclipse.remote.core.RemoteConnectionChangeEvent;
 
 public class RemoteConnectionsContentProvider implements ITreeContentProvider, IRemoteConnectionChangeListener {
 

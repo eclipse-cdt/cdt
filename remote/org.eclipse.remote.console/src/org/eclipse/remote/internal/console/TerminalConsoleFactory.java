@@ -103,7 +103,7 @@ public class TerminalConsoleFactory implements IConsoleFactory {
 	}
 
 	public static List<IConsole> findConsole(IRemoteConnection connection) {
-		ArrayList<IConsole> ret = new ArrayList<IConsole>();
+		ArrayList<IConsole> ret = new ArrayList<>();
 		IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		IConsole[] consoles = consoleManager.getConsoles();
 		for (IConsole console : consoles) {

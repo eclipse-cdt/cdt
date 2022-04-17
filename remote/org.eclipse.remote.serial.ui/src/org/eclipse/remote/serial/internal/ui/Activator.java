@@ -34,12 +34,14 @@ public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
 
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
 		getImageRegistry().put(IMG_CONNECTION_TYPE, imageDescriptorFromPlugin(PLUGIN_ID, "/icons/serial.png")); //$NON-NLS-1$
 	}
 
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);

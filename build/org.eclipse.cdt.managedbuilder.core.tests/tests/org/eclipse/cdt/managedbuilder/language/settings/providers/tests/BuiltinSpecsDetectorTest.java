@@ -223,7 +223,7 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 
 		@Override
 		protected List<String> parseOptions(final String line) {
-			return new ArrayList<String>() {
+			return new ArrayList<>() {
 				{
 					add(line);
 				}

@@ -89,7 +89,7 @@ public class ASTTypeUtil {
 	// sizes of type strings from getting out of control for certain code patterns.
 	private static final int TYPE_STRING_LENGTH_THRESHOLD = 100000;
 
-	private static final ThreadLocal<Set<IBinding>> fSourceFileOnlyCheckInProgress = new ThreadLocal<Set<IBinding>>() {
+	private static final ThreadLocal<Set<IBinding>> fSourceFileOnlyCheckInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<IBinding> initialValue() {
 			return new HashSet<>();

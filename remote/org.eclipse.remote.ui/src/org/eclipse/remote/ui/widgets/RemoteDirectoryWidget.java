@@ -56,7 +56,7 @@ public class RemoteDirectoryWidget extends Composite {
 	private IRemoteConnection fRemoteConnection;
 	private final ListenerList modifyListeners = new ListenerList();
 
-	private final Map<String, String> previousSelections = new HashMap<String, String>();
+	private final Map<String, String> previousSelections = new HashMap<>();
 
 	public RemoteDirectoryWidget(Composite parent, int style, String title, String defaultPath) {
 		super(parent, style);

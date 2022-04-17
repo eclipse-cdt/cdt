@@ -34,7 +34,7 @@ public class ProcessTests extends TestCase {
 	public void testStreamHalfClose() {
 		IRemoteProcessBuilder builder = processService.getProcessBuilder("perl", "-v"); //$NON-NLS-1$
 		try {
-			final Set<String> results = new HashSet<String>();
+			final Set<String> results = new HashSet<>();
 			IRemoteProcess proc = builder.start();
 			proc.getOutputStream().close(); // close stdin to make sure half closed channel works
 			BufferedReader stdout = new BufferedReader(new InputStreamReader(proc.getInputStream()));

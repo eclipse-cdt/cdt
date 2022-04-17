@@ -809,8 +809,7 @@ public class MIBreakpoints extends AbstractDsfService implements IBreakpointsExt
 		expression = adjustWatchPointExpression(attributes, expression);
 
 		// The DataRequestMonitor for the add request
-		DataRequestMonitor<MIBreakInsertInfo> addWatchpointDRM = new DataRequestMonitor<MIBreakInsertInfo>(
-				getExecutor(), drm) {
+		DataRequestMonitor<MIBreakInsertInfo> addWatchpointDRM = new DataRequestMonitor<>(getExecutor(), drm) {
 			@Override
 			protected void handleSuccess() {
 

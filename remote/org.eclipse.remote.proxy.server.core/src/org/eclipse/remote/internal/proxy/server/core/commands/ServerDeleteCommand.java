@@ -26,6 +26,7 @@ public class ServerDeleteCommand extends AbstractServerCommand {
 		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
+	@Override
 	public void exec() throws ProxyException {
 		try {
 			EFS.getStore(uri).delete(options, new NullProgressMonitor());

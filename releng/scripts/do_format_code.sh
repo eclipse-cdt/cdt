@@ -21,7 +21,7 @@ set -e
 ##
 # Format code
 ##
-: ${ECLIPSE:=~/buildtools/eclipse-SDK-4.13/eclipse}
+: ${ECLIPSE:=~/buildtools/eclipse-SDK-4.23/eclipse}
 if test -e check_code_cleanliness_workspace; then
     echo check_code_cleanliness_workspace needs to be deleted
     exit 1

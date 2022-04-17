@@ -299,14 +299,14 @@ public class CPPSemantics {
 	// that are not reachable via includes from the file containing the name.
 	// Generally this is not allowed, but certain consumers, such as IncludeOrganizer,
 	// need it (since the whole point of IncludeOrganizer is to find missing headers).
-	private static final ThreadLocal<Boolean> fAllowPromiscuousBindingResolution = new ThreadLocal<Boolean>() {
+	private static final ThreadLocal<Boolean> fAllowPromiscuousBindingResolution = new ThreadLocal<>() {
 		@Override
 		protected Boolean initialValue() {
 			return false;
 		}
 	};
 
-	private static final ThreadLocal<Deque<IASTNode>> fLookupPoints = new ThreadLocal<Deque<IASTNode>>() {
+	private static final ThreadLocal<Deque<IASTNode>> fLookupPoints = new ThreadLocal<>() {
 		@Override
 		protected Deque<IASTNode> initialValue() {
 			return new ArrayDeque<>();

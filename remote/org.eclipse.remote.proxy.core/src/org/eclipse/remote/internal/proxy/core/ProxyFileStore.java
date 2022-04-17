@@ -61,7 +61,7 @@ public class ProxyFileStore extends FileStore {
 		}
 	}
 
-	private static Map<String, ProxyFileStore> instanceMap = new HashMap<String, ProxyFileStore>();
+	private static Map<String, ProxyFileStore> instanceMap = new HashMap<>();
 
 	private final IPath fRemotePath;
 	private final URI fURI;

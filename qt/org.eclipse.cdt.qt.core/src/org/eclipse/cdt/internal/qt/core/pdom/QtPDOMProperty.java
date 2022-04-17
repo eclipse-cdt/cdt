@@ -129,7 +129,7 @@ public class QtPDOMProperty extends QtPDOMBinding {
 			this.cppRecord = cppRecord;
 		}
 
-		private static final IQtPDOMCodec<Attribute> Codec = new IQtPDOMCodec<Attribute>() {
+		private static final IQtPDOMCodec<Attribute> Codec = new IQtPDOMCodec<>() {
 			@Override
 			public int getElementSize() {
 				return 1 + Database.PTR_SIZE + Database.PTR_SIZE;

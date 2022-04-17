@@ -73,7 +73,7 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
 			return;
 		}
 
-		Query<Object> selectRecordQuery = new Query<Object>() {
+		Query<Object> selectRecordQuery = new Query<>() {
 			@Override
 			public void execute(final DataRequestMonitor<Object> rm) {
 				final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
@@ -123,7 +123,7 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
 			return false;
 		}
 
-		Query<Boolean> canSelectRecordQuery = new Query<Boolean>() {
+		Query<Boolean> canSelectRecordQuery = new Query<>() {
 			@Override
 			public void execute(final DataRequestMonitor<Boolean> rm) {
 				final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);

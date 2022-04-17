@@ -160,7 +160,7 @@ public final class CompositeValue implements IValue {
 
 	// The set of class types for which composite value creation is in progress on each thread.
 	// Used to guard against infinite recursion due to a class (illegally) aggregating itself.
-	private static final ThreadLocal<Set<ICPPClassType>> fCreateInProgress = new ThreadLocal<Set<ICPPClassType>>() {
+	private static final ThreadLocal<Set<ICPPClassType>> fCreateInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<ICPPClassType> initialValue() {
 			return new TreeSet<>((type1, type2) -> {

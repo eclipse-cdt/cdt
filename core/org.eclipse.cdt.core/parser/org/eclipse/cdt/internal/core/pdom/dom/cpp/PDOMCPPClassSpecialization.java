@@ -76,7 +76,7 @@ class PDOMCPPClassSpecialization extends PDOMCPPSpecialization
 
 	private volatile ICPPClassScope fScope;
 	private ObjectMap specializationMap; // Obtained from the synchronized PDOM cache.
-	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<Set<IBinding>>() {
+	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<IBinding> initialValue() {
 			return new HashSet<>();

@@ -42,8 +42,8 @@ import com.jcraft.jsch.JSchException;
 public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 
 	private final JSchConnection fConnection;
-	private final Map<String, String> fRemoteEnv = new HashMap<String, String>();
-	private final Set<Character> charSet = new HashSet<Character>();
+	private final Map<String, String> fRemoteEnv = new HashMap<>();
+	private final Set<Character> charSet = new HashSet<>();
 
 	private Channel fChannel;
 	private Map<String, String> fNewRemoteEnv;
@@ -88,7 +88,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 	@Override
 	public Map<String, String> environment() {
 		if (fNewRemoteEnv == null) {
-			fNewRemoteEnv = new HashMap<String, String>();
+			fNewRemoteEnv = new HashMap<>();
 			fNewRemoteEnv.putAll(fRemoteEnv);
 		}
 		return fNewRemoteEnv;
@@ -129,7 +129,7 @@ public class JSchProcessBuilder extends AbstractRemoteProcessBuilder {
 		 * list.
 		 */
 
-		final List<String> env = new ArrayList<String>();
+		final List<String> env = new ArrayList<>();
 		boolean clearEnv = false;
 
 		if (fNewRemoteEnv != null) {

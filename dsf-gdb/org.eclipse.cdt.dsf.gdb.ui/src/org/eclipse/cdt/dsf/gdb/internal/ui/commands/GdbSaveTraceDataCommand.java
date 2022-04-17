@@ -74,7 +74,7 @@ public class GdbSaveTraceDataCommand extends AbstractDebugCommand implements ISa
 		PlatformUI.getWorkbench().getDisplay().syncExec(() -> fileName[0] = promptForFileName());
 
 		if (fileName[0] != null) {
-			Query<Object> saveTraceDataQuery = new Query<Object>() {
+			Query<Object> saveTraceDataQuery = new Query<>() {
 				@Override
 				public void execute(final DataRequestMonitor<Object> rm) {
 					IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
@@ -110,7 +110,7 @@ public class GdbSaveTraceDataCommand extends AbstractDebugCommand implements ISa
 			return false;
 		}
 
-		Query<Boolean> canSaveQuery = new Query<Boolean>() {
+		Query<Boolean> canSaveQuery = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Boolean> rm) {
 				IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);

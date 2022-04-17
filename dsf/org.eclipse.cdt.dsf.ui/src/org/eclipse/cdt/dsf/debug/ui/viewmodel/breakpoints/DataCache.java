@@ -110,7 +110,7 @@ abstract class DataCache<V> {
 			boolean first = fWaitingList.isEmpty();
 			fWaitingList.add(rm);
 			if (first) {
-				fRm = new DataRequestMonitor<V>(fExecutor, null) {
+				fRm = new DataRequestMonitor<>(fExecutor, null) {
 					@Override
 					protected void handleCompleted() {
 						if (!isCanceled()) {

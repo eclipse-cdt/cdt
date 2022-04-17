@@ -39,7 +39,7 @@ public class DeleteRemoteConnectionHandler extends AbstractHandler {
 		ISelection selection = HandlerUtil.getActiveWorkbenchWindow(event).getActivePage().getSelection();
 		if (selection != null && selection instanceof IStructuredSelection) {
 			// Get the manageable connections from the selection
-			List<IRemoteConnection> connections = new ArrayList<IRemoteConnection>();
+			List<IRemoteConnection> connections = new ArrayList<>();
 			@SuppressWarnings("unchecked")
 			Iterator<Object> i = ((IStructuredSelection) selection).iterator();
 			while (i.hasNext()) {

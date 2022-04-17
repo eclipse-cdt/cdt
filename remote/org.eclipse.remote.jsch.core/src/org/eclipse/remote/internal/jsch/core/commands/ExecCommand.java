@@ -27,7 +27,7 @@ public class ExecCommand extends AbstractRemoteCommand<String> {
 	@Override
 	public String getResult(IProgressMonitor monitor) throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		ExecCallable<String> c = new ExecCallable<String>() {
+		ExecCallable<String> c = new ExecCallable<>() {
 			@Override
 			public String call() throws JSchException, RemoteConnectionException {
 				getChannel().setCommand(fCommand);

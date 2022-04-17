@@ -122,7 +122,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 				getSession().getExecutor().execute(() -> {
 					final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
 					if (expressionService != null) {
-						final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<IExpressionDMAddress>(
+						final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<>(
 								getSession().getExecutor(), null) {
 							@Override
 							public void handleCompleted() {
@@ -161,7 +161,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 				getSession().getExecutor().execute(() -> {
 					final IExpressions expressionService = getServicesTracker().getService(IExpressions.class);
 					if (expressionService != null) {
-						final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<IExpressionDMAddress>(
+						final DataRequestMonitor<IExpressionDMAddress> drm = new DataRequestMonitor<>(
 								getSession().getExecutor(), null) {
 							@Override
 							public void handleCompleted() {

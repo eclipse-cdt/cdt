@@ -43,14 +43,13 @@ public abstract class AbstractTriggerCommandHandler extends AbstractHandler {
 	protected void triggerCommand(String commandId, ISelection selection) {
 		Assert.isNotNull(commandId);
 
-		ICommandService service = (ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+		ICommandService service = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = service != null ? service.getCommand(commandId) : null;
 		if (command != null && command.isDefined() && command.isEnabled()) {
 			try {
 				ParameterizedCommand pCmd = ParameterizedCommand.generateCommand(command, null);
 				Assert.isNotNull(pCmd);
-				IHandlerService handlerSvc = (IHandlerService) PlatformUI.getWorkbench()
-						.getService(IHandlerService.class);
+				IHandlerService handlerSvc = PlatformUI.getWorkbench().getService(IHandlerService.class);
 				Assert.isNotNull(handlerSvc);
 				IEvaluationContext ctx = handlerSvc.getCurrentState();
 				if (selection != null) {

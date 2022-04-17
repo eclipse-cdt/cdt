@@ -37,6 +37,7 @@ public class ServerGetCwdCommand extends AbstractServerCommand {
 		this.result = new DataOutputStream(chan.getOutputStream());
 	}
 
+	@Override
 	public void exec() throws ProxyException {
 		cwd = System.getProperty("user.dir"); //$NON-NLS-1$
 		new Thread(new CommandRunner()).start();

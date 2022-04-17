@@ -34,6 +34,7 @@ public class FetchInfoCommand extends AbstractCommand<IFileInfo> {
 		this.path = path;
 	}
 
+	@Override
 	public IFileInfo call() throws ProxyException {
 		try {
 			final StreamChannel chan = openChannel();

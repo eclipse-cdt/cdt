@@ -131,7 +131,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		}
 	}
 
-	private static final Comparator<String> COMP_INSENSITIVE = new Comparator<String>() {
+	private static final Comparator<String> COMP_INSENSITIVE = new Comparator<>() {
 		@Override
 		public int compare(String o1, String o2) {
 			return o1.toUpperCase().compareTo(o2.toUpperCase());

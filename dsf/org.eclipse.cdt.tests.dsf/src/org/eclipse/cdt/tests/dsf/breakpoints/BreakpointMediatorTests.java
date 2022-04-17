@@ -94,7 +94,7 @@ public class BreakpointMediatorTests {
 						},
 
 						// Initialize breakpoints service
-						new InitializeServiceStep<DsfTestBreakpoints>(DsfTestBreakpoints.class) {
+						new InitializeServiceStep<>(DsfTestBreakpoints.class) {
 							@Override
 							protected void setService(DsfTestBreakpoints service) {
 								fBreakpoints = service;

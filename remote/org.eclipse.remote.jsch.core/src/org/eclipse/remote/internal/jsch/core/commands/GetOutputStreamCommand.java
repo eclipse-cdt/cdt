@@ -42,7 +42,7 @@ public class GetOutputStreamCommand extends AbstractRemoteCommand<OutputStream> 
 					super.close();
 					final InputStream input = new ByteArrayInputStream(this.toByteArray());
 					try {
-						SftpCallable<Integer> c = new SftpCallable<Integer>() {
+						SftpCallable<Integer> c = new SftpCallable<>() {
 							@Override
 							public Integer call() throws JSchException, SftpException, IOException {
 								try {

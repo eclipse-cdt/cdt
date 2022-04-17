@@ -51,6 +51,24 @@
       "parentUuid": "c5fd0131_d100e999",
       "revId": "5cc5aab0ba760df0be087eac52891d807cdce8f6",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "062423f8_0e8477c8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T21:27:20Z",
+      "side": 1,
+      "message": "Can\u0027t explain it, but I\u0027ve ran a debug session and the fViewer.getTextWidget() does return null when running the \"JUnit Plug-in Tests\" launch configuration on some of the CDT bundles.\nAnyway, the null check does not hurt too much here.",
+      "parentUuid": "66abbb21_a4340e88",
+      "revId": "5cc5aab0ba760df0be087eac52891d807cdce8f6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

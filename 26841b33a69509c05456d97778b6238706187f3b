@@ -33,6 +33,24 @@
       "message": "Apparently, running the build on Jenkins produces a different set of files that differ.\n\nJenkins (https://ci.eclipse.org/cdt/job/cdt-verify-code-cleanliness-pipeline/3702/artifact/baseline-compare-and-replace.log):\n```\n[ERROR] Failed to execute goal org.eclipse.tycho:tycho-p2-plugin:2.5.0:p2-metadata (baselinereplace-p2-metadata) on project org.eclipse.cdt.debug.dap: baseline and build artifacts have same version but different contents\n[ERROR]    no-classifier: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/build/config.gypi: different\n[ERROR] -\u003e [Help 1]\n```\n\n\nMy local build using docker:\n```\n[ERROR] Failed to execute goal org.eclipse.tycho:tycho-p2-plugin:2.5.0:p2-metadata (baselinereplace-p2-metadata) on project org.eclipse.cdt.debug.dap: baseline and build artifacts have same version but different contents\n[ERROR]    no-classifier: different\n[ERROR]       debug-servers/node_modules/.yarn-integrity: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/build/Release/.deps/Release/obj.target/node-addon-api/src/nothing.o.d: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/build/config.gypi: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/node-addon-api/src/node-api.target.mk: different\n[ERROR]       debug-servers/node_modules/cdt-gdb-adapter/node-addon-api/src/nothing.target.mk: different\n[ERROR] -\u003e [Help 1]\n```\n\n\nRegardless, I\u0027m not sure that the appropriate solution is to bump the version as that would include a different binary although the plugin should not be changed.",
       "revId": "26841b33a69509c05456d97778b6238706187f3b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1c0c0da8_63053464",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-17T16:26:11Z",
+      "side": 1,
+      "message": "The endgame has this note:\n\n The following need their bundle service segment updated all the time for various reasons:\n org.eclipse.cdt.debug.application because the version number is encoded in the bundle\n org.eclipse.cdt.debug.dap because it pulls and builds with yarn\n \nThat list isn\u0027t exhaustive - the native code needs version bumping due to the signing change.\n\nThe dap bundle, like the lsp one, is underinvested in.",
+      "parentUuid": "4be0b40f_0973a313",
+      "revId": "26841b33a69509c05456d97778b6238706187f3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

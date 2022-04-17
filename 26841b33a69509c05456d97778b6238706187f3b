@@ -51,6 +51,40 @@
       "parentUuid": "4be0b40f_0973a313",
       "revId": "26841b33a69509c05456d97778b6238706187f3b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "083c3ab2_00c5ff22",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-17T16:31:42Z",
+      "side": 1,
+      "message": "+1 once it builds cleanly and baseline comment resolved.",
+      "revId": "26841b33a69509c05456d97778b6238706187f3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0eaf268b_bceb2ce0",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-17T16:31:42Z",
+      "side": 1,
+      "message": "This line should be 10.6.0",
+      "revId": "26841b33a69509c05456d97778b6238706187f3b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

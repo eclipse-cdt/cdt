@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5cbb2ea8_b2c97a3d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T12:31:19Z",
+      "side": 1,
+      "message": "I noticed that these tests were failing on my development system. Is there any reason to not remove the project in a try { ... } finally { ... } way?",
+      "revId": "f328994852471824bcc2f2725aa3ff9d9bb8e11a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

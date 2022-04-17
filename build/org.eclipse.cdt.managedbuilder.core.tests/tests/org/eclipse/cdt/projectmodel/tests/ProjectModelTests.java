@@ -574,126 +574,134 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 	public void testMacroEntries() throws Exception {
 		final String projectName = "test3";
 		IProject project = createProject(projectName);
-		CoreModel coreModel = CoreModel.getDefault();
-		ICProjectDescription des = coreModel.getProjectDescription(project);
-		assertNull("detDescription1 returned not null!", des);
+		try {
+			CoreModel coreModel = CoreModel.getDefault();
+			ICProjectDescription des = coreModel.getProjectDescription(project);
+			assertNull("detDescription1 returned not null!", des);
 
-		des = coreModel.createProjectDescription(project, true);
-		assertNotNull("createDescription returned null!", des);
+			des = coreModel.createProjectDescription(project, true);
+			assertNotNull("createDescription returned null!", des);
 
-		assertNull("detDescription2 returned not null!", coreModel.getProjectDescription(project));
+			assertNull("detDescription2 returned not null!", coreModel.getProjectDescription(project));
 
-		assertFalse("new des should be not valid", des.isValid());
+			assertFalse("new des should be not valid", des.isValid());
 
-		assertEquals(0, des.getConfigurations().length);
+			assertEquals(0, des.getConfigurations().length);
 
-		ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
-		IProjectType type = ManagedBuildManager.getProjectType("cdt.managedbuild.target.gnu30.exe");
-		assertNotNull("project type not found", type);
+			ManagedBuildInfo info = ManagedBuildManager.createBuildInfo(project);
+			IProjectType type = ManagedBuildManager.getProjectType("cdt.managedbuild.target.gnu30.exe");
+			assertNotNull("project type not found", type);
 
-		ManagedProject mProj = new ManagedProject(project, type);
-		info.setManagedProject(mProj);
+			ManagedProject mProj = new ManagedProject(project, type);
+			info.setManagedProject(mProj);
 
-		IConfiguration cfgs[] = type.getConfigurations();
+			IConfiguration cfgs[] = type.getConfigurations();
 
-		for (int i = 0; i < cfgs.length; i++) {
-			String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
-			Configuration config = new Configuration(mProj, (Configuration) cfgs[i], id, false, true);
-			CConfigurationData data = config.getConfigurationData();
-			assertNotNull("data is null for created configuration", data);
-			des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
-		}
-		coreModel.setProjectDescription(project, des);
-
-		des = coreModel.getProjectDescription(project);
-		assertNotNull("project description is null ", des);
-		assertTrue("des should be valid ", des.isValid());
-
-		ICConfigurationDescription cfgDess[] = des.getConfigurations();
-
-		assertEquals(2, cfgDess.length);
-
-		ICConfigurationDescription cfgDes = cfgDess[0];
-		ICResourceDescription rcDess[] = cfgDes.getResourceDescriptions();
-		assertEquals(1, rcDess.length);
-		assertEquals(cfgDes.getRootFolderDescription(), rcDess[0]);
-		assertFalse(cfgDes.isModified());
-		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
-		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
-		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
-		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), false));
-		assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
-		assertEquals(null, cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), true));
-
-		ICFolderDescription rf = cfgDes.getRootFolderDescription();
-		ICLanguageSetting setting = rf.getLanguageSettingForFile("a.c");
-		ICLanguageSettingEntry entries[] = setting.getSettingEntries(ICLanguageSettingEntry.MACRO);
-
-		if (isPrint) {
-			for (int i = 0; i < entries.length; i++) {
-				System.out
-						.println("name = \"" + entries[i].getName() + "\", value = \"" + entries[i].getValue() + "\"");
+			for (int i = 0; i < cfgs.length; i++) {
+				String id = ManagedBuildManager.calculateChildId(cfgs[i].getId(), null);
+				Configuration config = new Configuration(mProj, (Configuration) cfgs[i], id, false, true);
+				CConfigurationData data = config.getConfigurationData();
+				assertNotNull("data is null for created configuration", data);
+				des.createConfiguration("org.eclipse.cdt.managedbuilder.core.configurationDataProvider", data);
 			}
-		}
+			coreModel.setProjectDescription(project, des);
 
-		CMacroEntry entry = new CMacroEntry("a", "b", 0);
-		List<ICLanguageSettingEntry> list = new ArrayList<>();
-		list.add(entry);
-		list.addAll(Arrays.asList(entries));
+			des = coreModel.getProjectDescription(project);
+			assertNotNull("project description is null ", des);
+			assertTrue("des should be valid ", des.isValid());
 
-		setting.setSettingEntries(ICLanguageSettingEntry.MACRO, list);
+			ICConfigurationDescription cfgDess[] = des.getConfigurations();
 
-		ICLanguageSettingEntry updatedEntries[] = setting.getSettingEntries(ICLanguageSettingEntry.MACRO);
-		assertEquals(entries.length + 1, updatedEntries.length);
+			assertEquals(2, cfgDess.length);
 
-		boolean found = false;
-		for (int i = 0; i < updatedEntries.length; i++) {
-			if (updatedEntries[i].getName().equals("a") && updatedEntries[i].getValue().equals("b")) {
-				found = true;
-				break;
+			ICConfigurationDescription cfgDes = cfgDess[0];
+			ICResourceDescription rcDess[] = cfgDes.getResourceDescriptions();
+			assertEquals(1, rcDess.length);
+			assertEquals(cfgDes.getRootFolderDescription(), rcDess[0]);
+			assertFalse(cfgDes.isModified());
+			assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
+			assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
+			assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), false));
+			assertEquals(cfgDes.getRootFolderDescription(),
+					cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), false));
+			assertEquals(cfgDes.getRootFolderDescription(), cfgDes.getResourceDescription(new Path(""), true));
+			assertEquals(null, cfgDes.getResourceDescription(new Path("ds/sd/sdf/"), true));
+
+			ICFolderDescription rf = cfgDes.getRootFolderDescription();
+			ICLanguageSetting setting = rf.getLanguageSettingForFile("a.c");
+			ICLanguageSettingEntry entries[] = setting.getSettingEntries(ICLanguageSettingEntry.MACRO);
+
+			if (isPrint) {
+				for (int i = 0; i < entries.length; i++) {
+					System.out.println(
+							"name = \"" + entries[i].getName() + "\", value = \"" + entries[i].getValue() + "\"");
+				}
 			}
-		}
 
-		assertTrue(found);
+			CMacroEntry entry = new CMacroEntry("a", "b", 0);
+			List<ICLanguageSettingEntry> list = new ArrayList<>();
+			list.add(entry);
+			list.addAll(Arrays.asList(entries));
+
+			setting.setSettingEntries(ICLanguageSettingEntry.MACRO, list);
+
+			ICLanguageSettingEntry updatedEntries[] = setting.getSettingEntries(ICLanguageSettingEntry.MACRO);
+			assertEquals(entries.length + 1, updatedEntries.length);
+
+			boolean found = false;
+			for (int i = 0; i < updatedEntries.length; i++) {
+				if (updatedEntries[i].getName().equals("a") && updatedEntries[i].getValue().equals("b")) {
+					found = true;
+					break;
+				}
+			}
+
+			assertTrue(found);
+		} finally {
+			project.delete(true, null);
+		}
 	}
 
 	public void testActiveCfg() throws Exception {
 		final String projectName = "test8";
 
 		IProject project = createProject(projectName, "cdt.managedbuild.target.gnu30.exe");
-		CoreModel coreModel = CoreModel.getDefault();
+		try {
+			CoreModel coreModel = CoreModel.getDefault();
 
-		ICProjectDescription des = coreModel.getProjectDescription(project);
-		ICConfigurationDescription cfgs[] = des.getConfigurations();
-		String id1 = cfgs[0].getId();
-		cfgs[1].getId();
+			ICProjectDescription des = coreModel.getProjectDescription(project);
+			ICConfigurationDescription cfgs[] = des.getConfigurations();
+			String id1 = cfgs[0].getId();
+			cfgs[1].getId();
 
-		cfgs[0].setActive();
-		assertEquals(cfgs[0], des.getActiveConfiguration());
+			cfgs[0].setActive();
+			assertEquals(cfgs[0], des.getActiveConfiguration());
 
-		coreModel.setProjectDescription(project, des);
+			coreModel.setProjectDescription(project, des);
 
-		des = coreModel.getProjectDescription(project);
-		cfgs = des.getConfigurations();
-		assertEquals(id1, des.getActiveConfiguration().getId());
+			des = coreModel.getProjectDescription(project);
+			cfgs = des.getConfigurations();
+			assertEquals(id1, des.getActiveConfiguration().getId());
 
-		ICConfigurationDescription newActive = null;
-		for (int i = 0; i < cfgs.length; i++) {
-			if (!cfgs[i].getId().equals(id1)) {
-				newActive = cfgs[i];
-				break;
+			ICConfigurationDescription newActive = null;
+			for (int i = 0; i < cfgs.length; i++) {
+				if (!cfgs[i].getId().equals(id1)) {
+					newActive = cfgs[i];
+					break;
+				}
 			}
+
+			String newActiveId = newActive.getId();
+			newActive.setActive();
+			assertEquals(newActive, des.getActiveConfiguration());
+
+			coreModel.setProjectDescription(project, des);
+
+			des = coreModel.getProjectDescription(project);
+			assertEquals(newActiveId, des.getActiveConfiguration().getId());
+		} finally {
+			project.delete(true, null);
 		}
-
-		String newActiveId = newActive.getId();
-		newActive.setActive();
-		assertEquals(newActive, des.getActiveConfiguration());
-
-		coreModel.setProjectDescription(project, des);
-
-		des = coreModel.getProjectDescription(project);
-		assertEquals(newActiveId, des.getActiveConfiguration().getId());
-
 	}
 
 	/**

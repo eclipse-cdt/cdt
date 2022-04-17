@@ -103,7 +103,7 @@ public class RemoteUIFileService implements IRemoteUIFileService {
 			return null;
 		}
 		connection = browser.getConnection();
-		List<String> paths = new ArrayList<String>();
+		List<String> paths = new ArrayList<>();
 		for (IFileStore store : browser.getResources()) {
 			paths.add(store.toURI().getPath());
 		}

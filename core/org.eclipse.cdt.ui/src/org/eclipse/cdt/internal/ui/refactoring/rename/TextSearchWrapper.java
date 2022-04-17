@@ -310,7 +310,7 @@ public class TextSearchWrapper {
 		}
 	}
 
-	final static Comparator<int[]> COMPARE_FIRST_INTEGER = new Comparator<int[]>() {
+	final static Comparator<int[]> COMPARE_FIRST_INTEGER = new Comparator<>() {
 		@Override
 		public int compare(int[] o1, int[] o2) {
 			return (o1)[0] - (o2)[0];

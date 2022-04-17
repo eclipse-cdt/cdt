@@ -80,7 +80,7 @@ public class HeaderSubstitutionMapEditDialog extends ResizableStatusDialog {
 	private static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
 	private static final String TAG_HEADER_SUBSTITUTION_MAP = "header_substitution_map"; //$NON-NLS-1$
 	private static final Collator COLLATOR = Collator.getInstance();
-	private static final Comparator<HeaderSubstitutionRule> SOURCE_COMPARATOR = new Comparator<HeaderSubstitutionRule>() {
+	private static final Comparator<HeaderSubstitutionRule> SOURCE_COMPARATOR = new Comparator<>() {
 		@Override
 		public int compare(HeaderSubstitutionRule r1, HeaderSubstitutionRule r2) {
 			return COLLATOR.compare(r1.getSource(), r2.getSource());

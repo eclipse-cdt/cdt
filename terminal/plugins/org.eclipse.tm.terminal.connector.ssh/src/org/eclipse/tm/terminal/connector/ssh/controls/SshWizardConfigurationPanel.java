@@ -302,7 +302,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				if (!savePassword)
 					removeSecurePassword(host);
 			} else if (add) {
-				Map<String, String> hostSettings = new HashMap<String, String>();
+				Map<String, String> hostSettings = new HashMap<>();
 				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_HOST, sshSettings.getHost());
 				hostSettings.put(ITerminalsConnectorConstants.PROP_IP_PORT, Integer.toString(sshSettings.getPort()));
 				hostSettings.put(ITerminalsConnectorConstants.PROP_TIMEOUT, Integer.toString(sshSettings.getTimeout()));

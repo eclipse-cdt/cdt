@@ -563,7 +563,7 @@ public class RemoveUnusedDeclarationsRefactoring extends CRefactoring {
 	 * in the reverse order.
 	 */
 	private static class SortedNodeSet<T extends IASTNode> extends TreeSet<T> {
-		private static final Comparator<IASTNode> COMPARATOR = new Comparator<IASTNode>() {
+		private static final Comparator<IASTNode> COMPARATOR = new Comparator<>() {
 			@Override
 			public int compare(IASTNode node1, IASTNode node2) {
 				int c = Integer.compare(ASTNodes.offset(node1), ASTNodes.offset(node2));

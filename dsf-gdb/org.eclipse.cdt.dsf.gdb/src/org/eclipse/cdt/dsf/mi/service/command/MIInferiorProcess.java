@@ -295,7 +295,7 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 		// with multi-process (it is re-used by the different processes).
 		// We use it still for GDB 7.2, since the single-process case is the most common.
 		try {
-			Query<Integer> exitCodeQuery = new Query<Integer>() {
+			Query<Integer> exitCodeQuery = new Query<>() {
 				@Override
 				protected void execute(final DataRequestMonitor<Integer> rm) {
 					// Guard against session disposed.

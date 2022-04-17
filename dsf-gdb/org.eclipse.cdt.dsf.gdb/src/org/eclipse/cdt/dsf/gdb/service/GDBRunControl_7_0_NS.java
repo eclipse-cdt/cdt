@@ -1588,7 +1588,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 
 			// It is important to use an ImmediateExecutor for this RM, to make sure we don't risk getting a new
 			// call to ExecuteWithTargetAvailable() when we just finished executing the steps.
-			fExecuteQueuedOpsStepMonitor = new MultiRequestMonitor<RequestMonitor>(ImmediateExecutor.getInstance(),
+			fExecuteQueuedOpsStepMonitor = new MultiRequestMonitor<>(ImmediateExecutor.getInstance(),
 					rm) {
 				@Override
 				protected void handleCompleted() {

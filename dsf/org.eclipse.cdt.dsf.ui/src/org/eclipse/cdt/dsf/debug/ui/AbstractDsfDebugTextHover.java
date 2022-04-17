@@ -230,7 +230,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 			if (frameDmc != null) {
 				final DsfSession dsfSession = DsfSession.getSession(frameDmc.getSessionId());
 				if (dsfSession != null) {
-					Callable<IExpressionDMContext> callable = new Callable<IExpressionDMContext>() {
+					Callable<IExpressionDMContext> callable = new Callable<>() {
 						@Override
 						public IExpressionDMContext call() throws Exception {
 							DsfServicesTracker tracker = new DsfServicesTracker(DsfUIPlugin.getBundleContext(),

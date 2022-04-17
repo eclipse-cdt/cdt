@@ -30,6 +30,7 @@ public class GetCwdCommand extends AbstractCommand<String> {
 		this.in = new DataInputStream(conn.getCommandChannel().getInputStream());
 	}
 
+	@Override
 	public String call() throws ProxyException {
 		try {
 			final StreamChannel chan = openChannel();

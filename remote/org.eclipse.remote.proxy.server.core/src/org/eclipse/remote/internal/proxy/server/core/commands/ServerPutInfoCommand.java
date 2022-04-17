@@ -29,10 +29,11 @@ public class ServerPutInfoCommand extends AbstractServerCommand {
 		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
+	@Override
 	public void exec() throws ProxyException {
 		try {
 			EFS.getStore(uri).putInfo(info, options, new NullProgressMonitor());
-			;
+
 		} catch (CoreException e) {
 			throw new ProxyException(e.getMessage());
 		}

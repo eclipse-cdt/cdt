@@ -219,7 +219,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 		// the request monitor when it is finished.  The request monitor
 		// will in turn set the element in the update argument in this method.
 		((ExpressionVMProvider) getVMProvider()).update(new VMExpressionUpdate(update, expression,
-				new ViewerDataRequestMonitor<Object>(getVMProvider().getExecutor(), update) {
+				new ViewerDataRequestMonitor<>(getVMProvider().getExecutor(), update) {
 					@Override
 					protected void handleSuccess() {
 						update.setChild(getData(), 0);

@@ -65,7 +65,7 @@ public class JschFileStore extends FileStore {
 		}
 	}
 
-	private static Map<String, JschFileStore> instanceMap = new HashMap<String, JschFileStore>();
+	private static Map<String, JschFileStore> instanceMap = new HashMap<>();
 
 	private final IPath fRemotePath;
 	private final URI fURI;

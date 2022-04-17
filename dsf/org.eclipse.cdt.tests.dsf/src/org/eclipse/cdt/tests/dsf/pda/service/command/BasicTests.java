@@ -105,7 +105,7 @@ public class BasicTests extends CommandControlTestsBase {
 		final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getContext(), "data 1");
 
 		// Test sending the command and checking all listeners were called.
-		Query<PDACommandResult> sendCommandQuery = new Query<PDACommandResult>() {
+		Query<PDACommandResult> sendCommandQuery = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<PDACommandResult> rm) {
 				fCommandControl.queueCommand(testCommand, rm);
@@ -124,7 +124,7 @@ public class BasicTests extends CommandControlTestsBase {
 
 		// Test queuing then removing command
 		listener.reset();
-		Query<Object> queueRemoveCommandQuery = new Query<Object>() {
+		Query<Object> queueRemoveCommandQuery = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Object> rm) {
 				ICommandToken token = fCommandControl.queueCommand(testCommand,

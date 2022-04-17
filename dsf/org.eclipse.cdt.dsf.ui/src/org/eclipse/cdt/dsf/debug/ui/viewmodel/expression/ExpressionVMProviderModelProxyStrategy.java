@@ -99,7 +99,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
 						} else {
 							getExpressionVMProvider().update(new VMExpressionUpdate(parentDelta,
 									getVMProvider().getPresentationContext(), expression,
-									new DataRequestMonitor<Object>(getVMProvider().getExecutor(), rm) {
+									new DataRequestMonitor<>(getVMProvider().getExecutor(), rm) {
 										@Override
 										protected void handleSuccess() {
 											buildDeltaForExpressionElement(node, expression, getData(),

@@ -25,7 +25,7 @@ public class FetchInfoCommand extends AbstractRemoteCommand<IFileInfo> {
 	@Override
 	public IFileInfo getResult(IProgressMonitor monitor) throws RemoteConnectionException {
 		SubMonitor subMon = SubMonitor.convert(monitor, 20);
-		SftpCallable<SftpATTRS> c = new SftpCallable<SftpATTRS>() {
+		SftpCallable<SftpATTRS> c = new SftpCallable<>() {
 			@Override
 			public SftpATTRS call() throws JSchException, SftpException {
 				return getChannel().lstat(fRemotePath.toString());

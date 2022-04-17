@@ -320,7 +320,7 @@ public class RemoteConnectionType implements IRemoteConnectionType {
 	@Override
 	public List<IRemoteConnection> getConnections() {
 		synchronized (connections) {
-			return new ArrayList<IRemoteConnection>(connections.values());
+			return new ArrayList<>(connections.values());
 		}
 	}
 

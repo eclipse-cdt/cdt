@@ -149,7 +149,7 @@ public class QtPDOMQObject extends AbstractQtPDOMClass {
 			this.value = value;
 		}
 
-		public static final IQtPDOMCodec<ClassInfo> Codec = new IQtPDOMCodec<ClassInfo>() {
+		public static final IQtPDOMCodec<ClassInfo> Codec = new IQtPDOMCodec<>() {
 			@Override
 			public int getElementSize() {
 				return 2 * Database.PTR_SIZE;

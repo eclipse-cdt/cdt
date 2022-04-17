@@ -54,7 +54,7 @@ public class AbstractCPPClassSpecializationScope implements ICPPClassSpecializat
 	// The following fields are used by the PDOM bindings and need to be volatile.
 	private volatile ICPPBase[] fBases;
 	private volatile ICPPMethod[] ownInheritedConstructors;
-	private final ThreadLocal<Boolean> fComputingBases = new ThreadLocal<Boolean>() {
+	private final ThreadLocal<Boolean> fComputingBases = new ThreadLocal<>() {
 		@Override
 		protected Boolean initialValue() {
 			return false;

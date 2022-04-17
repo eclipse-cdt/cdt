@@ -51,6 +51,7 @@ public class ServerChildInfosCommand extends AbstractServerCommand {
 		this.uri = URI.create("file:" + path); //$NON-NLS-1$
 	}
 
+	@Override
 	public void exec() throws ProxyException {
 		try {
 			infos = EFS.getStore(uri).childInfos(EFS.NONE, null);

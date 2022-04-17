@@ -822,7 +822,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	/** ThreadLocal flag to let CDescriptor know whether already in a setProjectDescription */
-	ThreadLocal<Boolean> settingProjectDescription = new ThreadLocal<Boolean>() {
+	ThreadLocal<Boolean> settingProjectDescription = new ThreadLocal<>() {
 		@Override
 		protected Boolean initialValue() {
 			return false;

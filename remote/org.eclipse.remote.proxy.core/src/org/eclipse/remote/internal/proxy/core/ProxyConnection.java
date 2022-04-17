@@ -214,6 +214,7 @@ public class ProxyConnection
 		}
 	}
 
+	@Override
 	public Map<String, String> getEnv() {
 		return Collections.unmodifiableMap(fEnv);
 	}

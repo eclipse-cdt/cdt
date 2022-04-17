@@ -122,7 +122,7 @@ public class VMTest1 extends VMTestBase implements IViewerUpdatesListenerConstan
 		Assert.assertNotNull(containerPropProvider);
 
 		// Check if container is suspended.
-		Query<Map<String, Object>> suspendedQuery = new Query<Map<String, Object>>() {
+		Query<Map<String, Object>> suspendedQuery = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<Map<String, Object>> rm) {
 				Set<String> properties = new HashSet<>();

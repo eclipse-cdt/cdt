@@ -45,7 +45,7 @@ public class RemoteDevelopmentPreferencePage extends FieldEditorPreferencePage i
 
 	@Override
 	protected void createFieldEditors() {
-		List<String[]> namesAndValues = new ArrayList<String[]>();
+		List<String[]> namesAndValues = new ArrayList<>();
 		String[] nameAndValue = new String[2];
 		nameAndValue[0] = "None"; //$NON-NLS-1$
 		nameAndValue[1] = ""; //$NON-NLS-1$

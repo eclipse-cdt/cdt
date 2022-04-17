@@ -2009,7 +2009,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 					// Construct the edit mode message
 					statusLineMessage = NLS.bind(FPRenderingMessages.getString("FPRendering.EDIT_MODE"), //$NON-NLS-1$
 							(insertMode() ? FPRenderingMessages.getString("FPRendering.EDIT_MODE_INSERT") : //$NON-NLS-1$
-					FPRenderingMessages.getString("FPRendering.EDIT_MODE_OVERWRITE"))); //$NON-NLS-1$
+									FPRenderingMessages.getString("FPRendering.EDIT_MODE_OVERWRITE"))); //$NON-NLS-1$
 				} else {
 					// 'null' = clear the message
 					statusLineMessage = null;

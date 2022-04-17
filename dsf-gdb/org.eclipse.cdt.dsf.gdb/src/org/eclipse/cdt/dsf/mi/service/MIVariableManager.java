@@ -1525,7 +1525,7 @@ public class MIVariableManager implements ICommandControl {
 									}
 								}
 
-								final DataRequestMonitor<ChildFullExpressionInfo> childPathRm = new DataRequestMonitor<ChildFullExpressionInfo>(
+								final DataRequestMonitor<ChildFullExpressionInfo> childPathRm = new DataRequestMonitor<>(
 										fSession.getExecutor(), countingRm) {
 									@Override
 									protected void handleSuccess() {

@@ -41,7 +41,7 @@ public final class CollectionUtils {
 	 * @throws NullPointerException if list is {@code null}
 	 */
 	public static <T> Iterator<T> reverseIterator(final List<T> list) {
-		return new Iterator<T>() {
+		return new Iterator<>() {
 			ListIterator<T> iterator = list.listIterator(list.size());
 
 			@Override
@@ -93,7 +93,7 @@ public final class CollectionUtils {
 		if (iter == null)
 			throw new NullPointerException("iter parameter is null"); //$NON-NLS-1$
 
-		return new Iterable<T>() {
+		return new Iterable<>() {
 			@Override
 			public Iterator<T> iterator() {
 				return iter;

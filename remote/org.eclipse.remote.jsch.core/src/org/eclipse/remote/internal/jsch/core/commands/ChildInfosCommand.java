@@ -31,7 +31,7 @@ public class ChildInfosCommand extends AbstractRemoteCommand<IFileInfo[]> {
 
 		Vector<LsEntry> files = getResult(fRemotePath.toString(), subMon.newChild(10));
 
-		List<IFileInfo> result = new ArrayList<IFileInfo>();
+		List<IFileInfo> result = new ArrayList<>();
 
 		if (files != null && !subMon.isCanceled()) {
 			Enumeration<LsEntry> enumeration = files.elements();
@@ -51,7 +51,7 @@ public class ChildInfosCommand extends AbstractRemoteCommand<IFileInfo[]> {
 
 	private Vector<LsEntry> getResult(String path, IProgressMonitor monitor) throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
-		SftpCallable<Vector<LsEntry>> c = new SftpCallable<Vector<LsEntry>>() {
+		SftpCallable<Vector<LsEntry>> c = new SftpCallable<>() {
 			@SuppressWarnings("unchecked")
 			@Override
 			public Vector<LsEntry> call() throws JSchException, SftpException {

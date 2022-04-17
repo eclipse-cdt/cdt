@@ -51,7 +51,7 @@ public class CHHistoryListAction extends Action {
 			setTitle(CHMessages.CHHistoryListAction_HistoryDialog_title);
 			String[] buttonLabels = new String[] { CHMessages.CHHistoryListAction_Remove_label, };
 
-			IListAdapter<ICElement> adapter = new IListAdapter<ICElement>() {
+			IListAdapter<ICElement> adapter = new IListAdapter<>() {
 				@Override
 				public void customButtonPressed(ListDialogField<ICElement> field, int index) {
 					doCustomButtonPressed();

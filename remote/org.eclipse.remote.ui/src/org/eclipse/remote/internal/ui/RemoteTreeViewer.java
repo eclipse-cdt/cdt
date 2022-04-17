@@ -42,7 +42,7 @@ public class RemoteTreeViewer extends TreeViewer {
 	private class ExpansionJob extends UIJob {
 
 		private Object element;
-		private final List<Object> parents = new ArrayList<Object>(); // top down
+		private final List<Object> parents = new ArrayList<>(); // top down
 
 		/**
 		 * Constructs a job to expand the given element.
@@ -108,7 +108,7 @@ public class RemoteTreeViewer extends TreeViewer {
 
 		private IStructuredSelection selection;
 		private Object first;
-		private final List<Object> parents = new ArrayList<Object>(); // top down
+		private final List<Object> parents = new ArrayList<>(); // top down
 
 		/**
 		 * Constucts a job to select the given element.
@@ -317,7 +317,7 @@ public class RemoteTreeViewer extends TreeViewer {
 	private void addAllParents(List<Object> list, Object element) {
 		if (element instanceof IAdaptable) {
 			IAdaptable adaptable = (IAdaptable) element;
-			IWorkbenchAdapter adapter = (IWorkbenchAdapter) adaptable.getAdapter(IWorkbenchAdapter.class);
+			IWorkbenchAdapter adapter = adaptable.getAdapter(IWorkbenchAdapter.class);
 			if (adapter != null) {
 				Object parent = adapter.getParent(element);
 				if (parent != null) {

@@ -36,7 +36,7 @@ public class GitShowInContextHandler {
 	public static ISelection getSelection(Object input) {
 		Assert.isNotNull(input);
 
-		List<Object> elements = new ArrayList<Object>();
+		List<Object> elements = new ArrayList<>();
 
 		if (input instanceof org.eclipse.egit.ui.internal.history.HistoryPageInput) {
 			org.eclipse.egit.ui.internal.history.HistoryPageInput inp = (org.eclipse.egit.ui.internal.history.HistoryPageInput) input;

@@ -34,7 +34,7 @@ public class ReferencedProjectsLanguageSettingsProvider extends LanguageSettings
 	/** ID of the provider used in extension point from plugin.xml */
 	public static final String ID = "org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider"; //$NON-NLS-1$
 
-	final private ThreadLocal<Boolean> recursiveCallIndicator = new ThreadLocal<Boolean>() {
+	final private ThreadLocal<Boolean> recursiveCallIndicator = new ThreadLocal<>() {
 		@Override
 		protected Boolean initialValue() {
 			return false;

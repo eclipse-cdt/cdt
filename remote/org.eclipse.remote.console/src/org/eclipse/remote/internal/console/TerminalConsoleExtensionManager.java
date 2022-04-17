@@ -46,7 +46,7 @@ public class TerminalConsoleExtensionManager {
 	public List<String> getActionsForType(String id) {
 		initialize();
 		List<String> list = actions.get(id);
-		return list == null ? new ArrayList<String>() : list;
+		return list == null ? new ArrayList<>() : list;
 	}
 
 	public IConsoleActionFactory getFactory(String id) {

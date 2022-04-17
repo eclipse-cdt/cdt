@@ -66,7 +66,7 @@ public class GdbStartTracingCommand extends AbstractDebugCommand implements ISta
 			return;
 		}
 
-		Query<Object> startTracingQuery = new Query<Object>() {
+		Query<Object> startTracingQuery = new Query<>() {
 			@Override
 			public void execute(final DataRequestMonitor<Object> rm) {
 				final IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);
@@ -110,7 +110,7 @@ public class GdbStartTracingCommand extends AbstractDebugCommand implements ISta
 			return false;
 		}
 
-		Query<Boolean> canStartTracingQuery = new Query<Boolean>() {
+		Query<Boolean> canStartTracingQuery = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Boolean> rm) {
 				IGDBTraceControl traceControl = fTracker.getService(IGDBTraceControl.class);

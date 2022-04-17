@@ -36,7 +36,7 @@ abstract class LocationAdapter<T> {
 
 	public abstract T getLocation(IFile file);
 
-	public static final LocationAdapter<IPath> PATH = new LocationAdapter<IPath>() {
+	public static final LocationAdapter<IPath> PATH = new LocationAdapter<>() {
 		@Override
 		public String extractName(IPath location) {
 			String name = location.lastSegment();
@@ -68,7 +68,7 @@ abstract class LocationAdapter<T> {
 		}
 	};
 
-	public static final LocationAdapter<URI> URI = new LocationAdapter<URI>() {
+	public static final LocationAdapter<URI> URI = new LocationAdapter<>() {
 		@Override
 		public String extractName(URI location) {
 			String path = location.getPath();

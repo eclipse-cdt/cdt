@@ -34,7 +34,7 @@ public class CRefactoringMatchStore {
 	private Comparator<CRefactoringMatch> fOffsetComparator;
 
 	public CRefactoringMatchStore() {
-		fOffsetComparator = new Comparator<CRefactoringMatch>() {
+		fOffsetComparator = new Comparator<>() {
 			@Override
 			public int compare(CRefactoringMatch o1, CRefactoringMatch o2) {
 				return o1.getOffset() - o2.getOffset();

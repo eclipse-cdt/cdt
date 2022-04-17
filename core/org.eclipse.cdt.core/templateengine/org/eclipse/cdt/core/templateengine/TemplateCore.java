@@ -46,7 +46,7 @@ public class TemplateCore {
 
 	private static Map<TemplateInfo, TemplateCore> templateCache = new HashMap<>();
 
-	public static final Comparator<TemplateCore> TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR = new Comparator<TemplateCore>() {
+	public static final Comparator<TemplateCore> TEMPLATE_ID_CASE_INSENSITIVE_COMPARATOR = new Comparator<>() {
 		@Override
 		public int compare(TemplateCore t1, TemplateCore t2) {
 			return String.CASE_INSENSITIVE_ORDER.compare(t1.getTemplateId(), t2.getTemplateId());

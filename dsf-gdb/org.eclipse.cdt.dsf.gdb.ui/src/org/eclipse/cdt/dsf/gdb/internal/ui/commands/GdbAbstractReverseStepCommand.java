@@ -75,7 +75,7 @@ public abstract class GdbAbstractReverseStepCommand extends AbstractDebugCommand
 		}
 
 		final StepType stepType = getStepType();
-		Query<Object> reverseStepQuery = new Query<Object>() {
+		Query<Object> reverseStepQuery = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Object> rm) {
 				IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);
@@ -111,7 +111,7 @@ public abstract class GdbAbstractReverseStepCommand extends AbstractDebugCommand
 		}
 
 		final StepType stepType = getStepType();
-		Query<Boolean> canReverseQuery = new Query<Boolean>() {
+		Query<Boolean> canReverseQuery = new Query<>() {
 			@Override
 			public void execute(DataRequestMonitor<Boolean> rm) {
 				IReverseRunControl runControl = fTracker.getService(IReverseRunControl.class);

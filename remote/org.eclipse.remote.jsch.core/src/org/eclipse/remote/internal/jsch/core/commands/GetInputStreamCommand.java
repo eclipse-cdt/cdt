@@ -38,7 +38,7 @@ public class GetInputStreamCommand extends AbstractRemoteCommand<InputStream> {
 	public InputStream getResult(IProgressMonitor monitor) throws RemoteConnectionException {
 		final SubMonitor subMon = SubMonitor.convert(monitor, 10);
 
-		final SftpCallable<InputStream> c = new SftpCallable<InputStream>() {
+		final SftpCallable<InputStream> c = new SftpCallable<>() {
 			private ChannelSftp newChannel() throws IOException {
 				synchronized (GetInputStreamCommand.class) {
 					if (commandChannel != null) {

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.eclipse.remote.proxy.protocol.core.StreamChannelManager;
 import org.eclipse.remote.proxy.protocol.core.StreamChannel;
+import org.eclipse.remote.proxy.protocol.core.StreamChannelManager;
 
 import junit.framework.TestCase;
 
@@ -163,7 +163,7 @@ public class MultiplexServerTests extends TestCase {
 
 	private List<StreamChannel> runChannelTest(StreamChannelManager mpx, Thread[] readers, Thread[] writers,
 			final StringBuffer[] sentBufs, final StringBuffer[] recvBufs) throws IOException {
-		List<StreamChannel> channels = new ArrayList<StreamChannel>();
+		List<StreamChannel> channels = new ArrayList<>();
 		for (int i = 0; i < NUM_CHANS; i++) {
 			StreamChannel chan = mpx.openChannel(); // needs to be in same thread as reader
 			//			ChanReader reader = new ChanReader(chan, recvBufs, "clnt reader thread " + chan.getId());

@@ -212,7 +212,7 @@ public class ConnectionsPreferencePage extends PreferencePage implements IWorkbe
 	private IRemoteConnectionType fConnectionType;
 	private IRemoteUIConnectionService fUIConnectionManager;
 
-	private final Map<String, IRemoteConnection> fWorkingCopies = new HashMap<String, IRemoteConnection>();
+	private final Map<String, IRemoteConnection> fWorkingCopies = new HashMap<>();
 
 	private static final String DEFAULT_CONNECTION_NAME = "Remote Host"; //$NON-NLS-1$
 

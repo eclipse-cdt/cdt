@@ -48,7 +48,7 @@ import junit.framework.Test;
  * @author Vivian Kong
  */
 public class PDOMSearchTest extends PDOMTestBase {
-	final Comparator<IBinding> BINDING_COMPARATOR = new Comparator<IBinding>() {
+	final Comparator<IBinding> BINDING_COMPARATOR = new Comparator<>() {
 		@Override
 		public int compare(IBinding b1, IBinding b2) {
 			return b1.getName().compareTo(b2.getName());

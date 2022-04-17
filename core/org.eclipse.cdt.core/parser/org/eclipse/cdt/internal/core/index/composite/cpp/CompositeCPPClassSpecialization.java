@@ -45,7 +45,7 @@ import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 
 public class CompositeCPPClassSpecialization extends CompositeCPPClassType implements ICPPClassSpecialization {
 	private ObjectMap specializationMap;
-	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<Set<IBinding>>() {
+	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<>() {
 		@Override
 		protected Set<IBinding> initialValue() {
 			return new HashSet<>();

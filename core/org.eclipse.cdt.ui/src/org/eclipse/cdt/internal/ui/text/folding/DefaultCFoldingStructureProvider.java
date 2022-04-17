@@ -1312,7 +1312,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			}
 		}
 
-		Comparator<Tuple> comparator = new Comparator<Tuple>() {
+		Comparator<Tuple> comparator = new Comparator<>() {
 			@Override
 			public int compare(Tuple t1, Tuple t2) {
 				return t1.position.getOffset() - t2.position.getOffset();

@@ -35,6 +35,7 @@ public class RemoteResourceAdapterFactory implements IAdapterFactory {
 
 	private Map<String, RemoteResourceFactory> fResourceFactory;
 
+	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
 		if (adapterType == IRemoteResource.class) {
 			if (adaptableObject instanceof IResource) {
@@ -58,13 +59,14 @@ public class RemoteResourceAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
+	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] { IRemoteResource.class };
 	}
 
 	private synchronized void loadExtensions() {
 		if (fResourceFactory == null) {
-			fResourceFactory = new HashMap<String, RemoteResourceFactory>();
+			fResourceFactory = new HashMap<>();
 
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint extensionPoint = registry.getExtensionPoint(RemoteCorePlugin.getUniqueIdentifier(),

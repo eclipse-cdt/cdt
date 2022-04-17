@@ -78,7 +78,7 @@ public class MakefileCompletionProcessor implements IContentAssistProcessor {
 	protected IEditorPart fEditor;
 	protected IWorkingCopyManager fManager;
 
-	private Comparator<IDirective> directivesComparator = new Comparator<IDirective>() {
+	private Comparator<IDirective> directivesComparator = new Comparator<>() {
 		@Override
 		public int compare(IDirective o1, IDirective o2) {
 			return o1.toString().compareToIgnoreCase(o2.toString());

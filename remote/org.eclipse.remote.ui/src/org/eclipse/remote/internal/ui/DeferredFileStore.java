@@ -65,7 +65,7 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 
 	@Override
 	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor) {
-		ArrayList<DeferredFileStore> children = new ArrayList<DeferredFileStore>();
+		ArrayList<DeferredFileStore> children = new ArrayList<>();
 		try {
 			IFileInfo[] childInfos = fFileStore.childInfos(EFS.NONE, monitor);
 			for (IFileInfo info : childInfos) {
@@ -122,7 +122,7 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 	 * @return IWorkbenchAdapter or <code>null</code>
 	 */
 	protected IWorkbenchAdapter getAdapter(Object element) {
-		return (IWorkbenchAdapter) getAdapter(element, IWorkbenchAdapter.class);
+		return getAdapter(element, IWorkbenchAdapter.class);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class DeferredFileStore implements IDeferredWorkbenchAdapter, IAdaptable 
 	public Object[] getChildren(Object o) {
 		try {
 			IFileStore[] stores = fFileStore.childStores(EFS.NONE, null);
-			List<DeferredFileStore> def = new ArrayList<DeferredFileStore>();
+			List<DeferredFileStore> def = new ArrayList<>();
 			for (int i = 0; i < stores.length; i++) {
 				if (!(fExcludeHidden && stores[i].getName().startsWith("."))) { //$NON-NLS-1$
 					def.add(new DeferredFileStore(stores[i], fExcludeHidden, this));

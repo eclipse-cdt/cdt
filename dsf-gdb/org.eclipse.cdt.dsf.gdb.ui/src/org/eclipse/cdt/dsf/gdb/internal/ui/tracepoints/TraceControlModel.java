@@ -245,7 +245,7 @@ public class TraceControlModel {
 			return null;
 		}
 
-		Query<ITraceVariableDMData[]> query = new Query<ITraceVariableDMData[]>() {
+		Query<ITraceVariableDMData[]> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<ITraceVariableDMData[]> rm) {
 
@@ -292,7 +292,7 @@ public class TraceControlModel {
 					TracepointsMessages.TraceControlView_create_variable_error);
 		}
 
-		Query<String> query = new Query<String>() {
+		Query<String> query = new Query<>() {
 			@Override
 			protected void execute(final DataRequestMonitor<String> rm) {
 

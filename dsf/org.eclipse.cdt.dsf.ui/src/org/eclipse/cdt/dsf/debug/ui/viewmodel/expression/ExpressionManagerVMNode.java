@@ -197,7 +197,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 				// the request monitor when it is finished.  The request monitor
 				// will in turn set the element in the update argument in this method.
 				((ExpressionVMProvider) getVMProvider()).update(new VMExpressionUpdate(update, expression,
-						new DataRequestMonitor<Object>(getVMProvider().getExecutor(), multiRm) {
+						new DataRequestMonitor<>(getVMProvider().getExecutor(), multiRm) {
 							@Override
 							protected void handleSuccess() {
 								update.setChild(getData(), childIndex);

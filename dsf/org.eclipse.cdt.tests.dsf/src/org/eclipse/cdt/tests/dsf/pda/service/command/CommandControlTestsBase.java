@@ -133,7 +133,7 @@ public class CommandControlTestsBase {
 		final PDATestCommand testCommand = new PDATestCommand(fCommandControl.getContext(), command);
 
 		// Test sending the command and checking all listeners were called.
-		Query<PDACommandResult> sendCommandQuery = new Query<PDACommandResult>() {
+		Query<PDACommandResult> sendCommandQuery = new Query<>() {
 			@Override
 			protected void execute(DataRequestMonitor<PDACommandResult> rm) {
 				fCommandControl.queueCommand(testCommand, rm);

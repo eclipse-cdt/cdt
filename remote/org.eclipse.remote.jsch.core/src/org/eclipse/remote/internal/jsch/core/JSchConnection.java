@@ -369,10 +369,12 @@ public class JSchConnection
 		}
 	}
 
+	@Override
 	public String getPassphrase() {
 		return fRemoteConnection.getSecureAttribute(PASSPHRASE_ATTR);
 	}
 
+	@Override
 	public String getPassword() {
 		return fRemoteConnection.getSecureAttribute(PASSWORD_ATTR);
 	}
@@ -538,6 +540,7 @@ public class JSchConnection
 		return hasOpenSession() && isFullySetup;
 	}
 
+	@Override
 	public boolean usePassword() {
 		String str = fRemoteConnection.getAttribute(IS_PASSWORD_ATTR);
 		return !str.isEmpty() ? Boolean.parseBoolean(str) : DEFAULT_IS_PASSWORD;

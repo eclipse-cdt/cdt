@@ -321,7 +321,7 @@ public abstract class AbstractRemoteCommand<T> {
 		fileInfo.setAttribute(EFS.ATTRIBUTE_OTHER_READ, (attrs.getPermissions() & 0004) != 0);
 		fileInfo.setAttribute(EFS.ATTRIBUTE_SYMLINK, attrs.isLink());
 		if (attrs.isLink()) {
-			SftpCallable<String> c2 = new SftpCallable<String>() {
+			SftpCallable<String> c2 = new SftpCallable<>() {
 				@Override
 				public String call() throws JSchException, SftpException {
 					return getChannel().readlink(parentPath.append(name).toString());

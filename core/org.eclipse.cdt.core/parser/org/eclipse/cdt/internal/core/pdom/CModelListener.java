@@ -42,7 +42,7 @@ public class CModelListener implements IElementChangedListener, IResourceChangeL
 	public static boolean sSuppressUpdateOfLastRecentlyUsed = false;
 
 	private PDOMManager fManager;
-	private final LinkedHashMap<ITranslationUnit, ITranslationUnit> fLRUs = new LinkedHashMap<ITranslationUnit, ITranslationUnit>(
+	private final LinkedHashMap<ITranslationUnit, ITranslationUnit> fLRUs = new LinkedHashMap<>(
 			UPDATE_LR_CHANGED_FILES_COUNT, 0.75f, true) {
 		@Override
 		protected boolean removeEldestEntry(Map.Entry<ITranslationUnit, ITranslationUnit> eldest) {

@@ -22,6 +22,7 @@ import org.eclipse.remote.proxy.protocol.core.Protocol;
 public class Application implements IApplication {
 	private Server server = new Server();
 
+	@Override
 	public Object start(IApplicationContext context) throws Exception {
 		String[] args = (String[]) context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		for (String arg : args) {
@@ -30,13 +31,13 @@ public class Application implements IApplication {
 				b.putInt(Protocol.MAGIC);
 				System.out.write(b.array());
 			}
-			;
 		}
 		server.start();
 		server.waitFor();
 		return IApplication.EXIT_OK;
 	}
 
+	@Override
 	public void stop() {
 		// Nothing
 	}

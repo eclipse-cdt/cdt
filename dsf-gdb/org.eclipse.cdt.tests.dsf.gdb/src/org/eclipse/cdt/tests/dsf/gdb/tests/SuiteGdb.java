@@ -47,7 +47,7 @@ import org.junit.runners.Suite;
 		GDBRemoteTracepointsTest.class, TraceFileTest.class, GDBConsoleSynchronizingTest.class, MIMemoryTest.class,
 		MIDisassemblyTest.class, GDBProcessesTest.class, PostMortemCoreTest.class, CommandTimeoutTest.class,
 		ThreadStackFrameSyncTest.class, CommandLineArgsTest.class, MIAsyncErrorProcessorTests.class
-		/* Add your test class here */
+/* Add your test class here */
 })
 public class SuiteGdb {
 

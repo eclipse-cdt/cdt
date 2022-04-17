@@ -48,6 +48,7 @@ public class ExecCommand extends AbstractCommand<Void> {
 		this.errChan = errChan;
 	}
 
+	@Override
 	public Void call() throws ProxyException {
 		try {
 			out.writeByte(Protocol.PROTO_COMMAND);

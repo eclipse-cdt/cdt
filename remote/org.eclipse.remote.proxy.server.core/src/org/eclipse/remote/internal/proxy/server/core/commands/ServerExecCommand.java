@@ -22,6 +22,7 @@ import org.eclipse.remote.proxy.protocol.core.StreamChannel;
  *
  */
 public class ServerExecCommand extends AbstractServerExecCommand {
+	@Override
 	public Process doRun() throws IOException {
 		System.err.print("exec: ");
 		for (String arg : getCommand()) {
@@ -52,12 +53,14 @@ public class ServerExecCommand extends AbstractServerExecCommand {
 		return builder.start();
 	}
 
+	@Override
 	protected void doKill(Process proc) {
 		if (proc.isAlive()) {
 			proc.destroyForcibly();
 		}
 	}
 
+	@Override
 	protected void doSetTerminalSize(Process proc, int cols, int rows) {
 		// Not supported
 	}

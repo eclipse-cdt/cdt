@@ -191,7 +191,7 @@ public class RemoteResourceBrowserWidget extends Composite {
 	private String fDialogLabel;
 
 	private boolean fShowHidden;
-	private final List<IFileStore> fResources = new ArrayList<IFileStore>();
+	private final List<IFileStore> fResources = new ArrayList<>();
 	private String fResource;
 	private String fInitialPath;
 	private IPath fRootPath;

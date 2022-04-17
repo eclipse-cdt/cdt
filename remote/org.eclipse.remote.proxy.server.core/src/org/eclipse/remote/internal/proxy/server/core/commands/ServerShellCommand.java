@@ -85,6 +85,7 @@ public class ServerShellCommand extends AbstractServerExecCommand {
 		super(null, null, null, true, false, cmdChan, ioChan, null);
 	}
 
+	@Override
 	public Process doRun() throws IOException {
 		String shell = findLoginShell();
 
@@ -97,12 +98,14 @@ public class ServerShellCommand extends AbstractServerExecCommand {
 		return ProcessFactory.getFactory().exec(new String[] { shell, "-l" }, null, null); //$NON-NLS-1$
 	}
 
+	@Override
 	protected void doKill(Process proc) {
 		if (proc.isAlive()) {
 			proc.destroyForcibly();
 		}
 	}
 
+	@Override
 	protected void doSetTerminalSize(Process proc, int cols, int rows) {
 		if (proc.isAlive() && proc instanceof ShellProcess) {
 			ShellProcess shell = (ShellProcess) proc;

@@ -49,7 +49,7 @@ public class DebugViewUtils {
 	/** Gets workbench view (if any) with specified ID. */
 	public static IViewPart getViewWithID(String viewID) {
 		final String viewID_f = viewID;
-		RunnableWithResult<IViewPart> runnable = new RunnableWithResult<IViewPart>() {
+		RunnableWithResult<IViewPart> runnable = new RunnableWithResult<>() {
 			@Override
 			public IViewPart call() {
 				IViewPart view = null;

@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6541f054_59af6beb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-17T19:12:24Z",
+      "side": 1,
+      "message": "WDYT of this option?",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a7d87c9_a7552933",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 235,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-17T19:12:24Z",
+      "side": 1,
+      "message": "Something I had overlooked earlier - as this constructor is package private it was not part of the API at all...",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bbb4d964_6e9f7420",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-17T19:12:24Z",
+      "side": 1,
+      "message": "...this method is part of API, but I hope no one would be calling it.",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

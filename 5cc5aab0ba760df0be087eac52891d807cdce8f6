@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c5fd0131_d100e999",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-17T12:32:28Z",
+      "side": 1,
+      "message": "Recently, I\u0027ve started to get NPE\u0027s when running runtime. I don\u0027t know the reason to why the NPE happens in this code, but it looks legit to have a null check here.\nComments?",
+      "revId": "5cc5aab0ba760df0be087eac52891d807cdce8f6",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

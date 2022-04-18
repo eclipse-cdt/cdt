@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "389baa0a_71ba26f5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-18T23:32:10Z",
+      "side": 1,
+      "message": "I think this is failing on build machine because the files have been formatted with newer version of JDT. Build machine using 4.13, this commit was made with 4.24.\n\nThe 4.24 formatting looks better, so I think it is time to upgrade build machine - probably to 4.23 as 4.24 is still in M1 state. Hopefully the formatting improvements are in 4.23!",
+      "revId": "636650495e66b7fd9db9b3b1a1955b60843ba98e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

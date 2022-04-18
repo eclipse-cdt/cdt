@@ -36,6 +36,23 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b806ab78_baef1c9a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-18T23:29:41Z",
+      "side": 1,
+      "message": "I am going to think this over before submitting it.\n\nAs for the other code cleanups, they should be done, but in separate commit.",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2bb8eda_e83ec176",

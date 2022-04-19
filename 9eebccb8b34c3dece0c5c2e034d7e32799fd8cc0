@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e762d8ef_8c796819",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-19T17:15:02Z",
+      "side": 1,
+      "message": "Good catch in baseline - this line needs an update too.",
+      "revId": "9eebccb8b34c3dece0c5c2e034d7e32799fd8cc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

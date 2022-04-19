@@ -72,6 +72,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "695862d8_d827657a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-19T15:12:33Z",
+      "side": 1,
+      "message": "No. Handled elsewhere.",
+      "parentUuid": "765c3de9_f71aff7b",
+      "range": {
+        "startLine": 75,
+        "startChar": 2,
+        "endLine": 75,
+        "endChar": 59
+      },
+      "revId": "be5cd62f141f3b85f53fc308930d5c2d79b90981",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4bf46c3d_17e5b619",

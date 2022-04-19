@@ -34,6 +34,24 @@
       "parentUuid": "e762d8ef_8c796819",
       "revId": "9eebccb8b34c3dece0c5c2e034d7e32799fd8cc0",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e2880f30_07c5899f",
+        "filename": "releng/org.eclipse.cdt.target/cdt.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-19T17:19:08Z",
+      "side": 1,
+      "message": "@Jonah, can you do this update?\nI suppose the other non-version-locked URLs needs to be changed too, but I don\u0027t know to what and how it\u0027s been done in the past.",
+      "parentUuid": "93a6cb1b_594bd3b6",
+      "revId": "9eebccb8b34c3dece0c5c2e034d7e32799fd8cc0",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

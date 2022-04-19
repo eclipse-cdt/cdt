@@ -34,6 +34,24 @@
       "parentUuid": "243461fa_8bd61ee9",
       "revId": "c428e864b539812af14850de62c077dac858669f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8a1a6ae3_02f5f618",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-19T17:14:30Z",
+      "side": 1,
+      "message": "I thought I did a rebase prior to pushing PS2 on https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192776/, but apparently I must have missed to fetch or did not complete that thought.\nAnyway, the I noticed a problem with the linuxtools version that was set to a version that was incompatible with CDT 10.6. All should be resolved with https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192822",
+      "parentUuid": "9ced453b_9141ac7d",
+      "revId": "c428e864b539812af14850de62c077dac858669f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

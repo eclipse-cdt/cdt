@@ -16,6 +16,24 @@
       "message": "@Jonah, do you have any idea why org.eclipse.cdt.core suddenly needs a bump while it didn\u0027t need it for the parent gerrit?",
       "revId": "c428e864b539812af14850de62c077dac858669f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9ced453b_9141ac7d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-19T14:52:40Z",
+      "side": 1,
+      "message": "Because https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192776/ wasn\u0027t rebased - https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/192766 was committed between when you did the version bump and when you submitted?",
+      "parentUuid": "243461fa_8bd61ee9",
+      "revId": "c428e864b539812af14850de62c077dac858669f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

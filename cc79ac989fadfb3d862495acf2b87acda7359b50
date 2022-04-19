@@ -16,6 +16,24 @@
       "message": "I got an idea to keep the objects.mk, but have it contain empty definitions for the variables.\nThe reason I\u0027m considering this way is to reduce the impact on existing projects and the test cases. Is this a good idea or is it better to simply get rid of the objects.mk file?",
       "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d99b1a1e_fae1e8c4",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-19T15:25:10Z",
+      "side": 1,
+      "message": "@Torbjörn, it seems that any legacy objects.mk files will be ignored as soon as the top-level makefile is regenerated. Should we consider deleting legacy objects.mk as part of project clean?\n\nWe are in control of the test cases, so we can ensure that they support the latest makefile generator. Is it the case that there are many changes required?",
+      "parentUuid": "06b16b32_1a22acd7",
+      "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

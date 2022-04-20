@@ -34,6 +34,24 @@
       "parentUuid": "06b16b32_1a22acd7",
       "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "68af88c7_387e73bc",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-20T18:32:35Z",
+      "side": 1,
+      "message": "I was just thinking that the XML still like refers to USER_OBJS and LIBS and then the symbols will not be defined in make. Maybe this is okay, maybe it\u0027s a problem - I don\u0027t know.\n\nAnyway, it\u0027s every project in the test bundle that needs to be touched if we remove the file, but I suppose it could be handled via a script or something.\n\nDo you still think it\u0027s best to remove the objects.mk file? If so, I\u0027ll do it :)\n\nRegarding the other errors for PS7; I have no clue why this change would cause a NPE in ManagedCommandLineGeneratorTest.java on, for example, line 78... It\u0027s almost like the ManagedCommandLineGenerator class cannot be instantiated, but that should from OOM exception instead?",
+      "parentUuid": "d99b1a1e_fae1e8c4",
+      "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 QNX Software Systems and others.
+ * Copyright (c) 2008, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,10 +15,12 @@
  *              - API generalization to become transport-independent (allow
  *                connections via serial ports and pipes).
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
+ *     John Dallaway - Support multiple remote debug protocols - bug 535143
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.eclipse.cdt.debug.gdbjtag.core.Activator;
 import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConstants;
@@ -60,11 +62,15 @@ public class GDBJtagDeviceContributionFactory {
 				String className = getRequired(configurationElement, "class"); //$NON-NLS-1$
 				String connection = getOptional(configurationElement, "default_connection", //$NON-NLS-1$
 						IGDBJtagConstants.DEFAULT_CONNECTION);
+				String[] protocols = getOptional(configurationElement, "protocols", //$NON-NLS-1$
+						IGDBJtagConstants.DEFAULT_PROTOCOL).split(","); //$NON-NLS-1$
 				GDBJtagDeviceContribution adapter = new GDBJtagDeviceContribution();
 				adapter.setDeviceId(id);
 				adapter.setDeviceName(name);
 				adapter.setDeviceClassName(className);
 				adapter.setDeviceDefaultConnection(connection);
+				adapter.setDeviceProtocols(
+						Arrays.stream(protocols).map(String::trim).filter(s -> !s.isEmpty()).toArray(String[]::new));
 				adapter.setDeviceClassBundleName(configurationElement.getContributor().getName());
 				addContribution(adapter);
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2018 QNX Software System and others.
+ * Copyright (c) 2016, 2022 QNX Software System and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,8 +12,10 @@
  *     Elena Laskavaia (QNX Software System) - Base API and implementation
  *     John Dallaway - GDB JTAG implementation (bug 538282)
  *******************************************************************************/
-package org.eclipse.cdt.debug.gdbjtag.core.tests.launch;
+package org.eclipse.cdt.debug.gdbjtag.core.tests;
 
+import org.eclipse.cdt.debug.gdbjtag.core.tests.jtagdevice.GDBJtagDeviceContributionTest;
+import org.eclipse.cdt.debug.gdbjtag.core.tests.launch.GDBJtagLaunchTest;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -21,7 +23,7 @@ import org.junit.runners.Suite;
 
 @SuppressWarnings("restriction")
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ GDBJtagLaunchTest.class })
+@Suite.SuiteClasses({ GDBJtagDeviceContributionTest.class, GDBJtagLaunchTest.class })
 
 public class SuiteGDBJtag {
 

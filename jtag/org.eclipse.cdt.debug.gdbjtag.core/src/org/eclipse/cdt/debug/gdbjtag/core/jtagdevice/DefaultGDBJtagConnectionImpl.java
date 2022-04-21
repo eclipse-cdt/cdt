@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2020 Sage Electronic Engineering and others.
+ * Copyright (c) 2010, 2022 Sage Electronic Engineering and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *              - API generalization to become transport-independent (e.g. to
  *                allow connections via serial ports and pipes).
  *     John Dallaway - Eliminate deprecated API - bug 566462
+ *     John Dallaway - Support multiple remote debug protocols - bug 535143
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
@@ -26,7 +27,15 @@ import org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection;
  */
 public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl implements IGDBJtagConnection {
 
+	private static final String PROTOCOL_REMOTE = "remote"; //$NON-NLS-1$
+
+	private String[] protocols = new String[0];
 	protected String connection = null;
+
+	@Override
+	public final void setDeviceProtocols(String[] protocols) {
+		this.protocols = protocols;
+	}
 
 	@Override
 	public final void setDefaultDeviceConnection(String connection) {
@@ -34,22 +43,33 @@ public class DefaultGDBJtagConnectionImpl extends DefaultGDBJtagDeviceImpl imple
 	}
 
 	@Override
-	public void doRemote(String connection, Collection<String> commands) {
+	public void doTarget(String protocol, String connection, Collection<String> commands) {
 		String cmd = ""; //$NON-NLS-1$
-		if (connection != null) {
+		if ((connection != null) && (protocol != null)) {
 			// The CLI version (target remote) does not let us know
 			// that we have properly connected.  For older GDBs (<= 6.8)
 			// we need this information for a DSF session.
 			// The MI version does tell us, which is why we must use it
 			// Bug 348043
-			cmd = "-target-select remote " + connection; //$NON-NLS-1$
+			cmd = String.format("-target-select %s %s", protocol, connection); //$NON-NLS-1$
 			addCmd(commands, cmd);
 		}
 	}
 
 	@Override
+	public String[] getDeviceProtocols() {
+		return protocols;
+	}
+
+	@Override
 	public String getDefaultDeviceConnection() {
 		return connection;
+	}
+
+	@Override
+	@Deprecated(since = "10.6", forRemoval = true)
+	public void doRemote(String connection, Collection<String> commands) {
+		doTarget(PROTOCOL_REMOTE, connection, commands);
 	}
 
 }

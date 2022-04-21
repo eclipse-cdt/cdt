@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.debug.gdbjtag.core" version="2">
+    <resource path="src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConnection.java" type="org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection">
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection"/>
+                <message_argument value="doTarget(String, String, Collection&lt;String&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection"/>
+                <message_argument value="getDeviceProtocols()"/>
+            </message_arguments>
+        </filter>
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.gdbjtag.core.IGDBJtagConnection"/>
+                <message_argument value="setDeviceProtocols(String[])"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

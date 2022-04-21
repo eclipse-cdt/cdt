@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 - 2020 QNX Software Systems and others.
+ * Copyright (c) 2008, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *              - API generalization to become transport-independent (allow
  *                connections via serial ports and pipes).
  *     John Dallaway - Eliminate deprecated API - bug 566462
+ *     John Dallaway - Support multiple remote debug protocols - bug 535143
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core.jtagdevice;
 
@@ -33,6 +34,7 @@ public class GDBJtagDeviceContribution {
 	private IGDBJtagDevice device;
 	private String deviceClassBundleName;
 	private String deviceDefaultConnection;
+	private String[] deviceProtocols;
 
 	/**
 	 * @return the deviceId
@@ -98,6 +100,7 @@ public class GDBJtagDeviceContribution {
 		try {
 			o = Platform.getBundle(deviceClassBundleName).loadClass(deviceClassName).getConstructor().newInstance();
 			if (o instanceof IGDBJtagConnection) {
+				((IGDBJtagConnection) o).setDeviceProtocols(deviceProtocols);
 				((IGDBJtagConnection) o).setDefaultDeviceConnection(deviceDefaultConnection);
 			}
 			device = (IGDBJtagDevice) o;
@@ -108,6 +111,16 @@ public class GDBJtagDeviceContribution {
 			return null;
 		}
 
+	}
+
+	/** @since 10.6 */
+	public void setDeviceProtocols(String[] protocols) {
+		deviceProtocols = protocols;
+	}
+
+	/** @since 10.6 */
+	public String[] getDeviceProtocols() {
+		return deviceProtocols;
 	}
 
 }

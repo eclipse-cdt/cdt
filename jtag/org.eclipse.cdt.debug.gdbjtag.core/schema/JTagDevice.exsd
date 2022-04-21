@@ -80,6 +80,13 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="protocols" type="string">
+            <annotation>
+               <documentation>
+                  The comma-separated set of GDB target types (protocols) supported by the JTAG device. If omitted, the &quot;remote&quot; protocol is assumed.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

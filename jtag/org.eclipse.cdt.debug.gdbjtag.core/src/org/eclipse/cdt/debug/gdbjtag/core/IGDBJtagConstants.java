@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 - 2020 QNX Software Systems and others.
+ * Copyright (c) 2007, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Torbjörn Svensson (STMicroelectronics) - Bug 535024
  *     John Dallaway - Sort JTAG device list, bug 560186
  *     John Dallaway - Eliminate deprecated API, bug 566462
+ *     John Dallaway - Support multiple remote debug protocols, bug 535143
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.gdbjtag.core;
@@ -52,6 +53,8 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_STOP_AT = Activator.PLUGIN_ID + ".stopAt"; //$NON-NLS-1$
 	public static final String ATTR_SET_RESUME = Activator.PLUGIN_ID + ".setResume"; //$NON-NLS-1$
 	public static final String ATTR_RUN_COMMANDS = Activator.PLUGIN_ID + ".runCommands"; //$NON-NLS-1$
+	/** @since 10.6 */
+	public static final String ATTR_PROTOCOL = Activator.PLUGIN_ID + ".protocol"; //$NON-NLS-1$
 	/** @since 7.0 */
 	public static final String ATTR_CONNECTION = Activator.PLUGIN_ID + ".connection"; //$NON-NLS-1$
 	/** @since 7.0 */
@@ -73,6 +76,8 @@ public interface IGDBJtagConstants {
 	public static final boolean DEFAULT_SET_RESUME = false;
 	public static final boolean DEFAULT_USE_DEFAULT_RUN = true;
 
+	/** @since 10.6 */
+	public static final String DEFAULT_PROTOCOL = "remote"; //$NON-NLS-1$
 	/** @since 7.0 */
 	public static final String DEFAULT_CONNECTION = "unspecified-ip-address:unspecified-port-number"; //$NON-NLS-1$
 	/** @since 7.0 */

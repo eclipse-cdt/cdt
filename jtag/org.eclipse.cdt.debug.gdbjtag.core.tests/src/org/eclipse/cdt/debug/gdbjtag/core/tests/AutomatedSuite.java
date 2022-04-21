@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2018 Ericsson and others.
+ * Copyright (c) 2012, 2022 Ericsson and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,7 @@
  *     Marc Khouzam (Ericsson) - Base Implementation
  *     John Dallaway - GDB JTAG Implementation (bug 538282)
  *******************************************************************************/
-package org.eclipse.cdt.debug.gdbjtag.core.tests.launch;
+package org.eclipse.cdt.debug.gdbjtag.core.tests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

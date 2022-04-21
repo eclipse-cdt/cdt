@@ -27,63 +27,73 @@
          point="org.eclipse.cdt.debug.gdbjtag.core.JTagDevice">
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GenericDevice"
-            default_connection="localhost:10000"
+            default_connection="localhost:1234"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.genericDevice"
-            name="%Generic.name">
+            name="%Generic.name"
+            protocols="remote,extended-remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.AbatronBDI2000"
             default_connection="bdi2000:2001"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.AbatronBDI2000"
-            name="%AbatronBDI2000.name">
+            name="%AbatronBDI2000.name"
+            protocols="remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.MacraigorUsb2Demon"
             default_connection="localhost:8888"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.MacraigorUsb2Demon"
-            name="%MacraigorUsb2Demon.name">
+            name="%MacraigorUsb2Demon.name"
+            protocols="remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.DefaultGDBJtagConnectionImpl"
-            default_connection="/dev/com1"
+            default_connection="COM1"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GenericSerial"
-            name="%GenericSerial.name">
+            name="%GenericSerial.name"
+            protocols="remote,extended-remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDPipe"
             default_connection="| openocd --pipe"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCD"
-            name="%OpenOCDPipe.name">
+            name="%OpenOCDPipe.name"
+            protocols="remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDSocket"
             default_connection="localhost:3333"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDSocket"
-            name="%OpenOCDSocket.name">
+            name="%OpenOCDSocket.name"
+            protocols="remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PEMicro"
             default_connection="localhost:7224"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PEMicro"
-            name="%PEMicro.name">
+            name="%PEMicro.name"
+            protocols="remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PyOCD"
             default_connection="localhost:3333"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.PyOCD"
-            name="%PyOCD.name">
+            name="%PyOCD.name"
+            protocols="remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"
             default_connection="localhost:2331"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.SeggerJLink"
-            name="%SeggerJLink.name">
+            name="%SeggerJLink.name"
+            protocols="remote">
       </device>
       <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.STLink"
             default_connection="localhost:61234"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.STLink"
-            name="%STLink.name">
+            name="%STLink.name"
+            protocols="remote">
       </device>
    </extension>
 </plugin>

@@ -52,6 +52,24 @@
       "parentUuid": "d99b1a1e_fae1e8c4",
       "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c2aa32b_e500102f",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-21T07:36:58Z",
+      "side": 1,
+      "message": "In the long term, clean up of the test resources seems desirable. Is there a simple change we can make to the failing test(s) to ignore objects.mk as an interim measure? That would allow us to get your current code merged for wider evaluation.",
+      "parentUuid": "68af88c7_387e73bc",
+      "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

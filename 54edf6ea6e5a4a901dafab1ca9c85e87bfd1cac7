@@ -158,6 +158,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5953ec3f_52618563",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-22T11:09:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9cdcd266_f6407b58",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7fab3c5f_f0d1b626",
@@ -207,6 +225,24 @@
       "side": 1,
       "message": "Sure, you can leave that in indefinitely. Deprecated stuff can be removed in major version bumps anyway, so if/when we do CDT11 you can reassess then.",
       "parentUuid": "77b9053f_e182dbfa",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d34831d_7a63f92f",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConnection.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-22T11:09:09Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "267ed0ec_aea9cb41",
       "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }

@@ -95,5 +95,12 @@
             name="%STLink.name"
             protocols="remote">
       </device>
+      <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GenericDevice"
+            default_connection="COM1"
+            id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.BlackMagicProbe"
+            name="%BlackMagicProbe.name"
+            protocols="extended-remote">
+      </device>
    </extension>
 </plugin>

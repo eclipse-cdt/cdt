@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f33b2519_ae1b3cab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-22T00:06:03Z",
+      "side": 1,
+      "message": "This looks good to me, and thanks for including screenshot, saved me having to load it up.\n\nI have expressed my reservation about the effect of the API change (sorry I didn\u0027t understand this implication until I saw the code).",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a91479dc_0a4fa28d",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-22T00:06:03Z",
+      "side": 1,
+      "message": "Intentional change? I do agree making the default windows centric is a good idea.",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "06134f55_27cc93e0",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-22T00:06:03Z",
+      "side": 1,
+      "message": "There is an API issue here - one that you may have already considered.\n\nCustom devices that have contributed their own \"doRemote\" will not be called anymore. So for example if someone has defined their own device and \"fixed\" it to have \"doRemote\" to extended remote will break with this change.\n\nThe traditional Eclipse API way to resolve this is to have a new interface - I know you had expressed some hesitancy about having to make duplicates in the past - https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/123392/7#message-08c78e6ca4c7e9751e261e78126202bd2af48274-\n\nTo simplify this for next time I would make all the device specific classes (the ones that extend DefaultGDBJtagConnectionImpl) non-API.",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7fab3c5f_f0d1b626",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConnection.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-22T00:06:03Z",
+      "side": 1,
+      "message": "Please add this to the doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "message": "In case you didn\u0027t know, https://ci.eclipse.org/cdt/job/cdt-10.6/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/ had the repo that will be 10.6.1 assuming no additional commits/builds. ",
       "revId": "d2c86682d739e53ac9611092a485505a8aa971ee",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c76093e6_9a8120e3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-22T10:50:50Z",
+      "side": 1,
+      "message": "Ah. I checked a few of the recent builds but I just got 404. Maybe I managed to miss the last one... Anyway, noted!",
+      "parentUuid": "f6c7f424_2b248cca",
+      "revId": "d2c86682d739e53ac9611092a485505a8aa971ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "8b7485e5_63755c74",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core.tests/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-22T00:07:17Z",
+      "side": 1,
+      "message": "PS CI failure is:\n\n18:00:20  [ERROR] Failed to execute goal org.eclipse.tycho:tycho-packaging-plugin:2.7.1:validate-version (default-validate-version) on project org.eclipse.cdt.debug.gdbjtag.core.tests: Unqualified OSGi version 1.0.400.qualifier must match unqualified Maven version 1.0.300-SNAPSHOT for SNAPSHOT builds -\u003e [Help 1]\n18:00:20  [ERROR]",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a91479dc_0a4fa28d",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/plugin.xml",
         "patchSetId": 1

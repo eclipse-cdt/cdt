@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f6c7f424_2b248cca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-22T10:14:44Z",
+      "side": 1,
+      "message": "In case you didn\u0027t know, https://ci.eclipse.org/cdt/job/cdt-10.6/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/ had the repo that will be 10.6.1 assuming no additional commits/builds. ",
+      "revId": "d2c86682d739e53ac9611092a485505a8aa971ee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

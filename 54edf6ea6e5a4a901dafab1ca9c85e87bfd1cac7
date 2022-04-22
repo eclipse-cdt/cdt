@@ -18,6 +18,23 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "71a29568_40732a32",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-22T07:37:48Z",
+      "side": 1,
+      "message": "Thank you for the review, @Jonah.",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8b7485e5_63755c74",
@@ -52,6 +69,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd1349b0_27820830",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-22T07:37:48Z",
+      "side": 1,
+      "message": "Yes, intentional.",
+      "parentUuid": "a91479dc_0a4fa28d",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "06134f55_27cc93e0",
@@ -71,6 +106,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "249099ea_a492b34d",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/GDBJtagDSFFinalLaunchSequence.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 428,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-22T07:37:48Z",
+      "side": 1,
+      "message": "Good point. I will make DefaultGDBJtagConnectionImpl.doTarget() call doRemote() for the \"remote\" protocol case. This will ensure that extenders of doRemote() still get called.",
+      "parentUuid": "06134f55_27cc93e0",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7fab3c5f_f0d1b626",
         "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConnection.java",
         "patchSetId": 1
@@ -82,6 +135,24 @@
       "writtenOn": "2022-04-22T00:06:03Z",
       "side": 1,
       "message": "Please add this to the doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "77b9053f_e182dbfa",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core/src/org/eclipse/cdt/debug/gdbjtag/core/IGDBJtagConnection.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-22T07:37:48Z",
+      "side": 1,
+      "message": "Based on your other comment, perhaps we should deprecate but not _remove_ this one.",
+      "parentUuid": "7fab3c5f_f0d1b626",
       "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }

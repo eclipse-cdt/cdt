@@ -52,6 +52,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "583c0042_13537706",
+        "filename": "jtag/org.eclipse.cdt.debug.gdbjtag.core.tests/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-04-22T09:59:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8b7485e5_63755c74",
+      "revId": "54edf6ea6e5a4a901dafab1ca9c85e87bfd1cac7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a91479dc_0a4fa28d",

@@ -70,6 +70,24 @@
       "parentUuid": "68af88c7_387e73bc",
       "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d8ce741_fabeffd2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/makegen/gnu2/GnuMakefileGenerator.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1052,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-24T16:53:16Z",
+      "side": 1,
+      "message": "Okay. I\u0027ve updated all the test cases to not expect the objects.mk file.\nUnless there is some test cases that I\u0027ve missed, I think the build should be green now.",
+      "parentUuid": "2c2aa32b_e500102f",
+      "revId": "cc79ac989fadfb3d862495acf2b87acda7359b50",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

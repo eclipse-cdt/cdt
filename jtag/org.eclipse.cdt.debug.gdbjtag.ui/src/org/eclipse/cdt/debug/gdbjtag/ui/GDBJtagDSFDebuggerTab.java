@@ -216,6 +216,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		useRemote = new Button(group, SWT.CHECK);
 		useRemote.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		useRemote.setText(Messages.getString("GDBJtagDebuggerTab.useRemote_Text")); //$NON-NLS-1$
+		useRemote.setToolTipText(Messages.getString("GDBJtagDebuggerTab.useRemoteTooltip")); //$NON-NLS-1$
 		useRemote.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -249,9 +250,11 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		jtagDeviceLabel = new Label(comp, SWT.NONE);
 		jtagDeviceLabel.setText(Messages.getString("GDBJtagDebuggerTab.jtagDeviceLabel")); //$NON-NLS-1$
+		jtagDeviceLabel.setToolTipText(Messages.getString("GDBJtagDebuggerTab.jtagDeviceTooltip")); //$NON-NLS-1$
 
 		jtagDevice = new Combo(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		jtagDevice.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		jtagDevice.setToolTipText(Messages.getString("GDBJtagDebuggerTab.jtagDeviceTooltip")); //$NON-NLS-1$
 
 		GDBJtagDeviceContribution[] availableDevices = GDBJtagDeviceContributionFactory.getInstance()
 				.getGDBJtagDeviceContribution();
@@ -268,14 +271,18 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 
 		protocolLabel = new Label(comp, SWT.NONE);
 		protocolLabel.setText(Messages.getString("GDBJtagDebuggerTab.protocolLabel")); //$NON-NLS-1$
+		protocolLabel.setToolTipText(Messages.getString("GDBJtagDebuggerTab.protocolTooltip")); //$NON-NLS-1$
 		protocol = new ComboViewer(comp, SWT.READ_ONLY | SWT.DROP_DOWN);
 		protocol.setContentProvider(new ArrayContentProvider());
 		protocol.getCombo().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		protocol.getCombo().setToolTipText(Messages.getString("GDBJtagDebuggerTab.protocolTooltip")); //$NON-NLS-1$
 
 		connectionLabel = new Label(comp, SWT.NONE);
 		connectionLabel.setText(Messages.getString("GDBJtagDebuggerTab.connectionLabel")); //$NON-NLS-1$
+		connectionLabel.setToolTipText(Messages.getString("GDBJtagDebuggerTab.connectionTooltip")); //$NON-NLS-1$
 		connection = new Text(comp, SWT.BORDER);
 		connection.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		connection.setToolTipText(Messages.getString("GDBJtagDebuggerTab.connectionTooltip")); //$NON-NLS-1$
 
 		//
 		//  Add watchers for user data entry

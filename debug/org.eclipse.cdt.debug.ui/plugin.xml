@@ -1029,6 +1029,7 @@
             contextId="org.eclipse.cdt.debug.ui.debugging">
       </contextViewBinding>
       <contextViewBinding
+            autoOpen="false"
             contextId="org.eclipse.cdt.debug.ui.debugging"
             viewId="org.eclipse.debug.ui.ModuleView"/>
      <contextViewBinding

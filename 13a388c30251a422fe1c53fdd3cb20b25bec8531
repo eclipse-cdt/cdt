@@ -16,6 +16,23 @@
       "message": "In principal this looks fine to me.",
       "revId": "13a388c30251a422fe1c53fdd3cb20b25bec8531",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c2346d3_9711be79",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-04-25T19:33:58Z",
+      "side": 1,
+      "message": "Works fine with this pattern in our product. Submitting to master.",
+      "revId": "13a388c30251a422fe1c53fdd3cb20b25bec8531",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

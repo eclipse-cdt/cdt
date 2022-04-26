@@ -35,6 +35,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.BadLocationException;
@@ -177,12 +178,8 @@ public abstract class AbstractCodanCMarkerResolution implements ICodanMarkerReso
 	 * @return the document of that part
 	 */
 	protected IDocument openDocument(IEditorPart editorPart) {
-		if (editorPart instanceof ITextEditor) {
-			ITextEditor editor = (ITextEditor) editorPart;
-			IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
-			return doc;
-		}
-		return null;
+		ITextEditor textEditor = Adapters.adapt(editorPart, ITextEditor.class);
+		return textEditor == null ? null : textEditor.getDocumentProvider().getDocument(textEditor.getEditorInput());
 	}
 
 	/**

@@ -356,49 +356,53 @@ public class CBuildConfigurationManager
 				try {
 					for (IBuildConfiguration buildConfig : project.getBuildConfigs()) {
 						configs.remove(buildConfig);
+						// Clean up stale configs list
+						noConfigs.remove(buildConfig);
 					}
 				} catch (CoreException e) {
 					CCorePlugin.log(e);
 				}
 
-				// Clean up the config settings
-				Preferences parentNode = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).node("config"); //$NON-NLS-1$
-				if (parentNode != null) {
-					Preferences projectNode = parentNode.node(project.getName());
-					if (projectNode != null) {
-						try {
-							projectNode.removeNode();
-							parentNode.flush();
-						} catch (BackingStoreException e) {
-							CCorePlugin.log(e);
+				if (event.getType() == IResourceChangeEvent.PRE_DELETE) {
+					// Clean up the config settings
+					Preferences parentNode = InstanceScope.INSTANCE.getNode(CCorePlugin.PLUGIN_ID).node("config"); //$NON-NLS-1$
+					if (parentNode != null) {
+						Preferences projectNode = parentNode.node(project.getName());
+						if (projectNode != null) {
+							try {
+								projectNode.removeNode();
+								parentNode.flush();
+							} catch (BackingStoreException e) {
+								CCorePlugin.log(e);
+							}
 						}
 					}
-				}
 
-				// Clean up the scanner info data
-				IPath scannerInfoPath = CCorePlugin.getDefault().getStateLocation().append("infoCache") //$NON-NLS-1$
-						.append(project.getName());
-				Path directory = scannerInfoPath.toFile().toPath();
-				if (!Files.exists(directory)) {
-					return;
-				}
+					// Clean up the scanner info data
+					IPath scannerInfoPath = CCorePlugin.getDefault().getStateLocation().append("infoCache") //$NON-NLS-1$
+							.append(project.getName());
+					Path directory = scannerInfoPath.toFile().toPath();
+					if (!Files.exists(directory)) {
+						return;
+					}
 
-				try {
-					Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
-						@Override
-						public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-							Files.delete(file);
-							return FileVisitResult.CONTINUE;
-						}
+					try {
+						Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+							@Override
+							public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+								Files.delete(file);
+								return FileVisitResult.CONTINUE;
+							}
 
-						@Override
-						public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-							Files.delete(dir);
-							return FileVisitResult.CONTINUE;
-						}
-					});
-				} catch (IOException e) {
-					CCorePlugin.log(e);
+							@Override
+							public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+								Files.delete(dir);
+								return FileVisitResult.CONTINUE;
+							}
+						});
+					} catch (IOException e) {
+						CCorePlugin.log(e);
+					}
 				}
 			}
 		}

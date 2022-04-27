@@ -16,6 +16,23 @@
       "message": "Hi guys, hope I\u0027ve pushed this change correctly. Been a while.\n\nRegarding JUnit test I\u0027m unsure how to proceed. The existing JUnits in org.eclipse.cdt.core.tests are a little overwhelming and I\u0027m not sure exactly where to start. Any hints welcome.",
       "revId": "a423837fa7d2596a274469c91d9239c34ce3c76f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "12d716fa_02c8c710",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-27T11:54:37Z",
+      "side": 1,
+      "message": "\u003e Patch Set 1: Verified-1\n\u003e \n\u003e Build Failed \n\u003e \n\u003e https://ci.eclipse.org/cdt/job/cdt-verify-test-cdt-other-pipeline/4162/ : ABORTED\n\n\nRetriggered as build timed out",
+      "revId": "a423837fa7d2596a274469c91d9239c34ce3c76f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

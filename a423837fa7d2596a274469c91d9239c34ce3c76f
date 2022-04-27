@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0ebeafaa_037667ef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6211
+      },
+      "writtenOn": "2022-04-27T10:33:23Z",
+      "side": 1,
+      "message": "Hi guys, hope I\u0027ve pushed this change correctly. Been a while.\n\nRegarding JUnit test I\u0027m unsure how to proceed. The existing JUnits in org.eclipse.cdt.core.tests are a little overwhelming and I\u0027m not sure exactly where to start. Any hints welcome.",
+      "revId": "a423837fa7d2596a274469c91d9239c34ce3c76f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

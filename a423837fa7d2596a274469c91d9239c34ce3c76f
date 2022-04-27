@@ -33,6 +33,23 @@
       "message": "\u003e Patch Set 1: Verified-1\n\u003e \n\u003e Build Failed \n\u003e \n\u003e https://ci.eclipse.org/cdt/job/cdt-verify-test-cdt-other-pipeline/4162/ : ABORTED\n\n\nRetriggered as build timed out",
       "revId": "a423837fa7d2596a274469c91d9239c34ce3c76f",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8671723c_531029c0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-04-27T15:37:33Z",
+      "side": 1,
+      "message": "I think this change relates to Core Build, but the described problem in the bug is with the old build system?\n",
+      "revId": "a423837fa7d2596a274469c91d9239c34ce3c76f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

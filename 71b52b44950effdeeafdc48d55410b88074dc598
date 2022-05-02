@@ -250,6 +250,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fda64316_04869f18",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ITool.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 721,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-05-02T09:16:56Z",
+      "side": 1,
+      "message": "@Torbjörn if a third party is implementing ITool directly (or has cloned the internal CDT Tool class) and has not yet overridden ITool.getExtraFlags(int), this could cause issues when using the new internal CDT GNU makefile generator.\n\nIf we allow the default implementation to return null, the makefile generator could detect this and revert to previous behaviour. My personal inclination would be to avoid cluttering the makefile generator in this way unless issues are reported.",
+      "parentUuid": "ec24ff74_1a212a34",
+      "range": {
+        "startLine": 721,
+        "startChar": 17,
+        "endLine": 721,
+        "endChar": 30
+      },
+      "revId": "71b52b44950effdeeafdc48d55410b88074dc598",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "6f86e0d9_08db5dcb",
         "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedCommandLineGenerator.java",
         "patchSetId": 5

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="115">
+<target name="cdt" sequenceNumber="116">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/"/>
 			<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/eclipse/updates/4.24-I-builds/I20220407-0240/"/>
+			<repository location="https://download.eclipse.org/eclipse/updates/4.24-I-builds/I20220428-1800/"/>
 			<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
 			<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
@@ -50,7 +50,7 @@
 			<unit id="org.eclipse.wildwebdeveloper.embedder.node.feature.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/S20220403232146/repository/"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/S20220426182153/repository/"/>
 			<unit id="com.google.gson" version="0.0.0"/>
 			<unit id="com.sun.xml.bind" version="2.3.3.v20201118-1818"/>
 			<unit id="javax.activation" version="1.2.2.v20201119-1642"/>

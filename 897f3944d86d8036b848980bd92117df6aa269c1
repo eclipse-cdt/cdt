@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "61efbf71_8845aac7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-03T00:37:32Z",
+      "side": 1,
+      "message": "The tests fail because of this NEWS item in GDB:\n\nprint\n  Printing of floating-point values with base-modifying formats like\n  /x has been changed to display the underlying bytes of the value in\n  the desired base.  This was GDB\u0027s documented behavior, but was never\n  implemented correctly.\n\n",
+      "revId": "897f3944d86d8036b848980bd92117df6aa269c1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

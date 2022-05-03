@@ -347,11 +347,11 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		tests.put("-100.0 / 3.0", new String[] { "0xffffffffffffffdf", "01777777777777777777737",
 				"1111111111111111111111111111111111111111111111111111111111011111", "-33", "-33.3333", "-33.3333" });
 		tests.put("-100.0 / -3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
-		executeExpressionSubTests(tests, false, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
+		executeExpressionSubTests(tests, false, true, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
 
 		tests.clear();
 		tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200", "200" });
-		executeExpressionSubTests(tests, true, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
+		executeExpressionSubTests(tests, true, true, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
 
 	}
 
@@ -364,35 +364,38 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		// Create a map of expressions to expected values.
+		Map<String, String[]> testsFloat1 = new HashMap<>();
 		Map<String, String[]> tests1 = new HashMap<>();
 
 		tests1.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
-		tests1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999",
-				"12345.123449999999" });
+		testsFloat1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345",
+				"12345.123449999999", "12345.123449999999" });
 		tests1.put("lCharVar", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
 		tests1.put("lBoolVar", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests1.put("lIntArray[1]", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
-		tests1.put("lDoubleArray[1]", new String[] { "0x3039", "030071", "11000000111001", "12345",
+		testsFloat1.put("lDoubleArray[1]", new String[] { "0x3039", "030071", "11000000111001", "12345",
 				"12345.123449999999", "12345.123449999999" });
 		tests1.put("lCharArray[1]", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
 		tests1.put("lBoolArray[1]", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests1.put("*lIntPtr", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
-		tests1.put("*lDoublePtr", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999",
-				"12345.123449999999" });
+		testsFloat1.put("*lDoublePtr", new String[] { "0x3039", "030071", "11000000111001", "12345",
+				"12345.123449999999", "12345.123449999999" });
 		tests1.put("*lCharPtr", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
 		tests1.put("*lBoolPtr", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests1.put("lIntPtr2", new String[] { "0x1", "01", "1", "1", "0x1", "0x1" });
-		tests1.put("lDoublePtr2", new String[] { "0x2345", "021505", "10001101000101", "9029", "0x2345", "0x2345" });
+		testsFloat1.put("lDoublePtr2",
+				new String[] { "0x2345", "021505", "10001101000101", "9029", "0x2345", "0x2345" });
 		// GDB says a char* is out of bounds, but not the other pointers???
 		// tests1.put("CharPtr2", new String[] { "0x1234", "011064",
 		// "1001000110100", "4660", "0x1234" });
 		tests1.put("lBoolPtr2", new String[] { "0x123ABCDE", "02216536336", "10010001110101011110011011110",
 				"305839326", "0x123ABCDE", "0x123ABCDE" });
 
-		executeExpressionSubTests(tests1, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
+		executeExpressionSubTests(testsFloat1, true, true, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
+		executeExpressionSubTests(tests1, true, false, SyncUtil.getStackFrame(SyncUtil.getExecutionContext(0), 0));
 	}
 
 	@Test
@@ -503,9 +506,20 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 	 *            will be. When this param is false, then we consider it a match
 	 *            if, e.g., the gdb expression resolves to "1.23456789", but the
 	 *            caller only supplied "1.2345".
+	 * @param isFloat
+	 *            on GDB >= 12, when expected values are floating point the
+	 *            value that is printed is the underlying bytes
+	 *            From GDB news:
+	 *
+	 *                print
+	 *                  Printing of floating-point values with base-modifying formats like
+	 *                  /x has been changed to display the underlying bytes of the value in
+	 *                  the desired base.  This was GDB's documented behavior, but was never
+	 *                  implemented correctly.
+	 *
 	 */
-	private void executeExpressionSubTests(final Map<String, String[]> tests, final boolean exact, IDMContext dmc)
-			throws Throwable {
+	private void executeExpressionSubTests(final Map<String, String[]> tests, final boolean exact,
+			final boolean isFloat, IDMContext dmc) throws Throwable {
 
 		// Now evaluate each of the above expressions and compare the actual
 		// value against
@@ -593,7 +607,14 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 																	expectedValue.length());
 														}
 
-														if (actualValue.equalsIgnoreCase(expectedValue)) {
+														if (isFloat && isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)
+																&& !formatId.equals(IFormattedValues.NATURAL_FORMAT)
+																&& !formatId.equals(MIExpressions.DETAILS_FORMAT)) {
+															// there is little value in ensuring that GDB formatted
+															// a number correctly in this case, so mark this as
+															// passed
+															wait.waitFinished();
+														} else if (actualValue.equalsIgnoreCase(expectedValue)) {
 															wait.waitFinished();
 														} else {
 															String errorMsg = "Failed to correctly evalutate '"
@@ -615,6 +636,6 @@ public class PostMortemCoreTest extends BaseParametrizedTestCase {
 	}
 
 	private void executeExpressionSubTests(final Map<String, String[]> tests, IDMContext dmc) throws Throwable {
-		executeExpressionSubTests(tests, true, dmc);
+		executeExpressionSubTests(tests, true, false, dmc);
 	}
 }

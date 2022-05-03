@@ -33,7 +33,8 @@ jlevel="${default_jlevel}"
 
 # Supported versions
 # Note starting in GDB 9.x the .x is the patch release, so for example we have 9.2 in this list, but not 9.1.
-default_versions="12.1 11.2 10.2 9.2 8.3.1 8.2.1 8.1.1 8.0.1 7.12.1 7.11.1 7.10.1 7.9.1 7.8.2 7.7.1 7.6.2 7.5.1 7.4.1 7.3.1 7.2 7.1 7.0.1 6.8 6.7.1 6.6"
+old_version="9.2 8.3.1 8.2.1 8.1.1 8.0.1 7.12.1 7.11.1 7.10.1 7.9.1 7.8.2 7.7.1 7.6.2 7.5.1 7.4.1 7.3.1 7.2 7.1 7.0.1 6.8 6.7.1 6.6"
+default_versions="16.1 15.2 14.2 13.2 12.1 11.2 10.2"
 
 # Is set to "echo" if we are doing a dry-run.
 dryrun=""
@@ -65,6 +66,8 @@ function help_and_exit() {
   echo ""
   echo "Supported versions:"
   echo "  ${default_versions}"
+  echo "Older versions:"
+  echo "  ${old_version}"
   echo ""
   echo "Examples:"
   echo "  Build versions 7.7.1 and 7.8.2:"
@@ -89,11 +92,15 @@ function echo_header() {
 # $1: version number
 function check_supported() {
   local supported_pattern="@(${default_versions// /|})"
+  local old_pattern="@(${old_version// /|})"
   local version="$1"
 
   shopt -s extglob
   case "$version" in
     ${supported_pattern})
+      # Supported, do nothing.
+      ;;
+    ${old_pattern})
       # Supported, do nothing.
       ;;
     *)

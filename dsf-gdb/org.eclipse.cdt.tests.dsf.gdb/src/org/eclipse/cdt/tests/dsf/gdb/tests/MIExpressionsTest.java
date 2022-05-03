@@ -207,11 +207,11 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		tests.put("-100.0 / 3.0", new String[] { "0xffffffffffffffdf", "01777777777777777777737",
 				"1111111111111111111111111111111111111111111111111111111111011111", "-33", "-33.3333", "-33.3333" });
 		tests.put("-100.0 / -3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
-		executeExpressionSubTests(tests, false, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+		executeExpressionSubTests(tests, false, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
 
 		tests.clear();
 		tests.put("100.0 / 0.5", new String[] { "0xc8", "0310", "11001000", "200", "200", "200" });
-		executeExpressionSubTests(tests, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+		executeExpressionSubTests(tests, true, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
 
 	}
 
@@ -225,61 +225,68 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = runToTag("testLocals_init");
 
 		// Create a map of expressions to expected values.
+		Map<String, String[]> testsFloat1 = new HashMap<>();
 		Map<String, String[]> tests1 = new HashMap<>();
 
 		tests1.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
-		tests1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999",
-				"12345.123449999999" });
+		testsFloat1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345",
+				"12345.123449999999", "12345.123449999999" });
 		tests1.put("lCharVar", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
 		tests1.put("lBoolVar", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests1.put("lIntArray[1]", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
-		tests1.put("lDoubleArray[1]", new String[] { "0x3039", "030071", "11000000111001", "12345",
+		testsFloat1.put("lDoubleArray[1]", new String[] { "0x3039", "030071", "11000000111001", "12345",
 				"12345.123449999999", "12345.123449999999" });
 		tests1.put("lCharArray[1]", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
 		tests1.put("lBoolArray[1]", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests1.put("*lIntPtr", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
-		tests1.put("*lDoublePtr", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999",
-				"12345.123449999999" });
+		testsFloat1.put("*lDoublePtr", new String[] { "0x3039", "030071", "11000000111001", "12345",
+				"12345.123449999999", "12345.123449999999" });
 		tests1.put("*lCharPtr", new String[] { "0x6d", "0155", "1101101", "109", "109 'm'", "109 'm'" });
 		tests1.put("*lBoolPtr", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests1.put("lIntPtr2", new String[] { "0x1", "01", "1", "1", "0x1", "0x1" });
-		tests1.put("lDoublePtr2", new String[] { "0x2345", "021505", "10001101000101", "9029", "0x2345", "0x2345" });
+		testsFloat1.put("lDoublePtr2",
+				new String[] { "0x2345", "021505", "10001101000101", "9029", "0x2345", "0x2345" });
 		// GDB says a char* is out of bounds, but not the other pointers???
 		// tests1.put("CharPtr2", new String[] { "0x1234", "011064",
 		// "1001000110100", "4660", "0x1234" });
 		tests1.put("lBoolPtr2", new String[] { "0x123ABCDE", "02216536336", "10010001110101011110011011110",
 				"305839326", "0x123ABCDE", "0x123ABCDE" });
 
-		executeExpressionSubTests(tests1, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+		executeExpressionSubTests(testsFloat1, true, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+		executeExpressionSubTests(tests1, true, false, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
 
 		// Step into the method and stop until all new local variables are
 		// initialized
 		stoppedEvent = runToTag("locals2_init");
 
 		// Create a map of expressions to expected values.
+		Map<String, String[]> testsFloat2 = new HashMap<>();
 		Map<String, String[]> tests2 = new HashMap<>();
 
 		tests2.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789", "6789" });
-		tests2.put("lDoubleArray[1]", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789.6788999999999",
-				"6789.6788999999999" });
+		testsFloat2.put("lDoubleArray[1]", new String[] { "0x1a85", "015205", "1101010000101", "6789",
+				"6789.6788999999999", "6789.6788999999999" });
 		tests2.put("lCharVar", new String[] { "0x69", "0151", "1101001", "105", "105 'i'", "105 'i'" });
 		tests2.put("*lCharPtr", new String[] { "0x69", "0151", "1101001", "105", "105 'i'", "105 'i'" });
 		tests2.put("lBoolPtr2", new String[] { "0xABCDE123", "025363360443", "10101011110011011110000100100011",
 				"2882396451", "0xABCDE123", "0xABCDE123" });
 
 		// check variables at current stack frame
-		executeExpressionSubTests(tests2, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+		executeExpressionSubTests(testsFloat2, true, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+		executeExpressionSubTests(tests2, true, false, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
 		// check previous stack frame
-		executeExpressionSubTests(tests1, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1));
+		executeExpressionSubTests(testsFloat1, true, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1));
+		executeExpressionSubTests(tests1, true, false, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1));
 
 		// Now return from the method and check that we see the
 		// original variables.  We must use the right context to restore the right stack frame
 		stoppedEvent = SyncUtil.step(stoppedEvent.getDMContext(), StepType.STEP_RETURN);
 
-		executeExpressionSubTests(tests1, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+		executeExpressionSubTests(testsFloat1, true, true, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
+		executeExpressionSubTests(tests1, true, false, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0));
 	}
 
 	/**
@@ -1353,20 +1360,42 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Global variables
 		tests.put("gIntVar", new String[] { "0x21F", "01037", "1000011111", "543", "543", "543" });
-		tests.put("gDoubleVar",
-				new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+		if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)) {
+			tests.put("gDoubleVar",
+					new String[] { "0x4080fc5810624dd3", "0402007705402030446723",
+							"100000010000000111111000101100000010000011000100100110111010011", "4647992270608551379",
+							"543.54300000000001", "543.54300000000001" });
+		} else {
+			tests.put("gDoubleVar",
+					new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+		}
 		tests.put("gCharVar", new String[] { "0x67", "0147", "1100111", "103", "103 'g'", "103 'g'" });
 		tests.put("gBoolVar", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests.put("gIntArray[1]", new String[] { "0x28E", "01216", "1010001110", "654", "654", "654" });
-		tests.put("gDoubleArray[1]",
-				new String[] { "0x28E", "01216", "1010001110", "654", "654.32100000000003", "654.32100000000003" });
+		if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)) {
+			tests.put("gDoubleArray[1]",
+					new String[] { "0x408472916872b021", "0402043451055034530041",
+							"100000010000100011100101001000101101000011100101011000000100001", "4648966684201365537",
+							"654.32100000000003", "654.32100000000003" });
+		} else {
+			tests.put("gDoubleArray[1]",
+					new String[] { "0x28E", "01216", "1010001110", "654", "654.32100000000003", "654.32100000000003" });
+		}
 		tests.put("gCharArray[1]", new String[] { "0x64", "0144", "1100100", "100", "100 'd'", "100 'd'" });
 		tests.put("gBoolArray[1]", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests.put("*gIntPtr", new String[] { "0x21F", "01037", "1000011111", "543", "543", "543" });
-		tests.put("*gDoublePtr",
-				new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+		if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)) {
+			tests.put("*gDoublePtr",
+					new String[] { "0x4080fc5810624dd3", "0402007705402030446723",
+							"100000010000000111111000101100000010000011000100100110111010011", "4647992270608551379",
+							"543.54300000000001", "543.54300000000001" });
+		} else {
+			tests.put("*gDoublePtr",
+					new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+
+		}
 		tests.put("*gCharPtr", new String[] { "0x67", "0147", "1100111", "103", "103 'g'", "103 'g'" });
 		tests.put("*gBoolPtr", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
@@ -2092,11 +2121,17 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 							if (!isSuccess()) {
 								wait.waitFinished(getStatus());
 							} else {
-								if (getData().getFormattedValue().equals("0x1")) {
+								String expected;
+								if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)) {
+									expected = "0x3fffd70a3d70a3d7";
+								} else {
+									expected = "0x1";
+								}
+								if (getData().getFormattedValue().equals(expected)) {
 									wait.waitFinished();
 								} else {
 									wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
-											"Failed evaluating a, expected 0x1 but got "
+											"Failed evaluating a, expected " + expected + " but got "
 													+ getData().getFormattedValue(),
 											null));
 								}
@@ -2189,7 +2224,13 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 							} else {
 								// check that we have the proper value
 								// This will cache the value 1 in the natural format cache
-								final String valueStr = "1";
+								final String valueNaturalStr = "1";
+								final String valueDecimalStr;
+								if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)) {
+									valueDecimalStr = "4607182418800017408";
+								} else {
+									valueDecimalStr = "1";
+								}
 								globalExpressionCtx1 = getData()[0];
 
 								wait.increment();
@@ -2201,13 +2242,13 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 											protected void handleCompleted() {
 												if (!isSuccess()) {
 													wait.waitFinished(getStatus());
-												} else if (getData().getFormattedValue().equals(valueStr)) {
+												} else if (getData().getFormattedValue().equals(valueNaturalStr)) {
 													wait.waitFinished();
 												} else {
 													wait.waitFinished(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID,
 															"Failed evaluating " + globalExpressionCtx1.getExpression()
 																	+ ", got " + getData().getFormattedValue()
-																	+ " instead of " + valueStr,
+																	+ " instead of " + valueNaturalStr,
 															null));
 												}
 											}
@@ -2224,7 +2265,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 												if (!isSuccess()) {
 													wait.waitFinished(getStatus());
 												} else {
-													if (getData().getFormattedValue().equals(valueStr)) {
+													if (getData().getFormattedValue().equals(valueDecimalStr)) {
 														wait.waitFinished();
 													} else {
 														wait.waitFinished(new Status(IStatus.ERROR,
@@ -2232,7 +2273,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 																"Failed evaluating "
 																		+ globalExpressionCtx1.getExpression()
 																		+ ", got " + getData().getFormattedValue()
-																		+ " instead of " + valueStr,
+																		+ " instead of " + valueDecimalStr,
 																null));
 													}
 												}
@@ -2783,9 +2824,20 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 *            will be. When this param is false, then we consider it a match
 	 *            if, e.g., the gdb expression resolves to "1.23456789", but the
 	 *            caller only supplied "1.2345".
+	 * @param isFloat
+	 *            on GDB >= 12, when expected values are floating point the
+	 *            value that is printed is the underlying bytes
+	 *            From GDB news:
+	 *
+	 *                print
+	 *                  Printing of floating-point values with base-modifying formats like
+	 *                  /x has been changed to display the underlying bytes of the value in
+	 *                  the desired base.  This was GDB's documented behavior, but was never
+	 *                  implemented correctly.
+	 *
 	 */
-	private void executeExpressionSubTests(final Map<String, String[]> tests, final boolean exact, IDMContext dmc)
-			throws Throwable {
+	private void executeExpressionSubTests(final Map<String, String[]> tests, final boolean exact,
+			final boolean isFloat, IDMContext dmc) throws Throwable {
 
 		// Now evaluate each of the above expressions and compare the actual
 		// value against
@@ -2872,7 +2924,14 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 																	expectedValue.length());
 														}
 
-														if (actualValue.equalsIgnoreCase(expectedValue)) {
+														if (isFloat && isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)
+																&& !formatId.equals(IFormattedValues.NATURAL_FORMAT)
+																&& !formatId.equals(MIExpressions.DETAILS_FORMAT)) {
+															// there is little value in ensuring that GDB formatted
+															// a number correctly in this case, so mark this as
+															// passed
+															wait.waitFinished();
+														} else if (actualValue.equalsIgnoreCase(expectedValue)) {
 															wait.waitFinished();
 														} else {
 															String errorMsg = "Failed to correctly evalutate '"
@@ -2896,7 +2955,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	}
 
 	private void executeExpressionSubTests(final Map<String, String[]> tests, IDMContext dmc) throws Throwable {
-		executeExpressionSubTests(tests, true, dmc);
+		executeExpressionSubTests(tests, true, false, dmc);
 	}
 
 	private boolean addressesEqual(IExpressionDMAddress addrToTest, String addrStr, int size) {

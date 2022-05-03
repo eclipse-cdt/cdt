@@ -252,6 +252,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Contex
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMAdaptedASTNode;
+import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPBinding;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 
@@ -2216,8 +2217,9 @@ public class CPPSemantics {
 		for (int i = 0; i < items.length && items[i] != null; i++) {
 			Object o = items[i];
 			boolean declaredBefore = data.isIgnorePointOfDeclaration() || declaredBefore(o, lookupPoint, indexBased);
+			final boolean isReadFromIndex = data.getTranslationUnit().getDefinitionsInAST((IBinding) o).length == 0;
 			boolean checkResolvedNamesOnly = false;
-			if (!checkWholeClass && !declaredBefore) {
+			if (!checkWholeClass && !declaredBefore && isReadFromIndex) {
 				if (lookupName != null && lookupName.getRoleOfName(false) != IASTNameOwner.r_reference) {
 					checkResolvedNamesOnly = true;
 					declaredBefore = true;

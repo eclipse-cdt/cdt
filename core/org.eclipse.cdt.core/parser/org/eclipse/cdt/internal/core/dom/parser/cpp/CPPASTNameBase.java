@@ -30,7 +30,6 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInternalNameOwner;
 import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
-import org.eclipse.core.runtime.Assert;
 
 /**
  * Common base class for all sorts of c++ names: unqualified, qualified, operator and conversion
@@ -50,7 +49,6 @@ public abstract class CPPASTNameBase extends ASTNode implements ICPPASTName {
 			implements IRecursionResolvingBinding {
 		public RecursionResolvingBinding(IASTName node, char[] arg) {
 			super(node, IProblemBinding.SEMANTIC_RECURSION_IN_LOOKUP, arg);
-			Assert.isTrue(sAllowRecursionBindings, getMessage());
 		}
 	}
 

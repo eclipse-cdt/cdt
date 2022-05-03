@@ -384,4 +384,31 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	public void testClassFirstDeclaredAsFriend_530430() throws Exception {
 		checkBindings();
 	}
+
+	//test.hpp
+	//	class Outer {
+	//		class ReallocOrder;
+	//		class AllocOrder;
+	//		void test(Outer::ReallocOrder& order);
+	//	};
+
+	//test.cpp
+	//#include "test.hpp"
+	//	class Outer::AllocOrder {
+	//	public:
+	//		int inherited() const
+	//		{
+	//			return 0;
+	//		}
+	//	};
+	//	class Outer::ReallocOrder : public Outer::AllocOrder {
+	//	};
+	//	void Outer::test(Outer::ReallocOrder& order)
+	//	{
+	//		order.inherited();
+	//	}
+	public void testBaseClassLookupForInnerClasses() throws Exception {
+		checkBindings();
+	}
+
 }

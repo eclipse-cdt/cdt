@@ -40,9 +40,17 @@ public class ITestConstants {
 	// From GDB 9 the number scheme changed to MAJOR.PATCH so 9.2 is a patch for 9.1 release
 	public static final String SUFFIX_GDB_9 = "9";
 	public static final String SUFFIX_GDB_10 = "10";
+	public static final String SUFFIX_GDB_11 = "11";
+	public static final String SUFFIX_GDB_12 = "12";
+	public static final String SUFFIX_GDB_13 = "13";
+	public static final String SUFFIX_GDB_14 = "14";
+	public static final String SUFFIX_GDB_15 = "15";
+	public static final String SUFFIX_GDB_16 = "16";
 
 	public static String[] ALL_SUPPORTED_VERSIONS = new String[] {
 			// add new versions here
+			ITestConstants.SUFFIX_GDB_16, ITestConstants.SUFFIX_GDB_15, ITestConstants.SUFFIX_GDB_14,
+			ITestConstants.SUFFIX_GDB_13, ITestConstants.SUFFIX_GDB_12, ITestConstants.SUFFIX_GDB_11,
 			ITestConstants.SUFFIX_GDB_10, ITestConstants.SUFFIX_GDB_9, ITestConstants.SUFFIX_GDB_8_3,
 			ITestConstants.SUFFIX_GDB_8_2, ITestConstants.SUFFIX_GDB_8_1, ITestConstants.SUFFIX_GDB_8_0, };
 

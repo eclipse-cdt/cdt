@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e97f2e4_8d67d810",
+        "filename": "dsf-gdb/org.eclipse.cdt.tests.dsf.gdb/src/org/eclipse/cdt/tests/dsf/gdb/tests/MIExpressionsTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1358,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-03T01:06:04Z",
+      "side": 1,
+      "message": "The problem with these values is they are theoretically platform dependent as they are showing the underlying bytes. So if these tests run on another platform this could be an issue?",
+      "revId": "6a9fe95b4cc81bf2237dfa4483cbd8d90c3dd788",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

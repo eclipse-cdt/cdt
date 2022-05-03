@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.ISymbolReader;
@@ -127,7 +125,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							}
 							// The build-id location is taken by converting the binary bytes to hex string.
 							// The first byte is used as a directory specifier (e.g. 51/a4578fe2).
-							String bName = DatatypeConverter.printHexBinary(byteArray).toLowerCase();
+							String bName = printHexBinary(byteArray).toLowerCase();
 							buildId = bName.substring(0, 2) + "/" + bName.substring(2) + ".debug"; //$NON-NLS-1$ //$NON-NLS-2$
 							// The build-id file should be in the special directory /usr/lib/debug/.build-id
 							IPath buildIdPath = new Path("/usr/lib/debug/.build-id").append(buildId); //$NON-NLS-1$
@@ -286,6 +284,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		// Don't print during parsing.
 		printEnabled = false;
 		m_parsed = false;
+	}
+
+	private static String printHexBinary(byte[] byteArray) {
+		StringBuilder sb = new StringBuilder(byteArray.length * 2);
+		for (byte b : byteArray)
+			sb.append(String.format("%02x", b)); //$NON-NLS-1$
+		return sb.toString();
 	}
 
 	/*

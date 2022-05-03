@@ -1353,20 +1353,42 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 		// Global variables
 		tests.put("gIntVar", new String[] { "0x21F", "01037", "1000011111", "543", "543", "543" });
-		tests.put("gDoubleVar",
-				new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+		if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)) {
+			tests.put("gDoubleVar",
+					new String[] { "0x4080fc5810624dd3", "0402007705402030446723",
+							"100000010000000111111000101100000010000011000100100110111010011", "4647992270608551379",
+							"543.54300000000001", "543.54300000000001" });
+		} else {
+			tests.put("gDoubleVar",
+					new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+		}
 		tests.put("gCharVar", new String[] { "0x67", "0147", "1100111", "103", "103 'g'", "103 'g'" });
 		tests.put("gBoolVar", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests.put("gIntArray[1]", new String[] { "0x28E", "01216", "1010001110", "654", "654", "654" });
-		tests.put("gDoubleArray[1]",
-				new String[] { "0x28E", "01216", "1010001110", "654", "654.32100000000003", "654.32100000000003" });
+		if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)) {
+			tests.put("gDoubleArray[1]",
+					new String[] { "0x408472916872b021", "0402043451055034530041",
+							"100000010000100011100101001000101101000011100101011000000100001", "4648966684201365537",
+							"654.32100000000003", "654.32100000000003" });
+		} else {
+			tests.put("gDoubleArray[1]",
+					new String[] { "0x28E", "01216", "1010001110", "654", "654.32100000000003", "654.32100000000003" });
+		}
 		tests.put("gCharArray[1]", new String[] { "0x64", "0144", "1100100", "100", "100 'd'", "100 'd'" });
 		tests.put("gBoolArray[1]", new String[] { "0x0", "0", "0", "0", "false", "false" });
 
 		tests.put("*gIntPtr", new String[] { "0x21F", "01037", "1000011111", "543", "543", "543" });
-		tests.put("*gDoublePtr",
-				new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+		if (isGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_12)) {
+			tests.put("*gDoublePtr",
+					new String[] { "0x4080fc5810624dd3", "0402007705402030446723",
+							"100000010000000111111000101100000010000011000100100110111010011", "4647992270608551379",
+							"543.54300000000001", "543.54300000000001" });
+		} else {
+			tests.put("*gDoublePtr",
+					new String[] { "0x21F", "01037", "1000011111", "543", "543.54300000000001", "543.54300000000001" });
+
+		}
 		tests.put("*gCharPtr", new String[] { "0x67", "0147", "1100111", "103", "103 'g'", "103 'g'" });
 		tests.put("*gBoolPtr", new String[] { "0x0", "0", "0", "0", "false", "false" });
 

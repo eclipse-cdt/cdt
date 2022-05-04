@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ab371954_86b725f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 12
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-04T16:46:07Z",
+      "side": 1,
+      "message": "OK - everyone seems happy with this. I have rebased, assuming build is ok then it is good to go.",
+      "revId": "2a669100f00eb9406ceb9ccad88182f701a4ea47",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

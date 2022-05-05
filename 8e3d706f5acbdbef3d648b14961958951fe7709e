@@ -129,6 +129,30 @@
       },
       "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "348cbe4a_25cd1ece",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/css/e4-dark_dsf_gdb.css",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-05T19:11:22Z",
+      "side": 1,
+      "message": "I can just 2nd that!\nReading https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d466075 made me a little bit less confused, but it does still not work.\n\nThe node is supposed to be called IEclipsePreferences#id1:id2 where \"id1\" is the plugin that defines the preference and \"id2\" is something that makes the node unique, for example the plugin-id of the bundle containing the css file.\n\nI\u0027ve debugged the CSS code to the level that I\u0027m sure that the files is read, but for some reason it is not considered for the preference store and I have no idea why...\n\nFor new-ui aware configurations, does the checkbox do anything or is it just doing something for the old GDB versions and Windows?",
+      "parentUuid": "c776c1ab_515c585b",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 54
+      },
+      "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

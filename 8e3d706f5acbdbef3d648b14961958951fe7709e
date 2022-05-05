@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2795d7e0_418cae42",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-05T14:46:51Z",
+      "side": 1,
+      "message": "With both your patches on linux it looks good:\nhttps://i.imgur.com/SvmI7oc.png\n\nBut with neither of them the debug console looks fine.\nhttps://i.imgur.com/oxPSiSC.png\n\nAre you hitting a problem on Windows or with old GDBs? If so that is just the basic console which looks like this for me without your patches (GDB 7.6 no new-ui running on linux):\nhttps://i.imgur.com/9ecPYk6.png\nand with your patch it doesn\u0027t look any different.\n\nTherefore that confirms your suspicion, but also shows that if you do get it to work that may regress Linux with new-ui where it is already working.\n\n\n",
+      "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2fbead41_f57005d1",

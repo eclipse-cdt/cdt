@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b78cb9d3_40a4efac",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-05T12:50:33Z",
+      "side": 1,
+      "message": "Sounds fine to me. Does this mean that extenders have to make the same change? I assume not as this only affects gnu2.GnuMakefileGenerator?",
+      "revId": "7357cfd9eb44d1fc6b64f906a0e7b62f2268cee2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "message": "Sounds fine to me. Does this mean that extenders have to make the same change? I assume not as this only affects gnu2.GnuMakefileGenerator?",
       "revId": "7357cfd9eb44d1fc6b64f906a0e7b62f2268cee2",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9da377c_4b7c2ca1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-05-05T14:11:54Z",
+      "side": 1,
+      "message": "@Jonah, most extenders do not override the command line pattern. We have logic in place to accommodate those do so. This change is really clean up and guidance for the future. We don\u0027t want extenders to use the previous XML as template for their own toolchain description.",
+      "parentUuid": "b78cb9d3_40a4efac",
+      "revId": "7357cfd9eb44d1fc6b64f906a0e7b62f2268cee2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

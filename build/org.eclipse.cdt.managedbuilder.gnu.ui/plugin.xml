@@ -604,7 +604,6 @@
             name="%ToolName.linker.macosx.c"
             outputFlag="-o"
             command="gcc"
-            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             id="cdt.managedbuild.tool.macosx.c.linker"
             errorParsers="org.eclipse.cdt.core.GLDErrorParser">
             <supportedProperties>
@@ -796,7 +795,6 @@
             name="%ToolName.linker.macosx.cpp"
             outputFlag="-o"
             command="g++"
-            commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
             id="cdt.managedbuild.tool.macosx.cpp.linker"
             errorParsers="org.eclipse.cdt.core.GLDErrorParser">
             <supportedProperties>
@@ -2526,13 +2524,11 @@
 	              </targetPlatform>
 				  <tool
                       id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.solaris.c.compiler.base"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.base"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
 				  </tool>
 				  <tool
 		    		  id="cdt.managedbuild.tool.gnu.solaris.archiver.base"
@@ -2597,14 +2593,12 @@
 				  <tool
                       id="cdt.managedbuild.tool.gnu.solaris.cpp.compiler.base"
                       name="%ToolName.compiler.solaris.cpp"
-                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base">
                   </tool>
                   <tool
                       id="cdt.managedbuild.tool.gnu.solaris.c.compiler.base"
                       name="%ToolName.compiler.solaris.c"
-                      superClass="cdt.managedbuild.tool.gnu.c.compiler.base"
-                      commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}">                          
+                      superClass="cdt.managedbuild.tool.gnu.c.compiler.base">
 				  </tool>
 			  </toolChain>
 

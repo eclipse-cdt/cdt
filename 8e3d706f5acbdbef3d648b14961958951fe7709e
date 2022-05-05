@@ -105,6 +105,30 @@
       },
       "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c776c1ab_515c585b",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/css/e4-dark_dsf_gdb.css",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-05T15:57:54Z",
+      "side": 1,
+      "message": "I don\u0027t know. Each time I have had to deal with such things I have pulled my hair out due to the magic!",
+      "parentUuid": "f1103054_34c90982",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 54
+      },
+      "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

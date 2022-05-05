@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d290a702_6c5f5d86",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-05T14:50:21Z",
+      "side": 1,
+      "message": "Based on what I see:\nBefore: https://i.imgur.com/oxPSiSC.png\nAfter: https://i.imgur.com/SvmI7oc.png\n\nthis looks good to go\n",
+      "revId": "e733cca5daef4b0dbfe0072502012fdd0557f00d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1dee4ab4_9d4e869b",
@@ -14,6 +31,30 @@
       "writtenOn": "2022-05-05T14:29:47Z",
       "side": 1,
       "message": "I\u0027m not sure how to trigger this color to be visible. Looking at the source code, it appears that I always get a TextPresentation instance in DisassemblyPart#applyTextPresentation().",
+      "range": {
+        "startLine": 20,
+        "startChar": 2,
+        "endLine": 20,
+        "endChar": 33
+      },
+      "revId": "e733cca5daef4b0dbfe0072502012fdd0557f00d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "00821c64_d07b2a7e",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/css/e4-dark_dsf.css",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-05T14:50:21Z",
+      "side": 1,
+      "message": "I don\u0027t know either. Maybe it only kicks in for code that is not in the project\u0027s source? Maybe make the colour 200,200,200 so it is visible still in case it shows up for some user. 0,0,0 will be near impossible to see on the dark grey background.",
+      "parentUuid": "1dee4ab4_9d4e869b",
       "range": {
         "startLine": 20,
         "startChar": 2,

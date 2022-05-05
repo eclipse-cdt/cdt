@@ -153,6 +153,30 @@
       },
       "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dd5aa758_b65db215",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/css/e4-dark_dsf_gdb.css",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-05T21:31:42Z",
+      "side": 1,
+      "message": "Inverted new-ui in dark mode looks like this:\n\nhttps://i.imgur.com/65PKPpK.png",
+      "parentUuid": "348cbe4a_25cd1ece",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 54
+      },
+      "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

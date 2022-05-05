@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "02fc0bea_7a633986",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-05T15:45:09Z",
+      "side": 1,
+      "message": "It\u0027s on Windows, so without the new-ui.\nIf you look in the preferences, there is a setting to invert the colors and ticking the checkbox does make a difference for the basic view. This is what I was aiming for with the preference node in the CSS.",
+      "parentUuid": "2795d7e0_418cae42",
+      "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "2fbead41_f57005d1",
         "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/css/e4-dark_dsf_gdb.css",
         "patchSetId": 1
@@ -55,6 +73,30 @@
       "side": 1,
       "message": "I don\u0027t know why it isn\u0027t kicking in. \n\nBTW the Full GDB Console (new-ui) should automatically change, but I am not sure if it works based on https://wiki.eclipse.org/CDT/User/NewIn100#Terminal - Specifically \"Editing Color palette (including better dark theme support)\" Bug 549697",
       "parentUuid": "2fbead41_f57005d1",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 54
+      },
+      "revId": "8e3d706f5acbdbef3d648b14961958951fe7709e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f1103054_34c90982",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/css/e4-dark_dsf_gdb.css",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-05T15:45:09Z",
+      "side": 1,
+      "message": "Is it correct to use the namespace org-eclipse-cdt-dsf-gdb-ui:org-eclipse-cdt-dsf-gdb-ui?\nI\u0027ve tried to find some documentation showing what these string is supposed to be, but so far, I\u0027ve only found a forum post that said that the first part should be the same as the bundle name that defines the setting and the part after the colon does not matter.",
+      "parentUuid": "920cf971_37cb460c",
       "range": {
         "startLine": 14,
         "startChar": 2,

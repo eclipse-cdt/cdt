@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "23e17828_ecf3311c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-05T15:48:10Z",
+      "side": 1,
+      "message": "There is one thing that looks a bit bad with this, but it requires some code change and I\u0027m not sure how to do it.\nIf you show the disassembly view and then step a few times, there last few lines that was executed will be highlighted. The highlighting color is fading towards white (or the default background color?). I suppose this should be changed, but I feel this is minor compared to being able to read the statements at all ;)",
+      "parentUuid": "d290a702_6c5f5d86",
+      "revId": "e733cca5daef4b0dbfe0072502012fdd0557f00d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "1dee4ab4_9d4e869b",
         "filename": "dsf/org.eclipse.cdt.dsf.ui/css/e4-dark_dsf.css",
         "patchSetId": 1
@@ -55,6 +73,30 @@
       "side": 1,
       "message": "I don\u0027t know either. Maybe it only kicks in for code that is not in the project\u0027s source? Maybe make the colour 200,200,200 so it is visible still in case it shows up for some user. 0,0,0 will be near impossible to see on the dark grey background.",
       "parentUuid": "1dee4ab4_9d4e869b",
+      "range": {
+        "startLine": 20,
+        "startChar": 2,
+        "endLine": 20,
+        "endChar": 33
+      },
+      "revId": "e733cca5daef4b0dbfe0072502012fdd0557f00d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "098f34f4_3b2f2276",
+        "filename": "dsf/org.eclipse.cdt.dsf.ui/css/e4-dark_dsf.css",
+        "patchSetId": 1
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-05T15:48:10Z",
+      "side": 1,
+      "message": "Ack - will use 200,200,200 in the next PS.",
+      "parentUuid": "00821c64_d07b2a7e",
       "range": {
         "startLine": 20,
         "startChar": 2,

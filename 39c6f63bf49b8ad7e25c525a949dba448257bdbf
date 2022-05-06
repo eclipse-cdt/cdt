@@ -70,6 +70,24 @@
       "parentUuid": "1864f1a5_e0b18e43",
       "revId": "39c6f63bf49b8ad7e25c525a949dba448257bdbf",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "869edf8f_3f4615d6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-06T12:13:31Z",
+      "side": 1,
+      "message": "GH issue created with a snippet that shows the problem.",
+      "parentUuid": "ebe4563f_f209d0aa",
+      "revId": "39c6f63bf49b8ad7e25c525a949dba448257bdbf",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -16,6 +16,23 @@
       "message": "I think this is working for both light and dark themes.\nI\u0027ve tested it on Linux with dark theme and Windows with light theme.\n\nWDYT?",
       "revId": "bd268d9f011f7078f91309a7a9063698d21acbc7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fce6ce01_499676ff",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-07T20:10:25Z",
+      "side": 1,
+      "message": "Looks much better.",
+      "revId": "bd268d9f011f7078f91309a7a9063698d21acbc7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

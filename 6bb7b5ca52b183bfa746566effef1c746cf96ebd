@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa2f8a5d_38a284a7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-07T19:58:40Z",
+      "side": 1,
+      "message": "\u003e https://ci.eclipse.org/cdt/job/cdt-verify-terminal-only-pipeline/183/ : FAILURE\n\nThis job is special because it has a different target platform that looks broken on the branch. I wouldn\u0027t spend too much time fixing it as the main build is ok, I think that cherry-picking Ia4238b5b85b42aa32adeeaad23b6f135919652fe would fix it.\n",
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2ec0a7f8_caa34198",
@@ -26,6 +43,30 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "0f02bd63_0e19e4a6",
+        "filename": "doc/org.eclipse.cdt.doc.isv/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-07T19:58:40Z",
+      "side": 1,
+      "message": "IANAL but I guess it doesn\u0027t hurt to do it now, but the content of the help hasn\u0027t changed in 2022 so it doesn\u0027t matter either.\n\nI guess there could/should be a beginning of every year bundle copyright bump that should include this? If so, the same thing should probably be done to features too?",
+      "parentUuid": "2ec0a7f8_caa34198",
+      "range": {
+        "startLine": 128,
+        "startChar": 32,
+        "endLine": 128,
+        "endChar": 107
+      },
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "26ea0ddd_a846187b",
         "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
         "patchSetId": 1
@@ -37,6 +78,30 @@
       "writtenOn": "2022-05-07T17:47:33Z",
       "side": 1,
       "message": "I guess this is supposed to be bumped, right?",
+      "range": {
+        "startLine": 35,
+        "startChar": 25,
+        "endLine": 35,
+        "endChar": 89
+      },
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c7e39379_5d630a94",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-07T19:58:40Z",
+      "side": 1,
+      "message": "Unneeded, but does no harm as API wise 10.6.0 and 10.6.1 *should* be the same (or else \"On a branch there should be no Major or Minor version bumps\" would be violated). You could update \"Update API baseline to last release and resolve any API errors\" to be more explicit on this, e.g to say \"Update API baseline to last non-maintenance release and resolve any API errors\"",
+      "parentUuid": "26ea0ddd_a846187b",
       "range": {
         "startLine": 35,
         "startChar": 25,

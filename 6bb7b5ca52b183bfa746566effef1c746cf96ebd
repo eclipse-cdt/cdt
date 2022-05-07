@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2ec0a7f8_caa34198",
+        "filename": "doc/org.eclipse.cdt.doc.isv/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-07T17:47:33Z",
+      "side": 1,
+      "message": "Should 2022 be added to the copyright too?\nWe did not do it for the 10.6.0 or 10.6.1 release...",
+      "range": {
+        "startLine": 128,
+        "startChar": 32,
+        "endLine": 128,
+        "endChar": 107
+      },
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "26ea0ddd_a846187b",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-07T17:47:33Z",
+      "side": 1,
+      "message": "I guess this is supposed to be bumped, right?",
+      "range": {
+        "startLine": 35,
+        "startChar": 25,
+        "endLine": 35,
+        "endChar": 89
+      },
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7415a650_a3095bca",
+        "filename": "remote/org.eclipse.remote.doc.isv/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-07T17:47:33Z",
+      "side": 1,
+      "message": "Should 2022 be added to the copyright too?\nWe did not do it for the 10.6.0 or 10.6.1 release...",
+      "range": {
+        "startLine": 82,
+        "startChar": 31,
+        "endLine": 82,
+        "endChar": 108
+      },
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

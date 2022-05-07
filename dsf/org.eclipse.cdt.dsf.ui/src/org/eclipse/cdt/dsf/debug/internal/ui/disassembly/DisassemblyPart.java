@@ -2933,9 +2933,10 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		}
 		// update pc history trail
 		if (fPCHistory.size() > 1) {
+			final double bgLuminance = new HSL(fViewer.getTextWidget().getBackground().getRGB()).luminance;
 			HSL hsv = new HSL(fPCAnnotationRGB);
-			double luminanceStep = (1 - hsv.luminance) / (fPCHistorySizeMax + 1);
-			hsv.luminance = 1 - luminanceStep * (fPCHistorySizeMax - fPCHistory.size());
+			double luminanceStep = (bgLuminance - hsv.luminance) / (fPCHistorySizeMax + 1);
+			hsv.luminance = bgLuminance - luminanceStep * (fPCHistorySizeMax - fPCHistory.size());
 			for (ListIterator<AddressRangePosition> listIt = fPCHistory.listIterator(fPCHistory.size()); listIt
 					.hasPrevious();) {
 				AddressRangePosition pcPos = listIt.previous();

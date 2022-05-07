@@ -18,11 +18,11 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>10.6.1-SNAPSHOT</version>
+		<version>10.6.2-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>1.2.501-SNAPSHOT</version>
+	<version>1.2.502-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.debug.dap</artifactId>
 	<packaging>eclipse-plugin</packaging>
 

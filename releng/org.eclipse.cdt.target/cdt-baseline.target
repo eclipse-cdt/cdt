@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt-baseline" sequenceNumber="34">
+<target name="cdt-baseline" sequenceNumber="35">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/eclipse/updates/4.23/R-4.23-202203080310/"/>
@@ -32,7 +32,7 @@
 			<unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/cdt/releases/10.6/cdt-10.6.0/"/>
+			<repository location="https://download.eclipse.org/tools/cdt/releases/10.6/cdt-10.6.1/"/>
 			<unit id="org.eclipse.cdt.autotools.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.cdt.build.crossgcc.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.cdt.cmake.feature.group" version="0.0.0"/>

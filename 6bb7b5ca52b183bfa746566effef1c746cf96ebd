@@ -65,6 +65,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e7f9fe6_7f094b45",
+        "filename": "doc/org.eclipse.cdt.doc.isv/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-08T13:18:04Z",
+      "side": 1,
+      "message": "I\u0027m neither any lawyer, so let\u0027s keep it simple and do as before. :)",
+      "parentUuid": "0f02bd63_0e19e4a6",
+      "range": {
+        "startLine": 128,
+        "startChar": 32,
+        "endLine": 128,
+        "endChar": 107
+      },
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "26ea0ddd_a846187b",
@@ -112,6 +136,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9838bc65_85cb8b22",
+        "filename": "releng/org.eclipse.cdt.target/cdt-baseline.target",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-08T13:18:04Z",
+      "side": 1,
+      "message": "Ack",
+      "parentUuid": "c7e39379_5d630a94",
+      "range": {
+        "startLine": 35,
+        "startChar": 25,
+        "endLine": 35,
+        "endChar": 89
+      },
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7415a650_a3095bca",
@@ -125,6 +173,30 @@
       "writtenOn": "2022-05-07T17:47:33Z",
       "side": 1,
       "message": "Should 2022 be added to the copyright too?\nWe did not do it for the 10.6.0 or 10.6.1 release...",
+      "range": {
+        "startLine": 82,
+        "startChar": 31,
+        "endLine": 82,
+        "endChar": 108
+      },
+      "revId": "6bb7b5ca52b183bfa746566effef1c746cf96ebd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a76515d0_b563b8af",
+        "filename": "remote/org.eclipse.remote.doc.isv/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-08T13:18:04Z",
+      "side": 1,
+      "message": "Same as for doc/org.eclipse.cdt.doc.isv/pom.xml",
+      "parentUuid": "7415a650_a3095bca",
       "range": {
         "startLine": 82,
         "startChar": 31,

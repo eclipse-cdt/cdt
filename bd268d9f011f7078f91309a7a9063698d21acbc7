@@ -33,6 +33,23 @@
       "message": "Looks much better.",
       "revId": "bd268d9f011f7078f91309a7a9063698d21acbc7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7c6558d_8ca15dad",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-08T13:05:25Z",
+      "side": 1,
+      "message": "Test failure is unrelated to the change.",
+      "revId": "bd268d9f011f7078f91309a7a9063698d21acbc7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

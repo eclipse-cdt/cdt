@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -545,12 +546,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	private void clearCaches() {
-		workspaceRootFindContainersForLocationURICache.clear();
-		workspaceRootFindFilesForLocationURICache.clear();
-		findPathInProjectCache.clear();
-		mappedURICache.clear();
-		fileSystemLocationCache.clear();
-		pathExistsCache.clear();
+		clearCache(workspaceRootFindContainersForLocationURICache);
+		clearCache(workspaceRootFindFilesForLocationURICache);
+		clearCache(findPathInProjectCache);
+		clearCache(mappedURICache);
+		clearCache(fileSystemLocationCache);
+		clearCache(pathExistsCache);
 	}
 
 	@Override
@@ -792,7 +793,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 		IResource sourceFile = null;
 
-		IResource[] resources = workspaceRootFindFilesForLocationURICache.computeIfAbsent(uri,
+		IResource[] resources = cacheValue(workspaceRootFindFilesForLocationURICache, uri,
 				key -> ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(key));
 		for (IResource rc : resources) {
 			if (!checkExistence || rc.isAccessible()) {
@@ -815,7 +816,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private IResource findContainerForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
 		IResource resource = null;
 
-		IResource[] resources = workspaceRootFindContainersForLocationURICache.computeIfAbsent(uri,
+		IResource[] resources = cacheValue(workspaceRootFindContainersForLocationURICache, uri,
 				key -> ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(key));
 		for (IResource rc : resources) {
 			if ((rc instanceof IProject || rc instanceof IFolder) && (!checkExistence || rc.isAccessible())) { // treat IWorkspaceRoot as non-workspace path
@@ -1011,7 +1012,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * @return {@link URI} of the resource
 	 */
 	private URI determineMappedURI(String pathStr, URI baseURI) {
-		return mappedURICache.computeIfAbsent(new MappedURIKey(baseURI, pathStr), key -> {
+		return cacheValue(mappedURICache, new MappedURIKey(baseURI, pathStr), key -> {
 			URI uri = null;
 
 			if (baseURI == null) {
@@ -1047,9 +1048,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * Find all resources in the project which might be represented by relative path passed.
 	 */
 	private List<IResource> findPathInProject(IPath path, IProject project) {
-		LRUCache<IPath, List<IResource>> cache = findPathInProjectCache.computeIfAbsent(project,
+		LRUCache<IPath, List<IResource>> cache = cacheValue(findPathInProjectCache, project,
 				key -> new LRUCache<>(FIND_RESOURCES_CACHE_SIZE));
-		return cache.computeIfAbsent(path, key -> findPathInFolder(path, project));
+		return cacheValue(cache, path, key -> findPathInFolder(path, project));
 	}
 
 	/**
@@ -1415,4 +1416,28 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		return true;
 	}
 
+	private static <K, V> V cacheValue(Map<K, V> cache, K key, Function<K, V> supplier) {
+		V value = null;
+		synchronized (cache) {
+			value = cache.get(key);
+		}
+		if (value == null) {
+			value = supplier.apply(key);
+			synchronized (cache) {
+				V currentValue = cache.get(key);
+				if (currentValue == null) {
+					cache.put(key, value);
+				} else {
+					value = currentValue;
+				}
+			}
+		}
+		return value;
+	}
+
+	private static <K, V> void clearCache(Map<K, V> cache) {
+		synchronized (cache) {
+			cache.clear();
+		}
+	}
 }

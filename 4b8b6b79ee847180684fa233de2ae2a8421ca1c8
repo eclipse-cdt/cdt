@@ -18,6 +18,23 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c981e290_4c8dc8b5",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-09T14:22:55Z",
+      "side": 1,
+      "message": "Thanks @Simeon for the patch. Obviously I would rather not apply synchronization unnecessarily for performance reasons, but I imagine even with synchronization this code is much faster than what was there before these caches were implemented I would be happy to merge this in case you don\u0027t have time to come back to do more.\n\nOne question, can we do the synchronization using Collections.synchronizedMap rather than relying on synchronized blocks in this code, something like below in combination with the cacheValue method?\n\n    $ git diff build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java\n    diff --git a/build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java b/build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java\n    index ac877d93eb..58944740b7 100644\n    --- a/build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java\n    +++ b/build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java\n    @@ -19,6 +19,7 @@ import java.net.URI;\n    import java.net.URISyntaxException;\n    import java.util.ArrayList;\n    import java.util.Arrays;\n    +import java.util.Collections;\n    import java.util.HashMap;\n    import java.util.HashSet;\n    import java.util.LinkedHashSet;\n    @@ -94,11 +95,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett\n    \n            private static final int FIND_RESOURCES_CACHE_SIZE \u003d 100;\n    \n    -       private LRUCache\u003cURI, IResource[]\u003e workspaceRootFindContainersForLocationURICache \u003d new LRUCache\u003c\u003e(\n    -                       FIND_RESOURCES_CACHE_SIZE);\n    -       private LRUCache\u003cURI, IResource[]\u003e workspaceRootFindFilesForLocationURICache \u003d new LRUCache\u003c\u003e(\n    -                       FIND_RESOURCES_CACHE_SIZE);\n    -       private HashMap\u003cIProject, LRUCache\u003cIPath, List\u003cIResource\u003e\u003e\u003e findPathInProjectCache \u003d new HashMap\u003c\u003e();\n    +       private Map\u003cURI, IResource[]\u003e workspaceRootFindContainersForLocationURICache \u003d Collections\n    +                       .synchronizedMap(new LRUCache\u003c\u003e(FIND_RESOURCES_CACHE_SIZE));\n    +       private Map\u003cURI, IResource[]\u003e workspaceRootFindFilesForLocationURICache \u003d Collections\n    +                       .synchronizedMap(new LRUCache\u003c\u003e(FIND_RESOURCES_CACHE_SIZE));\n    +       private Map\u003cIProject, LRUCache\u003cIPath, List\u003cIResource\u003e\u003e\u003e findPathInProjectCache \u003d Collections\n    +                       .synchronizedMap(new HashMap\u003c\u003e());\n    \n            //String pathStr, URI baseURI -\u003e URI\n            private static class MappedURIKey {\n    @@ -144,11 +146,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett\n            }\n    \n            // Caches the result of determineMappedURI\n    -       private LRUCache\u003cMappedURIKey, URI\u003e mappedURICache \u003d new LRUCache\u003c\u003e(FIND_RESOURCES_CACHE_SIZE);\n    +       private Map\u003cMappedURIKey, URI\u003e mappedURICache \u003d Collections\n    +                       .synchronizedMap(new LRUCache\u003c\u003e(FIND_RESOURCES_CACHE_SIZE));\n            // Caches the result of getFilesystemLocation\n    -       private LRUCache\u003cURI, IPath\u003e fileSystemLocationCache \u003d new LRUCache\u003c\u003e(FIND_RESOURCES_CACHE_SIZE);\n    +       private Map\u003cURI, IPath\u003e fileSystemLocationCache \u003d Collections\n    +                       .synchronizedMap(new LRUCache\u003c\u003e(FIND_RESOURCES_CACHE_SIZE));\n            // Caches the result of new File(pathname).exists()\n    -       private LRUCache\u003cIPath, Boolean\u003e pathExistsCache \u003d new LRUCache\u003c\u003e(FIND_RESOURCES_CACHE_SIZE);\n    +       private Map\u003cIPath, Boolean\u003e pathExistsCache \u003d Collections\n    +                       .synchronizedMap(new LRUCache\u003c\u003e(FIND_RESOURCES_CACHE_SIZE));\n    \n            /** @since 8.2 */\n            protected EFSExtensionProvider efsProvider \u003d null;",
+      "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "78102b97_e1e10a24",
@@ -31,6 +48,24 @@
       "writtenOn": "2022-05-09T10:54:04Z",
       "side": 1,
       "message": "We check twice in case some other thread already modified the map. Main point is to avoid locking the value computation (e.g. find some element in the entire workspace, possibly under a workspace lock).",
+      "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e65e32c2_188745fb",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-09T14:22:55Z",
+      "side": 1,
+      "message": "At first I didn\u0027t see why this would be needed - just doing cache.put always without a get would be fine. But the findPathInProjectCache cache the values are not immutable, so that would be problematic.\n\nEither way, I think the code in second synchronized can just be computeIfAbsent:\n\n  V value;\n  synchronized (cache) {\n    value \u003d cache.get(key);\n    if (value !\u003d null) return value;\n  }\n  value \u003d supplier.apply(key);\n  synchronized(cache) {\n    return cache.computeIfAbsent(key, k -\u003e value);\n  }\n  \nof if you agree that Collections.synchronizeMap can be used:\n\n  V value \u003d cache.get(key);\n  if (value !\u003d null) return value;\n  // calculate the value outside of the synchronized code to avoid\n  // unnecessarily long locking of the cache.\n  value \u003d supplier.apply(key);\n  return cache.computeIfAbsent(key, k -\u003e value);",
+      "parentUuid": "78102b97_e1e10a24",
       "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }

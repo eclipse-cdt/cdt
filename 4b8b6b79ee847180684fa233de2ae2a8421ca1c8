@@ -86,6 +86,24 @@
       "parentUuid": "e65e32c2_188745fb",
       "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "55da1241_3020223a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-09T15:10:17Z",
+      "side": 1,
+      "message": "OK, however the supplier.apply(key) is done outside of computeIfAbsent in my snippet, so the lock isn\u0027t held while doing that computation. I only use computeIfAbsent to avoid extra if/else blocks.\n\nMy main issue if that by using manual locking it means that further edits to this code can break synchronization accidentally, but if we use synchronizedMap then the maps are (mostly) safe - and the declaration of the map shows that the map is syncrhonized.\n\nThanks for the reply - I will give it to the CDT call and we can resolve after that.",
+      "parentUuid": "0f3ca431_60f8452c",
+      "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "78102b97_e1e10a24",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2022-05-09T10:54:04Z",
+      "side": 1,
+      "message": "We check twice in case some other thread already modified the map. Main point is to avoid locking the value computation (e.g. find some element in the entire workspace, possibly under a workspace lock).",
+      "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

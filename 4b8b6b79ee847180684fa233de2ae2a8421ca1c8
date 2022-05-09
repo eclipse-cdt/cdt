@@ -1,6 +1,23 @@
 {
   "comments": [
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e39a840d_58d33061",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2022-05-09T10:57:09Z",
+      "side": 1,
+      "message": "As written in the commit message, I still have to find out when the race condition occurs and test the change in the race condition state.\n\nMight be simpler (and more beneficial) to write a test that stresses the computations and caching with several threads.\n\nI\u0027ll take a look when I find time. If anyone wants to take over, feel free.",
+      "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "78102b97_e1e10a24",

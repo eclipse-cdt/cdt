@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "18f5bcc6_8da9be3b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-09T15:00:19Z",
+      "side": 1,
+      "message": "Please associate a bug with this change so that linking in N\u0026N works. You can simply broaden Bug 579666 to cover all dark mode issues in one.",
+      "revId": "e160dcb7e489461329d9831f081d06c918b32576",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

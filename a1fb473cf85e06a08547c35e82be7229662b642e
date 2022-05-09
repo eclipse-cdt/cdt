@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e7bd1e2c_fa8b66c7",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-09T15:15:39Z",
+      "side": 1,
+      "message": "I am adding this to the CDT call. Unforunately as is I don\u0027t think backporting this is a good idea.\n",
+      "revId": "a1fb473cf85e06a08547c35e82be7229662b642e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba9c0d1e_bc1f1a16",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-09T15:15:39Z",
+      "side": 1,
+      "message": "This is a tricky one - this is not strictly API, but so much of DSF (because of forever provisional code) is effectively API. For example I can see subclasses of this class in the wild that look like this:\n\n\n    // ...\n    import org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbDebuggerPage;\n    // ...\n\n    public class InTheWild extends GdbDebuggerPage {\n\n        @Override\n        public void createControl(Composite parent) {\n            Composite comp \u003d new Composite(parent, SWT.NONE);\n            comp.setLayout(new GridLayout());\n            comp.setLayoutData(new GridData(GridData.FILL_BOTH));\n            fTabFolder \u003d new TabFolder(comp, SWT.NONE);\n            fTabFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL));\n            // JLD - set background and background mode to accommodate Windows 7 Aero theme\n            fTabFolder.setBackground(parent.getBackground());\n            fTabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);\n            createTabs(fTabFolder);\n            fTabFolder.setSelection(0);\n            setControl(parent);\n        }\n\n\nInterestingly that code has a comment (I think JLD is John) and a different way of resolving the background colour?",
+      "revId": "a1fb473cf85e06a08547c35e82be7229662b642e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

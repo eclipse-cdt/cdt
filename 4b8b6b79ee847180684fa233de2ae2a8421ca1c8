@@ -68,6 +68,24 @@
       "parentUuid": "78102b97_e1e10a24",
       "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0f3ca431_60f8452c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/language/settings/providers/AbstractLanguageSettingsOutputScanner.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1427,
+      "author": {
+        "id": 119988
+      },
+      "writtenOn": "2022-05-09T14:58:48Z",
+      "side": 1,
+      "message": "I think if we put computeIfAbsent in a synchronized block (e.g. a synchronized map), a lock will be held while computing the value. This is what I\u0027m trying to avoid with the code here - its possible the operation takes a while to finish (since the value is cached, it must be expensive to compute it). Also maybe locks are taken while computing the value, so adding new locks on top might result in deadlocks.\n\nFrom my POV the current proposal should be as safe as possible, even if its slightly more code. The locks are around only map operations, those don\u0027t hold locks and should be \"fast\".",
+      "parentUuid": "e65e32c2_188745fb",
+      "revId": "4b8b6b79ee847180684fa233de2ae2a8421ca1c8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

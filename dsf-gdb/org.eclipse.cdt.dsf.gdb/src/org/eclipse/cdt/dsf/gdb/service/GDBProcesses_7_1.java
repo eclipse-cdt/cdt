@@ -41,7 +41,6 @@ import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIListThreadGroupsInfo.IThreadGroupInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThread;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
@@ -178,20 +177,25 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 				}
 			});
 		} else if (dmc instanceof MIThreadDMC) {
-			// Starting with GDB 7.1, we can obtain the core on which a thread
-			// is currently located.  The info is a new field in -thread-info
-			final MIThreadDMC threadDmc = (MIThreadDMC) dmc;
-
 			ICommandControlDMContext controlDmc = DMContexts.getAncestorOfType(dmc, ICommandControlDMContext.class);
-			fCommandForCoresCache.execute(fCommandFactory.createMIThreadInfo(controlDmc, threadDmc.getId()),
-					new ImmediateDataRequestMonitor<MIThreadInfoInfo>(rm) {
+			final String groupId = getGroupFromPid(
+					(DMContexts.getParentOfType(dmc, IMIProcessDMContext.class)).getProcId());
+			String threadId = ((MIThreadDMC) dmc).getId();
+
+			fCommandForCoresCache.execute(fCommandFactory.createMIListThreadGroups(controlDmc, groupId),
+					new ImmediateDataRequestMonitor<MIListThreadGroupsInfo>(rm) {
 						@Override
-						protected void handleSuccess() {
+						protected void handleCompleted() {
 							IThreadDMData threadData = null;
-							if (getData().getThreadList().length != 0) {
-								MIThread thread = getData().getThreadList()[0];
-								if (thread.getThreadId().equals(threadDmc.getId())) {
-									threadData = createThreadDMData(thread);
+							if (isSuccess()) {
+								MIThread[] threads = getData().getThreadInfo().getThreadList();
+								if (threads != null) {
+									for (MIThread thread : threads) {
+										if (thread.getThreadId().equals(threadId)) {
+											threadData = createThreadDMData(thread);
+											break;
+										}
+									}
 								}
 							}
 

@@ -23,6 +23,7 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -77,7 +78,7 @@ public class SelectionListenerWithASTManager {
 			};
 
 			fPostSelectionListener = (part, selection) -> {
-				if (part == fPart && selection instanceof ITextSelection)
+				if (Adapters.adapt(part, ITextEditor.class) == fPart && selection instanceof ITextSelection)
 					firePostSelectionChanged((ITextSelection) selection);
 			};
 		}

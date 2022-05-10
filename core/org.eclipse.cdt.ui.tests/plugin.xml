@@ -294,4 +294,26 @@
             id="org.eclipse.cdt.ui.tests.callhierarchy.extension.CHContentProvider">
       </CallHierarchyContentProvider>
    </extension>
+   
+   <!-- Example editor/launcher for embedding CEditors inside a MultiPageEditorPart -->
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.eclipse.cdt.ui.tests.editor.multipage.MultiPageEditorExample"
+            contributorClass="org.eclipse.cdt.ui.tests.editor.multipage.MultiPageEditorContributorExample"
+            default="false"
+            icon="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif"
+            id="org.eclipse.cdt.ui.tests.multi_page_editor"
+            name="C/C++ MultiPageEditor"
+            symbolicFontName="org.eclipse.cdt.ui.editors.textfont">
+      </editor>
+      <editor
+            default="false"
+            extensions="h,cpp"
+            icon="platform:/plugin/org.eclipse.cdt.ui/icons/obj16/c_file_obj.gif"
+            id="org.eclipse.cdt.ui.tests.multi_page_editor_launcher"
+            launcher="org.eclipse.cdt.ui.tests.editor.multipage.MultiPageEditorExampleLauncher"
+            name="C/C++ MultiPageEditor (new tab)">
+      </editor>
+   </extension>
 </plugin>

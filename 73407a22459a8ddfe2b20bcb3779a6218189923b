@@ -16,6 +16,24 @@
       "message": "Noticed a few icons that had white background too.\nThe easiest way to see the difference is to use the dark and light theme in gerrit to render them with white or grey background.",
       "revId": "73407a22459a8ddfe2b20bcb3779a6218189923b",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "558fe08d_5057835d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T15:26:35Z",
+      "side": 1,
+      "message": "\u003e The easiest way to see the difference is to use the dark and light theme in gerrit to render them with white or grey background.\n\nBrilliant - thanks for that hint!",
+      "parentUuid": "21493429_96f754b1",
+      "revId": "73407a22459a8ddfe2b20bcb3779a6218189923b",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

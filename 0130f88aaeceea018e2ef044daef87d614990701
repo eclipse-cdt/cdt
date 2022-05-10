@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b319d2ec_3ce04941",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T18:53:21Z",
+      "side": 1,
+      "message": "LGTM just the one comment.\n\nAnd BTW using the launcher like that is neat, thanks for sharing that and making it easy to test this and future related changes.",
+      "revId": "0130f88aaeceea018e2ef044daef87d614990701",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "afb2f281_e7d494f6",
+        "filename": "core/org.eclipse.cdt.ui.tests/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T18:53:21Z",
+      "side": 1,
+      "message": "Can we give this a distinct name from line 307? At the moment in the Open With it is impossible to distinguish the two.",
+      "revId": "0130f88aaeceea018e2ef044daef87d614990701",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

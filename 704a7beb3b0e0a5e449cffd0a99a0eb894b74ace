@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f09baede_2e202aed",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T19:21:10Z",
+      "side": 1,
+      "message": "Please explain something to me, AFAIU how this is working and improving performance is that it relies on fCommandForCoresCache to cache the `-list-thread-groups i1` so that the multiple calls to getExecutionData for each thread now can use the cached result of the first call?\n\nI was originally going to ask you to look at org.eclipse.cdt.dsf.gdb.service.GDBRunControl_7_0_NS.refreshThreadStates() too, but if the above is true, then there would be no advantage in the Nonstop case in changing to -list-thread-groups?\n\nThis change looks good to me pending answering the various questions I have. The tests pass (on GDB 10) so that is good too.",
+      "revId": "704a7beb3b0e0a5e449cffd0a99a0eb894b74ace",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "036fcc09_385b9bb1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T19:21:10Z",
+      "side": 1,
+      "message": "This is just a minor thing, but I am not sure why this part of the change? The only reason I can see to change it is so that the error message is \"Could not get thread info\" - but that loses the error that fCommandForCoresCache.execute may have added.\n\nNote that the handleCompleted at line 159 is different as in that case even if fCommandForCoresCache.execute fails, the getExecutionData. FTR I am not sure what is done at line 159 is a good idea.",
+      "range": {
+        "startLine": 188,
+        "startChar": 21,
+        "endLine": 188,
+        "endChar": 36
+      },
+      "revId": "704a7beb3b0e0a5e449cffd0a99a0eb894b74ace",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

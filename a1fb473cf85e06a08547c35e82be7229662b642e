@@ -69,6 +69,24 @@
       "parentUuid": "ba9c0d1e_bc1f1a16",
       "revId": "a1fb473cf85e06a08547c35e82be7229662b642e",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a2d61c1_bd2e437c",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/launching/GdbDebuggerPage.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T15:17:46Z",
+      "side": 1,
+      "message": "\u003e Will that actually change the background color of the tabs themselves or the widget inside the tab group?\n\nI don\u0027t know - you can bring it up with John tomorrow to see if he remembers/knows.",
+      "parentUuid": "1ece0be3_2451eae1",
+      "revId": "a1fb473cf85e06a08547c35e82be7229662b642e",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

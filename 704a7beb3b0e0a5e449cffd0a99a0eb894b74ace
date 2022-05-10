@@ -54,6 +54,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "f3810498_e29121fb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2022-05-10T22:32:09Z",
+      "side": 1,
+      "message": "\u003e \u003e Then we cache it and other threads info are provided by cache.\n\u003e \n\u003e that is the key part then - fCommandForCoresCache caches the information. This patch does a good job saving lots of comms between CDT and GDB, but it still has to parse the response to -list-thread-group i1 x number of threads. \n\nYeah! but it takes no time IMO.\n\n\u003e At the moment it certainly isn\u0027t worth caching at a higher level, I am just trying to make sure I understand the code being changed.\n\u003e \n\u003e We are still having to do -list-thread-group i1 twice per stopped event AFAICT because the two places they are issued from have different caches:\n\u003e - fCommandForCoresCache in GDBProcesses_7_1\n\u003e - fThreadCommandCache in GDBProcesses_7_0\n\u003e \n\u003e Is it worth combining those two caches so that -list-thread-group i1 is only sent once?\n\nActually I initially thought to use fThreadCommandCache but its tied with \"Force thread list update on suspend\" option and this cache is populated just once (thats why you are seeing two commands being issued on first suspend). But if user enables this option then definitely two will be issued.\n\nI tried to dig why we added this option and whats the benefit and couldn\u0027t grasp things well. Seems the problem was something related to linux target GDB used to debug an OS (IDK why baremetal gdb was not used).\n\nGiven we are always issuing -list-thread-group i1 now, does this \"Force thread list update on suspend\" option make sense now? isn\u0027t it redundant now? Should we remove this option and combine the two caches?",
+      "parentUuid": "ba231685_79d18cab",
+      "revId": "704a7beb3b0e0a5e449cffd0a99a0eb894b74ace",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "036fcc09_385b9bb1",

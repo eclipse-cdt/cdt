@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "badb76f4_92fc57d9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T15:18:42Z",
+      "side": 1,
+      "message": "Restoring lost Verified vote because of the new patchset that doesn\u0027t run any builds.",
+      "revId": "b80076a805ad8c2acd0bb23913fb01c55bfe6653",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -18,6 +18,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "6dd15cfd_84c9bf75",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2022-05-10T20:01:10Z",
+      "side": 1,
+      "message": "\u003e Please explain something to me, AFAIU how this is working and improving performance is that it relies on fCommandForCoresCache to cache the `-list-thread-groups i1` so that the multiple calls to getExecutionData for each thread now can use the cached result of the first call?\n\nIt is basically improving performance by reducing the communication between GDB and GDB server which are RSP packets. Kindly see bug 550257 for more details. For each thread-info command, qXfer:threads:read RSP packets are communicated which is a lot of communication, also there are many other memory reads and stuff.\n\nNow using \u0027-list-thread-groups i1\u0027 has only one (IIRC) qXfer:threads:read packet and other memory reads and stuff, hence communication is lesser and takes lesser time than collective thread-info command*s* and provides information for all threads. Then we cache it and other threads info are provided by cache.\n\n\u003e I was originally going to ask you to look at org.eclipse.cdt.dsf.gdb.service.GDBRunControl_7_0_NS.refreshThreadStates() too, but if the above is true, then there would be no advantage in the Nonstop case in changing to -list-thread-groups?\n\nI compared \"-thread-info\" (without arg) and \"-list-thread-group i1\" and both provide same info for particular case, but \"-thread-info\" has two extra infos.\n1. current-thread info\n2. in case of non-stop, it provides the threads of all inferiors.\n\nBecause of 2, the usage of it in GDBRunControl_7_0_NS.refreshThreadStates() is correct.",
+      "parentUuid": "f09baede_2e202aed",
+      "revId": "704a7beb3b0e0a5e449cffd0a99a0eb894b74ace",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "036fcc09_385b9bb1",
@@ -31,6 +49,30 @@
       "writtenOn": "2022-05-10T19:21:10Z",
       "side": 1,
       "message": "This is just a minor thing, but I am not sure why this part of the change? The only reason I can see to change it is so that the error message is \"Could not get thread info\" - but that loses the error that fCommandForCoresCache.execute may have added.\n\nNote that the handleCompleted at line 159 is different as in that case even if fCommandForCoresCache.execute fails, the getExecutionData. FTR I am not sure what is done at line 159 is a good idea.",
+      "range": {
+        "startLine": 188,
+        "startChar": 21,
+        "endLine": 188,
+        "endChar": 36
+      },
+      "revId": "704a7beb3b0e0a5e449cffd0a99a0eb894b74ace",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ef1f570f_d7f92023",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2022-05-10T20:01:10Z",
+      "side": 1,
+      "message": "\u003e but that loses the error that fCommandForCoresCache.execute may have added.\n\nthats a valid point.. The purpose was to show user more useful message.. I see following options\n1. Append the actual error message as well.\n2. Log the actual error and show user \"could not get thread info\" message only.\n3. or simply revert to use handleSuccess..\n\nWDYS?",
+      "parentUuid": "036fcc09_385b9bb1",
       "range": {
         "startLine": 188,
         "startChar": 21,

@@ -36,6 +36,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ba231685_79d18cab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T22:15:46Z",
+      "side": 1,
+      "message": "\u003e Then we cache it and other threads info are provided by cache.\n\nthat is the key part then - fCommandForCoresCache caches the information. This patch does a good job saving lots of comms between CDT and GDB, but it still has to parse the response to -list-thread-group i1 x number of threads. \n\nAt the moment it certainly isn\u0027t worth caching at a higher level, I am just trying to make sure I understand the code being changed.\n\nWe are still having to do -list-thread-group i1 twice per stopped event AFAICT because the two places they are issued from have different caches:\n- fCommandForCoresCache in GDBProcesses_7_1\n- fThreadCommandCache in GDBProcesses_7_0\n\nIs it worth combining those two caches so that -list-thread-group i1 is only sent once?",
+      "parentUuid": "6dd15cfd_84c9bf75",
+      "revId": "704a7beb3b0e0a5e449cffd0a99a0eb894b74ace",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "036fcc09_385b9bb1",
@@ -73,6 +91,30 @@
       "side": 1,
       "message": "\u003e but that loses the error that fCommandForCoresCache.execute may have added.\n\nthats a valid point.. The purpose was to show user more useful message.. I see following options\n1. Append the actual error message as well.\n2. Log the actual error and show user \"could not get thread info\" message only.\n3. or simply revert to use handleSuccess..\n\nWDYS?",
       "parentUuid": "036fcc09_385b9bb1",
+      "range": {
+        "startLine": 188,
+        "startChar": 21,
+        "endLine": 188,
+        "endChar": 36
+      },
+      "revId": "704a7beb3b0e0a5e449cffd0a99a0eb894b74ace",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "42b8645f_f7949215",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/service/GDBProcesses_7_1.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-10T22:15:46Z",
+      "side": 1,
+      "message": "1 is best. I think you can replace the null argument in the new status with the status in the inner class.",
+      "parentUuid": "ef1f570f_d7f92023",
       "range": {
         "startLine": 188,
         "startChar": 21,

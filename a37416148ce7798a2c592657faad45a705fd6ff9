@@ -16,6 +16,23 @@
       "message": "I Retriggered Jenkins jobs. ",
       "revId": "a37416148ce7798a2c592657faad45a705fd6ff9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1fb655b8_d0e368be",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 38406
+      },
+      "writtenOn": "2022-05-11T13:26:09Z",
+      "side": 1,
+      "message": "I found out that if I add a second tab, mark occurrences doesn\u0027t work. I\u0027ll further investigate that.",
+      "revId": "a37416148ce7798a2c592657faad45a705fd6ff9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

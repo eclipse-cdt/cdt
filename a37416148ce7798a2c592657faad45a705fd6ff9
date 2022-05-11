@@ -33,6 +33,24 @@
       "message": "I found out that if I add a second tab, mark occurrences doesn\u0027t work. I\u0027ll further investigate that.",
       "revId": "a37416148ce7798a2c592657faad45a705fd6ff9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "af025a71_1b284a8b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-11T16:32:13Z",
+      "side": 1,
+      "message": "OK. Thanks for reporting back.",
+      "parentUuid": "1fb655b8_d0e368be",
+      "revId": "a37416148ce7798a2c592657faad45a705fd6ff9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

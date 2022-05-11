@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "42719ae0_892a420a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-11T00:37:40Z",
+      "side": 1,
+      "message": "This is good to go once CI signs off. ",
+      "revId": "52ceb6520e3b9350eaf454d8eea2ec0be8d32e67",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

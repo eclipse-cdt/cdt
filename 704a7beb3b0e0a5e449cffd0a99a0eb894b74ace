@@ -72,6 +72,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c0e0d29f_9ea248a2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-11T00:07:10Z",
+      "side": 1,
+      "message": "\u003e Yeah! but it takes no time IMO. \n\nI share the opinion with you on reparsing. There are certainly other areas far ahead of that for optimization! \n\n\u003e [...] if user enables this option then definitely two will be issued\n\nAh, that makes sense, I only looked at first suspend. \n\nI don\u0027t know whether there are any real hardware/gdb combinations that really need for the option, but people still use cdt with what I consider ancient versions of gdb. So I don\u0027t think its worth changing this. As above, there is much better places to spend the limited effort available.\n\nThanks for the patch, once you have a chance to change the error handling its ready to submit afaict.",
+      "parentUuid": "f3810498_e29121fb",
+      "revId": "704a7beb3b0e0a5e449cffd0a99a0eb894b74ace",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "036fcc09_385b9bb1",

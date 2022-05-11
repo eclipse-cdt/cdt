@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "91535212_131357d8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-11T17:49:37Z",
+      "side": 1,
+      "message": "I also added the backport approval comment to the bugzilla, so you don\u0027t need to wait for my vote again on here once you resolve CI issue.",
+      "revId": "b12964672faed6d6b521bae54b163b326acb0aa3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

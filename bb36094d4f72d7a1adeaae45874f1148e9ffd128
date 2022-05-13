@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8c8719e5_ad0b0d0a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-13T10:35:53Z",
+      "side": 1,
+      "message": "I can\u0027t find a better background color than black that will work for all the various foreground colors used in the C/C++ editor.\nIn the light theme, text is almost always with black color and then the background can be a wide range. For dark theme, the text color can be white, grey, orange, blue, ... so it\u0027s hard to find a background color that is not grey that work for all of them...\nWDYT? Is black goo enough as a default value or do you have a better color in mind?\nOnce merged, I\u0027ll cherry-pick to 10.6.2 too.",
+      "revId": "bb36094d4f72d7a1adeaae45874f1148e9ffd128",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -16,6 +16,24 @@
       "message": "I can\u0027t find a better background color than black that will work for all the various foreground colors used in the C/C++ editor.\nIn the light theme, text is almost always with black color and then the background can be a wide range. For dark theme, the text color can be white, grey, orange, blue, ... so it\u0027s hard to find a background color that is not grey that work for all of them...\nWDYT? Is black goo enough as a default value or do you have a better color in mind?\nOnce merged, I\u0027ll cherry-pick to 10.6.2 too.",
       "revId": "bb36094d4f72d7a1adeaae45874f1148e9ffd128",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48fb8d4e_d1586e77",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-13T11:57:20Z",
+      "side": 1,
+      "message": "If that looks ok to you, fine by me. Only thing I would do is look at what JDT uses as background colour? Perhaps they don\u0027t have as many garish foreground colours to deal with.\n\nI won\u0027t have time to spin this up today, but if you add a screenshot then I can look at it if you want.",
+      "parentUuid": "8c8719e5_ad0b0d0a",
+      "revId": "bb36094d4f72d7a1adeaae45874f1148e9ffd128",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dd4a76af_8fbbc133",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-13T14:09:01Z",
+      "side": 1,
+      "message": "Changing the commit message and the values in the CSS does not have an impact on the build result.",
+      "revId": "a1794246d55580e2cb65baa8df6fff23963869fb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

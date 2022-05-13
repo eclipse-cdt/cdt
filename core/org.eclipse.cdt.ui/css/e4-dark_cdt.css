@@ -88,6 +88,14 @@ IEclipsePreferences#org-eclipse-cdt-ui:org-eclipse-cdt-ui {
 }
 
 
+IEclipsePreferences#org-eclipse-ui-editors:org-eclipse-cdt-ui { /* pseudo attribute added to allow contributions without replacing this node, see Bug 466075 */
+	preferences:
+		"org.eclipse.cdt.ui.occurrenceIndicationColor=27,98,145"
+		"org.eclipse.cdt.ui.writeOccurrenceIndicationColor=27,98,145"
+		"org.eclipse.cdt.ui.overrideIndicatorColor=27,98,145"
+}
+
+
 IEclipsePreferences#org-eclipse-ui-workbench:org-eclipse-cdt-ui { /* pseudo attribute added to allow contributions without replacing this node, see Bug 466075 */
 	preferences:
 		"org.eclipse.cdt.ui.ColoredLabels.writeaccess_highlight=255,128,128"

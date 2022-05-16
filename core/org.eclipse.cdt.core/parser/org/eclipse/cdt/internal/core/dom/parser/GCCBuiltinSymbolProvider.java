@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
@@ -53,6 +55,15 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitTypedef;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation.ConstexprEvaluationContext;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ActivationRecord;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Status;
 
 /**
  * This is the IBuiltinBindingsProvider used to implement the "Other" built-in GCC symbols defined:
@@ -188,6 +199,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("bool", "__atomic_always_lock_free", "size_t", "void*");
 		function("bool", "__atomic_is_lock_free", "size_t", "void*");
 
+		BuiltinFfs builtinFfs = new BuiltinFfs();
+
 		// Other Builtins (https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html) [incomplete]
 		function("void", "__builtin_abort");
 		function("int", "__builtin_abs", "int");
@@ -277,9 +290,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("double", "__builtin_fdim", "double", "double");
 		function("float", "__builtin_fdimf", "float", "float");
 		function("long double", "__builtin_fdiml", "long double", "long double");
-		function("int", "__builtin_ffs", "unsigned int");
-		function("int", "__builtin_ffsl", "unsigned long");
-		function("int", "__builtin_ffsll", "unsigned long long");
+		function("int", "__builtin_ffs", builtinFfs, "unsigned int");
+		function("int", "__builtin_ffsl", builtinFfs, "unsigned long");
+		function("int", "__builtin_ffsll", builtinFfs, "unsigned long long");
 		function("double", "__builtin_floor", "double");
 		function("float", "__builtin_floorf", "float");
 		function("long double", "__builtin_floorl", "long double");
@@ -501,6 +514,13 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	}
 
 	private void function(String returnType, String name, String... parameterTypes) {
+		function(returnType, name, null, parameterTypes);
+	}
+
+	/*
+	 * Create a function which can possibly be constexpr-evaluated
+	 */
+	private void function(String returnType, String name, ICPPExecution exec, String... parameterTypes) {
 		int len = parameterTypes.length;
 		boolean varargs = len > 0 && parameterTypes[len - 1].equals("...");
 		if (varargs)
@@ -511,14 +531,14 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		for (int i = 0; i < len; i++) {
 			IType pType = toType(parameterTypes[i]);
 			pTypes[i] = pType;
-			theParms[i] = fCpp ? new CPPBuiltinParameter(pType) : new CBuiltinParameter(pType);
+			theParms[i] = fCpp ? new CPPBuiltinParameter(pType, i) : new CBuiltinParameter(pType);
 		}
 		IType rt = toType(returnType);
 		IFunctionType ft = fCpp ? new CPPFunctionType(rt, pTypes, null) : new CFunctionType(rt, pTypes);
 
 		IBinding b = fCpp
-				? new CPPImplicitFunction(toCharArray(name), fScope, (ICPPFunctionType) ft, (ICPPParameter[]) theParms,
-						false, varargs)
+				? new CPPBuiltinImplicitFunction(toCharArray(name), fScope, (ICPPFunctionType) ft,
+						(ICPPParameter[]) theParms, varargs, exec)
 				: new CImplicitFunction(toCharArray(name), fScope, ft, theParms, varargs);
 		fBindingList.add(b);
 	}
@@ -660,5 +680,58 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	@Override
 	public boolean isKnownBuiltin(char[] builtinName) {
 		return fKnownBuiltins.containsKey(builtinName);
+	}
+
+	/*
+	 * A builtin function which can be evaluated in a constexpr context
+	 */
+	private static class CPPBuiltinImplicitFunction extends CPPImplicitFunction {
+		private ICPPExecution execution;
+
+		public CPPBuiltinImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, ICPPParameter[] params,
+				boolean takesVarArgs, ICPPExecution execution) {
+			super(name, scope, type, params, true, takesVarArgs);
+			this.execution = execution;
+		}
+
+		@Override
+		public ICPPExecution getFunctionBodyExecution() {
+			return execution;
+		}
+	}
+
+	private class BuiltinFfs implements ICPPExecution {
+		IType intType = toType("int");
+
+		@Override
+		public ICPPExecution instantiate(InstantiationContext context, int maxDepth) {
+			return this;
+		}
+
+		@Override
+		public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
+			ICPPEvaluation arg0 = record.getVariable(new CPPBuiltinParameter(null, 0));
+
+			IValue argValue = arg0.getValue();
+			if (!(argValue instanceof IntegralValue))
+				return null;
+
+			// __builtin_ffs returns 0 if arg is 0, or 1+count where count is the number of trailing 0 bits
+			long arg = argValue.numberValue().longValue();
+			if (arg == 0) {
+				return new ExecReturn(new EvalFixed(intType, ValueCategory.PRVALUE, IntegralValue.create(0)));
+			}
+			int count = 0;
+			while ((arg & 1) == 0) {
+				arg >>= 1;
+				count++;
+			}
+			return new ExecReturn(new EvalFixed(intType, ValueCategory.PRVALUE, IntegralValue.create(count + 1)));
+		}
+
+		@Override
+		public void marshal(ITypeMarshalBuffer buffer, boolean includeValue) throws CoreException {
+			throw new CoreException(Status.error("Can't marshall builtin function"));
+		}
 	}
 }

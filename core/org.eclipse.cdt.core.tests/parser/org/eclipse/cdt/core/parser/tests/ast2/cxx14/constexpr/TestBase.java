@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
-import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
+import org.eclipse.cdt.core.dom.parser.cpp.GPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.GPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
@@ -194,7 +194,7 @@ public abstract class TestBase extends IndexBindingResolutionTestBase {
 		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), ParserLanguage.CPP,
 				ParserMode.COMPLETE_PARSE, SCANNER_INFO);
 		AbstractGNUSourceCodeParser parser = null;
-		ICPPParserExtensionConfiguration config = new ANSICPPParserExtensionConfiguration();
+		ICPPParserExtensionConfiguration config = new GPPParserExtensionConfiguration();
 		parser = new GNUCPPSourceParser(scanner, ParserMode.COMPLETE_PARSE, NULL_LOG, config, null);
 		parser.setMaximumTrivialExpressionsInAggregateInitializers(Integer.MAX_VALUE);
 

@@ -38,9 +38,16 @@ public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter
 	}
 
 	private IType type;
+	private int position;
 
 	public CPPBuiltinParameter(IType type) {
 		this.type = type;
+		this.position = -1;
+	}
+
+	public CPPBuiltinParameter(IType type, int position) {
+		this.type = type;
+		this.position = position;
 	}
 
 	@Override
@@ -75,6 +82,9 @@ public class CPPBuiltinParameter extends PlatformObject implements ICPPParameter
 
 	@Override
 	public String getName() {
+		if (position != -1) {
+			return "arg" + position; //$NON-NLS-1$
+		}
 		return ""; //$NON-NLS-1$
 	}
 

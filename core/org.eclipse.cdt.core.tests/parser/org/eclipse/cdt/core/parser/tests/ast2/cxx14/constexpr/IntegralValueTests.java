@@ -269,4 +269,9 @@ public abstract class IntegralValueTests extends TestBase {
 	public void testHexLiteral() throws Exception {
 		assertEvaluationEquals(42);
 	}
+
+	// constexpr int x = __builtin_ffs(0) + __builtin_ffs(16);
+	public void testBuiltinFfs() throws Exception {
+		assertEvaluationEquals(5);
+	}
 }

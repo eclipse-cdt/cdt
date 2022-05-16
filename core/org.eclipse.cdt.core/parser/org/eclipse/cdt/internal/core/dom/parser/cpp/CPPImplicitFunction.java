@@ -34,6 +34,7 @@ public class CPPImplicitFunction extends CPPFunction {
 	private final boolean takesVarArgs;
 	private boolean isDeleted;
 	private final char[] name;
+	private ICPPExecution execution;
 
 	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, ICPPParameter[] params,
 			boolean isConstexpr, boolean takesVarArgs) {
@@ -44,6 +45,21 @@ public class CPPImplicitFunction extends CPPFunction {
 		this.params = params;
 		this.takesVarArgs = takesVarArgs;
 		this.isConstexpr = isConstexpr;
+	}
+
+	/*
+	 * Constructor for a builtin which can be constexpr-evaluated.
+	 */
+	public CPPImplicitFunction(char[] name, IScope scope, ICPPFunctionType type, ICPPParameter[] params,
+			ICPPExecution execution, boolean takesVarArgs) {
+		super(null);
+		this.name = name;
+		this.scope = scope;
+		this.functionType = type;
+		this.params = params;
+		this.takesVarArgs = takesVarArgs;
+		this.isConstexpr = (execution != null);
+		this.execution = execution;
 	}
 
 	@Override
@@ -103,5 +119,10 @@ public class CPPImplicitFunction extends CPPFunction {
 
 	public void setDeleted(boolean val) {
 		isDeleted = val;
+	}
+
+	@Override
+	public ICPPExecution getFunctionBodyExecution() {
+		return execution;
 	}
 }

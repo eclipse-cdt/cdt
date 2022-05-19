@@ -32,12 +32,14 @@ public class Messages extends NLS {
 	public static String LaunchShortcut_Launcher;
 	public static String Default_Image;
 	public static String Keep_Container_After_Launch;
+
+	public static String ContainerCommandLauncher_invalid_container_type;
+
 	public static String ContainerTab_Name;
 	public static String ContainerTab_Group_Name;
 	public static String ContainerTab_Option_Group_Name;
 	public static String ContainerTab_Ports_Group_Name;
 	public static String ContainerTab_Specify_Ports_Label;
-
 	public static String ContainerTab_Add_Button;
 	public static String ContainerTab_Edit_Button;
 	public static String ContainerTab_New_Button;

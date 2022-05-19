@@ -33,6 +33,24 @@
       "message": "@Jeff I forgot to put you on to the reviewers list. As I already said: I can split things up, if it helps.",
       "revId": "45bdef23b12fd22845998e2358838b7162e22d87",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "27b64f4b_96126ba6",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-05-19T20:21:19Z",
+      "side": 1,
+      "message": "Should be fine as the patch isn\u0027t too big.  I\u0027ll try and get it reviewed/merged for 4.24 M3 next week.  I am off tomorrow until Monday.  If there are minor issues, I\u0027ll just fix them and resubmit.",
+      "parentUuid": "01c27767_992b0b12",
+      "revId": "45bdef23b12fd22845998e2358838b7162e22d87",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

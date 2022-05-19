@@ -52,6 +52,8 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 
 	private IProject project;
 
+	private IPath hostDir;
+
 	@Override
 	public ICommandLauncher getCommandLauncher(IProject project) {
 		this.project = project;
@@ -223,7 +225,7 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 							DockerLaunchUIPlugin.log(e);
 							return;
 						}
-						IPath hostDir = pluginPath;
+						hostDir = pluginPath;
 						List<String> excludeList = new ArrayList<>();
 						excludeList.add(project.getLocation().toString());
 						@SuppressWarnings("unused")
@@ -315,11 +317,11 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 				int status = launcher.fetchContainerDirsSync(connectionName, imageName, includePaths, excludeList,
 						hostDir);
 				if (status == 0) {
-					Set<String> copiedVolumes = launcher.getCopiedVolumes(connectionName, imageName);
+					Set<IPath> copiedVolumes = launcher.getCopiedVolumes(hostDir);
 					List<String> newEntries = new ArrayList<>();
 
 					for (String path : includePaths) {
-						if (copiedVolumes.contains(path)) {
+						if (copiedVolumes.contains(new Path(path))) {
 							IPath newPath = hostDir.append(path);
 							String newEntry = newPath.toOSString();
 							newEntries.add(newEntry);
@@ -353,6 +355,8 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 		if (entries == null) {
 			return null;
 		}
+
+		//TODO: Cleanup
 		ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(project)
 				.getActiveConfiguration();
 		IConfiguration cfg = ManagedBuildManager.getConfigurationForDescription(cfgd);
@@ -371,7 +375,7 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 					}
 
 					ContainerLauncher launcher = new ContainerLauncher();
-					Set<String> copiedVolumes = launcher.getCopiedVolumes(connectionName, imageName);
+					Set<IPath> copiedVolumes = launcher.getCopiedVolumes(hostDir);
 					List<ICLanguageSettingEntry> newEntries = new ArrayList<>();
 					IPath pluginPath = Platform.getStateLocation(Platform.getBundle(DockerLaunchUIPlugin.PLUGIN_ID));
 					IPath hostDir = pluginPath.append("HEADERS") //$NON-NLS-1$
@@ -379,7 +383,7 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 
 					for (ICLanguageSettingEntry entry : entries) {
 						if (entry instanceof ICIncludePathEntry) {
-							if (copiedVolumes.contains(((ICIncludePathEntry) entry).getName().toString())) {
+							if (copiedVolumes.contains(new Path(((ICIncludePathEntry) entry).getName().toString()))) {
 								// //$NON-NLS-2$
 								IPath newPath = hostDir.append(entry.getName());
 								CIncludePathEntry newEntry = new CIncludePathEntry(newPath.toString(),
@@ -390,7 +394,7 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 						}
 						if (entry instanceof ICIncludeFileEntry) {
 							IPath p = new Path(((ICIncludeFileEntry) entry).getName());
-							if (copiedVolumes.contains(p.removeLastSegments(1).toString())) {
+							if (copiedVolumes.contains(p.removeLastSegments(1))) {
 								IPath newPath = hostDir.append(entry.getName());
 								CIncludeFileEntry newEntry = new CIncludeFileEntry(newPath.toString(),
 										entry.getFlags());

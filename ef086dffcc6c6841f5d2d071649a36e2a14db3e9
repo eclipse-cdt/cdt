@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "adaefe34_136e0f2a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-05-19T22:19:24Z",
+      "side": 1,
+      "message": "Found an NPE in verifyIncludeEntries.  There is a scenario where calling getCnn() gets a null Cfg so we get the NPE.  The code was easily changed to use a created ImageConnection instead and avoid the possible NPE.  Uploaded patch 5",
+      "revId": "ef086dffcc6c6841f5d2d071649a36e2a14db3e9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

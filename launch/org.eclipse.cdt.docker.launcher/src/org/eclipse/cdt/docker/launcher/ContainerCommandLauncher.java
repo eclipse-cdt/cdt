@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
@@ -65,6 +66,56 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 
 	private static final String NEWLINE = System.getProperty("line.separator", //$NON-NLS-1$
 			"\n"); //$NON-NLS-1$
+
+	/**
+	 * Maps the local path, to a path that is used within a docker container.
+	 * @param path The host path
+	 * @return the path within the docker container
+	 * @see  toDockerPath(String)
+	 */
+	public static final String toDockerPath(IPath path) {
+		String pathstring = path.toPortableString();
+		if (path.getDevice() != null) {
+			if (pathstring.charAt(0) != '/') {
+				pathstring = '/' + pathstring;
+			}
+		}
+		return toDockerPath(pathstring);
+
+	}
+
+	/**
+	 * Maps the local path, to a path that is used within a docker container.
+	 * C: is mapped to /c, etc.
+	 * //$WSL/<NAME>/ is a bit more tricky. For now it will be mapped to /WSL/<NAME>/
+	 * @param path The host path
+	 * @return the path within the docker container
+	 */
+	public static final String toDockerPath(String path) {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			path = path.replace(':', '/');
+			//Fix WSL which starts with //$WSL - TODO: Make more robust
+			path = path.replace("//WSL$/", "/WSL/"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		//Ensure the path is global.
+
+		return path;
+	}
+
+	/**
+	 * Convert a Path to a string that can be passed as docker volume to be mapped into the Docker container
+	 * toDockerPath() is used to get the path within the Docker container.
+	 * @param path The path on the hose
+	 * @return The string to be passed to the docker daemon
+	 */
+	public static final String toDockerVolume(IPath path) {
+		IPath p = path.makeAbsolute();
+		String rv = toDockerPath(p);
+		rv += ":HOST_FILE_SYSTEM:"; //$NON-NLS-1$
+		rv += p.toOSString();
+		rv += ":false:true"; //$NON-NLS-1$ RO=false, selected = true
+		return rv;
+	}
 
 	/**
 	 * The number of milliseconds to pause between polling.
@@ -158,23 +209,16 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		labels.put("org.eclipse.cdt.project-name", projectName); //$NON-NLS-1$
 
 		List<String> additionalDirs = new ArrayList<>();
+		List<IPath> additionalPaths = new ArrayList<>();
 
-		//
-		IPath projectLocation = fProject.getLocation();
-		String projectPath = projectLocation.toPortableString();
-		if (projectLocation.getDevice() != null) {
-			projectPath = "/" + projectPath.replace(':', '/'); //$NON-NLS-1$
-		}
-		additionalDirs.add(projectPath);
+		additionalPaths.add(fProject.getLocation());
 
 		ArrayList<String> commandSegments = new ArrayList<>();
 
 		List<String> cmdList = new ArrayList<>();
 
-		String commandString = commandPath.toPortableString();
-		if (commandPath.getDevice() != null) {
-			commandString = "/" + commandString.replace(':', '/'); //$NON-NLS-1$
-		}
+		String commandString = toDockerPath(commandPath);
+
 		cmdList.add(commandString);
 		commandSegments.add(commandString);
 		for (String arg : args) {
@@ -189,12 +233,11 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 					// and modify the argument to be unix-style
 					if (f.isFile() || f.isDirectory()) {
 						f = f.getParentFile();
-						modifiedArg = "/" //$NON-NLS-1$
-								+ p.toPortableString().replace(':', '/');
+						modifiedArg = toDockerPath(p);
 						p = p.removeLastSegments(1);
 					}
 					if (f != null && f.exists()) {
-						additionalDirs.add("/" + p.toPortableString().replace(':', '/')); //$NON-NLS-1$
+						additionalPaths.add(p);
 						realArg = modifiedArg;
 					}
 				}
@@ -206,9 +249,10 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 					File f = p.toFile();
 					if (f.isFile()) {
 						f = f.getParentFile();
+						p.removeLastSegments(1);
 					}
 					if (f != null && f.exists()) {
-						additionalDirs.add(f.getAbsolutePath());
+						additionalPaths.add(p);
 					}
 				}
 			}
@@ -220,19 +264,15 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 
 		IProject[] referencedProjects = fProject.getReferencedProjects();
 		for (IProject referencedProject : referencedProjects) {
-			String referencedProjectPath = referencedProject.getLocation().toPortableString();
-			if (referencedProject.getLocation().getDevice() != null) {
-				referencedProjectPath = "/" //$NON-NLS-1$
-						+ referencedProjectPath.replace(':', '/');
-			}
-			additionalDirs.add(referencedProjectPath);
+			IPath referencedProjectPath = referencedProject.getLocation();
+			additionalPaths.add(referencedProjectPath);
 		}
 
-		String workingDir = workingDirectory.makeAbsolute().toPortableString();
+		String workingDir;
 		if (workingDirectory.toPortableString().equals(".")) { //$NON-NLS-1$
 			workingDir = "/tmp"; //$NON-NLS-1$
-		} else if (workingDirectory.getDevice() != null) {
-			workingDir = "/" + workingDir.replace(':', '/'); //$NON-NLS-1$
+		} else {
+			workingDir = toDockerPath(workingDirectory.makeAbsolute());
 		}
 		parseEnvironment(env);
 		Map<String, String> origEnv = null;
@@ -282,6 +322,8 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			return null;
 		}
 		setImageName(imageName);
+
+		additionalDirs.addAll(additionalPaths.stream().map(p -> toDockerVolume(p)).collect(Collectors.toList()));
 
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
 				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);

@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2017, 2022 Red Hat Inc. and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Red Hat Inc. - initial API and implementation
+ *     Mathema      - Refactor
+ *******************************************************************************/
 package org.eclipse.cdt.docker.launcher;
 
 import java.io.File;
@@ -9,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
@@ -17,6 +32,7 @@ import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.ProcessClosure;
+import org.eclipse.cdt.internal.docker.launcher.ContainerLaunchUtils;
 import org.eclipse.cdt.internal.docker.launcher.Messages;
 import org.eclipse.cdt.internal.docker.launcher.PreferenceConstants;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
@@ -158,23 +174,16 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		labels.put("org.eclipse.cdt.project-name", projectName); //$NON-NLS-1$
 
 		List<String> additionalDirs = new ArrayList<>();
+		List<IPath> additionalPaths = new ArrayList<>();
 
-		//
-		IPath projectLocation = fProject.getLocation();
-		String projectPath = projectLocation.toPortableString();
-		if (projectLocation.getDevice() != null) {
-			projectPath = "/" + projectPath.replace(':', '/'); //$NON-NLS-1$
-		}
-		additionalDirs.add(projectPath);
+		additionalPaths.add(fProject.getLocation());
 
 		ArrayList<String> commandSegments = new ArrayList<>();
 
 		List<String> cmdList = new ArrayList<>();
 
-		String commandString = commandPath.toPortableString();
-		if (commandPath.getDevice() != null) {
-			commandString = "/" + commandString.replace(':', '/'); //$NON-NLS-1$
-		}
+		String commandString = ContainerLaunchUtils.toDockerPath(commandPath);
+
 		cmdList.add(commandString);
 		commandSegments.add(commandString);
 		for (String arg : args) {
@@ -189,12 +198,11 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 					// and modify the argument to be unix-style
 					if (f.isFile() || f.isDirectory()) {
 						f = f.getParentFile();
-						modifiedArg = "/" //$NON-NLS-1$
-								+ p.toPortableString().replace(':', '/');
+						modifiedArg = ContainerLaunchUtils.toDockerPath(p);
 						p = p.removeLastSegments(1);
 					}
 					if (f != null && f.exists()) {
-						additionalDirs.add("/" + p.toPortableString().replace(':', '/')); //$NON-NLS-1$
+						additionalPaths.add(p);
 						realArg = modifiedArg;
 					}
 				}
@@ -206,9 +214,10 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 					File f = p.toFile();
 					if (f.isFile()) {
 						f = f.getParentFile();
+						p.removeLastSegments(1);
 					}
 					if (f != null && f.exists()) {
-						additionalDirs.add(f.getAbsolutePath());
+						additionalPaths.add(p);
 					}
 				}
 			}
@@ -220,19 +229,15 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 
 		IProject[] referencedProjects = fProject.getReferencedProjects();
 		for (IProject referencedProject : referencedProjects) {
-			String referencedProjectPath = referencedProject.getLocation().toPortableString();
-			if (referencedProject.getLocation().getDevice() != null) {
-				referencedProjectPath = "/" //$NON-NLS-1$
-						+ referencedProjectPath.replace(':', '/');
-			}
-			additionalDirs.add(referencedProjectPath);
+			IPath referencedProjectPath = referencedProject.getLocation();
+			additionalPaths.add(referencedProjectPath);
 		}
 
-		String workingDir = workingDirectory.makeAbsolute().toPortableString();
+		String workingDir;
 		if (workingDirectory.toPortableString().equals(".")) { //$NON-NLS-1$
 			workingDir = "/tmp"; //$NON-NLS-1$
-		} else if (workingDirectory.getDevice() != null) {
-			workingDir = "/" + workingDir.replace(':', '/'); //$NON-NLS-1$
+		} else {
+			workingDir = ContainerLaunchUtils.toDockerPath(workingDirectory.makeAbsolute());
 		}
 		parseEnvironment(env);
 		Map<String, String> origEnv = null;
@@ -282,6 +287,9 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			return null;
 		}
 		setImageName(imageName);
+
+		additionalDirs.addAll(
+				additionalPaths.stream().map(p -> ContainerLaunchUtils.toDockerVolume(p)).collect(Collectors.toList()));
 
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
 				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);

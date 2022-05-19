@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2020 Red Hat and others.
+ * Copyright (c) 2015, 2022 Red Hat and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -160,13 +160,8 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 			String projectName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, ""); //$NON-NLS-1$
 			labels.put("org.eclipse.cdt.project-name", projectName); //$NON-NLS-1$
 			if (mode.equals(ILaunchManager.RUN_MODE)) {
-				String commandDir = commandPath.removeLastSegments(1).toPortableString();
-				String commandString = commandPath.toPortableString();
-
-				if (commandPath.getDevice() != null) {
-					commandDir = "/" + commandDir.replace(':', '/'); //$NON-NLS-1$
-					commandString = "/" + commandString.replace(':', '/'); //$NON-NLS-1$
-				}
+				String commandDir = ContainerLaunchUtils.toDockerPath(commandPath.removeLastSegments(1));
+				String commandString = ContainerLaunchUtils.toDockerPath(commandPath);
 
 				StringBuilder b = new StringBuilder();
 				b.append(commandString);
@@ -191,8 +186,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				if (workingDir != null) {
 					IPath workingPath = new Path(workingDir);
 					if (workingPath.getDevice() != null) {
-						workingDir = "/" + workingPath.toPortableString() //$NON-NLS-1$
-								.replace(':', '/');
+						workingDir = ContainerLaunchUtils.toDockerPath(workingPath);
 					}
 				}
 				Map<String, String> envMap = configuration.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,
@@ -208,10 +202,8 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 					List<String> dirs = new ArrayList<>();
 					for (String additionalDir : additionalDirs) {
 						IPath path = new Path(additionalDir);
-						String dir = path.toPortableString();
-						if (path.getDevice() != null) {
-							dir = "/" + dir.replace(':', '/'); //$NON-NLS-1$
-						}
+						String dir = ContainerLaunchUtils.toDockerPath(path);
+
 						dirs.add(dir);
 					}
 					additionalDirs = dirs;
@@ -298,13 +290,8 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				String gdbserverCommand = configuration.getAttribute(ILaunchConstants.ATTR_GDBSERVER_COMMAND,
 						ILaunchConstants.ATTR_GDBSERVER_COMMAND_DEFAULT);
 
-				String commandString = commandPath.toPortableString();
-				String commandDir = commandPath.removeLastSegments(1).toPortableString();
-
-				if (commandPath.getDevice() != null) {
-					commandDir = "/" + commandDir.replace(':', '/'); //$NON-NLS-1$
-					commandString = "/" + commandString.replace(':', '/'); //$NON-NLS-1$
-				}
+				String commandString = ContainerLaunchUtils.toDockerPath(commandPath);
+				String commandDir = ContainerLaunchUtils.toDockerPath(commandPath.removeLastSegments(1));
 
 				String commandArguments = ":" + gdbserverPortNumber + " " //$NON-NLS-1$ //$NON-NLS-2$
 						+ spaceEscapify(commandString);
@@ -331,8 +318,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				if (workingDir != null) {
 					IPath workingPath = new Path(workingDir);
 					if (workingPath.getDevice() != null) {
-						workingDir = "/" + workingPath.toPortableString() //$NON-NLS-1$
-								.replace(':', '/');
+						workingDir = ContainerLaunchUtils.toDockerPath(workingPath);
 					}
 				}
 
@@ -349,10 +335,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 					List<String> dirs = new ArrayList<>();
 					for (String additionalDir : additionalDirs) {
 						IPath path = new Path(additionalDir);
-						String dir = path.toPortableString();
-						if (path.getDevice() != null) {
-							dir = "/" + dir.replace(':', '/'); //$NON-NLS-1$
-						}
+						String dir = ContainerLaunchUtils.toDockerPath(path);
 						dirs.add(dir);
 					}
 					additionalDirs = dirs;

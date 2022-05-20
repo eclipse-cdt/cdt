@@ -373,7 +373,7 @@ public final class Arglets {
 	/**
 	 * @deprecated use <code>BuiltinDetectionArgsGeneric</code> instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public static abstract class BuiltinDetctionArgsGeneric {
 		protected int processArgument(IArgumentCollector resultCollector, String argsLine, Matcher[] optionMatchers) {
 			throw new IllegalStateException(

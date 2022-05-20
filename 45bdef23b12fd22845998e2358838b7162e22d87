@@ -51,6 +51,24 @@
       "parentUuid": "01c27767_992b0b12",
       "revId": "45bdef23b12fd22845998e2358838b7162e22d87",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0f247582_f279da5b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-05-20T06:38:39Z",
+      "side": 1,
+      "message": "Thanks a lot. Yet this patch was lying around for over a year now (I needed the linux-tools thingy first), so delaying it would have been fine with me. :) I was mainly cleaning it up to understand it better and prepare it wore other clean-up-stuff like providing a custom \"mirror\"-path. Thanks a lot, though.",
+      "parentUuid": "27b64f4b_96126ba6",
+      "revId": "45bdef23b12fd22845998e2358838b7162e22d87",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

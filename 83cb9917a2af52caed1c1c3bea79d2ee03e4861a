@@ -71,6 +71,23 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9511336e_4cec7aef",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-20T20:51:01Z",
+      "side": 1,
+      "message": "I think with CDT 11 around the corner we should just wait.",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a2bb8eda_e83ec176",

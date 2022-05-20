@@ -9,7 +9,6 @@
 
 package org.eclipse.cdt.jsoncdb.nvidia;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.jsoncdb.core.participant.Arglets.BuiltinDetectionArgsGeneric;
@@ -21,14 +20,16 @@ import org.eclipse.core.runtime.IPath;
  * standard {@code --std=xxx}.
  */
 public class NvccLangStdArglet extends BuiltinDetectionArgsGeneric implements IArglet {
-	private static final Matcher[] optionMatchers = { Pattern.compile("--std \\S+").matcher(""), //$NON-NLS-1$ //$NON-NLS-2$
-			Pattern.compile("-std \\S+").matcher(""), }; //$NON-NLS-1$ //$NON-NLS-2$
+	@SuppressWarnings("nls")
+	private static final Pattern[] optionPatterns = { Pattern.compile("--std \\S+"), //
+			Pattern.compile("-std \\S+"), //
+	};
 
 	/*-
 	 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
 	 */
 	@Override
 	public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
-		return processArgument(resultCollector, argsLine, optionMatchers);
+		return processArgument(resultCollector, argsLine, optionPatterns);
 	}
 }

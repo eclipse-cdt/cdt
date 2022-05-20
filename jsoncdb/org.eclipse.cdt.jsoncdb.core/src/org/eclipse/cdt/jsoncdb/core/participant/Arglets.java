@@ -387,10 +387,30 @@ public final class Arglets {
 	 * @since 1.2
 	 */
 	public static abstract class BuiltinDetectionArgsGeneric extends BuiltinDetctionArgsGeneric {
+
 		/**
 		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet#processArgument(IArgumentCollector,
 		 *      IPath, String)
+		 * @since 1.3
 		 */
+		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,
+				Pattern[] optionPatterns) {
+			for (Pattern pattern : optionPatterns) {
+				Matcher matcher = pattern.matcher(argsLine);
+				if (matcher.lookingAt()) {
+					resultCollector.addBuiltinDetectionArgument(matcher.group());
+					return matcher.end();
+				}
+			}
+			return 0;// no input consumed
+		}
+
+		/**
+		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet#processArgument(IArgumentCollector,
+		 *      IPath, String)
+		 * @deprecated Use {@link #processArgument(IArgumentCollector, String, Pattern[])} instead.
+		 */
+		@Deprecated(forRemoval = true)
 		@Override
 		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,
 				Matcher[] optionMatchers) {
@@ -450,24 +470,25 @@ public final class Arglets {
 	 */
 	public static class Sysroot_GCC extends BuiltinDetectionArgsGeneric implements IArglet {
 		@SuppressWarnings("nls")
-		private static final Matcher[] optionMatchers = {
+		private static final Pattern[] optionPatterns = {
 				/* "--sysroot=" quoted directory */
-				Pattern.compile("--sysroot=" + REGEX_INCLUDEPATH_QUOTED_DIR).matcher(EMPTY_STR),
+				Pattern.compile("--sysroot=" + REGEX_INCLUDEPATH_QUOTED_DIR), //
 				/* "--sysroot=" unquoted directory */
-				Pattern.compile("--sysroot=" + REGEX_INCLUDEPATH_UNQUOTED_DIR).matcher(EMPTY_STR),
+				Pattern.compile("--sysroot=" + REGEX_INCLUDEPATH_UNQUOTED_DIR), //
 				/* "-isysroot=" quoted directory */
-				Pattern.compile("-isysroot=" + REGEX_INCLUDEPATH_QUOTED_DIR).matcher(EMPTY_STR),
+				Pattern.compile("-isysroot=" + REGEX_INCLUDEPATH_QUOTED_DIR), //
 				/* "-isysroot=" unquoted directory */
-				Pattern.compile("-isysroot=" + REGEX_INCLUDEPATH_UNQUOTED_DIR).matcher(EMPTY_STR),
+				Pattern.compile("-isysroot=" + REGEX_INCLUDEPATH_UNQUOTED_DIR), //
 				/* "--no-sysroot-prefix" */
-				Pattern.compile("--no-sysroot-prefix").matcher(EMPTY_STR) };
+				Pattern.compile("--no-sysroot-prefix"), //
+		};
 
 		/*-
-		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
+		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
-			return processArgument(resultCollector, argsLine, optionMatchers);
+			return processArgument(resultCollector, argsLine, optionPatterns);
 		}
 	}
 
@@ -477,16 +498,18 @@ public final class Arglets {
 	 * @since 1.1
 	 */
 	public static class Target_Clang extends BuiltinDetectionArgsGeneric implements IArglet {
-		private static final Matcher[] optionMatchers = {
+		@SuppressWarnings("nls")
+		private static final Pattern[] optionPatterns = {
 				/* "--target=" triple */
-				Pattern.compile("--target=\\w+(-\\w+)*").matcher(EMPTY_STR) }; //$NON-NLS-1$
+				Pattern.compile("--target=\\w+(-\\w+)*") //
+		};
 
 		/*-
 		* @see de.marw.cmake.cdt.lsp.IArglet#processArgs(java.lang.String)
 		*/
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
-			return processArgument(resultCollector, argsLine, optionMatchers);
+			return processArgument(resultCollector, argsLine, optionPatterns);
 		}
 	}
 
@@ -497,20 +520,23 @@ public final class Arglets {
 	 */
 	public static class LangStd_GCC extends BuiltinDetectionArgsGeneric implements IArglet {
 		@SuppressWarnings("nls")
-		private static final Matcher[] optionMatchers = { Pattern.compile("-std=\\S+").matcher(EMPTY_STR),
-				Pattern.compile("-ansi").matcher(EMPTY_STR),
-				Pattern.compile("-fPIC", Pattern.CASE_INSENSITIVE).matcher(EMPTY_STR),
-				Pattern.compile("-fPIE", Pattern.CASE_INSENSITIVE).matcher(EMPTY_STR),
-				Pattern.compile("-fstack-protector\\S+").matcher(EMPTY_STR),
-				Pattern.compile("-march=\\\\S+").matcher(EMPTY_STR), Pattern.compile("-mcpu=\\\\S+").matcher(EMPTY_STR),
-				Pattern.compile("-mtune=\\\\S+").matcher(EMPTY_STR), Pattern.compile("-pthread").matcher(EMPTY_STR), };
+		private static final Pattern[] optionPatterns = { //
+				Pattern.compile("-std=\\S+"), //
+				Pattern.compile("-ansi"), //
+				Pattern.compile("-fPIC", Pattern.CASE_INSENSITIVE), //
+				Pattern.compile("-fPIE", Pattern.CASE_INSENSITIVE), //
+				Pattern.compile("-fstack-protector\\S+"), //
+				Pattern.compile("-march=\\\\S+"), //
+				Pattern.compile("-mcpu=\\\\S+"), //
+				Pattern.compile("-mtune=\\\\S+"), //
+				Pattern.compile("-pthread"), };
 
 		/*-
 		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
-			return processArgument(resultCollector, argsLine, optionMatchers);
+			return processArgument(resultCollector, argsLine, optionPatterns);
 		}
 	}
 

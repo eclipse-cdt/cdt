@@ -81,6 +81,7 @@
   </p>
   <ol>
     <li><a href="#newUIAbstractPage">org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields</a></li>
+    <li><a href="#ArgletsMatcher2">java.util.regex.Matcher use in JSONCDB API will be removed</a></li>
   </ol>
 
   <p>
@@ -578,6 +579,18 @@
   </p>
   <p>
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=579666" target="_blank">Bug 579666</a>.
+  </p>
+
+  <h3>2. <a name="ArgletsMatcher2">java.util.regex.Matcher use in JSONCDB API will be removed</a></h3>
+  <p>
+    The following method will be removed from the API as it encourages non-safe constructs of reusing Matchers instead of Patterns.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.jsoncdb.core.participant.Arglets.BuiltinDetectionArgsGeneric.processArgument(IArgumentCollector, String, Matcher[])
+       - use org.eclipse.cdt.jsoncdb.core.participant.Arglets.BuiltinDetectionArgsGeneric.processArgument(IArgumentCollector, String, Pattern[]) instead</li>
+  </ul>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=579982" target="_blank">Bug 579982</a>.
   </p>
 
   

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "871e33f0_52712b19",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-20T15:53:20Z",
+      "side": 1,
+      "message": "Is this patchset still relevant? I noticed that it used to be the parent commit of 193489 but it isn\u0027t anymore.",
+      "revId": "b73343733f798169997cc5e5473da622bfd7fb43",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

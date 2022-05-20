@@ -16,6 +16,23 @@
       "message": "I retriggered the unstable build. Some of the failing tests are not the \"normal\" flaky ones, so not sure if there is a regression here to consider.",
       "revId": "736fb2ba2aeef5c2a03f386154a98e3a27482d31",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "adb2c451_6046270f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-20T19:33:09Z",
+      "side": 1,
+      "message": "The tests appear to be regressed due to this change. Sadly Jenkins seems to be swallowing the useful stack trace, so here it is for one of the tests:\n\njunit.framework.AssertionFailedError\n\tat junit.framework.Assert.fail(Assert.java:55)\n\tat junit.framework.Assert.assertTrue(Assert.java:22)\n\tat junit.framework.Assert.assertNotNull(Assert.java:256)\n\tat junit.framework.Assert.assertNotNull(Assert.java:248)\n\tat junit.framework.TestCase.assertNotNull(TestCase.java:391)\n\tat org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.TestBase.assertEvaluationEquals(TestBase.java:95)\n\tat org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.FunctionTests.testLambdaExpression_560483(FunctionTests.java:282)\n",
+      "revId": "736fb2ba2aeef5c2a03f386154a98e3a27482d31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

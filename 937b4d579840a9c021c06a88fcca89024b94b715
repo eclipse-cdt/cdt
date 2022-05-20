@@ -16,6 +16,24 @@
       "message": "Looks like this is also the fix for https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d578683",
       "revId": "937b4d579840a9c021c06a88fcca89024b94b715",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "36cfde48_4cf648c8",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-20T18:54:37Z",
+      "side": 1,
+      "message": "Indeed it is :-) I split the bug out so that we could keep track of the separate parts fixed in 10.6.0 and 10.7.0. \n\nCDT is likely moving to GitHub soon, so some of these old processes may go away soon as I do wonder the value to anyone in splitting out the bug as I did.",
+      "parentUuid": "2189c1c7_9a2b46c7",
+      "revId": "937b4d579840a9c021c06a88fcca89024b94b715",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

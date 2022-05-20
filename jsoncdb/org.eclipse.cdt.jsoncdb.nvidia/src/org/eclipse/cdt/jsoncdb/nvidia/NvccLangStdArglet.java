@@ -26,7 +26,7 @@ public class NvccLangStdArglet extends BuiltinDetectionArgsGeneric implements IA
 	};
 
 	/*-
-	 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
+	 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet.processArgument(IArgumentCollector, IPath, String)
 	 */
 	@Override
 	public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {

@@ -30,7 +30,7 @@ class NvccSystemIncludePathArglet extends IncludePathGeneric implements IArglet 
 			new NameOptionMatcher("-isystem=" + "([^\\s]+)", 1), }; //$NON-NLS-1$ //$NON-NLS-2$
 
 	/*-
-	 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
+	 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet.processArgument(IArgumentCollector, IPath, String)
 	 */
 	@Override
 	public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {

@@ -156,7 +156,7 @@ public final class Arglets {
 	public static class MacroUndefineGeneric {
 
 		/*-
-		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgument(java.util.List, java.lang.String)
+		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet.processArgument(IArgumentCollector, IPath, String)
 		 */
 		protected final int processArgument(IArgumentCollector resultCollector, String argsLine,
 				NameOptionMatcher optionMatcher) {
@@ -505,8 +505,8 @@ public final class Arglets {
 		};
 
 		/*-
-		* @see de.marw.cmake.cdt.lsp.IArglet#processArgs(java.lang.String)
-		*/
+		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet#processArgs(java.lang.String)
+		 */
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
 			return processArgument(resultCollector, argsLine, optionPatterns);
@@ -532,7 +532,7 @@ public final class Arglets {
 				Pattern.compile("-pthread"), };
 
 		/*-
-		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
+		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet#processArgs(java.lang.String)
 		 */
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {

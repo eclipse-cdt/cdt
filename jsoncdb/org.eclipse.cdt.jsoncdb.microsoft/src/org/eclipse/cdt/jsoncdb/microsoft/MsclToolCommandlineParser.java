@@ -60,7 +60,7 @@ class MsclToolCommandlineParser extends DefaultToolCommandlineParser {
 				new NameOptionMatcher("[-/]I" + REGEX_INCLUDEPATH_UNQUOTED_DIR, 1), }; //$NON-NLS-1$
 
 		/*-
-		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
+		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet.processArgument(IArgumentCollector, IPath, String)
 		 */
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
@@ -86,7 +86,7 @@ class MsclToolCommandlineParser extends DefaultToolCommandlineParser {
 						1, 2), };
 
 		/*-
-		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgs(java.lang.String)
+		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet.processArgument(IArgumentCollector, IPath, String)
 		 */
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {
@@ -104,7 +104,7 @@ class MsclToolCommandlineParser extends DefaultToolCommandlineParser {
 				"[-/]U" + REGEX_MACRO_NAME_SKIP_LEADING_WS, 1); //$NON-NLS-1$
 
 		/*-
-		 * @see org.eclipse.cdt.jsoncdb.IArglet#processArgument(java.util.List, java.lang.String)
+		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet.processArgument(IArgumentCollector, IPath, String)
 		 */
 		@Override
 		public int processArgument(IArgumentCollector resultCollector, IPath cwd, String argsLine) {

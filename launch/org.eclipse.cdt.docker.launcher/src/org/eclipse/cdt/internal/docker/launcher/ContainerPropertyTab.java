@@ -188,6 +188,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		connectionSelectorLabel.setLayoutData(gd);
 
 		connectionSelector = new Combo(usercomp, SWT.BORDER | SWT.READ_ONLY);
+		connectionSelector.setToolTipText(Messages.ContainerTab_Connection_Selector_Tooltip);
 		initializeConnectionSelector();
 		connectionSelector.addModifyListener(connectionModifyListener);
 		// Following is a kludge so that on Linux the Combo is read-only but

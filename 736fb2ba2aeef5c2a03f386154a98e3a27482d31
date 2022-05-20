@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "88323132_589cc1f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-20T18:51:17Z",
+      "side": 1,
+      "message": "I retriggered the unstable build. Some of the failing tests are not the \"normal\" flaky ones, so not sure if there is a regression here to consider.",
+      "revId": "736fb2ba2aeef5c2a03f386154a98e3a27482d31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

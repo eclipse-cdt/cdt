@@ -16,6 +16,23 @@
       "message": "\u003e Patch Set 3: Verified+1\n\u003e \n\u003e Build Successful \n\u003e \n\u003e https://ci.eclipse.org/cdt/job/cdt-verify-test-cdt-ui-only-pipeline/3979/ : SUCCESS\n\u003e \n\u003e https://ci.eclipse.org/cdt/job/cdt-verify-code-cleanliness-pipeline/3802/ : SUCCESS. Formatting, whitespace, version numbers and other checks appear to be correct. See https://github.com/eclipse-cdt/cdt-infra/tree/master/jenkins/pipelines/cdt/verify#cdt-verify-code-cleanliness for documentation on what is checked.\n\u003e \n\u003e https://ci.eclipse.org/cdt/job/cdt-verify-test-cdt-other-pipeline/4224/ : SUCCESS. p2 repository available on https://ci.eclipse.org/cdt/job/cdt-verify-test-cdt-other-pipeline/4224/artifact/releng/org.eclipse.cdt.repo/target/repository/ - please mark build as \"Keep this build forever\" if the p2 repo is needed for testing. Otherwise it will be deleted shortly.\n\n",
       "revId": "c04aef26b255d0bc99902ef1ddade9b2988449f5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f055081b_9bfd6f44",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 7
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-20T15:14:30Z",
+      "side": 1,
+      "message": "I also retriggered the failing test, pretty sure it is just a flaky test though.\n\n",
+      "revId": "c04aef26b255d0bc99902ef1ddade9b2988449f5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

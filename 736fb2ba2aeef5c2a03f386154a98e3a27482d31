@@ -50,6 +50,42 @@
       "message": "Based on the bug description adding a test case shouldn\u0027t be too much trouble, right?",
       "revId": "736fb2ba2aeef5c2a03f386154a98e3a27482d31",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c8da5be4_1ad4c727",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-05-23T08:47:53Z",
+      "side": 1,
+      "message": "Thanks, I can reproduce that failure locally. The update just pushed should resolve it.",
+      "parentUuid": "adb2c451_6046270f",
+      "revId": "736fb2ba2aeef5c2a03f386154a98e3a27482d31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7f9bba1d_a39c10a9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-05-23T08:47:53Z",
+      "side": 1,
+      "message": "I tried to add a test in org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.IntegralValueTests but the test harness doesn\u0027t seem to be set up to recognize builtins. This makes it tricky (at least from my perspective, as I\u0027m very unfamiliar with the code base). Do you have any pointers?",
+      "parentUuid": "7d91a15e_5a6c81e5",
+      "revId": "736fb2ba2aeef5c2a03f386154a98e3a27482d31",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

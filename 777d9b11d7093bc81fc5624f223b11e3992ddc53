@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e822cc19_e4aac5f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-05-24T08:21:05Z",
+      "side": 1,
+      "message": "This is the first version and it seems to be working. I\u0027m in progress of adding a third mechanism, thus there is some dead code. I also used some deprecated stuff and need to review the persistence mechanism, but for now I am happy that it actually works.\n\nDeprecated Drop down menu:\nThis somehow seemed more intuitive than the new method. I\u0027d appreciate some pointers on how to do it right. Especially gluing the the entries together was a bit vague. Or maybe I just didn\u0027t find the right documentation.\n\nPersistence:\nI\u0027m currently using CUIPlugin.getDefault().getPreferenceStore() as that was the most simple thing I could find. Playing around with it a bit, I really think that this setting should be project specific. So I\u0027m looking into getting a hold of an IAdaptable.\n\n",
+      "revId": "777d9b11d7093bc81fc5624f223b11e3992ddc53",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

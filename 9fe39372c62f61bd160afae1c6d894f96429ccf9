@@ -33,6 +33,23 @@
       "message": "LGTM. \n\nIt might also make sense to marshall/unmarshall the execution in ExecBuiltin (looks like many of the other ICPPExecution classes do), but I\u0027m not sure about that.",
       "revId": "9fe39372c62f61bd160afae1c6d894f96429ccf9",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "05cb42c3_ec12bf82",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-24T14:28:20Z",
+      "side": 1,
+      "message": "Thank you Dominic and Morty for the reviews.\n\nI have tried to learn this code and I am pretty close to submitting it. However I tried adding some additional tests to try to understand the code and I found one case where GCC and CDT behave differently. I don\u0027t know which bit of code is responsible for narrowing the value passed in, but in this case I provide a constant of type \"long int\" and GCC converts that to 0, leading ffs to return 0, but CDT preserves the long int and returns 36.\n\nThis is the test:\n\n\n\t// constexpr int x \u003d __builtin_ffs(0x800000000);\n\tpublic void testBuiltinFfsOverflow() throws Exception {\n\t\tassertEvaluationEquals(0); // CDT is returning 36 here\n\t}\n\nAnd this is the warning GCC provides:\n\na.c:6:80: warning: overflow in conversion from ‘long int’ to ‘int’ changes value from ‘34359738368’ to ‘0’ [-Woverflow]\n\n@Davin - do you know if the above is an error in your new code or elsewhere in CDT just exposed in your code?\n\nThese are the additional tests that I wrote to cover the variants of ffs and the limits of inputs.\n\n\n\t// constexpr int x \u003d __builtin_ffs(0);\n\tpublic void testBuiltinFfsZero() throws Exception {\n\t\tassertEvaluationEquals(0);\n\t}\n\n\t// constexpr int x \u003d __builtin_ffsl(0);\n\tpublic void testBuiltinFfslZero() throws Exception {\n\t\tassertEvaluationEquals(0);\n\t}\n\n\t// constexpr int x \u003d __builtin_ffsll(0);\n\tpublic void testBuiltinFfsllZero() throws Exception {\n\t\tassertEvaluationEquals(0);\n\t}\n\n\t// constexpr int x \u003d __builtin_ffs(0x80000000);\n\tpublic void testBuiltinFfsMax() throws Exception {\n\t\tassertEvaluationEquals(32);\n\t}\n\n\t// constexpr int x \u003d __builtin_ffsl(0x8000000000000000);\n\tpublic void testBuiltinFfslMax() throws Exception {\n\t\tassertEvaluationEquals(64);\n\t}\n\n\t// constexpr int x \u003d __builtin_ffsll(0x8000000000000000);\n\tpublic void testBuiltinFfsllMax() throws Exception {\n\t\tassertEvaluationEquals(64);\n\t}\n\n\t// constexpr int x \u003d __builtin_ffs(0x800000000);\n\tpublic void testBuiltinFfsOverflow() throws Exception {\n\t\tassertEvaluationEquals(0);\n\t}\n\n\t// constexpr int x \u003d __builtin_ffsl(0x80000000000000000);\n\tpublic void testBuiltinFfslOverflow() throws Exception {\n\t\tassertEvaluationEquals(0);\n\t}\n\n\t// constexpr int x \u003d __builtin_ffsll(0x80000000000000000);\n\tpublic void testBuiltinFfsllOverflow() throws Exception {\n\t\tassertEvaluationEquals(0);\n\t}",
+      "revId": "9fe39372c62f61bd160afae1c6d894f96429ccf9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

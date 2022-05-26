@@ -22,6 +22,30 @@
       },
       "revId": "69da85417dcc7f8325267cc7f0274879f9d513a5",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b73fd9b3_9b24d02c",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core.tests/plugin.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 9787,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2022-05-26T11:39:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33e46104_d57442e5",
+      "range": {
+        "startLine": 9787,
+        "startChar": 22,
+        "endLine": 9787,
+        "endChar": 27
+      },
+      "revId": "69da85417dcc7f8325267cc7f0274879f9d513a5",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

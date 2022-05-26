@@ -25,10 +25,12 @@ import org.eclipse.cdt.managedbuilder.core.IOption;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
+import org.eclipse.cdt.managedbuilder.internal.core.ResourceInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.Tool;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
@@ -45,6 +47,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.Assert;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -68,6 +71,7 @@ public class ResourceBuildCoreTests extends TestCase {
 		TestSuite suite = new TestSuite(ResourceBuildCoreTests.class.getName());
 		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurations"));
 		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationReset"));
+		suite.addTest(new ResourceBuildCoreTests("testResourceConfiguration_Bug580009"));
 		//		suite.addTest(new ResourceBuildCoreTests("testResourceConfigurationBuildInfo"));
 		//		suite.addTest(new ResourceBuildCoreTests("testResourceRename"));
 		return suite;
@@ -967,6 +971,140 @@ public class ResourceBuildCoreTests extends TestCase {
 		ResourceHelper.joinIndexerBeforeCleanup(getName());
 		project.close(null);
 		removeProject(renamedProjectName2);
+	}
+
+	protected IResourceInfo getResourceConfiguration(final IConfiguration config, final IResource resource) {
+
+		IResourceInfo resInfo = config.getResourceInfo(resource.getProjectRelativePath(), true); // 'true' to ensure exact path
+		if (resInfo == null) {
+			// Resource element for path may not yet exist, force-create it
+			resInfo = config.createFolderInfo(resource.getProjectRelativePath());
+		}
+		return resInfo;
+	}
+
+	/**
+	 * Test that a folder level resource configuration correctly reloads from disk
+	 * @throws Exception
+	 */
+	public void testResourceConfiguration_Bug580009() throws Exception {
+
+		// Create a new project
+		IProject project = null;
+
+		try {
+			project = createProject(projectName);
+
+			// Now associate the builder with the project
+			ManagedBuildTestHelper.addManagedBuildNature(project);
+			IProjectDescription description = project.getDescription();
+			// Make sure it has a managed nature
+			if (description != null) {
+				assertTrue(description.hasNature(ManagedCProjectNature.MNG_NATURE_ID));
+			}
+
+		} catch (CoreException e) {
+			fail("Test failed on project creation: " + e.getLocalizedMessage());
+		}
+
+		// Find the base project type definition
+		IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
+		IProjectType projType = ManagedBuildManager.getProjectType("bug580009.tests.ptype");
+		assertNotNull(projType);
+
+		// Create the managed-project for our project
+		IManagedProject newProject = ManagedBuildManager.createManagedProject(project, projType);
+		assertEquals(newProject.getName(), projType.getName());
+		assertFalse(newProject.equals(projType));
+		ManagedBuildManager.setNewProjectVersion(project);
+
+		// Create a folder ('hello')
+		IFolder helloFolder = project.getProject().getFolder("hello");
+		if (!helloFolder.exists()) {
+			helloFolder.create(true, true, null);
+		}
+
+		// Get the configurations and make one of them as default configuration.
+		IConfiguration defaultConfig = null;
+		IConfiguration[] configs = projType.getConfigurations();
+		for (int i = 0; i < configs.length; ++i) {
+			// Make the first configuration the default
+			if (i == 0) {
+				defaultConfig = newProject.createConfiguration(configs[i], projType.getId() + "." + i);
+			} else {
+				newProject.createConfiguration(configs[i], projType.getId() + "." + i);
+			}
+		}
+		ManagedBuildManager.setDefaultConfiguration(project, defaultConfig);
+
+		//Set toolchain level option
+		IOption tcOption = defaultConfig.getToolChain().getOptionById("bug580009.tests.cfg1.tc.option.string");
+		ManagedBuildManager.setOption(defaultConfig, defaultConfig.getToolChain(), tcOption, true);
+		ManagedBuildManager.saveBuildInfo(project, true);
+		// Create Resource Configurations for hello.c
+		var resConfig = getResourceConfiguration(defaultConfig, helloFolder);
+
+		// Get the tools associated with the resource 'hello'.
+		ITool[] resTools = resConfig.getTools();
+		assertNotNull(resTools);
+		assertEquals(1, resTools.length);
+
+		// Get the build properties for the resource hello
+		ITool resTool = resTools[0];
+		String defaultResToolFlags = resTool.getToolFlags();
+
+		// Get the Test Option.
+		IOption resDebugOption = resTool.getOptionById("bug580009.tests.option.string");
+
+		// Get the default value of debug option for resource.
+		String defaultResDebugOptVal = resDebugOption.getStringValue();
+
+		// Now, override the value with "bug580009.tests.option.string"
+		IOption newResDebugOption = ManagedBuildManager.setOption(resConfig, resTool, resDebugOption, "SET");
+
+		// Get the overridden value of test option.
+		String newResDebugOptVal = newResDebugOption.getStringValue();
+		String newResToolFlags = resTool.getToolFlags();
+
+		// Make sure, default and overridden values are different.
+		assertNotSame(defaultResDebugOptVal, newResDebugOptVal);
+
+		//Check the config reports custom settings
+		Assert.assertTrue("hasCustomSettings should be true", ((ResourceInfo) resConfig).hasCustomSettings());
+
+		ManagedBuildManager.saveBuildInfo(project, true);
+
+		//Close project
+		project.close(null);
+		project.open(null);
+
+		//Reload configs
+		defaultConfig = ManagedBuildManager.getBuildInfo(project).getDefaultConfiguration();
+		var resInfo = defaultConfig.getResourceInfo(helloFolder.getProjectRelativePath(), true);
+
+		//Check the config still reports custom settings (sanity check)
+		Assert.assertTrue("hasCustomSettings should be true", ((ResourceInfo) resInfo).hasCustomSettings());
+
+		resTools = resInfo.getTools();
+		resTool = resTools[0];
+		resDebugOption = resTool.getOptionBySuperClassId("bug580009.tests.option.string");
+
+		// Set back to default value
+		IOption newResDebugOption2 = ManagedBuildManager.setOption(resInfo, resTool, resDebugOption, "UNSET");
+
+		//Check the config now reports no custom settings
+		Assert.assertFalse("hasCustomSettings should be false", ((ResourceInfo) resInfo).hasCustomSettings());
+
+		ManagedBuildManager.saveBuildInfo(project, true);
+
+		//Check the resource config no longer exists
+		resInfo = defaultConfig.getResourceInfo(helloFolder.getProjectRelativePath(), true);
+		Assert.assertNull("resInfo should be null", resInfo);
+
+		// Close and remove project.
+		ResourceHelper.joinIndexerBeforeCleanup(getName());
+		project.close(null);
+		removeProject(projectName);
 	}
 
 }

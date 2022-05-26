@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.core;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import org.eclipse.cdt.internal.core.SafeStringInterner;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IBuildPropertiesRestriction;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
 import org.eclipse.cdt.managedbuilder.core.IManagedConfigElement;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
@@ -511,7 +513,31 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		if (superClassId != null && superClassId.length() > 0) {
 			superClass = ManagedBuildManager.getExtensionOption(superClassId);
 			if (superClass == null) {
-				// TODO:  Report error
+				/*
+				 * This can happen for resource level options when there are options present at the toolchain level.
+				 * In these cases the superclass is set to the option from the parent not the extension's ID
+				 * Workaround this by searching for any missing superclass IDs at on the parent configs toolchain
+				 */
+				IBuildObject parent = this.getParent();
+				if (parent instanceof ToolChain) {
+					IConfiguration config = ((ToolChain) parent).getParent();
+					IOption foundOption = null;
+					if (config != null) {
+						IToolChain parentToolchain = config.getToolChain();
+						if (parentToolchain != null) {
+							foundOption = config.getToolChain().getOptionById(superClassId);
+						}
+					}
+					if (foundOption != null) {
+						superClass = foundOption;
+					} else {
+						ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+								MessageFormat.format("Missing superclass \"{0}\" for \"{1}\"", superClassId, getId()))); //$NON-NLS-1$
+					}
+				} else {
+					ManagedBuilderCorePlugin.log(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID,
+							MessageFormat.format("Missing superclass \"{0}\" for \"{1}\"", superClassId, getId()))); //$NON-NLS-1$
+				}
 			}
 		}
 

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "33471ce4_3bcc7428",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-05-26T22:25:58Z",
+      "side": 1,
+      "message": "LGTM and has a good test case, but it has been a while since I dabbled in the Managed Builder.  If no one else offers to review and approve by RC1 dead-line, feel free to merge.",
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

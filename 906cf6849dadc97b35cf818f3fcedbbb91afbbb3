@@ -16,6 +16,23 @@
       "message": "LGTM and has a good test case, but it has been a while since I dabbled in the Managed Builder.  If no one else offers to review and approve by RC1 dead-line, feel free to merge.",
       "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d51acbf3_ca85599e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2022-05-27T08:55:15Z",
+      "side": 1,
+      "message": "Thanks Jeff. I\u0027m adding the same patch to the internal fork we use for our product so should get a reasonable amount of testing done on it between now \u0026 RC2",
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

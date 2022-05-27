@@ -75,6 +75,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "ddc14484_f1e9140a",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2022-05-27T09:46:12Z",
+      "side": 1,
+      "message": "Tried cleaning it up. Also point to example added for the unit test",
+      "parentUuid": "b0f9320d_25481604",
+      "range": {
+        "startLine": 519,
+        "startChar": 67,
+        "endLine": 519,
+        "endChar": 72
+      },
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e9fc5d94_5c4627c3",
@@ -88,6 +112,30 @@
       "writtenOn": "2022-05-27T09:15:09Z",
       "side": 1,
       "message": "I think you should use IToolChain instead of ToolChain here.",
+      "range": {
+        "startLine": 522,
+        "startChar": 26,
+        "endLine": 522,
+        "endChar": 35
+      },
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e807245a_bd1cc5e2",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2022-05-27T09:46:12Z",
+      "side": 1,
+      "message": "Thanks, early versions of the change used methods from ToolChain that aren\u0027t in the interface. Removed for final version \u0026 missed reverting the the interface",
+      "parentUuid": "e9fc5d94_5c4627c3",
       "range": {
         "startLine": 522,
         "startChar": 26,

@@ -16,6 +16,23 @@
       "message": "Assuming unit test failure is random. Looks like the same test failed before on unrelated changes (e.g. https://ci.eclipse.org/cdt/job/cdt-verify-test-cdt-other-pipeline/4237/)\n\nTest passes in my local environment and passed on patchset 3 of this review.\n\nI\u0027ve retriggered the latest patchset verify",
       "revId": "133c81e979527ad9fe48326058296ec111c7e4cd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "66234d8e_0342e979",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-27T15:55:11Z",
+      "side": 1,
+      "message": "@William with Jeff\u0027s and Torbjörn\u0027s reviews this looks ready for 10.7.0. Please merge at your earliest convenience.",
+      "revId": "133c81e979527ad9fe48326058296ec111c7e4cd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

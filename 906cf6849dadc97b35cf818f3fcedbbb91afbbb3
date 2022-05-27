@@ -167,6 +167,30 @@
       },
       "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f4e3264a_02af8c47",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-27T15:55:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "56539e85_c62316b8",
+      "range": {
+        "startLine": 523,
+        "startChar": 31,
+        "endLine": 523,
+        "endChar": 40
+      },
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

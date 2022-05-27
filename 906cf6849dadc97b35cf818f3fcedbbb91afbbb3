@@ -33,6 +33,92 @@
       "message": "Thanks Jeff. I\u0027m adding the same patch to the internal fork we use for our product so should get a reasonable amount of testing done on it between now \u0026 RC2",
       "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d600ca6c_9731a27f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-27T09:15:09Z",
+      "side": 1,
+      "message": "Other than a few minor comments, I think the code makes sense.",
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b0f9320d_25481604",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 519,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-27T09:15:09Z",
+      "side": 1,
+      "message": "at on?\n\nI\u0027ve read the comment a few times now and am still not sure what you are trying to say with it. Is it possible to make it more explicit? Maybe use an example?",
+      "range": {
+        "startLine": 519,
+        "startChar": 67,
+        "endLine": 519,
+        "endChar": 72
+      },
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e9fc5d94_5c4627c3",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 522,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-27T09:15:09Z",
+      "side": 1,
+      "message": "I think you should use IToolChain instead of ToolChain here.",
+      "range": {
+        "startLine": 522,
+        "startChar": 26,
+        "endLine": 522,
+        "endChar": 35
+      },
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "56539e85_c62316b8",
+        "filename": "build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/internal/core/Option.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 523,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-27T09:15:09Z",
+      "side": 1,
+      "message": "Same here.",
+      "range": {
+        "startLine": 523,
+        "startChar": 31,
+        "endLine": 523,
+        "endChar": 40
+      },
+      "revId": "906cf6849dadc97b35cf818f3fcedbbb91afbbb3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

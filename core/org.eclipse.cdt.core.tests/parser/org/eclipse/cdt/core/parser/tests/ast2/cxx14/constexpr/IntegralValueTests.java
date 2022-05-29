@@ -274,4 +274,44 @@ public abstract class IntegralValueTests extends TestBase {
 	public void testBuiltinFfs() throws Exception {
 		assertEvaluationEquals(5);
 	}
+
+	// constexpr int x = __builtin_ctz(16);
+	public void testBuiltinCtz() throws Exception {
+		assertEvaluationEquals(4);
+	}
+
+	// constexpr int x = __builtin_popcount(128 + 32 + 8 + 4 + 2);
+	public void testBuiltinPopcount() throws Exception {
+		assertEvaluationEquals(5);
+	}
+
+	// constexpr int x = __builtin_popcountl(0x80000001);
+	public void testBuiltinPopcountHighBitSet() throws Exception {
+		assertEvaluationEquals(2);
+	}
+
+	// constexpr int x = __builtin_popcountl(0x8000000000000001);
+	public void testBuiltinPopcountlHighBitSet() throws Exception {
+		assertEvaluationEquals(2);
+	}
+
+	// constexpr int x = __builtin_popcountll(0x8000000000000001);
+	public void testBuiltinPopcountllHighBitSet() throws Exception {
+		assertEvaluationEquals(2);
+	}
+
+	// constexpr int x = __builtin_parity(128 + 32 + 8 + 4 + 2) + __builtin_parity(64) + __builtin_parity(0);
+	public void testBuiltinParity() throws Exception {
+		assertEvaluationEquals(2);
+	}
+
+	// constexpr int x = __builtin_abs(700) + __builtin_abs(50);
+	public void testBuiltinAbs() throws Exception {
+		assertEvaluationEquals(750);
+	}
+
+	// constexpr int x = __builtin_abs(-1);
+	public void testBuiltinAbsNegativeInput() throws Exception {
+		assertEvaluationEquals(1);
+	}
 }

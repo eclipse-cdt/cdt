@@ -191,10 +191,24 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("bool", "__atomic_is_lock_free", "size_t", "void*");
 
 		ICPPExecution builtinFfs = new ExecBuiltin(ExecBuiltin.BUILTIN_FFS);
+		ICPPExecution builtinFfsl = new ExecBuiltin(ExecBuiltin.BUILTIN_FFSL);
+		ICPPExecution builtinFfsll = new ExecBuiltin(ExecBuiltin.BUILTIN_FFSLL);
+		ICPPExecution builtinCtz = new ExecBuiltin(ExecBuiltin.BUILTIN_CTZ);
+		ICPPExecution builtinCtzl = new ExecBuiltin(ExecBuiltin.BUILTIN_CTZL);
+		ICPPExecution builtinCtzll = new ExecBuiltin(ExecBuiltin.BUILTIN_CTZLL);
+		ICPPExecution builtinPopcount = new ExecBuiltin(ExecBuiltin.BUILTIN_POPCOUNT);
+		ICPPExecution builtinPopcountl = new ExecBuiltin(ExecBuiltin.BUILTIN_POPCOUNTL);
+		ICPPExecution builtinPopcountll = new ExecBuiltin(ExecBuiltin.BUILTIN_POPCOUNTLL);
+		ICPPExecution builtinParity = new ExecBuiltin(ExecBuiltin.BUILTIN_PARITY);
+		ICPPExecution builtinParityl = new ExecBuiltin(ExecBuiltin.BUILTIN_PARITYL);
+		ICPPExecution builtinParityll = new ExecBuiltin(ExecBuiltin.BUILTIN_PARITYLL);
+		ICPPExecution builtinAbs = new ExecBuiltin(ExecBuiltin.BUILTIN_ABS);
+		ICPPExecution builtinLabs = new ExecBuiltin(ExecBuiltin.BUILTIN_LABS);
+		ICPPExecution builtinLlabs = new ExecBuiltin(ExecBuiltin.BUILTIN_LLABS);
 
 		// Other Builtins (https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html) [incomplete]
 		function("void", "__builtin_abort");
-		function("int", "__builtin_abs", "int");
+		function("int", "__builtin_abs", builtinAbs, "int");
 		function("double", "__builtin_acos", "double");
 		function("float", "__builtin_acosf", "float");
 		function("long double", "__builtin_acosl", "long double");
@@ -251,9 +265,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("double", "__builtin_creal", "complex double");
 		function("float", "__builtin_crealf", "complex float");
 		function("long double", "__builtin_creall", "complex long double");
-		function("int", "__builtin_ctz", "unsigned int");
-		function("int", "__builtin_ctzl", "unsigned long");
-		function("int", "__builtin_ctzll", "unsigned long long");
+		function("int", "__builtin_ctz", builtinCtz, "unsigned int");
+		function("int", "__builtin_ctzl", builtinCtzl, "unsigned long");
+		function("int", "__builtin_ctzll", builtinCtzll, "unsigned long long");
 		function("double", "__builtin_erf", "double");
 		function("float", "__builtin_erff", "float");
 		function("long double", "__builtin_erfl", "long double");
@@ -282,8 +296,8 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("float", "__builtin_fdimf", "float", "float");
 		function("long double", "__builtin_fdiml", "long double", "long double");
 		function("int", "__builtin_ffs", builtinFfs, "unsigned int");
-		function("int", "__builtin_ffsl", builtinFfs, "unsigned long");
-		function("int", "__builtin_ffsll", builtinFfs, "unsigned long long");
+		function("int", "__builtin_ffsl", builtinFfsl, "unsigned long");
+		function("int", "__builtin_ffsll", builtinFfsll, "unsigned long long");
 		function("double", "__builtin_floor", "double");
 		function("float", "__builtin_floorf", "float");
 		function("long double", "__builtin_floorl", "long double");
@@ -334,7 +348,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("bool", "__builtin_isnan", "double");
 		function("bool", "__builtin_isnormal", "double");
 		function("bool", "__builtin_isunordered", "float", "float");
-		function("long", "__builtin_labs", "long");
+		function("long", "__builtin_labs", builtinLabs, "long");
 		function("double", "__builtin_ldexp", "double", "int");
 		function("float", "__builtin_ldexpf", "float", "int");
 		function("long double", "__builtin_ldexpl", "long double", "int");
@@ -344,7 +358,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("int", "__builtin_LINE"); //TODO: This should technically be a constant integer expression
 		function("const char *", "__builtin_FUNCTION");
 		function("const char *", "__builtin_FILE");
-		function("long long", "__builtin_llabs", "long long");
+		function("long long", "__builtin_llabs", builtinLlabs, "long long");
 		function("long long", "__builtin_llrint", "double");
 		function("long long", "__builtin_llrintf", "float");
 		function("long long", "__builtin_llrintl", "long double");
@@ -397,12 +411,12 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("double", "__builtin_nexttoward", "double", "long double");
 		function("float", "__builtin_nexttowardf", "float", "long double");
 		function("long double", "__builtin_nexttowardl", "long double", "long double");
-		function("int", "__builtin_parity", "unsigned int");
-		function("int", "__builtin_parityl", "unsigned long");
-		function("int", "__builtin_parityll", "unsigned long long");
-		function("int", "__builtin_popcount", "unsigned int");
-		function("int", "__builtin_popcountl", "unsigned long");
-		function("int", "__builtin_popcountll", "unsigned long long");
+		function("int", "__builtin_parity", builtinParity, "unsigned int");
+		function("int", "__builtin_parityl", builtinParityl, "unsigned long");
+		function("int", "__builtin_parityll", builtinParityll, "unsigned long long");
+		function("int", "__builtin_popcount", builtinPopcount, "unsigned int");
+		function("int", "__builtin_popcountl", builtinPopcountl, "unsigned long");
+		function("int", "__builtin_popcountll", builtinPopcountll, "unsigned long long");
 		function("double", "__builtin_pow", "double", "double");
 		function("float", "__builtin_powf", "float", "float");
 		function("long double", "__builtin_powl", "long double", "long double");

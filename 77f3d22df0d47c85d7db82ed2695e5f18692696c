@@ -16,6 +16,24 @@
       "message": "This while condition looks suspicious to me. The unsigned shift on line 135 looks like it is handling the unsigned values correctly.",
       "revId": "77f3d22df0d47c85d7db82ed2695e5f18692696c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1b57bfa5_a82a3720",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecBuiltin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-05-30T22:09:19Z",
+      "side": 1,
+      "message": "Hi Jonah, you\u0027re right, it should be \u0027arg !\u003d 0\u0027. I\u0027ve pushed a correction.",
+      "parentUuid": "d96a9bc5_e65bb9de",
+      "revId": "77f3d22df0d47c85d7db82ed2695e5f18692696c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

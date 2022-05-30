@@ -34,6 +34,24 @@
       "parentUuid": "d96a9bc5_e65bb9de",
       "revId": "77f3d22df0d47c85d7db82ed2695e5f18692696c",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "87006613_50900216",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/ExecBuiltin.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-30T22:17:04Z",
+      "side": 1,
+      "message": "I restored the tests I added in PS2 for this case. This code as it is now has been run through CI in PS2 so I am submitting it now so I can get it into RC1.",
+      "parentUuid": "1b57bfa5_a82a3720",
+      "revId": "77f3d22df0d47c85d7db82ed2695e5f18692696c",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -108,6 +108,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "45955e39_21d1ff07",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-30T17:55:31Z",
+      "side": 1,
+      "message": "Remove this gerrit from the bug and close the bug - I added a CDT 11 milestone, but hopefully we will be in github soon enough. I hope to get the promised proposal out later this week.",
+      "parentUuid": "ac22b185_35554465",
+      "revId": "83cb9917a2af52caed1c1c3bea79d2ee03e4861a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "a2bb8eda_e83ec176",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/newui/AbstractPage.java",
         "patchSetId": 2

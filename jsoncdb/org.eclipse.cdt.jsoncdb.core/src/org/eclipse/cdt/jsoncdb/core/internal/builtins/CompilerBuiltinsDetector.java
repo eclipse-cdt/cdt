@@ -130,13 +130,17 @@ public class CompilerBuiltinsDetector {
 				}
 			}
 			if (state != ICommandLauncher.COMMAND_CANCELED) {
-				// check exit status
-				final int exitValue = proc.exitValue();
-				if (exitValue != 0 && !builtinsDetectionBehavior.suppressErrormessage()) {
-					// compiler had errors...
-					String errMsg = String.format(Messages.CompilerBuiltinsDetector_errmsg_command_failed, command,
-							exitValue);
-					createMarker(errMsg);
+				try {
+					// check exit status
+					final int exitValue = proc.waitFor();
+					if (exitValue != 0 && !builtinsDetectionBehavior.suppressErrormessage()) {
+						// compiler had errors...
+						String errMsg = String.format(Messages.CompilerBuiltinsDetector_errmsg_command_failed, command,
+								exitValue);
+						createMarker(errMsg);
+					}
+				} catch (InterruptedException ex) {
+					// ignore for now
 				}
 			}
 		} else {

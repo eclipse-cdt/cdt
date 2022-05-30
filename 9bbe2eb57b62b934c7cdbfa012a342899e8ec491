@@ -16,6 +16,23 @@
       "message": "@Davin, thank you for the patch. I thing I found a minor error on signed/unsigned handling (See line comment) but as I would like to get this into RC1 which for CDT is today I have made the modification myself. If you can review it today (Monday) that would be great. If not please review it even after I merge as we can still make a change before RC2 next Monday.\n",
       "revId": "9bbe2eb57b62b934c7cdbfa012a342899e8ec491",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "598dede7_22afe5ad",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-30T14:55:48Z",
+      "side": 1,
+      "message": "PS Similar to what was discussed in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/193395 there are some small issues related to narrowing and widening of numbers. As with patchset 193395  we aren\u0027t going to address that here.\n",
+      "revId": "9bbe2eb57b62b934c7cdbfa012a342899e8ec491",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

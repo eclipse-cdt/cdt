@@ -527,7 +527,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				if (parent instanceof IToolChain) {
 					IConfiguration config = ((IToolChain) parent).getParent();
 					IOption foundOption = null;
-					if (config != null) {
+					//In rare cases the RootFolderInfo may not have loaded & will cause an NPE
+					if (config != null && config.getRootFolderInfo() != null) {
 						IToolChain parentToolchain = config.getToolChain();
 						if (parentToolchain != null) {
 							foundOption = parentToolchain.getOptionById(superClassId);

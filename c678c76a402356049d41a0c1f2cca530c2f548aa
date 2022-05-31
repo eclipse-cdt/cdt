@@ -16,6 +16,23 @@
       "message": "@Jonah, this will need to be in 10.7.0, adding you here in case BugZilla e-mails go missing again",
       "revId": "c678c76a402356049d41a0c1f2cca530c2f548aa",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "90345ee4_6f8cf48f",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-05-31T15:35:43Z",
+      "side": 1,
+      "message": "Do you want a respin of RC1? We have until EOD Wednesday. ",
+      "revId": "c678c76a402356049d41a0c1f2cca530c2f548aa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -50,6 +50,23 @@
       "message": "I tested the change at work and found the issue seems to be gone.",
       "revId": "d01a15f013795fe8b54e0deb53bcd98a66dbc342",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d8a5df1_a5ddaab0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-05-31T19:17:48Z",
+      "side": 1,
+      "message": "I\u0027ve finally had some time to look more into the changeset and I\u0027m a bit worried about the use of proc.waitFor(). This will put yet another place where we ignore InterruptedException.\n\n@Martin: If you have a working example where the problem happens, can you put a conditional breakpoint in Swapner#exitValue() and have the condition check if fState \u003d\u003d State.DONE. Have the breakpoint suspend the JVM and not just the active thread.\n- What\u0027s the value of the Spwaner#fState?\n- Do you still see the two threads \"OutputReader\" and \"ErrorReader\" from ProcessClosure#runNonBlocking()?\nYou could also try to set a breakpoint on line 192, line 211 and line 222 of ProcessClosure.java. Do you land on any of these breakpoints?\nYou can also add a method to ProcessClosure.ReaderThread that simply calls isAlive() and use that method instead in the ProcessClosure class. In the method, set a breakpoint so that you break when isAlive() returns false.\n\nBased on just looking at the code, it looks like there are a few paths that can be taken that would make ICommandLauncher#waitAndRead(...) return before the process has finished/been terminated. One of the paths is ProcessClosure#isAlive() where the fProcess is simply set to null, but the process itself is not destroyed. One case where this would happen is when one of the reader threads got interrupted. Not sure if this happens or not, but I\u0027d much rather look into /why/ the state in ICommandLauncher#waitAndRead(...) returns even though the process is still running.\n\nI think the relevant class in your case that implements ICommandLauncher is org.eclipse.cdt.core.CommandLauncher.\n\n\nAfter checking all the above, I think we should have a clearer picture why the process is still alive when the waitAndRead method returns.",
+      "revId": "d01a15f013795fe8b54e0deb53bcd98a66dbc342",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

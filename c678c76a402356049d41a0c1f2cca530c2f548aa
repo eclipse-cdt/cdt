@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b400cf3a_b96e2c2c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1433
+      },
+      "writtenOn": "2022-05-31T14:46:27Z",
+      "side": 1,
+      "message": "@Jonah, this will need to be in 10.7.0, adding you here in case BugZilla e-mails go missing again",
+      "revId": "c678c76a402356049d41a0c1f2cca530c2f548aa",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

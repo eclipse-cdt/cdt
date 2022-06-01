@@ -112,7 +112,7 @@ public class AssignmentOperatorChecker extends AbstractIndexAstChecker {
 						reportProblem(MISS_SELF_CHECK_ID, info.decl);
 					}
 					info.decl = null;
-				} else {
+				} else if (expression.getPropertyInParent() != ICPPASTFunctionDeclarator.NOEXCEPT_EXPRESSION) {
 					reportProblem(MISS_SELF_CHECK_ID, info.decl);
 					info.decl = null;
 				}

@@ -49,6 +49,22 @@ public class AssignmentOperatorCheckerTest extends CheckerTestCase {
 
 	//class Foo {
 	//public:
+	//Foo& operator=(Foo& f) noexcept (false);
+	//};
+	//Foo& Foo::operator=(Foo& f) noexcept (false) {
+	//    if (this != &f) {
+	//        return *this;
+	//    }
+	//	  return *this;
+	//}
+	public void testWithNoErrorNoexcept() throws Exception {
+		loadCodeAndRun(getAboveComment());
+		checkNoErrorsOfKind(MISS_REF_ID);
+		checkNoErrorsOfKind(MISS_SELF_ID);
+	}
+
+	//class Foo {
+	//public:
 	//Foo operator=(const Foo& f);
 	//};
 	//Foo Foo::operator=(const Foo& f) {

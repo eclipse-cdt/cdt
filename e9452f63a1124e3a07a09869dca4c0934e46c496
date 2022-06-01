@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "059b1f61_929a3316",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-01T20:38:53Z",
+      "side": 1,
+      "message": "This looks reasonable to me, but I don\u0027t know this area of code well enough.\n\nIf you want it in CDT 10.7.0 which we are already preparing for RC2, please get another committer to sign-off on it by end of the day Monday and we can merge it in. Otherwise, please feel free to merge it after I make the branch in the coming days.",
+      "revId": "e9452f63a1124e3a07a09869dca4c0934e46c496",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -106,7 +106,7 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 		try {
 			// TODO Error parsers
 			Process process = builder.start();
-			watchProcess(process, console);
+			watchProcess(console, monitor);
 		} catch (IOException e) {
 			throw new CoreException(Activator.errorStatus("Error executing: " + String.join(" ", command), e)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -153,7 +153,7 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 							Activator.errorStatus("Error executing: " + String.join(" ", command), null)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 
-				watchProcess(p, new IConsoleParser[] { epm });
+				watchProcess(new IConsoleParser[] { epm }, monitor);
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);

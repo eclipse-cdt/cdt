@@ -391,7 +391,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 				outStream.write(msg.toString());
 
 				// TODO qmake error parser
-				watchProcess(process, console);
+				watchProcess(console, monitor);
 				doFullBuild = false;
 			}
 
@@ -405,7 +405,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[] { epm });
+				watchProcess(new IConsoleParser[] { epm }, monitor);
 			}
 
 			getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -442,7 +442,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 				setBuildEnvironment(processBuilder.environment());
 				Process process = processBuilder.start();
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[] { epm });
+				watchProcess(new IConsoleParser[] { epm }, monitor);
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);

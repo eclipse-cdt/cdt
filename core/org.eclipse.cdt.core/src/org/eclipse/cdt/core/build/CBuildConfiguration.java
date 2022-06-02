@@ -10,15 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -33,9 +28,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncherManager;
+import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.IConsoleParser;
 import org.eclipse.cdt.core.IConsoleParser2;
 import org.eclipse.cdt.core.IMarkerGenerator;
@@ -60,6 +57,8 @@ import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.BuildRunnerHelper;
+import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
 import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.cdt.internal.core.model.BinaryRunner;
 import org.eclipse.cdt.internal.core.model.CModelManager;
@@ -115,6 +114,8 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	private final Map<IResource, List<IScannerInfoChangeListener>> scannerInfoListeners = new HashMap<>();
 	private ScannerInfoCache scannerInfoCache;
+
+	private ICommandLauncher launcher;
 
 	protected CBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		this.config = config;
@@ -488,7 +489,8 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 						.write(String.format(Messages.CBuildConfiguration_CommandNotFound, commands.get(0)));
 				return null;
 			}
-			commands.set(0, commandPath.toString());
+			IPath cmd = new org.eclipse.core.runtime.Path(commandPath.toString());
+			List<String> args = commands.subList(1, commands.size());
 
 			// check if includes have been removed/refreshed and scanner info refresh is needed
 			boolean needRefresh = CommandLauncherManager.getInstance().checkIfIncludesChanged(this);
@@ -497,18 +499,28 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 				t.setProperty(NEED_REFRESH, Boolean.valueOf(needRefresh).toString());
 			}
 
-			ProcessBuilder processBuilder = new ProcessBuilder(commands).directory(buildDirectory.toFile());
-			// Override environment variables
-			Map<String, String> environment = processBuilder.environment();
+			// Generate environment block before launching process
+			launcher = CommandLauncherManager.getInstance().getCommandLauncher(this);
+			Properties envProps = launcher.getEnvironment();
+			HashMap<String, String> environment = envProps.entrySet().stream()
+					.collect(Collectors.toMap(e -> String.valueOf(e.getKey()), e -> String.valueOf(e.getValue()),
+							(prev, next) -> next, HashMap::new));
 			for (IEnvironmentVariable envVar : envVars) {
 				environment.put(envVar.getName(), envVar.getValue());
 			}
 			setBuildEnvironment(environment);
-			process = processBuilder.start();
+			launcher.setProject(getProject());
+			process = launcher.execute(cmd, args.toArray(new String[0]), BuildRunnerHelper.envMapToEnvp(environment),
+					buildDirectory, monitor);
 		}
 		return process;
 	}
 
+	/**
+	 * @return The exit code of the build process.
+	 *
+	 * @deprecated use {@link #watchProcess(IConsole, IProgressMonitor)} or {@link #watchProcess(IConsoleParser[], IProgressMonitor)} instead
+	 */
 	@Deprecated
 	protected int watchProcess(Process process, IConsoleParser[] consoleParsers, IConsole console)
 			throws CoreException {
@@ -520,110 +532,42 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	}
 
 	/**
+	 * @return The exit code of the build process.
 	 * @since 6.4
+	 *
+	 * @deprecated use {@link #watchProcess(IConsole, IProgressMonitor)} instead and pass in a monitor
 	 */
+	@Deprecated
 	protected int watchProcess(Process process, IConsole console) throws CoreException {
-		Thread t1 = new ReaderThread(process.getInputStream(), console.getOutputStream());
-		t1.start();
-		Thread t2 = new ReaderThread(process.getErrorStream(), console.getErrorStream());
-		t2.start();
-		try {
-			int rc = process.waitFor();
-			// Allow reader threads the chance to process all output to console
-			while (t1.isAlive()) {
-				Thread.sleep(100);
-			}
-			while (t2.isAlive()) {
-				Thread.sleep(100);
-			}
-			return rc;
-		} catch (InterruptedException e) {
-			CCorePlugin.log(e);
-			return -1;
-		}
+		return watchProcess(console, new NullProgressMonitor());
 	}
 
 	/**
-	 * @since 6.4
+	 * @return The exit code of the build process.
+	 * @since 7.5
 	 */
-	protected int watchProcess(Process process, IConsoleParser[] consoleParsers) throws CoreException {
-		Thread t1 = new ReaderThread(this, process.getInputStream(), consoleParsers);
-		t1.start();
-		Thread t2 = new ReaderThread(this, process.getErrorStream(), consoleParsers);
-		t2.start();
-		try {
-			int rc = process.waitFor();
-			// Allow reader threads the chance to process all output to console
-			while (t1.isAlive()) {
-				Thread.sleep(100);
-			}
-			while (t2.isAlive()) {
-				Thread.sleep(100);
-			}
-			return rc;
-		} catch (InterruptedException e) {
-			CCorePlugin.log(e);
-			return -1;
-		}
+	protected int watchProcess(IConsole console, IProgressMonitor monitor) throws CoreException {
+		return launcher.waitAndRead(console.getInfoStream(), console.getErrorStream(), monitor);
 	}
 
-	private static class ReaderThread extends Thread {
-		CBuildConfiguration config;
-		private final BufferedReader in;
-		private final IConsoleParser[] consoleParsers;
-		private final PrintStream out;
+	/**
+	 * @return The exit code of the build process.
+	 * @since 6.4
+	 *
+	 * @deprecated use {@link #watchProcess(IConsoleParser[], IProgressMonitor)} instead and pass in a monitor
+	 */
+	@Deprecated
+	protected int watchProcess(Process process, IConsoleParser[] consoleParsers) throws CoreException {
+		return watchProcess(consoleParsers, new NullProgressMonitor());
+	}
 
-		public ReaderThread(CBuildConfiguration config, InputStream in, IConsoleParser[] consoleParsers) {
-			this.config = config;
-			this.in = new BufferedReader(new InputStreamReader(in));
-			this.out = null;
-			this.consoleParsers = consoleParsers;
-		}
-
-		public ReaderThread(InputStream in, OutputStream out) {
-			this.in = new BufferedReader(new InputStreamReader(in));
-			this.out = new PrintStream(out);
-			this.consoleParsers = null;
-			this.config = null;
-		}
-
-		@Override
-		public void run() {
-			List<Job> jobList = new ArrayList<>();
-			try {
-				for (String line = in.readLine(); line != null; line = in.readLine()) {
-					if (consoleParsers != null) {
-						for (IConsoleParser consoleParser : consoleParsers) {
-							// Synchronize to avoid interleaving of lines
-							synchronized (consoleParser) {
-								// if we have an IConsoleParser2, use the processLine method that
-								// takes a job list (Container Build support)
-								if (consoleParser instanceof IConsoleParser2) {
-									((IConsoleParser2) consoleParser).processLine(line, jobList);
-								} else {
-									consoleParser.processLine(line);
-								}
-							}
-						}
-					}
-					if (out != null) {
-						out.println(line);
-					}
-				}
-				for (Job j : jobList) {
-					try {
-						j.join();
-					} catch (InterruptedException e) {
-						// ignore
-					}
-				}
-				if (config != null) {
-					config.shutdown();
-				}
-			} catch (IOException e) {
-				CCorePlugin.log(e);
-			}
-		}
+	/**
+	 * @return The exit code of the build process.
+	 * @since 7.5
+	 */
+	protected int watchProcess(IConsoleParser[] consoleParsers, IProgressMonitor monitor) throws CoreException {
+		ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(consoleParsers);
+		return launcher.waitAndRead(sniffer.getOutputStream(), sniffer.getErrorStream(), monitor);
 	}
 
 	private File getScannerInfoCacheFile() {

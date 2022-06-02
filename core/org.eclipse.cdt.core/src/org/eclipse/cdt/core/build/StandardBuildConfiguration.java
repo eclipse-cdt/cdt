@@ -267,7 +267,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				}
 
 				IConsoleParser[] consoleParsers = new IConsoleParser[] { epm, this };
-				watchProcess(p, consoleParsers);
+				watchProcess(consoleParsers, monitor);
 
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
@@ -326,7 +326,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				return;
 			}
 
-			watchProcess(p, console);
+			watchProcess(console, monitor);
 
 			outStream.write(Messages.CBuildConfiguration_BuildComplete);
 

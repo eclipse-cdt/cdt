@@ -183,7 +183,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					return null;
 				}
 
-				watchProcess(p, console);
+				watchProcess(console, monitor);
 			}
 
 			if (!Files.exists(buildDir.resolve("build.ninja"))) { //$NON-NLS-1$
@@ -238,7 +238,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					return null;
 				}
 
-				watchProcess(p, new IConsoleParser[] { epm });
+				watchProcess(new IConsoleParser[] { epm }, monitor);
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -298,7 +298,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					return;
 				}
 
-				watchProcess(p, console);
+				watchProcess(console, monitor);
 			}
 
 			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));

@@ -175,9 +175,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					ParsingConsoleOutputStream errStream = new ParsingConsoleOutputStream(console.getErrorStream(),
 							errorParser);
 					IConsole errConsole = new CMakeConsoleWrapper(console, errStream);
-					// TODO startBuildProcess() calls java.lang.ProcessBuilder.
-					// Use org.eclipse.cdt.core.ICommandLauncher
-					// in order to run builds in a container.
 					Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir,
 							errConsole, monitor);
 					String arg0 = command.getArguments().get(0);
@@ -190,7 +187,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					}
 
 					// check cmake exit status
-					final int exitValue = watchProcess(p, errConsole);
+					final int exitValue = watchProcess(errConsole, monitor);
 					if (exitValue != 0) {
 						// cmake had errors...
 						String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
@@ -230,8 +227,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
-				// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
-				// in order to run builds in a container.
 				// TODO pass envvars from CommandDescriptor once we use ICommandLauncher
 				Process p = startBuildProcess(command, envVars.toArray(new IEnvironmentVariable[0]), workingDir,
 						console, monitor);
@@ -241,7 +236,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				}
 
 				// check exit status
-				final int exitValue = watchProcess(p, new IConsoleParser[] { epm });
+				final int exitValue = watchProcess(new IConsoleParser[] { epm }, monitor);
 				if (exitValue != 0) {
 					// had errors...
 					String msg2 = String.format(Messages.CMakeBuildConfiguration_ExitFailure, command.get(0),
@@ -286,8 +281,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 					getBuildDirectory().toString());
-			// TODO startBuildProcess() calls java.lang.ProcessBuilder. Use org.eclipse.cdt.core.ICommandLauncher
-			// in order to run builds in a container.
 			Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir, console,
 					monitor);
 			if (p == null) {
@@ -299,7 +292,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			}
 
 			// check exit status
-			final int exitValue = watchProcess(p, console);
+			final int exitValue = watchProcess(console, monitor);
 			if (exitValue != 0) {
 				// had errors...
 				String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, command.getArguments().get(0),

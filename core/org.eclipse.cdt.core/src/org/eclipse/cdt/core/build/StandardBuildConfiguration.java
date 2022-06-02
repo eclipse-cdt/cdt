@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -267,7 +267,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				}
 
 				IConsoleParser[] consoleParsers = new IConsoleParser[] { epm, this };
-				watchProcess(p, consoleParsers);
+				watchProcess(consoleParsers, monitor);
 
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
@@ -326,7 +326,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				return;
 			}
 
-			watchProcess(p, console);
+			watchProcess(console, monitor);
 
 			outStream.write(Messages.CBuildConfiguration_BuildComplete);
 

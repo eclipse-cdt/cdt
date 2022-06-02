@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 QNX Software Systems and others.
+ * Copyright (c) 2015, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -379,9 +379,8 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 				IFile projectFile = project.getFile(project.getName() + ".pro"); //$NON-NLS-1$
 				command.add(projectFile.getLocation().toOSString());
 
-				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(getBuildDirectory().toFile());
-				setBuildEnvironment(processBuilder.environment());
-				Process process = processBuilder.start();
+				startBuildProcess(command, new IEnvironmentVariable[0],
+						new org.eclipse.core.runtime.Path(buildDir.toString()), console, monitor);
 
 				StringBuffer msg = new StringBuffer();
 				for (String arg : command) {
@@ -391,7 +390,7 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 				outStream.write(msg.toString());
 
 				// TODO qmake error parser
-				watchProcess(process, console);
+				watchProcess(console, monitor);
 				doFullBuild = false;
 			}
 
@@ -401,11 +400,11 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 				// run make
 				List<String> command = new ArrayList<>(Arrays.asList(makeCommand));
 				command.add("all"); //$NON-NLS-1$
-				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
-				setBuildEnvironment(processBuilder.environment());
-				Process process = processBuilder.start();
+
+				startBuildProcess(command, new IEnvironmentVariable[0],
+						new org.eclipse.core.runtime.Path(buildDir.toString()), console, monitor);
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[] { epm });
+				watchProcess(new IConsoleParser[] { epm }, monitor);
 			}
 
 			getProject().refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -438,11 +437,10 @@ public class QtBuildConfiguration extends CBuildConfiguration implements IQtBuil
 				// run make
 				List<String> command = new ArrayList<>(Arrays.asList(makeCommand));
 				command.add("clean"); //$NON-NLS-1$
-				ProcessBuilder processBuilder = new ProcessBuilder(command).directory(buildDir.toFile());
-				setBuildEnvironment(processBuilder.environment());
-				Process process = processBuilder.start();
+				startBuildProcess(command, new IEnvironmentVariable[0],
+						new org.eclipse.core.runtime.Path(buildDir.toString()), console, monitor);
 				outStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
-				watchProcess(process, new IConsoleParser[] { epm });
+				watchProcess(new IConsoleParser[] { epm }, monitor);
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);

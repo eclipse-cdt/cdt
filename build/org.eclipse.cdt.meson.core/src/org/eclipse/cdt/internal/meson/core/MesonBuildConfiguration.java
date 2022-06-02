@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 QNX Software Systems and others.
+ * Copyright (c) 2015, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -183,7 +183,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					return null;
 				}
 
-				watchProcess(p, console);
+				watchProcess(console, monitor);
 			}
 
 			if (!Files.exists(buildDir.resolve("build.ninja"))) { //$NON-NLS-1$
@@ -238,7 +238,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					return null;
 				}
 
-				watchProcess(p, new IConsoleParser[] { epm });
+				watchProcess(new IConsoleParser[] { epm }, monitor);
 			}
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
@@ -298,7 +298,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 					return;
 				}
 
-				watchProcess(p, console);
+				watchProcess(console, monitor);
 			}
 
 			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));

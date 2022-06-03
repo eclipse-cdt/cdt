@@ -16,6 +16,24 @@
       "message": "I wasn\u0027t sure if you were considering this change for RC2 - it is attached to a bug for 10.7.0 that was already resolved.\n\nI am nervous about this change for RC2 - I was happy enough with Martin\u0027s original fix to this bug because it was self contained in jsoncdb. But this change and its parent is changing code that has been this way for 10+ years.\n\nCan this change be left for the next release.\n\n",
       "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4c8f3413_f7da79f4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-03T13:30:19Z",
+      "side": 1,
+      "message": "I mostly pushed the change to share something that Martin could try and see if it resolved the real problem and not just the symptom.",
+      "parentUuid": "51a91714_2e8bb14c",
+      "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

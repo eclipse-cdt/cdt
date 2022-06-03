@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5dc8d62a_2b8e451e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-03T05:28:02Z",
+      "side": 1,
+      "message": "I suppose something like this would at least expose the incorrect usage of CommandLauncher instances.\n\n@Martin: Can you confirm that you get the CME with the changeset https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/193817 reverted?\nIf that\u0027s the case, then we know the root cause for why waitAndRead(...) returns prior to the process completion.",
+      "revId": "344c254d5b90818db6546d706dbdfca776a153d9",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

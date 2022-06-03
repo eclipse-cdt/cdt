@@ -34,6 +34,24 @@
       "parentUuid": "51a91714_2e8bb14c",
       "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64d9feb0_c1027b09",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2022-06-03T19:46:01Z",
+      "side": 1,
+      "message": "For the records: Bug 580045 - Spurious java.lang.IllegalThreadStateException is visible only for a non-CDT bundle utilizing MBS (cmake4eclipse).\nConcerning the *SAME* ICommandLauncher instance for different projects problem, I  solved the problem by calling\nCommandLauncherManager.getInstance().getCommandLauncher(cfgDescription)\ninstead of\nbuilder.getCommandLauncher()",
+      "parentUuid": "4c8f3413_f7da79f4",
+      "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

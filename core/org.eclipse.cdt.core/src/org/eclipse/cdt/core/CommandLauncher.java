@@ -16,6 +16,8 @@ package org.eclipse.cdt.core;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.Properties;
 
 import org.eclipse.cdt.internal.core.Cygwin;
@@ -161,6 +163,17 @@ public class CommandLauncher implements ICommandLauncher {
 	@Override
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath workingDirectory,
 			IProgressMonitor monitor) throws CoreException {
+
+		// Ensure that previous command has finished before launching next.
+		if (fProcess != null && fProcess.isAlive()) {
+			String command = "(unknown)"; //$NON-NLS-1$
+			if (fCommandArgs != null) {
+				command = Arrays.asList(fCommandArgs).toString();
+			}
+			throw new ConcurrentModificationException(
+					NLS.bind("Process for command \"{0}\" is still executing.", command)); //$NON-NLS-1$
+		}
+
 		parseEnvironment(env);
 		String envPathValue = getEnvironmentProperty(PATH_ENV);
 

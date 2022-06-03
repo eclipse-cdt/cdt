@@ -52,6 +52,24 @@
       "parentUuid": "4c8f3413_f7da79f4",
       "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e5186fcd_a4dfb077",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-03T20:07:53Z",
+      "side": 1,
+      "message": "So I guess that means that https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/193817 should be reverted then? With that change, it\u0027s not certain that all data gets processed (as the read will end before EOF is reached on the stream).\n\nWhat\u0027s your take on https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/193925/, would it be beneficial to identify these kind of situations?",
+      "parentUuid": "64d9feb0_c1027b09",
+      "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

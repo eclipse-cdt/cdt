@@ -34,6 +34,24 @@
       "parentUuid": "059b1f61_929a3316",
       "revId": "e9452f63a1124e3a07a09869dca4c0934e46c496",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ff2bedfb_9dbbbcb0",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-03T13:30:48Z",
+      "side": 1,
+      "message": "Simple rebase commits don\u0027t get new votes. You can just reuse the last one.\n\nI spent a bit more time looking and I will be the other committer (in addition to you) to +1 this, so I will submit this now for RC2.",
+      "parentUuid": "30a74aed_99a70794",
+      "revId": "e9452f63a1124e3a07a09869dca4c0934e46c496",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

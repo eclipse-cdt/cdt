@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1a35f453_c8569556",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-03T12:55:21Z",
+      "side": 1,
+      "message": "I think this solves the problem. Feel free to merge it if the build fails. I am away from my computer a bit today.",
+      "revId": "a60ea13d405645363879b73f8788fd93f77a4cee",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

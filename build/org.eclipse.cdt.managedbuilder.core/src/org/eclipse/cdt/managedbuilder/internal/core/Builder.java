@@ -146,7 +146,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	private ICOutputEntry[] outputEntries;
 
-	private ICommandLauncher fCommandLauncher = null;
 	private IConfigurationElement fCommandLauncherElement = null;
 
 	private AbstractBuildRunner fBuildRunner = null;
@@ -336,7 +335,6 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		super.copyChildren(builder);
 
-		fCommandLauncher = builder.fCommandLauncher;
 		fCommandLauncherElement = builder.fCommandLauncherElement;
 
 		fBuildRunner = builder.fBuildRunner;
@@ -2843,25 +2841,18 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	@Override
 	public ICommandLauncher getCommandLauncher() {
-		if (fCommandLauncher != null)
-			return fCommandLauncher;
-
-		if (fCommandLauncher == null && fCommandLauncherElement != null) {
+		if (fCommandLauncherElement != null) {
 			try {
-				fCommandLauncher = (ICommandLauncher) fCommandLauncherElement
-						.createExecutableExtension(ATTRIBUTE_COMMAND_LAUNCHER);
-				return fCommandLauncher;
+				return (ICommandLauncher) fCommandLauncherElement.createExecutableExtension(ATTRIBUTE_COMMAND_LAUNCHER);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 		}
-		if (fCommandLauncher == null && superClass != null)
+		if (superClass != null)
 			return getSuperClass().getCommandLauncher();
 
-		else if (fCommandLauncher == null) // catch all for backwards compatibility
-			fCommandLauncher = CommandLauncherManager.getInstance().getCommandLauncher();
-
-		return fCommandLauncher;
+		// catch all for backwards compatibility
+		return CommandLauncherManager.getInstance().getCommandLauncher();
 	}
 
 	@Override

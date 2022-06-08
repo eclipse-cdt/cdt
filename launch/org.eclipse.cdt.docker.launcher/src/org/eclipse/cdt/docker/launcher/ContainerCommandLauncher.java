@@ -38,16 +38,23 @@ import org.eclipse.cdt.internal.docker.launcher.PreferenceConstants;
 import org.eclipse.cdt.managedbuilder.buildproperties.IOptionalBuildProperties;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.linuxtools.docker.core.DockerConnectionManager;
+import org.eclipse.linuxtools.docker.core.DockerException;
+import org.eclipse.linuxtools.docker.core.IDockerConnection;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 import org.eclipse.linuxtools.docker.ui.launch.IErrorMessageHolder;
+import org.eclipse.linuxtools.internal.docker.core.DefaultImagePullProgressHandler;
 import org.eclipse.linuxtools.internal.docker.ui.launch.ContainerCommandProcess;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.Preferences;
@@ -291,6 +298,33 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		additionalDirs.addAll(
 				additionalPaths.stream().map(p -> ContainerLaunchUtils.toDockerVolume(p)).collect(Collectors.toList()));
 
+		// Try to pull image, if necessary
+		IDockerConnection connection = DockerConnectionManager.getInstance().getConnectionByName(connectionName);
+		if (connection != null && connection.getImageInfo(imageName) == null) {
+
+			try {
+				monitor.setBlocked(Status.info(NLS.bind(Messages.ContainerCommandLauncher_pullstate, imageName)));
+				connection.pullImage(imageName, new DefaultImagePullProgressHandler(connection, imageName));
+			} catch (DockerException e) {
+				var causeE = e.getCause();
+				// The first cause seems to a have more informative text.
+				if (causeE != null && causeE.getClass().getName().startsWith("org.mandas.docker.client.exceptions")) { //$NON-NLS-1$
+					setErrorMessage(causeE.getMessage() + " (" + connectionName + ')'); //$NON-NLS-1$
+				} else {
+					setErrorMessage(NLS.bind(Messages.ContainerCommandLauncher_pullerr, imageName, e.getMessage()));
+				}
+				// Write to error, to support finding the root cause
+				ManagedBuilderCorePlugin
+						.log(new Status(IStatus.ERROR, DockerLaunchUIPlugin.PLUGIN_ID, getErrorMessage(), e));
+				return null;
+			} catch (InterruptedException e) {
+				setErrorMessage(Messages.ContainerCommandLauncher_pullint);
+				return null;
+			} finally {
+				monitor.clearBlocked();
+			}
+		}
+
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
 				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);
 
@@ -445,8 +479,8 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		StringBuilder buf = new StringBuilder();
 		if (commandArgs != null) {
 			for (String commandArg : commandArgs) {
-				if (quote && (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\"))) {
-					commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + '"';
+				if (quote && (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + '"'; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				buf.append(commandArg);
 				buf.append(' ');

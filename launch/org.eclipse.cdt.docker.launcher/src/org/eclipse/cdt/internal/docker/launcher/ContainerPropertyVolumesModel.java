@@ -80,8 +80,8 @@ public class ContainerPropertyVolumesModel extends BaseDatabindingModel {
 		if (this.selectedImage == null || !this.selectedImage.equals(selectedImage)) {
 			this.selectedImage = selectedImage;
 			if (selectedImage != null) {
-				this.imageInfo = selectedImage.getConnection().getImageInfo(selectedImage.id());
-				if (this.imageInfo.config() != null && this.imageInfo.config().volumes() != null) {
+				imageInfo = selectedImage.getConnection().getImageInfo(selectedImage.id());
+				if (imageInfo != null && imageInfo.config() != null && imageInfo.config().volumes() != null) {
 					for (DataVolumeModel dvm : previousVolumes) {
 						removeDataVolume(dvm);
 						selectedDataVolumes.remove(dvm);

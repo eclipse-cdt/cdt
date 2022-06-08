@@ -70,6 +70,24 @@
       "parentUuid": "64d9feb0_c1027b09",
       "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b388b04e_e32cf50e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 276327
+      },
+      "writtenOn": "2022-06-08T19:30:36Z",
+      "side": 1,
+      "message": "I think it is better to fix it here than in https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/193925/. There are more implementations of ICommandLauncher:\no.e.c.docker.launcher.ContainerCommandLauncher and o.e.c.remote.core.RemoteCommandLauncher",
+      "parentUuid": "e5186fcd_a4dfb077",
+      "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

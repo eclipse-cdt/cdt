@@ -241,6 +241,21 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		});
 
+		imageCombo.addVerifyListener(new VerifyListener() {
+			@Override
+			public void verifyText(VerifyEvent e) {
+				if (e.keyCode == 0x00)
+					return;
+				// When inserting text, check if we already have that image
+				final String currentText = imageCombo.getText();
+				final String nimg = currentText.substring(0, e.start) + e.text + currentText.substring(e.end);
+				var t = displayedImages.stream().filter(x -> x.repoTags().contains(nimg)).findAny().orElse(null);
+				// Set to 0 if it does not exist
+				setImageId(nimg);
+				model.setSelectedImage(t);
+			}
+		});
+
 		pullButton = new Button(usercomp, SWT.CHECK);
 		pullButton.setText(Messages.ContainerPropertyTab_PullImageIfNecessary);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -705,6 +720,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 					model.setSelectedImage(displayedImages.get(index));
 					setVolumeControlsEnabled(new Button[] { addButton }, true);
 				} else {
+					model.setSelectedImage(null);
+					imageCombo.setText(initialImageId);
 				}
 			}
 			connection.addImageListener(containerTab);

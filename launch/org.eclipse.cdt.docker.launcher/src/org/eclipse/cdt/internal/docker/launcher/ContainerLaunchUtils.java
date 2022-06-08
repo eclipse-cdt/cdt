@@ -15,8 +15,19 @@ package org.eclipse.cdt.internal.docker.launcher;
 
 import java.util.Map;
 
+import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.linuxtools.docker.core.DockerConnectionManager;
+import org.eclipse.linuxtools.docker.core.DockerException;
+import org.eclipse.linuxtools.docker.core.IDockerConnection;
+import org.eclipse.linuxtools.docker.core.IDockerConnection4;
+import org.eclipse.osgi.util.NLS;
 
 public class ContainerLaunchUtils {
 
@@ -82,4 +93,57 @@ public class ContainerLaunchUtils {
 		return rv;
 	}
 
+	/**
+	 * Pull an Docker-Image if is not locally available.
+	 *
+	 * The interface is rather bad, as it returns null on success to keep things simple at the call site.
+	 * This should probably be moved to linuxtools anyway.
+	 *
+	 * @param monitor A Monitor to show progress
+	 * @param connectionName The name of the connection
+	 * @param imageName The image to pull
+	 * @return null on success, otherwise an error string
+	 *
+	 */
+	public static @NonNull IStatus provideDockerImage(IProgressMonitor monitor, @NonNull final String connectionName,
+			@NonNull final String imageName) {
+
+		// Try to pull image, if necessary
+		final var connection = (IDockerConnection4) DockerConnectionManager.getInstance()
+				.getConnectionByName(connectionName);
+
+		if (connection == null) {
+			// This is unlikely to happen, but who knows
+			return new Status(Status.ERROR, DockerLaunchUIPlugin.PLUGIN_ID,
+					NLS.bind(Messages.ContainerCommandLauncher_pullerr_noConn, imageName, connectionName));
+		}
+
+		// See if the image already exists
+		if (connection.getImageInfo(imageName) != null)
+			return Status.OK_STATUS;
+
+		try {
+			final var prghandler = connection.getDefaultPullImageProgressHandler(imageName, monitor);
+			// Seems like Eclipse/javac(?) confuses this call with pullImage(String, IRegistryAccount, IDockerProgressHandler)
+			// Feel free to remove the cast, if the error is not triggered anymore.
+			((IDockerConnection) connection).pullImage(imageName, prghandler);
+			return Status.OK_STATUS;
+		} catch (DockerException e) {
+			final IStatus rv;
+			var causeE = e.getCause();
+			// The first cause seems to a have more informative text.
+			if (causeE != null && causeE.getClass().getName().startsWith("org.mandas.docker.client.exceptions")) { //$NON-NLS-1$
+				rv = new Status(Status.ERROR, DockerLaunchUIPlugin.PLUGIN_ID,
+						causeE.getMessage() + " (" + connectionName + ')'); //$NON-NLS-1$
+			} else {
+				rv = new Status(Status.ERROR, DockerLaunchUIPlugin.PLUGIN_ID,
+						NLS.bind(Messages.ContainerCommandLauncher_pullerr, imageName, e.getMessage()));
+			}
+			// Write to error, to support finding the root cause
+			ManagedBuilderCorePlugin.log(rv);
+			return rv;
+		} catch (InterruptedException e) {
+			return new Status(Status.CANCEL, DockerLaunchUIPlugin.PLUGIN_ID, Messages.ContainerCommandLauncher_pullint);
+		}
+	}
 }

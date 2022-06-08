@@ -127,6 +127,10 @@ public class Messages extends NLS {
 
 	public static String ContainerCommandLauncher_invalid_values;
 	public static String ContainerCommandLauncher_invalid_container_type;
+	public static String ContainerCommandLauncher_pullerr;
+	public static String ContainerCommandLauncher_pullerr_noConn;
+	public static String ContainerCommandLauncher_pullint;
+	public static String ContainerCommandLauncher_pullstate;
 
 	public static String Gdbserver_Settings_Remotetimeout_label;
 

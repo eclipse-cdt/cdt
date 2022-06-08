@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d322c42d_fcb0b42f",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-08T17:55:59Z",
+      "side": 0,
+      "message": "So this plugin.xml was malformed!?\nAre there other plugin.xml that have similar issues, and should we include some kind of validation during the clean check for this?",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 79
+      },
+      "revId": "b3908852119605af78ddf21b758ee13795fad92a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

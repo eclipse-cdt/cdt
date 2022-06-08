@@ -16,6 +16,69 @@
       "message": "You are welcome. \nIt was a moment of a light panic for me to see code like this suggested by you 😊",
       "revId": "815b3f9a921d97cd571319a11e79e6be255072b1",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e1da0a2_6f6166eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-08T17:55:59Z",
+      "side": 1,
+      "message": "Other than the minor comments, I think looks fine.",
+      "revId": "815b3f9a921d97cd571319a11e79e6be255072b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e67f58f_1bb0fb5a",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-08T17:55:59Z",
+      "side": 1,
+      "message": "Not really a difffernce, but isn\u0027t it preferable to use NLS.bind()?",
+      "range": {
+        "startLine": 144,
+        "startChar": 22,
+        "endLine": 144,
+        "endChar": 35
+      },
+      "revId": "815b3f9a921d97cd571319a11e79e6be255072b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5e2399d9_ababf146",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/internal/builtins/messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-08T17:55:59Z",
+      "side": 1,
+      "message": "English is not my first language, but to me, this message looks weird.\nI would have written something like this instead:\n\nCompilerBuiltinsDetector_msg_unexpectedly_still_running\u003d%1$s is unexpectedly still running. Some built-ins might not have been captured by the compiler built-ins detector.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 154
+      },
+      "revId": "815b3f9a921d97cd571319a11e79e6be255072b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

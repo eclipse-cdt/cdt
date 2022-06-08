@@ -34,6 +34,24 @@
       "parentUuid": "80c86918_e86c507d",
       "revId": "c4035ed755c66a39cb04a5fcd7dafa8d88b4adfc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "48f003dd_635fd7a0",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-08T16:50:18Z",
+      "side": 1,
+      "message": "PS2 has this test code removed. Thanks for pointing out this mistake.",
+      "parentUuid": "c036c471_7e78df25",
+      "revId": "c4035ed755c66a39cb04a5fcd7dafa8d88b4adfc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

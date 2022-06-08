@@ -22,6 +22,7 @@ class Messages extends NLS {
 	public static String CompilerBuiltinsDetector_errmsg_command_failed;
 	public static String CompilerBuiltinsDetector_msg_detection_finished;
 	public static String CompilerBuiltinsDetector_msg_detection_start;
+	public static String CompilerBuiltinsDetector_msg_unexpectedly_still_running;
 	public static String DetectorConsole_title;
 	static {
 		// initialize resource bundle

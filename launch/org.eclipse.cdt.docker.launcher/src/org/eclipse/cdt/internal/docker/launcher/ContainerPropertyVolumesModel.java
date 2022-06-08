@@ -79,13 +79,14 @@ public class ContainerPropertyVolumesModel extends BaseDatabindingModel {
 	public void setSelectedImage(final IDockerImage selectedImage) {
 		if (this.selectedImage == null || !this.selectedImage.equals(selectedImage)) {
 			this.selectedImage = selectedImage;
+			for (DataVolumeModel dvm : previousVolumes) {
+				removeDataVolume(dvm);
+				selectedDataVolumes.remove(dvm);
+			}
+			previousVolumes = Collections.emptyList();
 			if (selectedImage != null) {
 				imageInfo = selectedImage.getConnection().getImageInfo(selectedImage.id());
 				if (imageInfo != null && imageInfo.config() != null && imageInfo.config().volumes() != null) {
-					for (DataVolumeModel dvm : previousVolumes) {
-						removeDataVolume(dvm);
-						selectedDataVolumes.remove(dvm);
-					}
 					final List<DataVolumeModel> volumes = new ArrayList<>();
 					for (String volume : this.imageInfo.config().volumes().keySet()) {
 						volumes.add(new DataVolumeModel(volume));

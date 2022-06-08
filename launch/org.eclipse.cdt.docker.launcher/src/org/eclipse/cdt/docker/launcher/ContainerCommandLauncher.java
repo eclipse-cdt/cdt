@@ -42,10 +42,16 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.linuxtools.docker.core.DockerConnectionManager;
+import org.eclipse.linuxtools.docker.core.DockerException;
+import org.eclipse.linuxtools.docker.core.IDockerConnection;
+import org.eclipse.linuxtools.docker.core.IDockerConnection2;
 import org.eclipse.linuxtools.docker.ui.launch.ContainerLauncher;
 import org.eclipse.linuxtools.docker.ui.launch.IErrorMessageHolder;
 import org.eclipse.linuxtools.internal.docker.ui.launch.ContainerCommandProcess;
@@ -62,7 +68,8 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 	public final static String VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.volumes"; //$NON-NLS-1$
 	public final static String SELECTED_VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID
 			+ ".containerbuild.property.selectedvolumes"; //$NON-NLS-1$
-
+	/** @since 2.0 */
+	public final static String PULL_IMAGE = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.pullImage"; //$NON-NLS-1$
 	public final static String VOLUME_SEPARATOR_REGEX = "[|]"; //$NON-NLS-1$
 
 	private IProject fProject;
@@ -253,14 +260,16 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		boolean keepContainer = prefs.getBoolean(PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH, false);
 
 		ICBuildConfiguration buildCfg = getBuildConfiguration();
-		String selectedVolumeString = null;
-		String connectionName = null;
-		String imageName = null;
+		final String selectedVolumeString;
+		final String connectionName;
+		final String imageName;
+		final boolean pullImage;
 		if (buildCfg != null) {
 			IToolChain toolChain = buildCfg.getToolChain();
 			selectedVolumeString = toolChain.getProperty(SELECTED_VOLUMES_ID);
 			connectionName = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
 			imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+			pullImage = Boolean.parseBoolean(toolChain.getProperty(PULL_IMAGE));
 		} else {
 			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(fProject)
 					.getActiveConfiguration();
@@ -272,6 +281,7 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			selectedVolumeString = props.getProperty(SELECTED_VOLUMES_ID);
 			connectionName = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 			imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
+			pullImage = Boolean.parseBoolean(props.getProperty(ContainerCommandLauncher.PULL_IMAGE));
 		}
 
 		// Add any specified volumes to additional dir list
@@ -290,6 +300,33 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 
 		additionalDirs.addAll(
 				additionalPaths.stream().map(p -> ContainerLaunchUtils.toDockerVolume(p)).collect(Collectors.toList()));
+
+		// Try to pull image, if necessary
+		IDockerConnection connection = DockerConnectionManager.getInstance().getConnectionByName(connectionName);
+		if (pullImage && connection != null && connection.getImageInfo(imageName) == null) {
+			try {
+				monitor.setBlocked(Status.info(NLS.bind(Messages.ContainerCommandLauncher_pullstate, imageName)));
+				var cnn2 = (IDockerConnection2) connection;
+				connection.pullImage(imageName, cnn2.getDefaultPullImageProgressHandler(imageName));
+			} catch (DockerException e) {
+				var causeE = e.getCause();
+				// The first cause seems to a have more informative text.
+				if (causeE != null && causeE.getClass().getName().startsWith("org.mandas.docker.client.exceptions")) { //$NON-NLS-1$
+					setErrorMessage(causeE.getMessage() + " (" + connectionName + ')'); //$NON-NLS-1$
+				} else {
+					setErrorMessage(NLS.bind(Messages.ContainerCommandLauncher_pullerr, imageName, e.getMessage()));
+				}
+				// Write to error, to support finding the root cause
+				DockerLaunchUIPlugin
+						.log(new Status(IStatus.ERROR, DockerLaunchUIPlugin.PLUGIN_ID, getErrorMessage(), e));
+				return null;
+			} catch (InterruptedException e) {
+				setErrorMessage(Messages.ContainerCommandLauncher_pullint);
+				return null;
+			} finally {
+				monitor.clearBlocked();
+			}
+		}
 
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
 				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);
@@ -445,8 +482,8 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		StringBuilder buf = new StringBuilder();
 		if (commandArgs != null) {
 			for (String commandArg : commandArgs) {
-				if (quote && (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\"))) {
-					commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + '"';
+				if (quote && (commandArg.contains(" ") || commandArg.contains("\"") || commandArg.contains("\\"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					commandArg = '"' + commandArg.replaceAll("\\\\", "\\\\\\\\").replaceAll("\"", "\\\\\"") + '"'; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				}
 				buf.append(commandArg);
 				buf.append(' ');

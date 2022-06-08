@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
@@ -96,12 +97,14 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private final static String GNU_ELF_PARSER_ID = "org.eclipse.cdt.core.GNU_ELF"; //$NON-NLS-1$
 	private final static String ELF_PARSER_ID = "org.eclipse.cdt.core.ELF"; //$NON-NLS-1$
 	private static final String RUN_IN_CONFIGURE_LAUNCHER = "org.eclipse.cdt.autotools.core.property.launchAutotoolsInContainer"; //$NON-NLS-1$
+	public final static String PULL_IMAGE = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.pullImage"; //$NON-NLS-1$
 
 	private Combo imageCombo;
 	private Combo connectionSelector;
 	private Button enableButton;
 	private Button launchAutotoolsButton;
 	private Button addButton;
+	private Button pullButton;
 	private IDockerConnection connection;
 	private IDockerConnection[] connections;
 	private IDockerImageListener containerTab;
@@ -222,12 +225,6 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		gd.grabExcessHorizontalSpace = true;
 		imageCombo.setLayoutData(gd);
 
-		Label label2 = new Label(usercomp, SWT.NULL);
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		gd.grabExcessHorizontalSpace = false;
-		label2.setLayoutData(gd);
-
 		initializeImageCombo();
 
 		imageCombo.addSelectionListener(new SelectionListener() {
@@ -243,6 +240,28 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			}
 
 		});
+
+		pullButton = new Button(usercomp, SWT.CHECK);
+		pullButton.setText(Messages.ContainerPropertyTab_PullImageIfNecessary);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 5;
+		pullButton.setLayoutData(gd);
+		pullButton.addSelectionListener(new SelectionListener() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				setPullImage(pullButton.getSelection());
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
+		});
+
+		Label label2 = new Label(usercomp, SWT.NULL);
+		gd = new GridData();
+		gd.horizontalSpan = 1;
+		gd.grabExcessHorizontalSpace = false;
+		label2.setLayoutData(gd);
 
 		createVolumeSettingsContainer(usercomp);
 
@@ -515,6 +534,20 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 	}
 
+	private void setCfg(String key, String value) {
+		if (iCfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
+				IConfiguration cfg = cfs[i];
+				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
+				p.setProperty(key, value);
+			}
+		} else {
+			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
+			p.setProperty(key, value);
+		}
+	}
+
 	private void setVolumes() {
 		StringBuffer buffer = new StringBuffer();
 		String separator = ""; //$NON-NLS-1$
@@ -530,35 +563,15 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			selectedBuffer.append(volume.toString());
 			separator = VOLUME_SEPARATOR;
 		}
-		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
-			for (int i = 0; i < cfs.length; i++) {
-				IConfiguration cfg = cfs[i];
-				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
-				p.setProperty(ContainerCommandLauncher.VOLUMES_ID, buffer.toString());
-				p.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, selectedBuffer.toString());
-			}
-		} else {
-			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
-			p.setProperty(ContainerCommandLauncher.VOLUMES_ID, buffer.toString());
-			p.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, selectedBuffer.toString());
-		}
+
+		setCfg(ContainerCommandLauncher.VOLUMES_ID, buffer.toString());
+		setCfg(ContainerCommandLauncher.SELECTED_VOLUMES_ID, selectedBuffer.toString());
 	}
 
 	private void setEnablement(boolean enabled) {
-		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
-			for (int i = 0; i < cfs.length; i++) {
-				IConfiguration cfg = cfs[i];
-				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
-				p.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
-						Boolean.toString(enableButton.getSelection()));
-			}
-		} else {
-			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
-			p.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED,
-					Boolean.toString(enableButton.getSelection()));
-		}
+
+		setCfg(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, Boolean.toString(enableButton.getSelection()));
+
 		// if enabled, make sure we have ELF binary parsers specified
 		if (enabled) {
 			String[] ids = CoreModelUtil.getBinaryParserIds(page.getCfgsEditable());
@@ -574,45 +587,19 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	}
 
 	private void setLaunchAutotoolsEnablement(boolean enabled) {
-		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
-			for (int i = 0; i < cfs.length; i++) {
-				IConfiguration cfg = cfs[i];
-				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
-				p.setProperty(RUN_IN_CONFIGURE_LAUNCHER, Boolean.toString(launchAutotoolsButton.getSelection()));
-			}
-		} else {
-			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
-			p.setProperty(RUN_IN_CONFIGURE_LAUNCHER, Boolean.toString(launchAutotoolsButton.getSelection()));
-		}
+		setCfg(RUN_IN_CONFIGURE_LAUNCHER, Boolean.toString(enabled));
 	}
 
 	private void setImageId(String imageId) {
-		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
-			for (int i = 0; i < cfs.length; i++) {
-				IConfiguration cfg = cfs[i];
-				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
-				p.setProperty(ContainerCommandLauncher.IMAGE_ID, imageId);
-			}
-		} else {
-			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
-			p.setProperty(ContainerCommandLauncher.IMAGE_ID, imageId);
-		}
+		setCfg(ContainerCommandLauncher.IMAGE_ID, imageId);
 	}
 
 	private void setConnection(String uri) {
-		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
-			for (int i = 0; i < cfs.length; i++) {
-				IConfiguration cfg = cfs[i];
-				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
-				p.setProperty(ContainerCommandLauncher.CONNECTION_ID, uri);
-			}
-		} else {
-			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
-			p.setProperty(ContainerCommandLauncher.CONNECTION_ID, uri);
-		}
+		setCfg(ContainerCommandLauncher.CONNECTION_ID, uri);
+	}
+
+	private void setPullImage(boolean enabled) {
+		setCfg(ContainerCommandLauncher.PULL_IMAGE, Boolean.toString(enabled));
 	}
 
 	private void setControlsEnabled(boolean enabled) {
@@ -633,6 +620,16 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 		enableButton.setSelection(initialEnabled);
 		setControlsEnabled(initialEnabled);
+	}
+
+	private void initializePullButton() {
+		initialEnabled = false;
+		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
+		String pull = properties.getProperty(ContainerCommandLauncher.PULL_IMAGE);
+		if (pull != null) {
+			initialEnabled = Boolean.parseBoolean(pull);
+		}
+		pullButton.setSelection(initialEnabled);
 	}
 
 	private void initializeLaunchAutotoolsButton() {
@@ -786,6 +783,17 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 	}
 
+	private static boolean copyCfgProp(IOptionalBuildProperties src, IOptionalBuildProperties trg, String value) {
+		String enablementProperty = src.getProperty(value);
+		String enablementProperty2 = trg.getProperty(value);
+		trg.setProperty(value, enablementProperty);
+		if (enablementProperty != null && !enablementProperty.equals(enablementProperty2)) {
+			return true;
+		}
+		return false;
+
+	}
+
 	private boolean applyToCfg(ICConfigurationDescription c1, ICConfigurationDescription c2) {
 		Configuration cfg01 = (Configuration) getCfg(c1);
 		Configuration cfg02 = (Configuration) getCfg(c2);
@@ -798,32 +806,12 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		ICTargetPlatformSetting tps2 = c2.getTargetPlatformSetting();
 		tps2.setBinaryParserIds(pids);
 
-		String enablementProperty = prop1.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
-		String enablementProperty2 = prop2.getProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
-		if (enablementProperty != null && !enablementProperty.equals(enablementProperty2)) {
-			needToRecalculate = true;
-		}
-		prop2.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, enablementProperty);
-
-		String connectionProperty = prop1.getProperty(ContainerCommandLauncher.CONNECTION_ID);
-		String connectionProperty2 = prop2.getProperty(ContainerCommandLauncher.CONNECTION_ID);
-		if (connectionProperty != null && !connectionProperty.equals(connectionProperty2)) {
-			needToRecalculate = true;
-		}
-		prop2.setProperty(ContainerCommandLauncher.CONNECTION_ID, connectionProperty);
-
-		String imageProperty = prop1.getProperty(ContainerCommandLauncher.IMAGE_ID);
-		String imageProperty2 = prop2.getProperty(ContainerCommandLauncher.IMAGE_ID);
-		if (imageProperty != null && !imageProperty.equals(imageProperty2)) {
-			needToRecalculate = true;
-		}
-		prop2.setProperty(ContainerCommandLauncher.IMAGE_ID, imageProperty);
-
-		String volumesProperty = prop1.getProperty(ContainerCommandLauncher.VOLUMES_ID);
-		prop2.setProperty(ContainerCommandLauncher.VOLUMES_ID, volumesProperty);
-
-		String selectedVolumesProperty = prop1.getProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID);
-		prop2.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, selectedVolumesProperty);
+		needToRecalculate |= copyCfgProp(prop1, prop2, ContainerCommandLauncher.CONTAINER_BUILD_ENABLED);
+		needToRecalculate |= copyCfgProp(prop1, prop2, ContainerCommandLauncher.CONNECTION_ID);
+		needToRecalculate |= copyCfgProp(prop1, prop2, ContainerCommandLauncher.IMAGE_ID);
+		copyCfgProp(prop1, prop2, ContainerCommandLauncher.VOLUMES_ID);
+		copyCfgProp(prop1, prop2, ContainerCommandLauncher.SELECTED_VOLUMES_ID);
+		copyCfgProp(prop1, prop2, ContainerCommandLauncher.PULL_IMAGE);
 
 		return needToRecalculate;
 	}
@@ -878,29 +866,29 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	@Override
 	protected void performDefaults() {
+
+		final Consumer<IOptionalBuildProperties> setDefProps = (IOptionalBuildProperties p) -> {
+			p.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, Boolean.toString(false));
+			if (connections.length > 0) {
+				p.setProperty(ContainerCommandLauncher.CONNECTION_ID, connections[0].getUri());
+			} else {
+				p.setProperty(ContainerCommandLauncher.CONNECTION_ID, null);
+			}
+			p.setProperty(ContainerCommandLauncher.IMAGE_ID, null);
+			p.setProperty(ContainerCommandLauncher.VOLUMES_ID, null);
+			p.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, null);
+			p.setProperty(ContainerCommandLauncher.PULL_IMAGE, Boolean.toString(false));
+		};
+
 		if (iCfg instanceof IMultiConfiguration) {
 			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
 			for (int i = 0; i < cfs.length; i++) {
 				IOptionalBuildProperties props = cfs[i].getOptionalBuildProperties();
-				props.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, Boolean.toString(false));
-				if (connections.length > 0) {
-					props.setProperty(ContainerCommandLauncher.CONNECTION_ID, connections[0].getUri());
-				} else {
-					props.setProperty(ContainerCommandLauncher.CONNECTION_ID, null);
-				}
-				props.setProperty(ContainerCommandLauncher.IMAGE_ID, null);
-				props.setProperty(ContainerCommandLauncher.VOLUMES_ID, null);
-				props.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, null);
+				setDefProps.accept(props);
 			}
 		} else {
 			IOptionalBuildProperties props = iCfg.getOptionalBuildProperties();
-			props.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, Boolean.toString(false));
-			if (connections.length > 0) {
-				props.setProperty(ContainerCommandLauncher.CONNECTION_ID, connections[0].getUri());
-			} else {
-				props.setProperty(ContainerCommandLauncher.CONNECTION_ID, null);
-			}
-			props.setProperty(ContainerCommandLauncher.IMAGE_ID, null);
+			setDefProps.accept(props);
 		}
 		initialEnabled = false;
 		initialConnection = null;
@@ -929,6 +917,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		initializeConnectionSelector();
 		initializeImageCombo();
 		initializeEnablementButton();
+		initializePullButton();
 		initializeVolumesTable();
 	}
 

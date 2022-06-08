@@ -114,6 +114,7 @@ public class Messages extends NLS {
 
 	public static String ContainerPropertyTab_Title;
 	public static String ContainerPropertyTab_Enable_Msg;
+	public static String ContainerPropertyTab_PullImageIfNecessary;
 	public static String ContainerPropertyTab_Run_Autotools_In_Container_Msg;
 	public static String ContainerPropertyTab_Run_Autotools_In_Container_Tooltip;
 
@@ -124,6 +125,9 @@ public class Messages extends NLS {
 
 	public static String ContainerCommandLauncher_invalid_values;
 	public static String ContainerCommandLauncher_invalid_container_type;
+	public static String ContainerCommandLauncher_pullerr;
+	public static String ContainerCommandLauncher_pullint;
+	public static String ContainerCommandLauncher_pullstate;
 
 	public static String Gdbserver_Settings_Remotetimeout_label;
 

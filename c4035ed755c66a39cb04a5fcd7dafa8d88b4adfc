@@ -70,6 +70,24 @@
       "parentUuid": "c036c471_7e78df25",
       "revId": "c4035ed755c66a39cb04a5fcd7dafa8d88b4adfc",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "63147225_40bcb326",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-08T17:00:12Z",
+      "side": 1,
+      "message": "My panic was realizing that I hate doing stuff so close to final build time as there is so little time to review and correct it. So I am glad to have had your eyes on this.",
+      "parentUuid": "e06822d8_d652ecd7",
+      "revId": "c4035ed755c66a39cb04a5fcd7dafa8d88b4adfc",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

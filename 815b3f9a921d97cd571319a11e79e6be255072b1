@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f76c9f91_7e17537c",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 23745
+      },
+      "writtenOn": "2022-06-08T16:57:39Z",
+      "side": 1,
+      "message": "You are welcome. \nIt was a moment of a light panic for me to see code like this suggested by you 😊",
+      "revId": "815b3f9a921d97cd571319a11e79e6be255072b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

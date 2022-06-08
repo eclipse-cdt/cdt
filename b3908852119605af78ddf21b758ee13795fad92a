@@ -22,6 +22,30 @@
       },
       "revId": "b3908852119605af78ddf21b758ee13795fad92a",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "33856c3c_3c20fc54",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/plugin.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-08T18:02:20Z",
+      "side": 0,
+      "message": "It was malformed and wasn\u0027t detected by anything. I am surprised. I am not sure it is worth the effort to add more tooling, most malformed xml is caught by normal tooling. If anything the place to fix this is in PDE.",
+      "parentUuid": "d322c42d_fcb0b42f",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 5,
+        "endChar": 79
+      },
+      "revId": "b3908852119605af78ddf21b758ee13795fad92a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -58,6 +58,30 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "c4741002_5216fc75",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/internal/builtins/CompilerBuiltinsDetector.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-08T18:02:20Z",
+      "side": 1,
+      "message": "As you noted, I just made it consistent with what is there. Normally I would say NLS.bind, but not sure if there is a rule on that.",
+      "parentUuid": "5e67f58f_1bb0fb5a",
+      "range": {
+        "startLine": 144,
+        "startChar": 22,
+        "endLine": 144,
+        "endChar": 35
+      },
+      "revId": "815b3f9a921d97cd571319a11e79e6be255072b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5e2399d9_ababf146",
@@ -71,6 +95,30 @@
       "writtenOn": "2022-06-08T17:55:59Z",
       "side": 1,
       "message": "English is not my first language, but to me, this message looks weird.\nI would have written something like this instead:\n\nCompilerBuiltinsDetector_msg_unexpectedly_still_running\u003d%1$s is unexpectedly still running. Some built-ins might not have been captured by the compiler built-ins detector.",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 154
+      },
+      "revId": "815b3f9a921d97cd571319a11e79e6be255072b1",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe92abb0_3e378536",
+        "filename": "jsoncdb/org.eclipse.cdt.jsoncdb.core/src/org/eclipse/cdt/jsoncdb/core/internal/builtins/messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-08T18:02:20Z",
+      "side": 1,
+      "message": "My parents make fun of me, saying that English isn\u0027t my first language either, rather it is some kind of programming language.\n\nPatch coming as yours reads better.",
+      "parentUuid": "5e2399d9_ababf146",
       "range": {
         "startLine": 17,
         "startChar": 0,

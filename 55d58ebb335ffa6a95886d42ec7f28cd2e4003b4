@@ -18,6 +18,40 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a4b0da54_4eadedfe",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-09T23:26:30Z",
+      "side": 1,
+      "message": "Hi John - thanks for the commit. I will review it soon and get back to you.",
+      "revId": "55d58ebb335ffa6a95886d42ec7f28cd2e4003b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b9285fac_58c5138e",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/build/TestICBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-09T23:26:30Z",
+      "side": 1,
+      "message": "Please add copyright headers for all new files.",
+      "revId": "55d58ebb335ffa6a95886d42ec7f28cd2e4003b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e28443f6_abcef776",

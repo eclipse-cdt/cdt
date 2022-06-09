@@ -166,6 +166,22 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/cdt/core/build/ICBuildConfiguration.java" type="org.eclipse.cdt.core.build.ICBuildConfiguration">
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.build.ICBuildConfiguration"/>
+                <message_argument value="getBinaryParserIds()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/cdt/core/build/IToolChain.java" type="org.eclipse.cdt.core.build.IToolChain">
+        <filter id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.core.build.IToolChain"/>
+                <message_argument value="getBinaryParserIds()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/core/cdtvariables/CdtVariableStatus.java" type="org.eclipse.cdt.core.cdtvariables.CdtVariableStatus">
         <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
             <message_arguments>

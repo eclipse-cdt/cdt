@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "99dd2feb_c74bd798",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-09T08:36:17Z",
+      "side": 1,
+      "message": "This is a set of small patches that allow pulling an image, if it does not exist at build time. If inserting a random image in the settings this is now saved. During my experiments I also fixed an NPE, I came across.",
+      "revId": "db2e3c2111b5c5141f619433888d0b11ad60deab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

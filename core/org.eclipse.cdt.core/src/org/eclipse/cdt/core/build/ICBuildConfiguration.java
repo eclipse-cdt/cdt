@@ -11,6 +11,7 @@
 package org.eclipse.cdt.core.build;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
@@ -79,8 +80,22 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 *
 	 * @return binary parser ids
 	 * @throws CoreException
+	 * @deprecated As of 10.??? replaced by {@link ICBuildConfiguration#getBinaryParserIds}
 	 */
+	@Deprecated(since = "7.5")
 	String getBinaryParserId() throws CoreException;
+
+	/**
+	 * Ids for the Binary Parsers to use when checking whether a file is a
+	 * binary that can be launched.
+	 *
+	 * @return binary parser ids
+	 * @throws CoreException
+	 * @since 7.5
+	 */
+	default List<String> getBinaryParserIds() throws CoreException {
+		return List.of(getBinaryParserId());
+	}
 
 	/**
 	 * Return a build environment variable with a given name.

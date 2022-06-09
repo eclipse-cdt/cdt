@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3b3c21c0_da6fe87b",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6211
+      },
+      "writtenOn": "2022-06-09T17:01:13Z",
+      "side": 1,
+      "message": "Some JUnit tests still to complete.",
+      "revId": "55d58ebb335ffa6a95886d42ec7f28cd2e4003b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e28443f6_abcef776",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/build/TestICBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 6211
+      },
+      "writtenOn": "2022-06-09T17:01:13Z",
+      "side": 1,
+      "message": "I ran out of time today to complete this. Need to figure how I\u0027m going to create a build config for testing.",
+      "range": {
+        "startLine": 14,
+        "startChar": 13,
+        "endLine": 14,
+        "endChar": 37
+      },
+      "revId": "55d58ebb335ffa6a95886d42ec7f28cd2e4003b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5d1a7961_3c8aa8b9",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/build/TestIToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6211
+      },
+      "writtenOn": "2022-06-09T17:01:13Z",
+      "side": 1,
+      "message": "I couldn\u0027t find any existing core build tests. Maybe I\u0027ve missed something.\nI tried to put these in a build directory, but I couldn\u0027t seem to create a new directory of the correct type. What type of resource is \"misc\"?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 35
+      },
+      "revId": "55d58ebb335ffa6a95886d42ec7f28cd2e4003b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "65536c17_8a69120b",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/build/TestIToolChain.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 6211
+      },
+      "writtenOn": "2022-06-09T17:01:13Z",
+      "side": 1,
+      "message": "I might have gone overboard with this test; perhaps it is superfluous?",
+      "range": {
+        "startLine": 60,
+        "startChar": 13,
+        "endLine": 60,
+        "endChar": 37
+      },
+      "revId": "55d58ebb335ffa6a95886d42ec7f28cd2e4003b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

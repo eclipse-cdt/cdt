@@ -165,8 +165,21 @@ public interface IToolChain extends IAdaptable {
 	 * the toolchain.
 	 *
 	 * @return binary parser IDs for this toolchain
+	 * @deprecated As of 7.5 replaced by {@link IToolChain#getBinaryParserIds}
 	 */
+	@Deprecated(since = "7.5")
 	String getBinaryParserId();
+
+	/**
+	 * Returns the IDs for the binary parsers that can parse the build output of
+	 * the toolchain.
+	 *
+	 * @return binary parser IDs for this toolchain
+	 * @since 7.5
+	 */
+	default List<String> getBinaryParserIds() {
+		return List.of(getBinaryParserId());
+	}
 
 	/**
 	 * Get the scanner info for a given build config, command, base scanner

@@ -215,6 +215,11 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		return toolChain != null ? toolChain.getBinaryParserId() : CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID;
 	}
 
+	@Override
+	public List<String> getBinaryParserIds() throws CoreException {
+		return toolChain != null ? toolChain.getBinaryParserIds() : List.of(CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID);
+	}
+
 	public IContainer getBuildContainer() throws CoreException {
 		// TODO make the name of this folder a project property
 		IProject project = getProject();

@@ -88,6 +88,24 @@
       "parentUuid": "e5186fcd_a4dfb077",
       "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9d4ea5cf_3d6c79ca",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-09T07:46:57Z",
+      "side": 1,
+      "message": "Thanks for the comment, but I don\u0027t think that the 2 gerrits are mutual-exclusive.\nWhile there are more ICommandLauncher implementations out there, each of them need to address the issue of their internal state. As you mention, the ContainerCommandLauncher and RemoteCommandLaunch should have the check\u0026throw block from https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/193925/ too.\nBetter to throw the exception where the fault happens then try to fix all the potential places where symptoms are shown...",
+      "parentUuid": "b388b04e_e32cf50e",
+      "revId": "222e9e2e170f936dd4e3b0e2b6ad8f18197d23ae",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

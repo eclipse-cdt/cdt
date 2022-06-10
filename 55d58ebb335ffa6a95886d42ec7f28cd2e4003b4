@@ -52,6 +52,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8bae9e19_e46267a2",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/build/TestICBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6211
+      },
+      "writtenOn": "2022-06-10T09:14:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b9285fac_58c5138e",
+      "revId": "55d58ebb335ffa6a95886d42ec7f28cd2e4003b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e28443f6_abcef776",

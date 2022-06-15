@@ -48,4 +48,5 @@ Import-Package: org.eclipse.core.commands,
  org.eclipse.ui.navigator,
  org.eclipse.ui.plugin,
  org.eclipse.ui.progress,
- org.osgi.framework
+ org.osgi.framework,
+ org.osgi.service.prefs

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "c47e58bd_2fdf3255",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-15T14:05:21Z",
+      "side": 1,
+      "message": "Most of the CI is done already.\n\nI am going to separately update the setup oomph files which seem to not be working at the moment.",
+      "revId": "793af86603f344c43216c3ad2361db5cbc3c907f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

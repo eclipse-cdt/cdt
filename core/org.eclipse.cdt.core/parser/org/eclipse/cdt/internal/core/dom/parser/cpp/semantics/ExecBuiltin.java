@@ -55,25 +55,35 @@ public class ExecBuiltin implements ICPPExecution {
 
 		switch (funcId) {
 		case BUILTIN_FFS:
+			return executeBuiltinFfs(record, context, intType);
 		case BUILTIN_FFSL:
+			return executeBuiltinFfs(record, context, longType);
 		case BUILTIN_FFSLL:
-			return executeBuiltinFfs(record, context);
+			return executeBuiltinFfs(record, context, longlongType);
 		case BUILTIN_CTZ:
+			return executeBuiltinCtz(record, context, intType);
 		case BUILTIN_CTZL:
+			return executeBuiltinCtz(record, context, longType);
 		case BUILTIN_CTZLL:
-			return executeBuiltinCtz(record, context);
+			return executeBuiltinCtz(record, context, longlongType);
 		case BUILTIN_POPCOUNT:
+			return executeBuiltinPopcount(record, context, intType);
 		case BUILTIN_POPCOUNTL:
+			return executeBuiltinPopcount(record, context, longType);
 		case BUILTIN_POPCOUNTLL:
-			return executeBuiltinPopcount(record, context);
+			return executeBuiltinPopcount(record, context, longlongType);
 		case BUILTIN_PARITY:
+			return executeBuiltinParity(record, context, intType);
 		case BUILTIN_PARITYL:
+			return executeBuiltinParity(record, context, longType);
 		case BUILTIN_PARITYLL:
-			return executeBuiltinParity(record, context);
+			return executeBuiltinParity(record, context, longlongType);
 		case BUILTIN_ABS:
+			return executeBuiltinAbs(record, context, intType);
 		case BUILTIN_LABS:
+			return executeBuiltinAbs(record, context, longType);
 		case BUILTIN_LLABS:
-			return executeBuiltinAbs(record, context);
+			return executeBuiltinAbs(record, context, longlongType);
 		}
 		return null;
 	}
@@ -82,16 +92,18 @@ public class ExecBuiltin implements ICPPExecution {
 	 * Return an execution representing __builtin_ffs or __builtin_ctz
 	 */
 	private ICPPExecution executeBuiltinFfsCtz(ActivationRecord record, ConstexprEvaluationContext context,
-			boolean isCtz) {
+			boolean isCtz, IType argType) {
 		ICPPEvaluation arg0 = record.getVariable(new CPPBuiltinParameter(null, 0));
 
 		IValue argValue = arg0.getValue();
-		if (!(argValue instanceof IntegralValue))
+		Number numberVal = argValue.numberValue();
+		numberVal = Conversions.narrowNumberValue(numberVal, argType);
+		if (numberVal == null)
 			return null;
 
 		// __builtin_ffs returns 0 if arg is 0, or 1+count where count is the number of trailing 0 bits
 		// __builtin_ctz is undefined if arg is 0, or returns count
-		long arg = argValue.numberValue().longValue();
+		long arg = numberVal.longValue();
 		if (arg == 0) {
 			if (isCtz) {
 				return null;
@@ -108,26 +120,30 @@ public class ExecBuiltin implements ICPPExecution {
 		return new ExecReturn(new EvalFixed(intType, ValueCategory.PRVALUE, IntegralValue.create(count + increment)));
 	}
 
-	private ICPPExecution executeBuiltinFfs(ActivationRecord record, ConstexprEvaluationContext context) {
-		return executeBuiltinFfsCtz(record, context, false /* ffs */);
+	private ICPPExecution executeBuiltinFfs(ActivationRecord record, ConstexprEvaluationContext context,
+			IType argType) {
+		return executeBuiltinFfsCtz(record, context, false /* ffs */, argType);
 	}
 
-	private ICPPExecution executeBuiltinCtz(ActivationRecord record, ConstexprEvaluationContext context) {
-		return executeBuiltinFfsCtz(record, context, true /* ctz */);
+	private ICPPExecution executeBuiltinCtz(ActivationRecord record, ConstexprEvaluationContext context,
+			IType argType) {
+		return executeBuiltinFfsCtz(record, context, true /* ctz */, argType);
 	}
 
 	/*
 	 * Return an execution representing __builtin_popcount
 	 */
 	private ICPPExecution executeBuiltinPopcountParity(ActivationRecord record, ConstexprEvaluationContext context,
-			boolean isParity) {
+			boolean isParity, IType argType) {
 		ICPPEvaluation arg0 = record.getVariable(new CPPBuiltinParameter(null, 0));
 
 		IValue argValue = arg0.getValue();
-		if (!(argValue instanceof IntegralValue))
+		Number numberVal = argValue.numberValue();
+		numberVal = Conversions.narrowNumberValue(numberVal, argType);
+		if (numberVal == null)
 			return null;
 
-		long arg = argValue.numberValue().longValue();
+		long arg = numberVal.longValue();
 		int count = 0;
 		while (arg != 0) {
 			if ((arg & 1) != 0)
@@ -140,38 +156,30 @@ public class ExecBuiltin implements ICPPExecution {
 		return new ExecReturn(new EvalFixed(intType, ValueCategory.PRVALUE, IntegralValue.create(count)));
 	}
 
-	private ICPPExecution executeBuiltinPopcount(ActivationRecord record, ConstexprEvaluationContext context) {
-		return executeBuiltinPopcountParity(record, context, false);
+	private ICPPExecution executeBuiltinPopcount(ActivationRecord record, ConstexprEvaluationContext context,
+			IType argType) {
+		return executeBuiltinPopcountParity(record, context, false, argType);
 	}
 
-	private ICPPExecution executeBuiltinParity(ActivationRecord record, ConstexprEvaluationContext context) {
-		return executeBuiltinPopcountParity(record, context, true);
+	private ICPPExecution executeBuiltinParity(ActivationRecord record, ConstexprEvaluationContext context,
+			IType argType) {
+		return executeBuiltinPopcountParity(record, context, true, argType);
 	}
 
-	private ICPPExecution executeBuiltinAbs(ActivationRecord record, ConstexprEvaluationContext context) {
+	private ICPPExecution executeBuiltinAbs(ActivationRecord record, ConstexprEvaluationContext context,
+			IType argType) {
 		ICPPEvaluation arg0 = record.getVariable(new CPPBuiltinParameter(null, 0));
 
 		IValue argValue = arg0.getValue();
-		if (!(argValue instanceof IntegralValue))
+		Number argNumber = argValue.numberValue();
+		argNumber = Conversions.narrowNumberValue(argNumber, argType);
+		if (argNumber == null)
 			return null;
 
-		long arg = argValue.numberValue().longValue();
+		long arg = argNumber.longValue();
 		long result = Math.abs(arg);
 
-		IType resultType = null;
-		switch (funcId) {
-		case BUILTIN_ABS:
-			resultType = intType;
-			break;
-		case BUILTIN_LABS:
-			resultType = longType;
-			break;
-		case BUILTIN_LLABS:
-			resultType = longlongType;
-			break;
-		}
-
-		return new ExecReturn(new EvalFixed(resultType, ValueCategory.PRVALUE, IntegralValue.create(result)));
+		return new ExecReturn(new EvalFixed(argType, ValueCategory.PRVALUE, IntegralValue.create(result)));
 	}
 
 	@Override

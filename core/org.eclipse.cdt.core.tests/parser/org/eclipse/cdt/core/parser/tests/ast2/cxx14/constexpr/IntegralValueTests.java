@@ -275,6 +275,16 @@ public abstract class IntegralValueTests extends TestBase {
 		assertEvaluationEquals(5);
 	}
 
+	// constexpr int x = __builtin_ffs(0x100000000);
+	public void testBuiltinFfsNarrowing() throws Exception {
+		assertEvaluationEquals(0);
+	}
+
+	// constexpr int x = __builtin_ffsl(0x100000000);
+	public void testBuiltinFfsl() throws Exception {
+		assertEvaluationEquals(33);
+	}
+
 	// constexpr int x = __builtin_ctz(16);
 	public void testBuiltinCtz() throws Exception {
 		assertEvaluationEquals(4);
@@ -312,6 +322,11 @@ public abstract class IntegralValueTests extends TestBase {
 
 	// constexpr int x = __builtin_abs(-1);
 	public void testBuiltinAbsNegativeInput() throws Exception {
+		assertEvaluationEquals(1);
+	}
+
+	// constexpr int x = __builtin_abs(0xFFFFFFFF);
+	public void testBuiltinAbsNarrowing() throws Exception {
 		assertEvaluationEquals(1);
 	}
 }

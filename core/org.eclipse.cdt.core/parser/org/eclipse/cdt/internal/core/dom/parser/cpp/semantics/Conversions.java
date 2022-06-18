@@ -540,13 +540,34 @@ public class Conversions {
 		return cost;
 	}
 
-	// [over.match.list] Initialization by list-initialization
+	// [dcl.list.init][over.match.list] Initialization by list-initialization
 	static Cost listInitializationOfClass(EvalInitList arg, ICPPClassType t, boolean isDirect, boolean deferUDC)
 			throws DOMException {
 		if (deferUDC) {
 			Cost c = new Cost(arg.getType(), t, Rank.USER_DEFINED_CONVERSION);
 			c.setDeferredUDC(isDirect ? DeferredUDC.DIRECT_LIST_INIT_OF_CLASS : DeferredUDC.LIST_INIT_OF_CLASS);
 			return c;
+		}
+
+		// [dcl.init.list] 3.2 if T is a class and the initializer list has a single element of type U
+		// where U is T or a subclass of T, the object is initialised from that element
+		if (arg.getClauses().length == 1) {
+			IType singleArgType = arg.getClauses()[0].getType();
+			singleArgType = getNestedType(singleArgType, CVTYPE | TDEF);
+			if (singleArgType instanceof ICPPClassType) {
+				ICPPClassType argType = (ICPPClassType) singleArgType;
+				// [over.ics.list] the cost is that of converting the single value to the
+				// parameter type
+				int depth = SemanticUtil.calculateInheritanceDepth(singleArgType, t);
+				if (depth == 0) {
+					return new Cost(argType, t, Rank.IDENTITY);
+				}
+				if (depth > 0) {
+					Cost c = new Cost(argType, t, Rank.CONVERSION);
+					c.setInheritanceDistance(depth);
+					return c;
+				}
+			}
 		}
 
 		// p1: When objects of non-aggregate class type are list-initialized,

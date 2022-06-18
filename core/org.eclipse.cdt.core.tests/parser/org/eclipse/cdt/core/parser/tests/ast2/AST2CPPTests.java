@@ -8848,7 +8848,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		h({ "foo" }); // OK: h(C(std::string("foo")))
 	//		i({ { 1, 2 }, { "bar" } }); // OK: i(D(A(std::initializer_list<int>{1,2}),C(std::string("bar"))))
 	//      X x1;
-	//      x({x1});  // no matching constructor
+	//      x({x1});  // calls copy constructor
 	//	}
 	public void testListInitialization_302412c() throws Exception {
 		String code = getAboveComment();
@@ -8859,7 +8859,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		bh.assertProblem("f({ 'a', 'b' })", 1);
 		bh.assertNonProblem("h({", 1);
 		bh.assertNonProblem("i({ { 1, 2 }, {", 1);
-		bh.assertProblem("x({x1})", 1);
+		bh.assertNonProblem("x({x1})", 1);
 	}
 
 	//	namespace std {
@@ -9050,6 +9050,17 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		binding = name.resolveBinding();
 		assertTrue(binding instanceof ICPPConstructor);
 		assertEquals(2, ((ICPPConstructor) binding).getType().getParameterTypes().length);
+	}
+
+	//	struct C {
+	//		C(int);
+	//	};
+	//	void foo() {
+	//		const C a;
+	//		C b{a};
+	//	}
+	public void testListInit_CopyConstructor_559318() throws Exception {
+		parseAndCheckImplicitNameBindings();
 	}
 
 	//	struct S {

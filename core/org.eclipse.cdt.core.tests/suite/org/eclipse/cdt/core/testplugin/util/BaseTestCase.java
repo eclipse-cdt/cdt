@@ -94,6 +94,11 @@ public abstract class BaseTestCase extends TestCase {
 		CPPASTNameBase.sAllowRecursionBindings = false;
 		CPPASTNameBase.sAllowNameComputation = false;
 		CModelListener.sSuppressUpdateOfLastRecentlyUsed = true;
+		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_SHORT__", "2");
+		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_INT__", "4");
+		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_LONG__", "8");
+		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_LONG_LONG__", "8");
+		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_POINTER__", "8");
 	}
 
 	@Override

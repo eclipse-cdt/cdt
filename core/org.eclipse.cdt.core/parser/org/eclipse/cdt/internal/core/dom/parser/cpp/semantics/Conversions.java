@@ -30,6 +30,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.getNestedType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.isVoidType;
 
+import java.math.BigInteger;
 import java.util.Collections;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -60,6 +61,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerToMemberType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
@@ -1325,5 +1328,100 @@ public class Conversions {
 
 	private static boolean isNullPtr(IType t1) {
 		return t1 instanceof IBasicType && ((IBasicType) t1).getKind() == Kind.eNullPtr;
+	}
+
+	/**
+	 * Narrow a numeric value to the range of a specified type.
+	 * @param num  the value to narrow (may be null)
+	 * @param toType  the type to narrow to
+	 * @return a number representing the narrowed value, or null
+	 */
+	public static Number narrowNumberValue(Number num, IType toType) {
+		if (num == null)
+			return null;
+
+		if (toType instanceof IBasicType) {
+			IBasicType basicType = (IBasicType) toType;
+			IBasicType.Kind basicTypeKind = basicType.getKind();
+			switch (basicTypeKind) {
+			case eFloat:
+				if (num instanceof Float)
+					return num;
+				return Float.valueOf(num.floatValue());
+			case eDouble:
+				if (num instanceof Double)
+					return num;
+				return Double.valueOf(num.doubleValue());
+			case eInt:
+				SizeAndAlignment sizeToType = SizeofCalculator.getSizeAndAlignment(toType);
+				if (sizeToType == null)
+					return null;
+				// Note in the following we don't check type.isSigned() since that checks for the
+				// explicit presence of the "signed" modifier. So instead check !type.isUnsigned().
+				if (sizeToType.size <= 8) {
+					// First, mask the value to the correct size
+					// Note that we take the longValue here which may be negative even though the
+					// original value is positive; the masking here should still be correct and we
+					// should ultimately end up with the correct narrowed value, regardless.
+					long longVal = num.longValue();
+					long maskVal = 0xFFFFFFFFFFFFFFFFL;
+					long signBit = 0x8000000000000000L;
+					// Calculate a mask to reduce the size of the value to the target width:
+					maskVal >>>= (8 - sizeToType.size) * 8;
+					signBit >>>= (8 - sizeToType.size) * 8;
+					if (!basicType.isUnsigned() && (longVal & signBit) != 0) {
+						// We need to extend the sign bit.
+						long signBits = ~maskVal;
+						longVal |= signBits;
+					} else {
+						longVal &= maskVal;
+					}
+
+					// The Java type used to store the numerical value is independent of the associated
+					// C type, but we go with a smaller type (Integer) where possible. For 4 bytes
+					// (signed) or less than 4 bytes (signed or not) we can use Integer. For 8 bytes
+					// (signed) or less than 8 bytes (signed or not) we can use Long. Any larger and we
+					// resort to BigInteger.
+					if (longVal >= 0 && longVal <= Integer.MAX_VALUE) {
+						return Integer.valueOf((int) longVal);
+					}
+					if (!basicType.isUnsigned() && longVal >= Integer.MIN_VALUE && longVal <= Integer.MAX_VALUE) {
+						return Integer.valueOf((int) longVal);
+					}
+
+					if (!basicType.isUnsigned() || longVal > 0) {
+						return Long.valueOf(longVal);
+					}
+
+					BigInteger biVal = BigInteger.valueOf(longVal);
+					// 2**64 = 18446744073709551616
+					biVal = biVal.add(new BigInteger("18446744073709551616")); //$NON-NLS-1$
+					return biVal;
+				}
+				// TODO handle larger int sizes?
+				return null;
+			case eChar:
+				// TODO don't assume signed char
+				if (num instanceof Byte)
+					return num;
+				return Byte.valueOf(num.byteValue());
+			case eChar16:
+				int intVal = num.intValue();
+				int maskedVal = intVal & 0xFFFF;
+				if (maskedVal == intVal && num instanceof Integer)
+					return num;
+				return Integer.valueOf(maskedVal);
+			case eChar32:
+				long longVal = num.longValue();
+				long maskedVal32 = longVal & 0xFFFFFFFFL;
+				if (maskedVal32 == longVal && (num instanceof Integer || num instanceof Long))
+					return num;
+				return Long.valueOf(maskedVal32);
+			default:
+				return null;
+			}
+		}
+
+		return null;
 	}
 }

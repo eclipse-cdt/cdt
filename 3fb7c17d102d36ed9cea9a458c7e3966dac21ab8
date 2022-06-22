@@ -16,6 +16,23 @@
       "message": "I had time to review only part of this in the first instance. I did some code updates which you should interpret as suggestions on how to resolve some of the outstanding issues.\n\nI haven\u0027t reviewed the logic in IncludeReferenceProxy and IncludeRefContainer yet. I will endeavour to find some time to review that at some point soon.",
       "revId": "3fb7c17d102d36ed9cea9a458c7e3966dac21ab8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6a718345_4f1b2cc5",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/PreferenceConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 841,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-22T15:24:15Z",
+      "side": 1,
+      "message": "This has a neat side effect - you can see how many times you have run the action: \n\n.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.cdt.ui.prefs:org.eclipse.cdt.ui.cview.ForceRefresh\u003d2",
+      "revId": "3fb7c17d102d36ed9cea9a458c7e3966dac21ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f72b4210_e167e492",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-22T15:18:53Z",
+      "side": 1,
+      "message": "I had time to review only part of this in the first instance. I did some code updates which you should interpret as suggestions on how to resolve some of the outstanding issues.\n\nI haven\u0027t reviewed the logic in IncludeReferenceProxy and IncludeRefContainer yet. I will endeavour to find some time to review that at some point soon.",
+      "revId": "3fb7c17d102d36ed9cea9a458c7e3966dac21ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

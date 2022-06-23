@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d5c4d219_34dcb262",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:35:26Z",
+      "side": 1,
+      "message": "Not sure I understand what you are doing here.",
+      "revId": "7ca0d2e5d1bf96c3fabc1c269ee1da72d6647af8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "01edb440_b69b5ab2",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:35:26Z",
+      "side": 1,
+      "message": "because you just use the getText() here",
+      "revId": "7ca0d2e5d1bf96c3fabc1c269ee1da72d6647af8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ada0890_8bc95dc8",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:35:26Z",
+      "side": 1,
+      "message": "this should generate a message of some sort to let user know image does not exist and will be pulled if user continues.",
+      "revId": "7ca0d2e5d1bf96c3fabc1c269ee1da72d6647af8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -18,6 +18,57 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9909e141_19a4ff81",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-23T14:41:26Z",
+      "side": 1,
+      "message": "Thank you Morty. This change will be great to have. As you have seen I added a bugzilla for this and attached this gerrit to it.\n\nI have completed the review now. Please let me know how you would like to proceed, especially if there are any items you would like my support with.\n\n",
+      "revId": "3fb7c17d102d36ed9cea9a458c7e3966dac21ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "728624b1_1c90792c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/IncludeRefContainer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-23T14:41:26Z",
+      "side": 1,
+      "message": "In case you didn\u0027t know about it, there is a trace system in Eclipse that allows you wrap such sysouts in a boolean that allows you to leave this debug statements in the code not commented out.\n\ne.g. add this to the class:\n\n  private static boolean DEBUG \u003d Boolean.parseBoolean(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + \"/debug/include_presentation\")); //$NON-NLS-1$\n  \nand then in the .options file in the root of the project add a couple of lines like this:\n\n  # Enables debug information for Includes node presentation in CView and Navigator View\n  org.eclipse.cdt.ui/debug/include_presentation\u003dfalse\n  \nSee https://help.eclipse.org/latest/topic/org.eclipse.platform.doc.isv/reference/misc/runtime-options.html#osgidebug and https://wiki.eclipse.org/FAQ_How_do_I_use_the_platform_debug_tracing_facility\n\nMarking this as resolved as there is nothing that needs to be done.",
+      "revId": "3fb7c17d102d36ed9cea9a458c7e3966dac21ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b94c69a_6f6bedc4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/IncludeReferenceProxy.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-23T14:41:26Z",
+      "side": 1,
+      "message": "Based on the commented out assert, I guess my comment was incorrect? If so, lets remove the commented out assertion.",
+      "revId": "3fb7c17d102d36ed9cea9a458c7e3966dac21ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6a718345_4f1b2cc5",
@@ -31,6 +82,24 @@
       "writtenOn": "2022-06-22T15:24:15Z",
       "side": 1,
       "message": "This has a neat side effect - you can see how many times you have run the action: \n\n.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.cdt.ui.prefs:org.eclipse.cdt.ui.cview.ForceRefresh\u003d2",
+      "revId": "3fb7c17d102d36ed9cea9a458c7e3966dac21ab8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b5159aae_8e603ab4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/PreferenceConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 841,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-23T14:41:26Z",
+      "side": 1,
+      "message": "Marking resolved.",
+      "parentUuid": "6a718345_4f1b2cc5",
       "revId": "3fb7c17d102d36ed9cea9a458c7e3966dac21ab8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }

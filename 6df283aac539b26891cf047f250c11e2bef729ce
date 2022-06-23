@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7c8d045e_89f22a77",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:26:57Z",
+      "side": 1,
+      "message": "docker internal core is not exposed to CDT.  Maybe this needs to be exposed via Docker UI wrapping the DefaultImagePullProgressHandler.",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "adac310f_48a91c25",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:26:57Z",
+      "side": 1,
+      "message": "Do you warn or have an informational message that lets the user know you will be pulling the image because it is not found?",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e215a7b4_8d8444fb",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:26:57Z",
+      "side": 1,
+      "message": "Why do you use the ManagedBuildCorePlugin to log?  It should be the DockerLaunchUIPlugin or the CDT Docker Launcher plug-in.",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b62233e_e8f7f548",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:26:57Z",
+      "side": 1,
+      "message": "I\u0027m wondering if it might be better to do the pull in a separate thread and have this job poll and allow a user to cancel if the pull is taking too long.  If the pull cannot be cancelled perhaps just let it go in the background and keep track that it is being pulled in case the user tries again.",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7a0763d2_9778c696",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/messages.properties",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:26:57Z",
+      "side": 1,
+      "message": "typo",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "13c33f4b_15b83bf6",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-23T07:24:37Z",
+      "side": 1,
+      "message": "So your suggestion is to expose this in Linuxtools?",
+      "parentUuid": "7c8d045e_89f22a77",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "adac310f_48a91c25",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
         "patchSetId": 2
@@ -31,6 +49,24 @@
       "writtenOn": "2022-06-23T00:26:57Z",
       "side": 1,
       "message": "Do you warn or have an informational message that lets the user know you will be pulling the image because it is not found?",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c3ac1770_a9236515",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-23T07:24:37Z",
+      "side": 1,
+      "message": "No, not really. I thought about it, and didn\u0027t come up with a good solution. The user can cancel the download in the Progress-Window. Admittedly this doesn\u0027t work very well, as there are multiple tiggers that require downloading the image.\nWhat do you think about adding a \"Download image if necessary\"-Option. I\u0027d set it to true by default, as I assume that is what most people want (and how `docker run` works.)",
+      "parentUuid": "adac310f_48a91c25",
       "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
@@ -54,6 +90,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "a45ae154_6fa7a0d3",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 317,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-23T07:24:37Z",
+      "side": 1,
+      "message": "C\u0026P-Error. :(",
+      "parentUuid": "e215a7b4_8d8444fb",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "7b62233e_e8f7f548",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
         "patchSetId": 2
@@ -65,6 +119,24 @@
       "writtenOn": "2022-06-23T00:26:57Z",
       "side": 1,
       "message": "I\u0027m wondering if it might be better to do the pull in a separate thread and have this job poll and allow a user to cancel if the pull is taking too long.  If the pull cannot be cancelled perhaps just let it go in the background and keep track that it is being pulled in case the user tries again.",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f8b1dc74_b429c08a",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-23T07:24:37Z",
+      "side": 1,
+      "message": "The pulls do have their own tasks in the Progress-Window. But I don\u0027t get a InterruptedException if I cancel them. I do think this is a linux-tools-issue. \n\nAS for putting it in an extra Job. Should I put this into a Job within CDT or should I extract the Job from, e.g. PullImageCommandHandler and expose it in linuxtools? I like the latter, because having a Job that pulls stuff seems like something that is reusable.",
+      "parentUuid": "7b62233e_e8f7f548",
       "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },

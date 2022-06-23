@@ -18,6 +18,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "1276457b_841937e9",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-23T07:25:00Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d5c4d219_34dcb262",
+      "revId": "7ca0d2e5d1bf96c3fabc1c269ee1da72d6647af8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "01edb440_b69b5ab2",
@@ -37,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "83b5aa6d_1f168fb0",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-23T07:25:00Z",
+      "side": 1,
+      "message": "Because I messed up. Probably during some rebase. :-( This should of course be `setImageId(nimg)`.",
+      "parentUuid": "01edb440_b69b5ab2",
+      "revId": "7ca0d2e5d1bf96c3fabc1c269ee1da72d6647af8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "3ada0890_8bc95dc8",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerPropertyTab.java",
         "patchSetId": 2
@@ -48,6 +84,24 @@
       "writtenOn": "2022-06-23T00:35:26Z",
       "side": 1,
       "message": "this should generate a message of some sort to let user know image does not exist and will be pulled if user continues.",
+      "revId": "7ca0d2e5d1bf96c3fabc1c269ee1da72d6647af8",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6f44b2ab_c17ee780",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerPropertyTab.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-23T07:25:00Z",
+      "side": 1,
+      "message": "In combination with a checkbox whether to automatically pull images: Do you think a a warning-tooltip is the right way to go?",
+      "parentUuid": "3ada0890_8bc95dc8",
       "revId": "7ca0d2e5d1bf96c3fabc1c269ee1da72d6647af8",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }

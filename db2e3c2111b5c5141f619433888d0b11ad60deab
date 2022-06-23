@@ -33,6 +33,23 @@
       "message": "Hi Jeff,\n\nit would be awesome if you could have a glance at this and give me a first round of feedback. Currently I have some time at my disposal, but that can change quickly. :-)\n\nMorty",
       "revId": "db2e3c2111b5c5141f619433888d0b11ad60deab",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "35fe394c_0a1651eb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:02:49Z",
+      "side": 1,
+      "message": "Looks good.",
+      "revId": "db2e3c2111b5c5141f619433888d0b11ad60deab",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

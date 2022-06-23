@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dfd97243_165bc09b",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/internal/docker/launcher/ContainerPropertyVolumesModel.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-06-23T00:28:58Z",
+      "side": 1,
+      "message": "might as well prefix with \"this\" since other variables still have \"this\".\n\nOther than that, looks good.",
+      "revId": "3dfba043bc964099a17a3d89a496b7b7d5935387",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

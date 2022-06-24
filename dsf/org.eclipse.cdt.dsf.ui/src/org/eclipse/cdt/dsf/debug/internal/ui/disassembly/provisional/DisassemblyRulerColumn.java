@@ -73,18 +73,12 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 */
 	class InternalListener implements IViewportListener, ITextListener, ISelectionChangedListener {
 
-		/*
-		 * @see IViewportListener#viewportChanged(int)
-		 */
 		@Override
 		public void viewportChanged(int verticalPosition) {
 			if (verticalPosition != fScrollPos)
 				redraw();
 		}
 
-		/*
-		 * @see ITextListener#textChanged(TextEvent)
-		 */
 		@Override
 		public void textChanged(TextEvent event) {
 
@@ -102,9 +96,6 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			postRedraw();
@@ -125,9 +116,6 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		/** The auto scroll direction */
 		private int fAutoScrollDirection;
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseUp(MouseEvent event) {
 			// see bug 45700
@@ -138,9 +126,6 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseDown(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
@@ -150,9 +135,6 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseDoubleClick(MouseEvent event) {
 			fParentRuler.setLocationOfLastMouseButtonActivity(event.x, event.y);
@@ -160,9 +142,6 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 			stopAutoScroll();
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseMove(MouseEvent event) {
 			if (!autoScroll(event)) {
@@ -171,23 +150,14 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseEnter(MouseEvent event) {
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseExit(MouseEvent event) {
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
-		 */
 		@Override
 		public void mouseHover(MouseEvent event) {
 		}
@@ -478,17 +448,11 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		return DsfUIPlugin.getDefault().getPreferenceStore();
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return fCanvas;
 	}
 
-	/*
-	 * @see IVerticalRuleColumnr#getWidth
-	 */
 	@Override
 	public int getWidth() {
 		return fIndentation[0];
@@ -587,9 +551,6 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#createControl(CompositeRuler, Composite)
-	 */
 	@Override
 	public Control createControl(CompositeRuler parentRuler, Composite parentControl) {
 
@@ -977,9 +938,6 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#redraw()
-	 */
 	@Override
 	public void redraw() {
 
@@ -995,16 +953,10 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		}
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#setModel(IAnnotationModel)
-	 */
 	@Override
 	public void setModel(IAnnotationModel model) {
 	}
 
-	/*
-	 * @see IVerticalRulerColumn#setFont(Font)
-	 */
 	@Override
 	public void setFont(Font font) {
 		fFont = font;

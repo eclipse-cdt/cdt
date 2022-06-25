@@ -893,9 +893,8 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		int widgetBaseline = fCachedTextWidget.getBaseline();
 		FontMetrics fm = gc.getFontMetrics();
 		int fontBaseline = fm.getAscent() + fm.getLeading();
-		Assert.isTrue(widgetBaseline >= fontBaseline);
 		int baselineBias = widgetBaseline - fontBaseline;
-		return baselineBias;
+		return Math.max(0, baselineBias);
 	}
 
 	/**

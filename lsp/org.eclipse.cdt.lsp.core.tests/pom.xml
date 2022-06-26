@@ -34,7 +34,7 @@
                     <useUIHarness>true</useUIHarness>
                     <useUIThread>true</useUIThread>
                     <argLine>${tycho.testArgLine} ${base.ui.test.vmargs}</argLine>
-					<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
+					<appArgLine>-pluginCustomization ${basedir}/../../releng/disable_intro_in_tests.ini</appArgLine>
                 <!-- else, if you have no UI tests, use this block -->
                     <!-- <useUIHarness>false</useUIHarness>
                     <useUIThread>false</useUIThread>

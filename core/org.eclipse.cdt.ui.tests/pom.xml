@@ -75,7 +75,7 @@
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>true</useUIThread>
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} ${extra.vmargs.indexer.timeout} ${extra.vmargs.displayhelper.timeoutmultipler}</argLine>
-					<appArgLine>-pluginCustomization ${basedir}/../../disable_intro_in_tests.ini</appArgLine>
+					<appArgLine>-pluginCustomization ${basedir}/../../releng/disable_intro_in_tests.ini</appArgLine>
 					<excludes>
 						<!-- The default Excludes omits nested static classes, this reenables them.
 							See org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr.ArrayTests.NonIndexingTests

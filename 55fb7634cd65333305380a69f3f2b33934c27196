@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "8f3eea5f_39e12fda",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-27T21:04:04Z",
+      "side": 1,
+      "message": "This looks good to me. \n\n@Martin - as a number of the TODOs in your previous submissions are fixed with Mat\u0027s change do you want to have a look?\n\n@Mat - You can submit when ready (once Martin has had a chance to look). ",
+      "revId": "55fb7634cd65333305380a69f3f2b33934c27196",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "19579ff3_1ac255d7",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-27T21:04:04Z",
+      "side": 1,
+      "message": "forRemove\u003dtrue perhaps? (same for other deprecations)",
+      "revId": "55fb7634cd65333305380a69f3f2b33934c27196",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

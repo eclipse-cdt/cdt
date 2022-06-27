@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "499e8eaf_4a202817",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-27T20:19:24Z",
+      "side": 1,
+      "message": "This looks good. A couple of minor fixes needed.\n\nMy only other concern is the handling of 64-bit unsigned values. I haven\u0027t tried to test this, but because you are using BigInteger in that case, but later calling longValue, the unsignedness of the value is gone.",
+      "revId": "84ffc582e65fcdb76044015bdfe507690cadfaa2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "64d60bfb_59980a8c",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1361,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-27T20:19:24Z",
+      "side": 1,
+      "message": "The short int case (size 2) is missing here. It isn\u0027t used today in your calls to narrowNumberValue though.",
+      "revId": "84ffc582e65fcdb76044015bdfe507690cadfaa2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03575d27_c97d4887",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1402,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-27T20:19:24Z",
+      "side": 1,
+      "message": "Pretty sure that an L is missing here? As written now this code is a no-op as it is equivalent to longVal \u0026 -1, which means that maskedVal32 is always \u003d\u003d longVal.",
+      "range": {
+        "startLine": 1402,
+        "startChar": 43,
+        "endLine": 1402,
+        "endChar": 44
+      },
+      "revId": "84ffc582e65fcdb76044015bdfe507690cadfaa2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

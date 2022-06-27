@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7f202ca8_64a02307",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-27T12:35:16Z",
+      "side": 1,
+      "message": "Added a checkbox whether to pull stuff. Had to bump the version so this might need a discussion.",
+      "revId": "af01b67459b4ecf2f1fe25f0e583f01a25bf9290",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -38,6 +38,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "319c8323_6c6300b3",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-27T12:35:16Z",
+      "side": 1,
+      "message": "Using getDefaultPullImageProgressHandler now",
+      "parentUuid": "13c33f4b_15b83bf6",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "adac310f_48a91c25",
         "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
         "patchSetId": 2
@@ -67,6 +85,24 @@
       "side": 1,
       "message": "No, not really. I thought about it, and didn\u0027t come up with a good solution. The user can cancel the download in the Progress-Window. Admittedly this doesn\u0027t work very well, as there are multiple tiggers that require downloading the image.\nWhat do you think about adding a \"Download image if necessary\"-Option. I\u0027d set it to true by default, as I assume that is what most people want (and how `docker run` works.)",
       "parentUuid": "adac310f_48a91c25",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0fd9829_59e7c3ba",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 302,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-27T12:35:16Z",
+      "side": 1,
+      "message": "See https://github.com/eclipse-linuxtools/org.eclipse.linuxtools/pull/70",
+      "parentUuid": "c3ac1770_a9236515",
       "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
@@ -137,6 +173,24 @@
       "side": 1,
       "message": "The pulls do have their own tasks in the Progress-Window. But I don\u0027t get a InterruptedException if I cancel them. I do think this is a linux-tools-issue. \n\nAS for putting it in an extra Job. Should I put this into a Job within CDT or should I extract the Job from, e.g. PullImageCommandHandler and expose it in linuxtools? I like the latter, because having a Job that pulls stuff seems like something that is reusable.",
       "parentUuid": "7b62233e_e8f7f548",
+      "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "58b9ea15_8c8b3a8d",
+        "filename": "launch/org.eclipse.cdt.docker.launcher/src/org/eclipse/cdt/docker/launcher/ContainerCommandLauncher.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-27T12:35:16Z",
+      "side": 1,
+      "message": "Once  https://github.com/eclipse-linuxtools/org.eclipse.linuxtools/pull/70 is merged I can fix this.",
+      "parentUuid": "f8b1dc74_b429c08a",
       "revId": "6df283aac539b26891cf047f250c11e2bef729ce",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },

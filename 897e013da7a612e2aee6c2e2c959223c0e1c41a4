@@ -16,6 +16,24 @@
       "message": "Quick FYI - because Linuxtools now requires Java 17, CDT is not currently tracking latest Linuxtools. See https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/194400",
       "revId": "897e013da7a612e2aee6c2e2c959223c0e1c41a4",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7d2b2845_05b10a4a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-27T14:17:59Z",
+      "side": 1,
+      "message": "Thanks for the info. It\u0027s not strictly necessary, but as Jeff suggested that cancelling a pull should be an option I started fixing that and then messed when staging the code. :)",
+      "parentUuid": "e3c5e88f_16ef5e14",
+      "revId": "897e013da7a612e2aee6c2e2c959223c0e1c41a4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

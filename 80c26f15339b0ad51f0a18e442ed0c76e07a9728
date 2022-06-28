@@ -55,6 +55,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "85a396db_3a324396",
+        "filename": "core/org.eclipse.cdt.ui.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-28T04:55:57Z",
+      "side": 1,
+      "message": "No, I needed that for the testcases.",
+      "parentUuid": "da70b182_aecdd845",
+      "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "bbef2e6e_54b7e716",
         "filename": "core/org.eclipse.cdt.ui/plugin.xml",
         "patchSetId": 5
@@ -107,6 +125,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "110dec5d_09e9b81a",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/IncludeGroupAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-28T04:55:57Z",
+      "side": 1,
+      "message": "Added it. Will show up with the next push.",
+      "parentUuid": "e84ce843_972895cc",
+      "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "854d94d6_20eed18b",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/IncludeGroupAction.java",
         "patchSetId": 5
@@ -136,6 +172,24 @@
       "side": 1,
       "message": "Done in PS6. Please let me know if you think that is a good solution or not.",
       "parentUuid": "854d94d6_20eed18b",
+      "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5b048d6f_3ade069c",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/IncludeGroupAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-28T04:55:57Z",
+      "side": 1,
+      "message": "Yes, I\u0027m happy with that - in theory ;). I\u0027ve seen other places that looked a bit like random experiments to update screens. Thus I\u0027d prefer to have that as a helper-method more globally (updateAllViews() or something) that can be called from all those places.",
+      "parentUuid": "61034d54_ffab77c8",
       "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
@@ -188,6 +242,24 @@
       "writtenOn": "2022-06-22T15:18:53Z",
       "side": 1,
       "message": "In my first proof of concept I added this todo, it still needs resolving. I can take a look at it, but if you have looked at how to resolve these todos, please let me know what you have considered before I try something.\n\nSame thing for other TODOs farther down.",
+      "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e58f6996_ee8c8fe4",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-28T04:55:57Z",
+      "side": 1,
+      "message": "Ah ok. I\u0027ve seen quite a few todo that seemed like \"This should be looked at, but it works for now\", so I kind of ignored them. I\u0027ll look into it.",
+      "parentUuid": "a443ad40_cbf484e1",
       "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }

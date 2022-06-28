@@ -16,6 +16,24 @@
       "message": "This TODO comment was removed, however the device handling is not quite right on Windows.\n\nIn compact, for example I see trees that present like this:\n\n + Includes\n   + C:/msys64/mingw64\n     + C:include\n     + C:lib/gcc/x86_64-w64-mingw32/11.3.0\n       + C:include\n       + C:include-fixed\n       \nThe C: (device) looks like it needs to be removed when the paths get chopped up.\n       \nFor comparison, in List mode:\n\n + Includes\n   + C:/msys64/mingw64/include\n   + C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/11.3.0/include\n   + C:/msys64/mingw64/lib/gcc/x86_64-w64-mingw32/11.3.0/include-fixed",
       "revId": "17556ee76af5a171a451cc26c37fb1eee8cd90cb",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "43d2d5c8_de8ba8f1",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/IncludeRefContainer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-28T04:55:57Z",
+      "side": 1,
+      "message": "Windows testing was superficial. There were just too many open issue with deprecations and such, that I new that this would go at least another round. I\u0027ll write testcases for that. BTW: Is it possible to run this stuff on a windows-CI. Windows behaves slightly different in terms of paths, with is a PITA.",
+      "parentUuid": "e1b38044_36658dcc",
+      "revId": "17556ee76af5a171a451cc26c37fb1eee8cd90cb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

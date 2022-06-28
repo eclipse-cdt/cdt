@@ -89,6 +89,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "419f94ce_144acd41",
+        "filename": "core/org.eclipse.cdt.ui.tests/META-INF/MANIFEST.MF",
+        "patchSetId": 5
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-28T15:45:49Z",
+      "side": 1,
+      "message": "Thanks for adding tests for this!",
+      "parentUuid": "d3875acf_f7e1eedf",
+      "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bbef2e6e_54b7e716",
@@ -159,6 +177,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "241006ef_f5869294",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/IncludeGroupAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-28T15:45:49Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "110dec5d_09e9b81a",
+      "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "854d94d6_20eed18b",
@@ -208,6 +244,24 @@
       "side": 1,
       "message": "Yes, I\u0027m happy with that - in theory ;). I\u0027ve seen other places that looked a bit like random experiments to update screens. Thus I\u0027d prefer to have that as a helper-method more globally (updateAllViews() or something) that can be called from all those places.",
       "parentUuid": "61034d54_ffab77c8",
+      "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "34e788b7_de542217",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/actions/IncludeGroupAction.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-28T15:45:49Z",
+      "side": 1,
+      "message": "Me too - not sure where to put that though.",
+      "parentUuid": "5b048d6f_3ade069c",
       "revId": "80c26f15339b0ad51f0a18e442ed0c76e07a9728",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },

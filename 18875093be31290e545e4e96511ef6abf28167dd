@@ -39,6 +39,30 @@
       },
       "revId": "18875093be31290e545e4e96511ef6abf28167dd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "20ef5a7b_4b1c64b5",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1378,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-06-28T23:41:57Z",
+      "side": 1,
+      "message": "True, I don\u0027t think there are any int sizes between 5 and 7 bytes inclusive. I guess this was handling an imagined case. The reworked code would still handle it correctly, but does so naturally (without complicating the code) so I think it\u0027s much better - see what you think.",
+      "parentUuid": "296e7211_df533b5f",
+      "range": {
+        "startLine": 1378,
+        "startChar": 32,
+        "endLine": 1378,
+        "endChar": 56
+      },
+      "revId": "18875093be31290e545e4e96511ef6abf28167dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

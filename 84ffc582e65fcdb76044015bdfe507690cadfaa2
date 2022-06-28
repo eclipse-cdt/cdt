@@ -89,6 +89,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "36d3fe42_ab05ecf2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1361,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-06-28T23:41:57Z",
+      "side": 1,
+      "message": "You\u0027re totally correct, I had a brain fart. The value still needs to be masked to the correct size, regardless of what type we use to represent it on the Java side. I\u0027ve fixed that now and reworked the code a bit in the process, which I think has made an improvement.",
+      "parentUuid": "8ee2765b_9b0f43f2",
+      "revId": "84ffc582e65fcdb76044015bdfe507690cadfaa2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "03575d27_c97d4887",

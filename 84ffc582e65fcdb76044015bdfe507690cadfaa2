@@ -18,6 +18,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "0396faf1_a4182bf2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-06-28T07:32:45Z",
+      "side": 1,
+      "message": "I was uneasy about using BigInteger but it would be nice to handle all possible sizes. For the builtins that I\u0027ve implemented, they only ever narrow to a signed type so this is not an immediate concern, but there is probably older code using longValue to get the value. It could never have worked previously for too-large values, however.",
+      "parentUuid": "499e8eaf_4a202817",
+      "revId": "84ffc582e65fcdb76044015bdfe507690cadfaa2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "64d60bfb_59980a8c",
@@ -35,6 +53,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "d3002265_f4eb3f14",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1361,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-06-28T07:32:45Z",
+      "side": 1,
+      "message": "The sizes here don\u0027t necessarily correspond to C sizes, it\u0027s checking whether we can keep the value in a particular Java type (eg for size \u003c\u003d 4, we can use an Integer unless it\u0027s unsigned, for size \u003c\u003d 8 we can use a long). So we don\u0027t need a specific check for short (assuming we always keep the value itself in an Integer). I\u0027ve added a comment to explain this a bit better. However, I can also make a slight improvement which I noticed due to your comment: we can use Integer if the type is signed, or if its size is less than 4 (similarly for Long, below, with size 8).",
+      "parentUuid": "64d60bfb_59980a8c",
+      "revId": "84ffc582e65fcdb76044015bdfe507690cadfaa2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "03575d27_c97d4887",
@@ -48,6 +84,30 @@
       "writtenOn": "2022-06-27T20:19:24Z",
       "side": 1,
       "message": "Pretty sure that an L is missing here? As written now this code is a no-op as it is equivalent to longVal \u0026 -1, which means that maskedVal32 is always \u003d\u003d longVal.",
+      "range": {
+        "startLine": 1402,
+        "startChar": 43,
+        "endLine": 1402,
+        "endChar": 44
+      },
+      "revId": "84ffc582e65fcdb76044015bdfe507690cadfaa2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "eaa32fb8_c533eed3",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1402,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-06-28T07:32:45Z",
+      "side": 1,
+      "message": "Yep, good catch! Thanks",
+      "parentUuid": "03575d27_c97d4887",
       "range": {
         "startLine": 1402,
         "startChar": 43,

@@ -16,6 +16,29 @@
       "message": "Hopefully resolved with rebase.",
       "revId": "18875093be31290e545e4e96511ef6abf28167dd",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "296e7211_df533b5f",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1378,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-28T15:28:05Z",
+      "side": 1,
+      "message": "I find this interesting - because when I reviewed the earlier patchset I wondered why the test on line 1377 wasn\u0027t \"sizeToType.size \u003d\u003d 8\", but I guess I don\u0027t  understand fully. With this test it implies that sizes of 5, 6, or 7 are permitted/exist too (as \u003c\u003d4 is fully handled by if block above). However I thought that only 1, 2, 4, 8, and 16 were real sizes here.",
+      "range": {
+        "startLine": 1378,
+        "startChar": 32,
+        "endLine": 1378,
+        "endChar": 56
+      },
+      "revId": "18875093be31290e545e4e96511ef6abf28167dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

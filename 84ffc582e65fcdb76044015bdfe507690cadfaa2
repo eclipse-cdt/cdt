@@ -71,6 +71,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8ee2765b_9b0f43f2",
+        "filename": "core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/cpp/semantics/Conversions.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1361,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-28T15:28:05Z",
+      "side": 1,
+      "message": "I don\u0027t think I understand here yet.\n\nIf the sizeToType.size \u003d\u003d 2 and the input num.intValue() \u003d\u003d -268431361 (0xf0000fff) then this method will return -268431361, but if it were narrowed to 2-bytes it would return 4095.\n\nIn the cases where (num.intValue() | 0xffff0000) \u003d\u003d num.intValue() this code is fine.",
+      "parentUuid": "d3002265_f4eb3f14",
+      "revId": "84ffc582e65fcdb76044015bdfe507690cadfaa2",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "03575d27_c97d4887",

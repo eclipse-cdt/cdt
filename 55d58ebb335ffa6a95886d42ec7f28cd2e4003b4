@@ -70,6 +70,24 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "27a70925_455626a5",
+        "filename": "core/org.eclipse.cdt.core.tests/misc/org/eclipse/cdt/core/build/TestICBuildConfiguration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 6211
+      },
+      "writtenOn": "2022-06-28T09:00:26Z",
+      "side": 1,
+      "message": "Hi Jonah,\nI hope the copyright notice I added is adequate.\n\nI wondered if you had any other comments?\n\nThere is an an outstanding test to add, but I\u0027m not really sure how best to create the test project to drive that to give me a useable ICBuildConfiguration. Or myabe a different test approach is required.",
+      "parentUuid": "8bae9e19_e46267a2",
+      "revId": "55d58ebb335ffa6a95886d42ec7f28cd2e4003b4",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e28443f6_abcef776",

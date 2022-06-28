@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c8df4b5_0e894049",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 164318
+      },
+      "writtenOn": "2022-06-28T07:50:25Z",
+      "side": 1,
+      "message": "Hopefully resolved with rebase.",
+      "revId": "18875093be31290e545e4e96511ef6abf28167dd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

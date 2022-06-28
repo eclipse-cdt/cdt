@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ecd54f4d_12ad8e6a",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-06-28T15:10:35Z",
+      "side": 1,
+      "message": "This seems fine to me. Do you think the reason that the code reuses the launcher was an attempt at efficiency, or something else. If it was efficiency only, then I see no reason to not put this change in for CDT 11.",
+      "revId": "f39661e5f43cff3c45daf428918e1a0dbed7582a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4bee542d_dc22ccab",
+        "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-29T07:45:35Z",
+      "side": 1,
+      "message": "Jonah: Please have a close look at these parts. I change the logic a bit in hopes of making it easier to understand. The main change here is that decorateText is now always called. I\u0027m not sure whether it was intentional, that it was not called, if the project matched. I also didn\u0027t fully understand how to reproduce bug 192707 at a glance. I can have a second look at it if necessary. Having a testcase would be nice. ;)",
+      "revId": "84b40062b0151364eaba160d0312766aafd1fabd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

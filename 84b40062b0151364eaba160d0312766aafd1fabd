@@ -3,6 +3,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "795b5360_fb352642",
+        "filename": "core/org.eclipse.cdt.ui/plugin.properties",
+        "patchSetId": 8
+      },
+      "lineNbr": 709,
+      "author": {
+        "id": 301449
+      },
+      "writtenOn": "2022-06-29T07:48:08Z",
+      "side": 1,
+      "message": "Jonah: Should this maybe renamed to mixed? I just named it \"smart\" because I didn\u0027t come up with a better name.",
+      "revId": "84b40062b0151364eaba160d0312766aafd1fabd",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "4bee542d_dc22ccab",
         "filename": "core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/cview/CViewLabelProvider.java",
         "patchSetId": 8

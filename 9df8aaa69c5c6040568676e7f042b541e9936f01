@@ -16,6 +16,24 @@
       "message": "This is definitely a good thing for CDT 11!",
       "revId": "9df8aaa69c5c6040568676e7f042b541e9936f01",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "962e0885_ba3d864d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-30T08:41:08Z",
+      "side": 1,
+      "message": "So, based on your +2, is master ready for CDT11 now?",
+      "parentUuid": "7863e4f4_53dc6c13",
+      "revId": "9df8aaa69c5c6040568676e7f042b541e9936f01",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

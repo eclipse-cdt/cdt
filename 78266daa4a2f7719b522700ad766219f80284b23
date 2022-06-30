@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "1bc4235c_07a985f3",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-06-30T09:37:14Z",
+      "side": 1,
+      "message": "I think this is an effect of the dark theme fixes that we have done in the past releases, but I can\u0027t find any change in the BuildConsolePage class that is related to it. Might it be that when closing eclipse, the colors are restored to some default state and this did not happen when it wasn\u0027t using a custom color theme?\nAnyway, it feels right to check if the widget is disposed or not.",
+      "revId": "78266daa4a2f7719b522700ad766219f80284b23",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

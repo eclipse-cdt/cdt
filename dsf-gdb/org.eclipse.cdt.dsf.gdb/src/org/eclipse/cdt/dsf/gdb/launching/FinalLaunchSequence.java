@@ -660,13 +660,18 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	@Execute
 	public void stepAttachRemoteToDebugger(final RequestMonitor requestMonitor) {
 		if (fGDBBackend.getIsAttachSession() && fGDBBackend.getSessionType() == SessionType.REMOTE) {
-			IProcessDMContext processContext = fProcService.createProcessContext(fCommandControl.getContext(),
-					MIProcesses.UNKNOWN_PROCESS_ID);
-			fProcService.attachDebuggerToProcess(processContext,
-					new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
-		} else {
-			requestMonitor.done();
+			DataRequestMonitor<Boolean> rm = new DataRequestMonitor<>(getExecutor(), null);
+			fProcService.canDetachDebuggerFromProcess(null, rm);
+
+			if (rm.getData()) {
+				IProcessDMContext processContext = fProcService.createProcessContext(fCommandControl.getContext(),
+						MIProcesses.UNKNOWN_PROCESS_ID);
+				fProcService.attachDebuggerToProcess(processContext,
+						new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
+				return;
+			}
 		}
+		requestMonitor.done();
 	}
 
 	/**

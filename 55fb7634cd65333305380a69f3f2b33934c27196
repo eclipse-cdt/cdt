@@ -35,6 +35,23 @@
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "dc13dde6_298c8b6d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2022-06-30T16:32:41Z",
+      "side": 1,
+      "message": "Thanks both for the review :-)",
+      "revId": "55fb7634cd65333305380a69f3f2b33934c27196",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "19579ff3_1ac255d7",
@@ -48,6 +65,24 @@
       "writtenOn": "2022-06-27T21:04:04Z",
       "side": 1,
       "message": "forRemove\u003dtrue perhaps? (same for other deprecations)",
+      "revId": "55fb7634cd65333305380a69f3f2b33934c27196",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6c5707dd_7a08c3b4",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2022-06-30T16:32:41Z",
+      "side": 1,
+      "message": "I was hesitant to mark as such since the other deprecated method wasn\u0027t. We can do it in a separate change if there is consensus to do so, I\u0027ll file a separate bug.",
+      "parentUuid": "19579ff3_1ac255d7",
       "revId": "55fb7634cd65333305380a69f3f2b33934c27196",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }

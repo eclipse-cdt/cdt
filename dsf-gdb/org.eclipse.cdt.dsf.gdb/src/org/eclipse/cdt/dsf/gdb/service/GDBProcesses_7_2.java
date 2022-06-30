@@ -285,19 +285,13 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 			// NOTE: when we support multi-process in all-stop mode,
 			// we will need to interrupt the target to when doing the attach.
 			int numConnected = getNumConnected();
-			switch (sessionType) {
-			case REMOTE:
-				// In remote session already one process is connected
-				// Bug 528145
-				return numConnected == 1;
-			case LOCAL:
-				return numConnected == 0;
 
-			default:
-				break;
+			if (numConnected == 1 && sessionType == SessionType.REMOTE) {
+				// Bug 528145: Special case for remote sessions with an existing connection.
+				return true;
 			}
 
-			return false;
+			return numConnected == 0;
 		}
 
 		return true;
@@ -333,38 +327,38 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 							public void execute(final RequestMonitor rm) {
 								// The remote session is already connected to the process
 								// Bug 528145
-								if (fBackend.getSessionType() == SessionType.REMOTE) {
+								if (fBackend.getSessionType() == SessionType.REMOTE
+										&& doCanDetachDebuggerFromProcess()) {
 									rm.done();
-								} else {
-									getProcessesBeingDebugged(procCtx,
-											new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
-												@Override
-												protected void handleSuccess() {
-													assert getData() != null;
-
-													boolean found = false;
-													for (IDMContext dmc : getData()) {
-														IProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc,
-																IProcessDMContext.class);
-														if (procCtx.equals(procDmc)) {
-															found = true;
-														}
-													}
-													if (found) {
-														// abort the sequence
-														Status failedStatus = new Status(IStatus.ERROR,
-																GdbPlugin.PLUGIN_ID, REQUEST_FAILED,
-																MessageFormat.format(
-																		Messages.Already_connected_process_err,
-																		((IMIProcessDMContext) procCtx).getProcId()),
-																null);
-														rm.done(failedStatus);
-														return;
-													}
-													super.handleSuccess();
-												}
-											});
+									return;
 								}
+
+								getProcessesBeingDebugged(procCtx, new ImmediateDataRequestMonitor<IDMContext[]>(rm) {
+									@Override
+									protected void handleSuccess() {
+										assert getData() != null;
+
+										boolean found = false;
+										for (IDMContext dmc : getData()) {
+											IProcessDMContext procDmc = DMContexts.getAncestorOfType(dmc,
+													IProcessDMContext.class);
+											if (procCtx.equals(procDmc)) {
+												found = true;
+											}
+										}
+										if (found) {
+											// abort the sequence
+											Status failedStatus = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+													REQUEST_FAILED,
+													MessageFormat.format(Messages.Already_connected_process_err,
+															((IMIProcessDMContext) procCtx).getProcId()),
+													null);
+											rm.done(failedStatus);
+											return;
+										}
+										super.handleSuccess();
+									}
+								});
 							}
 						},
 
@@ -477,24 +471,25 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 							public void execute(RequestMonitor rm) {
 								// This call end the current attach to the gdbserver in remote session
 								// Bug 528145
-								if (fBackend.getSessionType() == SessionType.REMOTE) {
+								if (fBackend.getSessionType() == SessionType.REMOTE
+										&& doCanDetachDebuggerFromProcess()) {
 									rm.done();
-								} else {
-									// For non-stop mode, we do a non-interrupting attach
-									// Bug 333284
-									boolean shouldInterrupt = true;
-									IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
-									if (runControl != null && runControl.getRunMode() == MIRunMode.NON_STOP) {
-										shouldInterrupt = false;
-									}
-
-									boolean extraNewline = targetAttachRequiresTrailingNewline();
-									ICommand<MIInfo> miTargetAttach = fCommandFactory.createMITargetAttach(
-											fContainerDmc, ((IMIProcessDMContext) procCtx).getProcId(), shouldInterrupt,
-											extraNewline);
-									fCommandControl.queueCommand(miTargetAttach,
-											new ImmediateDataRequestMonitor<MIInfo>(rm));
+									return;
 								}
+
+								// For non-stop mode, we do a non-interrupting attach
+								// Bug 333284
+								boolean shouldInterrupt = true;
+								IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
+								if (runControl != null && runControl.getRunMode() == MIRunMode.NON_STOP) {
+									shouldInterrupt = false;
+								}
+
+								boolean extraNewline = targetAttachRequiresTrailingNewline();
+								ICommand<MIInfo> miTargetAttach = fCommandFactory.createMITargetAttach(fContainerDmc,
+										((IMIProcessDMContext) procCtx).getProcId(), shouldInterrupt, extraNewline);
+								fCommandControl.queueCommand(miTargetAttach,
+										new ImmediateDataRequestMonitor<MIInfo>(rm));
 							}
 
 						},

@@ -170,83 +170,97 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		usercomp.setLayoutData(gd);
 
-		enableButton = new Button(usercomp, SWT.CHECK);
-		enableButton.setText(Messages.ContainerPropertyTab_Enable_Msg);
+		//Enable button
+		{
+			enableButton = new Button(usercomp, SWT.CHECK);
+			enableButton.setText(Messages.ContainerPropertyTab_Enable_Msg);
 
-		iCfg = getCfg();
-		iCfgd = getResDesc().getConfiguration();
+			iCfg = getCfg();
+			iCfgd = getResDesc().getConfiguration();
 
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 5;
-		enableButton.setLayoutData(gd);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 5;
+			enableButton.setLayoutData(gd);
+		}
+		// Connection
+		{
+			Label connectionSelectorLabel = new Label(usercomp, SWT.NULL);
+			connectionSelectorLabel.setText(Messages.ContainerTab_Connection_Selector_Label);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			connectionSelectorLabel.setLayoutData(gd);
 
-		Label connectionSelectorLabel = new Label(usercomp, SWT.NULL);
-		connectionSelectorLabel.setText(Messages.ContainerTab_Connection_Selector_Label);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		gd.grabExcessHorizontalSpace = false;
-		connectionSelectorLabel.setLayoutData(gd);
+			connectionSelector = new Combo(usercomp, SWT.BORDER | SWT.READ_ONLY);
+			connectionSelector.setToolTipText(Messages.ContainerTab_Connection_Selector_Tooltip);
+			initializeConnectionSelector();
+			connectionSelector.addModifyListener(connectionModifyListener);
+			// Following is a kludge so that on Linux the Combo is read-only but
+			// has a white background.
+			connectionSelector.addVerifyListener(new VerifyListener() {
+				@Override
+				public void verifyText(VerifyEvent e) {
+					e.doit = false;
+				}
+			});
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 3;
+			gd.grabExcessHorizontalSpace = true;
+			connectionSelector.setLayoutData(gd);
 
-		connectionSelector = new Combo(usercomp, SWT.BORDER | SWT.READ_ONLY);
-		connectionSelector.setToolTipText(Messages.ContainerTab_Connection_Selector_Tooltip);
-		initializeConnectionSelector();
-		connectionSelector.addModifyListener(connectionModifyListener);
-		// Following is a kludge so that on Linux the Combo is read-only but
-		// has a white background.
-		connectionSelector.addVerifyListener(new VerifyListener() {
-			@Override
-			public void verifyText(VerifyEvent e) {
-				e.doit = false;
-			}
-		});
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		gd.grabExcessHorizontalSpace = true;
-		connectionSelector.setLayoutData(gd);
+			Label label1 = new Label(usercomp, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			label1.setLayoutData(gd);
+		}
+		// Image selector
+		{
+			Label imageSelectorLabel = new Label(usercomp, SWT.NULL);
+			imageSelectorLabel.setText(Messages.ContainerTab_Image_Selector_Label);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 1;
+			imageSelectorLabel.setLayoutData(gd);
 
-		Label label1 = new Label(usercomp, SWT.NULL);
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		gd.grabExcessHorizontalSpace = false;
-		label1.setLayoutData(gd);
+			imageCombo = new Combo(usercomp, SWT.DROP_DOWN);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 3;
+			gd.grabExcessHorizontalSpace = true;
+			imageCombo.setLayoutData(gd);
 
-		Label imageSelectorLabel = new Label(usercomp, SWT.NULL);
-		imageSelectorLabel.setText(Messages.ContainerTab_Image_Selector_Label);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		connectionSelectorLabel.setLayoutData(gd);
+			Label label2 = new Label(usercomp, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			label2.setLayoutData(gd);
+			initializeImageCombo();
 
-		imageCombo = new Combo(usercomp, SWT.DROP_DOWN);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		gd.grabExcessHorizontalSpace = true;
-		imageCombo.setLayoutData(gd);
+			imageCombo.addSelectionListener(new SelectionListener() {
 
-		Label label2 = new Label(usercomp, SWT.NULL);
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		gd.grabExcessHorizontalSpace = false;
-		label2.setLayoutData(gd);
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					setImageId(imageCombo.getText());
+					model.setSelectedImage(displayedImages.get(imageCombo.getSelectionIndex()));
+				}
 
-		initializeImageCombo();
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
 
-		imageCombo.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setImageId(imageCombo.getText());
-				model.setSelectedImage(displayedImages.get(imageCombo.getSelectionIndex()));
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-
-		});
-
-		createVolumeSettingsContainer(usercomp);
-
+			});
+		}
+		// Volume
+		{
+			Label label = new Label(usercomp, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			label.setLayoutData(gd);
+			createVolumeSettingsContainer(usercomp);
+		}
+		// Autotools
 		try {
+
 			IProject project = iCfgd.getProjectDescription().getProject();
 			IProjectNature nature = project.getNature("org.eclipse.cdt.autotools.core.autotoolsNatureV2"); //$NON-NLS-1$
 			isAutotoolsProject = (nature != null);
@@ -275,6 +289,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			DockerLaunchUIPlugin.log(e);
 		}
 
+		// Handle enablement stuff
 		initializeEnablementButton();
 		enableButton.addSelectionListener(new SelectionListener() {
 

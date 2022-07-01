@@ -518,47 +518,10 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	/**
 	 * @return The exit code of the build process.
-	 *
-	 * @deprecated use {@link #watchProcess(IConsole, IProgressMonitor)} or {@link #watchProcess(IConsoleParser[], IProgressMonitor)} instead
-	 */
-	@Deprecated
-	protected int watchProcess(Process process, IConsoleParser[] consoleParsers, IConsole console)
-			throws CoreException {
-		if (consoleParsers == null || consoleParsers.length == 0) {
-			return watchProcess(process, console);
-		} else {
-			return watchProcess(process, consoleParsers);
-		}
-	}
-
-	/**
-	 * @return The exit code of the build process.
-	 * @since 6.4
-	 *
-	 * @deprecated use {@link #watchProcess(IConsole, IProgressMonitor)} instead and pass in a monitor
-	 */
-	@Deprecated
-	protected int watchProcess(Process process, IConsole console) throws CoreException {
-		return watchProcess(console, new NullProgressMonitor());
-	}
-
-	/**
-	 * @return The exit code of the build process.
 	 * @since 7.5
 	 */
 	protected int watchProcess(IConsole console, IProgressMonitor monitor) throws CoreException {
 		return launcher.waitAndRead(console.getInfoStream(), console.getErrorStream(), monitor);
-	}
-
-	/**
-	 * @return The exit code of the build process.
-	 * @since 6.4
-	 *
-	 * @deprecated use {@link #watchProcess(IConsoleParser[], IProgressMonitor)} instead and pass in a monitor
-	 */
-	@Deprecated
-	protected int watchProcess(Process process, IConsoleParser[] consoleParsers) throws CoreException {
-		return watchProcess(consoleParsers, new NullProgressMonitor());
 	}
 
 	/**

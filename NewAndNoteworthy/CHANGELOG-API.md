@@ -10,6 +10,8 @@ This section describes API removals that occurred in past releases, and upcoming
 
 - [org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields](#newUIAbstractPage)
 - [org.eclipse.cdt.dsf.gdb.breakpoints.Messages is no longer API](#org.eclipse.cdt.dsf.gdb.breakpoints.Messages)
+- [Removal of deprecated CommandLauncher.execute() method](#executeCommandLauncher)
+- [Removal of deprecated CBuildConfiguration.watchProcess() methods](#watchProcessCBuildConfig)
 
 ## API Changes in CDT 10.5.0
 
@@ -108,6 +110,28 @@ See [Bug 579666](https://bugs.eclipse.org/bugs/show_bug.cgi?id=579666).
 org.eclipse.cdt.dsf.gdb.breakpoints.Messages should never have been API, Messages classes generally should not be.
 
 See https://github.com/eclipse-cdt/cdt/pull/90
+
+### <span id="executeCommandLauncher">Removal of deprecated CommandLauncher.execute() method</span>
+
+The following method is removed because it does not implement the ICommandLauncher
+interface. It has been deprecated since 2009:
+
+- org.eclipse.cdt.core.CommandLauncher.execute(IPath, String[], String[], IPath)
+
+Clients should instead use the equivilent method from the ICommandLauncher interface.
+See [Bug 268615](https://bugs.eclipse.org/bugs/show_bug.cgi?id=268615).
+
+### <span id="watchProcessCBuildConfig">Removal of deprecated CBuildConfiguration.watchProcess() methods</span>
+
+The following methods are removed because their use prevents cancellation of
+in-progress builds of core-build projects:
+
+- org.eclipse.cdt.core.build.CBuildConfiguration.watchProcess(Process, IConsoleParser[], IConsole)
+- org.eclipse.cdt.core.build.CBuildConfiguration.watchProcess(Process, IConsole)
+- org.eclipse.cdt.core.build.CBuildConfiguration.watchProcess(Process, IConsoleParser[])
+
+Clients should instead use the methods of the same name that take a progress monitor object.
+See [Bug 580314](https://bugs.eclipse.org/bugs/show_bug.cgi?id=580314).
 
 ---
 

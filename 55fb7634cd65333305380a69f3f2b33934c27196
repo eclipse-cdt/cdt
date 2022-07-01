@@ -85,6 +85,24 @@
       "parentUuid": "19579ff3_1ac255d7",
       "revId": "55fb7634cd65333305380a69f3f2b33934c27196",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7a2c773b_34e85d06",
+        "filename": "core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/CBuildConfiguration.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 524,
+      "author": {
+        "id": 888
+      },
+      "writtenOn": "2022-07-01T12:47:31Z",
+      "side": 1,
+      "message": "\u003e I\u0027ll file a separate bug.\n\nSee bug: https://bugs.eclipse.org/bugs/show_bug.cgi?id\u003d580314\nAnd change: https://git.eclipse.org/r/c/cdt/org.eclipse.cdt/+/194515",
+      "parentUuid": "6c5707dd_7a08c3b4",
+      "revId": "55fb7634cd65333305380a69f3f2b33934c27196",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

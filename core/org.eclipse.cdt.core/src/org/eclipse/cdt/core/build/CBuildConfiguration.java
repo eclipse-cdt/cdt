@@ -521,7 +521,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 *
 	 * @deprecated use {@link #watchProcess(IConsole, IProgressMonitor)} or {@link #watchProcess(IConsoleParser[], IProgressMonitor)} instead
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	protected int watchProcess(Process process, IConsoleParser[] consoleParsers, IConsole console)
 			throws CoreException {
 		if (consoleParsers == null || consoleParsers.length == 0) {
@@ -537,7 +537,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 *
 	 * @deprecated use {@link #watchProcess(IConsole, IProgressMonitor)} instead and pass in a monitor
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	protected int watchProcess(Process process, IConsole console) throws CoreException {
 		return watchProcess(console, new NullProgressMonitor());
 	}
@@ -556,7 +556,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 *
 	 * @deprecated use {@link #watchProcess(IConsoleParser[], IProgressMonitor)} instead and pass in a monitor
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	protected int watchProcess(Process process, IConsoleParser[] consoleParsers) throws CoreException {
 		return watchProcess(consoleParsers, new NullProgressMonitor());
 	}

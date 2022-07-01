@@ -143,20 +143,6 @@ public class CommandLauncher implements ICommandLauncher {
 	}
 
 	/**
-	 * @deprecated
-	 * @since 5.1
-	 */
-	@Deprecated
-	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) {
-		try {
-			return execute(commandPath, args, env, changeToDirectory, null);
-		} catch (CoreException e) {
-			CCorePlugin.log(e);
-		}
-		return null;
-	}
-
-	/**
 	 * @since 5.1
 	 * @see org.eclipse.cdt.core.ICommandLauncher#execute(IPath, String[], String[], IPath, IProgressMonitor)
 	 */

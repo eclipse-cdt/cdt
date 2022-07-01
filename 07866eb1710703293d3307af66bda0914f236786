@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1822715_660dcfdb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 6211
+      },
+      "writtenOn": "2022-07-01T10:32:29Z",
+      "side": 1,
+      "message": "The following test is failing:\n\n org.eclipse.cdt.make.scannerdiscovery.ScannerConfigDiscoveryTests.testGetCCompilerBuiltins\n \nI\u0027ve run this test locally with and without my change and it always fails.\n\nThe test fails here:\n\norg.eclipse.cdt.make.scannerdiscovery.ScannerConfigDiscoveryTests.testGetCCompilerBuiltins()\n\n\t\tString[] includes \u003d scInfo.getIncludePaths();\n        includes\tString[3]  (id\u003d364)\t\n          [0]\t\"C:\\\\msys64\\\\mingw64\\\\bin\\\\..\\\\lib\\\\gcc\\\\x86_64-w64-mingw32\\\\11.2.0\\\\include\" (id\u003d366)\t\n          [1]\t\"C:\\\\msys64\\\\mingw64\\\\bin\\\\..\\\\lib\\\\gcc\\\\x86_64-w64-mingw32\\\\11.2.0\\\\..\\\\..\\\\..\\\\..\\\\include\" (id\u003d367)\t\n          [2]\t\"C:\\\\msys64\\\\mingw64\\\\bin\\\\..\\\\lib\\\\gcc\\\\x86_64-w64-mingw32\\\\11.2.0\\\\include-fixed\" (id\u003d368)\t\n\t\tassertTrue(includes.length \u003d\u003d 0);\n\n\nNot sure what is causing this.",
+      "revId": "07866eb1710703293d3307af66bda0914f236786",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

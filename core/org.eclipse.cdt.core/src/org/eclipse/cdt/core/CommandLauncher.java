@@ -144,7 +144,7 @@ public class CommandLauncher implements ICommandLauncher {
 	 * @deprecated
 	 * @since 5.1
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public Process execute(IPath commandPath, String[] args, String[] env, IPath changeToDirectory) {
 		try {
 			return execute(commandPath, args, env, changeToDirectory, null);

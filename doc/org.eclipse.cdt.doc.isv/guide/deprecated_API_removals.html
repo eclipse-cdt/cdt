@@ -84,6 +84,13 @@
     <li><a href="#ArgletsMatcher2">java.util.regex.Matcher use in JSONCDB API will be removed</a></li>
     <li><a href="#BuiltinDetctionArgsGeneric">Misnamed class BuiltinDetctionArgsGeneric will be removed</a></li>
   </ol>
+  <p>
+    Planned Removals after September 2024 or on the next major version of Eclipe CDT.
+  </p>
+  <ol>
+    <li><a href="#executeCommandLauncher">Removal of deprecated CommandLauncher.execute() method</a></li>
+    <li><a href="#watchProcessCBuildConfig">Removal of deprecated CBuildConfiguration.watchProcess() methods</a></li>
+  </ol>
 
   <p>
     API Changes prior to CDT 10.0 / 2020-09.
@@ -602,7 +609,27 @@
     <li>org.eclipse.cdt.jsoncdb.core.participant.Arglets.BuiltinDetctionArgsGeneric</li>
   </ul>
 
-  
+  <h3>API Removals after September 2024</h3>
+
+  <h3>1. <a name="executeCommandLauncher">Removal of deprecated CommandLauncher.execute() method</a></h3>
+  <p>
+    The following method will be removed because it does not implement the ICommandLauncher interface. It has been deprecated since 2009:
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.core.CommandLauncher.execute(IPath, String[], String[], IPath)</ul>
+  </ul>
+  <p>See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=268615" target="_blank">Bug 580314</a></p>
+
+  <h3>2. <a name="watchProcessCBuildConfig">Removal of deprecated CBuildConfiguration.watchProcess() methods</a></h3>
+  <p>
+    The following methods will be removed because their use prevents cancellation of in-progress builds of core-build projects:
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.core.build.CBuildConfiguration.watchProcess(Process, IConsoleParser[], IConsole)</li>
+    <li>org.eclipse.cdt.core.build.CBuildConfiguration.watchProcess(Process, IConsole)</li>
+    <li>org.eclipse.cdt.core.build.CBuildConfiguration.watchProcess(Process, IConsoleParser[])</li>
+  </ul>
+  <p>Clients should instead use the non-deprecated methods of the same name that take a progress monitor object. See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=580178" target="_blank">Bug 580314</a></p>
 </body>
 
 </html>

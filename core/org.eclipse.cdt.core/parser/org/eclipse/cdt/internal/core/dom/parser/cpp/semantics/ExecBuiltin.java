@@ -19,6 +19,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
@@ -33,7 +35,9 @@ import org.eclipse.core.runtime.CoreException;
 public class ExecBuiltin implements ICPPExecution {
 	public final static short BUILTIN_FFS = 0, BUILTIN_FFSL = 1, BUILTIN_FFSLL = 2, BUILTIN_CTZ = 3, BUILTIN_CTZL = 4,
 			BUILTIN_CTZLL = 5, BUILTIN_POPCOUNT = 6, BUILTIN_POPCOUNTL = 7, BUILTIN_POPCOUNTLL = 8, BUILTIN_PARITY = 9,
-			BUILTIN_PARITYL = 10, BUILTIN_PARITYLL = 11, BUILTIN_ABS = 12, BUILTIN_LABS = 13, BUILTIN_LLABS = 14;
+			BUILTIN_PARITYL = 10, BUILTIN_PARITYLL = 11, BUILTIN_ABS = 12, BUILTIN_LABS = 13, BUILTIN_LLABS = 14,
+			BUILTIN_CLRSB = 15, BUILTIN_CLRSBL = 16, BUILTIN_CLRSBLL = 17, BUILTIN_CLZ = 18, BUILTIN_CLZL = 19,
+			BUILTIN_CLZLL = 20;
 
 	private static IType intType = new CPPBasicType(Kind.eInt, 0);
 	private static IType longType = new CPPBasicType(Kind.eInt, CPPBasicType.IS_LONG);
@@ -84,6 +88,18 @@ public class ExecBuiltin implements ICPPExecution {
 			return executeBuiltinAbs(record, context, longType);
 		case BUILTIN_LLABS:
 			return executeBuiltinAbs(record, context, longlongType);
+		case BUILTIN_CLRSB:
+			return executeBuiltinClrsb(record, context, intType);
+		case BUILTIN_CLRSBL:
+			return executeBuiltinClrsb(record, context, longType);
+		case BUILTIN_CLRSBLL:
+			return executeBuiltinClrsb(record, context, longlongType);
+		case BUILTIN_CLZ:
+			return executeBuiltinClz(record, context, intType);
+		case BUILTIN_CLZL:
+			return executeBuiltinClz(record, context, longType);
+		case BUILTIN_CLZLL:
+			return executeBuiltinClz(record, context, longlongType);
 		}
 		return null;
 	}
@@ -166,6 +182,9 @@ public class ExecBuiltin implements ICPPExecution {
 		return executeBuiltinPopcountParity(record, context, true, argType);
 	}
 
+	/*
+	 * Return an execution implementing __builtin_abs
+	 */
 	private ICPPExecution executeBuiltinAbs(ActivationRecord record, ConstexprEvaluationContext context,
 			IType argType) {
 		ICPPEvaluation arg0 = record.getVariable(new CPPBuiltinParameter(null, 0));
@@ -180,6 +199,69 @@ public class ExecBuiltin implements ICPPExecution {
 		long result = Math.abs(arg);
 
 		return new ExecReturn(new EvalFixed(argType, ValueCategory.PRVALUE, IntegralValue.create(result)));
+	}
+
+	/*
+	 * Return an execution implementing __builtin_clsrb (count leading "redundant" sign bits)
+	 */
+	private ICPPExecution executeBuiltinClrsb(ActivationRecord record, ConstexprEvaluationContext context,
+			IType argType) {
+		ICPPEvaluation arg0 = record.getVariable(new CPPBuiltinParameter(null, 0));
+
+		SizeAndAlignment sizeToType = SizeofCalculator.getSizeAndAlignment(argType);
+		if (sizeToType.size > 8)
+			return null; // can't handle too-large type
+
+		IValue argValue = arg0.getValue();
+		Number argNumber = argValue.numberValue();
+		if (argNumber == null)
+			return null;
+
+		long argLong = argNumber.longValue();
+		long signBit = 1L << (sizeToType.size * 8 - 1);
+		int result = 0;
+		long valueBit = signBit >>> 1;
+
+		if ((argLong & signBit) == 0) {
+			// if positive, invert all bits so we can unconditionally count 1 bits
+			argLong = ~argLong;
+		}
+
+		while ((argLong & valueBit) != 0) {
+			result++;
+			valueBit >>>= 1;
+		}
+
+		return new ExecReturn(new EvalFixed(intType, ValueCategory.PRVALUE, IntegralValue.create(result)));
+	}
+
+	private ICPPExecution executeBuiltinClz(ActivationRecord record, ConstexprEvaluationContext context,
+			IType argType) {
+		ICPPEvaluation arg0 = record.getVariable(new CPPBuiltinParameter(null, 0));
+
+		SizeAndAlignment sizeToType = SizeofCalculator.getSizeAndAlignment(argType);
+		if (sizeToType.size > 8)
+			return null; // can't handle too-large type
+
+		IValue argValue = arg0.getValue();
+		Number argNumber = argValue.numberValue();
+		if (argNumber == null)
+			return null;
+
+		long argLong = argNumber.longValue();
+		long valueBit = 1L << (sizeToType.size * 8 - 1);
+		int result = 0;
+
+		// Note that __builtin_clz(0) is supposedly undefined, but GCC (12.1) apparently returns
+		// the bit size of int, so we'll make sure to do the same.
+		while ((argLong & valueBit) == 0) {
+			result++;
+			valueBit >>>= 1;
+			if (valueBit == 0)
+				break;
+		}
+
+		return new ExecReturn(new EvalFixed(intType, ValueCategory.PRVALUE, IntegralValue.create(result)));
 	}
 
 	@Override

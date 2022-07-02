@@ -205,6 +205,12 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		ICPPExecution builtinAbs = new ExecBuiltin(ExecBuiltin.BUILTIN_ABS);
 		ICPPExecution builtinLabs = new ExecBuiltin(ExecBuiltin.BUILTIN_LABS);
 		ICPPExecution builtinLlabs = new ExecBuiltin(ExecBuiltin.BUILTIN_LLABS);
+		ICPPExecution builtinClrsb = new ExecBuiltin(ExecBuiltin.BUILTIN_CLRSB);
+		ICPPExecution builtinClrsbl = new ExecBuiltin(ExecBuiltin.BUILTIN_CLRSBL);
+		ICPPExecution builtinClrsbll = new ExecBuiltin(ExecBuiltin.BUILTIN_CLRSBLL);
+		ICPPExecution builtinClz = new ExecBuiltin(ExecBuiltin.BUILTIN_CLZ);
+		ICPPExecution builtinClzl = new ExecBuiltin(ExecBuiltin.BUILTIN_CLZL);
+		ICPPExecution builtinClzll = new ExecBuiltin(ExecBuiltin.BUILTIN_CLZLL);
 
 		// Other Builtins (https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html) [incomplete]
 		function("void", "__builtin_abort");
@@ -243,12 +249,12 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("float", "__builtin_cimagf", "complex float");
 		function("long double", "__builtin_cimagl", "complex long double");
 		function("void", "__builtin___clear_cache", "void*", "void*");
-		function("int", "__builtin_clrsb", "int");
-		function("int", "__builtin_clrsbl", "long");
-		function("int", "__builtin_clrsbll", "long long");
-		function("int", "__builtin_clz", "unsigned int");
-		function("int", "__builtin_clzl", "unsigned long");
-		function("int", "__builtin_clzll", "unsigned long long");
+		function("int", "__builtin_clrsb", builtinClrsb, "int");
+		function("int", "__builtin_clrsbl", builtinClrsbl, "long");
+		function("int", "__builtin_clrsbll", builtinClrsbll, "long long");
+		function("int", "__builtin_clz", builtinClz, "unsigned int");
+		function("int", "__builtin_clzl", builtinClzl, "unsigned long");
+		function("int", "__builtin_clzll", builtinClzll, "unsigned long long");
 		function("complex double", "__builtin_conj", "complex double");
 		function("complex float", "__builtin_conjf", "complex float");
 		function("complex long double", "__builtin_conjl", "complex long double");
@@ -330,7 +336,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("int", "__builtin_ilogb", "double");
 		function("int", "__builtin_ilogbf", "float");
 		function("int", "__builtin_ilogbl", "long double");
-		function("long long", "__builtin_imaxabs", "long long");
+		function("long long", "__builtin_imaxabs", builtinLlabs, "long long");
 		function("double", "__builtin_inf");
 		function("_Decimal32", "__builtin_infd32");
 		function("_Decimal64", "__builtin_infd64");

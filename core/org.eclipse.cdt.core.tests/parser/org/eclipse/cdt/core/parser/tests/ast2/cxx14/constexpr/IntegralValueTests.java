@@ -340,4 +340,24 @@ public abstract class IntegralValueTests extends TestBase {
 	public void testBuiltinAbsNarrowing() throws Exception {
 		assertEvaluationEquals(1);
 	}
+
+	// constexpr int x = __builtin_clrsb(0xFFFFFFFF);
+	public void testBuiltinClrsb() throws Exception {
+		assertEvaluationEquals(31);
+	}
+
+	// constexpr int x = __builtin_clrsb(555);
+	public void testBuiltinClrsbPositive() throws Exception {
+		assertEvaluationEquals(21);
+	}
+
+	// constexpr int x = __builtin_clz(0x8000);
+	public void testBuiltinClz() throws Exception {
+		assertEvaluationEquals(16);
+	}
+
+	// constexpr int x = __builtin_clz(-17);
+	public void testBuiltinClzNegative() throws Exception {
+		assertEvaluationEquals(0);
+	}
 }

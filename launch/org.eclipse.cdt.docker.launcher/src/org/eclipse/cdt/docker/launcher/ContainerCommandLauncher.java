@@ -62,6 +62,8 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 	public final static String VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.volumes"; //$NON-NLS-1$
 	public final static String SELECTED_VOLUMES_ID = DockerLaunchUIPlugin.PLUGIN_ID
 			+ ".containerbuild.property.selectedvolumes"; //$NON-NLS-1$
+	/** @since 2.0 */
+	public final static String DOCKERD_PATH = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.dockerdpath"; //$NON-NLS-1$
 
 	public final static String VOLUME_SEPARATOR_REGEX = "[|]"; //$NON-NLS-1$
 
@@ -253,14 +255,16 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		boolean keepContainer = prefs.getBoolean(PreferenceConstants.KEEP_CONTAINER_AFTER_LAUNCH, false);
 
 		ICBuildConfiguration buildCfg = getBuildConfiguration();
-		String selectedVolumeString = null;
-		String connectionName = null;
-		String imageName = null;
+		final String selectedVolumeString;
+		final String connectionName;
+		final String imageName;
+		final String pathMapProperty;
 		if (buildCfg != null) {
 			IToolChain toolChain = buildCfg.getToolChain();
 			selectedVolumeString = toolChain.getProperty(SELECTED_VOLUMES_ID);
 			connectionName = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
 			imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
+			pathMapProperty = toolChain.getProperty(DOCKERD_PATH);
 		} else {
 			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(fProject)
 					.getActiveConfiguration();
@@ -272,6 +276,7 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			selectedVolumeString = props.getProperty(SELECTED_VOLUMES_ID);
 			connectionName = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 			imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
+			pathMapProperty = props.getProperty(DOCKERD_PATH);
 		}
 
 		// Add any specified volumes to additional dir list
@@ -288,8 +293,20 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		}
 		setImageName(imageName);
 
-		additionalDirs.addAll(
-				additionalPaths.stream().map(p -> ContainerLaunchUtils.toDockerVolume(p)).collect(Collectors.toList()));
+		final Map<String, String> pathMap = new HashMap<>();
+
+		if (pathMapProperty != null && !pathMapProperty.isEmpty()) {
+			final var entries = pathMapProperty.split(";"); //$NON-NLS-1$
+			for (var e : entries) {
+				final var spl = e.split("\\|"); //$NON-NLS-1$
+				if (spl.length == 2) {
+					pathMap.put(spl[0], spl[1]);
+				}
+			}
+		}
+
+		additionalDirs.addAll(additionalPaths.stream().map(p -> ContainerLaunchUtils.toDockerVolume(pathMap, p))
+				.collect(Collectors.toList()));
 
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
 				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);

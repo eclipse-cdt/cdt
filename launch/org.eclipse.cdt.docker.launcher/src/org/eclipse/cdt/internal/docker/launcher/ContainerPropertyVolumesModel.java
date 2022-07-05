@@ -53,6 +53,16 @@ public class ContainerPropertyVolumesModel extends BaseDatabindingModel {
 
 	private IDockerImage selectedImage;
 
+	private String dockerDPath;
+
+	public String getDockerDPath() {
+		return dockerDPath;
+	}
+
+	public void setDockerDPath(String dockerDPath) {
+		this.dockerDPath = dockerDPath;
+	}
+
 	public ContainerPropertyVolumesModel(final IDockerConnection connection) {
 		this.connection = connection;
 	}

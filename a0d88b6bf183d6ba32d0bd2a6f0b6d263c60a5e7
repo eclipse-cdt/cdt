@@ -33,6 +33,23 @@
       "message": "Hi Morty.  The old gerrit build is gone so I can\u0027t retrigger and it doesn\u0027t appear that CDT supports the \"please rebuild\" trigger.  As your patch is deeply interlaced with other patches, could you please do something small and resubmit so I can retrigger if necessary or at least see the build results.  I will be on vacation Friday to Monday so if you can get this done for tomorrow, great, otherwise, it will have to wait until Tuesday.",
       "revId": "a0d88b6bf183d6ba32d0bd2a6f0b6d263c60a5e7",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f821087d_bc59a681",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 5
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 582
+      },
+      "writtenOn": "2022-07-06T23:10:05Z",
+      "side": 1,
+      "message": "I guess the trigger reply does work.",
+      "revId": "a0d88b6bf183d6ba32d0bd2a6f0b6d263c60a5e7",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

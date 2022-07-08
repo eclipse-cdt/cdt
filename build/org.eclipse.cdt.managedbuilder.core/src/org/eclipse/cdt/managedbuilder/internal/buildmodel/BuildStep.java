@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Intel Corporation and others.
+ * Copyright (c) 2006, 2022 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * John Dallaway - Accommodate extra flags with internal builder (bug 580286)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -357,6 +358,11 @@ public class BuildStep implements IBuildStep {
 
 	private String[] getInputResources(IPath cwd, BuildResource[] rcs) {
 		String[] resources = resourcesToStrings(cwd, rcs, null);
+
+		// if the libraries will be provided as extra flags we do not need to add them here
+		if (fTool.getCommandLinePattern().contains("${EXTRA_FLAGS}")) { //$NON_NLS-1$
+			return resources;
+		}
 
 		// also need to get libraries
 		String[] libs = null;

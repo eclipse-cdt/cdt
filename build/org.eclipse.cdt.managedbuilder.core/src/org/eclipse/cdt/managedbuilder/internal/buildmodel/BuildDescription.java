@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Intel Corporation and others.
+ * Copyright (c) 2006, 2022 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  * Intel Corporation - Initial API and implementation
  * IBM Corporation
  * John Dallaway - Handle reduced build step input resource count (bug 366039)
+ * John Dallaway - Accommodate extra flags with internal builder (bug 580286)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -1424,7 +1425,7 @@ public class BuildDescription implements IBuildDescription {
 							depFiles = new IPath[1];
 							depFiles[0] = new Path(
 									buildRc.getLocation().segment(buildRc.getLocation().segmentCount() - 1))
-									.removeFileExtension().addFileExtension("d"); //$NON-NLS-1$
+											.removeFileExtension().addFileExtension("d"); //$NON-NLS-1$
 						}
 
 						if (depFiles != null) {
@@ -1523,6 +1524,7 @@ public class BuildDescription implements IBuildDescription {
 		 *  3.  Use the file extensions and the resources in the project
 		 */
 		ITool tool = step.getTool();
+		boolean toolHasExtraFlags = tool.getCommandLinePattern().contains("${EXTRA_FLAGS}"); //$NON-NLS-1$
 		IInputType[] inTypes = tool.getInputTypes();
 		if (inTypes != null && inTypes.length > 0) {
 			for (IInputType type : inTypes) {
@@ -1597,7 +1599,8 @@ public class BuildDescription implements IBuildDescription {
 										if ((var = var.trim()).length() != 0) {
 											if (VAR_USER_OBJS.equals(var)) {
 												String objs[] = getUserObjs(step);
-												if (objs != null && objs.length != 0) {
+												// if there are user objects and they will not be provided as extra flags
+												if (objs != null && objs.length != 0 && !toolHasExtraFlags) {
 													if (arg == null)
 														arg = step.createIOType(true, primaryInput, type);
 

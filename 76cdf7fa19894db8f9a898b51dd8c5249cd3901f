@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9736fb7d_f8c513e9",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-07-08T20:31:47Z",
+      "side": 1,
+      "message": "Looks clean enough. I have not actually tested the code, but I trust that you\u0027ve done that part.\nDo you think it\u0027s possible to add some unit-test for this use case?",
+      "revId": "76cdf7fa19894db8f9a898b51dd8c5249cd3901f",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "404f2277_c4dae950",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 261854
+      },
+      "writtenOn": "2022-07-13T19:48:48Z",
+      "side": 1,
+      "message": "Looks like that resolved the issue. I am able to connect to gdbserver and attach to a process from within the Debug view.",
+      "revId": "a1b5428718c4f693f35638b8d6cbaff3f61e17bb",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

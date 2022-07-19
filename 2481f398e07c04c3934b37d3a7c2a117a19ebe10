@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e0c02a00_c3f26bbe",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 27769
+      },
+      "writtenOn": "2022-07-19T22:11:21Z",
+      "side": 1,
+      "message": "Looks like we have new unstable tests with java 17. That will be dealt with separately ",
+      "revId": "2481f398e07c04c3934b37d3a7c2a117a19ebe10",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

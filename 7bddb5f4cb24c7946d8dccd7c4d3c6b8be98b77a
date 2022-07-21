@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe90a815_23a3be7d",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 10
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2022-07-21T21:13:57Z",
+      "side": 1,
+      "message": "I started using CDT 10.7 and faced issue because of the fix..\n\nthe current implementation fixes the problem but IMO it should have been fixed differently and thats a better approach.. ",
+      "revId": "7bddb5f4cb24c7946d8dccd7c4d3c6b8be98b77a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5fc0d9a5_cf551ce1",
+        "filename": "dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/FinalLaunchSequence.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 171781
+      },
+      "writtenOn": "2022-07-21T21:13:57Z",
+      "side": 1,
+      "message": "I think we just needed to change this condition to following to fix the issue...\n\nif (!fGDBBackend.getIsAttachSession() || (fGDBBackend.getIsAttachSession() \u0026\u0026 fGDBBackend.getSessionType() \u003d\u003d SessionType.REMOTE))\n\nthe javadoc of comment already says that it should handle remote session but it wasn\u0027t...",
+      "revId": "7bddb5f4cb24c7946d8dccd7c4d3c6b8be98b77a",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

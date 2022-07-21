@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "614edbc7_8ef41337",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-07-21T09:06:13Z",
+      "side": 1,
+      "message": "@Jonah: Do you agree that this is a regression that should be fixed in a 10.7.1 release?\nI think there are 3 topics that would motivate a 10.7.1 release currently, this one, the \"widget is disposed\" problem that is likely due to the dark theme fixes and the internal builder regression.",
+      "revId": "15d229e5207104afa37c1c901dc25df6e77d0d1d",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

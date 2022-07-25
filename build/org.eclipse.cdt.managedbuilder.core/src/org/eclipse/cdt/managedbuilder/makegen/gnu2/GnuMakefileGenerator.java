@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2022 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@
  *     Marc-Andre Laperle
  *     Liviu Ionescu - [322168]
  *     Dorothea Pilz-Roeder (Advantest Europe GmbH) - [180451]
+ *     John Dallaway - [580441] fix processing on source folder deletion
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.makegen.gnu2;
 
@@ -192,7 +193,6 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 							// This is a source file so just add its container
 							if (fo == null || fo.buildsFileType(ext)) {
 								generator.appendDeletedFile(resource);
-								generator.appendModifiedSubdirectory(resource);
 							}
 						}
 						break;
@@ -208,6 +208,11 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 					case IResourceDelta.REMOVED:
 						if (!generator.isGeneratedResource(resource)) {
 							generator.appendDeletedSubdirectory((IContainer) resource);
+						}
+						break;
+					case IResourceDelta.CHANGED:
+						if (!generator.isGeneratedResource(resource)) {
+							generator.appendModifiedSubdirectory(resource);
 						}
 						break;
 					}

@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "cc37c9e8_cb8c7f1e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-07-25T16:34:22Z",
+      "side": 1,
+      "message": "Patchset 2 introduces a test that illustrates the ResourceException reported in bug 580441: https://ci.eclipse.org/cdt/job/cdt-verify-test-cdt-other-pipeline/4362/testReport/junit/org.eclipse.cdt.managedbuilder.core.regressions/Bug_580441Test/testBuildAfterPopulatedSourceFolderDelete/",
+      "revId": "e42a0f4cf0f137a60c874d351d3d3ee40888f0b3",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

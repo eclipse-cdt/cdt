@@ -16,6 +16,23 @@
       "message": "Patchset 4 resolves the ResourceException reported in bug 580441. Remaining test failures are unrelated to this issue.",
       "revId": "7c6bd5bdcb4cf8c31050aeeb102250a27a157728",
       "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ee003b94_a049726e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 178588
+      },
+      "writtenOn": "2022-07-26T16:15:14Z",
+      "side": 1,
+      "message": "Surprised that this hasn\u0027t been reported earlier. Anyway, thanks for fixing it!",
+      "revId": "7c6bd5bdcb4cf8c31050aeeb102250a27a157728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
     }
   ]
 }

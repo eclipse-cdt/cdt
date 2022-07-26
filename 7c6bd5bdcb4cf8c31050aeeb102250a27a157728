@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "78b74a6e_edc632ab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 846
+      },
+      "writtenOn": "2022-07-26T08:04:27Z",
+      "side": 1,
+      "message": "Patchset 4 resolves the ResourceException reported in bug 580441. Remaining test failures are unrelated to this issue.",
+      "revId": "7c6bd5bdcb4cf8c31050aeeb102250a27a157728",
+      "serverId": "97ee7c02-f12f-4043-b43e-dea463d88b31"
+    }
+  ]
+}

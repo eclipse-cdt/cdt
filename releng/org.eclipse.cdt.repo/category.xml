@@ -218,6 +218,7 @@
    <bundle id="org.yaml.snakeyaml" version="0.0.0"/>
    <bundle id="com.sun.jna" version="0.0.0"/>
    <bundle id="com.sun.jna.platform" version="0.0.0"/>
+   <bundle id="org.apache.commons.io" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.core" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>

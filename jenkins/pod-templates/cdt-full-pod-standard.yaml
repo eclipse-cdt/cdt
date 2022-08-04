@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: cdt
+    image: quay.io/eclipse-cdt/cdt-infra-eclipse-full@sha256:b892f93d8b2a2acbb6045438f8771790d31b4722040ca815d391b532cc796182
+    tty: true
+    args: ["/bin/sh", "-c", "/home/vnc/.vnc/xstartup.sh && cat"]
+    resources:
+      requests:
+        memory: "2662Mi"
+        cpu: "1"
+      limits:
+        memory: "2662Mi"
+        cpu: "1"
+    volumeMounts:
+    - name: settings-xml
+      mountPath: /home/jenkins/.m2/settings.xml
+      subPath: settings.xml
+      readOnly: true
+    - name: m2-repo
+      mountPath: /home/jenkins/.m2/repository
+  - name: jnlp
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "200m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+  volumes:
+  - name: settings-xml
+    secret:
+      secretName: m2-secret-dir
+      items:
+      - key: settings.xml
+        path: settings.xml
+  - name: m2-repo
+    emptyDir: {}

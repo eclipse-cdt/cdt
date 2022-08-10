@@ -17,7 +17,7 @@ pipeline {
             container('cdt') {
               timeout(activity: true, time: 30) {
                 withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
-                  sh 'touch simple.log ; echo "got to here"'
+                  sh 'touch simple.log ; echo "got to here" ; exit 1'
                 }
               }
             }

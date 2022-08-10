@@ -46,7 +46,8 @@
 		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.24/</help-docs-eclipserun-repo>
 
 		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/cdt/org.eclipse.cdt</tycho.scmUrl>
-		<base.test.vmargs>-Xms256m -Xmx512m -ea</base.test.vmargs>
+		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->
+		<base.test.vmargs>-Xms256m -Xmx512m -ea --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED</base.test.vmargs>
 		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.6/cdt-10.6.0/</comparator.repo>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want
 		     to avoid baseline replace and compare, especially if you have different versions of Java than

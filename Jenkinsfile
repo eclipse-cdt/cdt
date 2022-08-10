@@ -24,7 +24,9 @@ pipeline {
             post {
               always {
                 container('cdt') {
+                  sh 'echo "before archive"'
                   archiveArtifacts allowEmptyArchive: true, artifacts: '*.log,native/org.eclipse.cdt.native.serial/**,core/org.eclipse.cdt.core.*/**'
+                  sh 'echo "after archive"'
                 }
               }
             }

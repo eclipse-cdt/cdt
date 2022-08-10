@@ -7,7 +7,7 @@ pipeline {
     stage('Run Build') {
       failFast false
       parallel {
-        stage('Code Formatting Checks') {
+        stage('Code Formatting Checks 1') {
           agent {
             kubernetes {
               yamlFile 'jenkins/pod-templates/cdt-full-pod-plus-eclipse-install.yaml'
@@ -17,7 +17,33 @@ pipeline {
             container('cdt') {
               timeout(activity: true, time: 30) {
                 withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
-                  sh 'touch simple.log ; echo "got to here" ; exit 1'
+                  sh 'touch simple.log simple1.log ; echo "got to here" ; exit 1'
+                }
+              }
+            }
+          }
+          post {
+            always {
+              container('cdt') {
+                sh 'echo "before archive"'
+                archiveArtifacts allowEmptyArchive: true, artifacts: '*.log,native/org.eclipse.cdt.native.serial/**,core/org.eclipse.cdt.core.*/**'
+                sh 'echo "after archive"'
+              }
+            }
+          }
+
+        }
+        stage('Code Formatting Checks 2') {
+          agent {
+            kubernetes {
+              yamlFile 'jenkins/pod-templates/cdt-full-pod-plus-eclipse-install.yaml'
+            }
+          }
+          steps {
+            container('cdt') {
+              timeout(activity: true, time: 30) {
+                withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
+                  sh 'touch simple.log simple2.log ; echo "got to here" ; exit 1'
                 }
               }
             }

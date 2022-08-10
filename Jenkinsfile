@@ -17,20 +17,21 @@ pipeline {
             container('cdt') {
               timeout(activity: true, time: 30) {
                 withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
-                  sh 'echo "got to here"'
-                }
-              }
-            }
-            post {
-              always {
-                container('cdt') {
-                  sh 'echo "before archive"'
-                  archiveArtifacts allowEmptyArchive: true, artifacts: '*.log,native/org.eclipse.cdt.native.serial/**,core/org.eclipse.cdt.core.*/**'
-                  sh 'echo "after archive"'
+                  sh 'touch simple.log ; echo "got to here"'
                 }
               }
             }
           }
+          post {
+            always {
+              container('cdt') {
+                sh 'echo "before archive"'
+                archiveArtifacts allowEmptyArchive: true, artifacts: '*.log,native/org.eclipse.cdt.native.serial/**,core/org.eclipse.cdt.core.*/**'
+                sh 'echo "after archive"'
+              }
+            }
+          }
+
         }
         // stage('Build and verify') {
         //   agent {

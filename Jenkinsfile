@@ -10,7 +10,7 @@ pipeline {
         stage('Code Formatting Checks') {
           agent {
             kubernetes {
-              yamlFile 'jenkins/pod-templates/cdt-full-pod-standard.yaml'
+              yamlFile 'jenkins/pod-templates/cdt-full-pod-plus-eclipse-install.yaml'
             }
           }
           steps {

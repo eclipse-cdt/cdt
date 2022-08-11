@@ -119,6 +119,14 @@ fulfills the DCO's requirement that you sign-off on your contributions.
 For more information, please see the Eclipse Committer Handbook:
 https://www.eclipse.org/projects/handbook/#resources-commit
 
+## Connect Eclipse Foundation and GitHub account
+
+The Eclipse Foundation manages the permissions of the GitHub repositories using automation based on your state as a committer. Therefore you need to enter your GitHub username in the Eclipse [Account Management page](https://accounts.eclipse.org/user/edit) as per screenshot below. Once you make the change it can take a few hours for the synchronization scripts to update.
+
+<img src="images/github_eclipse_account.png">
+
+Once you have done this successfully and the synchronization scripts have had a chance to run you will see yourself listed in [tools-cdt-committers](https://github.com/orgs/eclipse-cdt/teams/tools-cdt-committers/members). If you get permissiong denied, the connection is not working. Reach out to the [CDT Dev list](#contact) for support.
+
 ## Contact
 
 Contact the project developers via the project's "dev" list, raise an issue or start a discussion. Official communications, such as voting, is conducted on the dev list.

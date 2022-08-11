@@ -2,13 +2,13 @@
 
 [![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.eclipse.org%2Fcdt%2Fjob%2Fcdt-master%2F)](https://ci.eclipse.org/cdt/job/cdt-master/) [![Jenkins tests](https://img.shields.io/jenkins/tests?compact_message&jobUrl=https%3A%2F%2Fci.eclipse.org%2Fcdt%2Fjob%2Fcdt-master%2F)](https://ci.eclipse.org/cdt/job/cdt-master/lastCompletedBuild/testReport/) ![GitHub](https://img.shields.io/github/license/eclipse-cdt/cdt) [![Eclipse Marketplace](https://img.shields.io/eclipse-marketplace/v/eclipse-cc-ide)](https://marketplace.eclipse.org/content/eclipse-cc-ide) [![GitHub contributors](https://img.shields.io/github/contributors-anon/eclipse-cdt/cdt)](https://github.com/eclipse-cdt/cdt/graphs/contributors)
 
-<img align="right" src="logo.png">
+<img align="right" src="images/logo.png">
 
 The Eclipse CDT™ Project provides a fully functional C and C++ Integrated Development Environment based on the Eclipse platform. Features include: support for project creation and managed build for various toolchains, standard make build, source navigation, various source knowledge tools, such as type hierarchy, call graph, include browser, macro definition browser, code editor with syntax highlighting, folding and hyperlink navigation, source code refactoring and code generation, visual debugging tools, including memory, registers, and disassembly viewers.
 
 See also https://projects.eclipse.org/projects/tools.cdt and https://eclipse.org/cdt
 
-<img src="snapshots.gif" width="66%">
+<img src="images/snapshots.gif" width="66%">
 
 ## Download
 

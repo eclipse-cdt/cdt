@@ -1,6 +1,6 @@
 # Eclipse CDT™ C/C++ Development Tools
 
-[![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.eclipse.org%2Fcdt%2Fjob%2Fcdt-master%2F)](https://ci.eclipse.org/cdt/job/cdt-master/) [![Jenkins tests](https://img.shields.io/jenkins/tests?compact_message&jobUrl=https%3A%2F%2Fci.eclipse.org%2Fcdt%2Fjob%2Fcdt-master%2F)](https://ci.eclipse.org/cdt/job/cdt-master/lastCompletedBuild/testReport/) ![GitHub](https://img.shields.io/github/license/eclipse-cdt/cdt) [![Eclipse Marketplace](https://img.shields.io/eclipse-marketplace/v/eclipse-cc-ide)](https://marketplace.eclipse.org/content/eclipse-cc-ide) [![GitHub contributors](https://img.shields.io/github/contributors-anon/eclipse-cdt/cdt)](https://github.com/eclipse-cdt/cdt/graphs/contributors)
+[![Jenkins](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fci.eclipse.org%2Fcdt%2Fjob%2Fcdt%2Fjob%2Fmain%2F)](https://ci.eclipse.org/cdt/job/cdt/job/main/) [![Jenkins tests](https://img.shields.io/jenkins/tests?compact_message&jobUrl=https%3A%2F%2Fci.eclipse.org%2Fcdt%2Fjob%2Fcdt%2Fjob%2Fmain%2F)](https://ci.eclipse.org/cdt/job/cdt/job/main/lastCompletedBuild/testReport/) ![GitHub](https://img.shields.io/github/license/eclipse-cdt/cdt) [![Eclipse Marketplace](https://img.shields.io/eclipse-marketplace/v/eclipse-cc-ide)](https://marketplace.eclipse.org/content/eclipse-cc-ide) [![GitHub contributors](https://img.shields.io/github/contributors-anon/eclipse-cdt/cdt)](https://github.com/eclipse-cdt/cdt/graphs/contributors)
 
 <img align="right" src="images/logo.png">
 

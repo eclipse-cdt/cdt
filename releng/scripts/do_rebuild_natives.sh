@@ -12,6 +12,14 @@
 
 set -e
 
+SCRIPT=$( basename "${BASH_SOURCE[0]}" )
+
+if ! command -v x86_64-apple-darwin21.1-clang &> /dev/null
+then
+    echo "WARNING: Skipping ${SCRIPT} because Darwin clang is not available"
+    exit 0
+fi
+
 ##
 # Make sure that natives are up to date
 ##

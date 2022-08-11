@@ -12,6 +12,14 @@
 
 set -eu
 
+SCRIPT=$( basename "${BASH_SOURCE[0]}" )
+
+if ! command -v x86_64-w64-mingw32-objdump &> /dev/null
+then
+    echo "WARNING: Skipping ${SCRIPT} because mingw cross compiler tools are not available"
+    exit 0
+fi
+
 # This is the current set of allowed DLL dependencies for CDT code. Additional entries here are permitted,
 # provided they are found on all Windows machines by default.
 ALLOWED_DLLS="KERNEL32.DLL MSVCRT.DLL USER32.DLL PSAPI.DLL SHELL32.DLL ADVAPI32.DLL"

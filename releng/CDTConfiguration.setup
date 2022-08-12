@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<setup:Configuration
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    label="CDT">
+  <annotation
+      source="http://www.eclipse.org/oomph/setup/BrandingInfo">
+    <detail
+        key="imageURI">
+      <value>https://www.eclipse.org/downloads/images/cdt.png</value>
+    </detail>
+    <detail
+        key="badgeLabel">
+      <value>CDT</value>
+    </detail>
+  </annotation>
+  <installation
+      name="cdt.installation"
+      label="CDT Installation">
+    <setupTask
+        xsi:type="setup:VariableTask"
+        name="installation.id.default"
+        value="cdt"/>
+    <productVersion
+        href="index:/org.eclipse.setup#//@productCatalogs[name='org.eclipse.products']/@products[name='epp.package.committers']/@versions[name='latest']"/>
+    <description>The CDT installation provides the latest tools needed to work with the Eclipse C/C++ Development Tools' source code.</description>
+  </installation>
+  <workspace
+      name="cdt.workspace"
+      label="CDT Workspace">
+    <stream
+        href="index:/org.eclipse.setup#//@projectCatalogs[name='org.eclipse']/@projects[name='cdt']/@streams[name='main']"/>
+    <description>The CDT workspace provides the source code of the Eclipse C/C++ Development Tools.</description>
+  </workspace>
+  <description>
+    &lt;p>
+    The &lt;a href=&quot;https://www.eclipse.org/cdt/&quot;/>Eclipse C/C++ Development Tools&lt;/a> configuration provisions a dedicated development environment 
+    for the complete set of source projects of the &lt;a href=&quot;https://projects.eclipse.org/projects/tools.cdt&quot;>CDT project&lt;/a>.
+    &lt;/p>
+    &lt;p>
+    All the source projects from &lt;a href=&quot;https://github.com/eclipse-cdt&quot;>CDT's Github Repositories&lt;/a>
+    are available, organized into working sets, and ready for contribution.
+    &lt;/p>
+    &lt;/p>
+    Please &lt;a href=&quot;https://wiki.eclipse.org/Eclipse_Platform_SDK_Provisioning&quot;>read the analogous tutorial instructions&lt;/a> for the Eclipse Platform SDK's configuration for more details.
+    &lt;/p>
+  </description>
+</setup:Configuration>

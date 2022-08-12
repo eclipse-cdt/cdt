@@ -12,6 +12,7 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.launchbar.ui.controls.internal,
- org.junit.jupiter.api;version="5.8.1"
+ org.junit.jupiter.api;version="5.8.1",
+ org.slf4j
 Automatic-Module-Name: org.eclipse.launchbar.ui.tests
 Bundle-Localization: plugin

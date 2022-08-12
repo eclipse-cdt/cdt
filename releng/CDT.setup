@@ -11,9 +11,15 @@
     xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
-    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/pde/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/PDE.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore"
+    xmlns:workingsets="http://www.eclipse.org/oomph/workingsets/1.0"
+    xsi:schemaLocation="http://www.eclipse.org/oomph/setup/git/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Git.ecore http://www.eclipse.org/oomph/setup/jdt/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/JDT.ecore http://www.eclipse.org/oomph/setup/pde/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/PDE.ecore http://www.eclipse.org/oomph/predicates/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/Predicates.ecore http://www.eclipse.org/oomph/setup/targlets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupTarglets.ecore http://www.eclipse.org/oomph/setup/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/SetupWorkingSets.ecore http://www.eclipse.org/oomph/workingsets/1.0 http://git.eclipse.org/c/oomph/org.eclipse.oomph.git/plain/setups/models/WorkingSets.ecore"
     name="cdt"
     label="CDT">
+  <annotation
+      source="http://www.eclipse.org/oomph/setup/ConfigurationReference">
+    <reference
+        href="CDTConfiguration.setup#/"/>
+  </annotation>
   <setupTask
       xsi:type="setup.p2:P2Task">
     <requirement
@@ -237,56 +243,11 @@
       <requirement
           name="org.eclipse.license.feature.group"/>
       <requirement
-          name="com.google.gson"/>
-      <requirement
-          name="com.sun.jna"
-          versionRange="5.8.0"/>
-      <requirement
-          name="com.sun.jna.platform"
-          versionRange="5.8.0"/>
-      <requirement
-          name="com.sun.xml.bind"
-          versionRange="2.3.3"/>
-      <requirement
-          name="jakarta.xml.bind"
-          versionRange="2.3.3"/>
-      <requirement
-          name="javax.activation"
-          versionRange="1.2.2"/>
-      <requirement
-          name="javax.xml.stream"/>
-      <requirement
-          name="net.sourceforge.lpg.lpgjavaruntime"/>
-      <requirement
-          name="org.antlr.runtime"/>
-      <requirement
-          name="org.apache.commons.compress"/>
-      <requirement
-          name="org.apache.log4j"/>
-      <requirement
-          name="org.assertj"/>
-      <requirement
           name="org.eclipse.egit.feature.group"/>
       <requirement
           name="org.eclipse.equinox.executable.feature.group"/>
       <requirement
-          name="org.eclipse.jdt.annotation"/>
-      <requirement
-          name="org.eclipse.launchbar.feature.group"/>
-      <requirement
-          name="org.eclipse.launchbar.remote.feature.group"/>
-      <requirement
           name="org.eclipse.linuxtools.docker.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.lsp4e"/>
-      <requirement
-          name="org.eclipse.lsp4e.debug"/>
-      <requirement
-          name="org.eclipse.remote.console.feature.group"/>
-      <requirement
-          name="org.eclipse.remote.feature.group"/>
-      <requirement
-          name="org.eclipse.remote.serial.feature.group"/>
       <requirement
           name="org.eclipse.sdk.feature.group"/>
       <requirement
@@ -298,31 +259,7 @@
       <requirement
           name="org.eclipse.test.feature.group"/>
       <requirement
-          name="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.tm.terminal.control"/>
-      <requirement
-          name="org.eclipse.tm.terminal.feature.feature.group"/>
-      <requirement
           name="org.eclipse.tm4e.feature.feature.group"/>
-      <requirement
-          name="org.freemarker"/>
-      <requirement
-          name="org.hamcrest"/>
-      <requirement
-          name="org.hamcrest.core"/>
-      <requirement
-          name="org.junit"/>
-      <requirement
-          name="org.junit.jupiter.api"/>
-      <requirement
-          name="org.mockito"/>
-      <requirement
-          name="org.slf4j.impl.log4j12"/>
-      <requirement
-          name="org.yaml.snakeyaml"/>
-      <requirement
-          name="org.eclipse.unittest.ui"/>
       <requirement
           name="*"/>
       <sourceLocator
@@ -330,50 +267,235 @@
           locateNestedProjects="true"/>
       <repositoryList>
         <repository
-            url="https://download.eclipse.org/cbi/updates/license/"/>
+            url="https://download.eclipse.org/cbi/updates/license"/>
         <repository
-            url="https://download.eclipse.org/eclipse/updates/4.22/R-4.22-202111241800/"/>
+            url="https://download.eclipse.org/egit/updates-nightly"/>
         <repository
-            url="https://download.eclipse.org/egit/updates/"/>
+            url="https://download.eclipse.org/linuxtools/updates-docker-nightly"/>
         <repository
-            url="https://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
+            url="https://download.eclipse.org/lsp4e/releases/latest"/>
         <repository
-            url="https://download.eclipse.org/lsp4e/releases/0.20.2/"/>
+            url="https://download.eclipse.org/modeling/emf/emf/builds/nightly/latest"/>
         <repository
-            url="https://download.eclipse.org/modeling/emf/emf/builds/release/latest/"/>
+            url="https://download.eclipse.org/tm4e/releases/latest"/>
         <repository
-            url="https://download.eclipse.org/mylyn/docs/releases/3.0.42/"/>
+            url="https://download.eclipse.org/tools/cdt/releases/latest"/>
         <repository
-            url="https://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956"/>
+            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20201118194144/repository"/>
         <repository
-            url="https://download.eclipse.org/technology/swtbot/releases/3.1.0/"/>
-        <repository
-            url="https://download.eclipse.org/tm4e/releases/0.4.3/"/>
-        <repository
-            url="https://download.eclipse.org/tools/cdt/releases/10.6/cdt-10.6.0/">
-          <annotation>
-            <detail
-                key="description">
-              <value>We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace.</value>
-            </detail>
-          </annotation>
-        </repository>
-        <repository
-            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository/"/>
+            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20220531185310/repository"/>
         <repository
             url="https://download.eclipse.org/tools/ptp/builds/remote/3.0/2021-09"/>
         <repository
-            url="https://download.eclipse.org/wildwebdeveloper/snapshots/"/>
+            url="https://download.eclipse.org/technology/swtbot/releases/latest"/>
+        <repository
+            url="https://download.eclipse.org/wildwebdeveloper/releases/latest"/>
       </repositoryList>
     </targlet>
   </setupTask>
   <setupTask
-      xsi:type="setup.workingsets:WorkingSetTask">
+      xsi:type="setup.workingsets:WorkingSetTask"
+      id="cdt.workingsets">
     <workingSet
         name="CDT">
       <predicate
+          xsi:type="predicates:AndPredicate">
+        <operand
+            xsi:type="predicates:RepositoryPredicate"
+            project="org.eclipse.cdt"/>
+        <operand
+            xsi:type="workingsets:ExclusionPredicate"
+            excludedWorkingSet="//'cdt.workingsets'/@workingSets[name='CDT%20%20Json%20CDB'] //'cdt.workingsets'/@workingSets[name='CDT%20%20JTag'] //'cdt.workingsets'/@workingSets[name='CDT%20%20Launch'] //'cdt.workingsets'/@workingSets[name='CDT%20%20Launchbar'] //'cdt.workingsets'/@workingSets[name='CDT%20%20Releng'] //'cdt.workingsets'/@workingSets[name='CDT%20%20Remote'] //'cdt.workingsets'/@workingSets[name='CDT%20%20Terminal'] //'cdt.workingsets'/@workingSets[name='CDT%20Build'] //'cdt.workingsets'/@workingSets[name='CDT%20CMake'] //'cdt.workingsets'/@workingSets[name='CDT%20Codan'] //'cdt.workingsets'/@workingSets[name='CDT%20Core'] //'cdt.workingsets'/@workingSets[name='CDT%20Cross'] //'cdt.workingsets'/@workingSets[name='CDT%20Debug'] //'cdt.workingsets'/@workingSets[name='CDT%20DSF'] //'cdt.workingsets'/@workingSets[name='CDT%20DSF%20GDB'] //'cdt.workingsets'/@workingSets[name='CDT%20Doc'] //'cdt.workingsets'/@workingSets[name='CDT%20LLVM'] //'cdt.workingsets'/@workingSets[name='CDT%20LSP'] //'cdt.workingsets'/@workingSets[name='CDT%20Memory'] //'cdt.workingsets'/@workingSets[name='CDT%20Native'] //'cdt.workingsets'/@workingSets[name='CDT%20QT'] //'cdt.workingsets'/@workingSets[name='CDT%20Tests%20Runner'] //'cdt.workingsets'/@workingSets[name='CDT%20Tools%20Templates'] //'cdt.workingsets'/@workingSets[name='CDT%20Unit%20Test'] //'cdt.workingsets'/@workingSets[name='CDT%20Util'] //'cdt.workingsets'/@workingSets[name='CDT%20Visualizer'] //'cdt.workingsets'/@workingSets[name='CDT%20Windows']"/>
+      </predicate>
+    </workingSet>
+    <workingSet
+        name="CDT Build">
+      <predicate
           xsi:type="predicates:RepositoryPredicate"
-          project="org.eclipse.cdt-feature"/>
+          project="org.eclipse.cdt"
+          relativePathPattern="build/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT CMake">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="cmake/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Codan">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="codan/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Core">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="core/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Cross">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="cross/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Debug">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="debug/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Doc">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="doc/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT DSF">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="dsf/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT DSF GDB">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="dsf-gdb/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT  Json CDB">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="jsoncdb/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT  JTag">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="jtag/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT  Launch">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="launch/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT  Launchbar">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="launchbar/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT LLVM">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="lsp/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT LSP">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="llvm/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Memory">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="memory/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Native">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="native/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT QT">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="qt/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT  Releng">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="releng/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT  Remote">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="remote/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT  Terminal">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="terminal/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Tests Runner">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="testsrunner/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Tools Templates">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="tools\.templates/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Unit Test">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="unittest/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Util">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="util/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Visualizer">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="visualizer/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT Windows">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt"
+          relativePathPattern="windows/.*"/>
     </workingSet>
     <description>The dynamic working sets for ${scope.project.label}</description>
   </setupTask>

@@ -14,20 +14,6 @@ The recommended flow for most users is to use the "Oomph" installer. Just click 
 
 [![Create Eclipse Development Environment for CDT](https://download.eclipse.org/oomph/www/setups/svg/CDT.svg)](https://www.eclipse.org/setups/installer/?url=https://raw.githubusercontent.com/eclipse-cdt/cdt/main/releng/CDTConfiguration.setup&show=true "Click to open Eclipse-Installer Auto Launch or drag onto your running installer's title area")
 
-<!--
-Use the Eclipse installer (Oomph) to setup the Eclipse installation and everything required to get started with CDT development. It downloads Eclipse, sets the API baseline, clones the CDT git repo and imports the projects for you.
-
-1. Download and run the Eclipse installer, available at https://www.eclipse.org/downloads/packages/installer.
-2. In the first page (product selection), click the preference button in the top-right corner and select the Advanced Mode button.
-  - If you are behind a proxy, at this point you might want to double check your network settings by clicking in the "Network Proxy Settings" at the bottom.
-3. Select Eclipse IDE for Eclipse Committers and select Latest as the product version. Click next.
-4. Under Eclipse Projects, select CDT. It should now be visible in the bottom list. Click next.
-5. Enter installation folder name, workspace name, etc. Click Next, Finish.
-6. The installer will download Eclipse, clone the git repository and import the sets of projects you selected.
-
-**TODO** Put in animated gif of install
--->
-
 ### Setup CDT for development, manual setup
 
 Many of the active Eclipse CDT developers manually setup their development environment instead of using Oomph as described above. *Developers new to Eclipse development should follow the Oomph instructions above.* The instructions in this section are brief and assume reader has experience in Eclipse development already.

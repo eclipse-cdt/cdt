@@ -36,6 +36,12 @@ Makefile text
 # file permission +x
 *.sh text
 
+# Build files
+*.Jenkinsfile text
+Jenkinsfile text
+*.yaml text
+*.yml text
+
 # Qt
 *.pro text
 *.qml text

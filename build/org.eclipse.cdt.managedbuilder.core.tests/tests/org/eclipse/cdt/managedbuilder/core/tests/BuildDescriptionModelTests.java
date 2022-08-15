@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Intel Corporation and others.
+ * Copyright (c) 2006, 2022 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * John Dallaway - Accommodate extra flags with internal builder (bug 580286)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
@@ -1652,13 +1653,6 @@ public class BuildDescriptionModelTests extends TestCase {
 		type.addResource(tDes.createResource("dir2/h.r"));
 		type.addResource(tDes.createResource("dir2/i.r"));
 
-		type = step.createIOType(false, false, null);
-		type.addResource(tDes.createResource("o1.o"));
-		type.addResource(tDes.createResource("dir3/o2.o"));
-		type.addResource(tDes.createResource("dir4/d/o3.o"));
-
-		//
-		//
 		step = tDes.createStep(null, null);
 
 		type = step.createIOType(true, false, null);
@@ -1754,11 +1748,6 @@ public class BuildDescriptionModelTests extends TestCase {
 		//			type.addResource(tDes.createResource(cName + "/r.o"));
 		//			type.addResource(tDes.createResource(cName + "/t.o"));
 		//			type.addResource(tDes.createResource(cName + "/y.o"));
-
-		//		type = step.createIOType(true, false, null);
-		type.addResource(tDes.createResource("o1.o"));
-		type.addResource(tDes.createResource("dir3/o2.o"));
-		type.addResource(tDes.createResource("dir4/d/o3.o"));
 
 		type = step.createIOType(false, false, null);
 		type.addResource(tDes.createResource(cName + "/" + artifactName));

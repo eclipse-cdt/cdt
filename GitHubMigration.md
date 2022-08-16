@@ -20,9 +20,9 @@ Please see the GitHub issues on the migration for current status and things left
   - Note that one of the drawbacks of decentralized GitHub issues is that each project has its own set of "numbers". 
   - Therefore when referencing an issues from outside of the current repo, prefixing it with the project name is the proper way to do it. e.g. `Organization_name/Repository#Issue` - see [GitHub help](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls) for more details.
 
-- Bug reports are not necessary on Pull Requests. Issues and Pull Requests in GitHub share a numbering system and the metadata that can be applied to them is the same. So unlike the Bugzilla/Gerrit flow it is no longer necessary to create issues for each PR. See (contribution guide's Creating Pull Requests section)[CONTRIBUTING.md#Creating-Pull-Requests] for current policy
+- Bug reports are not necessary on Pull Requests. Issues and Pull Requests in GitHub share a numbering system and the metadata that can be applied to them is the same. So unlike the Bugzilla/Gerrit flow it is no longer necessary to create issues for each PR. See [contribution guide's Creating Pull Requests section](CONTRIBUTING.md#Creating-Pull-Requests) for current policy
 
-- GitHub Pull Requests replace Gerrit. See (contribution guide's Creating Pull Requests section)[CONTRIBUTING.md#Creating-Pull-Requests] for step-by-step on creating PRs, and the (Merge Pull Request)[CONTRIBUTING.md#Merge-Pull-Request] section for how to review and merge issues
+- GitHub Pull Requests replace Gerrit. See [contribution guide's Creating Pull Requests section](CONTRIBUTING.md#Creating-Pull-Requests) for step-by-step on creating PRs, and the [Merge Pull Request](CONTRIBUTING.md#Merge-Pull-Request) section for how to review and merge issues
 
 - Where possible we borrow for the Eclipse Platform project on process. The Eclipse Platform have a [recommended workflow](https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md#recommended-workflow) that is evolving that Eclipse CDT should use.
   - CDT's contribution + pull request process are documented in [CONTRIBUTING.md](CONTRIBUTING.md)

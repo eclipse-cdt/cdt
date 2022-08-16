@@ -15,7 +15,7 @@ Externalize strings (excluding exception arguments, tests and special identifier
 
 All CDT plugins override default compiler error/warning and use project specific errors/warnings. This enforced by the [build process](https://github.com/eclipse-cdt/cdt-infra/tree/master/jenkins/pipelines/cdt/verify#cdt-verify-code-cleanliness). 
 
-All committers and contributors submitting patches should enable [http://wiki.eclipse.org/PDE/API_Tools/User_Guide#API_Tooling_Setup API tooling] by setting target baseline platform. Do not commit code with API errors.
+All committers and contributors submitting patches should enable [API tooling](http://wiki.eclipse.org/PDE/API_Tools/User_Guide#API_Tooling_Setup) by setting target baseline platform. Do not commit code with API errors.
 
 *Patches with errors listed above including API errors will not be accepted without corrections.*
 
@@ -86,7 +86,7 @@ Once this is done, a full build will be triggered. After that, any changes that 
 4. Click "Refresh" to update the contents of the target.
 5. Click "Finish", then "OK" in the next dialog.
 
-(In the future, refreshing manually might not be required, see [https://bugs.eclipse.org/bugs/show_bug.cgi?id=479055 bug 479055])
+(In the future, refreshing manually might not be required, see [bug 479055](https://bugs.eclipse.org/bugs/show_bug.cgi?id=479055))
 
 ## Javadoc
 

@@ -202,13 +202,19 @@ public class CProjectDescriptionSerializationTests extends TestCase {
 			coreModel.setProjectDescription(project, des);
 			Assert.assertEquals(project, des.getProject());
 
-			Thread.sleep(1000); // let scanner discovery participate
 			try {
 				QualifiedName pdomName = new QualifiedName(CCorePlugin.PLUGIN_ID, "pdomName");
 				QualifiedName activeCfg = new QualifiedName(CCorePlugin.PLUGIN_ID, "activeConfiguration");
 				QualifiedName settingCfg = new QualifiedName(CCorePlugin.PLUGIN_ID, "settingConfiguration");
 				QualifiedName discoveredScannerConfigFileName = new QualifiedName(MakeCorePlugin.PLUGIN_ID,
 						"discoveredScannerConfigFileName");
+
+				// pdomName is set by indexer setup, which may still be postponed or not even
+				// scheduled yet, so we can't join the job. Just wait for the property to appear.
+				// (The other properties were set synchronously in setProjectDescription().)
+				for (int i = 0; i < 100 && !project.getPersistentProperties().containsKey(pdomName); i++) {
+					Thread.sleep(100);
+				}
 
 				assertTrue("pdomName", project.getPersistentProperties().containsKey(pdomName));
 				assertTrue("activeCfg", project.getPersistentProperties().containsKey(activeCfg));

@@ -851,6 +851,10 @@ public class BuiltinSpecsDetectorTest extends BaseTestCase {
 		assertEquals(true, provider.isExecuted());
 		assertEquals(ENV_SAMPLE_VALUE_2, provider.getSampleEnvVar());
 
+		// clean up
+		vars.deleteAll();
+		fUserSupplier.setWorkspaceEnvironment(vars);
+
 		// unregister listeners
 		provider.unregisterListener();
 	}

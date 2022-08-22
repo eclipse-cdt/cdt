@@ -11,7 +11,7 @@ pipeline {
     stage('Upload') {
       steps {
         sshagent ( ['projects-storage.eclipse.org-bot-ssh']) {
-          sh './scripts/promote-files-to-download.sh'
+          sh './releng/scripts/promote-files-to-download.sh'
         }
       }
     }

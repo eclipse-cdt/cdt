@@ -87,7 +87,10 @@
       activateTarget="false">
     <targlet
         name="${scope.project.label}"
-        activeRepositoryList="CDT Latest Released">
+        activeRepositoryList="CDT Latest Released"
+        includeSources="false"
+        includeAllPlatforms="true"
+        includeAllRequirements="false">
       <requirement
           name="org.eclipse.cdt.autotools.feature.group"/>
       <requirement
@@ -109,19 +112,19 @@
       <requirement
           name="org.eclipse.cdt.docker.launcher.feature.group"/>
       <requirement
-          name="org.eclipse.cdt.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.gdb.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.gnu.build.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.gnu.debug.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.gnu.dsf.feature.group"/>
+          name="org.eclipse.cdt.examples.dsf.feature.group"/>
       <requirement
           name="org.eclipse.cdt.gnu.multicorevisualizer.feature.group"/>
       <requirement
-          name="org.eclipse.cdt.examples.dsf.feature.group"/>
+          name="org.eclipse.cdt.jsoncdb.arm"/>
+      <requirement
+          name="org.eclipse.cdt.jsoncdb.hpenonstop"/>
+      <requirement
+          name="org.eclipse.cdt.jsoncdb.intel"/>
+      <requirement
+          name="org.eclipse.cdt.jsoncdb.microsoft"/>
+      <requirement
+          name="org.eclipse.cdt.jsoncdb.nvidia"/>
       <requirement
           name="org.eclipse.cdt.launch.remote.feature.group"/>
       <requirement
@@ -129,15 +132,13 @@
       <requirement
           name="org.eclipse.cdt.llvm.dsf.lldb.feature.group"/>
       <requirement
+          name="org.eclipse.cdt.lsp.feature.group"/>
+      <requirement
           name="org.eclipse.cdt.managedbuilder.llvm.feature.group"/>
       <requirement
           name="org.eclipse.cdt.meson.feature.group"/>
       <requirement
           name="org.eclipse.cdt.msw.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.native.feature.group"/>
-      <requirement
-          name="org.eclipse.cdt.platform.feature.group"/>
       <requirement
           name="org.eclipse.cdt.qt.feature.group"/>
       <requirement
@@ -145,61 +146,33 @@
       <requirement
           name="org.eclipse.cdt.testsrunner.feature.feature.group"/>
       <requirement
-          name="org.eclipse.cdt.visualizer.feature.group"/>
+          name="org.eclipse.cdt.unittest.feature.feature.group"/>
       <requirement
-          name="org.eclipse.launchbar.feature.group"/>
+          name="org.eclipse.cdt.util"/>
+      <requirement
+          name="org.eclipse.cdt.visualizer.feature.group"/>
       <requirement
           name="org.eclipse.launchbar.remote.feature.group"/>
       <requirement
-          name="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group"/>
+          name="org.eclipse.remote.feature.group"/>
       <requirement
-          name="org.eclipse.tm.terminal.connector.local.feature.feature.group"/>
+          name="org.eclipse.remote.console.feature.group"/>
+      <requirement
+          name="org.eclipse.remote.proxy.feature.group"/>
+      <requirement
+          name="org.eclipse.remote.serial.feature.group"/>
+      <requirement
+          name="org.eclipse.remote.telnet.feature.group"/>
+      <requirement
+          name="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group"/>
       <requirement
           name="org.eclipse.tm.terminal.connector.remote.feature.feature.group"/>
       <requirement
-          name="org.eclipse.tm.terminal.connector.ssh.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.tm.terminal.connector.telnet.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.tm.terminal.control.feature.feature.group"/>
-      <requirement
           name="org.eclipse.tm.terminal.feature.feature.group"/>
-      <requirement
-          name="org.eclipse.tm.terminal.view.feature.feature.group"/>
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/eclipse/updates/4.23/R-4.23-202203080310"/>
-        <repository
-            url="https://download.eclipse.org/egit/updates-6.1/"/>
-        <repository
-            url="https://download.eclipse.org/linuxtools/update-docker-5.6.0/"/>
-        <repository
-            url="https://download.eclipse.org/lsp4e/releases/0.20.2/"/>
-        <repository
-            url="https://download.eclipse.org/modeling/emf/emf/builds/release/2.28/"/>
-        <repository
-            url="https://download.eclipse.org/mylyn/docs/releases/3.0.42/"/>
-        <repository
-            url="https://download.eclipse.org/mylyn/drops/3.25.2/v20200831-1956"/>
-        <repository
-            url="https://download.eclipse.org/tm4e/releases/0.4.3/"/>
-        <repository
-            url="https://download.eclipse.org/tools/cdt/releases/10.6/cdt-10.6.0/">
-          <annotation>
-            <detail
-                key="description">
-              <value>
-                OMG! We have circular dependency that involves 'java.package; org.eclipse.cdt.utils.pty 0.0.0'
-                but it gets resolved here as we have CDT repo below.
-              </value>
-            </detail>
-          </annotation>
-        </repository>
-        <repository
-            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20220302172233/repository/"/>
-        <repository
-            url="https://download.eclipse.org/tools/ptp/builds/remote/3.0/2021-09/"/>
+            url="https://download.eclipse.org/tools/cdt/releases/latest"/>
       </repositoryList>
     </targlet>
   </setupTask>

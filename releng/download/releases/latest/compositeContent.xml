@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?compositeMetadataRepository version='1.0.0'?>
+<repository name='CDT Latest Update Site'
+    type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository' version='1.0.0'>
+  <properties size='1'>
+    <!-- timestamp made with date +%s%3N -->
+    <property name='p2.timestamp' value='1654707443791'/>
+  </properties>
+  <children size='1'>
+    <child location='../10.7'/>
+  </children>
+</repository>

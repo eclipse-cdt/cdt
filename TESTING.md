@@ -6,6 +6,28 @@ This document is a collection of various notes on testing and writing JUnit test
 
 Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for contributing information, including setting up a development environment.
 
+### How do I run CDT JUnit test suite?
+
+There are special Java packages to test CDT itself.
+Their names generally end with suffix ".tests".
+They are normally run during the build of CDT for example you can see results for Jenkins builds [here](https://ci.eclipse.org/cdt/job/cdt/job/main/lastCompletedBuild/testReport).
+
+You can run JUnit tests in UI this way:
+
+1. Select test CDT package (ends with ".tests", for example org.eclipse.cdt.core.tests).
+2. Right-click on the class, suite, package, source folder or project you want to run in Package Explorer and select Run As-\>JUnit Plugin Test.
+
+The build machine generally use the standard [Tycho Surefire](https://www.eclipse.org/tycho/sitedocs/tycho-surefire-plugin/plugin-info.html) class name patterns for [includes](https://www.eclipse.org/tycho/sitedocs/tycho-surefire-plugin/integration-test-mojo.html#includes) and [excludes](https://www.eclipse.org/tycho/sitedocs/tycho-surefire-plugin/integration-test-mojo.html#excludes) to identify tests during automated builds.
+
+![run_junit_tests.png](images/run_junit_tests.png "screenshot of how to run junit plug-in tests")
+
+
+Some sets of tests are grouped in "suites", these can be used to run subsets of tests that may exist across numerous packages.
+An example is the CDT core's [AutomatedIntegrationSuite](https://github.com/eclipse-cdt/cdt/blob/main/core/org.eclipse.cdt.core.tests/suite/org/eclipse/cdt/core/suite/AutomatedIntegrationSuite.java).
+
+Note that there could be intermittent failures in random tests, if you are getting those, try to rerun the tests.
+Tests can be marked as flaky, see the subsequent section for more details.
+
 ### Marking tests as Slow or Flaky
 
 Tests in CDT can be marked as Slow or Flaky to prevent them running as part of the standard test suites. See excludedGroups to skip slow or flaky tests sections above.

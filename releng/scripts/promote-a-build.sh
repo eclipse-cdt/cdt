@@ -9,7 +9,7 @@ SSH="ssh ${SSHUSER}"
 SCP="scp"
 DOWNLOAD=/home/data/httpd/download.eclipse.org/tools/cdt/$RELEASE_OR_BUILD/$MINOR_VERSION/$MILESTONE
 ARTIFACTS=https://ci.eclipse.org/cdt/job/$CDT_JOB_NAME/$CDT_BUILD_NUMBER/artifact
-INDEX_PHP_FOR_RCP=scripts/cdt-standalone-php-template
+INDEX_PHP_FOR_RCP=scripts/cdt-standalone-php-template.txt
 ARTIFACTS_REPO_TARGET=$ARTIFACTS/releng/org.eclipse.cdt.repo/target
 
 echo Using download location root of $DOWNLOAD

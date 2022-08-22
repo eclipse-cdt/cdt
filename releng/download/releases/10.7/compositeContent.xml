@@ -4,9 +4,10 @@
     type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository' version='1.0.0'>
   <properties size='1'>
     <!-- timestamp made with date +%s%3N -->
-    <property name='p2.timestamp' value='1654707443791'/>
+    <property name='p2.timestamp' value='1661203448094'/>
   </properties>
-  <children size='3'>
+  <children size='2'>
+    <child location='cdt-10.7.0'/>
     <child location='cdt-10.7.1'/>
   </children>
 </repository>

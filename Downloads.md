@@ -7,16 +7,17 @@ The CDT can either be installed as part of the Eclipse C/C++ IDE packaged zip fi
 
 CDT can be used as a standalone debugger. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
-### CDT 10.7.0 for Eclipse 2022-06
+### CDT 10.7.1 for Eclipse 2022-06
 
-Eclipse package: [Eclipse C/C++ IDE for 2022-06](https://www.eclipse.org/downloads/packages/release/2022-06/r/eclipse-ide-cc-developers) and run Check for Updates to get CDT 10.7.0.
+Eclipse package: [Eclipse C/C++ IDE for 2022-06](https://www.eclipse.org/downloads/packages/release/2022-06/r/eclipse-ide-cc-developers) and run Check for Updates to get CDT 10.7.1.
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.7>
 
-The git repo have been tagged with the [CDT_10_7_0](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_10_7_0) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_7_1](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_7_1) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
 
 Archived p2 repos:
 
+-   [cdt-10.7.1.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.7/cdt-10.7.1/cdt-10.7.1.zip)
 -   [cdt-10.7.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.7/cdt-10.7.0/cdt-10.7.0.zip)
 
 As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).

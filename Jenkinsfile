@@ -11,7 +11,13 @@ pipeline {
     stage('Code Formatting Checks') {
       steps {
         container('cdt') {
-          timeout(activity: true, time: 30) {
+            script {
+              if (env.CHANGE_ID) {
+                // Use github-pipeline to interact with GitHub: https://github.com/jenkinsci/pipeline-github-plugin
+                pullRequest.comment('The Jenkins build of this PR has has started. See details at ' + env.BUILD_URL)
+              }
+            }
+            timeout(activity: true, time: 30) {
             withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
               sh 'MVN="/usr/share/maven/bin/mvn -Dmaven.repo.local=/home/jenkins/.m2/repository \
                         --settings /home/jenkins/.m2/settings.xml" ./releng/scripts/check_code_cleanliness.sh'

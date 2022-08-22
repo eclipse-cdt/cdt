@@ -13,7 +13,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2022-06](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.7>
 
-The git repo have been tagged with the [CDT_10_7_1](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_7_1) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_7_1](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_7_1) tag.
 
 Archived p2 repos:
 
@@ -28,7 +28,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2022-03](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.6>
 
-The git repo have been tagged with the [CDT_10_6_2](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_10_6_2) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_6_2](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_6_2) tag.
 
 Archived p2 repos:
 
@@ -44,7 +44,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2021-12](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.5>
 
-The git repo have been tagged with the [CDT_10_5_0](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_10_5_0) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_5_0](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_5_0) tag.
 
 Archived p2 repos:
 
@@ -58,7 +58,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2021-09](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.4>
 
-The git repo have been tagged with the [CDT_10_4_1](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_10_4_1) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_4_1](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_4_1) tag.
 
 Archived p2 repos:
 
@@ -73,7 +73,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2021-06](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.3>
 
-The git repo have been tagged with the [CDT_10_3_3](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_10_3_3) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_3_3](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_3_3) tag.
 
 Archived p2 repos:
 
@@ -90,7 +90,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2021-03](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.2>
 
-The git repo have been tagged with the [CDT_10_2_0](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_10_2_0) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_2_0](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_2_0) tag.
 
 Archived p2 repos:
 
@@ -104,7 +104,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2020-12](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.1>
 
-The git repo have been tagged with the [CDT_10_1_0](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_10_1_0) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_1_0](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_1_0) tag.
 
 Archived p2 repos:
 
@@ -120,7 +120,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2020-09](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/10.0>
 
-The git repo have been tagged with the [CDT_10_0_1](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_10_0_1) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_10_0_1](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_10_0_1) tag.
 
 Archived p2 repos:
 
@@ -137,7 +137,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2020-06](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.11>
 
-The git repo have been tagged with the [CDT_9_11_1](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_9_11_1) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_9_11_1](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_9_11_1) tag.
 
 Archived p2 repos:
 
@@ -154,7 +154,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2019-12](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.10>
 
-The git repo have been tagged with the [CDT_9_10_0](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_9_10_0) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_9_10_0](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_9_10_0) tag.
 
 Archived p2 repos:
 
@@ -170,7 +170,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2019-09](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.9>
 
-The git repo have been tagged with the [CDT_9_9_0](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_9_9_0) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_9_9_0](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_9_9_0) tag.
 
 Archived p2 repos:
 
@@ -186,7 +186,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2019-06](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.8>
 
-The git repo have been tagged with the [CDT_9_8_1](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_9_8_1) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_9_8_1](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_9_8_1) tag.
 
 Archived p2 repos:
 
@@ -203,7 +203,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2019-03](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.7>
 
-The git repo have been tagged with the [CDT_9_7_2](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_9_7_2) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_9_7_2](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_9_7_2) tag.
 
 Archived p2 repos:
 
@@ -221,7 +221,7 @@ Eclipse package: [Eclipse C/C++ IDE for 2018-12](https://www.eclipse.org/downlo
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.6>
 
-The git repo have been tagged with the [CDT_9_6_0](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_9_6_0) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_9_6_0](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_9_6_0) tag.
 
 Archived p2 repos:
 
@@ -239,7 +239,7 @@ Eclipse package: [Eclipse C/C++ IDE for Photon](https://www.eclipse.org/downloa
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.5>
 
-The git repo have been tagged with the [CDT_9_5_5](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_9_5_5) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_9_5_5](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_9_5_5) tag.
 
 Archived p2 repos:
 
@@ -260,7 +260,7 @@ Eclipse package: [Eclipse C/C++ IDE for Oxygen.3](https://www.eclipse.org/downl
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.4>
 
-The git repo have been tagged with the [CDT_9_4_3](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git/tag/?h=CDT_9_4_3) tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the [CDT_9_4_3](https://github.com/eclipse-cdt/cdt/releases/tag/CDT_9_4_3) tag.
 
 Archived p2 repos:
 
@@ -279,7 +279,7 @@ Eclipse package: [Eclipse C/C++ IDE for Oxygen.1](https://www.eclipse.org/downl
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.3>
 
-You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the CDT_9_3_0 tag.
 
 Archived p2 repos:
 
@@ -298,7 +298,7 @@ Eclipse package: [Eclipse C/C++ IDE for Neon.3](https://www.eclipse.org/downloa
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/9.2>
 
-The git repo have been tagged with the CDT_9_2_1 tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repo have been tagged with the CDT_9_2_1 tag.
 
 Archived p2 repos:
 
@@ -318,7 +318,7 @@ Eclipse package: [Eclipse C/C++ IDE for Mars.2](https://www.eclipse.org/downloa
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/8.8.1>
 
-The git repos have been tagged with the CDT_8_8_1 tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repos have been tagged with the CDT_8_8_1 tag.
 
 Archived p2 repos:
 
@@ -336,7 +336,7 @@ Eclipse package: [Eclipse C/C++ IDE for Luna SR2](https://www.eclipse.org/downl
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/8.6>
 
-The git repos have been tagged with the CDT_8_6_0 tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repos have been tagged with the CDT_8_6_0 tag.
 
 Archived p2 repos:
 
@@ -350,7 +350,7 @@ Eclipse package: [Eclipse C/C++ IDE for Kepler SR2](https://www.eclipse.org/dow
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/kepler>
 
-The git repos have been tagged with the CDT_8_3_0 tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repos have been tagged with the CDT_8_3_0 tag.
 
 Archived p2 repos:
 
@@ -364,7 +364,7 @@ Eclipse package: [Eclipse C/C++ IDE for Juno SR2](https://www.eclipse.org/downl
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/juno>
 
-The git repos have been tagged with the CDT_8_1_2 tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repos have been tagged with the CDT_8_1_2 tag.
 
 Archived p2 repos:
 
@@ -378,7 +378,7 @@ Eclipse package: [Eclipse C/C++ IDE Indigo SR2](https://www.eclipse.org/downloa
 
 p2 software repository: <https://download.eclipse.org/tools/cdt/releases/indigo>
 
-The git repos have been tagged with the CDT_8_0_2 tag. You can download the source from the [web interface](https://git.eclipse.org/c/cdt/org.eclipse.cdt.git).
+The git repos have been tagged with the CDT_8_0_2 tag.
 
 Archived p2 repos:
 

@@ -45,7 +45,7 @@
 		     so that compare&replace does not replace the the newly built docs because the only change is in the filtered out index/* resources. -->
 		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.24/</help-docs-eclipserun-repo>
 
-		<tycho.scmUrl>scm:git:https://git.eclipse.org/r/cdt/org.eclipse.cdt</tycho.scmUrl>
+		<tycho.scmUrl>scm:git:https://github.com/eclipse-cdt/cdt</tycho.scmUrl>
 		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->
 		<base.test.vmargs>-Xms256m -Xmx512m -ea --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED</base.test.vmargs>
 		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.6/cdt-10.6.0/</comparator.repo>

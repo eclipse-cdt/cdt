@@ -2545,24 +2545,7 @@ still pass. Add a test case for your changes.
 
 #### How do I run CDT JUnit test suite?
 
-There are special Java packages to test CDT itself. Their names end with
-suffix ".tests". They are normally run during the build of CDT for
-example you can see results for Hudson builds here:
-[<https://ci.eclipse.org/cdt/job/cdt-master/lastCompletedBuild/testReport/>](https://hudson.eclipse.org/hudson/job/cdt-nightly/lastCompletedBuild/testReport/).
-
-You can run JUnit tests in UI this way:
-
-1. Select test CDT package (ends with ".tests", for example
-org.eclipse.cdt.core.tests).
-2. Locate the main test suite in the package (i.e.
-suite/org.eclipse.cdt.core.suite/AutomatedIntegrationSuite.java)
-3. Right-click on the suite java file in Package Explorer and
-select Run As-\>JUnit Plugin Test.
-
-You can run individual tests this way as well.
-
-Note that there could be intermittent failures in random tests, if you
-are getting those, try to rerun the tests.
+Please see instructions in the testing readme section [How do I run CDT JUnit test suite?](../TESTING.md#how-do-i-run-cdt-junit-test-suite)
 
 #### How do I submit a fix for a bug?
 

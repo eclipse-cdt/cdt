@@ -46,3 +46,6 @@ Please see the GitHub issues on the migration for current status and things left
 
 - [GitHub Discussions](https://github.com/eclipse-cdt/cdt/discussions) for CDT have been enabled as the new location for user support. In addition to user support, announcements about CDT releases can be made as pinned posts. The advantage of using discussions is that it brings the user discussions and the developers of Eclipse CDT closer together.
 
+- The Eclipse CDT website (https://www.eclipse.org/cdt) has been discontinued.
+Redirects from the CDT website have been put in place to land at suitable locations in Eclipse CDT on GitHub.
+The old website content is still available in git with the tag [PRE_MOVE_TO_GITHUB](https://git.eclipse.org/r/plugins/gitiles/www.eclipse.org/cdt/+/refs/tags/PRE_MOVE_TO_GITHUB)

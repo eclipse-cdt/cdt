@@ -222,6 +222,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			Label label = new Label(usercomp, SWT.NULL);
 			label.setText(Messages.ContainerPropertyTab_dockerDPath);
 			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 1;
 			label.setLayoutData(gd);
 
 			dockerDPath = new Text(usercomp, SWT.BORDER);
@@ -239,11 +240,13 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 			label = new Label(usercomp, SWT.NULL);
 			gd = new GridData();
+			gd.horizontalSpan = 1;
 			gd.grabExcessHorizontalSpace = false;
 			label.setLayoutData(gd);
 
 			label = new Label(usercomp, SWT.NULL);
 			gd = new GridData();
+			gd.horizontalSpan = 1;
 			gd.grabExcessHorizontalSpace = false;
 			label.setLayoutData(gd);
 
@@ -256,6 +259,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 			label = new Label(usercomp, SWT.NULL);
 			gd = new GridData();
+			gd.horizontalSpan = 1;
 			gd.grabExcessHorizontalSpace = false;
 			label.setLayoutData(gd);
 
@@ -296,14 +300,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			});
 		}
 		// Volume
-		{
-			Label label = new Label(usercomp, SWT.NULL);
-			gd = new GridData();
-			gd.horizontalSpan = 1;
-			gd.grabExcessHorizontalSpace = false;
-			label.setLayoutData(gd);
-			createVolumeSettingsContainer(usercomp);
-		}
+		createVolumeSettingsContainer(usercomp);
+
 		// Autotools
 		try {
 

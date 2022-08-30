@@ -112,6 +112,9 @@ public class Messages extends NLS {
 
 	public static String StandardGDBDebuggerPage14;
 
+	public static String ContainerPropertyTab_dockerDPath;
+	public static String ContainerPropertyTab_dockerDPath_Instruction;
+	public static String ContainerPropertyTab_dockerDPath_Tooltip;
 	public static String ContainerPropertyTab_Title;
 	public static String ContainerPropertyTab_Enable_Msg;
 	public static String ContainerPropertyTab_Run_Autotools_In_Container_Msg;

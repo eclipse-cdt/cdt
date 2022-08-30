@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.docker.launcher;
 
+import java.util.Map;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 
@@ -59,11 +61,23 @@ public class ContainerLaunchUtils {
 	 * @param path The path on the hose
 	 * @return The string to be passed to the docker daemon
 	 */
-	public static final String toDockerVolume(IPath path) {
-		IPath p = path.makeAbsolute();
-		String rv = toDockerPath(p);
+	public static final String toDockerVolume(Map<String, String> pMap, IPath path) {
+		// The path on the Docker host
+		var dhPath = path.makeAbsolute().toString();
+
+		for (var me : pMap.entrySet()) {
+			var elp = me.getKey();
+			var edhp = me.getValue();
+			if (dhPath.startsWith(elp)) {
+				dhPath = edhp + dhPath.substring(elp.length());
+				break;
+			}
+		}
+
+		// docker-path first, docker-host-path third
+		String rv = toDockerPath(path.makeAbsolute());
 		rv += ":HOST_FILE_SYSTEM:"; //$NON-NLS-1$
-		rv += p.toOSString();
+		rv += dhPath;
 		rv += ":false:true"; //$NON-NLS-1$ RO=false, selected = true
 		return rv;
 	}

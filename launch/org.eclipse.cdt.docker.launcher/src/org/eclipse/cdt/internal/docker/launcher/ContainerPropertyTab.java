@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
 import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
@@ -86,6 +87,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Text;
 
 @SuppressWarnings("restriction")
 public class ContainerPropertyTab extends AbstractCBuildPropertyTab
@@ -102,6 +104,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	private Button enableButton;
 	private Button launchAutotoolsButton;
 	private Button addButton;
+	private Text dockerDPath;
 	private IDockerConnection connection;
 	private IDockerConnection[] connections;
 	private IDockerImageListener containerTab;
@@ -170,83 +173,138 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		usercomp.setLayoutData(gd);
 
-		enableButton = new Button(usercomp, SWT.CHECK);
-		enableButton.setText(Messages.ContainerPropertyTab_Enable_Msg);
+		//Enable button
+		{
+			enableButton = new Button(usercomp, SWT.CHECK);
+			enableButton.setText(Messages.ContainerPropertyTab_Enable_Msg);
 
-		iCfg = getCfg();
-		iCfgd = getResDesc().getConfiguration();
+			iCfg = getCfg();
+			iCfgd = getResDesc().getConfiguration();
 
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 5;
-		enableButton.setLayoutData(gd);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 5;
+			enableButton.setLayoutData(gd);
+		}
+		// Connection
+		{
+			Label connectionSelectorLabel = new Label(usercomp, SWT.NULL);
+			connectionSelectorLabel.setText(Messages.ContainerTab_Connection_Selector_Label);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			connectionSelectorLabel.setLayoutData(gd);
 
-		Label connectionSelectorLabel = new Label(usercomp, SWT.NULL);
-		connectionSelectorLabel.setText(Messages.ContainerTab_Connection_Selector_Label);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		gd.grabExcessHorizontalSpace = false;
-		connectionSelectorLabel.setLayoutData(gd);
+			connectionSelector = new Combo(usercomp, SWT.BORDER | SWT.READ_ONLY);
+			connectionSelector.setToolTipText(Messages.ContainerTab_Connection_Selector_Tooltip);
+			initializeConnectionSelector();
+			connectionSelector.addModifyListener(connectionModifyListener);
+			// Following is a kludge so that on Linux the Combo is read-only but
+			// has a white background.
+			connectionSelector.addVerifyListener(new VerifyListener() {
+				@Override
+				public void verifyText(VerifyEvent e) {
+					e.doit = false;
+				}
+			});
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 3;
+			gd.grabExcessHorizontalSpace = true;
+			connectionSelector.setLayoutData(gd);
 
-		connectionSelector = new Combo(usercomp, SWT.BORDER | SWT.READ_ONLY);
-		connectionSelector.setToolTipText(Messages.ContainerTab_Connection_Selector_Tooltip);
-		initializeConnectionSelector();
-		connectionSelector.addModifyListener(connectionModifyListener);
-		// Following is a kludge so that on Linux the Combo is read-only but
-		// has a white background.
-		connectionSelector.addVerifyListener(new VerifyListener() {
-			@Override
-			public void verifyText(VerifyEvent e) {
-				e.doit = false;
-			}
-		});
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		gd.grabExcessHorizontalSpace = true;
-		connectionSelector.setLayoutData(gd);
+			Label label1 = new Label(usercomp, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			label1.setLayoutData(gd);
+		}
+		// DockerDPath
+		{
+			Label label = new Label(usercomp, SWT.NULL);
+			label.setText(Messages.ContainerPropertyTab_dockerDPath);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 1;
+			label.setLayoutData(gd);
 
-		Label label1 = new Label(usercomp, SWT.NULL);
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		gd.grabExcessHorizontalSpace = false;
-		label1.setLayoutData(gd);
+			dockerDPath = new Text(usercomp, SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 3;
+			dockerDPath.setLayoutData(gd);
+			dockerDPath.setToolTipText(Messages.ContainerPropertyTab_dockerDPath_Tooltip);
+			dockerDPath.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					setDockerDPath(dockerDPath.getText());
 
-		Label imageSelectorLabel = new Label(usercomp, SWT.NULL);
-		imageSelectorLabel.setText(Messages.ContainerTab_Image_Selector_Label);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 1;
-		connectionSelectorLabel.setLayoutData(gd);
+				}
+			});
 
-		imageCombo = new Combo(usercomp, SWT.DROP_DOWN);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 3;
-		gd.grabExcessHorizontalSpace = true;
-		imageCombo.setLayoutData(gd);
+			label = new Label(usercomp, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			label.setLayoutData(gd);
 
-		Label label2 = new Label(usercomp, SWT.NULL);
-		gd = new GridData();
-		gd.horizontalSpan = 1;
-		gd.grabExcessHorizontalSpace = false;
-		label2.setLayoutData(gd);
+			label = new Label(usercomp, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			label.setLayoutData(gd);
 
-		initializeImageCombo();
+			label = new Label(usercomp, SWT.NULL);
+			label.setText(Messages.ContainerPropertyTab_dockerDPath_Instruction);
+			gd = new GridData();
+			gd.horizontalSpan = 3;
+			gd.grabExcessHorizontalSpace = false;
+			label.setLayoutData(gd);
 
-		imageCombo.addSelectionListener(new SelectionListener() {
+			label = new Label(usercomp, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			label.setLayoutData(gd);
 
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				setImageId(imageCombo.getText());
-				model.setSelectedImage(displayedImages.get(imageCombo.getSelectionIndex()));
-			}
+		}
+		// Image selector
+		{
+			Label imageSelectorLabel = new Label(usercomp, SWT.NULL);
+			imageSelectorLabel.setText(Messages.ContainerTab_Image_Selector_Label);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 1;
+			imageSelectorLabel.setLayoutData(gd);
 
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
+			imageCombo = new Combo(usercomp, SWT.DROP_DOWN);
+			gd = new GridData(GridData.FILL_HORIZONTAL);
+			gd.horizontalSpan = 3;
+			gd.grabExcessHorizontalSpace = true;
+			imageCombo.setLayoutData(gd);
 
-		});
+			Label label2 = new Label(usercomp, SWT.NULL);
+			gd = new GridData();
+			gd.horizontalSpan = 1;
+			gd.grabExcessHorizontalSpace = false;
+			label2.setLayoutData(gd);
+			initializeImageCombo();
 
+			imageCombo.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					setImageId(imageCombo.getText());
+					model.setSelectedImage(displayedImages.get(imageCombo.getSelectionIndex()));
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+
+			});
+		}
+		// Volume
 		createVolumeSettingsContainer(usercomp);
 
+		// Autotools
 		try {
+
 			IProject project = iCfgd.getProjectDescription().getProject();
 			IProjectNature nature = project.getNature("org.eclipse.cdt.autotools.core.autotoolsNatureV2"); //$NON-NLS-1$
 			isAutotoolsProject = (nature != null);
@@ -275,6 +333,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			DockerLaunchUIPlugin.log(e);
 		}
 
+		// Handle enablement stuff
 		initializeEnablementButton();
 		enableButton.addSelectionListener(new SelectionListener() {
 
@@ -587,6 +646,20 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		}
 	}
 
+	private void setDockerDPath(String ddPath) {
+		if (iCfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
+				IConfiguration cfg = cfs[i];
+				IOptionalBuildProperties p = cfg.getOptionalBuildProperties();
+				p.setProperty(ContainerCommandLauncher.DOCKERD_PATH, ddPath);
+			}
+		} else {
+			IOptionalBuildProperties p = iCfg.getOptionalBuildProperties();
+			p.setProperty(ContainerCommandLauncher.DOCKERD_PATH, ddPath);
+		}
+	}
+
 	private void setImageId(String imageId) {
 		if (iCfg instanceof IMultiConfiguration) {
 			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
@@ -713,6 +786,12 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			connection.addImageListener(containerTab);
 		}
 
+	}
+
+	private void initializeDockerDPath() {
+		IOptionalBuildProperties properties = iCfg.getOptionalBuildProperties();
+		var path = properties.getProperty(ContainerCommandLauncher.DOCKERD_PATH);
+		dockerDPath.setText(path == null ? "" : path); //$NON-NLS-1$
 	}
 
 	private void initializeImageCombo() {
@@ -878,22 +957,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 	@Override
 	protected void performDefaults() {
-		if (iCfg instanceof IMultiConfiguration) {
-			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
-			for (int i = 0; i < cfs.length; i++) {
-				IOptionalBuildProperties props = cfs[i].getOptionalBuildProperties();
-				props.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, Boolean.toString(false));
-				if (connections.length > 0) {
-					props.setProperty(ContainerCommandLauncher.CONNECTION_ID, connections[0].getUri());
-				} else {
-					props.setProperty(ContainerCommandLauncher.CONNECTION_ID, null);
-				}
-				props.setProperty(ContainerCommandLauncher.IMAGE_ID, null);
-				props.setProperty(ContainerCommandLauncher.VOLUMES_ID, null);
-				props.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, null);
-			}
-		} else {
-			IOptionalBuildProperties props = iCfg.getOptionalBuildProperties();
+
+		Consumer<IOptionalBuildProperties> setProps = (IOptionalBuildProperties props) -> {
 			props.setProperty(ContainerCommandLauncher.CONTAINER_BUILD_ENABLED, Boolean.toString(false));
 			if (connections.length > 0) {
 				props.setProperty(ContainerCommandLauncher.CONNECTION_ID, connections[0].getUri());
@@ -901,6 +966,20 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				props.setProperty(ContainerCommandLauncher.CONNECTION_ID, null);
 			}
 			props.setProperty(ContainerCommandLauncher.IMAGE_ID, null);
+			props.setProperty(ContainerCommandLauncher.VOLUMES_ID, null);
+			props.setProperty(ContainerCommandLauncher.SELECTED_VOLUMES_ID, null);
+			props.setProperty(ContainerCommandLauncher.DOCKERD_PATH, null);
+		};
+
+		if (iCfg instanceof IMultiConfiguration) {
+			IConfiguration[] cfs = (IConfiguration[]) ((IMultiConfiguration) iCfg).getItems();
+			for (int i = 0; i < cfs.length; i++) {
+				IOptionalBuildProperties props = cfs[i].getOptionalBuildProperties();
+				setProps.accept(props);
+			}
+		} else {
+			IOptionalBuildProperties props = iCfg.getOptionalBuildProperties();
+			setProps.accept(props);
 		}
 		initialEnabled = false;
 		initialConnection = null;
@@ -911,6 +990,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 			connectionSelector.select(0);
 		}
 		imageCombo.setText(""); //$NON-NLS-1$
+		dockerDPath.setText(""); //$NON-NLS-1$
 		model.setDataVolumes(null);
 		model.setSelectedDataVolumes(new HashSet<>());
 		enableButton.setSelection(false);
@@ -928,6 +1008,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 
 		initializeConnectionSelector();
 		initializeImageCombo();
+		initializeDockerDPath();
 		initializeEnablementButton();
 		initializeVolumesTable();
 	}

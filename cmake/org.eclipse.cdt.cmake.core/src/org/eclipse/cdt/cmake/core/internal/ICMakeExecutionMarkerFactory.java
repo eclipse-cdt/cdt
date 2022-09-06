@@ -50,7 +50,6 @@ interface ICMakeExecutionMarkerFactory {
 	 *
 	 * @throws CoreException
 	 */
-	// TODO pass in the extra attributes here then return void
 	void createMarker(String message, int severity, String filePath, Map<String, Object> mandatoryAttributes)
 			throws CoreException;
 }

@@ -205,6 +205,10 @@ import org.eclipse.core.runtime.Status;
 		 */
 		public void processMessage(ICMakeExecutionMarkerFactory markerFactory, String fullMessage)
 				throws CoreException {
+			int length = getMessageStart().length();
+			if (fullMessage.length() <= length) {
+				return;
+			}
 			String content = fullMessage.substring(getMessageStart().length());
 			// mandatory attributes for the marker
 			Map<String, Object> attributes = new HashMap<>(3);

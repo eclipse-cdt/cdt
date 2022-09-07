@@ -38,7 +38,7 @@ To make changes to the CDT, whether it be code, docs, JUnits, etc., you will nee
 
 These steps apply to anyone, whether a member of Eclipse CDT or a contributor on the project.
 
-- To fix anything in CDT first you can create or find an existing [https://github.com/eclipse-cdt/cdt/issues issue] report for this particular problem/enhancement. Creating an issue is optional, but highly recommended for larger changes to provide a place to pull all aspects of the improvement together and to discuss acceptable solutions before a Pull Request may be ready.
+- To fix anything in CDT first you can create or find an existing [issue](https://github.com/eclipse-cdt/cdt/issues) report for this particular problem/enhancement. Creating an issue is optional, but highly recommended for larger changes to provide a place to pull all aspects of the improvement together and to discuss acceptable solutions before a Pull Request may be ready.
 - Setup your Eclipse Development environment and check out source code, see [Setup CDT for development with Oomph](#Setup-CDT-for-development-with-Oomph) below.
 - Fix the source code 
 - Comment your changes in the code

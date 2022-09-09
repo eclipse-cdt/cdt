@@ -20,6 +20,12 @@
   </p>
 
   <p>
+    API Changes in CDT 11.0.
+  </p>
+  <ol>
+    <li><a href="#newUIAbstractPage">org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields</a></li>
+  </ol>
+  <p>
     API Changes in CDT 10.5.0
   </p>
   <ol>
@@ -80,7 +86,6 @@
     Planned Removals after June 2024 or on the next major version of Eclipe CDT.
   </p>
   <ol>
-    <li><a href="#newUIAbstractPage">org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields</a></li>
     <li><a href="#ArgletsMatcher2">java.util.regex.Matcher use in JSONCDB API will be removed</a></li>
     <li><a href="#BuiltinDetctionArgsGeneric">Misnamed class BuiltinDetctionArgsGeneric will be removed</a></li>
   </ol>
@@ -94,6 +99,32 @@
     forward breaking API changes are included in this document.
   </p>
 
+  <hr>
+  <h2>API Changes in CDT 11.0.</h2>
+  <h3>1. <a name="newUIAbstractPage">org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields</a></h3>
+  <p>
+    The following fields have been be removed from the API of org.eclipse.cdt.ui.newui.AbstractPage as they were never intended to be accessible by the design. As far as the current CDT developers know, no one was using this API.
+  </p>
+  <ul>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.noContentOnPage</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.displayedConfig</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.internalElement</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.isProject</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.isFolder</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.isFile</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.folder</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.itabs</li>
+    <li>org.eclipse.cdt.ui.newui.AbstractPage.currentTab</li>
+  </ul>
+  <p>
+    In addition, the following inner class wil be removed from the API.
+    <ul>
+      <li>org.eclipse.cdt.ui.newui.AbstractPage.InternalTab</li>
+    </ul>
+  </p>
+  <p>
+    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=579666" target="_blank">Bug 579666</a>.
+  </p>
   <hr>
   <h2>API Changes in CDT 10.5.0.</h2>
   <h3>1. <a name="jsoncdb">Package org.eclipse.cdt.cmake.is.core.participant has been renamed to
@@ -557,32 +588,7 @@
 
   <h3>API Removals after June 2024</h3>
 
-  <h3>1. <a name="newUIAbstractPage">org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields</a></h3>
-  <p>
-    The following fields will be removed from the API of org.eclipse.cdt.ui.newui.AbstractPage as they were never intended to be accessible by the design. As far as the current CDT developers know, no one is using this API.
-  </p>
-  <ul>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.noContentOnPage</li>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.displayedConfig</li>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.internalElement</li>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.isProject</li>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.isFolder</li>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.isFile</li>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.folder</li>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.itabs</li>
-    <li>org.eclipse.cdt.ui.newui.AbstractPage.currentTab</li>
-  </ul>
-  <p>
-    In addition, the following inner class wil be removed from the API.
-    <ul>
-      <li>org.eclipse.cdt.ui.newui.AbstractPage.InternalTab</li>
-    </ul>
-  </p>
-  <p>
-    See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=579666" target="_blank">Bug 579666</a>.
-  </p>
-
-  <h3>2. <a name="ArgletsMatcher2">java.util.regex.Matcher use in JSONCDB API will be removed</a></h3>
+  <h3>1. <a name="ArgletsMatcher2">java.util.regex.Matcher use in JSONCDB API will be removed</a></h3>
   <p>
     The following method will be removed from the API as it encourages non-safe constructs of reusing Matchers instead of Patterns.
   </p>
@@ -594,7 +600,7 @@
     See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=579982" target="_blank">Bug 579982</a>.
   </p>
 
-  <h3>3. <a name="BuiltinDetctionArgsGeneric">Misnamed class BuiltinDetctionArgsGeneric will be removed</a></h3>
+  <h3>2. <a name="BuiltinDetctionArgsGeneric">Misnamed class BuiltinDetctionArgsGeneric will be removed</a></h3>
   <p>
     The class BuiltinDetctionArgsGeneric will be removed. Use the correctly spelled BuiltinDetectionArgsGeneric instead.
   </p>

@@ -190,9 +190,7 @@ public class DsfSourceLookupParticipant extends AbstractSourceLookupParticipant 
 
 		IStack stackService = fServicesTracker.getService(IStack.class);
 		if (stackService == null) {
-			rm.setStatus(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, IDsfStatusConstants.INVALID_HANDLE,
-					"Stack data not available", null)); //$NON-NLS-1$
-			rm.done();
+			rm.done((String) null);
 			return;
 		}
 

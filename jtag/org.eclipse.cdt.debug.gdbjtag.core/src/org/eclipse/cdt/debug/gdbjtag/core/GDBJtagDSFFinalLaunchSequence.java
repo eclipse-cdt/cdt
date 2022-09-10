@@ -27,6 +27,7 @@
  *     John Dallaway - Set executable file (Bug 457697)
  *     John Dallaway - Initialize memory data before connecting to target (Bug 575934)
  *     John Dallaway - Support multiple remote debug protocols (Bug 535143)
+ *     John Dallaway - Accommodate ELF executables with any file suffix (#65)
  *******************************************************************************/
 package org.eclipse.cdt.debug.gdbjtag.core;
 
@@ -48,6 +49,7 @@ import java.util.Properties;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
+import org.eclipse.cdt.debug.core.executables.Executable;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContribution;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.GDBJtagDeviceContributionFactory;
 import org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.IGDBJtagDevice;
@@ -80,13 +82,17 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStatusAsyncOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MITuple;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
+import org.eclipse.cdt.launch.LaunchUtils;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * The final launch sequence for the Jtag hardware debugging using the
@@ -589,7 +595,10 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 				String imageOffset = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET,
 						IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 				if (imageOffset.length() > 0) {
-					imageOffset = (imageFileName.endsWith(".elf")) ? "" //$NON-NLS-1$//$NON-NLS-2$
+					ILaunchConfiguration launchConfig = ((ILaunch) getSession().getModelAdapter(ILaunch.class))
+							.getLaunchConfiguration();
+					IPath imageFilePath = new Path(LaunchUtils.resolveProgramPath(launchConfig, imageFileName));
+					imageOffset = Executable.isBinaryFile(imageFilePath) ? "" //$NON-NLS-1$
 							: "0x" + CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_OFFSET, //$NON-NLS-1$
 									IGDBJtagConstants.DEFAULT_IMAGE_OFFSET);
 				}

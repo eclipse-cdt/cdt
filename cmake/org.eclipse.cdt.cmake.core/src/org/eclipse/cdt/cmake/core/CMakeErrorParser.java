@@ -6,7 +6,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.cmake.core;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.cmake.core.internal.Activator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -36,7 +37,7 @@ import org.eclipse.core.runtime.Status;
  *
  * @author Martin Weber
  */
-/* package */ class CMakeErrorParser implements AutoCloseable {
+public class CMakeErrorParser implements AutoCloseable {
 
 	/** matches the Start of a message, also ending the previous message */
 	private static final Pattern PTN_MSG_START;

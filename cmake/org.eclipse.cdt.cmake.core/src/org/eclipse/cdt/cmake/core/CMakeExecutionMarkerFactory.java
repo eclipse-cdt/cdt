@@ -9,12 +9,14 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.cmake.core;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 
+import org.eclipse.cdt.cmake.core.internal.Activator;
+import org.eclipse.cdt.cmake.core.internal.Messages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;

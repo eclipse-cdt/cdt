@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.cmake.core.tests
 Bundle-Version: 1.0.0.qualifier
-Fragment-Host: org.eclipse.cdt.cmake.core;bundle-version="1.3.0"
+Fragment-Host: org.eclipse.cdt.cmake.core;bundle-version="1.5.0"
 Automatic-Module-Name: org.eclipse.cdt.cmake.core.tests
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Copyright: %Bundle-Copyright

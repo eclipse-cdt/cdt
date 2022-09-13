@@ -24,8 +24,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import org.eclipse.cdt.cmake.core.CMakeErrorParser;
+import org.eclipse.cdt.cmake.core.CMakeExecutionMarkerFactory;
+import org.eclipse.cdt.cmake.core.ICMakeExecutionMarkerFactory;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.cmake.core.ParsingConsoleOutputStream;
 import org.eclipse.cdt.cmake.core.internal.CommandDescriptorBuilder.CommandDescriptor;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;

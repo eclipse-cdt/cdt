@@ -9,10 +9,11 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.cmake.core;
 
 import java.util.Map;
 
+import org.eclipse.cdt.cmake.core.internal.Activator;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -21,9 +22,10 @@ import org.eclipse.core.runtime.CoreException;
  * build.
  *
  * @author Martin Weber
+ * @since 1.5.0
  */
 @FunctionalInterface
-interface ICMakeExecutionMarkerFactory {
+public interface ICMakeExecutionMarkerFactory {
 
 	/** ID for error markers related to execution of the cmake tool.
 	 * @see IResource#createMarker(String)

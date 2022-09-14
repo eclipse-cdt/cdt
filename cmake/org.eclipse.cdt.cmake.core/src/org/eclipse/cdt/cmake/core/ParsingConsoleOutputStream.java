@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.cmake.core;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -20,8 +20,9 @@ import org.eclipse.cdt.core.ConsoleOutputStream;
  * Intercepts output to a console output stream and forwards it to a CMakeErrorParser for processing.
  *
  * @author Martin Weber
+ * @since 1.5.0
  */
-class ParsingConsoleOutputStream extends ConsoleOutputStream {
+public class ParsingConsoleOutputStream extends ConsoleOutputStream {
 
 	private final ConsoleOutputStream os;
 	private final CMakeErrorParser parser;

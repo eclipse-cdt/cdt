@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
 
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.cmake.core;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

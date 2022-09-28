@@ -80,9 +80,9 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 *
 	 * @return binary parser ids
 	 * @throws CoreException
-	 * @deprecated As of 10.??? replaced by {@link ICBuildConfiguration#getBinaryParserIds}
+	 * @deprecated As of 8.0 replaced by {@link ICBuildConfiguration#getBinaryParserIds}
 	 */
-	@Deprecated(since = "7.5")
+	@Deprecated(since = "8.0")
 	String getBinaryParserId() throws CoreException;
 
 	/**
@@ -91,11 +91,9 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 *
 	 * @return binary parser ids
 	 * @throws CoreException
-	 * @since 7.5
+	 * @since 8.0
 	 */
-	default List<String> getBinaryParserIds() throws CoreException {
-		return List.of(getBinaryParserId());
-	}
+	List<String> getBinaryParserIds() throws CoreException;
 
 	/**
 	 * Return a build environment variable with a given name.

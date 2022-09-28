@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.build;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -144,6 +145,12 @@ public class ErrorBuildConfiguration extends PlatformObject implements ICBuildCo
 
 	@Override
 	public IEnvironmentVariable[] getVariables() throws CoreException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getBinaryParserIds() throws CoreException {
 		// TODO Auto-generated method stub
 		return null;
 	}

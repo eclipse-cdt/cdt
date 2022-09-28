@@ -234,6 +234,11 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		}
 	}
 
+	@Override
+	public List<String> getBinaryParserIds() {
+		return List.of(getBinaryParserId());
+	}
+
 	protected void addDiscoveryOptions(List<String> command) {
 		command.add("-E"); //$NON-NLS-1$
 		command.add("-P"); //$NON-NLS-1$

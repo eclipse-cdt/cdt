@@ -210,6 +210,11 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 	}
 
 	@Override
+	public List<String> getBinaryParserIds() {
+		return List.of(getBinaryParserId());
+	}
+
+	@Override
 	public Path getCommandPath(Path command) {
 		if (command.isAbsolute()) {
 			return command;

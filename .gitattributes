@@ -89,9 +89,11 @@ yarn.lock text
 *.icns binary
 *.ico binary
 *.jpg binary
+*.JPG binary
 *.jpeg binary
 *.png binary
 *.PNG binary
+*.svg binary
 *.xpm binary
 
 # Java/Eclipse

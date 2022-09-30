@@ -6,6 +6,8 @@
 
 The Eclipse CDT™ Project provides a fully functional C and C++ Integrated Development Environment based on the Eclipse platform. Features include: support for project creation and managed build for various toolchains, standard make build, source navigation, various source knowledge tools, such as type hierarchy, call graph, include browser, macro definition browser, code editor with syntax highlighting, folding and hyperlink navigation, source code refactoring and code generation, visual debugging tools, including memory, registers, and disassembly viewers.
 
+Highlights of recent releases and release notes are available in the [New & Noteworthy](NewAndNoteworthy/README.md).
+
 See also https://projects.eclipse.org/projects/tools.cdt and https://eclipse.org/cdt
 
 <img src="images/snapshots.gif" width="66%">

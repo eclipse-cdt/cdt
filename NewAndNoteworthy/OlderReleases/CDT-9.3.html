@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)https://wiki.eclipse.org/CDT/User/NewIn93 -->
+<html lang="en" dir="ltr" class="client-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" async="" src="./CDT-9.3_files/f.txt"></script><script type="text/javascript" async="" src="./CDT-9.3_files/insight.min.js"></script><script type="text/javascript" async="" src="./CDT-9.3_files/js"></script><script src="./CDT-9.3_files/conversations-embed.js" type="text/javascript" id="hubspot-messages-loader" data-loader="hs-scriptloader" data-hsjs-portal="5413615" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script src="./CDT-9.3_files/5413615.js" type="text/javascript" id="cookieBanner-5413615" data-cookieconsent="ignore" data-hs-ignore="true" data-loader="hs-scriptloader" data-hsjs-portal="5413615" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script src="./CDT-9.3_files/5413615(1).js" type="text/javascript" id="hs-analytics"></script><script src="./CDT-9.3_files/fb.js" type="text/javascript" id="hs-ads-pixel-5413615" data-ads-portal-id="5413615" data-ads-env="prod" data-loader="hs-scriptloader" data-hsjs-portal="5413615" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script type="text/javascript" async="" src="./CDT-9.3_files/analytics.js"></script><script async="" src="./CDT-9.3_files/gtm.js"></script>
+
+<title>CDT/User/NewIn93 - Eclipsepedia</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":!1,"wgNamespaceNumber":0,"wgPageName":"CDT/User/NewIn93","wgTitle":"CDT/User/NewIn93","wgCurRevisionId":420836,"wgRevisionId":420836,"wgArticleId":55352,"wgIsArticle":!0,"wgIsRedirect":!1,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgBreakFrames":!1,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"CDT/User/NewIn93","wgRelevantArticleId":55352,"wgIsProbablyEditable":!1,"wgRestrictionEdit":[],"wgRestrictionMove":[],"wgWikiEditorEnabledModules":{"toolbar":!1,"dialogs":!1,"preview":!1,"publish":!1},
+"wgCategoryTreePageCategoryOptions":"{\"mode\":0,\"hideprefix\":20,\"showcount\":true,\"namespaces\":false}"});mw.loader.implement("user.options",function($,jQuery){mw.user.options.set({"variant":"en"});});mw.loader.implement("user.tokens",function($,jQuery){mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\"});});mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits"]);
+} );</script>
+<link rel="stylesheet" href="./CDT-9.3_files/load.php">
+<link rel="stylesheet" href="./CDT-9.3_files/styles.css" media="screen, print">
+<style>
+.mw-collapsible-toggle{float:right;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}  .mw-content-ltr .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr .mw-collapsible-toggle{float:right} .mw-content-rtl .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl .mw-collapsible-toggle{float:left}.mw-customtoggle,.mw-collapsible-toggle{cursor:pointer} caption .mw-collapsible-toggle,.mw-content-ltr caption .mw-collapsible-toggle,.mw-content-rtl caption .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr caption .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl caption .mw-collapsible-toggle{float:none} li .mw-collapsible-toggle,.mw-content-ltr li .mw-collapsible-toggle,.mw-content-rtl li .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr li .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left; overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.highlight{font-weight:bold}
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(/resources/src/mediawiki.action/images/green-checkmark.png?9048a)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{color:black;text-decoration:none}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}.suggestions a.mw-searchSuggest-link .special-query{ overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}</style><meta name="ResourceLoaderDynamicStyles" content="">
+<style>a:lang(ar),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}</style>
+<script async="" src="./CDT-9.3_files/load(1).php"></script>
+<meta name="generator" content="MediaWiki 1.26.4">
+<link rel="shortcut icon" href="https://wiki.eclipse.org/eclipse.org-common/themes/solstice/public/images/favicon.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="https://wiki.eclipse.org/opensearch_desc.php" title="Eclipsepedia (en)">
+<link rel="EditURI" type="application/rsd+xml" href="https://wiki.eclipse.org/api.php?action=rsd">
+<link rel="alternate" type="application/atom+xml" title="Eclipsepedia Atom feed" href="https://wiki.eclipse.org/index.php?title=Special:RecentChanges&amp;feed=atom">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="./CDT-9.3_files/load(2).php"></script><style></style><script async="" src="./CDT-9.3_files/js(1)"></script><meta http-equiv="origin-trial" content="A7bG5hJ4XpMV5a3V1wwAR0PalkFSxLOZeL9D/YBYdupYUIgUgGhfVJ1zBFOqGybb7gRhswfJ+AmO7S2rNK2IOwkAAAB7eyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGV0YWdtYW5hZ2VyLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1RoaXJkUGFydHkiOnRydWV9"><script type="text/javascript" async="" src="./CDT-9.3_files/f(1).txt"></script></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-CDT_User_NewIn93 skin-solstice action-view" id="solstice"><div class="cc-revoke cc-bottom cc-animate cc-color-override-1434350510" style="">Cookie settings</div><div role="dialog" aria-live="polite" aria-label="cookieconsent" aria-describedby="cookieconsent:desc" class="cc-window cc-banner cc-type-opt-in cc-theme-block cc-bottom cc-color-override-1434350510 cc-invisible" style="display: none;"><!--googleoff: all--><span id="cookieconsent:desc" class="cc-message">Some Eclipse Foundation pages use cookies to better serve you when you return to the site. You can set your browser to notify you before you receive a cookie or turn off cookies. If you do so, however, some areas of some sites may not function properly. To read Eclipse Foundation Privacy Policy <a aria-label="learn more about cookies" role="button" tabindex="0" class="cc-link" href="https://www.eclipse.org/legal/privacy.php" rel="noopener noreferrer nofollow" target="_blank">click here.</a></span><div class="cc-compliance cc-highlight"><a aria-label="deny cookies" role="button" tabindex="0" class="cc-btn cc-deny">Decline</a><a aria-label="allow cookies" role="button" tabindex="0" class="cc-btn cc-allow">Allow cookies</a></div><!--googleon: all--></div><style type="text/css">html.hs-messages-widget-open.hs-messages-mobile,html.hs-messages-widget-open.hs-messages-mobile body{overflow:hidden!important;position:relative!important}html.hs-messages-widget-open.hs-messages-mobile body{height:100%!important;margin:0!important}#hubspot-messages-iframe-container{display:initial!important;z-index:2147483647;position:fixed!important;bottom:0!important}#hubspot-messages-iframe-container.widget-align-left{left:0!important}#hubspot-messages-iframe-container.widget-align-right{right:0!important}#hubspot-messages-iframe-container.internal{z-index:1016}#hubspot-messages-iframe-container.internal iframe{min-width:108px}#hubspot-messages-iframe-container .shadow-container{display:initial!important;z-index:-1;position:absolute;width:0;height:0;bottom:0;content:""}#hubspot-messages-iframe-container .shadow-container.internal{display:none!important}#hubspot-messages-iframe-container .shadow-container.active{width:400px;height:400px}#hubspot-messages-iframe-container iframe{display:initial!important;width:100%!important;height:100%!important;border:none!important;position:absolute!important;bottom:0!important;right:0!important;background:transparent!important}</style>
+
+<a class="sr-only" href="https://wiki.eclipse.org/CDT/User/NewIn93#content">Skip to main content</a>
+<header class="header-wrapper" id="header-wrapper">
+  <div class="clearfix toolbar-container-wrapper">
+    <div class="container-fluid">
+      <div class="text-right toolbar-row row hidden-print">
+        <div class="col-md-24 row-toolbar-col">
+               <ul class="list-inline">
+                  <li id="pt-login">
+            <a href="https://wiki.eclipse.org/index.php?title=Special:UserLogin&amp;returnto=CDT%2FUser%2FNewIn93" class="toolbar-link toolbar-login">
+              <i class="fa fa-sign-in fa-fw"></i> Log in            </a>
+          </li>
+                <li><a class="toolbar-link toolbar-manage-cookies dropdown-toggle"><i class="fa fa-wrench"></i> Manage Cookies</a></li>
+      </ul>
+            </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row" id="header-row">
+      <div class="col-sm-5 col-md-4" id="header-left">
+        <div class="wrapper-logo-default"><a href="https://www.eclipse.org/"><img class="logo-eclipse-default hidden-xs" alt="Eclipse.org logo" width="160" src="./CDT-9.3_files/eclipse-foundation-white-orange.svg"></a></div>
+      </div>
+      <div class="col-sm-19 col-md-20 margin-top-10" id="main-menu-wrapper">
+        <div class="float-right hidden-xs" id="btn-call-for-action"><a href="https://eclipse.org/downloads/" class="btn btn-huge btn-warning"><i class="fa fa-download"></i> Download</a></div>
+        <div class="navbar yamm float-sm-right" id="main-menu">
+          <div class="navbar-collapse collapse" id="navbar-main-menu">
+            <ul class="nav navbar-nav">
+              <li><a href="https://www.eclipse.org/projects/" target="_self">Projects</a></li>
+              <li><a href="https://www.eclipse.org/org/workinggroups/" target="_self">Working Groups</a></li>
+              <li><a href="https://www.eclipse.org/membership/" target="_self">Members</a></li>
+              <li class="dropdown visible-xs">
+                <a href="https://wiki.eclipse.org/CDT/User/NewIn93#" data-toggle="dropdown" class="dropdown-toggle">Community <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://marketplace.eclipse.org/">Marketplace</a></li>
+                  <li><a href="http://events.eclipse.org/">Events</a></li>
+                  <li><a href="http://www.planeteclipse.org/">Planet Eclipse</a></li>
+                  <li><a href="https://www.eclipse.org/community/eclipse_newsletter/">Newsletter</a></li>
+                  <li><a href="https://www.youtube.com/user/EclipseFdn">Videos</a></li>
+                  <li><a href="https://blogs.eclipse.org/">Blogs</a></li>
+                </ul>
+              </li>
+              <li class="dropdown visible-xs">
+                <a href="https://wiki.eclipse.org/CDT/User/NewIn93#" data-toggle="dropdown" class="dropdown-toggle">Participate <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="https://bugs.eclipse.org/bugs/">Report a Bug</a></li>
+                  <li><a href="https://www.eclipse.org/forums/">Forums</a></li>
+                  <li><a href="https://www.eclipse.org/mail/">Mailing Lists</a></li>
+                  <li><a href="https://wiki.eclipse.org/">Wiki</a></li>
+                  <li><a href="https://wiki.eclipse.org/IRC">IRC</a></li>
+                  <li><a href="https://www.eclipse.org/org/research/">Research</a></li>
+                </ul>
+              </li>
+              <li class="dropdown visible-xs">
+                <a href="https://wiki.eclipse.org/CDT/User/NewIn93#" data-toggle="dropdown" class="dropdown-toggle">Eclipse IDE <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="https://www.eclipse.org/downloads">Download</a></li>
+                  <li><a href="https://www.eclipse.org/eclipseide">Learn More</a></li>
+                  <li><a href="https://help.eclipse.org/">Documentation</a></li>
+                  <li><a href="https://www.eclipse.org/getting_started">Getting Started / Support</a></li>
+                  <li><a href="https://www.eclipse.org/contribute/">How to Contribute</a></li>
+                  <li><a href="https://www.eclipse.org/ide/">IDE and Tools</a></li>
+                  <li><a href="https://www.eclipse.org/forums/index.php/f/89/">Newcomer Forum</a></li>
+                </ul>
+              </li>
+              <!-- More -->
+              <li class="dropdown eclipse-more hidden-xs">
+                <a data-toggle="dropdown" class="dropdown-toggle" role="button">More<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <!-- Content container to add padding -->
+                    <div class="yamm-content">
+                      <div class="row">
+                        <ul class="col-sm-8 list-unstyled">
+                          <li>
+                            <p><strong>Community</strong></p>
+                          </li>
+                          <li><a href="http://marketplace.eclipse.org/">Marketplace</a></li>
+                          <li><a href="http://events.eclipse.org/">Events</a></li>
+                          <li><a href="http://www.planeteclipse.org/">Planet Eclipse</a></li>
+                          <li><a href="https://www.eclipse.org/community/eclipse_newsletter/">Newsletter</a></li>
+                          <li><a href="https://www.youtube.com/user/EclipseFdn">Videos</a></li>
+                          <li><a href="https://blogs.eclipse.org/">Blogs</a></li>
+                        </ul>
+                        <ul class="col-sm-8 list-unstyled">
+                          <li>
+                            <p><strong>Participate</strong></p>
+                          </li>
+                          <li><a href="https://bugs.eclipse.org/bugs/">Report a Bug</a></li>
+                          <li><a href="https://www.eclipse.org/forums/">Forums</a></li>
+                          <li><a href="https://www.eclipse.org/mail/">Mailing Lists</a></li>
+                          <li><a href="https://wiki.eclipse.org/">Wiki</a></li>
+                          <li><a href="https://wiki.eclipse.org/IRC">IRC</a></li>
+                          <li><a href="https://www.eclipse.org/org/research/">Research</a></li>
+                        </ul>
+                        <ul class="col-sm-8 list-unstyled">
+                          <li>
+                            <p><strong>Eclipse IDE</strong></p>
+                          </li>
+                          <li><a href="https://www.eclipse.org/downloads">Download</a></li>
+                          <li><a href="https://www.eclipse.org/eclipseide">Learn More</a></li>
+                          <li><a href="https://help.eclipse.org/">Documentation</a></li>
+                          <li><a href="https://www.eclipse.org/getting_started">Getting Started / Support</a></li>
+                          <li><a href="https://www.eclipse.org/contribute/">How to Contribute</a></li>
+                          <li><a href="https://www.eclipse.org/ide/">IDE and Tools</a></li>
+                          <li><a href="https://www.eclipse.org/forums/index.php/f/89/">Newcomer Forum</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-main-menu">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <div class="wrapper-logo-mobile"><a class="navbar-brand visible-xs" href="https://www.eclipse.org/"><img class="logo-eclipse-default-mobile img-responsive" alt="Eclipse.org logo" width="160" src="./CDT-9.3_files/eclipse-foundation-white-orange.svg"></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<section class="default-breadcrumbs hidden-print" id="breadcrumb">
+  <div class="container-fluid">
+    <h3 class="sr-only">Breadcrumbs</h3>
+    <div class="row">
+      <div class="col-sm-24">
+        <ol class="breadcrumb">
+          <li><a href="https://www.eclipse.org/">Home</a></li>
+          <li><a href="https://wiki.eclipse.org/Main_Page">Eclipse Wiki</a></li>
+          <li class="active">CDT/User/NewIn93</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /#breadcrumb -->
+<main>
+<div class="container-fluid padding-15 padding-top-20">
+    
+    
+    <!-- content -->
+    <section id="content" class="mw-body container-full clearfix 0">
+      <div id="mw-js-message" style="display:none;"></div>
+
+      
+      <!-- bodyContent -->
+      <div id="bodyContent">
+
+        
+                <!-- jumpto -->
+        <div id="jump-to-nav" class="mw-jump">
+          Jump to: <a href="https://wiki.eclipse.org/CDT/User/NewIn93#mw-head">navigation</a>,
+          <a href="https://wiki.eclipse.org/CDT/User/NewIn93#p-search">search</a>
+        </div>
+        <!-- /jumpto -->
+        
+          <!-- leftcol -->
+          <aside class="col-md-4 noprint hidden-print" id="leftcol">
+                      <form class="input-group" role="form" id="form-eclipse-search" action="https://wiki.eclipse.org/index.php">
+              <input id="searchInput" class="search-query form-control" type="search" accesskey="f" title="Special:Search [alt-shift-f]" placeholder="Search" name="search" value="" autocomplete="off">
+
+              <span class="input-group-btn">
+                <button value="search" id="mw-searchButton" type="submit" class="btn btn-default" title="Search the pages for this text" name="fulltext">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
+            </form>
+                      <select class="form-control margin-top-10 margin-bottom-10 visible-xs visible-sm" onchange="this.options[this.selectedIndex].value &amp;&amp; (window.location = this.options[this.selectedIndex].value);"><option class="fw-700 ">---Navigation---</option><option value="/Main_Page">Main Page</option><option value="/Eclipsepedia:Community_portal">Community portal</option><option value="/Eclipsepedia:Current_events">Current events</option><option value="/Special:RecentChanges">Recent changes</option><option value="/Special:Random">Random page</option><option value="https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents">Help</option></select><ul class="ul-left-nav fa-ul hidden-print leftnav hidden-xs hidden-sm"><li class="separator"><span class="separator">Navigation</span></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Main_Page" id="n-mainpage" title="Visit the main page [alt-shift-z]" accesskey="z">Main Page</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Eclipsepedia:Community_portal" id="n-portal" title="About the project, what you can do, where to find things">Community portal</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Eclipsepedia:Current_events" id="n-currentevents" title="Find background information on current events">Current events</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:RecentChanges" id="n-recentchanges" title="A list of recent changes in the wiki [alt-shift-r]" accesskey="r">Recent changes</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:Random" id="n-randompage" title="Load a random page [alt-shift-x]" accesskey="x">Random page</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents" id="n-help" title="The place to find out">Help</a></li></ul>            <select class="form-control margin-top-10 margin-bottom-10 visible-xs visible-sm" onchange="this.options[this.selectedIndex].value &amp;&amp; (window.location = this.options[this.selectedIndex].value);"><option class="fw-700 ">---Toolbox---</option><option value="/index.php?title=CDT/User/NewIn93&amp;action=info">Page information</option><option value="/index.php?title=CDT/User/NewIn93&amp;oldid=420836">Permanent link</option><option value="/index.php?title=CDT/User/NewIn93&amp;printable=yes">Printable version</option><option value="/Special:SpecialPages">Special pages</option><option value="/Special:RecentChangesLinked/CDT/User/NewIn93">Related changes</option><option value="/Special:WhatLinksHere/CDT/User/NewIn93">What links here</option></select><ul class="ul-left-nav fa-ul hidden-print leftnav hidden-xs hidden-sm"><li class="separator"><span class="separator">Toolbox</span></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn93&amp;action=info" id="t-info" title="More information about this page">Page information</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn93&amp;oldid=420836" id="t-permalink" title="Permanent link to this revision of the page">Permanent link</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn93&amp;printable=yes" id="t-print" rel="alternate" title="Printable version of this page [alt-shift-p]" accesskey="p">Printable version</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:SpecialPages" id="t-specialpages" title="A list of all special pages [alt-shift-q]" accesskey="q">Special pages</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:RecentChangesLinked/CDT/User/NewIn93" id="t-recentchangeslinked" title="Recent changes in pages linked from this page [alt-shift-k]" accesskey="k">Related changes</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:WhatLinksHere/CDT/User/NewIn93" id="t-whatlinkshere" title="A list of all wiki pages that link here [alt-shift-j]" accesskey="j">What links here</a></li></ul>                                  </aside>
+          <!-- /leftcol -->
+
+          <!-- mainContent -->
+          <div id="mainContent" class="col-md-20">
+                      <ul class="nav nav-tabs noprint hidden-print" role="tablist">
+                       <li id="ca-nstab-main" class="active"><a href="https://wiki.eclipse.org/CDT/User/NewIn93" title="View the content page [alt-shift-c]" accesskey="c" tabindex="-1">Page</a></li>
+                        <li id="ca-talk" class="new"><a href="https://wiki.eclipse.org/index.php?title=Talk:CDT/User/NewIn93&amp;action=edit&amp;redlink=1" title="Discussion about the content page [alt-shift-t]" accesskey="t" tabindex="-1">Discussion</a></li>
+                        <li id="ca-viewsource"><a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn93&amp;action=edit" title="This page is protected.
+You can view its source [alt-shift-e]" accesskey="e" tabindex="-1">View source</a></li>
+                        <li id="ca-history" class="collapsible"><a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn93&amp;action=history" title="Past revisions of this page [alt-shift-h]" accesskey="h" tabindex="-1">History</a></li>
+                      </ul>            <div class="tab-content background-white">
+              <div id="tab-pane-main-page-content" class="tab-pane active">
+
+                
+                <h1 id="firstHeading" class="firstHeading page-header">
+                  <span dir="auto">CDT/User/NewIn93</span>
+                </h1>
+                <div id="main-page-content">
+                                                      <!-- subtitle -->
+                  <div id="contentSub" class="alert alert-small alert-warning"><span class="subpages">&lt; <a href="https://wiki.eclipse.org/CDT" title="CDT">CDT</a></span></div>
+                  <!-- /subtitle -->
+                  
+                  
+                  <div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div id="toc" class="toc"><div id="toctitle"><h2>Contents</h2><span class="toctoggle">&nbsp;[<a href="https://wiki.eclipse.org/CDT/User/NewIn93#" id="togglelink">hide</a>]&nbsp;</span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Release"><span class="tocnumber">1</span> <span class="toctext">Release</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Editor"><span class="tocnumber">2</span> <span class="toctext">Editor</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Open_Declaration"><span class="tocnumber">2.1</span> <span class="toctext">Open Declaration</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Content_Assist"><span class="tocnumber">2.2</span> <span class="toctext">Content Assist</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Search"><span class="tocnumber">2.3</span> <span class="toctext">Search</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Placement_of_const"><span class="tocnumber">2.4</span> <span class="toctext">Placement of const</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Folding_Comments"><span class="tocnumber">2.5</span> <span class="toctext">Folding Comments</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-8"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Code_Analysis"><span class="tocnumber">3</span> <span class="toctext">Code Analysis</span></a>
+<ul>
+<li class="toclevel-2 tocsection-9"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#GCC_Build_Quick-fixes"><span class="tocnumber">3.1</span> <span class="toctext">GCC Build Quick-fixes</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Parser"><span class="tocnumber">4</span> <span class="toctext">Parser</span></a></li>
+<li class="toclevel-1 tocsection-11"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Build"><span class="tocnumber">5</span> <span class="toctext">Build</span></a></li>
+<li class="toclevel-1 tocsection-12"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Debug"><span class="tocnumber">6</span> <span class="toctext">Debug</span></a>
+<ul>
+<li class="toclevel-2 tocsection-13"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Source_not_found_editor_modifications"><span class="tocnumber">6.1</span> <span class="toctext">Source not found editor modifications</span></a></li>
+<li class="toclevel-2 tocsection-14"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Launch_Group"><span class="tocnumber">6.2</span> <span class="toctext">Launch Group</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-15"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Arduino_C.2B.2B"><span class="tocnumber">7</span> <span class="toctext">Arduino C++</span></a></li>
+<li class="toclevel-1 tocsection-16"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#API_modifications"><span class="tocnumber">8</span> <span class="toctext">API modifications</span></a></li>
+<li class="toclevel-1 tocsection-17"><a href="https://wiki.eclipse.org/CDT/User/NewIn93#Bugs_Fixed_in_this_Release"><span class="tocnumber">9</span> <span class="toctext">Bugs Fixed in this Release</span></a></li>
+</ul>
+</div>
+
+<h1><span class="mw-headline" id="Release">Release</span></h1>
+<hr>
+<p>This is the New &amp; Noteworthy page for CDT 9.3 which is part of the Eclipse Oxygen release of June 2017
+</p>
+<hr>
+<h1><span class="mw-headline" id="Editor">Editor</span></h1>
+<hr>
+<h2><span class="mw-headline" id="Open_Declaration">Open Declaration</span></h2>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> C++11 "auto" variables
+</th>
+<td> For variables whose type is declared with the C++11 <code>auto</code> keyword, Open Declaration on the <code>auto</code> opens the declaration of the deduced type (<a rel="nofollow" class="external text" href="http://eclip.se/511522">bug 511522)</a>.
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Following includes in inactive code paths
+</th>
+<td> Open Declaration can now follow <code>#include</code>s in inactive code paths (<a rel="nofollow" class="external text" href="http://eclip.se/379623">bug 379623)</a>.
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Navigation to forward declaration of class template
+</th>
+<td> Open Declaration <a rel="nofollow" class="external text" href="http://eclip.se/483048">now supports</a> navigation from the definition of a class template to its forward declaration.
+<p>This can be useful in cases where some of the class template's template parameter have default arguments, as the default arguments may only be declared at the forward declaration.
+</p><p><a href="https://wiki.eclipse.org/File:CDTNavigateToFwdDeclBeforeV2.png" class="image"><img alt="CDTNavigateToFwdDeclBeforeV2.png" src="./CDT-9.3_files/CDTNavigateToFwdDeclBeforeV2.png" width="479" height="407"></a>
+<a href="https://wiki.eclipse.org/File:CDTNavigateToFwdDeclAfterV2.png" class="image"><img alt="CDTNavigateToFwdDeclAfterV2.png" src="./CDT-9.3_files/CDTNavigateToFwdDeclAfterV2.png" width="522" height="469"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Open Declaration in assembly files
+</th>
+<td> The Open Declaration action is now supported in assembly files.
+<p><a href="https://wiki.eclipse.org/File:CDTAssemblyOpenDeclBefore.png" class="image"><img alt="CDTAssemblyOpenDeclBefore.png" src="./CDT-9.3_files/CDTAssemblyOpenDeclBefore.png" width="568" height="612"></a>
+<a href="https://wiki.eclipse.org/File:CDTAssemblyOpenDeclAfter.png" class="image"><img alt="CDTAssemblyOpenDeclAfter.png" src="./CDT-9.3_files/CDTAssemblyOpenDeclAfter.png" width="666" height="633"></a>
+</p><p>The action works on #include directives (<a rel="nofollow" class="external text" href="http://eclip.se/507285">bug 507285</a>) and identifiers (<a rel="nofollow" class="external text" href="http://eclip.se/507974">bug 507974</a>).
+</p>
+</td></tr></tbody></table>
+<hr>
+<h2><span class="mw-headline" id="Content_Assist">Content Assist</span></h2>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Completion of member functions when taking the address
+</th>
+<td> After a classname qualifier such as <code>MyClass::</code>, CDT generally only offers static methods as completion proposals, since nonstatic methods need to be called on an object.
+<p>However, sometimes the address of a nonstatic method is taken, usually to be passed as a callback. CDT now recognizes the <code>&amp;MyClass::</code> form used to do this, and offers nonstatic methods as completion proposals (<a rel="nofollow" class="external text" href="http://eclip.se/395562">bug 395562</a>).
+</p><p><a href="https://wiki.eclipse.org/File:CDTAddressofMethodCompletion.png" class="image"><img alt="CDTAddressofMethodCompletion.png" src="./CDT-9.3_files/CDTAddressofMethodCompletion.png" width="655" height="466"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Improved content assist in inactive code
+</th>
+<td> Content assist in inactive code (code disabled by an <code>#ifdef</code>) was improved in <a rel="nofollow" class="external text" href="http://eclip.se/72809">bug 72809</a>. It's still not on par with content assist in active code, but completions for entities declared in active code preceding the point of invocation are now proposed.
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Included files with no file extension
+</th>
+<td> CDT <a rel="nofollow" class="external text" href="http://eclip.se/292229">now offers</a> completion proposals for files with files extensions other than the usual C/C++ header file extensions (such as <code>.h</code> or <code>.hpp</code>) when content assist is invoked in an <code>#include</code> directive. This is useful for libraries that use header names with no extensions, such as Qt or KDE, as well as scenarios where non-header files (such as resource files) are included.
+<p><a href="https://wiki.eclipse.org/File:CDTIncludeCompletionNoExtension.png" class="image"><img alt="CDTIncludeCompletionNoExtension.png" src="./CDT-9.3_files/CDTIncludeCompletionNoExtension.png" width="507" height="252"></a>
+</p><p>To avoid polluting content assist proposals with irrelevant files, in cases where a directory contains both files with the usual C/C++ header extensions, and other files, proposals for files in the first category are shown first.
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Enhanced parameter hints
+</th>
+<td> CDT's parameter hints have been enhanced (<a rel="nofollow" class="external text" href="http://eclip.se/461680">bug 461680</a>). They now show the full signature of the function being called, including its return type, containing class (if it's a method), and whether it's virtual.
+<p><a href="https://wiki.eclipse.org/File:CDTEnhancedParameterHint.png" class="image"><img alt="CDTEnhancedParameterHint.png" src="./CDT-9.3_files/CDTEnhancedParameterHint.png" width="440" height="52"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Constructor completion with uniform initialization syntax
+</th>
+<td>
+<p>CDT's content assist now recognizes constructor calls that use the C++11 uniform initialization syntax and offers completion proposals for the constructor(s).
+</p><p><a href="https://wiki.eclipse.org/File:CDTUniformInitConstructorCompletion.png" class="image"><img alt="CDTUniformInitConstructorCompletion.png" src="./CDT-9.3_files/CDTUniformInitConstructorCompletion.png" width="375" height="158"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<h2><span class="mw-headline" id="Search">Search</span></h2>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Enclosing definition of macro reference
+</th>
+<td>
+<p>In the Search view, the enclosing definition (function and class if applicable) is now shown for macro references the way it is for references to other entities (<a rel="nofollow" class="external text" href="http://eclip.se/508216">bug 508216</a>).
+</p><p><a href="https://wiki.eclipse.org/File:CDTEnclosingDefForMacroReference.png" class="image"><img alt="CDTEnclosingDefForMacroReference.png" src="./CDT-9.3_files/CDTEnclosingDefForMacroReference.png" width="439" height="338"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<h2><span class="mw-headline" id="Placement_of_const">Placement of <code>const</code></span></h2>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Choose the placement of <code>const</code> keyword
+</th>
+<td>
+<p>The <code>const</code> keyword can now be placed left or right to the type in a declaration specifier (<a rel="nofollow" class="external text" href="http://eclip.se/491957">bug 491957</a>). A new preference sets the location (Preferences -&gt; C/C++ -&gt; Code Style):
+</p><p><a href="https://wiki.eclipse.org/File:CDTConstPlacementPreference.png" class="image"><img alt="CDTConstPlacementPreference.png" src="./CDT-9.3_files/CDTConstPlacementPreference.png" width="656" height="529"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> When CDT generates new source code
+</th>
+<td>
+<p>For example in a refactoring the <code>const</code> keyword will be written accordingly:
+</p><p><a href="https://wiki.eclipse.org/File:CDTConstPlacementInRefactoringPreview.png" class="image"><img alt="CDTConstPlacementInRefactoringPreview.png" src="./CDT-9.3_files/CDTConstPlacementInRefactoringPreview.png" width="734" height="486"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> To adapt all <code>const</code> occurrences in the current file
+</th>
+<td>
+<p>There is an action <b>Align Const</b> in the <b>Source</b> menu (Mnemonic <code>ctrl+shift+A</code>):
+</p><p><a href="https://wiki.eclipse.org/File:CDTAlignConstSourceAction.png" class="image"><img alt="CDTAlignConstSourceAction.png" src="./CDT-9.3_files/CDTAlignConstSourceAction.png" width="315" height="163"></a>
+</p>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Folding_Comments">Folding Comments</span></h2>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Folding of Comments Improvements
+</th>
+<td>
+<p>Some improvements have been made to folding comments. Documentation comments can now fold together when using <b>///</b> style comments. In addition new preferences on initial folding state of comments have been provided.
+</p><p><a href="https://wiki.eclipse.org/File:CDT_9_3_New_Folding_comments.png" class="image"><img alt="CDT 9 3 New Folding comments.png" src="./CDT-9.3_files/CDT_9_3_New_Folding_comments.png" width="617" height="561"></a>
+</p><p><br>
+See (<a rel="nofollow" class="external text" href="http://eclip.se/515101">bug 515101</a>).
+</p>
+</td></tr></tbody></table>
+<hr>
+<h1><span class="mw-headline" id="Code_Analysis">Code Analysis</span></h1>
+<hr>
+<h2><span class="mw-headline" id="GCC_Build_Quick-fixes">GCC Build Quick-fixes</span></h2>
+<hr>
+<p>Quick fixes have been added for a variety of build errors generated by the gcc compiler.  Such
+fixes include: 
+</p>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;">
+<ul><li> missing semi-colon</li></ul>
+</th>
+<td>
+<p><a href="https://wiki.eclipse.org/File:CDTSemicolonFixitV2.png" class="image"><img alt="CDTSemicolonFixitV2.png" src="./CDT-9.3_files/CDTSemicolonFixitV2.png" width="663" height="341"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;">
+<ul><li> specification of wrong member (gcc 6 and above).</li></ul>
+</th>
+<td>
+<p><a href="https://wiki.eclipse.org/File:CDTWrongMemberFixitV2.png" class="image"><img alt="CDTWrongMemberFixitV2.png" src="./CDT-9.3_files/CDTWrongMemberFixitV2.png" width="707" height="259"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;">
+<ul><li> use of . operator instead of -&gt;</li></ul>
+</th>
+<td>
+<p><a href="https://wiki.eclipse.org/File:CDTNeedPtrV2.png" class="image"><img alt="CDTNeedPtrV2.png" src="./CDT-9.3_files/CDTNeedPtrV2.png" width="674" height="363"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;">
+<ul><li> use of -&gt; operator instead of .</li></ul>
+</th>
+<td>
+<p><a href="https://wiki.eclipse.org/File:CDTNeedDotV2.png" class="image"><img alt="CDTNeedDotV2.png" src="./CDT-9.3_files/CDTNeedDotV2.png" width="658" height="386"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Support for -fdiagnostics-parseable-fixits
+</th>
+<td>
+<p>Clang and gcc 7 have support for generating fix-it suggestions for various compiler errors.  When
+the -fdiagnostics-parseable-fixits option is specified for the build, CDT is able to parse these
+fix-it messages and generate quick-fixes for them.
+</p><p><a href="https://wiki.eclipse.org/File:CDTParseableFixitsV2.png" class="image"><img alt="CDTParseableFixitsV2.png" src="./CDT-9.3_files/CDTParseableFixitsV2.png" width="735" height="296"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<h1><span class="mw-headline" id="Parser">Parser</span></h1>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;">  More accurate binding resolution
+</th>
+<td>
+<p>This release fixes a <a rel="nofollow" class="external text" href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=402498">long-standing issue</a> where the indexer would resolve names in a source file that referenced entities that did not have a declaration in any file included by that source file, only in other files in the project.
+</p><p>As a result of this change, the set of semantic errors produced by the indexer should more closely resemble what an actual compiler produces.
+</p><p>Another positive effect is, that CODAN now reports "unresolved symbol" errors when a symbol is used but the corresponding #include was not added. This may help fixing such issues (potentially by using "organize includes") before invoking the compiler, thus saving time.
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Exposing the CDT version number for feature-testing
+</th>
+<td>
+<p>CDT defines the <code>__CDT_PARSER__</code> macro while parsing code. This allows having a block of code in a preprocessor branch that CDT sees but the compiler does not, or vice versa, which can be useful for working around CDT limitations.
+</p><p>Previously, the value of this macro was <code>1</code>. Now it encodes the CDT version as well, so that e.g. for CDT version 9.2.1, the value of the macro is <code>90201</code>.
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> C++14 Language Support
+</th>
+<td>
+<p>Support for two new C++14 language features has been added: <a rel="nofollow" class="external text" href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=408470">return type deduction</a> and <a rel="nofollow" class="external text" href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=516627">generic lambdas</a>.
+</p>
+</td></tr></tbody></table>
+<hr>
+<h1><span class="mw-headline" id="Build">Build</span></h1>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Prebuild task and parallel make
+</th>
+<td>
+<p>Pre-build tasks and parallel make is now working together. Pre-build tasks can be used to generate header and source files as the pre-build task is now guaranteed to complete before any source code is built. 
+</p><p>Also, the build targets under Project Settings -&gt; C/C++ Build -&gt; Behavior -&gt; Workbench Build Behavior is respected and works the same for projects both with and without pre-build tasks.
+</p><p>This solves
+</p><p>(<a rel="nofollow" class="external text" href="http://eclip.se/340300">bug 340300</a>).
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Build console speed up
+</th>
+<td>
+<p>Doing builds in CDT are now significantly faster when there is a lot of output, warnings, and/or errors. 
+</p><p>The benefits of this improvement are:
+</p>
+<ul><li> The build time in CDT compared to 9.2 / Neon is *much* faster, with speedups most significant on builds where large number of warnings or errors are generated. (For example a file with 10,000 warnings is now 25x faster build time.)</li>
+<li> The build time in CDT is comparable to running in a terminal for most projects.</li>
+<li> The cancel button cancels the build fairly instantaneously</li>
+<li> The implementation is designed to limit the amount of UI thread used to ensure the UI stays responsive.</li>
+<li> The "took" time reported at the end of the build is accurate</li></ul>
+<p>This solves (<a rel="nofollow" class="external text" href="http://eclip.se/314428">bug 314428</a>).
+</p>
+</td></tr></tbody></table>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> .SECONDARY removed from generated Makefiles
+</th>
+<td>
+<p>In this release of CDT <b>.SECONDARY:</b> with no dependencies has been removed from the generated Makefiles. .SECONDARY with no dependencies can allow a build to succeed even if some dependencies are required. In the unlikely event that a project was depending on such behaviour the behaviour can be restored by creating a <b>makefile.targets</b> in the root of the project with <b>.SECONDARY:</b> as the file's contents. See the bug for more details.
+</p><p>This solves (<a rel="nofollow" class="external text" href="http://eclip.se/516813">bug 516813</a>).
+</p>
+</td></tr></tbody></table>
+<hr>
+<h1><span class="mw-headline" id="Debug">Debug</span></h1>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Support to extend the toolbar of the Debugger Console pages
+</th>
+<td>
+<p>Just like the standard Console view, the Debugger Console view now allows the use of the <a rel="nofollow" class="external text" href="http://help.eclipse.org/neon/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fextension-points%2Forg_eclipse_ui_console_consolePageParticipants.html">Console Page Participants</a> extension point.  By using this extension, extenders can add buttons to the toolbar of the different pages of the Debugger Console view.  An example of such additions can be found in <i>org.eclipse.cdt.examples.dsf.gdb/GdbExtendedConsolePageParticipant.java</i> and has been copied below.
+</p><p><br>
+</p>
+<pre>   &lt;extension point="org.eclipse.ui.console.consolePageParticipants"&gt;
+      &lt;consolePageParticipant
+            class="org.eclipse.cdt.examples.dsf.gdb.ui.console.GdbExtendedConsolePageParticipant"
+            id="org.eclipse.cdt.examples.dsf.gdb.debuggerConsolePageParticipant"&gt;
+         &lt;enablement&gt;
+         &lt;and&gt;
+            &lt;instanceof value="org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole"/&gt;
+            &lt;!-- The below check only works with the Debugger Console view and not the
+                 standard console view.  But that is ok since this contribution is
+                 for the Debugger Console views only. --&gt;
+            &lt;with variable="org.eclipse.core.runtime.Platform"&gt;
+               &lt;test property="org.eclipse.core.runtime.bundleState"
+                     args="org.eclipse.cdt.examples.dsf.gdb"
+                     value="ACTIVE"&gt;
+               &lt;/test&gt;
+            &lt;/with&gt;
+         &lt;/and&gt;
+         &lt;/enablement&gt;
+      &lt;/consolePageParticipant&gt;
+   &lt;/extension&gt;
+
+</pre>
+</td></tr></tbody></table>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;">
+</th>
+<td>
+<p>Furthermore, a new method was added to provide access to the full console widget.  This allows to modify or extend the behaviour of the full GDB console.  The method in question is <i>GdbFullCliConsolePage#getTerminalViewControl()</i> which returns an <i>ITerminalViewControl</i>.  ConsolePageParticipants are provided with the console page in their <i>init()</i> method; they can then cast it to <i>GdbFullCliConsolePage</i> to access the <i>ITerminalViewControl</i>.
+</p><p>This support was a contribution from Stephen Flynn from Dell-EMC.
+</p>
+</td></tr></tbody></table>
+<hr>
+<h2><span class="mw-headline" id="Source_not_found_editor_modifications">Source not found editor modifications</span></h2>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> User have now 3 choices to display the source not found editor&nbsp;:
+</th>
+<td>
+<pre> - Source you were jumping into is not found:
+ - Function name known but can't find its source:
+ - Unknown function name
+</pre>
+<p><a href="https://wiki.eclipse.org/File:CDTCSourceNotFoundEditorV2.png" class="image"><img alt="CDTCSourceNotFoundEditorV2.png" src="./CDT-9.3_files/CDTCSourceNotFoundEditorV2.png" width="802" height="467"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<h2><span class="mw-headline" id="Launch_Group">Launch Group</span></h2>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Launch Group now part of Eclipse Platform&nbsp;:
+</th>
+<td>
+<p>The Launch Group feature of CDT has been promoted to the Eclipse Platform. The version in CDT has been deprecated and will be removed in a future version.
+</p><p>The new Launch Group type can be identified by the <a href="https://wiki.eclipse.org/File:CDT_NEW93_Launch_Group.png" class="image"><img alt="CDT NEW93 Launch Group.png" src="./CDT-9.3_files/CDT_NEW93_Launch_Group.png" width="32" height="32"></a> icon and the deprecated Launch Group has "(deprecated)" in its title.
+</p><p>See the <a rel="nofollow" class="external text" href="https://www.eclipse.org/eclipse/news/4.7/platform.php#launch-groups">news item in Eclipse Platform</a> for more details, and <a href="https://wiki.eclipse.org/CDT/User/LaunchGroupMigrationInfo" title="CDT/User/LaunchGroupMigrationInfo">CDT/User/LaunchGroupMigrationInfo</a>.
+</p><p><br>
+</p>
+</td></tr></tbody></table>
+<hr>
+<h1><span class="mw-headline" id="Arduino_C.2B.2B">Arduino C++</span></h1>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> Support for Arduino
+</th>
+<td>
+<p>Added support for Arduino serial connections to use the TM Terminal's new CDT Serial Port terminal connector.
+<a href="https://wiki.eclipse.org/File:Screen_Shot_2017-05-31_at_10.46.38_AM.png" class="image"><img alt="Screen Shot 2017-05-31 at 10.46.38 AM.png" src="./CDT-9.3_files/Screen_Shot_2017-05-31_at_10.46.38_AM.png" width="453" height="206"></a>
+</p>
+</td></tr></tbody></table>
+<hr>
+<h1><span class="mw-headline" id="API_modifications">API modifications</span></h1>
+<hr>
+<table style="width: 100%;">
+
+<tbody><tr style="vertical-align:top;">
+<th style="width: 30%; text-align:left;"> org.eclipse.cdt.dsf.gdb
+</th>
+<td>
+<ol><li> The method <b>MIVariableManager.MIVariableObject#isComplex()</b> has changed to always return false because we can't reliably determine whether a variable is complex or not (see <a rel="nofollow" class="external text" href="http://eclip.se/399494">bug 399494</a>). Extenders should make sure that code calling this method will not misbehave. </li></ol>
+</td></tr></tbody></table>
+<hr>
+<h1><span class="mw-headline" id="Bugs_Fixed_in_this_Release">Bugs Fixed in this Release</span></h1>
+<hr>
+<p>See Bugzilla report <a rel="nofollow" class="external text" href="https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&amp;bug_status=VERIFIED&amp;bug_status=CLOSED&amp;classification=Tools&amp;product=CDT&amp;query_format=advanced&amp;resolution=FIXED&amp;target_milestone=9.3.0">Bugs Fixed in CDT 9.3</a>
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20220930221102
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.276 seconds
+Real time usage: 1.011 seconds
+Preprocessor visited node count: 75/1000000
+Preprocessor generated node count: 92/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 - -total
+-->
+
+<!-- Saved in parser cache with key my_wiki:pcache:idhash:55352-0!*!0!!en!5!* and timestamp 20220930221101 and revision id 420836
+ -->
+</div>
+                                      <!-- catlinks -->
+                    <div id="catlinks" class="catlinks catlinks-allhidden"></div>                     <!-- /catlinks -->
+                                  </div>
+              </div>
+            </div>
+          </div>
+        <!-- /maincontent -->
+
+                <!-- printfooter -->
+        <div class="printfooter">
+        Retrieved from "<a dir="ltr" href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn93&amp;oldid=420836">https://wiki.eclipse.org/index.php?title=CDT/User/NewIn93&amp;oldid=420836</a>"        </div>
+        <!-- /printfooter -->
+        
+        
+        <!-- debughtml -->
+                <!-- /debughtml -->
+
+      </div>
+      <!-- /bodyContent -->
+    </section>
+    <!-- /content -->
+
+    <!-- footer -->
+    
+</div>
+<div class="featured-footer featured-footer-newsletter background-secondary">
+  <div class="container">
+    <p id="footercredit">This page was last modified 03:27, 24 November 2017 by <a href="https://wiki.eclipse.org/index.php?title=User:Mober.at%2Beclipse.gmail.com&amp;action=edit&amp;redlink=1" class="new" title="User:Mober.at+eclipse.gmail.com (page does not exist)">Martin Oberhuber</a>. Based on work by <a href="https://wiki.eclipse.org/User:Jonah.kichwacoders.com" title="User:Jonah.kichwacoders.com">Jonah Graham</a>, <a href="https://wiki.eclipse.org/index.php?title=User:Tcorbat.hsr.ch&amp;action=edit&amp;redlink=1" class="new" title="User:Tcorbat.hsr.ch (page does not exist)">Thomas Corbat</a> and <a href="https://wiki.eclipse.org/index.php?title=User:Darroy.jp31.gmail.com&amp;action=edit&amp;redlink=1" class="new" title="User:Darroy.jp31.gmail.com (page does not exist)">Jean-Philippe Darroy</a> and <a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn93&amp;action=credits" title="CDT/User/NewIn93">others</a>.</p><p id="footerviews"></p>  </div>
+</div>
+</main> <!-- /#main-content-container-row -->
+<p id="back-to-top" class="noprint hidden-print">
+  <a class="visible-xs" href="https://wiki.eclipse.org/CDT/User/NewIn93#top">Back to the top</a>
+</p>
+<footer id="solstice-footer">
+  <div class="container">
+    <div class="row">
+      <section class="col-sm-6 hidden-print" id="footer-eclipse-foundation">
+        <h2 class="section-title">Eclipse Foundation</h2>
+        <ul class="nav">
+          <li><a href="https://www.eclipse.org/org/">About Us</a></li>
+          <li><a href="https://www.eclipse.org/org/foundation/contact.php">Contact Us</a></li>
+          <li><a href="https://www.eclipse.org/donate">Donate</a></li>
+          <li><a href="https://www.eclipse.org/membership/">Members</a></li>
+          <li><a href="https://www.eclipse.org/org/documents/">Governance</a></li>
+          <li><a href="https://www.eclipse.org/org/documents/Community_Code_of_Conduct.php">Code of Conduct</a></li>
+          <li><a href="https://www.eclipse.org/artwork/">Logo and Artwork</a></li>
+          <li><a href="https://www.eclipse.org/org/foundation/directors.php">Board of Directors</a></li>
+        </ul>
+      </section>
+      <section class="col-sm-6 hidden-print" id="footer-legal">
+        <h2 class="section-title">Legal</h2>
+        <ul class="nav">
+          <li><a href="https://www.eclipse.org/legal/privacy.php">Privacy Policy</a></li>
+          <li><a href="https://www.eclipse.org/legal/termsofuse.php">Terms of Use</a></li>
+          <li><a href="https://www.eclipse.org/legal/copyright.php">Copyright Agent</a></li>
+          <li><a href="https://www.eclipse.org/legal/epl-2.0/">Eclipse Public License</a></li>
+          <li><a href="https://www.eclipse.org/legal/">Legal Resources</a></li>
+        </ul>
+      </section>
+      <section class="col-sm-6 hidden-print" id="footer-useful-links">
+        <h2 class="section-title">Useful Links</h2>
+        <ul class="nav">
+          <li><a href="https://bugs.eclipse.org/bugs/">Report a Bug</a></li>
+          <li><a href="https://help.eclipse.org/">Documentation</a></li>
+          <li><a href="https://www.eclipse.org/contribute/">How to Contribute</a></li>
+          <li><a href="https://www.eclipse.org/mail/">Mailing Lists</a></li>
+          <li><a href="https://www.eclipse.org/forums/">Forums</a></li>
+          <li><a href="https://marketplace.eclipse.org/">Marketplace</a></li>
+        </ul>
+      </section>
+      <section class="col-sm-6 hidden-print" id="footer-other">
+        <h2 class="section-title">Other</h2>
+        <ul class="nav">
+          <li><a href="https://www.eclipse.org/ide/">IDE and Tools</a></li>
+          <li><a href="https://www.eclipse.org/projects">Projects</a></li>
+          <li><a href="https://www.eclipse.org/org/workinggroups/">Working Groups</a></li>
+          <li><a href="https://www.eclipse.org/org/research/">Research@Eclipse</a></li>
+          <li><a href="https://www.eclipse.org/security/">Report a Vulnerability</a></li>
+          <li><a href="https://status.eclipse.org/">Service Status</a></li>
+        </ul>
+      </section>
+      <div class="col-sm-24 margin-top-20">
+        <div class="row">
+          <div id="copyright" class="col-md-16">
+            <p id="copyright-text">Copyright © Eclipse Foundation, Inc. All Rights Reserved.</p>
+          </div>
+          <div class="col-md-8 social-media">
+            <ul class="list-inline">
+              <li>
+                <a class="social-media-link fa-stack fa-lg" href="https://twitter.com/EclipseFdn">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x"></i>
+                </a>
+              </li>
+              <li>
+                <a class="social-media-link fa-stack fa-lg" href="https://www.facebook.com/eclipse.org">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-facebook fa-stack-1x"></i>
+                </a>
+              </li>
+              <li>
+                <a class="social-media-link fa-stack fa-lg" href="https://www.youtube.com/user/EclipseFdn">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-youtube fa-stack-1x"></i>
+                </a>
+              </li>
+              <li>
+                <a class="social-media-link fa-stack fa-lg" href="https://www.linkedin.com/company/eclipse-foundation">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-linkedin fa-stack-1x"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <a href="https://wiki.eclipse.org/CDT/User/NewIn93#" class="scrollup">Back to the top</a>
+    </div>
+  </div>
+</footer>
+    <!-- /footer -->
+    <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.loader.state({"skins.solstice":"loading","user":"ready","user.groups":"ready"});mw.loader.load("/load.php?debug=false\u0026lang=en\u0026modules=skins.solstice\u0026only=scripts\u0026skin=solstice");mw.loader.load(["mediawiki.toc","mediawiki.action.view.postEdit","site","mediawiki.user","mediawiki.hidpi","mediawiki.page.ready","mediawiki.searchSuggest"]);
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({"wgBackendResponseTime":461});
+} );</script>  
+
+
+<script type="text/javascript" id="hs-script-loader" src="./CDT-9.3_files/5413615(2).js"></script>
+<div class="suggestions" style="display: none; font-size: 14px;"><div class="suggestions-results"></div><div class="suggestions-special"></div></div></body></html>

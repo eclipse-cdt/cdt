@@ -17,7 +17,7 @@ Require-Bundle: com.google.gson;bundle-version="2.8.2",
  org.eclipse.osgi.services;bundle-version="3.9.0";resolution:=optional,
  org.eclipse.ui;bundle-version="3.118.0"
 Bundle-ActivationPolicy: lazy
-Service-Component: OSGI-INF/org.eclipse.cdt.lsp.internal.cquery.ui.CqueryLanguageServer.xml,
- OSGI-INF/org.eclipse.cdt.lsp.internal.cquery.ui.CqueryProtocolExtension.xml
 Export-Package: org.eclipse.cdt.lsp.internal.cquery;x-internal:=true,
  org.eclipse.cdt.lsp.internal.cquery.ui;x-internal:=true
+Service-Component: OSGI-INF/org.eclipse.cdt.lsp.internal.cquery.ui.CqueryLanguageServer.xml,
+ OSGI-INF/org.eclipse.cdt.lsp.internal.cquery.ui.CqueryProtocolExtension.xml

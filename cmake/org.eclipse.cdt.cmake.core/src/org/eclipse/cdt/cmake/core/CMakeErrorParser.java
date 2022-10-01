@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Status;
  * </p>
  *
  * @author Martin Weber
- * @since 1.5.0
+ * @since 1.5
  */
 public class CMakeErrorParser implements AutoCloseable {
 

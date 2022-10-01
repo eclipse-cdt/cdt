@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * build.
  *
  * @author Martin Weber
- * @since 1.5.0
+ * @since 1.5
  */
 @FunctionalInterface
 public interface ICMakeExecutionMarkerFactory {

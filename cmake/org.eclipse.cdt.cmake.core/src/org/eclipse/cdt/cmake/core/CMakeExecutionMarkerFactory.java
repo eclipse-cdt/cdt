@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.Status;
  * Default implementation of {@code ICMakeExecutionMarkerFactory}.
  *
  * @author Martin Weber
- * @since 1.5.0
+ * @since 1.5
  */
 public class CMakeExecutionMarkerFactory implements ICMakeExecutionMarkerFactory {
 

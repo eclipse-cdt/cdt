@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.checkers;singleton:=true
-Bundle-Version: 3.4.200.qualifier
+Bundle-Version: 3.5.0.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.checkers.CodanCheckersActivator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core,
  org.eclipse.cdt.codan.core.cxx
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.codan.checkers;x-internal:=true,
  org.eclipse.cdt.codan.internal.checkers;x-friends:="org.eclipse.cdt.codan.checkers.ui,org.eclipse.cdt.codan.core.test",

@@ -6,6 +6,6 @@ Bundle-Version: 1.0.100.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Fragment-Host: org.eclipse.cdt.jsoncdb.microsoft
 Import-Package: org.junit
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.jsoncdb.microsoft.tests
 Bundle-Name: %Bundle-Name

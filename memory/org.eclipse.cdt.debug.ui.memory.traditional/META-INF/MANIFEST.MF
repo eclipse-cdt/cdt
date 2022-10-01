@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui.memory.traditional;singleton:=true
-Bundle-Version: 1.6.300.qualifier
+Bundle-Version: 1.7.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.debug.core,
  org.eclipse.debug.ui,
@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.debug.core,
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.debug.ui.memory.traditional.TraditionalRenderingPlugin
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.cdt.debug.ui.memory.traditional,
  org.eclipse.cdt.debug.ui.internal
 Automatic-Module-Name: org.eclipse.cdt.debug.ui.memory.traditional

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui.memory.floatingpoint;singleton:=true
-Bundle-Version: 1.1.200.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.debug.core;bundle-version="3.7.100",
  org.eclipse.debug.ui;bundle-version="3.8.1",
@@ -13,6 +13,6 @@ Require-Bundle: org.eclipse.debug.core;bundle-version="3.7.100",
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.eclipse.cdt.debug.ui.memory.floatingpoint.FPRenderingPlugin
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.cdt.debug.ui.memory.floatingpoint
 Automatic-Module-Name: org.eclipse.cdt.debug.ui.memory.floatingpoint

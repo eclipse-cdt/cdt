@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.examples.dsf.pda.ui;singleton:=true
-Bundle-Version: 2.2.100.qualifier
+Bundle-Version: 2.3.0.qualifier
 Bundle-Activator: org.eclipse.cdt.examples.dsf.pda.ui.PDAUIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
@@ -24,6 +24,6 @@ Export-Package: org.eclipse.cdt.examples.dsf.pda.ui,
  org.eclipse.cdt.examples.dsf.pda.ui.breakpoints,
  org.eclipse.cdt.examples.dsf.pda.ui.editor,
  org.eclipse.cdt.examples.dsf.pda.ui.launcher
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: %providerName
 Automatic-Module-Name: org.eclipse.cdt.examples.dsf.pda.ui

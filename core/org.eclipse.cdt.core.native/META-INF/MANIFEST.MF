@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.core.native;singleton:=true
-Bundle-Version: 6.2.200.qualifier
+Bundle-Version: 6.3.0.qualifier
 Bundle-Activator: org.eclipse.cdt.internal.core.natives.CNativePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -14,5 +14,5 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
  com.sun.jna;bundle-version="[5.6.0,6.0.0)";resolution:=optional,
  com.sun.jna.platform;bundle-version="[5.6.0,6.0.0)";resolution:=optional
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.core.native

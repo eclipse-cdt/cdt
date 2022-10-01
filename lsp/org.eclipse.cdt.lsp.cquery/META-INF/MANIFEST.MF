@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.cdt.lsp.cquery
 Bundle-Version: 0.1.100.qualifier
 Bundle-Name: %Bundle-Name
 Bundle-Vendor: %Bundle-Vendor
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: com.google.gson;bundle-version="2.8.2",
  org.eclipse.cdt.lsp.core;bundle-version="1.1.100",
  org.eclipse.cdt.lsp.ui;bundle-version="0.1.100",

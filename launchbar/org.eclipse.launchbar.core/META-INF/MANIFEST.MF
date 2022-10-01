@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.launchbar.core;singleton:=true
-Bundle-Version: 2.4.300.qualifier
+Bundle-Version: 2.5.0.qualifier
 Bundle-Activator: org.eclipse.launchbar.core.internal.Activator
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.debug.core,
  org.eclipse.core.expressions
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.launchbar.core,
  org.eclipse.launchbar.core.internal;x-friends:="org.eclipse.launchbar.core.tests,org.eclipse.launchbar.ui",

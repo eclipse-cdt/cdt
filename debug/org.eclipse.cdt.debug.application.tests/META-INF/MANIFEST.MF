@@ -4,7 +4,7 @@ Bundle-Name: %bundleName
 Bundle-SymbolicName: org.eclipse.cdt.debug.application.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %bundleVendor
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.cdt.debug.application,
  org.eclipse.cdt.debug.application.doc,
  org.eclipse.swtbot.eclipse.finder,

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.launchbar.ui.controls;singleton:=true
-Bundle-Version: 1.1.200.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.launchbar.ui.controls.internal.Activator
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.osgi.services;bundle-version="3.5.0",
@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.osgi.services;bundle-version="3.5.0",
  org.eclipse.launchbar.ui;bundle-version="2.0.0"
 Import-Package: javax.annotation,
  javax.inject
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: org.eclipse.launchbar.ui.controls.internal;x-friends:="org.eclipse.launchbar.ui.tests"

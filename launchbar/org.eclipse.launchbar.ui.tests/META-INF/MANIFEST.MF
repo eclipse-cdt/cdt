@@ -9,7 +9,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.swtbot.go;bundle-version="2.7.0",
  org.eclipse.debug.core;bundle-version="3.18.300",
  org.eclipse.debug.ui;bundle-version="3.15.200"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.launchbar.ui.controls.internal,
  org.junit.jupiter.api;version="5.8.1",

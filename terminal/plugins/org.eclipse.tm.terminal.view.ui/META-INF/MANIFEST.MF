@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.view.ui;singleton:=true
-Bundle-Version: 4.10.300.qualifier
+Bundle-Version: 4.11.0.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.view.ui.activator.UIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",
@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",
  org.eclipse.ui.ide;bundle-version="3.18.0";resolution:=optional,
  org.eclipse.ui.editors;bundle-version="3.14.0";resolution:=optional,
  org.eclipse.text;bundle-version="3.11.0";resolution:=optional
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin
 Export-Package: org.eclipse.tm.terminal.view.ui.actions,

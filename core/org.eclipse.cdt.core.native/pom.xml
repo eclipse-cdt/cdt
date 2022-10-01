@@ -23,7 +23,7 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <version>6.2.200-SNAPSHOT</version>
+  <version>6.3.0-SNAPSHOT</version>
   <artifactId>org.eclipse.cdt.core.native</artifactId>
   <packaging>eclipse-plugin</packaging>
 
@@ -120,8 +120,8 @@
 										<arg>-h</arg>
 										<arg>${project.basedir}/native_src/include</arg>
 									</compilerArgs>
-									<source>11</source>
-									<target>11</target>
+									<source>17</source>
+									<target>17</target>
 									<encoding>UTF-8</encoding>
 								</configuration>
 								<goals>

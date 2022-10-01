@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.testsrunner;singleton:=true
-Bundle-Version: 8.2.400.qualifier
+Bundle-Version: 8.3.0.qualifier
 Bundle-Activator: org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.dsf.gdb.ui,
  org.eclipse.cdt.dsf.gdb
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: org.eclipse.cdt.dsf.gdb.launching,
  org.eclipse.cdt.internal.ui.viewsupport,
  org.eclipse.cdt.launch,

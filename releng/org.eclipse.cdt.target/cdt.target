@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="122">
+<target name="cdt" sequenceNumber="123">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/"/>
 			<unit id="org.eclipse.license.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/eclipse/updates/4.24/R-4.24-202206070700/"/>
+			<repository location="https://download.eclipse.org/eclipse/updates/4.26-I-builds/I20220928-1800/"/>
 			<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.jdt.annotation" version="0.0.0"/>
 			<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
@@ -19,7 +19,7 @@
 			<unit id="org.eclipse.egit.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/linuxtools/update-2022-06-docker-rc2"/>
+			<repository location="https://download.eclipse.org/linuxtools/updates-docker-nightly/"/>
 			<unit id="org.eclipse.linuxtools.docker.feature.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
@@ -31,7 +31,7 @@
 			<repository location="https://download.eclipse.org/modeling/emf/emf/builds/release/latest/"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/technology/swtbot/releases/3.1.0/"/>
+			<repository location="https://download.eclipse.org/technology/swtbot/releases/latest"/>
 			<unit id="org.eclipse.swtbot.eclipse.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.swtbot.eclipse.test.junit.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.swtbot.feature.group" version="0.0.0"/>
@@ -41,16 +41,16 @@
 			<unit id="org.eclipse.tm4e.feature.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/cdt/releases/10.7/cdt-10.7.0/"/>
+			<repository location="https://download.eclipse.org/tools/cdt/releases/latest"/>
 			<!-- We explicitly have CDT in target platform so that developers can develop org.eclipse.cdt.core/ui without requiring all the projects from CDT in their workspace. -->
 			<unit id="org.eclipse.cdt.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/wildwebdeveloper/releases/0.13.5/"/>
+			<repository location="https://download.eclipse.org/wildwebdeveloper/releases/0.15.0/"/>
 			<unit id="org.eclipse.wildwebdeveloper.embedder.node.feature.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20220531185310/repository/"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/S20220927175816/repository/"/>
 			<unit id="com.google.gson" version="0.0.0"/>
 			<unit id="com.sun.xml.bind" version="2.3.3.v20201118-1818"/>
 			<unit id="javax.activation" version="1.2.2.v20201119-1642"/>
@@ -78,7 +78,7 @@
 			<unit id="org.slf4j.impl.log4j12" version="0.0.0"/>
 		</location>
 	</locations>
-	<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11"/>
+	<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17"/>
 	<launcherArgs>
 		<vmArgs>-Xms40m&#13;
 		-Xmx512M&#13;

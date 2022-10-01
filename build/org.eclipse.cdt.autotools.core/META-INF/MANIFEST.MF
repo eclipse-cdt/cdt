@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name.0
 Bundle-SymbolicName: org.eclipse.cdt.autotools.core;singleton:=true
-Bundle-Version: 2.1.300.qualifier
+Bundle-Version: 2.2.0.qualifier
 Bundle-Activator: org.eclipse.cdt.autotools.core.AutotoolsPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
@@ -32,5 +32,5 @@ Export-Package: org.eclipse.cdt.autotools.core;x-friends:="org.eclipse.cdt.autot
  org.eclipse.cdt.internal.autotools.core;x-friends:="org.eclipse.cdt.autotools.ui",
  org.eclipse.cdt.internal.autotools.core.configure;x-friends:="org.eclipse.cdt.autotools.ui",
  org.eclipse.cdt.internal.autotools.core.wizards;x-friends:="org.eclipse.cdt.autotools.ui"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.autotools.core

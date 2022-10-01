@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-Vendor: %Bundle-Vendor
 Bundle-SymbolicName: org.eclipse.cdt.debug.dap.gdbjtag;singleton:=true
-Bundle-Version: 1.101.300.qualifier
+Bundle-Version: 1.102.0.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.dap.gdbjtag.Activator
 Require-Bundle: org.apache.commons.io,
  org.eclipse.core.runtime,
@@ -33,6 +33,6 @@ Require-Bundle: org.apache.commons.io,
  org.eclipse.cdt.debug.gdbjtag.ui;bundle-version="8.1.1",
  org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.core.variables;bundle-version="3.4.600"
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.debug.dap.gdbjtag
 Bundle-ActivationPolicy: lazy

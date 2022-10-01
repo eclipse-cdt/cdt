@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.cdt.lsp.ui
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.cdt.lsp.ui;singleton:=true
-Bundle-Version: 0.1.400.qualifier
+Bundle-Version: 0.2.0.qualifier
 Bundle-Name: %Bundle-Name
 Bundle-Vendor: %Bundle-Vendor
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.osgi;bundle-version="[3.15.0,4.0.0)",
  org.eclipse.core.expressions;bundle-version="3.7.0",
  org.eclipse.core.resources;bundle-version="3.13.800",

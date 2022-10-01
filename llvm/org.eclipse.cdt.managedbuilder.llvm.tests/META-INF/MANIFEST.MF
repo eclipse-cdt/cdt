@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.cdt.managedbuilder.llvm.tests.Activator
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Import-Package: junit.framework
 Automatic-Module-Name: org.eclipse.cdt.managedbuilder.llvm.tests

@@ -98,7 +98,7 @@ git ls-files  -- \*\*/.project | while read i ; do
     natures=$(xmllint --xpath 'string(//projectDescription/natures)' $i)
     if [[ $natures == *"org.eclipse.pde.PluginNature"* ]] && [[ $natures == *"org.eclipse.jdt.core.javanature"* ]]; then
         if [[ $natures != *"org.eclipse.pde.api.tools.apiAnalysisNature"* ]]; then
-            if ! echo $i | grep -E '\.tests?[/\.]' > /dev/null && ! echo $i | grep -E '\.examples?[/\.]' > /dev/null; then
+            if ! echo $i | grep -E '\.tests?[/\.]' > /dev/null && ! echo $i | grep -E '\.examples?[/\.]' > /dev/null && ! echo $i | grep -E 'org.eclipse.cdt.lsp.cquery' > /dev/null; then
                 echo "$d is missing API Tools Nature - Turn it on in Eclipse by 1) Right-click project 2) Plug-in tools -> API Tools Setup"
                 exit 1
             fi

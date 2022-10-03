@@ -10,7 +10,7 @@
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>1.1.200-SNAPSHOT</version>
+	<version>1.2.0-SNAPSHOT</version>
   <artifactId>org.eclipse.remote.doc.isv</artifactId>
 	<packaging>eclipse-plugin</packaging>
 

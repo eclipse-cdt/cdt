@@ -43,7 +43,7 @@
 
 		<!-- When changing this value, consider also bumping the version numbers of all the docs plug-ins (those with build-doc profile in pom.xml)
 		     so that compare&replace does not replace the the newly built docs because the only change is in the filtered out index/* resources. -->
-		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.24/</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.26-I-builds/</help-docs-eclipserun-repo>
 
 		<tycho.scmUrl>scm:git:https://github.com/eclipse-cdt/cdt</tycho.scmUrl>
 		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->

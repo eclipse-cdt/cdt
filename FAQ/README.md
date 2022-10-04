@@ -771,7 +771,7 @@ There is an entire [page dedicated to troubleshooting the Indexer](Indexer.md)
 #### What is a Scanner Discovery?
 
 See
-<http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.cdt.doc.user%2Fconcepts%2Fcdt_c_scanner_discovery.htm>
+<http://help.eclipse.org/latest/index.jsp?topic=%2Forg.eclipse.cdt.doc.user%2Fconcepts%2Fcdt_c_scanner_discovery.htm>
 
 #### I installed a new version of my compiler but old include paths of old compiler are still there under "Paths and Symbols" in project properties. I cannot get rid of them\! What do I edit to remove the old paths by hand?
 

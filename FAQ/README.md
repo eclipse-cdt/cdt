@@ -764,6 +764,10 @@ so you'll see if the indexer had problems understanding the syntax of
 the code that you've just been working on. It will not reveal semantic
 issues.
 
+#### More on the Indexer
+
+There is an entire [page dedicated to troubleshooting the Indexer](Indexer.md)
+
 #### What is a Scanner Discovery?
 
 See

@@ -339,28 +339,28 @@
           relativePathPattern="dsf-gdb/.*"/>
     </workingSet>
     <workingSet
-        name="CDT  Json CDB">
+        name="CDT Json CDB">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
           relativePathPattern="jsoncdb/.*"/>
     </workingSet>
     <workingSet
-        name="CDT  JTag">
+        name="CDT JTag">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
           relativePathPattern="jtag/.*"/>
     </workingSet>
     <workingSet
-        name="CDT  Launch">
+        name="CDT Launch">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
           relativePathPattern="launch/.*"/>
     </workingSet>
     <workingSet
-        name="CDT  Launchbar">
+        name="CDT Launchbar">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
@@ -402,21 +402,21 @@
           relativePathPattern="qt/.*"/>
     </workingSet>
     <workingSet
-        name="CDT  Releng">
+        name="CDT Releng">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
           relativePathPattern="releng/.*"/>
     </workingSet>
     <workingSet
-        name="CDT  Remote">
+        name="CDT Remote">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
           relativePathPattern="remote/.*"/>
     </workingSet>
     <workingSet
-        name="CDT  Terminal">
+        name="CDT Terminal">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"

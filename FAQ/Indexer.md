@@ -104,5 +104,6 @@ See [Setup for CDT Development](https://github.com/eclipse-cdt/cdt/blob/main/CON
 
 #### Classes of interest
 
-- org.eclipse.cdt.internal.core.dom.parser.ProblemBinding: When you have a "Symbol 'foo' could not be resolved" error, put a breakpoint in the constructors of this class and you can work your way back in the stack where/why the parsing produced this.- org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor.executeInclude: This method is where the CDT preprocessor handles \#include.
-  This can be a useful starting point if you want to debug why a header is not resolved or the wrong one is included or skipped, etc.
+- [org.eclipse.cdt.internal.core.dom.parser.ProblemBinding](https://github.com/eclipse-cdt/cdt/blob/main/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/dom/parser/ProblemBinding.java): When you have a "Symbol 'foo' could not be resolved" error, put a breakpoint in the constructors of this class and you can work your way back in the stack where/why the parsing produced this.
+- [org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor](https://github.com/eclipse-cdt/cdt/blob/main/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java).executeInclude: This method is where the CDT preprocessor handles \#include.
+This can be a useful starting point if you want to debug why a header is not resolved or the wrong one is included or skipped, etc.

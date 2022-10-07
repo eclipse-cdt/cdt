@@ -9,6 +9,7 @@ This section describes API removals that occurred in past releases, and upcoming
 ## API Changes in CDT 11.0
 
 - [org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields](#newUIAbstractPage)
+- [org.eclipse.cdt.dsf.gdb.breakpoints.Messages is no longer API](#org.eclipse.cdt.dsf.gdb.breakpoints.Messages)
 
 ## API Changes in CDT 10.5.0
 
@@ -101,6 +102,12 @@ In addition, the following inner class has been removed from the API.
 - org.eclipse.cdt.ui.newui.AbstractPage.InternalTab
 
 See [Bug 579666](https://bugs.eclipse.org/bugs/show_bug.cgi?id=579666).
+
+### <span id="org.eclipse.cdt.dsf.gdb.breakpoints.Messages">org.eclipse.cdt.dsf.gdb.breakpoints.Messages is no longer API</span>
+
+org.eclipse.cdt.dsf.gdb.breakpoints.Messages should never have been API, Messages classes generally should not be.
+
+See https://github.com/eclipse-cdt/cdt/pull/90
 
 ---
 

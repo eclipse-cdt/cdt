@@ -15,7 +15,9 @@ package org.eclipse.cdt.dsf.gdb.breakpoints;
 
 import org.eclipse.osgi.util.NLS;
 
-/** @since 4.4 */
+/**
+ * @noreference This class is not intended to be referenced by clients.
+ */
 public class Messages extends NLS {
 	public static String DynamicPrintf_Invalid_string;
 	public static String DynamicPrintf_Printf_must_start_with_quote;

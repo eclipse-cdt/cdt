@@ -3336,6 +3336,27 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		for (int i = 0; i < 256; i++) {
 			assertEquals("format " + i, contents[i].trim());
 		}
+	}
 
+	@Test
+	public void insertDprintfBreakpointBug580873() throws Throwable {
+		Map<String, Object> printfBreakpoint = new HashMap<>();
+		printfBreakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.DYNAMICPRINTF);
+		printfBreakpoint.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
+		printfBreakpoint.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_1);
+		printfBreakpoint.put(MIBreakpoints.PRINTF_STRING,
+				"\"===> XML_EVENT_TEXT(%s)\\n\", (char *)strtok(Text,\"\\n\")");
+
+		IBreakpointDMContext printfRef = insertBreakpoint(fBreakpointsDmc, printfBreakpoint);
+		waitForBreakpointEvent(1);
+		insertBreakpoint(fBreakpointsDmc, Map.of(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG, FILE_NAME_TAG, SOURCE_NAME,
+				LINE_NUMBER_TAG, LINE_NUMBER_5));
+		SyncUtil.resumeUntilStopped(5000);
+		IProcess[] processes = getGDBLaunch().getProcesses();
+		IStreamMonitor outputStreamMonitor = processes[1].getStreamsProxy().getOutputStreamMonitor();
+		String[] contents = outputStreamMonitor.getContents().split("\n");
+		for (int i = 0; i < 256; i++) {
+			assertEquals("===> XML_EVENT_TEXT(Text " + i + ")", contents[i].trim());
+		}
 	}
 }

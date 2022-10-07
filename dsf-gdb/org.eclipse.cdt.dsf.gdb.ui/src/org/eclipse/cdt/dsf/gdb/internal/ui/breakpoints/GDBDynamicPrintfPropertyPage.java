@@ -43,7 +43,9 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -305,6 +307,8 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	protected void createPrintStringEditor(Composite parent) {
 		fPrintString = new DynamicPrintfStringFieldEditor(ICDynamicPrintf.PRINTF_STRING,
 				Messages.DynamicPrintfPropertyPage_PrintString, parent) {
+			private Label closingParenLabel;
+
 			@Override
 			protected boolean doCheckState() {
 				GDBDynamicPrintfUtils.GDBDynamicPrintfString parsedStr = new GDBDynamicPrintfUtils.GDBDynamicPrintfString(
@@ -316,6 +320,30 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 				}
 
 				return valid;
+			}
+
+			@Override
+			public int getNumberOfControls() {
+				return super.getNumberOfControls() + 1;
+			}
+
+			@Override
+			protected void adjustForNumColumns(int numColumns) {
+				super.adjustForNumColumns(numColumns - 1);
+			}
+
+			@Override
+			protected void doFillIntoGrid(Composite parent, int numColumns) {
+				super.doFillIntoGrid(parent, numColumns - 1);
+				if (closingParenLabel == null) {
+					closingParenLabel = new Label(parent, SWT.LEFT);
+					closingParenLabel.setFont(parent.getFont());
+					closingParenLabel.setText(")"); //$NON-NLS-1$
+					closingParenLabel.addDisposeListener(event -> closingParenLabel = null);
+				} else {
+					checkParent(closingParenLabel, parent);
+				}
+
 			}
 		};
 		addField(fPrintString);

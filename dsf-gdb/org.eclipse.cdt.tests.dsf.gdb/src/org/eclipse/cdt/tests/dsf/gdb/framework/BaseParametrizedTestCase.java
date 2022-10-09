@@ -54,7 +54,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 			return Collections.singletonList(globalVersion);
 		}
 		String gdbVersions = System.getProperty("cdt.tests.dsf.gdb.versions");
-		if (gdbVersions == null) {
+		if (gdbVersions == null || gdbVersions.isBlank()) {
 			// this has to be put in maven using -Dcdt.tests.dsf.gdb.versions or
 			// in junit config if you run locally
 			// like this -Dcdt.tests.dsf.gdb.versions=gdb.7.7,gdbserver.7.7

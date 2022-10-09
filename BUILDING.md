@@ -116,6 +116,9 @@ uncommited changes use `-Djgit.dirtyWorkingTree-cdtDefault=warning`
 
 For running CDT's DSF-GDB tests, this specifies the path to the location of gdb.
 
+The default, defined in the root pom.xml, it is blank, which uses gdb from the `PATH`.
+See BaseTestCase for more info.
+
 #### cdt.tests.dsf.gdb.versions
 
 For running CDT's DSF-GDB tests, this specifies the executable names of the gdbs to run, comma-separated.
@@ -126,7 +129,8 @@ There are a few special values that can be specified (see BaseParametrizedTestCa
 - supported: run all versions listed in ITestConstants.ALL_SUPPORTED_VERSIONS
 - unsupported: run all versions listed in ITestConstants.ALL_UNSUPPORTED_VERSIONS
 
-The default, defined in the root pom.xml, should be the most recent released version of gdb.
+The default, defined in the root pom.xml, it is blank, which uses `gdb` and `gdbserver`.
+See BaseParametrizedTestCase for more info.
 
 To build all gdb versions for testing CDT see [download-build-gdb.sh](https://github.com/eclipse-cdt/cdt-infra/blob/master/docker/scripts/download-build-gdb.sh)
 

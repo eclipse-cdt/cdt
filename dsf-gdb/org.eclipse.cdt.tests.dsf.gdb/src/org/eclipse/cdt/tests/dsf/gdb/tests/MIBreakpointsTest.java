@@ -109,7 +109,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	protected IExpressions fExpressionService;
 	protected IGDBControl fCommandControl;
 	// Event Management
-	protected static Boolean lock = true;
+	protected static Object lock = new Object();
 
 	protected enum Events {
 		BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT, WP_HIT, WP_OOS

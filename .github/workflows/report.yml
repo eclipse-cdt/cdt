@@ -1,0 +1,36 @@
+name: Unit Test Results
+
+on:
+  workflow_run:
+    workflows: ["Build and Test"]
+    types:
+      - completed
+
+jobs:
+  unit-test-results:
+    name: Unit Test Results
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion != 'skipped'
+
+    steps:
+      - name: Download Test Report
+        uses: dawidd6/action-download-artifact@v2
+        with:
+          name: test-results
+          path: test-results
+          workflow: ${{ github.event.workflow.id }}
+          run_id: ${{ github.event.workflow_run.id }}
+      - name: Publish Test Report as GitHub PR Comment
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          commit: ${{ github.event.workflow_run.head_sha }}
+          junit_files: "test-results/**/*.xml"
+      - name: Publish Test Report in GitHub Actions UI
+        uses: mikepenz/action-junit-report@v3
+        with:
+          commit: ${{github.event.workflow_run.head_sha}}
+          report_paths: 'test-results/**/*.xml'
+          fail_on_failure: true
+          require_tests: true
+          check_name: Test Results

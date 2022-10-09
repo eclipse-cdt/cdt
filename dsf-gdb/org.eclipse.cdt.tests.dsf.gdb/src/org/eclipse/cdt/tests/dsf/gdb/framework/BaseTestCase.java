@@ -743,7 +743,7 @@ public class BaseTestCase {
 		String fileExtension = isWindows ? ".exe" : "";
 		String versionPostfix = (!version.equals(DEFAULT_VERSION_STRING)) ? "." + version : "";
 		String debugName = main + versionPostfix + fileExtension;
-		if (gdbPath != null) {
+		if (gdbPath != null && !gdbPath.isBlank()) {
 			debugName = gdbPath + "/" + debugName;
 		}
 		return debugName;

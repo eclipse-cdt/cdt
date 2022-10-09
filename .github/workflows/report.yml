@@ -26,11 +26,3 @@ jobs:
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           junit_files: "test-results/**/*.xml"
-      - name: Publish Test Report in GitHub Actions UI
-        uses: mikepenz/action-junit-report@v3
-        with:
-          commit: ${{github.event.workflow_run.head_sha}}
-          report_paths: 'test-results/**/*.xml'
-          fail_on_failure: true
-          require_tests: true
-          check_name: Test Results

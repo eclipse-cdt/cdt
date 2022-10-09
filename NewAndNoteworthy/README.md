@@ -47,6 +47,10 @@ This may lead to some minor rendering issues that hopefully do not detract too m
 
 </details>
 
+## API Changes
+
+The Eclipse CDT project announces and tracks breaking API changes in [CHANGELOG-API][CHANGELOG-API.md].
+
 <details>
 <summary>How to write a New & Noteworthy entry</summary>
 
@@ -77,5 +81,14 @@ which renders like this:
 
 The [SerialPort](../native/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java) supports arbitrary baud rates.
 
+### API Changes and Improvements
+
+Improvements and changes to API should be announced in the New and Noteworthy for the release so they get visibility.
+Linking directly to the code or Javadoc for the new API is encouraged.
+
+### API Breakages and Removals
+
+Anything that breaks or removes API should be listed in the [CHANGELOG-API](CHANGELOG-API.md).
+If the API change is very significant (such as a new version of Java) listing it in the New and Noteworthy for the release is also advisable.
 
 </details>

@@ -8,13 +8,11 @@ This section describes API removals that occurred in past releases, and upcoming
 
 ## API Changes in CDT 11.0
 
-- [org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many
-  fields](#newUIAbstractPage)
+- [org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields](#newUIAbstractPage)
 
 ## API Changes in CDT 10.5.0
 
-- [Package org.eclipse.cdt.cmake.is.core.participant has been renamed
-  to org.eclipse.cdt.jsoncdb.core.participant.](#jsoncdb)
+- [Package org.eclipse.cdt.cmake.is.core.participant has been renamed to org.eclipse.cdt.jsoncdb.core.participant.](#jsoncdb)
 
 ## API Changes in CDT 10.0.
 

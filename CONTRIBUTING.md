@@ -59,6 +59,7 @@ These steps apply to anyone, whether a member of Eclipse CDT or a contributor on
 - Create a Pull Request for your commit(s).
   - Eclipse CDT follows standard [GitHub practice](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) on using Pull Requests.
   - Eclipse CDT borrows process when possible from the Eclipse Platform project rather than duplicating it here. See the Eclipse Platform's [recommended workflow](https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md#recommended-workflow) for creating Pull Requests.
+- There are various GitHub actions and Jenkins CI jobs that may run on the Pull Request. Click on the details of those runs to understand more about them.
 - Normally committers are watching new Issues and Pull Requests and somebody would look at your contribution in a few days
 - If it has not received attention in a week or so, some nagging can help. Send email to [cdt-dev](#contact) asking committers to look at the contribution. Continue sending e-mails until somebody would give up and look :)
 

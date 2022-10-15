@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 QNX Software Systems and others.
+ * Copyright (c) 2014, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,8 +23,9 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.launchbar.core.ILaunchBarListener;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
@@ -33,13 +34,12 @@ import org.eclipse.launchbar.ui.ILaunchBarUIConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -71,18 +71,22 @@ public class LaunchBarControl implements ILaunchBarListener {
 		container.setLayout(layout);
 		container.addDisposeListener(e -> LaunchBarControl.this.dispose());
 
-		ToolBar toolBar = new ToolBar(container, SWT.FLAT);
+		Composite buttons = new Composite(container, SWT.NONE);
+		FillLayout fillLayout = new FillLayout();
+		fillLayout.spacing = 5;
+		buttons.setLayout(fillLayout);
+
 		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
 		boolean buildEnabled = store.getBoolean(Activator.PREF_ENABLE_BUILDBUTTON);
 		if (buildEnabled) {
-			createButton(toolBar, Activator.IMG_BUTTON_BUILD, Messages.LaunchBarControl_Build,
-					ILaunchBarUIConstants.CMD_BUILD);
+			Image imageBuild = Activator.getDefault().getImageRegistry().get(Activator.IMG_BUTTON_BUILD);
+			createButton(buttons, imageBuild, Messages.LaunchBarControl_Build, ILaunchBarUIConstants.CMD_BUILD);
 		}
 
-		createButton(toolBar, Activator.IMG_BUTTON_LAUNCH, Messages.LaunchBarControl_Launch,
-				ILaunchBarUIConstants.CMD_LAUNCH);
-		createButton(toolBar, Activator.IMG_BUTTON_STOP, Messages.LaunchBarControl_Stop,
-				ILaunchBarUIConstants.CMD_STOP);
+		Image imageLaunch = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN);
+		createButton(buttons, imageLaunch, Messages.LaunchBarControl_Launch, ILaunchBarUIConstants.CMD_LAUNCH);
+		Image imageStop = DebugUITools.getImage(IDebugUIConstants.IMG_OBJS_LAUNCH_RUN_TERMINATED);
+		createButton(buttons, imageStop, Messages.LaunchBarControl_Stop, ILaunchBarUIConstants.CMD_STOP);
 
 		modeSelector = new ModeSelector(container, SWT.NONE);
 		modeSelector.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
@@ -139,14 +143,9 @@ public class LaunchBarControl implements ILaunchBarListener {
 		manager.removeListener(this);
 	}
 
-	private ToolItem createButton(Composite parent, String imageName, String toolTipText, final String commandId) {
-		ToolItem button = new ToolItem((ToolBar) parent, SWT.FLAT);
+	private CLaunchButton createButton(Composite parent, Image image, String toolTipText, final String commandId) {
+		CLaunchButton button = new CLaunchButton(parent, SWT.NONE);
 
-		Image bgImage = Activator.getDefault().getImageRegistry().get(Activator.IMG_BUTTON_BACKGROUND);
-		Image fgImage = Activator.getDefault().getImageRegistry().get(imageName);
-
-		ImageDescriptor imageDesc = new LaunchBarButtonImageDescriptor(fgImage, bgImage);
-		Image image = imageDesc.createImage();
 		button.setImage(image);
 		button.setToolTipText(toolTipText);
 		button.setData("command", commandId); //$NON-NLS-1$
@@ -167,7 +166,6 @@ public class LaunchBarControl implements ILaunchBarListener {
 				}
 			}
 		});
-		button.addDisposeListener(e -> image.dispose());
 		return button;
 	}
 

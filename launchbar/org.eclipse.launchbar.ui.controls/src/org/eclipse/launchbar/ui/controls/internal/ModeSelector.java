@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 QNX Software Systems and others.
+ * Copyright (c) 2014, 2022 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -34,13 +34,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 
 public class ModeSelector extends CSelector {
 	private static final String[] noModes = new String[] { "---" }; //$NON-NLS-1$
 	private final ILaunchBarManager manager = Activator.getService(ILaunchBarManager.class);
-	private Map<String, Image> modeButtonImages = new HashMap<>();
 
 	public ModeSelector(Composite parent, int style) {
 		super(parent, style);
@@ -135,15 +132,6 @@ public class ModeSelector extends CSelector {
 		});
 	}
 
-	@Override
-	public void dispose() {
-		super.dispose();
-
-		for (Image image : modeButtonImages.values()) {
-			image.dispose();
-		}
-	}
-
 	protected ILaunchGroup getDefaultLaunchGroup(String mode) {
 		String groupId;
 		if (mode.equals(ILaunchManager.DEBUG_MODE)) {
@@ -196,14 +184,15 @@ public class ModeSelector extends CSelector {
 		updateLaunchButton(findLaunchButton());
 	}
 
-	private ToolItem findLaunchButton() {
+	private CLaunchButton findLaunchButton() {
 		String commandId = ILaunchBarUIConstants.CMD_LAUNCH;
+		// Launchbar buttons are grouped in a composite that is a sibling to this
 		for (Control control : getParent().getChildren()) {
-			if (control instanceof ToolBar) {
-				for (ToolItem toolItem : ((ToolBar) control).getItems()) {
-					if (commandId.equals(toolItem.getData("command"))) { //$NON-NLS-1$
+			if (control instanceof Composite comp) {
+				for (Control button : comp.getChildren()) {
+					if (commandId.equals(button.getData("command"))) { //$NON-NLS-1$
 						// found launch button
-						return toolItem;
+						return (CLaunchButton) button;
 					}
 				}
 			}
@@ -212,27 +201,15 @@ public class ModeSelector extends CSelector {
 		return null;
 	}
 
-	private void updateLaunchButton(ToolItem toolItem) {
-		if (toolItem == null || isDisposed()) {
+	private void updateLaunchButton(CLaunchButton button) {
+		if (button == null || isDisposed()) {
 			return;
 		}
 		Object selection = getSelection();
-		if (selection instanceof ILaunchMode) {
-			ILaunchMode mode = (ILaunchMode) selection;
-			toolItem.setToolTipText(NLS.bind(Messages.ModeSelector_ToolTip, mode.getLabel()));
-			ILaunchGroup group = getLaunchGroup(mode);
-			// we cannot use mode id as id, since external tool group and run group have same "run" id for the mode
-			// but different images
-			String id = group.getIdentifier();
-			Image image = modeButtonImages.get(id);
-			if (image == null) {
-				Image bgImage = Activator.getDefault().getImageRegistry().get(Activator.IMG_BUTTON_BACKGROUND);
-				Image modeImage = getLabelProvider().getImage(mode);
-				ImageDescriptor imageDesc = new LaunchBarButtonImageDescriptor(modeImage, bgImage);
-				image = imageDesc.createImage();
-				modeButtonImages.put(id, image);
-			}
-			toolItem.setImage(image);
+		if (selection instanceof ILaunchMode mode) {
+			button.setToolTipText(NLS.bind(Messages.ModeSelector_ToolTip, mode.getLabel()));
+			Image image = getLabelProvider().getImage(mode);
+			button.setImage(image);
 		}
 	}
 

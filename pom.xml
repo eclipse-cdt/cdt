@@ -456,12 +456,11 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-source-feature-plugin</artifactId>
-						<version>${tycho-version}</version>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-source-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>source-feature</id>
+								<id>attach-feature-source</id>
 								<phase>none</phase>
 							</execution>
 						</executions>
@@ -736,23 +735,14 @@
 							<goal>plugin-source</goal>
 						</goals>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-source-feature-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<includeBinaryFeature>false</includeBinaryFeature>
-				</configuration>
-				<executions>
 					<execution>
-						<id>source-feature</id>
+						<id>attach-feature-source</id>
 						<phase>package</phase>
 						<goals>
-							<goal>source-feature</goal>
+							<goal>feature-source</goal>
 						</goals>
 						<configuration>
+							<includeBinaryFeature>false</includeBinaryFeature>
 							<excludes>
 								<plugin id="org.eclipse.cdt.autotools.docs"/>
 								<plugin id="org.eclipse.cdt.meson.docs"/>
@@ -846,14 +836,6 @@
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-source-plugin</artifactId>
 					<version>${tycho-version}</version>
-					<executions>
-						<execution>
-							<id>plugin-source</id>
-							<goals>
-								<goal>plugin-source</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>

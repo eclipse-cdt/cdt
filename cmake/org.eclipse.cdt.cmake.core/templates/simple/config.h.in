@@ -1,0 +1,2 @@
+#define ${projectName?replace(" ", "_")}_VERSION_MAJOR @${projectName?replace(" ", "_")}_VERSION_MAJOR@
+#define ${projectName?replace(" ", "_")}_VERSION_MINOR @${projectName?replace(" ", "_")}_VERSION_MINOR@

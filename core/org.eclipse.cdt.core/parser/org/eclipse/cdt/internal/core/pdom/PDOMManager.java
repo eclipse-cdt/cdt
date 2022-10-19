@@ -709,8 +709,8 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 				}
 			}
 			fTaskQueue.addLast(subjob);
-			fIndexerJob.schedule();
 		}
+		fIndexerJob.schedule();
 	}
 
 	IPDOMIndexerTask getNextTask() {
@@ -734,14 +734,16 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	}
 
 	void indexerJobCanceled(boolean byManager) {
+		boolean scheduleJob;
 		synchronized (fTaskQueue) {
 			fCurrentTask = null;
 			if (!byManager) {
 				fTaskQueue.clear();
 			}
-			if (!fTaskQueue.isEmpty()) {
-				fIndexerJob.schedule();
-			}
+			scheduleJob = !fTaskQueue.isEmpty();
+		}
+		if (scheduleJob) {
+			fIndexerJob.schedule();
 		}
 	}
 

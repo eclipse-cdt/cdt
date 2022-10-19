@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.application.tests;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
@@ -24,7 +21,6 @@ import org.eclipse.swtbot.swt.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.waits.DefaultCondition;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.junit.After;
-import org.junit.AfterClass;
 
 public abstract class StandaloneTest {
 
@@ -34,14 +30,10 @@ public abstract class StandaloneTest {
 	protected static String projectName;
 	protected static SWTBotShell mainShell;
 	protected static SWTBotView projectExplorer;
-	private static final Logger fLogger = Logger.getRootLogger();
 
 	public static void init(String projectName) throws Exception {
 		SWTBotPreferences.KEYBOARD_LAYOUT = "EN_US";
 		SWTBotPreferences.TIMEOUT = 20000;
-
-		fLogger.removeAllAppenders();
-		fLogger.addAppender(new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT));
 
 		bot = new SWTBot();
 		Utilities.getDefault().buildProject(projectName);
@@ -80,14 +72,6 @@ public abstract class StandaloneTest {
 		//			}
 		//		}
 		//		mainShell.activate();
-	}
-
-	/**
-	 * Test class tear down method.
-	 */
-	@AfterClass
-	public static void tearDown() {
-		fLogger.removeAllAppenders();
 	}
 
 	private static final class WaitForFileCondition extends DefaultCondition {

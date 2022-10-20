@@ -412,9 +412,9 @@ Archived p2 repos:
 
 ### Development Builds
 
-Development builds of the Eclipse C/C++ IDE can be found on the [Eclipse Downloads page](https://www.eclipse.org/downloads) by clicking on the Development Builds tab.
+Development builds of the Eclipse C/C++ IDE can be found on the [Eclipse Downloads page](https://www.eclipse.org/downloads/packages/) by clicking on the Eclipse Developer Builds tab.
 
-Bleeding edge continuous builds are available from the [cdt-master Jenkins build page](https://ci.eclipse.org/cdt/job/cdt-master) and the p2 software repository: <https://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository/>
+Bleeding edge continuous builds are available from the [cdt/main Jenkins build page](https://ci.eclipse.org/cdt/job/cdt/job/main/) and the p2 software repository: <https://ci.eclipse.org/cdt/job/cdt/job/main/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository/>
 
 Some older builds are available in the old [CDT Nightly Build page](https://archive.eclipse.org/tools/cdt/builds/).
 

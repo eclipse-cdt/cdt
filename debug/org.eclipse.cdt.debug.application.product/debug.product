@@ -2,7 +2,7 @@
 <?pde version="3.5"?>
 
 <!--
-   Copyright (c) 2015, 2021 Contributors to the Eclipse Foundation
+   Copyright (c) 2015, 2022 Contributors to the Eclipse Foundation
 
    This program and the accompanying materials
    are made available under the terms of the Eclipse Public License 2.0
@@ -11,7 +11,7 @@
 
    SPDX-License-Identifier: EPL-2.0
 -->
-<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="11.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="11.0.0.qualifier" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/org.eclipse.cdt.debug.application/icons/about.png"/>
@@ -26,11 +26,11 @@
    <launcherArgs>
       <programArgs>-data @noDefault
       </programArgs>
-      <vmArgsLin>-Xms100m -Xmx512m  -Dosgi.requiredJavaVersion=11
+      <vmArgsLin>-Xms100m -Xmx512m  -Dosgi.requiredJavaVersion=17
       </vmArgsLin>
-      <vmArgsMac>-Xms100m -Xmx512m  -XstartOnFirstThread -Dosgi.requiredJavaVersion=11 -Dorg.eclipse.swt.internal.carbon.smallFonts
+      <vmArgsMac>-Xms100m -Xmx512m  -XstartOnFirstThread -Dosgi.requiredJavaVersion=17 -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
-      <vmArgsWin>-Xms100m -Xmx512m   -Dosgi.requiredJavaVersion=11
+      <vmArgsWin>-Xms100m -Xmx512m   -Dosgi.requiredJavaVersion=17
       </vmArgsWin>
    </launcherArgs>
 
@@ -46,10 +46,9 @@
    </launcher>
 
    <vm>
-      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11</linux>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11</macos>
-      <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11</solaris>
-      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11</windows>
+      <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</linux>
+      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</macos>
+      <windows include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17</windows>
    </vm>
 
    <license>
@@ -194,7 +193,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="javax.annotation"/>
       <plugin id="javax.el"/>
       <plugin id="javax.inject"/>
-      <plugin id="javax.servlet.jsp"/>
+      <plugin id="javax.servlet.jsp-api"/>
       <plugin id="javax.xml"/>
       <plugin id="javax.xml.stream"/>
       <plugin id="org.apache.batik.constants"/>
@@ -288,6 +287,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.e4.ui.dialogs"/>
       <plugin id="org.eclipse.e4.ui.ide"/>
       <plugin id="org.eclipse.e4.ui.model.workbench"/>
+      <plugin id="org.eclipse.e4.ui.progress"/>
       <plugin id="org.eclipse.e4.ui.services"/>
       <plugin id="org.eclipse.e4.ui.swt.gtk" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.widgets"/>
@@ -375,7 +375,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.osgi.util"/>
-      <plugin id="org.eclipse.pde.ds.lib"/>
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
@@ -406,7 +405,16 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
       <plugin id="org.eclipse.urischeme"/>
       <plugin id="org.freemarker"/>
+      <plugin id="org.osgi.service.cm"/>
+      <plugin id="org.osgi.service.component"/>
+      <plugin id="org.osgi.service.device"/>
+      <plugin id="org.osgi.service.event"/>
+      <plugin id="org.osgi.service.metatype"/>
       <plugin id="org.osgi.service.prefs"/>
+      <plugin id="org.osgi.service.provisioning"/>
+      <plugin id="org.osgi.service.upnp"/>
+      <plugin id="org.osgi.service.useradmin"/>
+      <plugin id="org.osgi.service.wireadmin"/>
       <plugin id="org.osgi.util.function"/>
       <plugin id="org.osgi.util.measurement"/>
       <plugin id="org.osgi.util.position"/>
@@ -432,10 +440,6 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
    </configurations>
 
    <repositories>
-      <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
-      <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
-      <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
-      <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
       <repository location="http://download.eclipse.org/tools/cdt/builds/master/nightly/rcp-repository" enabled="true" />
    </repositories>
 

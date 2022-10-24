@@ -12,6 +12,7 @@ This section describes API removals that occurred in past releases, and upcoming
 - [org.eclipse.cdt.dsf.gdb.breakpoints.Messages is no longer API](#org.eclipse.cdt.dsf.gdb.breakpoints.Messages)
 - [Removal of deprecated CommandLauncher.execute() method](#executeCommandLauncher)
 - [Removal of deprecated CBuildConfiguration.watchProcess() methods](#watchProcessCBuildConfig)
+- [Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb](#gdbBackendDebuggerCommandLine)
 
 ## API Changes in CDT 10.5.0
 
@@ -49,7 +50,6 @@ See the [policy](../POLICY.md) for the details.
 
 ## Planned Removals after June 2023 or on a major version of Eclipe CDT.
 
-- [Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb](#gdbBackendDebuggerCommandLine)
 - [Add ITool parameter to ManagedCommandLineGenerator.toManagedCommandLineInfo](#ManagedCommandLineGenerator.toManagedCommandLineInfo)
 - [Removed unneded boolean from function](#GnuMakefileGenerator.addRuleForTool)
 - [Changed methods from static to non-static](#GnuMakefileGenerator.addDefaultHeader)
@@ -132,6 +132,23 @@ in-progress builds of core-build projects:
 
 Clients should instead use the methods of the same name that take a progress monitor object.
 See [Bug 580314](https://bugs.eclipse.org/bugs/show_bug.cgi?id=580314).
+
+### <span id="gdbBackendDebuggerCommandLine">Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb</span>
+
+To support presentation of the GDB command line within the process
+property page, a public method getDebuggerCommandLineArray() has been
+added to the org.eclipse.cdt.dsf.gdb.service.IGDBBackend interface and
+the following redundant protected methods have been removed:
+
+- org.eclipse.cdt.dsf.gdb.service.GDBBackend.getDebuggerCommandLine()
+- org.eclipse.cdt.dsf.gdb.service.GDBBackend.getGDBCommandLineArray()
+
+Extenders that previously overrode the above protected methods should override
+org.eclipse.cdt.dsf.gdb.service.IGDBBackend.getDebuggerCommandLineArray()
+instead.
+
+See [Bug 572944](https://bugs.eclipse.org/bugs/show_bug.cgi?id=572944)
+and https://github.com/eclipse-cdt/cdt/pull/112.
 
 ---
 
@@ -491,22 +508,6 @@ following APIs will be removed, listed with their replacement.
 See [Bug 563108](https://bugs.eclipse.org/bugs/show_bug.cgi?id=563108).
 
 ## API Removals after June 2023
-
-### <span id="gdbBackendDebuggerCommandLine">Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb</span>
-
-To support presentation of the GDB command line within the process
-property page, a public method getDebuggerCommandLineArray() has been
-added to the org.eclipse.cdt.dsf.gdb.service.IGDBBackend interface and
-the following redundant protected methods will be removed:
-
-- org.eclipse.cdt.dsf.gdb.service.GDBBackend.getDebuggerCommandLine()
-- org.eclipse.cdt.dsf.gdb.service.GDBBackend.getGDBCommandLineArray()
-
-Extenders that override the above protected methods should override
-org.eclipse.cdt.dsf.gdb.service.IGDBBackend.getDebuggerCommandLineArray()
-instead.
-
-See [Bug 572944](https://bugs.eclipse.org/bugs/show_bug.cgi?id=572944).
 
 ### <span id="ManagedCommandLineGenerator.toManagedCommandLineInfo">Add ITool parameter to ManagedCommandLineGenerator.toManagedCommandLineInfo</span>
 

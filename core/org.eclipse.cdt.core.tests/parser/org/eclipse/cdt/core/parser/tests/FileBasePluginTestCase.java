@@ -43,6 +43,7 @@ public abstract class FileBasePluginTestCase extends TestCase {
 	static int numProjects;
 	static Class className;
 	static ICProject cPrj;
+	private Class className2;
 
 	public FileBasePluginTestCase() {
 	}
@@ -80,7 +81,13 @@ public abstract class FileBasePluginTestCase extends TestCase {
 
 	public FileBasePluginTestCase(String name, Class className) {
 		super(name);
-		initialize(className);
+		className2 = className;
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		initialize(className2);
 	}
 
 	public void cleanupProject() throws Exception {

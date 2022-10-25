@@ -37,9 +37,13 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -115,6 +119,7 @@ public abstract class BaseTestCase5 {
 		this.testInfo = testInfo;
 
 		logMonitoring.start();
+		removeLeftOverProjects();
 
 		CPPASTNameBase.sAllowRecursionBindings = false;
 		CPPASTNameBase.sAllowNameComputation = false;
@@ -130,6 +135,7 @@ public abstract class BaseTestCase5 {
 		TestScannerProvider.clear();
 
 		logMonitoring.stop(fExpectedLoggedNonOK);
+		BaseTestCase5.removeLeftOverProjects();
 	}
 
 	protected void deleteOnTearDown(File file) {
@@ -158,6 +164,26 @@ public abstract class BaseTestCase5 {
 	 */
 	public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
 		fExpectedLoggedNonOK = count;
+	}
+
+	/**
+	 * Some tests don't cleanup after themselves well and leave projects
+	 * in the workspace. Therefore run this code before each test
+	 * to make sure all left over projects are deleted.
+	 */
+	public static void removeLeftOverProjects() throws CoreException {
+		MultiStatus multiStatus = new MultiStatus(BaseTestCase5.class, 0,
+				"Failed to remove left over projects from previous tests");
+		for (IProject p : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			try {
+				p.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			} catch (CoreException e) {
+				multiStatus.add(Status.error("failed to delete " + p.toString(), e));
+			}
+		}
+		if (multiStatus.getChildren().length > 0) {
+			throw new CoreException(multiStatus);
+		}
 	}
 
 	public static void waitForIndexer(ICProject project) throws InterruptedException {

@@ -27,6 +27,22 @@ See [Bug 580873](https://bugs.eclipse.org/bugs/show_bug.cgi?id=580873).
 
 Please see [CHANGELOG-API](CHANGELOG-API.md) for details on the breaking API changes in this release as well as future planned API changes.
 
+## New Job Family for backgrond build settings update
+
+When the project is modified the managed build settings needs to update settings.
+
+While much of this update happens synchronously to the `IResourceChangeListener` calls, the final update is done with a job.
+If an update needs to be tracked for completion, after making an update the `IJobManager` can be queried using this family.
+
+e.g. a join on the job being completed:
+
+```java
+Job.getJobManager().join(ManagedBuilderCorePlugin.BUILD_SETTING_UPDATE_JOB_FAMILY, null);
+```
+
+This new job family was added to improve stability of tests to ensure background operations are complete.
+It may have other uses to other API consumers as well and is therefore included here.
+
 # Bugs Fixed in this Release
 
 See [GitHub milestones](https://github.com/eclipse-cdt/cdt/milestone/2?closed=1) and for bugs that haven't been transitioned to GitHub please see Bugzilla report [Bugs Fixed in CDT 11.0](https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&classification=Tools&product=CDT&query_format=advanced&resolution=FIXED&target_milestone=11.0.0).

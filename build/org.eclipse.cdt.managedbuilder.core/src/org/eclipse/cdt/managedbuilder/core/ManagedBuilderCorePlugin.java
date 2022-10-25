@@ -27,6 +27,7 @@ import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildCPathEn
 import org.eclipse.cdt.managedbuilder.internal.scannerconfig.ManagedBuildPathEntryContainerInitializer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,6 +35,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobManager;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -53,6 +55,25 @@ public class ManagedBuilderCorePlugin extends Plugin {
 	// The unique id for all managed make projects
 	public static final String MANAGED_MAKE_PROJECT_ID = ManagedBuilderCorePlugin.getUniqueIdentifier()
 			+ ".managedMake"; //$NON-NLS-1$
+
+	/**
+	 * When the project is modified the managed build settings needs to update settings.
+	 *
+	 * While much of this update happens synchronously to the {@link IResourceChangeListener}
+	 * calls, the final update is done with a job. If an update needs to be tracked for
+	 * completion, after making an update the {@link IJobManager} can be queried using
+	 * this family.
+	 *
+	 * e.g. a join on the job being completed:
+	 *
+	 * <pre>
+	 *   Job.getJobManager().join(ManagedBuilderCorePlugin.BUILD_SETTING_UPDATE_JOB_FAMILY, null);
+	 * </pre>
+	 *
+	 * @since 9.5
+	 */
+	public static final Object BUILD_SETTING_UPDATE_JOB_FAMILY = new Object();
+
 	//  NOTE: The code below is for tracking resource renaming and deleting.  This is needed to keep
 	//  ResourceConfiguration elements up to date.  It may also be needed by AdditionalInput
 	//  elements

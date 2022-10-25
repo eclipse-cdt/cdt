@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.language.settings.providers;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -31,6 +32,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.jobs.Job;
 
 import junit.framework.TestSuite;
@@ -1150,6 +1153,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 			mockLseListener.resetCount();
 			assertEquals(0, mockLseListener.getCount());
 			assertEquals(null, mockLseListener.getLastEvent());
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IProject[] projects = root.getProjects();
+			if (projects.length != 1) {
+				fail("Unexpected projects exist, only expected '" + project.toString() + "', got these projects: "
+						+ Arrays.toString(projects));
+			}
 
 			// Serialize settings
 			LanguageSettingsManager.serializeLanguageSettingsWorkspace();

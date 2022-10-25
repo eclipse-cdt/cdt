@@ -48,6 +48,7 @@ int main()
 	loop();
 	setBlocks();
 	SLEEP(1);
+	cout << flush;
 	a++; // LINE_NUMBER_5
 	return 0; // LINE_NUMBER_6
 }

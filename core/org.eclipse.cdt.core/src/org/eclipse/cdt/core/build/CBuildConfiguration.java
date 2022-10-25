@@ -518,7 +518,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	/**
 	 * @return The exit code of the build process.
-	 * @since 7.5
+	 * @since 8.0
 	 */
 	protected int watchProcess(IConsole console, IProgressMonitor monitor) throws CoreException {
 		return launcher.waitAndRead(console.getInfoStream(), console.getErrorStream(), monitor);
@@ -526,7 +526,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	/**
 	 * @return The exit code of the build process.
-	 * @since 7.5
+	 * @since 8.0
 	 */
 	protected int watchProcess(IConsoleParser[] consoleParsers, IProgressMonitor monitor) throws CoreException {
 		ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(consoleParsers);

@@ -28,7 +28,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
-public class IndexTestBase extends BaseTestCase {
+public abstract class IndexTestBase extends BaseTestCase {
 	public IndexTestBase(String name) {
 		super(name);
 	}

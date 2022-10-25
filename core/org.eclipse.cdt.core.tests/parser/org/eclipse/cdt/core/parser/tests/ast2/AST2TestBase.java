@@ -98,7 +98,7 @@ import junit.framework.AssertionFailedError;
 /**
  * @author aniefer
  */
-public class AST2TestBase extends SemanticTestBase {
+public abstract class AST2TestBase extends SemanticTestBase {
 	public final static String TEST_CODE = "<testcode>";
 	protected static final IParserLogService NULL_LOG = new NullLogService();
 	protected static boolean sValidateCopy;

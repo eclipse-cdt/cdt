@@ -43,7 +43,7 @@ import org.eclipse.core.resources.IFile;
 /**
  * @author dsteffle
  */
-public class AST2SelectionParseTestBase extends FileBasePluginTestCase {
+public abstract class AST2SelectionParseTestBase extends FileBasePluginTestCase {
 
 	public AST2SelectionParseTestBase() {
 	}

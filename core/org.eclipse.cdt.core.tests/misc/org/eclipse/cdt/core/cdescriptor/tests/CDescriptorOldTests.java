@@ -16,6 +16,9 @@
 
 package org.eclipse.cdt.core.cdescriptor.tests;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.CProjectNature;
@@ -55,7 +58,7 @@ public class CDescriptorOldTests extends TestCase {
 	static String projectId = CTestPlugin.PLUGIN_ID + ".TestProject";
 	static IProject fProject;
 	static CDescriptorListener listener = new CDescriptorListener();
-	static CDescriptorEvent fLastEvent;
+	static final List<CDescriptorEvent> fEvents = new ArrayList<>();
 
 	/**
 	 * Constructor for CDescriptorTest.
@@ -113,7 +116,7 @@ public class CDescriptorOldTests extends TestCase {
 
 		@Override
 		public void descriptorChanged(CDescriptorEvent event) {
-			fLastEvent = event;
+			fEvents.add(event);
 		}
 	}
 
@@ -155,11 +158,11 @@ public class CDescriptorOldTests extends TestCase {
 		}, null);
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_ADDED);
-		Assert.assertEquals(fLastEvent.getFlags(), 0);
-		fLastEvent = null;
+		Assert.assertFalse(fEvents.isEmpty());
+		Assert.assertEquals(fEvents.get(0).getDescriptor(), desc);
+		Assert.assertEquals(fEvents.get(0).getType(), CDescriptorEvent.CDTPROJECT_ADDED);
+		Assert.assertEquals(fEvents.get(0).getFlags(), 0);
+		fEvents.clear();
 
 		Assert.assertEquals(fProject, desc.getProject());
 		Assert.assertEquals("*", desc.getPlatform());
@@ -185,7 +188,7 @@ public class CDescriptorOldTests extends TestCase {
 		Element data = desc.getProjectData("testElement0");
 		data.appendChild(data.getOwnerDocument().createElement("test"));
 		desc.saveProjectData();
-		fLastEvent = null;
+		fEvents.clear();
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=185930
@@ -254,7 +257,7 @@ public class CDescriptorOldTests extends TestCase {
 			lastLength += threads.length; // Update last lengths to what we expect
 			assertEquals("Iteration count: " + i, lastLength, lengthAfter);
 
-			fLastEvent = null;
+			fEvents.clear();
 		}
 	}
 
@@ -298,7 +301,7 @@ public class CDescriptorOldTests extends TestCase {
 			desc.saveProjectData();
 			t.join();
 
-			fLastEvent = null;
+			fEvents.clear();
 		}
 	}
 
@@ -318,11 +321,11 @@ public class CDescriptorOldTests extends TestCase {
 		ICDescriptor desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		ICExtensionReference extRef = desc.create("org.eclipse.cdt.testextension", "org.eclipse.cdt.testextensionID");
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
-		fLastEvent = null;
+		Assert.assertNotNull(fEvents);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getDescriptor(), desc);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
+		fEvents.clear();
 
 		Assert.assertEquals("org.eclipse.cdt.testextension", extRef.getExtension());
 		Assert.assertEquals("org.eclipse.cdt.testextensionID", extRef.getID());
@@ -341,11 +344,11 @@ public class CDescriptorOldTests extends TestCase {
 		ICExtensionReference extRef[] = desc.get("org.eclipse.cdt.testextension");
 		extRef[0].setExtensionData("testKey", "testValue");
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), 0);
-		fLastEvent = null;
+		Assert.assertNotNull(fEvents);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getDescriptor(), desc);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getFlags(), 0);
+		fEvents.clear();
 
 		Assert.assertEquals("testValue", extRef[0].getExtensionData("testKey"));
 		extRef[0].setExtensionData("testKey", null);
@@ -357,11 +360,11 @@ public class CDescriptorOldTests extends TestCase {
 		ICExtensionReference extRef[] = desc.get("org.eclipse.cdt.testextension");
 		desc.remove(extRef[0]);
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
-		fLastEvent = null;
+		Assert.assertNotNull(fEvents);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getDescriptor(), desc);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getFlags(), CDescriptorEvent.EXTENSION_CHANGED);
+		fEvents.clear();
 
 	}
 
@@ -371,11 +374,11 @@ public class CDescriptorOldTests extends TestCase {
 		data.appendChild(data.getOwnerDocument().createElement("test"));
 		desc.saveProjectData();
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), 0);
-		fLastEvent = null;
+		Assert.assertNotNull(fEvents);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getDescriptor(), desc);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getFlags(), 0);
+		fEvents.clear();
 	}
 
 	public void testProjectDataDelete() throws Exception {
@@ -386,11 +389,11 @@ public class CDescriptorOldTests extends TestCase {
 		data.removeChild(data.getFirstChild());
 		desc.saveProjectData();
 
-		Assert.assertNotNull(fLastEvent);
-		Assert.assertEquals(fLastEvent.getDescriptor(), desc);
-		Assert.assertEquals(fLastEvent.getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
-		Assert.assertEquals(fLastEvent.getFlags(), 0);
-		fLastEvent = null;
+		Assert.assertNotNull(fEvents);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getDescriptor(), desc);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getType(), CDescriptorEvent.CDTPROJECT_CHANGED);
+		Assert.assertEquals(fEvents.get(fEvents.size() - 1).getFlags(), 0);
+		fEvents.clear();
 	}
 
 	public void testProjectStorageDelete() throws Exception {
@@ -410,7 +413,7 @@ public class CDescriptorOldTests extends TestCase {
 		desc = CCorePlugin.getDefault().getCProjectDescription(fProject, true);
 		data = desc.getProjectData("testElement");
 		assertTrue(data.getChildNodes().getLength() == 0);
-		fLastEvent = null;
+		fEvents.clear();
 	}
 
 }

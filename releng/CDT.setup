@@ -371,14 +371,14 @@
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
-          relativePathPattern="lsp/.*"/>
+          relativePathPattern="llvm/.*"/>
     </workingSet>
     <workingSet
         name="CDT LSP">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
-          relativePathPattern="llvm/.*"/>
+          relativePathPattern="lsp/.*"/>
     </workingSet>
     <workingSet
         name="CDT Memory">

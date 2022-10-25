@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2021 Wind River Systems, Nokia and others.
+ * Copyright (c) 2006, 2022 Wind River Systems, Nokia and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
  *     Mark Bozeman (Mentor Graphics) - Report GDB start failures (Bug 376203)
  *     Iulia Vasii (Freescale Semiconductor) - Separate GDB command from its arguments (Bug 445360)
  *     John Dallaway - Implement getDebuggerCommandLineArray() method (Bug 572944)
+ *     John Dallaway - Eliminate deprecated methods (#112)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -177,12 +178,9 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	/**
 	 * Options for GDB process. Returns the GDB command and its arguments as an
 	 * array. Allow subclass to override.
-	 *
-	 * @since 4.6
-	 * @deprecated Override {@link #getDebuggerCommandLineArray()} instead
 	 */
-	@Deprecated(since = "5.2", forRemoval = true)
-	protected String[] getGDBCommandLineArray() {
+	@Override
+	public String[] getDebuggerCommandLineArray() {
 		// The goal here is to keep options to an absolute minimum.
 		// All configuration should be done in the final launch sequence
 		// to allow for more flexibility.
@@ -197,47 +195,6 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
 		// Parse to properly handle spaces and such things (bug 458499)
 		return CommandLineUtil.argumentsToArray(cmd);
-	}
-
-	@Override
-	public String[] getDebuggerCommandLineArray() {
-		// Call the deprecated method which might be overridden
-		return getDebuggerCommandLine();
-	}
-
-	/**
-	 * Returns the GDB command and its arguments as an array.
-	 * Allow subclass to override.
-	 * @since 5.2
-	 * @deprecated Override {@link #getDebuggerCommandLineArray()} instead
-	 */
-	// This method replaces getGDBCommandLineArray() because we need
-	// to override it for GDB 7.12 even if an extender has overridden
-	// getGDBCommandLineArray().
-	// Here is the scenario:
-	//   An extender has overridden getGDBCommandLineArray() to launch
-	//   GDB in MI mode but with extra parameters.  Once GDBBackend_7_12
-	//   is released, the extender may likely point their extension to
-	//   GDBBackend_7_12 instead of GDBBackend (which will even happen
-	//   automatically if the extender extends GDBBackend_HEAD).
-	//   In such a case, they would override the changes in
-	//   GDBBackend_7_12.getGDBCommandLineArray() and the debug session
-	//   is likely to fail since with GDBBackend_7_12, we launch GDB
-	//   in CLI mode.
-	//
-	//   Instead, we use getDebuggerCommandLine() and override that method in
-	//   GDBBackend_7_12.  That way an extender will not override it
-	//   without noticing (since it didn't exist before).  Then we can call
-	//   the overridden getGDBCommandLineArray() and work with that to
-	//   make it work with the new way to launch GDB of GDBBackend_7_12
-	//
-	// Note that we didn't name this method getGDBCommandLine() because
-	// this name had been used in CDT 8.8 and could still be part of
-	// extenders' code.
-	@Deprecated(since = "6.4", forRemoval = true)
-	protected String[] getDebuggerCommandLine() {
-		// Call the old method in case it was overridden
-		return getGDBCommandLineArray();
 	}
 
 	@Override

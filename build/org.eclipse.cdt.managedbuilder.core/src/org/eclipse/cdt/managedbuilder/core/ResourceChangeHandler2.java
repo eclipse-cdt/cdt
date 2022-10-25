@@ -207,6 +207,11 @@ class ResourceChangeHandler2 extends ResourceChangeHandlerBase {
 				return Status.OK_STATUS;
 			}
 
+			@Override
+			public boolean belongsTo(Object family) {
+				return family == ManagedBuilderCorePlugin.BUILD_SETTING_UPDATE_JOB_FAMILY;
+			}
+
 		};
 
 		job.setRule(root);

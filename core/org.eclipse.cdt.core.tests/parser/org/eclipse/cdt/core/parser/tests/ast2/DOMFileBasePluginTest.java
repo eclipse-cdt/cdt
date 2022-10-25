@@ -47,6 +47,7 @@ public abstract class DOMFileBasePluginTest extends TestCase {
 	static int numProjects = 0;
 	static Class className;
 	static ICProject cPrj;
+	private Class className2;
 
 	public DOMFileBasePluginTest() {
 	}
@@ -84,7 +85,7 @@ public abstract class DOMFileBasePluginTest extends TestCase {
 
 	public DOMFileBasePluginTest(String name, Class className) {
 		super(name);
-		initialize(className);
+		className2 = className;
 	}
 
 	public void cleanupProject() throws Exception {
@@ -98,6 +99,12 @@ public abstract class DOMFileBasePluginTest extends TestCase {
 		} catch (Throwable e) {
 			/*boo*/
 		}
+	}
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		initialize(className2);
 	}
 
 	@Override

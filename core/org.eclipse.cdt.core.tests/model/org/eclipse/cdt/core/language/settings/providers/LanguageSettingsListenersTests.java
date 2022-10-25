@@ -14,6 +14,13 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +32,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
@@ -35,13 +42,13 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.jobs.Job;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases to cover {@link ILanguageSettingsChangeListener} capabilities.
  */
-public class LanguageSettingsListenersTests extends BaseTestCase {
+public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	// These should match corresponding entries defined in plugin.xml
 	private static final String EXTENSION_REGISTERER_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_REGISTERER_PROVIDER_ID;
 	private static final String EXTENSION_EDITABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_EDITABLE_PROVIDER_ID;
@@ -82,22 +89,8 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 
 	private MockLanguageSettingsChangeListener mockLseListener = new MockLanguageSettingsChangeListener();
 
-	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public LanguageSettingsListenersTests(String name) {
-		super(name);
-
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEachCleanup() throws Exception {
 		LanguageSettingsManager.unregisterLanguageSettingsChangeListener(mockLseListener);
 		LanguageSettingsManager.setWorkspaceProviders(null);
 		try {
@@ -108,28 +101,12 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 		} catch (Exception e) {
 			// ignore
 		}
-		super.tearDown(); // includes ResourceHelper cleanup
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(LanguageSettingsListenersTests.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
 	 * Check that global provider does not get unnecessarily registered on start.
 	 */
+	@Test
 	public void testListenerRegisterer_CheckExtensionProvider() throws Exception {
 		// check if extension provider exists
 		ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager
@@ -143,6 +120,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered for non-shared configuration owned provider.
 	 */
+	@Test
 	public void testListenerRegisterer_OneOwnedByCfg() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -192,6 +170,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered for non-shared configuration owned multiple providers.
 	 */
+	@Test
 	public void testListenerRegisterer_TwoOwnedByCfgs() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProject(this.getName(), null, new String[] {
@@ -256,6 +235,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered for shared provider.
 	 */
+	@Test
 	public void testListenerRegisterer_OneGlobal() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -306,6 +286,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered for multiple shared providers.
 	 */
+	@Test
 	public void testListenerRegisterer_TwoGlobal() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProject(this.getName(), null, new String[] {
@@ -369,6 +350,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered for shared provider when the provider removed from the list.
 	 */
+	@Test
 	public void testListenerRegisterer_TwoGlobalMinusOne() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProject(this.getName(), null, new String[] {
@@ -449,6 +431,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered for shared provider define in multiple projects.
 	 */
+	@Test
 	public void testListenerRegisterer_GlobalProviderTwoProjects() throws Exception {
 		// create project 1
 		IProject project_1 = ResourceHelper.createCDTProjectWithConfig(this.getName() + ".1");
@@ -522,6 +505,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered for shared global providers not included in any configuration.
 	 */
+	@Test
 	public void testListenerRegisterer_GlobalProviderNotInUse() throws Exception {
 		// create project
 		ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager
@@ -553,6 +537,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered for shared global provider replacing another one in global list.
 	 */
+	@Test
 	public void testListenerRegisterer_GlobalProviderAddRemoveOutsideTheProject() throws Exception {
 		// create project
 		ILanguageSettingsProvider workspaceProvider = LanguageSettingsManager
@@ -620,6 +605,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered when empty provider added and the resulting list of entries does not change.
 	 */
+	@Test
 	public void testNotification_cfgProvider_AddEmptyProvider() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -684,6 +670,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered where non-empty provider added.
 	 */
+	@Test
 	public void testNotification_cfgProvider_AddNonEmptyProvider() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -757,6 +744,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered during serialization.
 	 */
+	@Test
 	public void testNotification_cfgProvider_SerializeEntries() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -831,6 +819,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered when providers are being added by 2 independent parties in parallel.
 	 */
+	@Test
 	public void testNotification_cfgProvider_SerializeEntriesConcurrent() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -941,6 +930,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered during adding global empty provider.
 	 */
+	@Test
 	public void testNotification_globalProvider_AddEmptyProvider() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -1012,6 +1002,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered during adding global non-empty provider.
 	 */
+	@Test
 	public void testNotification_globalProvider_AddNonEmptyProvider() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -1094,6 +1085,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test events triggered during serialization of global shared providers.
 	 */
+	@Test
 	public void testNotification_globalProvider_SerializeEntries() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -1268,6 +1260,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test case when a project is present in the list of resources in delta.
 	 */
+	@Test
 	public void testDelta_AffectedResources_Project() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -1344,6 +1337,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test case when a default resource (null) is represented in the list of resources in delta.
 	 */
+	@Test
 	public void testDelta_AffectedResources_DefaultResource() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -1420,6 +1414,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test case when a folder is present in the list of resources in delta.
 	 */
+	@Test
 	public void testDelta_AffectedResources_Folder() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -1497,6 +1492,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test case when a file is present in the list of resources in delta.
 	 */
+	@Test
 	public void testDelta_AffectedResources_File() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
@@ -1574,6 +1570,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase {
 	/**
 	 * Test case when a mix of files and folders is present in the list of resources in delta.
 	 */
+	@Test
 	public void testDelta_AffectedResources_Mix() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());

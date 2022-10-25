@@ -35,7 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 /**
  * Common base class for AST2 and index tests.
  */
-public class SemanticTestBase extends BaseTestCase {
+public abstract class SemanticTestBase extends BaseTestCase {
 	public SemanticTestBase() {
 		super();
 	}

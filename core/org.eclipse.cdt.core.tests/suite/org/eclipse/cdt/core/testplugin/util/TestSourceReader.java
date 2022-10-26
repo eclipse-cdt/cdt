@@ -124,10 +124,8 @@ public class TestSourceReader {
 			while (clazz.getMethod(testName).getDeclaringClass() != clazz) {
 				clazz = clazz.getSuperclass();
 			}
-		} catch (SecurityException e) {
-			Assert.fail(e.getMessage());
-		} catch (NoSuchMethodException e) {
-			Assert.fail(e.getMessage());
+		} catch (NoSuchMethodException | SecurityException e1) {
+			throw new AssertionError("Failed to find expected class", e1);
 		}
 
 		while (true) {

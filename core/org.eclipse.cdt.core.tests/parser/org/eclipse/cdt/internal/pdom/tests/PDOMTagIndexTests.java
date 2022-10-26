@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.util.Arrays;
 
@@ -20,23 +25,20 @@ import org.eclipse.cdt.core.dom.ast.tag.ITag;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IIndexLocationConverter;
 import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.dom.ast.tag.Tag;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTag;
 import org.eclipse.cdt.internal.core.pdom.tag.PDOMTagIndex;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 // copy/pasted from BTreeTests
-public class PDOMTagIndexTests extends BaseTestCase {
+public class PDOMTagIndexTests extends BaseTestCase5 {
 	private File pdomFile;
 	private PDOM pdom;
-
-	public static Test suite() {
-		return suite(PDOMTagIndexTests.class);
-	}
 
 	private static class MockIndexLocationConverter implements IIndexLocationConverter {
 		@Override
@@ -50,10 +52,8 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		pdomFile = File.createTempFile(getClass().getSimpleName() + '.' + Double.toString(Math.random()).substring(2),
 				null);
 		pdom = new WritablePDOM(pdomFile, new MockIndexLocationConverter(),
@@ -61,15 +61,14 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		pdom.acquireWriteLock(null);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		try {
 			pdom.close();
 		} finally {
 			pdom.releaseWriteLock();
 		}
 		pdomFile.delete();
-		super.tearDown();
 	}
 
 	// return the nearest valid record that is less than the specified base
@@ -81,6 +80,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 	}
 
 	// A quick sanity test to confirm basic functionality.
+	@Test
 	public void testSimple() throws Exception {
 		String tagger = "tagger_a";
 		long rec = computeValidRecord();
@@ -89,6 +89,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		assertNotNull(PDOMTagIndex.getTag(pdom, rec, tagger));
 	}
 
+	@Test
 	public void testMultipleTaggers() throws Exception {
 		String tagger_a = "tagger_a";
 		String tagger_b = "tagger_b";
@@ -112,6 +113,7 @@ public class PDOMTagIndexTests extends BaseTestCase {
 		assertEquals(2, tag_count);
 	}
 
+	@Test
 	public void testReplaceTags() throws Exception {
 		String tagger_a = "tagger_a";
 		String tagger_b = "tagger_b";

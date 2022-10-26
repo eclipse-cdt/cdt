@@ -15,6 +15,9 @@
 
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.model.ICProject;
@@ -22,8 +25,9 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -34,19 +38,15 @@ public class CVariableTests extends PDOMTestBase {
 	protected ICProject project;
 	protected PDOM pdom;
 
-	public static Test suite() {
-		return suite(CVariableTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		project = createProject("variableTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
@@ -54,6 +54,7 @@ public class CVariableTests extends PDOMTestBase {
 		}
 	}
 
+	@Test
 	public void testCAutoVariable() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "autoCVariable");
 		assertEquals(1, bindings.length);
@@ -61,6 +62,7 @@ public class CVariableTests extends PDOMTestBase {
 		assertTrue(variable.isAuto());
 	}
 
+	@Test
 	public void testCExternVariable() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "externCVariable");
 		assertEquals(1, bindings.length);
@@ -68,6 +70,7 @@ public class CVariableTests extends PDOMTestBase {
 		assertTrue(variable.isExtern());
 	}
 
+	@Test
 	public void testCRegisterVariable() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "registerCVariable");
 		assertEquals(1, bindings.length);
@@ -75,6 +78,7 @@ public class CVariableTests extends PDOMTestBase {
 		assertTrue(variable.isRegister());
 	}
 
+	@Test
 	public void testCStaticVariable() throws Exception {
 		// static elements cannot be found on global scope, see bug 161216
 		IBinding[] bindings = findUnqualifiedName(pdom, "staticCVariable");

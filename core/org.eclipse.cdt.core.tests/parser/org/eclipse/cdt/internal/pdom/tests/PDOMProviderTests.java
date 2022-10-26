@@ -15,6 +15,8 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import static org.eclipse.cdt.core.testplugin.CProjectHelper.createCCProject;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URI;
@@ -44,8 +46,7 @@ import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests addition of external pdom's into the logical index
@@ -53,10 +54,7 @@ import junit.framework.Test;
 public class PDOMProviderTests extends PDOMTestBase {
 	private static final int A_FRAGMENT_OPTIONS = IIndexManager.ADD_EXTENSION_FRAGMENTS_ADD_IMPORT;
 
-	public static Test suite() {
-		return suite(PDOMProviderTests.class);
-	}
-
+	@Test
 	public void testLifeCycle() throws Exception {
 		final File tempPDOM = createTempFile("temp", ".pdom");
 
@@ -128,6 +126,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		}
 	}
 
+	@Test
 	public void testCommonSDK() throws Exception {
 		final File tempPDOM = createTempFile("temp", ".pdom");
 
@@ -247,6 +246,7 @@ public class PDOMProviderTests extends PDOMTestBase {
 		}
 	}
 
+	@Test
 	public void testVersionMismatchOfExternalPDOM_178998() throws Exception {
 		final File tempPDOM = createTempFile("temp", ".pdom");
 

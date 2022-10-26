@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,7 +34,7 @@ import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
@@ -40,20 +43,17 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
-import junit.framework.Test;
-
-public class PDOMCBugsTest extends BaseTestCase {
+public class PDOMCBugsTest extends BaseTestCase5 {
 	ICProject cproject;
 	PDOM pdom;
 
-	public static Test suite() {
-		return suite(PDOMCBugsTest.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		cproject = CProjectHelper.createCProject("PDOMCBugsTest" + System.currentTimeMillis(), "bin",
 				IPDOMManager.ID_NO_INDEXER);
 		Bundle b = CTestPlugin.getDefault().getBundle();
@@ -65,16 +65,14 @@ public class PDOMCBugsTest extends BaseTestCase {
 		waitForIndexer(cproject);
 
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
-		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 					new NullProgressMonitor());
 		}
-		super.tearDown();
 	}
 
 	// // check we get the right IProblemBinding objects
@@ -85,6 +83,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 	// typedef H *H;
 	// typedef I *************I;
 	// typedef int (*J)(J);
+	@Test
 	public void test192165() throws Exception {
 		pdom.acquireReadLock();
 		IBinding[] bindings = pdom.findBindings(Pattern.compile(".*"), false, IndexFilter.ALL, npm());
@@ -93,7 +92,7 @@ public class PDOMCBugsTest extends BaseTestCase {
 		for (IBinding binding : bindings) {
 			final String name = binding.getName();
 			bnames.add(name);
-			assertTrue("expected typedef, got " + binding, binding instanceof ITypedef);
+			assertTrue(binding instanceof ITypedef, "expected typedef, got " + binding);
 			IType type = SemanticUtil.getUltimateType((IType) binding, false);
 			if (name.equals("J")) {
 				// for plain C the second J has to be interpreted as a (useless) parameter name.

@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.util.regex.Pattern;
 
@@ -40,9 +44,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.BadLocationException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.Test;
 
 /**
  * Test that PDOM correctly track declarations, definitions and references of objects.
@@ -55,12 +61,8 @@ public class DefDeclTests extends PDOMTestBase {
 	protected PDOM pdom;
 	protected ICProject cproject;
 
-	public static Test suite() {
-		return suite(DefDeclTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		String requiredName = "defDeclTests";
 		cproject = createProject(requiredName);
 		this.projectName = cproject.getElementName();
@@ -68,8 +70,8 @@ public class DefDeclTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, null);
@@ -181,34 +183,42 @@ public class DefDeclTests extends PDOMTestBase {
 	}
 
 	/* ------------------ Tests Started Here ------------------------ */
+	@Test
 	public void testInit() {
 		// will fail if setUp fails, maybe timelimit is too small for warm-up
 	}
 
+	@Test
 	public void testSimpleDeclUsage_f01() throws Exception {
 		assertDefDeclRef("foo", "01", 0, 1, 1);
 	}
 
+	@Test
 	public void testKRDeclUsage_f02() throws Exception {
 		assertDefDeclRef("foo", "02", 0, 1, 1);
 	}
 
+	@Test
 	public void testImplicitDeclPostDecl_f03() throws Exception {
 		assertDefDeclRef("foo", "03", 0, 1, 1);
 	}
 
+	@Test
 	public void testImplicitDeclPostDef_f04() throws Exception {
 		assertDefDeclRef("foo", "04", 1, 0, 1);
 	}
 
+	@Test
 	public void testImplicitDeclNone_f05() throws Exception {
 		assertDefDeclRef("foo", "05", 0, 0, 1);
 	}
 
+	@Test
 	public void testNonLocalDefintion_f06() throws Exception {
 		assertDefDeclRef("foo", "06", 1, 1, 1);
 	}
 
+	@Test
 	public void testWrongMatchedStaticDefinition() throws Exception {
 		String elName = "foo" + "07";
 		IIndexBinding[] binds = pdom.findBindings(Pattern.compile(elName), true, IndexFilter.ALL, null);
@@ -232,6 +242,7 @@ public class DefDeclTests extends PDOMTestBase {
 		checkReference(binds[1], "ref" + "07", 0);
 	}
 
+	@Test
 	public void testStaticBindings_f08() throws Exception {
 		String elName = "foo" + "08";
 
@@ -260,43 +271,53 @@ public class DefDeclTests extends PDOMTestBase {
 		checkReference(element, "refS" + "08", 1);
 	}
 
+	@Test
 	public void testSimpleGlobalWrite_v09() throws Exception {
 		assertDefDeclRef("var", "_v09", 1, 0, 1);
 	}
 
+	@Test
 	public void testGlobalInitRead_v10() throws Exception {
 		assertDefDeclRef("var", "_v10", 1, 0, 1);
 	}
 
+	@Test
 	public void testGlobalInitRead2_v11() throws Exception {
 		assertDefDeclRef("var", "_v11", 1, 0, 1);
 	}
 
+	@Test
 	public void testDeclUseDef_v12() throws Exception {
 		assertDefDeclRef("var", "_v12", 1, 1, 1);
 	}
 
+	@Test
 	public void testDeclDefUse_v13() throws Exception {
 		assertDefDeclRef("var", "_v13", 1, 1, 1);
 	}
 
+	@Test
 	public void testDefDeclUse_v14() throws Exception {
 		// Hmm. This test seems to work, but Find Declaration in the UI does not work.
 		assertDefDeclRef("var", "_v14", 1, 1, 1);
 	}
 
+	@Test
 	public void testNamedStruct_t01() throws Exception {
 		assertDefDeclRef("type", "_t01", 1, 0, 1);
 	}
 
+	@Test
 	public void testStructPreDefintion_t02() throws Exception {
 		assertDefDeclRef("type", "_t02", 0, 1, 1);
 	}
 
+	@Test
 	public void testStructRecursive_t03() throws Exception {
 		assertDefDeclRef("type", "_t03", 1, 1, 1);
 	}
 
+	@Test
 	public void testStructAndTypedef_t04() throws Exception {
 		String num = "_t04";
 		String elName = "type" + num;
@@ -314,6 +335,7 @@ public class DefDeclTests extends PDOMTestBase {
 		checkDefinition(struct, "defS" + num, 1);
 	}
 
+	@Test
 	public void testTypedefAndAnonymousStruct_t05() throws Exception {
 		assertDefDeclRef("type", "_t05", 1, 0, 1);
 	}

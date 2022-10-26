@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
@@ -30,8 +34,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Doug Schaefer
@@ -40,12 +45,8 @@ public class EnumerationTests extends PDOMTestBase {
 
 	protected PDOM pdom;
 
-	public static Test suite() {
-		return suite(EnumerationTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("enumerationTests");
 			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
@@ -53,11 +54,12 @@ public class EnumerationTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 	}
 
+	@Test
 	public void testC() throws Exception {
 		// Check bindings
 		Pattern pattern = Pattern.compile("TestCEnum");
@@ -97,6 +99,7 @@ public class EnumerationTests extends PDOMTestBase {
 		assertEquals(offset("enumTest.c", "ca;"), loc.getNodeOffset());
 	}
 
+	@Test
 	public void testCPP() throws Exception {
 		// Check bindings
 		Pattern pattern = Pattern.compile("TestCPPEnum");

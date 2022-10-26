@@ -16,6 +16,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -36,8 +41,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Doug Schaefer
@@ -45,12 +51,8 @@ import junit.framework.Test;
 public class ClassTests extends PDOMTestBase {
 	protected PDOM pdom;
 
-	public static Test suite() {
-		return suite(ClassTests.class, "_");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("classTests");
 			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
@@ -58,11 +60,12 @@ public class ClassTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 	}
 
+	@Test
 	public void test1() throws Exception {
 		IBinding[] Bs = pdom.findBindings(Pattern.compile("B"), true, IndexFilter.ALL, npm());
 		assertEquals(1, Bs.length);
@@ -89,6 +92,7 @@ public class ClassTests extends PDOMTestBase {
 		return null;
 	}
 
+	@Test
 	public void testNested() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("NestedA"), false, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, bindings.length);
@@ -112,6 +116,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(offset("nested.cpp", "x.x") + 2, loc.getNodeOffset());
 	}
 
+	@Test
 	public void test147903() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("pr147903"), false, IndexFilter.ALL, npm());
 		assertEquals(1, bindings.length);
@@ -125,6 +130,7 @@ public class ClassTests extends PDOMTestBase {
 	}
 
 	/* Test friend relationships between classes */
+	@Test
 	public void testFriend() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("ClassA"), true, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, bindings.length);
@@ -175,6 +181,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(bindings[0], ((PDOMName) refs[0]).getBinding());
 	}
 
+	@Test
 	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentA() throws Exception {
 		IndexFilter JUST_CONSTRUCTORS = new IndexFilter() {
 			@Override
@@ -187,6 +194,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(2, bindings.length);
 	}
 
+	@Test
 	public void testAbsenceOfDefaultConstructorWhenExplicitNonDefaultPresentB() throws Exception {
 		IndexFilter JUST_CONSTRUCTORS = new IndexFilter() {
 			@Override
@@ -199,6 +207,7 @@ public class ClassTests extends PDOMTestBase {
 		assertEquals(1, bindings.length);
 	}
 
+	@Test
 	public void testClassScope_bug185408() throws Exception {
 		char[][] name = { "B".toCharArray(), "bf".toCharArray() };
 		IBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
@@ -225,31 +234,33 @@ public class ClassTests extends PDOMTestBase {
 
 	private ICPPMethod extractSingleMethod(IBinding[] bindings) {
 		assertEquals(1, bindings.length);
-		assertInstance(bindings[0], ICPPMethod.class);
+		assertInstanceOf(ICPPMethod.class, bindings[0]);
 		return (ICPPMethod) bindings[0];
 	}
 
 	private ICPPClassType extractSingleClass(IBinding[] bindings) {
 		assertEquals(1, bindings.length);
-		assertInstance(bindings[0], ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, bindings[0]);
 		return (ICPPClassType) bindings[0];
 	}
 
+	@Test
 	public void testFinalClass() throws Exception {
 		char[][] name = { "E".toCharArray() };
 		IBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
 		assertEquals(1, bindings.length);
-		assertInstance(bindings[0], ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, bindings[0]);
 		ICPPClassType classBinding = (ICPPClassType) bindings[0];
 
 		assertTrue(classBinding.isFinal());
 	}
 
+	@Test
 	public void testNoDiscardClass() throws Exception {
 		char[][] name = { "F".toCharArray() };
 		IBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
 		assertEquals(1, bindings.length);
-		assertInstance(bindings[0], ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, bindings[0]);
 		ICPPClassType classBinding = (ICPPClassType) bindings[0];
 
 		assertTrue(classBinding.isNoDiscard());

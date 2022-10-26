@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -24,8 +26,9 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test overloaded symbols are correctly resolved when within a single translation
@@ -35,12 +38,8 @@ import junit.framework.TestSuite;
 public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 	protected PDOM pdom;
 
-	public static TestSuite suite() {
-		return suite(OverloadsWithinSingleTUTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("overloadsWithinSingleTU");
 			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
@@ -48,11 +47,12 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 	}
 
+	@Test
 	public void testDistinctBindingsPresent() throws Exception {
 		IBinding[] fooBs = pdom.findBindings(Pattern.compile("foo"), false, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(3, fooBs.length);
@@ -64,15 +64,16 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 				new NullProgressMonitor());
 		assertEquals(4, FooBs.length);
 
-		Pattern[] XBarAbsPath = makePatternArray(new String[] { "X", "bar" });
+		Pattern[] XBarAbsPath = makePatternArray("X", "bar");
 		IBinding[] XBarBs = pdom.findBindings(XBarAbsPath, true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(4, XBarBs.length);
 
-		Pattern[] XFooPath = makePatternArray(new String[] { "X", "Foo" });
+		Pattern[] XFooPath = makePatternArray("X", "Foo");
 		IBinding[] XFooPathBs = pdom.findBindings(XFooPath, true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(1, XFooPathBs.length);
 	}
 
+	@Test
 	public void testReferencesToGlobalBindings() throws Exception {
 		IBinding[] BarBs = pdom.findBindings(Pattern.compile("bar"), true, IndexFilter.ALL, new NullProgressMonitor());
 		assertEquals(4, BarBs.length);
@@ -90,8 +91,9 @@ public class OverloadsWithinSingleTUTests extends PDOMTestBase {
 		assertFunctionRefCount(new Class[] { ICPPClassType.class, IBasicType.class }, BarBs, 1);
 	}
 
+	@Test
 	public void testReferencesToNamespacedBindings() throws Exception {
-		Pattern[] XBarAbsPath = makePatternArray(new String[] { "X", "bar" });
+		Pattern[] XBarAbsPath = makePatternArray("X", "bar");
 		IBinding[] XBarBs = pdom.findBindings(XBarAbsPath, false, IndexFilter.ALL, new NullProgressMonitor());
 
 		// X::bar()

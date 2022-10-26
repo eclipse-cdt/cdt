@@ -15,6 +15,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.util.regex.Pattern;
 
@@ -30,7 +35,7 @@ import org.eclipse.cdt.core.index.ResourceContainerRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -46,36 +51,32 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests bugs found in the PDOM.
  */
-public class PDOMCPPBugsTest extends BaseTestCase {
+public class PDOMCPPBugsTest extends BaseTestCase5 {
 	ICProject cproject;
 
-	public static Test suite() {
-		return suite(PDOMCPPBugsTest.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		cproject = CProjectHelper.createCCProject("PDOMBugsTest" + System.currentTimeMillis(), "bin",
 				IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 					new NullProgressMonitor());
 		}
-		super.tearDown();
 	}
 
+	@Test
 	public void testPDOMProperties() throws Exception {
 		PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireWriteLock(0, null);
@@ -93,6 +94,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testProjectPDOMProperties() throws Exception {
 		PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		pdom.acquireReadLock();
@@ -110,6 +112,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testProjectPDOMPropertiesOnExport() throws Exception {
 		// this test is currently failing on the cdt test build machine, but
 		// not on my local linux or windows boxes.
@@ -128,18 +131,18 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 
 			String id2 = getFragmentID(cproject);
 			assertNotNull("Project pdom ID is null", id2);
-			assertFalse("Project pdom ID equals export PDOM id", id2.equals(id));
+			assertFalse(id2.equals(id), "Project pdom ID equals export PDOM id");
 
 			pdomManager.reindex(cproject);
 			waitForIndexer(cproject);
 
 			String id3 = pdom.getProperty(IIndexFragment.PROPERTY_FRAGMENT_ID);
 			assertNotNull("Exported pdom ID is null after project reindex", id3);
-			assertEquals("Exported pdom ID hasChanged during reindex", id, id3);
+			assertEquals(id, id3, "Exported pdom ID hasChanged during reindex");
 
 			String id4 = getFragmentID(cproject);
 			assertNotNull("Reindexed project pdom ID is null", id4);
-			assertFalse("Reindexex project pdom ID equals exported pdom ID", id4.equals(id));
+			assertFalse(id4.equals(id), "Reindexex project pdom ID equals exported pdom ID");
 		} finally {
 			pdom.releaseReadLock();
 		}
@@ -158,6 +161,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		return id2;
 	}
 
+	@Test
 	public void testInterruptingAcquireReadLock() throws Exception {
 		final PDOM pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		final boolean[] ok = { false };
@@ -176,7 +180,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 			other.start();
 			other.interrupt();
 			other.join();
-			assertTrue("thread was not interrupted", ok[0]);
+			assertTrue(ok[0], "thread was not interrupted");
 		} finally {
 			pdom.releaseWriteLock();
 		}
@@ -184,6 +188,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		pdom.releaseWriteLock();
 	}
 
+	@Test
 	public void testInterruptingAcquireWriteLock() throws Exception {
 		final WritablePDOM pdom = (WritablePDOM) CCoreInternals.getPDOMManager().getPDOM(cproject);
 		final boolean[] ok = { false };
@@ -204,7 +209,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 			other.start();
 			other.interrupt();
 			other.join();
-			assertTrue("thread was not interrupted", ok[0]);
+			assertTrue(ok[0], "thread was not interrupted");
 		} finally {
 			pdom.releaseReadLock();
 		}
@@ -212,6 +217,7 @@ public class PDOMCPPBugsTest extends BaseTestCase {
 		pdom.releaseWriteLock();
 	}
 
+	@Test
 	public void test191679() throws Exception {
 		IProject project = cproject.getProject();
 		IFolder cHeaders = cproject.getProject().getFolder("cHeaders");

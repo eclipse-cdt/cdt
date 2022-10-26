@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
@@ -39,8 +42,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the correctness of C/C++ searches.
@@ -60,19 +64,15 @@ public class PDOMSearchTest extends PDOMTestBase {
 	protected IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 	protected IndexFilter INDEX_FILTER = IndexFilter.ALL_DECLARED;
 
-	public static Test suite() {
-		return suite(PDOMSearchTest.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		project = createProject("searchTests", true);
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
@@ -83,6 +83,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 	/**
 	 * Tests the members inside namespaces
 	 */
+	@Test
 	public void testNamespaces() throws Exception {
 		/* Members in the namespace */
 		IBinding[] namespaces = pdom.findBindings(Pattern.compile("namespace1"), false, INDEX_FILTER, NULL_MONITOR);
@@ -126,6 +127,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(offset("Class1.h", "namespace namespace1") + 10, loc.getNodeOffset()); //character offset
 	}
 
+	@Test
 	public void testAnonymousNamespace_460646() throws Exception {
 		char[][] name = new char[][] { "ns1".toCharArray(), "ns2".toCharArray(), "Class3".toCharArray() };
 		IIndexBinding[] bindings = pdom.findBindings(name, IndexFilter.ALL, npm());
@@ -134,6 +136,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals("ns1::ns2::Class3", getQualifiedName(bindings[0]));
 	}
 
+	@Test
 	public void testClasses_160913() throws Exception {
 		// classes and nested classes
 
@@ -237,6 +240,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals(offset("Class1.h", "class Class2 { //namespace1::Class1::Class2") + 6, loc.getNodeOffset()); //character offset
 	}
 
+	@Test
 	public void testFunction() throws Exception {
 		IBinding[] functions = pdom.findBindings(Pattern.compile("foo2"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, functions.length);
@@ -249,6 +253,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals("main", getQualifiedName(functions[0]));
 	}
 
+	@Test
 	public void testMethods() throws Exception {
 		IBinding[] methods = pdom.findBindings(Pattern.compile("~Class2"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, methods.length);
@@ -256,6 +261,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals("Class2::~Class2", getQualifiedName(methods[0]));
 	}
 
+	@Test
 	public void testFields() throws Exception {
 		IBinding[] fields = pdom.findBindings(Pattern.compile("class1x"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, fields.length);
@@ -268,6 +274,7 @@ public class PDOMSearchTest extends PDOMTestBase {
 		assertEquals("namespace1::Class1::class1y", getQualifiedName(fields[0]));
 	}
 
+	@Test
 	public void testVariables() throws Exception {
 		IBinding[] variables = pdom.findBindings(Pattern.compile("var"), false, INDEX_FILTER, NULL_MONITOR);
 		assertEquals(1, variables.length);

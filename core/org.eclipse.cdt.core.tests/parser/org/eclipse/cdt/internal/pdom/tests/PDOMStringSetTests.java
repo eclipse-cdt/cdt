@@ -13,30 +13,28 @@
  */
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.db.PDOMStringSet;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 // copy/pasted from BTreeTests
-public class PDOMStringSetTests extends BaseTestCase {
+public class PDOMStringSetTests extends BaseTestCase5 {
 	protected File dbFile;
 	protected Database db;
 	protected PDOMStringSet stringSet;
 	protected int rootRecord;
 
-	public static Test suite() {
-		return suite(PDOMStringSetTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		dbFile = File.createTempFile("pdomstringsettest", "db");
 		db = new Database(dbFile, new ChunkCache(), 0, false);
 		db.setExclusiveLock();
@@ -44,15 +42,14 @@ public class PDOMStringSetTests extends BaseTestCase {
 		stringSet = new PDOMStringSet(db, rootRecord);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		db.close();
 		dbFile.deleteOnExit();
-
-		super.tearDown();
 	}
 
 	// Quick tests to exercise the basic functionality.
+	@Test
 	public void testInterface() throws Exception {
 		long val1_rec_a = stringSet.add("val1");
 		long val2_rec_a = stringSet.add("val2");

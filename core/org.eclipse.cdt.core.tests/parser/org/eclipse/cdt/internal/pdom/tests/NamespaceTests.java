@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -30,8 +33,9 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about C++ namespaces.
@@ -44,12 +48,8 @@ public class NamespaceTests extends PDOMTestBase {
 	protected IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 	protected IndexFilter INDEX_FILTER = IndexFilter.ALL;
 
-	public static Test suite() {
-		return suite(NamespaceTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		if (pdom == null) {
 			project = createProject("namespaceTests", true);
 			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
@@ -57,8 +57,8 @@ public class NamespaceTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
@@ -66,6 +66,7 @@ public class NamespaceTests extends PDOMTestBase {
 		}
 	}
 
+	@Test
 	public void testAlias() throws Exception {
 		// Find all the namespace
 		IBinding[] namespaces = pdom.findBindings(Pattern.compile("namespace1"), false, INDEX_FILTER, NULL_MONITOR);
@@ -89,6 +90,7 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(namespace2, namespaceAlias.getBinding());
 	}
 
+	@Test
 	public void testNested() throws Exception {
 		// Find deeply nested namespace
 		Pattern[] patterns = { Pattern.compile("namespace1"), Pattern.compile("namespace2"),
@@ -98,6 +100,7 @@ public class NamespaceTests extends PDOMTestBase {
 		assertTrue(namespaces[0] instanceof ICPPNamespace);
 	}
 
+	@Test
 	public void testMemberDefinition() throws Exception {
 		// Find the definition of a member declared in a namespace
 		Pattern[] patterns = { Pattern.compile("namespace1"), Pattern.compile("namespace2"), Pattern.compile("foo") };
@@ -116,6 +119,7 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(offset("namespace.cpp", "::foo()") + 2, loc.getNodeOffset()); // character offset
 	}
 
+	@Test
 	public void testExtend() throws Exception {
 		// Extending a namespace
 		IBinding[] namespaces = pdom.findBindings(Pattern.compile("ns1"), false, INDEX_FILTER, NULL_MONITOR);
@@ -127,6 +131,7 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(1, members.length); // c was added by extending the namespace
 	}
 
+	@Test
 	public void testOverload() throws Exception {
 		// Function overloading in namespace
 		Pattern[] patterns = { Pattern.compile("ns3"), Pattern.compile("blah") };
@@ -151,6 +156,7 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(offset("overload.cpp", "blah('a')"), loc.getNodeOffset()); // character offset
 	}
 
+	@Test
 	public void testUnnamed_162226() throws Exception {
 		// Unnamed Namespace
 		IBinding[] functions = pdom.findBindings(Pattern.compile("function1"), true, INDEX_FILTER, NULL_MONITOR);
@@ -174,6 +180,7 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(offset("unnamed.cpp", "function1();"), loc.getNodeOffset()); // character offset
 	}
 
+	@Test
 	public void testFriend_162011() throws Exception {
 		// Friend in namespace - function2 is not in Class1
 		IBinding[] functions = pdom.findBindings(Pattern.compile("function2"), false, INDEX_FILTER, NULL_MONITOR);
@@ -197,6 +204,7 @@ public class NamespaceTests extends PDOMTestBase {
 		assertEquals(offset("friend.cpp", "ns4::function2(element)") + 5, loc.getNodeOffset()); // character offset
 	}
 
+	@Test
 	public void testUsingDirective() throws Exception {
 		// TODO need to test for PDOM?  or is it more for compiler?
 		Pattern[] patterns = { Pattern.compile("ns4"), Pattern.compile("element") };

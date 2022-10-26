@@ -13,13 +13,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
@@ -30,33 +37,29 @@ import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-
-public class PDOMNameTests extends BaseTestCase {
+public class PDOMNameTests extends BaseTestCase5 {
 	private ICProject cproject;
 
-	public static Test suite() {
-		return suite(PDOMNameTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		cproject = CProjectHelper.createCCProject("PDOMNameTest" + System.currentTimeMillis(), "bin",
 				IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(cproject);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 					new NullProgressMonitor());
 		}
-		super.tearDown();
 	}
 
+	@Test
 	public void testExternalReferences() throws Exception {
 		IProject project = cproject.getProject();
 		// Use enum because this uses a different NodeType in C++ and C.

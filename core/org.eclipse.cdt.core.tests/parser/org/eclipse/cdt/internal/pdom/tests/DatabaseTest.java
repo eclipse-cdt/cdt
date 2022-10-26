@@ -15,11 +15,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.util.Random;
 
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
@@ -29,21 +33,21 @@ import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.db.ShortString;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the {@link Database} class.
  */
-public class DatabaseTest extends BaseTestCase {
+public class DatabaseTest extends BaseTestCase5 {
 	// This constant can be used to run the test with very large databases.
 	// Try, for example, setting it to Integer.MAX_VALUE * 7L;
 	private static final long TEST_OFFSET = 0;
 	protected Database db;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		db = new Database(getTestDir().append(getName() + System.currentTimeMillis() + ".dat").toFile(),
 				new ChunkCache(), 0, false);
 		db.setExclusiveLock();
@@ -60,10 +64,6 @@ public class DatabaseTest extends BaseTestCase {
 		db.flush();
 	}
 
-	public static Test suite() {
-		return suite(DatabaseTest.class);
-	}
-
 	protected IPath getTestDir() {
 		IPath path = CTestPlugin.getDefault().getStateLocation().append("tests/");
 		File file = path.toFile();
@@ -72,8 +72,8 @@ public class DatabaseTest extends BaseTestCase {
 		return path;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		db.close();
 		if (!db.getLocation().delete()) {
 			db.getLocation().deleteOnExit();
@@ -81,6 +81,7 @@ public class DatabaseTest extends BaseTestCase {
 		db = null;
 	}
 
+	@Test
 	public void testBlockSizeAndFirstBlock() throws Exception {
 		assertEquals(0, db.getVersion());
 
@@ -98,6 +99,7 @@ public class DatabaseTest extends BaseTestCase {
 		assertEquals(mem + blocksize, db.getRecPtr((freeDeltas - Database.MIN_BLOCK_DELTAS + 1) * Database.INT_SIZE));
 	}
 
+	@Test
 	public void testBug192437() throws Exception {
 		File tmp = File.createTempFile("readOnlyEmpty", ".db");
 		try {
@@ -122,6 +124,7 @@ public class DatabaseTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testFreeBlockLinking() throws Exception {
 		final int realsize = 42;
 		final int deltas = (realsize + Database.BLOCK_HEADER_SIZE + Database.BLOCK_SIZE_DELTA - 1)
@@ -140,6 +143,7 @@ public class DatabaseTest extends BaseTestCase {
 		assertEquals(0, db.getRecPtr(mem1 + Database.INT_SIZE));
 	}
 
+	@Test
 	public void testSimpleAllocationLifecycle() throws Exception {
 		long mem1 = db.malloc(42);
 		db.free(mem1);
@@ -173,6 +177,7 @@ public class DatabaseTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testStringsInBTree() throws Exception {
 		String[] names = { "ARLENE", "BRET", "CINDY", "DENNIS", "EMILY", "FRANKLIN", "GERT", "HARVEY", "IRENE", "JOSE",
 				"KATRINA", "LEE", "MARIA", "NATE", "OPHELIA", "PHILIPPE", "RITA", "STAN", "TAMMY", "VINCE", "WILMA",
@@ -211,6 +216,7 @@ public class DatabaseTest extends BaseTestCase {
 
 	private final int GT = 1, LT = -1, EQ = 0;
 
+	@Test
 	public void testShortStringComparison() throws CoreException {
 		Random r = new Random(90210);
 
@@ -234,6 +240,7 @@ public class DatabaseTest extends BaseTestCase {
 		assertCMP("a", EQ, "A", false);
 	}
 
+	@Test
 	public void testLongStringComparison() throws CoreException {
 		Random r = new Random(314159265);
 		doTrials(100, ShortString.MAX_BYTE_LENGTH + 1, ShortString.MAX_BYTE_LENGTH * 2, r, true);

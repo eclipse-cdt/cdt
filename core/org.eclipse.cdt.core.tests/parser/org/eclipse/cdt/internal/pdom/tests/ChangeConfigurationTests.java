@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -38,14 +40,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 public class ChangeConfigurationTests extends PDOMTestBase {
-
-	public static Test suite() {
-		return suite(ChangeConfigurationTests.class);
-	}
 
 	private void changeConfigRelations(ICProject project, int option) throws CoreException, InterruptedException {
 		ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(project.getProject());
@@ -77,6 +74,7 @@ public class ChangeConfigurationTests extends PDOMTestBase {
 	//#ifdef MACRO2
 	//void testFunc2();
 	//#endif
+	@Test
 	public void testRepeatedlyChangeConfig_bug375226() throws Exception {
 		ModelJoiner mj = new ModelJoiner();
 		ICProject cProject = CProjectHelper.createNewStyleCProject("testChangeConfiguration",
@@ -121,8 +119,8 @@ public class ChangeConfigurationTests extends PDOMTestBase {
 						new NullProgressMonitor());
 				IBinding[] noBindings = index.findBindings(isFirstConfig ? testFunc2 : testFunc1, true, IndexFilter.ALL,
 						new NullProgressMonitor());
-				assertEquals(1, bindings.length);
-				assertEquals(0, noBindings.length);
+				assertEquals(1, bindings.length, "Failed at try number " + i);
+				assertEquals(0, noBindings.length, "Failed at try number " + i);
 			} finally {
 				index.releaseReadLock();
 			}

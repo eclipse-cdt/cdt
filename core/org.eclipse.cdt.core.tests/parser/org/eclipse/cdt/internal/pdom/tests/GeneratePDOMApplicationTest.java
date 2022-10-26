@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
@@ -49,9 +54,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
-
-import junit.framework.Test;
 
 /**
  * Tests the GeneratePDOMApplication
@@ -68,39 +74,36 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 
 	private static Deque<ICProject> projectsToDeleteOnTearDown = new ArrayDeque<>();
 
-	public static Test suite() {
-		return suite(GeneratePDOMApplicationTest.class);
-	}
-
 	protected File target; // the location of the generated PDOM
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		projectsToDeleteOnTearDown.clear();
 		target = nonExistentTempFile("temp", ".pdom");
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		for (ICProject cproject; (cproject = projectsToDeleteOnTearDown.pollLast()) != null;) {
 			cproject.getProject().delete(true, new NullProgressMonitor());
 		}
-		super.tearDown();
 	}
 
+	@Test
 	public void testBrokenExportProjectProvider1() throws Exception {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for createProject
 		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider1.class.getName() });
 	}
 
+	@Test
 	public void testBrokenExportProjectProvider2() throws Exception {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for getLocationConverter
 		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider2.class.getName() });
 	}
 
+	@Test
 	public void testSimpleExportProjectProvider1() throws Exception {
 		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider3.class.getName() });
@@ -120,6 +123,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		assertTrue(fid.startsWith("export")); // check for default export id
 	}
 
+	@Test
 	public void testSimpleExportProjectProvider2() throws Exception {
 		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider4.class.getName() });
@@ -141,6 +145,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		}
 	}
 
+	@Test
 	public void testExternalExportProjectProvider_BadCmdLine1() throws Exception {
 		setExpectedNumberOfLoggedNonOKStatusObjects(1); // Expected failure: -source must be specified
 
@@ -149,6 +154,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		assertFalse(target.exists());
 	}
 
+	@Test
 	public void testExternalExportProjectProvider_BadCmdLine2() throws Exception {
 		TestProjectProvider4 tpp4 = new TestProjectProvider4();
 		ICProject cproject = tpp4.createProject();
@@ -162,6 +168,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		assertFalse(target.exists());
 	}
 
+	@Test
 	public void testExternalExportProjectProvider_BadCmdLine3() throws Exception {
 		TestProjectProvider4 tpp4 = new TestProjectProvider4();
 		ICProject cproject = tpp4.createProject();
@@ -173,6 +180,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		assertFalse(target.exists());
 	}
 
+	@Test
 	public void testExternalExportProjectProvider() throws Exception {
 		final int[] stateCount = new int[1];
 		WritablePDOM wpdom = generatePDOM(LOC_TSTPRJ1, ExternalExportProjectProvider.class, stateCount);
@@ -187,24 +195,28 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 			wpdom.releaseReadLock();
 		}
 		// depending on the timing the index of the temporary project is changed once or twice.
-		assertTrue("state is " + stateCount[0], stateCount[0] == 2 || stateCount[0] == 4);
+		assertTrue(stateCount[0] == 2 || stateCount[0] == 4, "state is " + stateCount[0]);
 	}
 
+	@Test
 	public void testExternalExportProjectProvider_SysIncludes() throws Exception {
 		WritablePDOM wpdom = generatePDOM(LOC_TSTPRJ2, ExternalExportProjectProvider.class, null);
 		verifyProject2Content(wpdom);
 	}
 
+	@Test
 	public void testGenerateOnCyclicIncludes1() throws Exception {
 		// testing for zero NON-OK status objects (see BaseTestCase.setExpectedNumberOfLoggedNonOKStatusObjects)
 		WritablePDOM wpdom = generatePDOM(LOC_CYCINC1, ExternalExportProjectProvider.class, null);
 	}
 
+	@Test
 	public void testGenerateOnCyclicIncludes2() throws Exception {
 		// testing for zero NON-OK status objects (see BaseTestCase.setExpectedNumberOfLoggedNonOKStatusObjects)
 		WritablePDOM wpdom = generatePDOM(LOC_CYCINC2, ExternalExportProjectProvider.class, null);
 	}
 
+	@Test
 	public void testExternalExportProjectProvider_CLinkage() throws Exception {
 		WritablePDOM wpdom = generatePDOM(LOC_TSTPRJ3, TestProjectProvider5.class, null);
 

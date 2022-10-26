@@ -16,8 +16,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +41,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.parser.tests.VisibilityAsserts;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.ModelJoiner;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
@@ -59,7 +63,7 @@ import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 /**
  * @author Doug Schaefer
  */
-public class PDOMTestBase extends BaseTestCase {
+public class PDOMTestBase extends BaseTestCase5 {
 	protected static final IProgressMonitor PROGRESS = new NullProgressMonitor();
 	static IPath rootPath = new Path("resources/pdomtests");
 	private String projectName;
@@ -246,16 +250,7 @@ public class PDOMTestBase extends BaseTestCase {
 		return (IBinding[]) preresult.toArray(new IBinding[preresult.size()]);
 	}
 
-	protected void assertInstance(Object o, Class c) {
-		assertNotNull(o);
-		assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
-	}
-
-	public static Pattern[] makePatternArray(String[] args) {
-		List preresult = new ArrayList();
-		for (String arg : args) {
-			preresult.add(Pattern.compile(arg));
-		}
-		return (Pattern[]) preresult.toArray(new Pattern[preresult.size()]);
+	public static Pattern[] makePatternArray(String... args) {
+		return Arrays.asList(args).stream().map(Pattern::compile).toArray(Pattern[]::new);
 	}
 }

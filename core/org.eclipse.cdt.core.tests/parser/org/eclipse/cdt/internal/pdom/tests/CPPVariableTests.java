@@ -15,6 +15,10 @@
 
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
 import org.eclipse.cdt.core.model.ICProject;
@@ -22,8 +26,9 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -34,19 +39,15 @@ public class CPPVariableTests extends PDOMTestBase {
 	protected ICProject project;
 	protected PDOM pdom;
 
-	public static Test suite() {
-		return suite(CPPVariableTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		project = createProject("variableTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
@@ -54,6 +55,7 @@ public class CPPVariableTests extends PDOMTestBase {
 		}
 	}
 
+	@Test
 	public void testCPPAutoVariable() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "autoCPPVariable");
 		assertEquals(1, bindings.length);
@@ -62,6 +64,7 @@ public class CPPVariableTests extends PDOMTestBase {
 		assertFalse(variable.isStatic());
 	}
 
+	@Test
 	public void testCPPExternVariable() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "externCPPVariable");
 		assertEquals(1, bindings.length);
@@ -69,12 +72,14 @@ public class CPPVariableTests extends PDOMTestBase {
 		assertTrue(variable.isExtern());
 	}
 
+	@Test
 	public void testCPPRegisterVariable() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "registerCPPVariable");
 		assertEquals(1, bindings.length);
 		ICPPVariable variable = (ICPPVariable) bindings[0];
 	}
 
+	@Test
 	public void testCPPStaticVariable() throws Exception {
 		// static elements cannot be found on global scope, see bug 161216
 		IBinding[] bindings = findUnqualifiedName(pdom, "staticCPPVariable");

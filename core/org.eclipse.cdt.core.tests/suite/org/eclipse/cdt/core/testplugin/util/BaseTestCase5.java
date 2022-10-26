@@ -107,7 +107,9 @@ public abstract class BaseTestCase5 {
 	 * enough for the general use case of getName.
 	 */
 	public String getName() {
-		return testInfo.getDisplayName();
+		String displayName = testInfo.getDisplayName();
+		String replaceFirst = displayName.replaceFirst("\\(.*\\)", "");
+		return replaceFirst;
 	}
 
 	public static NullProgressMonitor npm() {

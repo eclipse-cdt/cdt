@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -29,8 +32,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * See bugzilla
@@ -39,12 +43,8 @@ public class FilesOnReindexTests extends PDOMTestBase {
 	protected ICProject project;
 	protected IIndex pdom;
 
-	public static Test suite() {
-		return suite(FilesOnReindexTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		if (pdom == null) {
 			project = createProject("filesOnReindex");
 			pdom = CCorePlugin.getIndexManager().getIndex(project);
@@ -52,8 +52,8 @@ public class FilesOnReindexTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
@@ -61,6 +61,7 @@ public class FilesOnReindexTests extends PDOMTestBase {
 		}
 	}
 
+	@Test
 	public void testFilesOnReindex() throws CoreException, InterruptedException {
 		IFile file = project.getProject().getFile("simple.cpp");
 		performAssertions(file);

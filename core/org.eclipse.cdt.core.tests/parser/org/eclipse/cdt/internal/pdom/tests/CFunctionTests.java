@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IParameter;
@@ -23,8 +27,9 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -34,19 +39,15 @@ public class CFunctionTests extends PDOMTestBase {
 	protected ICProject project;
 	protected PDOM pdom;
 
-	public static Test suite() {
-		return suite(CFunctionTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		project = createProject("functionTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
@@ -54,12 +55,14 @@ public class CFunctionTests extends PDOMTestBase {
 		}
 	}
 
+	@Test
 	public void testExternCFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "externCFunction");
 		assertEquals(1, bindings.length);
 		assertTrue(((IFunction) bindings[0]).isExtern());
 	}
 
+	@Test
 	public void testStaticCFunction() throws Exception {
 		// static elements cannot be found on global scope, see bug 161216
 		IBinding[] bindings = findUnqualifiedName(pdom, "staticCFunction");
@@ -67,24 +70,28 @@ public class CFunctionTests extends PDOMTestBase {
 		assertTrue(((IFunction) bindings[0]).isStatic());
 	}
 
+	@Test
 	public void testInlineCFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "inlineCFunction");
 		assertEquals(1, bindings.length);
 		assertTrue(((IFunction) bindings[0]).isInline());
 	}
 
+	@Test
 	public void testVarArgsCFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "varArgsCFunction");
 		assertEquals(1, bindings.length);
 		assertTrue(((IFunction) bindings[0]).takesVarArgs());
 	}
 
+	@Test
 	public void testNoReturnCFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "noReturnCFunction");
 		assertEquals(1, bindings.length);
 		assertTrue(((IFunction) bindings[0]).isNoReturn());
 	}
 
+	@Test
 	public void testKnRStyleFunctionWithProblemParameters() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "KnRfunctionWithProblemParameters");
 		assertEquals(1, bindings.length);
@@ -96,6 +103,7 @@ public class CFunctionTests extends PDOMTestBase {
 		assertTrue(params[2].getType() instanceof ICBasicType);
 	}
 
+	@Test
 	public void testFunctionWithRegisterParam() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "storageClassCFunction");
 		assertEquals(1, bindings.length);

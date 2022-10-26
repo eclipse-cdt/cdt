@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,14 +26,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 public class CPPFunctionTemplateTests extends PDOMInlineCodeTestBase {
-
-	public static Test suite() {
-		return suite(CPPFunctionTemplateTests.class);
-	}
 
 	/*************************************************************************/
 
@@ -53,12 +51,13 @@ public class CPPFunctionTemplateTests extends PDOMInlineCodeTestBase {
 	//      foo<C3,C2>(*new C3(), *new C2());
 	//      foo<C1,C3>(*new C1(), *new C3());
 	//	}
+	@Test
 	public void testSimpleInstantiation() throws Exception {
 		setUpSections(1);
 		IBinding[] bs = pdom.findBindings(new char[][] { "foo".toCharArray() }, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(2, bs.length);
-		assertInstance(bs[0], ICPPFunctionTemplate.class);
-		assertInstance(bs[1], ICPPFunctionTemplate.class);
+		assertInstanceOf(ICPPFunctionTemplate.class, bs[0]);
+		assertInstanceOf(ICPPFunctionTemplate.class, bs[1]);
 
 		boolean b = ((ICPPFunctionTemplate) bs[0]).getTemplateParameters().length == 1;
 		ICPPFunctionTemplate fooX = (ICPPFunctionTemplate) bs[b ? 0 : 1];

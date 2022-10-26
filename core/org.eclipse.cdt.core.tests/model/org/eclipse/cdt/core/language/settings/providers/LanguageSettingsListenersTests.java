@@ -104,6 +104,16 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	}
 
 	/**
+	 * This method exists because PDE reports accessing
+	 * ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled
+	 * as an API violation, and having only one call means only one warning in this
+	 * file instead of many.
+	 */
+	private void setLanguageSettingsProvidersFunctionalityEnabled(IProject project) {
+		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+	}
+
+	/**
 	 * Check that global provider does not get unnecessarily registered on start.
 	 */
 	@Test
@@ -124,7 +134,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testListenerRegisterer_OneOwnedByCfg() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		{
 			// get project descriptions
@@ -175,7 +185,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 		// create project
 		IProject project = ResourceHelper.createCDTProject(this.getName(), null, new String[] {
 				"org.eclipse.cdt.core.tests.configuration.id.1", "org.eclipse.cdt.core.tests.configuration.id.2", });
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		{
 			// get project descriptions
@@ -239,7 +249,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testListenerRegisterer_OneGlobal() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		{
 			// get project descriptions
@@ -291,7 +301,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 		// create project
 		IProject project = ResourceHelper.createCDTProject(this.getName(), null, new String[] {
 				"org.eclipse.cdt.core.tests.configuration.id.1", "org.eclipse.cdt.core.tests.configuration.id.2", });
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		{
 			// retrieve global provider
@@ -355,7 +365,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 		// create project
 		IProject project = ResourceHelper.createCDTProject(this.getName(), null, new String[] {
 				"org.eclipse.cdt.core.tests.configuration.id.1", "org.eclipse.cdt.core.tests.configuration.id.2", });
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		{
 			// retrieve workspace provider
@@ -435,7 +445,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testListenerRegisterer_GlobalProviderTwoProjects() throws Exception {
 		// create project 1
 		IProject project_1 = ResourceHelper.createCDTProjectWithConfig(this.getName() + ".1");
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project_1, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project_1);
 		{
 			// get project descriptions
 			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance()
@@ -463,7 +473,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 
 		// create project 2
 		IProject project_2 = ResourceHelper.createCDTProjectWithConfig(this.getName() + ".2");
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project_2, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project_2);
 		{
 			// get project descriptions
 			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance()
@@ -551,7 +561,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 		// prepare project
 		List<ILanguageSettingsProvider> workspaceProvidersOriginal = LanguageSettingsManager.getWorkspaceProviders();
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 		{
 			// get project descriptions
 			ICProjectDescription prjDescriptionWritable = CProjectDescriptionManager.getInstance()
@@ -609,7 +619,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testNotification_cfgProvider_AddEmptyProvider() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 		// First clear default providers
 		{
 			// get project descriptions
@@ -674,7 +684,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testNotification_cfgProvider_AddNonEmptyProvider() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 		// First clear default providers
 		{
 			// get project descriptions
@@ -748,7 +758,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testNotification_cfgProvider_SerializeEntries() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		// add the mock provider
 		{
@@ -823,7 +833,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testNotification_cfgProvider_SerializeEntriesConcurrent() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		// add the mock provider
 		{
@@ -934,7 +944,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testNotification_globalProvider_AddEmptyProvider() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 		// First clear default providers
 		{
 			// get project descriptions
@@ -1006,7 +1016,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testNotification_globalProvider_AddNonEmptyProvider() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 		// First clear default providers
 		{
 			// get project descriptions
@@ -1089,7 +1099,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testNotification_globalProvider_SerializeEntries() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		// register mock listener to inspect the notifications
 		LanguageSettingsManager.registerLanguageSettingsChangeListener(mockLseListener);
@@ -1264,7 +1274,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testDelta_AffectedResources_Project() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		// create a mock provider and add to cfgDescription
 		{
@@ -1341,7 +1351,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 	public void testDelta_AffectedResources_DefaultResource() throws Exception {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		// create a mock provider and add to cfgDescription
 		{
@@ -1419,7 +1429,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
 		IFolder folder = ResourceHelper.createFolder(project, "Folder");
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		// create a mock provider and add to cfgDescription
 		{
@@ -1497,7 +1507,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 		// create project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(this.getName());
 		IFile file = ResourceHelper.createFile(project, "file.cpp");
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		// create a mock provider and add to cfgDescription
 		{
@@ -1578,7 +1588,7 @@ public class LanguageSettingsListenersTests extends BaseTestCase5 {
 		IFile file1 = ResourceHelper.createFile(project, "file1.cpp");
 		IFile file2 = ResourceHelper.createFile(project, "file2.cpp");
 		IFile file3 = ResourceHelper.createFile(project, "file3.cpp");
-		ScannerDiscoveryLegacySupport.setLanguageSettingsProvidersFunctionalityEnabled(project, true);
+		setLanguageSettingsProvidersFunctionalityEnabled(project);
 
 		// create a mock provider and add to cfgDescription
 		{

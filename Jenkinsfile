@@ -34,6 +34,8 @@ pipeline {
                       -Dindexer.timeout=300 \
                       -P production \
                       -P build-standalone-debugger-rcp \
+                      -Ddsf.gdb.tests.gdbPath=/shared/common/gdb/gdb-all/bin \
+                      -Dcdt.tests.dsf.gdb.versions=gdb.10,gdbserver.10 \
                       -Dmaven.repo.local=/home/jenkins/.m2/repository \
                       --settings /home/jenkins/.m2/settings.xml \
                       "

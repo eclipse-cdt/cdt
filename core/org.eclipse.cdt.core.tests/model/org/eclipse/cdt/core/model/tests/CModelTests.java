@@ -42,6 +42,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -118,8 +119,8 @@ public class CModelTests extends TestCase {
 	* Called after every test case method.
 	*/
 	@Override
-	protected void tearDown() {
-		// release resources here and clean-up
+	protected void tearDown() throws CoreException {
+		BaseTestCase5.assertWorkspaceIsEmpty();
 	}
 
 	public static TestSuite suite() {
@@ -273,44 +274,53 @@ public class CModelTests extends TestCase {
 	}
 
 	public void testCElementVisitorLeave() throws Exception {
-		ICProject testProject;
-		String projectName = "bug257609";
-		testProject = CProjectHelper.createCProject(projectName, "none", IPDOMManager.ID_NO_INDEXER);
+		ICProject testProject = null;
+		try {
+			String projectName = "bug257609";
+			testProject = CProjectHelper.createCProject(projectName, "none", IPDOMManager.ID_NO_INDEXER);
 
-		IFolder testFolder = testProject.getProject().getFolder("test");
-		testFolder.create(true, true, monitor);
-		IFolder subFolder1 = testFolder.getFolder("1");
-		subFolder1.create(true, true, monitor);
-		IFolder subFolder2 = testFolder.getFolder("2");
-		subFolder2.create(true, true, monitor);
-		IFolder subFolder3 = subFolder2.getFolder("3");
-		subFolder3.create(true, true, monitor);
-		IFile file0 = testFolder.getFile("test0.c");
-		file0.create(new ByteArrayInputStream(new byte[0]), true, monitor);
+			IFolder testFolder = testProject.getProject().getFolder("test");
+			testFolder.create(true, true, monitor);
+			IFolder subFolder1 = testFolder.getFolder("1");
+			subFolder1.create(true, true, monitor);
+			IFolder subFolder2 = testFolder.getFolder("2");
+			subFolder2.create(true, true, monitor);
+			IFolder subFolder3 = subFolder2.getFolder("3");
+			subFolder3.create(true, true, monitor);
+			IFile file0 = testFolder.getFile("test0.c");
+			file0.create(new ByteArrayInputStream(new byte[0]), true, monitor);
 
-		List<String> expected = Arrays.asList("visit " + projectName, "visit " + projectName, "visit test", "visit 1",
-				"leave 1", "visit 2", "visit 3", "leave 3", "leave 2", "visit test0.c", "leave test0.c", "leave test",
-				"leave " + projectName, "leave " + projectName);
-		final List<String> actual = new ArrayList<>();
-		testProject.accept(new ICElementVisitor() {
-			@Override
-			public boolean visit(ICElement element) throws CoreException {
-				if (".settings".equals(element.getElementName())) {
-					return false;
+			List<String> expected = Arrays.asList("visit " + projectName, "visit " + projectName, "visit test",
+					"visit 1", "leave 1", "visit 2", "visit 3", "leave 3", "leave 2", "visit test0.c", "leave test0.c",
+					"leave test", "leave " + projectName, "leave " + projectName);
+			final List<String> actual = new ArrayList<>();
+			testProject.accept(new ICElementVisitor() {
+				@Override
+				public boolean visit(ICElement element) throws CoreException {
+					if (".settings".equals(element.getElementName())) {
+						return false;
+					}
+					actual.add("visit " + element.getResource().getName());
+					return true;
 				}
-				actual.add("visit " + element.getResource().getName());
-				return true;
-			}
 
-			@Override
-			public void leave(ICElement element) throws CoreException {
-				if (".settings".equals(element.getElementName())) {
-					return;
+				@Override
+				public void leave(ICElement element) throws CoreException {
+					if (".settings".equals(element.getElementName())) {
+						return;
+					}
+					actual.add("leave " + element.getResource().getName());
 				}
-				actual.add("leave " + element.getResource().getName());
+			});
+			assertEquals(expected, actual);
+		} finally {
+			try {
+				if (testProject != null) {
+					testProject.getProject().delete(true, true, monitor);
+				}
+			} catch (CoreException e) {
 			}
-		});
-		assertEquals(expected, actual);
+		}
 	}
 
 	// bug 275609

@@ -24,7 +24,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -39,12 +42,14 @@ import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -138,6 +143,33 @@ public abstract class BaseTestCase5 {
 
 		logMonitoring.stop(fExpectedLoggedNonOK);
 		BaseTestCase5.removeLeftOverProjects();
+	}
+
+	/**
+	 * assert that the virtual workspace is empty and that
+	 * there are no files left on disk in the workspace directory
+	 * this latter one is important because a new project can
+	 * be created with the same named and then those old files
+	 * will end up part of the project unexpectedly
+	 */
+	@AfterAll
+	public static void assertWorkspaceIsEmpty() throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		// use lists because error messages are nicer
+		assertEquals(List.of(), Arrays.asList(root.members()));
+
+		File workspaceFile = root.getLocation().toFile();
+
+		// Special permission for an empty "tmp" directory so
+		// that ResourceHelper.createTemporaryFolder() does not
+		// need to be reworked
+		File file = new File(workspaceFile, "tmp");
+		List<String> permitted = new ArrayList<>(List.of(".metadata"));
+		if (file.isDirectory()) {
+			assertEquals(List.of(), Arrays.asList(file.list()));
+			permitted.add("tmp");
+		}
+		assertEquals(List.of(), Arrays.asList(workspaceFile.list((dir, name) -> !permitted.contains(name))));
 	}
 
 	protected void deleteOnTearDown(File file) {

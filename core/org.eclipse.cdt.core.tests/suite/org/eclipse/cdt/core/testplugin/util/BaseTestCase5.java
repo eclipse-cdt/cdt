@@ -156,7 +156,8 @@ public abstract class BaseTestCase5 {
 	public static void assertWorkspaceIsEmpty() throws CoreException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		// use lists because error messages are nicer
-		assertEquals(List.of(), Arrays.asList(root.members()));
+		assertEquals(List.of(), Arrays.asList(root.members()),
+				"Found projects in workspace. This test or an earlier test did not clean up after itself.");
 
 		File workspaceFile = root.getLocation().toFile();
 
@@ -169,7 +170,8 @@ public abstract class BaseTestCase5 {
 			assertEquals(List.of(), Arrays.asList(file.list()));
 			permitted.add("tmp");
 		}
-		assertEquals(List.of(), Arrays.asList(workspaceFile.list((dir, name) -> !permitted.contains(name))));
+		assertEquals(List.of(), Arrays.asList(workspaceFile.list((dir, name) -> !permitted.contains(name))),
+				"Found files in workspace directory. This test or an earlier test did not clean up after itself.");
 	}
 
 	protected void deleteOnTearDown(File file) {

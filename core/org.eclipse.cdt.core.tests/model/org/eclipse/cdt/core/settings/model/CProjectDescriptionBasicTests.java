@@ -13,6 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -20,7 +29,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceDescription;
@@ -30,22 +39,28 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class CProjectDescriptionBasicTests extends BaseTestCase {
+public class CProjectDescriptionBasicTests extends BaseTestCase5 {
+	private static final String TEST_BUG242955 = "testBug242955";
 	private static final String PROJ_NAME_PREFIX = "CProjectDescriptionBasicTests_";
-	IProject p1, p2, p3, p4;
+	private List<IProject> projectsToDelete = new ArrayList<>();
 
-	public static TestSuite suite() {
-		return suite(CProjectDescriptionBasicTests.class, "_");
+	@AfterEach
+	protected void deleteProjects() throws Exception {
+		for (IProject p : projectsToDelete) {
+			p.delete(true, true, null);
+		}
 	}
 
+	@Test
 	public void testSetInvalidDescription() throws Exception {
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = wsp.getRoot();
 
-		p1 = root.getProject(PROJ_NAME_PREFIX + "1");
+		IProject p1 = root.getProject(PROJ_NAME_PREFIX + "1");
+		projectsToDelete.add(p1);
 		p1.create(null);
 		p1.open(null);
 
@@ -67,9 +82,11 @@ public class CProjectDescriptionBasicTests extends BaseTestCase {
 		assertTrue(failed);
 	}
 
+	@Test
 	public void testModulesCopiedOnCreateNewConfig() throws Exception {
 		ICProject p = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
-		p3 = p.getProject();
+		IProject p3 = p.getProject();
+		projectsToDelete.add(p3);
 
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 
@@ -130,6 +147,7 @@ public class CProjectDescriptionBasicTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testCreateProjectDescriptionInvalidProject() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject("someProject");
 		assertTrue(!project.isAccessible());
@@ -152,11 +170,13 @@ public class CProjectDescriptionBasicTests extends BaseTestCase {
 		assertTrue(exception);
 	}
 
+	@Test
 	public void testSetInvalidCreatingDescription() throws Exception {
 		IWorkspace wsp = ResourcesPlugin.getWorkspace();
 		IWorkspaceRoot root = wsp.getRoot();
 
-		p2 = root.getProject(PROJ_NAME_PREFIX + "2");
+		IProject p2 = root.getProject(PROJ_NAME_PREFIX + "2");
+		projectsToDelete.add(p2);
 		p2.create(null);
 		p2.open(null);
 
@@ -188,9 +208,11 @@ public class CProjectDescriptionBasicTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testSetDescriptionWithRootIncompatibleRuleAquired() throws Exception {
 		ICProject p = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "4", IPDOMManager.ID_NO_INDEXER);
-		p4 = p.getProject();
+		IProject p4 = p.getProject();
+		projectsToDelete.add(p4);
 
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 
@@ -215,11 +237,12 @@ public class CProjectDescriptionBasicTests extends BaseTestCase {
 		assertTrue(failed);
 	}
 
+	@Test
 	public void testBug242955() throws Exception {
 		CoreModel coreModel = CoreModel.getDefault();
 		ICProjectDescriptionManager mngr = coreModel.getProjectDescriptionManager();
 
-		String projectName = "testBug242955";
+		String projectName = TEST_BUG242955;
 
 		String defaultConfigurationName = "Default";
 		String newConfigurationName = "NEW-NAME";
@@ -229,10 +252,11 @@ public class CProjectDescriptionBasicTests extends BaseTestCase {
 			// Create model project and accompanied descriptions
 			ICProject cproject = CProjectHelper.createNewStyleCProject(projectName, IPDOMManager.ID_NO_INDEXER);
 			IProject project = cproject.getProject();
+			projectsToDelete.add(project);
 
 			// Initial project description after opening a project
 			ICProjectDescription initialProjectDescription = mngr.getProjectDescription(project);
-			assertNotNull("createDescription returned null!", initialProjectDescription);
+			assertNotNull(initialProjectDescription, "createDescription returned null!");
 			assertEquals(1, initialProjectDescription.getConfigurations().length);
 
 			// Initial configuration description
@@ -297,30 +321,4 @@ public class CProjectDescriptionBasicTests extends BaseTestCase {
 			project.close(null);
 		}
 	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		try {
-			if (p1 != null)
-				p1.getProject().delete(true, null);
-		} catch (CoreException e) {
-		}
-		try {
-			if (p2 != null)
-				p2.getProject().delete(true, null);
-		} catch (CoreException e) {
-		}
-		try {
-			if (p3 != null)
-				p3.getProject().delete(true, null);
-		} catch (CoreException e) {
-		}
-		try {
-			if (p4 != null)
-				p4.getProject().delete(true, null);
-		} catch (CoreException e) {
-		}
-		super.tearDown();
-	}
-
 }

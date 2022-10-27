@@ -45,7 +45,6 @@ public class IndexSearchTest extends IndexTestBase {
 
 	public static TestSuite suite() {
 		TestSuite suite = suite(IndexSearchTest.class, "_");
-		suite.addTest(new IndexSearchTest("deleteProject"));
 		return suite;
 	}
 
@@ -59,9 +58,8 @@ public class IndexSearchTest extends IndexTestBase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		if (fProject == null) {
-			fProject = createProject(true, "resources/indexTests/search");
-		}
+		fProject = createProject(true, "resources/indexTests/search");
+
 		fIndex = CCorePlugin.getIndexManager().getIndex(fProject);
 		fIndex.acquireReadLock();
 	}
@@ -74,7 +72,6 @@ public class IndexSearchTest extends IndexTestBase {
 		BaseTestCase5.assertWorkspaceIsEmpty();
 		super.tearDown();
 	}
-
 
 	private void checkIsClass(IIndexBinding binding) {
 		assertTrue(binding instanceof ICPPClassType);

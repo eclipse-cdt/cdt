@@ -85,7 +85,6 @@ public class IndexUpdateTests extends IndexTestBase {
 
 	public static TestSuite suite() {
 		TestSuite suite = suite(IndexUpdateTests.class, "_");
-		suite.addTest(new IndexUpdateTests("deleteProject"));
 		return suite;
 	}
 
@@ -104,12 +103,8 @@ public class IndexUpdateTests extends IndexTestBase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		if (fCppProject == null) {
-			fCppProject = CProjectHelper.createCCProject("indexUpdateTestsCpp", null, IPDOMManager.ID_FAST_INDEXER);
-		}
-		if (fCProject == null) {
-			fCProject = CProjectHelper.createCProject("indexUpdateTestsC", null, IPDOMManager.ID_FAST_INDEXER);
-		}
+		fCppProject = CProjectHelper.createCCProject("indexUpdateTestsCpp", null, IPDOMManager.ID_FAST_INDEXER);
+		fCProject = CProjectHelper.createCProject("indexUpdateTestsC", null, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fCppProject);
 		waitForIndexer(fCProject);
 		fIndex = CCorePlugin.getIndexManager().getIndex(new ICProject[] { fCProject, fCppProject });
@@ -164,18 +159,11 @@ public class IndexUpdateTests extends IndexTestBase {
 		if (fHeader != null) {
 			fHeader.delete(true, npm());
 		}
-		super.tearDown();
-	}
 
-	public void deleteProject() {
-		if (fCProject != null) {
-			CProjectHelper.delete(fCProject);
-			fCProject = null;
-		}
-		if (fCppProject != null) {
-			CProjectHelper.delete(fCppProject);
-			fCppProject = null;
-		}
+		CProjectHelper.delete(fCProject);
+		CProjectHelper.delete(fCppProject);
+
+		super.tearDown();
 	}
 
 	// int globalVar;

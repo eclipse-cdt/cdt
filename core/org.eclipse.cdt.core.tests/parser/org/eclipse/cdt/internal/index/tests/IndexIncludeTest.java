@@ -55,7 +55,6 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	public static TestSuite suite() {
 		TestSuite suite = suite(IndexIncludeTest.class, "_");
-		suite.addTest(new IndexIncludeTest("deleteProject"));
 		return suite;
 	}
 
@@ -69,26 +68,20 @@ public class IndexIncludeTest extends IndexTestBase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		if (fProject == null) {
-			fProject = createProject(true, "resources/indexTests/includes");
-			IPathEntry[] entries = new IPathEntry[] {
-					CoreModel.newIncludeEntry(fProject.getPath(), null, fProject.getResource().getLocation()) };
-			fProject.setRawPathEntries(entries, npm());
-			IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
-					"false");
-		}
+		fProject = createProject(true, "resources/indexTests/includes");
+		IPathEntry[] entries = new IPathEntry[] {
+				CoreModel.newIncludeEntry(fProject.getPath(), null, fProject.getResource().getLocation()) };
+		fProject.setRawPathEntries(entries, npm());
+		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
+				"false");
+
 		fIndex = CCorePlugin.getIndexManager().getIndex(fProject);
 	}
 
 	@Override
 	public void tearDown() throws Exception {
+		CProjectHelper.delete(fProject);
 		super.tearDown();
-	}
-
-	public void deleteProject() {
-		if (fProject != null) {
-			CProjectHelper.delete(fProject);
-		}
 	}
 
 	public void testFastIndexer() throws Exception {

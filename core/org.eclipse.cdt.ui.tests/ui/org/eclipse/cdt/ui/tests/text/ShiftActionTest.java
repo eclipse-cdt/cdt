@@ -23,17 +23,13 @@ import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.ui.texteditor.ShiftAction;
 
-import junit.extensions.TestSetup;
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Test the Shift left/right actions.
@@ -51,59 +47,30 @@ public class ShiftActionTest extends BaseUITestCase {
 		}
 	}
 
-	protected static class ShiftTestSetup extends TestSetup {
-
-		private ICProject fCProject;
-
-		public ShiftTestSetup(Test test) {
-			super(test);
-		}
-
-		@Override
-		protected void setUp() throws Exception {
-			super.setUp();
-
-			fCProject = CProjectHelper.createCProject(PROJECT, null);
-			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, DefaultCodeFormatterConstants.MIXED);
-			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, String.valueOf(8));
-			fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, String.valueOf(4));
-			IFile file = EditorTestHelper.createFile(fCProject.getProject(), FILE, "", new NullProgressMonitor());
-		}
-
-		@Override
-		protected void tearDown() throws Exception {
-			EditorTestHelper.closeAllEditors();
-			if (fCProject != null) {
-				CProjectHelper.delete(fCProject);
-			}
-			super.tearDown();
-		}
-	}
-
-	private static final Class<?> THIS = ShiftActionTest.class;
-
 	public static Test suite() {
-		return new ShiftTestSetup(new TestSuite(THIS));
+		return suite(ShiftActionTest.class);
 	}
 
 	private CEditor fEditor;
 	private SourceViewer fSourceViewer;
 	private IDocument fDocument;
-	private ShiftTestSetup fProjectSetup;
+	private ICProject fCProject;
 
 	/*
 	 * @see junit.framework.TestCase#setUp()
 	 */
 	@Override
 	protected void setUp() throws Exception {
-		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
-			fProjectSetup = new ShiftTestSetup(this);
-			fProjectSetup.setUp();
-		}
+		super.setUp();
+
+		fCProject = CProjectHelper.createCProject(PROJECT, null);
+		fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, DefaultCodeFormatterConstants.MIXED);
+		fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_SIZE, String.valueOf(8));
+		fCProject.setOption(DefaultCodeFormatterConstants.FORMATTER_INDENTATION_SIZE, String.valueOf(4));
+		IFile file = EditorTestHelper.createFile(fCProject.getProject(), FILE, "", new NullProgressMonitor());
 		fEditor = (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(PROJECT + '/' + FILE), true);
 		fSourceViewer = EditorTestHelper.getSourceViewer(fEditor);
 		fDocument = fSourceViewer.getDocument();
-		super.setUp();
 	}
 
 	/*
@@ -111,9 +78,8 @@ public class ShiftActionTest extends BaseUITestCase {
 	 */
 	@Override
 	protected void tearDown() throws Exception {
-		if (fProjectSetup != null) {
-			fProjectSetup.tearDown();
-		}
+		EditorTestHelper.closeAllEditors();
+		CProjectHelper.delete(fCProject);
 		super.tearDown();
 	}
 

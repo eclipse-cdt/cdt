@@ -33,15 +33,7 @@ public class RenameTypeTests extends RenameTestBase {
 	}
 
 	public static Test suite() {
-		return suite(true);
-	}
-
-	public static Test suite(boolean cleanup) {
-		TestSuite suite = new TestSuite(RenameTypeTests.class);
-		if (cleanup) {
-			suite.addTest(new RenameTypeTests("cleanupProject"));
-		}
-		return suite;
+		return new TestSuite(RenameTypeTests.class);
 	}
 
 	public void testClassNameConflicts() throws Exception {

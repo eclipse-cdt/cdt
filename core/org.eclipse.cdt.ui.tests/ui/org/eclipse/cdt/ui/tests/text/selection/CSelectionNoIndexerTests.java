@@ -33,7 +33,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -51,34 +50,11 @@ import junit.framework.TestSuite;
 public class CSelectionNoIndexerTests extends BaseSelectionTests {
 
 	private static final String INDEX_FILE_ID = "2324852323"; //$NON-NLS-1$
-	static NullProgressMonitor monitor;
-	static IWorkspace workspace;
-	static IProject project;
-	static ICProject cPrj;
-	static FileManager fileManager;
-	static boolean disabledHelpContributions = false;
-
-	void initProject() {
-		if (project != null) {
-			return;
-		}
-		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
-		monitor = new NullProgressMonitor();
-
-		workspace = ResourcesPlugin.getWorkspace();
-
-		try {
-			cPrj = CProjectHelper.createCProject("CSelectionTestsNoIndexerProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
-			project = cPrj.getProject();
-		} catch (CoreException e) {
-			/*boo*/
-		}
-		if (project == null)
-			fail("Unable to create project"); //$NON-NLS-1$
-
-		//Create file manager
-		fileManager = new FileManager();
-	}
+	NullProgressMonitor monitor;
+	IWorkspace workspace;
+	IProject project;
+	ICProject cPrj;
+	FileManager fileManager;
 
 	public CSelectionNoIndexerTests() {
 		super();
@@ -93,7 +69,6 @@ public class CSelectionNoIndexerTests extends BaseSelectionTests {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(CSelectionNoIndexerTests.class);
-		suite.addTest(new CSelectionNoIndexerTests("cleanupProject")); //$NON-NLS-1$
 		return suite;
 	}
 
@@ -101,17 +76,16 @@ public class CSelectionNoIndexerTests extends BaseSelectionTests {
 	protected void setUp() throws Exception {
 		super.setUp();
 		OpenDeclarationsAction.sDisallowAmbiguousInput = true;
-		initProject();
-	}
+		monitor = new NullProgressMonitor();
 
-	public void cleanupProject() throws Exception {
-		try {
-			closeAllEditors();
-			CProjectHelper.delete(cPrj);
-			project = null;
-		} finally {
-			project = null;
-		}
+		workspace = ResourcesPlugin.getWorkspace();
+
+		cPrj = CProjectHelper.createCProject("CSelectionTestsNoIndexerProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
+		project = cPrj.getProject();
+		assertNotNull(project);
+
+		//Create file manager
+		fileManager = new FileManager();
 	}
 
 	@Override
@@ -120,19 +94,8 @@ public class CSelectionNoIndexerTests extends BaseSelectionTests {
 			return;
 
 		closeAllEditors();
-
-		IResource[] members = project.members();
-		for (IResource member : members) {
-			if (member.getName().equals(".project") || member.getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
-				continue;
-			if (member.getName().equals(".settings"))
-				continue;
-			try {
-				member.delete(true, monitor);
-			} catch (Throwable e) {
-				/*boo*/
-			}
-		}
+		CProjectHelper.delete(cPrj);
+		super.tearDown();
 	}
 
 	protected IFile importFile(String fileName, String contents) throws Exception {

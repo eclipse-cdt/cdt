@@ -23,18 +23,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
  *
  */
 public class DOMGCCSelectionParseExtensionsTest extends DOMSelectionParseTestBase {
-
-	public DOMGCCSelectionParseExtensionsTest() {
-	}
-
-	public DOMGCCSelectionParseExtensionsTest(String name, Class className) {
-		super(name, className);
-	}
-
-	public DOMGCCSelectionParseExtensionsTest(String name) {
-		super(name, DOMGCCSelectionParseExtensionsTest.class);
-	}
-
 	public void testBug43021() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("extern int johnc(__const char *__restrict __format, ...);\n"); //$NON-NLS-1$

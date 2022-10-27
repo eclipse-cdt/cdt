@@ -28,17 +28,6 @@ import org.eclipse.core.resources.IFile;
  */
 public abstract class DOMSelectionParseTestBase extends DOMFileBasePluginTest {
 
-	public DOMSelectionParseTestBase() {
-	}
-
-	public DOMSelectionParseTestBase(String name) {
-		super(name);
-	}
-
-	public DOMSelectionParseTestBase(String name, Class className) {
-		super(name, className);
-	}
-
 	protected IASTNode parse(String code, int offset1, int offset2) throws Exception {
 		return parse(code, offset1, offset2, true);
 	}

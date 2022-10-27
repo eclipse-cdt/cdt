@@ -52,18 +52,6 @@ import org.eclipse.core.resources.IFile;
  * @author dsteffle
  */
 public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
-
-	public AST2SelectionParseTest() {
-	}
-
-	public AST2SelectionParseTest(String name, Class className) {
-		super(name, className);
-	}
-
-	public AST2SelectionParseTest(String name) {
-		super(name, AST2SelectionParseTest.class);
-	}
-
 	public void testBaseCase_VariableReference() throws Exception {
 		String code = "void f() { int x; x=3; }"; //$NON-NLS-1$
 		int offset1 = code.indexOf("x="); //$NON-NLS-1$

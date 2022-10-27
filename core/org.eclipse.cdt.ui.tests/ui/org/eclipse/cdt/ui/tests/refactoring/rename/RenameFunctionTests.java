@@ -29,16 +29,7 @@ public class RenameFunctionTests extends RenameTestBase {
 	}
 
 	public static Test suite() {
-		return suite(true);
-	}
-
-	public static Test suite(boolean cleanup) {
-		TestSuite suite = new TestSuite(RenameFunctionTests.class);
-
-		if (cleanup) {
-			suite.addTest(new RenameFunctionTests("cleanupProject"));
-		}
-		return suite;
+		return new TestSuite(RenameFunctionTests.class);
 	}
 
 	public void testFunctionNameConflicts() throws Exception {

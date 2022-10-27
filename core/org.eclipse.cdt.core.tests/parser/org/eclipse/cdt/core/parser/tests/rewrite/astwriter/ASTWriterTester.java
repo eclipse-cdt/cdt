@@ -46,7 +46,7 @@ import org.eclipse.core.resources.IFile;
 /**
  * @author Guido Zgraggen
  */
-public class ASTWriterTester extends RewriteBaseTest {
+public abstract class ASTWriterTester extends RewriteBaseTest {
 	private static final IParserLogService NULL_LOG = new NullLogService();
 
 	private IFile file;

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
@@ -68,14 +69,12 @@ public class IndexSearchTest extends IndexTestBase {
 	@Override
 	public void tearDown() throws Exception {
 		fIndex.releaseReadLock();
+		CProjectHelper.delete(fProject);
+
+		BaseTestCase5.assertWorkspaceIsEmpty();
 		super.tearDown();
 	}
 
-	public void deleteProject() {
-		if (fProject != null) {
-			CProjectHelper.delete(fProject);
-		}
-	}
 
 	private void checkIsClass(IIndexBinding binding) {
 		assertTrue(binding instanceof ICPPClassType);

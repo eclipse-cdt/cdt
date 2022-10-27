@@ -32,7 +32,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -147,7 +149,9 @@ public class Bug246129 extends IndexTestBase {
 		fExternalIncludeFolder.delete();
 
 		fTmpDir.delete();
-
+		ResourceHelper.cleanUp(getName());
+		CProjectHelper.delete(fProject);
+		BaseTestCase5.assertWorkspaceIsEmpty();
 		super.tearDown();
 	}
 

@@ -41,7 +41,7 @@ public abstract class IndexTestBase extends BaseTestCase {
 		workspace.run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				String name = "IndexTest_" + System.currentTimeMillis();
+				String name = "IndexTest_" + getName() + "_" + System.currentTimeMillis();
 				if (useCpp) {
 					result[0] = CProjectHelper.createCCProject(name, null, IPDOMManager.ID_NO_INDEXER);
 				} else {

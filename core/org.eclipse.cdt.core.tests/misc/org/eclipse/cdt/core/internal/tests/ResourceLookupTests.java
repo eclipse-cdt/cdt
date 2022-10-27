@@ -14,12 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.internal.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -30,28 +32,23 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-public class ResourceLookupTests extends BaseTestCase {
-	public static Test suite() {
-		return new TestSuite(ResourceLookupTests.class);
-	}
+public class ResourceLookupTests extends BaseTestCase5 {
 
 	private IProject fProject;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		fProject = root.getProject("reslookup_" + getName());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		fProject.delete(true, new NullProgressMonitor());
-		super.tearDown();
+	@AfterEach
+	protected void afterEach() throws Exception {
+		fProject.delete(true, true, new NullProgressMonitor());
 	}
 
 	protected IFolder createFolder(IProject project, String filename) throws CoreException {
@@ -71,6 +68,7 @@ public class ResourceLookupTests extends BaseTestCase {
 		return file;
 	}
 
+	@Test
 	public void testNameLookup() throws CoreException {
 		IProject[] prjs = new IProject[] { fProject };
 
@@ -112,6 +110,7 @@ public class ResourceLookupTests extends BaseTestCase {
 		assertEquals(3, files.length);
 	}
 
+	@Test
 	public void testResourceDelta() throws CoreException {
 		IProject[] prjs = new IProject[] { fProject };
 		fProject.create(new NullProgressMonitor());
@@ -143,6 +142,7 @@ public class ResourceLookupTests extends BaseTestCase {
 		assertEquals(1, files.length);
 	}
 
+	@Test
 	public void testDeref() throws CoreException {
 		IProject[] prjs = new IProject[] { fProject };
 
@@ -166,6 +166,7 @@ public class ResourceLookupTests extends BaseTestCase {
 		assertEquals(3, files.length);
 	}
 
+	@Test
 	public void testCollected() throws CoreException {
 		IProject[] prjs = new IProject[] { fProject };
 
@@ -189,6 +190,7 @@ public class ResourceLookupTests extends BaseTestCase {
 		assertEquals(3, files.length);
 	}
 
+	@Test
 	public void testFindFilesByLocation() throws Exception {
 		fProject.create(new NullProgressMonitor());
 		fProject.open(new NullProgressMonitor());
@@ -215,6 +217,7 @@ public class ResourceLookupTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testLinkedResourceFiles() throws Exception {
 		IProject[] prjs = new IProject[] { fProject };
 

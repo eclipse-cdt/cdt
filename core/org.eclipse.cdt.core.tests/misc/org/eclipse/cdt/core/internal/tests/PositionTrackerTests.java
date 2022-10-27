@@ -13,21 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.internal.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Random;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.PositionTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class PositionTrackerTests extends TestCase {
-	public static Test suite() {
-		return new TestSuite(PositionTrackerTests.class);
-	}
-
+public class PositionTrackerTests extends BaseTestCase5 {
+	@Test
 	public void testInitialFailures() {
 		int[][] moves = {
 				{ 46, -18, 95, -76, 98, -89, 10, -10, 85, -80, 16, 6, 5, -3, 22, -8, 29, -20, 86, -62, 34, -21, 63, -41,
@@ -41,6 +39,7 @@ public class PositionTrackerTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testRotations() {
 		int[][] moves = { { 0, 1, 2, 1, 4, 1, 6, 1, 8, 1, 10, 1, 12, 1, 14, 1, 16, 1, 18, 1, 20, 1, 22, 1, 24, 1 },
 				{ 15, 1, 14, 1, 13, 1, 12, 1, 11, 1, 10, 1, 9, 1, 8, 1, 7, 1, 6, 1, 5, 1, 4, 1, 3, 1 },
@@ -51,34 +50,42 @@ public class PositionTrackerTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testDepth4() {
 		fullTest(5, 4);
 	}
 
+	@Test
 	public void testRandomDepth5() {
 		randomTest(20, 5, 5, 1000);
 	}
 
+	@Test
 	public void testRandomDepth10() {
 		randomTest(50, 10, 10, 1000);
 	}
 
+	@Test
 	public void testRandomDepth15() {
 		randomTest(100, 15, 15, 1000);
 	}
 
+	@Test
 	public void testRandomDepth20() {
 		randomTest(100, 15, 20, 1000);
 	}
 
+	@Test
 	public void testRetireDepth2() {
 		randomRetireTest(100, 10, 25, 2, 1000);
 	}
 
+	@Test
 	public void testRetireDepth5() {
 		randomRetireTest(100, 10, 10, 5, 1000);
 	}
 
+	@Test
 	public void testRetireDepth10() {
 		randomRetireTest(100, 10, 5, 10, 1000);
 	}
@@ -242,6 +249,7 @@ public class PositionTrackerTests extends TestCase {
 		return false;
 	}
 
+	@Test
 	public void testInsertion() {
 		PositionTracker pt = new PositionTracker();
 		pt.insert(1, 1);
@@ -266,6 +274,7 @@ public class PositionTrackerTests extends TestCase {
 		doubleRangeCheck(pt, new Region(1, 0), new Region(2, 0));
 	}
 
+	@Test
 	public void testDeletion() {
 		PositionTracker pt = new PositionTracker();
 		pt.delete(1, 1);
@@ -288,6 +297,7 @@ public class PositionTrackerTests extends TestCase {
 		doubleRangeCheck(pt, new Region(2, 0), new Region(1, 0));
 	}
 
+	@Test
 	public void testReplace() {
 		PositionTracker pt = new PositionTracker();
 		pt.delete(1, 1);

@@ -15,23 +15,14 @@ package org.eclipse.cdt.core.internal.errorparsers.tests;
 
 import java.io.IOException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test is designed to exercise the error parser capabilities for GNU ld.
  */
 public class GLDErrorParserTests extends GenericErrorParserTests {
 
-	public GLDErrorParserTests() {
-		super();
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(GLDErrorParserTests.class);
-		return suite;
-	}
-
+	@Test
 	public void testLinkerMessages0() throws IOException {
 		runParserTest(
 				// old style: no colons before sections
@@ -48,6 +39,7 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 				new String[] { GLD_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testLinkerMessages1() throws IOException {
 		runParserTest(
 				// new style: colons before sections
@@ -64,6 +56,7 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 				new String[] { GLD_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testLinkerMessages2() throws IOException {
 		runParserTest(
 				new String[] { "make -k all", "gcc -o hallo.o main.c libfoo.a", "libfoo.a(foo.o): In function `foo':",
@@ -76,6 +69,7 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 				new String[] { GLD_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testLinkerMessages_DangerousFunction_bug248669() throws IOException {
 		runParserTest(new String[] { "mktemp.o(.text+0x19): In function 'main':",
 				"mktemp.c:15: the use of 'mktemp' is dangerous, better use 'mkstemp'", "1.o: In function `main':",
@@ -88,6 +82,7 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 				new String[] { GLD_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testLinkerMessages_PrecedingPath_bug314253() throws IOException {
 		runParserTest(new String[] {
 				"ld: warning: libstdc++.so.5, needed by testlib_1.so, may conflict with libstdc++.so.6",
@@ -107,6 +102,7 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 				new String[] { GLD_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testLinkerMessages_bug495661() throws IOException {
 		runParserTest(
 				// new style: colons before sections

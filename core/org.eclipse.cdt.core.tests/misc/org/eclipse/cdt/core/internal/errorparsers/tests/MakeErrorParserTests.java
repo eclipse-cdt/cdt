@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.internal.errorparsers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.IOException;
 
 import org.eclipse.cdt.core.ErrorParserManager;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test is designed to exercise the error parser capabilities for GNU make.
@@ -66,29 +66,24 @@ public class MakeErrorParserTests extends GenericErrorParserTests {
 	private static final int GMAKE_ERROR_STREAM2_WARNINGS = 0;
 	private static final int GMAKE_ERROR_STREAM2_ERRORS = 3;
 
-	public MakeErrorParserTests() {
-		super();
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(MakeErrorParserTests.class);
-		return suite;
-	}
-
+	@Test
 	public void testGmakeSanity() throws Exception {
 		assertNotNull(ErrorParserManager.getErrorParserCopy(GMAKE_ERROR_PARSER_ID));
 	}
 
+	@Test
 	public void testGmakeMessages0() throws IOException {
 		runParserTest(GMAKE_ERROR_STREAM0, GMAKE_ERROR_STREAM0_ERRORS, GMAKE_ERROR_STREAM0_WARNINGS,
 				GMAKE_ERROR_STREAM0_INFOS, null, null, new String[] { GMAKE_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGMakeMessages1() throws IOException {
 		runParserTest(GMAKE_ERROR_STREAM1, GMAKE_ERROR_STREAM1_ERRORS, GMAKE_ERROR_STREAM1_WARNINGS,
 				GMAKE_ERROR_STREAM1_FILENAMES, null, new String[] { GMAKE_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGmakeMessages2() throws IOException {
 		runParserTest(GMAKE_ERROR_STREAM2, GMAKE_ERROR_STREAM2_ERRORS, GMAKE_ERROR_STREAM2_WARNINGS, null, null,
 				new String[] { GMAKE_ERROR_PARSER_ID });

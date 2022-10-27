@@ -13,17 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.internal.efsextension.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.utils.EFSExtensionManager;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the EFSExtensionManager and EFSExtensionProvider classes, as well as the EFSExtensionProvider extension point.
@@ -31,7 +33,8 @@ import junit.framework.TestSuite;
  * @author crecoskie
  *
  */
-public class EFSExtensionTests extends TestCase {
+public class EFSExtensionTests extends BaseTestCase5 {
+	@Test
 	public void testReplaceInRSEURI() {
 		URI originalURI = null;
 		URI expected = null;
@@ -49,6 +52,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testReplaceInUNIXURI() {
 		URI originalURI = null;
 		URI expected = null;
@@ -66,6 +70,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testReplaceInWindowsURI() {
 		URI originalURI = null;
 		URI expected = null;
@@ -83,6 +88,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testReplaceInMadeUpURI() {
 		URI originalURI = null;
 		URI expected = null;
@@ -100,6 +106,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testReplaceWithWindowsPathNoLeadingSlash() {
 		URI originalURI = null;
 		URI expected = null;
@@ -123,6 +130,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testReplaceURIWithAuthority() {
 		URI originalURI = null;
 		URI expected = null;
@@ -141,6 +149,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testReplaceURIWithAuthority2() {
 		URI originalURI = null;
 		URI expected = null;
@@ -159,6 +168,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testAppendinRSEURI() {
 		URI originalURI = null;
 		URI expected = null;
@@ -174,6 +184,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testAppendToUNIXURI() {
 		URI originalURI = null;
 		URI expected = null;
@@ -189,6 +200,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testAppendToWindowsURI() {
 		URI originalURI = null;
 		URI expected = null;
@@ -204,6 +216,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(expected, uri);
 	}
 
+	@Test
 	public void testGetLinkedURI() {
 		URI originalURI = null;
 		try {
@@ -217,6 +230,7 @@ public class EFSExtensionTests extends TestCase {
 		assertEquals(originalURI, uri);
 	}
 
+	@Test
 	public void testGetMappedPath() {
 		URI originalURI = null;
 		try {
@@ -234,6 +248,7 @@ public class EFSExtensionTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testGetPathFromURI() {
 		URI originalURI = null;
 		try {
@@ -251,6 +266,7 @@ public class EFSExtensionTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testExtension() {
 		URI originalURI = null;
 		try {
@@ -262,8 +278,4 @@ public class EFSExtensionTests extends TestCase {
 		assertTrue(EFSExtensionManager.getDefault().isVirtual(originalURI));
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(EFSExtensionTests.class);
-		return suite;
-	}
 }

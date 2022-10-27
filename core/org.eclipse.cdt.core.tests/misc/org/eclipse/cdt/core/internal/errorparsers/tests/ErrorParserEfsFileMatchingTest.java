@@ -14,6 +14,10 @@
 
 package org.eclipse.cdt.core.internal.errorparsers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -27,6 +31,7 @@ import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;
 import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,16 +41,14 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The test case includes a few tests checking that {@link AbstractErrorParser}/{@link ErrorPattern}
  * properly locate and resolve filenames found in build output in case of EFS files/folders.
  */
-public class ErrorParserEfsFileMatchingTest extends TestCase {
+public class ErrorParserEfsFileMatchingTest extends BaseTestCase5 {
 	private static final String MAKE_ERRORPARSER_ID = "org.eclipse.cdt.core.CWDLocator";
 	private String mockErrorParserId = null;
 
@@ -80,45 +83,14 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		}
 	}
 
-	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public ErrorParserEfsFileMatchingTest(String name) {
-		super(name);
-
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		if (fProject == null) {
 			fProject = ResourceHelper.createCDTProject(testName);
-			Assert.assertNotNull(fProject);
+			assertNotNull(fProject);
 			mockErrorParserId = addErrorParserExtension("MockErrorParser", MockErrorParser.class);
 		}
 		errorList = new ArrayList<>();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp(getName());
-		fProject = null;
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(ErrorParserEfsFileMatchingTest.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
@@ -138,7 +110,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 		boolean added = Platform.getExtensionRegistry().addContribution(new ByteArrayInputStream(ext.getBytes()),
 				contributor, false, shortId, null,
 				((ExtensionRegistry) Platform.getExtensionRegistry()).getTemporaryUserToken());
-		assertTrue("failed to add extension", added);
+		assertTrue(added, "failed to add extension");
 		String fullId = "org.eclipse.cdt.core.tests." + shortId;
 		IErrorParser[] errorParser = CCorePlugin.getDefault().getErrorParser(fullId);
 		assertTrue(errorParser.length > 0);
@@ -210,6 +182,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testSingle() throws Exception {
 		ResourceHelper.createEfsFile(fProject, "testSingle.c", "null:/efsTestSingle.c");
 
@@ -225,6 +198,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testEfsVsRegular() throws Exception {
 		ResourceHelper.createFile(fProject, "testEfsVsRegular.c");
 		ResourceHelper.createEfsFile(fProject, "efsTestEfsVsRegular.c", "null:/testEfsVsRegular.c");
@@ -241,6 +215,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testFullPath() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
 		ResourceHelper.createEfsFile(fProject, "Folder/testFullPath.c", "null:/EfsFolder/efsTestFullPath.c");
@@ -258,6 +233,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testInNonEfsFolder() throws Exception {
 		ResourceHelper.createFolder(fProject, "NonEfsFolder");
 		ResourceHelper.createEfsFile(fProject, "NonEfsFolder/testInNonEfsFolder.c",
@@ -276,6 +252,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testInFolder() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
 		ResourceHelper.createEfsFile(fProject, "Folder/testInFolder.c", "null:/EfsFolder/efsTestInFolder.c");
@@ -293,6 +270,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDuplicateInRoot() throws Exception {
 		ResourceHelper.createEfsFile(fProject, "testDuplicateInRoot.c", "null:/testDuplicateInRoot.c");
 
@@ -313,6 +291,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathFromProjectRoot() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
 		ResourceHelper.createEfsFile(fProject, "Folder/testRelativePathFromProjectRoot.c",
@@ -332,6 +311,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathFromSubfolder() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Subfolder", "null:/Subfolder");
 		ResourceHelper.createEfsFolder(fProject, "Subfolder/Folder", "null:/Subfolder/Folder");
@@ -352,6 +332,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathNotMatchingFolder() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
 		ResourceHelper.createEfsFile(fProject, "Folder/testRelativePathNotMatchingFolder.c",
@@ -372,6 +353,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathDuplicate() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "SubfolderA", "null:/SubfolderA");
 		ResourceHelper.createEfsFolder(fProject, "SubfolderA/Folder", "null:/SubfolderA/Folder");
@@ -397,6 +379,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathUpSubfolder() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
 		ResourceHelper.createEfsFile(fProject, "Folder/testRelativePathUpSubfolder.c",
@@ -416,6 +399,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathDotFromSubfolder() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Subfolder", "null:/Subfolder");
 		ResourceHelper.createEfsFolder(fProject, "Subfolder/Folder", "null:/Subfolder/Folder");
@@ -436,6 +420,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testBuildDir() throws Exception {
 		ResourceHelper.createEfsFolder(fProject, "Folder", "null:/Folder");
 		ResourceHelper.createEfsFile(fProject, "Folder/testBuildDir.c", "null:/Folder/testBuildDir.c");
@@ -456,9 +441,10 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testEfsProject() throws Exception {
 		IFile efsSmokeTest = ResourceHelper.createEfsFile(fProject, "efsSmokeTest.c", "mem:/efsSmokeTest.c");
-		Assert.assertTrue(efsSmokeTest.exists());
+		assertTrue(efsSmokeTest.exists());
 
 		IProject efsProject = ResourceHelper.createCDTProject("EfsProject", new URI("mem:/EfsProject"));
 		ResourceHelper.createFolder(efsProject, "Folder");
@@ -476,6 +462,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testEfsProjectBuildDirURI() throws Exception {
 		String fileName = "testEfsProjectBuildDirURI.c";
 
@@ -499,6 +486,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testEfsProjectPushPopDirectory() throws Exception {
 		String fileName = "testEfsProjectPushPopDirectory.c";
 

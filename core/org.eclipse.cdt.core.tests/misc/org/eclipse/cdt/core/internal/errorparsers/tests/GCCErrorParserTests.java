@@ -16,8 +16,7 @@ package org.eclipse.cdt.core.internal.errorparsers.tests;
 
 import java.io.IOException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test is designed to exercise the error parser capabilities.
@@ -76,20 +75,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 	public static final int GCC_ERROR_STREAM5_ERRORS = 2;
 	public static final String[] GCC_ERROR_STREAM5_FILENAMES = { "main.c" };
 
-	/**
-	 * Constructor for IndexManagerTest.
-	 *
-	 * @param name
-	 */
-	public GCCErrorParserTests() {
-		super();
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(GCCErrorParserTests.class);
-		return suite;
-	}
-
+	@Test
 	public void testMultipleIncludesError() throws IOException {
 		runParserTest(GCC_ERROR_STREAM1, GCC_ERROR_STREAM1_ERRORS, GCC_ERROR_STREAM1_WARNINGS,
 				GCC_ERROR_STREAM1_FILENAMES, null, new String[] { GCC_ERROR_PARSER_ID });
@@ -105,27 +91,29 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 	 * I brought this up in http://dev.eclipse.org/mhonarc/lists/cdt-dev/msg08668.html
 	 * but did not get any replies.
 	 *
-		public void testMultiLineDescriptionError() throws IOException {
+		@Test public void testMultiLineDescriptionError() throws IOException {
 			runParserTest(GCC_ERROR_STREAM2, GCC_ERROR_STREAM2_ERRORS, GCC_ERROR_STREAM2_WARNINGS, GCC_ERROR_STREAM2_FILENAMES,
 					GCC_ERROR_STREAM2_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});
 		}
 
-		public void testLongMultiLineDescriptionError() throws IOException {
+		@Test public void testLongMultiLineDescriptionError() throws IOException {
 			runParserTest(GCC_ERROR_STREAM3, GCC_ERROR_STREAM3_ERRORS, GCC_ERROR_STREAM3_WARNINGS, GCC_ERROR_STREAM3_FILENAMES,
 					GCC_ERROR_STREAM3_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});
 		}
 
-		public void testMultiFileMultiLineSingleError() throws IOException {
+		@Test public void testMultiFileMultiLineSingleError() throws IOException {
 			runParserTest(GCC_ERROR_STREAM4, GCC_ERROR_STREAM4_ERRORS, GCC_ERROR_STREAM4_WARNINGS, GCC_ERROR_STREAM4_FILENAMES,
 					GCC_ERROR_STREAM4_DESCRIPTIONS, new String[]{GCC_ERROR_PARSER_ID});
 		}
 	*/
 
+	@Test
 	public void testBasicMessages() throws IOException {
 		runParserTest(GCC_ERROR_STREAM5, GCC_ERROR_STREAM5_ERRORS, GCC_ERROR_STREAM5_WARNINGS,
 				GCC_ERROR_STREAM5_FILENAMES, null, new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_Colon_bug263987() throws IOException {
 		runParserTest(new String[] {
 				"foo.cc:11:20: error: value with length 0 violates the length restriction: length (1 .. infinity)", },
@@ -136,6 +124,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_C90Comments_bug193982() throws IOException {
 		runParserTest(
 				new String[] { "Myfile.c:66:3: warning: C++ style comments are not allowed in ISO C90",
@@ -146,6 +135,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_ConflictingTypes() throws IOException {
 		runParserTest(
 				new String[] { "bar.h:42: error: conflicting types for 'jmp_buf'",
@@ -157,6 +147,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_InstantiatedFromHere() throws IOException {
 		runParserTest(new String[] {
 				"/usr/include/c++/4.1.3/ext/hashtable.h:600:   instantiated from 'size_t __gnu_cxx::hashtable<_Val, _Key, _HashFcn, _ExtractKey, _EqualKey, _Alloc>::_M_bkt_num(const _Val&, size_t) const [with _Val = std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int>, _Key = std::basic_string<char, std::char_traits<char>, std::allocator<char> >, _HashFcn = __gnu_cxx::hash<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _ExtractKey = std::_Select1st<std::pair<const std::basic_string<char, std::char_traits<char>, std::allocator<char> >, int> >, _EqualKey = std::equal_to<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >, _Alloc = std::allocator<int>]'",
@@ -170,6 +161,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_RequiredFromHere() throws IOException {
 		runParserTest(new String[] {
 				"utils/bar.hpp:61:7: required from 'static void OpenCVUtils::show_contours_d(std::string, cv::Mat&, const std::vector<std::vector<cv::Point_<_Tp> > >&, bool, const Scalar&, int, int, int) [with T = int; std::string = std::basic_string<char>; cv::Scalar = cv::Scalar_<double>]'",
@@ -183,6 +175,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_Infos() throws IOException {
 		runParserTest(
 				new String[] { "foo.c:5: note: Offset of packed bit-field 'b' has changed in GCC 4.4",
@@ -196,6 +189,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_DangerousFunction_bug248669() throws IOException {
 		runParserTest(
 				new String[] { "mktemp.o(.text+0x19): In function 'main':",
@@ -206,6 +200,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_TemplateInstantiation_bug500798() throws IOException {
 		runParserTest(new String[] {
 				"test.hpp:309:18:   [ skipping 2 instantiation contexts, use -ftemplate-backtrace-limit=0 to disable ]",
@@ -219,6 +214,7 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
 
+	@Test
 	public void testGccErrorMessages_InConstexprExpansion() throws IOException {
 		runParserTest(
 				new String[] { "../can/CANBus.h: In instantiation of 'constexpr void Test::setupBitrate(T)':",

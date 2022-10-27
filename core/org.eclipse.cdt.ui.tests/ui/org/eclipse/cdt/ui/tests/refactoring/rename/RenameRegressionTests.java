@@ -17,7 +17,6 @@ package org.eclipse.cdt.ui.tests.refactoring.rename;
 import java.io.StringWriter;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.tests.FailingTester;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
@@ -25,7 +24,6 @@ import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 public class RenameRegressionTests extends RenameTestBase {
 	public RenameRegressionTests() {
@@ -37,20 +35,7 @@ public class RenameRegressionTests extends RenameTestBase {
 	}
 
 	public static Test suite() {
-		return suite(true);
-	}
-
-	public static Test suite(boolean cleanup) {
-		TestSuite innerSuite = new TestSuite(RenameRegressionTests.class);
-		innerSuite.addTest(new FailingTester(new RenameRegressionTests("_testMethod_35_72726"), 72726));
-
-		TestSuite suite = new TestSuite("RenameRegressionTests");
-		suite.addTest(innerSuite);
-
-		if (cleanup)
-			suite.addTest(new RenameRegressionTests("cleanupProject"));
-
-		return suite;
+		return suite(RenameRegressionTests.class, "_");
 	}
 
 	public void testSimpleRename() throws Exception {

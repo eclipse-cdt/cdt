@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.envvar;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
@@ -22,6 +27,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.envvar.EnvironmentVariableManager;
 import org.eclipse.cdt.utils.envvar.IEnvironmentChangeEvent;
 import org.eclipse.cdt.utils.envvar.IEnvironmentChangeListener;
@@ -32,12 +38,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class IEnvironmentVariableManagerTests extends TestCase {
+public class IEnvironmentVariableManagerTests extends BaseTestCase5 {
 	/**
 	 * Mock listener to listen to environment variable change events.
 	 */
@@ -65,26 +68,12 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp(getName());
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(IEnvironmentVariableManagerTests.class);
-		return suite;
-	}
-
 	/**
 	 * Create a project with 2 configurations. Set an environment variable on one of
 	 * the configurations. Close and reopen the project. Check persistence
 	 * @throws Exception
 	 */
+	@Test
 	public void testSimpleVar() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 
@@ -138,6 +127,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 * Also tests that an an external change to the settings file is correctly picked up.
 	 * @throws Exception
 	 */
+	@Test
 	public void testOldStyleLoad() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProjectOldStyleLoad");
 
@@ -178,6 +168,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 * Tests we can load an old-style preferences while an incompatible scheduling rule is held.
 	 * @throws Exception
 	 */
+	@Test
 	public void testOldStyleLoadConflictingSchedulingRule() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("incompatibleSchedRule");
 
@@ -245,6 +236,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 * Test that an ovewrite of new style preferences is loaded correctly
 	 * @throws Exception
 	 */
+	@Test
 	public void testNewStyleOverwrite() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProjectNewStyleLoad");
 
@@ -285,6 +277,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 		assertEquals(var2, envManager.getVariable(var2.getName(), prjDesc.getConfigurationById(id2), true));
 	}
 
+	@Test
 	public void testNoChangeToOneVariable() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 
@@ -344,6 +337,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	/**
 	 * tests the get / set append persisting
 	 */
+	@Test
 	public void testGetSetAppend() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 
@@ -387,6 +381,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	/**
 	 * Tests file system change of the settings file
 	 */
+	@Test
 	public void testSettingsOverwrite() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 
@@ -436,6 +431,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	/**
 	 * Tests file system change of the settings file without recreating the project description
 	 */
+	@Test
 	public void testSettingsOverwriteBug295436() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 
@@ -493,6 +489,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 * Test that on deleting and recreating the project variables haven't persisted
 	 * @throws Exception
 	 */
+	@Test
 	public void testBrokenCaching() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 
@@ -537,6 +534,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 * The model shouldn't cache incorrect variables / values in the project description
 	 * @throws Exception
 	 */
+	@Test
 	public void testBug265282() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 
@@ -625,6 +623,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testBug284843() throws Exception {
 		final IProject project = ResourceHelper.createCDTProjectWithConfig("envProject");
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(project);
@@ -678,6 +677,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testEnvironmentChangeListener() throws Exception {
 		// Register environment event listener
 		MockEnvironmentListener envListener = new MockEnvironmentListener();

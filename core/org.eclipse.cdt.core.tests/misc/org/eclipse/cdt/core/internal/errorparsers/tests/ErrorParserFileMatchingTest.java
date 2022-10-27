@@ -15,6 +15,10 @@
 
 package org.eclipse.cdt.core.internal.errorparsers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 
@@ -27,6 +31,7 @@ import org.eclipse.cdt.core.errorparsers.AbstractErrorParser;
 import org.eclipse.cdt.core.errorparsers.ErrorPattern;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.resources.IFile;
@@ -39,16 +44,14 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * The test case includes a few tests checking that {@link AbstractErrorParser}/{@link ErrorPattern}
  * properly locate and resolve filenames found in build output.
  */
-public class ErrorParserFileMatchingTest extends TestCase {
+public class ErrorParserFileMatchingTest extends BaseTestCase5 {
 	private static final String CWD_LOCATOR_ID = "org.eclipse.cdt.core.CWDLocator";
 	private String mockErrorParserId = null;
 
@@ -83,45 +86,12 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		}
 	}
 
-	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public ErrorParserFileMatchingTest(String name) {
-		super(name);
-
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		if (fProject == null) {
-			fProject = ResourceHelper.createCDTProject(testName);
-			Assert.assertNotNull(fProject);
-			mockErrorParserId = addErrorParserExtension("MockErrorParser", MockErrorParser.class);
-		}
+	@BeforeEach
+	protected void beforeEach() throws Exception {
+		fProject = ResourceHelper.createCDTProject(testName);
+		assertNotNull(fProject);
+		mockErrorParserId = addErrorParserExtension("MockErrorParser", MockErrorParser.class);
 		errorList = new ArrayList<>();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp(getName());
-		fProject = null;
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(ErrorParserFileMatchingTest.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
@@ -141,7 +111,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		boolean added = Platform.getExtensionRegistry().addContribution(new ByteArrayInputStream(ext.getBytes()),
 				contributor, false, shortId, null,
 				((ExtensionRegistry) Platform.getExtensionRegistry()).getTemporaryUserToken());
-		assertTrue("failed to add extension", added);
+		assertTrue(added, "failed to add extension");
 		String fullId = "org.eclipse.cdt.core.tests." + shortId;
 		IErrorParser[] errorParser = CCorePlugin.getDefault().getErrorParser(fullId);
 		assertTrue(errorParser.length > 0);
@@ -194,6 +164,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testSingle() throws Exception {
 		ResourceHelper.createFile(fProject, "testSingle.c");
 
@@ -210,6 +181,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks that no false positive for missing file generated.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testMissing() throws Exception {
 
 		parseOutput("testMissing.c:1:error");
@@ -227,6 +199,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if duplicate files give ambiguous match.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDuplicate() throws Exception {
 		ResourceHelper.createFolder(fProject, "FolderA");
 		ResourceHelper.createFile(fProject, "FolderA/testDuplicate.c");
@@ -248,6 +221,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testInFolder() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Folder/testInFolder.c");
@@ -264,6 +238,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDuplicateInRoot() throws Exception {
 		ResourceHelper.createFile(fProject, "testDuplicateInRoot.c");
 
@@ -284,6 +259,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testLinkedFile() throws Exception {
 		ResourceHelper.createWorkspaceFolder("OutsideFolder");
 		IPath realFile = ResourceHelper.createWorkspaceFile("OutsideFolder/testLinkedFile.c");
@@ -302,6 +278,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testLinkedFileWithDifferentName() throws Exception {
 		ResourceHelper.createWorkspaceFolder("OutsideFolder");
 		IPath realFile = ResourceHelper.createWorkspaceFile("OutsideFolder/RealFileWithDifferentName.c");
@@ -321,6 +298,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDuplicateLinkedFile() throws Exception {
 		ResourceHelper.createWorkspaceFolder("OutsideFolderA");
 		ResourceHelper.createWorkspaceFolder("OutsideFolderB");
@@ -346,6 +324,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDuplicateLinkedFileDifferentName() throws Exception {
 		ResourceHelper.createWorkspaceFolder("OutsideFolderA");
 		ResourceHelper.createWorkspaceFolder("OutsideFolderB");
@@ -370,6 +349,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testInLinkedFolder() throws Exception {
 		IPath outsideFolder = ResourceHelper.createWorkspaceFolder("OutsideFolder");
 		ResourceHelper.createWorkspaceFile("OutsideFolder/testInLinkedFolder.c");
@@ -387,6 +367,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDuplicateInLinkedFolder() throws Exception {
 		IPath folderA = ResourceHelper.createWorkspaceFolder("OutsideFolderA");
 		ResourceHelper.createWorkspaceFile("OutsideFolderA/testDuplicateInLinkedFolder.c");
@@ -410,6 +391,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testLinkedFolderInAnotherProject() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Folder/testLinkedFolderInAnotherProject.c");
@@ -442,6 +424,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testSymbolicLink() throws Exception {
 		// do not test on systems where symbolic links are not supported
 		if (!ResourceHelper.isSymbolicLinkSupported())
@@ -465,6 +448,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDuplicateSymbolicLink() throws Exception {
 		// do not test on systems where symbolic links are not supported
 		if (!ResourceHelper.isSymbolicLinkSupported())
@@ -493,6 +477,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testFolderSymbolicLink() throws Exception {
 		// do not test on systems where symbolic links are not supported
 		if (!ResourceHelper.isSymbolicLinkSupported())
@@ -516,6 +501,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDuplicateFolderSymbolicLink() throws Exception {
 		// do not test on systems where symbolic links are not supported
 		if (!ResourceHelper.isSymbolicLinkSupported())
@@ -541,6 +527,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testAbsolutePathSingle() throws Exception {
 		ResourceHelper.createFile(fProject, "testAbsolutePathSingle.c");
 		String fullName = fProject.getLocation().append("testAbsolutePathSingle.c").toOSString();
@@ -558,6 +545,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testAbsolutePathInOtherProject() throws Exception {
 		IProject anotherProject = ResourceHelper.createCDTProject("ProjectAbsolutePathInOtherProject");
 		ResourceHelper.createFile(anotherProject, "testAbsolutePathInOtherProject.c");
@@ -577,6 +565,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testAbsolutePathOutsideWorkspace() throws Exception {
 
 		ResourceHelper.createWorkspaceFolder("OutsideFolder");
@@ -599,6 +588,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathFromProjectRoot() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Folder/testRelativePathFromProjectRoot.c");
@@ -617,6 +607,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathFromSubfolder() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFolder(fProject, "Folder/SubFolder");
@@ -636,6 +627,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathNotMatchingFolder() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Folder/testRelativePathNotMatchingFolder.c");
@@ -655,6 +647,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathDuplicate() throws Exception {
 		ResourceHelper.createFolder(fProject, "SubfolderA");
 		ResourceHelper.createFolder(fProject, "SubfolderA/Folder");
@@ -678,6 +671,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathUp() throws Exception {
 		ResourceHelper.createFile(fProject, "testRelativePathUp.c");
 
@@ -694,6 +688,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathUpSubfolderBug262988() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Folder/testRelativePathUpSubfolder.c");
@@ -711,6 +706,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathUpOtherProject() throws Exception {
 		IProject anotherProject = ResourceHelper.createCDTProject("AnotherProject");
 		ResourceHelper.createFile(anotherProject, "testRelativePathUpOtherProject.c");
@@ -728,6 +724,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathUpDuplicate() throws Exception {
 		ResourceHelper.createFolder(fProject, "FolderA/SubFolder");
 		ResourceHelper.createFolder(fProject, "FolderB/SubFolder");
@@ -749,6 +746,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathDotFromProjectRoot() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Folder/testRelativePathDotFromProjectRoot.c");
@@ -767,6 +765,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathDotFromSubfolder() throws Exception {
 		ResourceHelper.createFolder(fProject, "Subfolder");
 		ResourceHelper.createFolder(fProject, "Subfolder/Folder");
@@ -786,6 +785,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathDotNotMatchingFolder() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Subfolder/Folder/testRelativePathDotNotMatchingFolder.c");
@@ -806,6 +806,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRelativePathDotDuplicate() throws Exception {
 		ResourceHelper.createFolder(fProject, "SubfolderA");
 		ResourceHelper.createFolder(fProject, "SubfolderA/Folder");
@@ -830,6 +831,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testUppercase1() throws Exception {
 		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
 			// This test is valid on Windows platform only
@@ -851,6 +853,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testUppercase2InSubFolder() throws Exception {
 		// Note that old MSDOS can handle only 8 characters in file name
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -869,6 +872,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testUppercase3ResolveCase() throws Exception {
 		// Note that old MSDOS can handle only 8 characters in file name
 		ResourceHelper.createFolder(fProject, "FolderA");
@@ -889,6 +893,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testUppercase4Duplicate() throws Exception {
 		// Note that old MSDOS can handle only 8 characters in file name
 		ResourceHelper.createFolder(fProject, "FolderA");
@@ -911,6 +916,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testCygwinCygdrive() throws Exception {
 		String fileName = "testCygwinCygdrive.c";
 		String windowsFileName = fProject.getLocation().append(fileName).toOSString();
@@ -921,7 +927,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
-		assertTrue("cygwinFileName=[" + cygwinFileName + "]", cygwinFileName.startsWith("/cygdrive/"));
+		assertTrue(cygwinFileName.startsWith("/cygdrive/"), "cygwinFileName=[" + cygwinFileName + "]");
 
 		ResourceHelper.createFile(fProject, fileName);
 
@@ -938,6 +944,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testCygwinUsrUnclude() throws Exception {
 		String cygwinFolder = "/usr/include/";
 		String fileName = "stdio.h";
@@ -950,11 +957,11 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			return;
 		}
 
-		assertTrue("usrIncludeWindowsPath=[" + usrIncludeWindowsPath + "]",
-				usrIncludeWindowsPath.charAt(1) == IPath.DEVICE_SEPARATOR);
+		assertTrue(usrIncludeWindowsPath.charAt(1) == IPath.DEVICE_SEPARATOR,
+				"usrIncludeWindowsPath=[" + usrIncludeWindowsPath + "]");
 
 		java.io.File file = new java.io.File(usrIncludeWindowsPath + "\\" + fileName);
-		assertTrue("File " + file + " does not exist, check your cygwin installation", file.exists());
+		assertTrue(file.exists(), "File " + file + " does not exist, check your cygwin installation");
 
 		ResourceHelper.createLinkedFolder(fProject, "include", usrIncludeWindowsPath);
 
@@ -971,6 +978,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testCygwinAnotherProject() throws Exception {
 		String fileName = "testCygwinAnotherProject.c";
 		IProject anotherProject = ResourceHelper.createCDTProject("AnotherProject");
@@ -983,7 +991,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
-		assertTrue("cygwinFileName=[" + cygwinFileName + "]", cygwinFileName.startsWith("/cygdrive/"));
+		assertTrue(cygwinFileName.startsWith("/cygdrive/"), "cygwinFileName=[" + cygwinFileName + "]");
 
 		ResourceHelper.createFile(anotherProject, fileName);
 
@@ -1000,6 +1008,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testCustomProjectLocation() throws Exception {
 		ResourceHelper.createWorkspaceFolder("Custom");
 		ResourceHelper.createWorkspaceFolder("Custom/ProjectLocation");
@@ -1022,6 +1031,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testCygwinAndMakeErrorParserBug270772() throws Exception {
 		String fileName = "testCygwinAndMakeErrorParser.c";
 		String windowsFileName = fProject.getLocation().append(fileName).toOSString();
@@ -1032,7 +1042,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 			// Skip the test if Cygwin is not available.
 			return;
 		}
-		assertTrue("cygwinFileName=[" + cygwinFileName + "]", cygwinFileName.startsWith("/cygdrive/"));
+		assertTrue(cygwinFileName.startsWith("/cygdrive/"), "cygwinFileName=[" + cygwinFileName + "]");
 
 		ResourceHelper.createFile(fProject, fileName);
 
@@ -1052,6 +1062,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testInNestedProject() throws Exception {
 		ResourceHelper.createFolder(fProject, "NestedProjectFolder");
 		IProject nestedProject = ResourceHelper.createCDTProject("NestedProject",
@@ -1086,6 +1097,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testBuildDir() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFile(fProject, "Folder/testBuildDir.c");
@@ -1106,6 +1118,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 * Checks if a file from error output can be found.
 	 * @throws Exception...
 	 */
+	@Test
 	public void testBuildDirVsProjectRoot() throws Exception {
 		ResourceHelper.createFile(fProject, "testBuildDirVsProjectRoot.c");
 		ResourceHelper.createFolder(fProject, "BuildDir");
@@ -1126,6 +1139,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testAbsoluteFileVsLink() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		IFile file = ResourceHelper.createFile(fProject, "Folder/testAbsoluteFileVsLink.c");
@@ -1146,6 +1160,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testPushDirectory() throws Exception {
 		String fileName = "testPushDirectory.c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1170,6 +1185,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testPushDirectorySingleQuote() throws Exception {
 		String fileName = "testPushDirectory.c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1193,6 +1209,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testPushAbsoluteDirectory() throws Exception {
 		String fileName = "testPushAbsoluteDirectory.c";
 		IFolder folder = ResourceHelper.createFolder(fProject, "Folder");
@@ -1200,7 +1217,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 		ResourceHelper.createFile(fProject, "Folder/" + fileName);
 
 		IPath absoluteDir = folder.getLocation();
-		Assert.assertTrue(absoluteDir.isAbsolute());
+		assertTrue(absoluteDir.isAbsolute());
 
 		String lines = "make[0]: Entering directory `" + absoluteDir + "'\n" + fileName + ":1:error\n";
 
@@ -1219,6 +1236,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testPopDirectory() throws Exception {
 		String fileName = "testPopDirectory.c";
 
@@ -1247,6 +1265,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testPushPop_WithNoLevel() throws Exception {
 		String fileName = getName() + ".c";
 
@@ -1275,6 +1294,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testPushDirectoryAndCache() throws Exception {
 		String fileName = "testPushDirectoryCacheProblem.c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1307,6 +1327,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDisablePushDirectoryOnParallelBuild_J() throws Exception {
 		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1330,6 +1351,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDisablePushDirectoryOnParallelBuild_J2() throws Exception {
 		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1353,6 +1375,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDisablePushDirectoryOnParallelBuild_J_2() throws Exception {
 		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1376,6 +1399,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDisablePushDirectoryOnParallelBuild_J1() throws Exception {
 		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1399,6 +1423,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDisablePushDirectoryOnParallelBuild_J_1() throws Exception {
 		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1422,6 +1447,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDisablePushDirectoryOnParallelBuild_Jobs() throws Exception {
 		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1445,6 +1471,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDisablePushDirectoryOnParallelBuild_Jobs1() throws Exception {
 		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1468,6 +1495,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDisablePushDirectoryOnParallelBuild_gmake() throws Exception {
 		String fileName = getName() + ".c";
 		ResourceHelper.createFolder(fProject, "Folder");
@@ -1491,6 +1519,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testMappedRemoteAbsolutePath_Bug264704() throws Exception {
 		ResourceHelper.createFolder(fProject, "Folder");
 		ResourceHelper.createFolder(fProject, "Folder/AbsoluteRemoteFolder");
@@ -1511,6 +1540,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testMappedRemoteAbsolutePathAnotherProject_Bug264704() throws Exception {
 
 		IProject anotherProject = ResourceHelper.createCDTProject("ProjectMappedRemoteAbsolutePathAnotherProject");
@@ -1536,6 +1566,7 @@ public class ErrorParserFileMatchingTest extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testWindowsPathOnLinux_Bug263977() throws Exception {
 		// This test is valid on Unix platforms only
 		boolean isUnix = Platform.getOS().equals(Platform.OS_LINUX) || Platform.getOS().equals(Platform.OS_AIX)

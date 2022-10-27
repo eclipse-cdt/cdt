@@ -36,7 +36,7 @@ public class CommentHandlingWithRewriteTest extends CommentHandlingTest {
 	}
 
 	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite(CommentHandlingTestSuite.class.getName());
+		TestSuite suite = new TestSuite(CommentHandlingWithRewriteTest.class.getName());
 		suite.addTest(
 				RewriteTester.suite("CommentMultiFileTests", "resources/rewrite/CommentHandlingWithRewriteTest.rts")); //$NON-NLS-1$
 		return suite;

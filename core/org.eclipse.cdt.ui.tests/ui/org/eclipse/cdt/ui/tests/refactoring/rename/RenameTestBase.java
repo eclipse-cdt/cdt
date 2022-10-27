@@ -30,7 +30,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 /**
  * @author markus.schorn@windriver.com
  */
-public class RenameTestBase extends RefactoringTests {
+public abstract class RenameTestBase extends RefactoringTests {
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
 
 	protected RenameTestBase(String name) {

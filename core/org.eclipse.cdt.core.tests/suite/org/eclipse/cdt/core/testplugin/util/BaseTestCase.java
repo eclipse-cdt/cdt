@@ -103,6 +103,7 @@ public abstract class BaseTestCase extends TestCase {
 		}
 		ResourceHelper.cleanUp(getName());
 		TestScannerProvider.clear();
+		BaseTestCase5.assertWorkspaceIsEmpty();
 		super.tearDown();
 	}
 

@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
@@ -137,7 +138,7 @@ public class CPPSelectionNoIndexerTests extends BaseSelectionTests {
 		//Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
 
-		IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName);
+		IPath location = ResourceHelper.createTemporaryFolder().append(fileName);
 
 		File linkFile = new File(location.toOSString());
 		if (!linkFile.exists()) {

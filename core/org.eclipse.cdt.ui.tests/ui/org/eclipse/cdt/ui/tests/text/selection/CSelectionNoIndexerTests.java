@@ -25,6 +25,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.core.resources.IFile;
@@ -118,12 +119,11 @@ public class CSelectionNoIndexerTests extends BaseSelectionTests {
 		//Obtain file handle
 		IFile file = project.getProject().getFile(fileName);
 
-		IPath location = new Path(project.getLocation().removeLastSegments(1).toOSString() + File.separator + fileName);
+		IPath location = ResourceHelper.createTemporaryFolder().append(fileName);
 
 		File linkFile = new File(location.toOSString());
-		if (!linkFile.exists()) {
-			linkFile.createNewFile();
-		}
+		assertFalse(linkFile.exists());
+		linkFile.createNewFile();
 
 		file.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
 

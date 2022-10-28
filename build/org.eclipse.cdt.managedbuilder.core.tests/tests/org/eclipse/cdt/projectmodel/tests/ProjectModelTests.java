@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -67,10 +68,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class ProjectModelTests extends TestCase implements IElementChangedListener {
+public class ProjectModelTests extends BaseTestCase implements IElementChangedListener {
 	private boolean isPrint = false;
 	private CDefaultModelEventChecker fEventChecker;
 
@@ -105,9 +105,9 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		fEventChecker = null;
 		CoreModel.getDefault().removeElementChangedListener(this);
+		super.tearDown();
 	}
 
 	private void modify(ICFileDescription fiDes) {

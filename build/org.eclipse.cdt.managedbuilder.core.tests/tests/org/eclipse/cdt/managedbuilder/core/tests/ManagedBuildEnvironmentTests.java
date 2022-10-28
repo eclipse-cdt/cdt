@@ -16,6 +16,7 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
@@ -25,13 +26,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  *
  * */
-public class ManagedBuildEnvironmentTests extends TestCase {
+public class ManagedBuildEnvironmentTests extends BaseTestCase {
 	// test variable names
 	final private String NAME_CWD = "CWD"; //$NON-NLS-1$
 	final private String NAME_PWD = "PWD"; //$NON-NLS-1$

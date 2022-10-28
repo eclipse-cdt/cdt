@@ -15,6 +15,7 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -35,10 +36,9 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class OptionEnablementTests extends TestCase implements IManagedOptionValueHandler, IOptionApplicability {
+public class OptionEnablementTests extends BaseTestCase implements IManagedOptionValueHandler, IOptionApplicability {
 	private static final String PROJECT_TYPE = "test.four.dot.zero.cdt.managedbuild.target.gnu.exe";
 	private static final String CFG_NAME = "Test 4.0 ConfigName.Dbg";
 	private static final String TOOL_ID = "test.four.dot.zero.cdt.managedbuild.tool.gnu.c.compiler";

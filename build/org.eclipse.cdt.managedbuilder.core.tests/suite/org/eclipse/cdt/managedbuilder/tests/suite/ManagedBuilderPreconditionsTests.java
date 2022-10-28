@@ -18,23 +18,18 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
-import junit.framework.TestCase;
-
 /**
  * Check that preconditions for running managed builder tests are in place,
  * see individual tests in this class for details.
  */
-public class ManagedBuilderPreconditionsTests extends TestCase {
-	@Override
-	protected void setUp() throws Exception {
-	}
-
+public class ManagedBuilderPreconditionsTests extends BaseTestCase {
 	/**
 	 * Many MBS tests run make and gcc and will inspect resulting artifacts of the build.
 	 * Make sure GNU tool-chain is available for the tests.

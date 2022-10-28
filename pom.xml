@@ -216,10 +216,6 @@
 
 		<module>native/org.eclipse.cdt.native.serial</module>
 
-		<module>qt/org.eclipse.cdt.qt.core</module>
-		<module>qt/org.eclipse.cdt.qt.ui</module>
-		<module>qt/org.eclipse.cdt.qt-feature</module>
-
 		<module>remote/org.eclipse.cdt.remote.core</module>
 
 		<module>testsrunner/org.eclipse.cdt.testsrunner</module>
@@ -322,7 +318,6 @@
 		<module>lsp/org.eclipse.cdt.lsp.core.tests</module>
 		<module>lsp/org.eclipse.cdt.lsp.cquery.tests</module>
 		<module>memory/org.eclipse.cdt.debug.core.memory.tests</module>
-		<module>qt/org.eclipse.cdt.qt.ui.tests</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tests</module>
 
 		<module>releng/org.eclipse.cdt.testing</module>
@@ -332,10 +327,7 @@
 		<!-- TODO:  Investigate/Fix hanging before re-enable re-enabling
 		<module>debug/org.eclipse.cdt.debug.application.tests</module>
 		-->
-		
-		<!--
-		<module>qt/org.eclipse.cdt.qt.core.tests</module>
-		-->
+
 	</modules>
 
 	<pluginRepositories>

@@ -13,6 +13,7 @@ This section describes API removals that occurred in past releases, and upcoming
 - [Removal of deprecated CommandLauncher.execute() method](#executeCommandLauncher)
 - [Removal of deprecated CBuildConfiguration.watchProcess() methods](#watchProcessCBuildConfig)
 - [Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb](#gdbBackendDebuggerCommandLine)
+- [Removal of Qt plug-ins and features](#qt-plugins)
 
 ## API Changes in CDT 10.5.0
 
@@ -149,6 +150,18 @@ instead.
 
 See [Bug 572944](https://bugs.eclipse.org/bugs/show_bug.cgi?id=572944)
 and https://github.com/eclipse-cdt/cdt/pull/112.
+
+### <span id="qt-plugins">Removal of Qt plug-ins and features</span>
+
+For a while now the Qt plug-ins have had at least some issues.
+They rely on the Nashorn script engine which was removed in Java 15.
+The plug-ins have been removed in CDT 11.
+The following bundles and all their related API has been removed:
+
+- org.eclipse.cdt.qt.ui
+- org.eclipse.cdt.qt.core
+
+See https://github.com/eclipse-cdt/cdt/issues/123
 
 ---
 

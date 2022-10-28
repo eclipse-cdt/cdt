@@ -38,7 +38,9 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		fCProject = StandardBuildTestHelper.createProject("SCD", (IPath) null, MakeCorePlugin.MAKE_PROJECT_ID);
+		super.setUp();
+		fCProject = StandardBuildTestHelper.createProject("SCD" + getName(), (IPath) null,
+				MakeCorePlugin.MAKE_PROJECT_ID);
 		fCFile = fCProject.getProject().getFile("main.c");
 		if (!fCFile.exists()) {
 			fCFile.create(new ByteArrayInputStream(" \n".getBytes()), false, new NullProgressMonitor());
@@ -48,7 +50,8 @@ public class ScannerConfigProfileTests extends BaseTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.cleanUp(getName());
-		StandardBuildTestHelper.removeProject("SCDC");
+		fCProject.delete(true, true, null);
+		super.tearDown();
 	}
 
 	/**

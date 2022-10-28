@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.wizards.settingswizards;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.List;
@@ -111,47 +112,51 @@ public class SettingsImportExportTest extends BaseUITestCase {
 			}
 		};
 
-		page.setDestinationFilePath(getFilePath("settings.xml"));
-		page.setSettingsProcessors(processors);
-		page.setSelectedSettingsProcessors(processors);
-		ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(exportProject.getProject(), false);
-		ICConfigurationDescription config = desc.getActiveConfiguration();
-		page.setSelectedConfiguration(config);
+		String filePath = getFilePath("settings.xml");
+		try {
+			page.setDestinationFilePath(filePath);
+			page.setSettingsProcessors(processors);
+			page.setSelectedSettingsProcessors(processors);
+			ICProjectDescription desc = CoreModel.getDefault().getProjectDescription(exportProject.getProject(), false);
+			ICConfigurationDescription config = desc.getActiveConfiguration();
+			page.setSelectedConfiguration(config);
 
-		ProjectSettingsExportStrategy exporter = new ProjectSettingsExportStrategy();
-		exporter.finish(page);
+			ProjectSettingsExportStrategy exporter = new ProjectSettingsExportStrategy();
+			exporter.finish(page);
 
-		// now import into another project
+			// now import into another project
 
-		desc = CoreModel.getDefault().getProjectDescription(importProject.getProject(), true);
-		config = desc.getActiveConfiguration();
-		page.setSelectedConfiguration(config);
+			desc = CoreModel.getDefault().getProjectDescription(importProject.getProject(), true);
+			config = desc.getActiveConfiguration();
+			page.setSelectedConfiguration(config);
 
-		ProjectSettingsImportStrategy importer = new ProjectSettingsImportStrategy();
-		importer.finish(page);
+			ProjectSettingsImportStrategy importer = new ProjectSettingsImportStrategy();
+			importer.finish(page);
 
-		desc = CoreModel.getDefault().getProjectDescription(importProject.getProject(), true);
-		config = desc.getActiveConfiguration();
-		ICFolderDescription folder = config.getRootFolderDescription();
-		ICLanguageSetting languageSetting = folder.getLanguageSettings()[0];
+			desc = CoreModel.getDefault().getProjectDescription(importProject.getProject(), true);
+			config = desc.getActiveConfiguration();
+			ICFolderDescription folder = config.getRootFolderDescription();
+			ICLanguageSetting languageSetting = folder.getLanguageSettings()[0];
 
-		ICLanguageSettingEntry[] importedMacros = languageSetting.getSettingEntries(ICSettingEntry.MACRO);
+			ICLanguageSettingEntry[] importedMacros = languageSetting.getSettingEntries(ICSettingEntry.MACRO);
 
-		assertEquals(EXPORTED_MACROS.length, importedMacros.length);
-		for (int i = 0; i < importedMacros.length; i++) {
-			assertEquals(EXPORTED_MACROS[i].getName(), importedMacros[i].getName());
-			assertEquals(EXPORTED_MACROS[i].getValue(), importedMacros[i].getValue());
+			assertEquals(EXPORTED_MACROS.length, importedMacros.length);
+			for (int i = 0; i < importedMacros.length; i++) {
+				assertEquals(EXPORTED_MACROS[i].getName(), importedMacros[i].getName());
+				assertEquals(EXPORTED_MACROS[i].getValue(), importedMacros[i].getValue());
+			}
+
+			ICLanguageSettingEntry[] importedIncludes = languageSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
+
+			assertEquals(EXPORTED_INCLUDES.length, importedIncludes.length);
+			for (int i = 0; i < importedIncludes.length; i++) {
+				assertTrue(importedIncludes[i].getName().endsWith(EXPORTED_INCLUDES[i].getName()));
+			}
+		} finally {
+			CProjectHelper.delete(importProject);
+			CProjectHelper.delete(exportProject);
+			new File(filePath).delete();
 		}
-
-		ICLanguageSettingEntry[] importedIncludes = languageSetting.getSettingEntries(ICSettingEntry.INCLUDE_PATH);
-
-		assertEquals(EXPORTED_INCLUDES.length, importedIncludes.length);
-		for (int i = 0; i < importedIncludes.length; i++) {
-			assertTrue(importedIncludes[i].getName().endsWith(EXPORTED_INCLUDES[i].getName()));
-		}
-
-		CProjectHelper.delete(importProject);
-		CProjectHelper.delete(exportProject);
 	}
 
 	public static void vaidateCorrectErrorHandling(String xmlContent) throws Exception {

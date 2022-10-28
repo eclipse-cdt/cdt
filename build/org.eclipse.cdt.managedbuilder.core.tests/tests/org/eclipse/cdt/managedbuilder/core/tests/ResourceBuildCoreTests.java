@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -50,10 +51,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Assert;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class ResourceBuildCoreTests extends TestCase {
+public class ResourceBuildCoreTests extends BaseTestCase {
 	private static final boolean boolVal = true;
 	private static IProjectType exeType;
 	private static IProjectType libType;

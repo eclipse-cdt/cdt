@@ -12,6 +12,7 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.model.IncludeEntry;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -26,7 +27,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
@@ -38,7 +38,7 @@ import junit.framework.TestSuite;
  * @author pn3484
  *
  */
-public class PathConverterTest extends TestCase {
+public class PathConverterTest extends BaseTestCase {
 
 	public PathConverterTest(String name) {
 		super(name);

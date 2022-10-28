@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -34,10 +35,9 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.junit.Assert;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class ManagedBuildCoreTests extends TestCase {
+public class ManagedBuildCoreTests extends BaseTestCase {
 	private static IProjectType exeType;
 	private static IProjectType libType;
 	private static IProjectType dllType;

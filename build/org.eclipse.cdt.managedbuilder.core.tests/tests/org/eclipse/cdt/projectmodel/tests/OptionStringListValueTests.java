@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -47,10 +48,9 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class OptionStringListValueTests extends TestCase {
+public class OptionStringListValueTests extends BaseTestCase {
 	private static final String PROJ_NAME_PREFIX = "OptionStringListValueTests_";
 
 	public static Test suite() {
@@ -58,12 +58,9 @@ public class OptionStringListValueTests extends TestCase {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
-	}
-
-	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.cleanUp(getName());
+		super.tearDown();
 	}
 
 	public void testCfgDesEntries() throws Exception {

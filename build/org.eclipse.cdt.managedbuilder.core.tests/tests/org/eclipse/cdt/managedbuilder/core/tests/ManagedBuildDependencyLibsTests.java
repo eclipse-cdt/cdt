@@ -55,6 +55,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	private IProject fTapp, fTlib, fTobjs;
 
 	private IToolChain[] allToolChains;
+	private boolean autoBuildingRestoreValue;
 
 	private void buildProject(IProject curProject) {
 
@@ -74,13 +75,10 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 
 	}
 
-	@Override
-	public void setUp() {
-		// Don't run super class setUp
-	}
-
 	@BeforeEach
 	public void setUpLocal() throws Exception {
+		autoBuildingRestoreValue = setAutoBuilding(true);
+
 		allToolChains = ManagedBuildManager.getRealToolChains();
 		IWorkspaceDescription wsDescription = ResourcesPlugin.getWorkspace().getDescription();
 		wsDescription.setAutoBuilding(false);
@@ -102,6 +100,8 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 		ManagedBuildTestHelper.removeProject(fTapp.getName());
 		ManagedBuildTestHelper.removeProject(fTlib.getName());
 		ManagedBuildTestHelper.removeProject(fTobjs.getName());
+
+		setAutoBuilding(autoBuildingRestoreValue);
 	}
 
 	private void findFiles(IResource dir, String pattern, List<IFile> files) {

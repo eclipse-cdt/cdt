@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -36,10 +37,9 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class ManagedBuildDependencyCalculatorTests extends TestCase {
+public class ManagedBuildDependencyCalculatorTests extends BaseTestCase {
 	private IPath resourcesLocation = new Path(
 			CTestPlugin.getFileInPlugin(new Path("resources/depCalcProjects/")).getAbsolutePath());
 

@@ -16,13 +16,12 @@ package org.eclipse.cdt.build.core.scannerconfig.tests;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser;
 
-import junit.framework.TestCase;
-
-public class GCCSpecsConsoleParserTest extends TestCase {
+public class GCCSpecsConsoleParserTest extends BaseTestCase {
 	GCCSpecsConsoleParser parser;
 	private IScannerInfoCollector collector;
 	List<String> includes;
@@ -30,6 +29,7 @@ public class GCCSpecsConsoleParserTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		collector = new IScannerInfoCollector() {
 
 			@Override

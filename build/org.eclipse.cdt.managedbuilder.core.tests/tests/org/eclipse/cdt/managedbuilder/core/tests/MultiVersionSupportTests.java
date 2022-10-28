@@ -14,16 +14,21 @@
 
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -48,41 +53,15 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+public class MultiVersionSupportTests extends BaseTestCase5 {
+	private IProject proj = null;
+	private IManagedProject mproj = null;
 
-public class MultiVersionSupportTests extends TestCase {
-	static IProject proj = null;
-	static IManagedProject mproj = null;
-
-	IConfiguration[] cfgs = null;
+	private IConfiguration[] cfgs = null;
 	private IWorkspace worksp;
-
-	public MultiVersionSupportTests() {
-		super();
-	}
-
-	public MultiVersionSupportTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(MultiVersionSupportTests.class.getName());
-		//$JUnit-BEGIN$
-		suite.addTest(new MultiVersionSupportTests("testProjectConverterConvenienceRoutines")); //$NON-NLS-1$
-		suite.addTest(new MultiVersionSupportTests("testConfigurationNameProvider")); //$NON-NLS-1$
-		suite.addTest(new MultiVersionSupportTests("testConfigurationDescription")); //$NON-NLS-1$
-		suite.addTest(new MultiVersionSupportTests("testVersionInfo")); //$NON-NLS-1$
-		suite.addTest(new MultiVersionSupportTests("testVersionsSupportedAttribute")); //$NON-NLS-1$
-		//the test is invalid, disabling for now (see bug# 193831)
-		//		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT20")); //$NON-NLS-1$
-		suite.addTest(new MultiVersionSupportTests("testToolChainConversion_CDT21")); //$NON-NLS-1$
-		suite.addTest(new MultiVersionSupportTests("testProjectConversion")); //$NON-NLS-1$
-		//$JUnit-END$
-		return suite;
-	}
 
 	/*
 	 * This function tests the functionality of Project converter convenience routines
@@ -93,6 +72,7 @@ public class MultiVersionSupportTests extends TestCase {
 	 * 		iii) To convert a Build Object
 	 */
 
+	@Test
 	public void testProjectConverterConvenienceRoutines() throws Exception {
 		String projectName = "TestProjectConverterConvenienceRoutines"; //$NON-NLS-1$
 		String projectTypeId = "testProjectConverterConvenienceRoutines.exe"; //$NON-NLS-1$
@@ -130,6 +110,7 @@ public class MultiVersionSupportTests extends TestCase {
 	 * configuration names as "Debug", "Release", "Debug_ia64" and "Release_ia64" while creating a project.
 	 *
 	 */
+	@Test
 	public void testConfigurationNameProvider() throws Exception {
 		String[] expectedConfigNames = { "Debug", "Release", "Debug_ia64", "Release_ia64" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		String[] actualConfigNames = new String[4];
@@ -160,6 +141,7 @@ public class MultiVersionSupportTests extends TestCase {
 	 * expected description after creating a project.
 	 */
 
+	@Test
 	public void testConfigurationDescription() throws Exception {
 		String[] expectedConfigDescriptions = { "debug configuration for IA32 windows", //$NON-NLS-1$
 				"release configuration for IA32 windows", "debug configuration for IA64 windows",
@@ -191,6 +173,7 @@ public class MultiVersionSupportTests extends TestCase {
 	 * is retrived from plugin manifest file correctly or not.
 	 */
 
+	@Test
 	public void testVersionInfo() throws Exception {
 
 		String projectName = "TestVersionInfo"; //$NON-NLS-1$
@@ -276,6 +259,7 @@ public class MultiVersionSupportTests extends TestCase {
 	 * ToolChain/Tool/Builder elements is retrived from plugin manifest file correctly or not.
 	 */
 
+	@Test
 	public void testVersionsSupportedAttribute() throws Exception {
 		// create managed project
 		String projectName = "TestVersionSupportAttribute"; //$NON-NLS-1$
@@ -315,7 +299,7 @@ public class MultiVersionSupportTests extends TestCase {
 
 	}
 
-	static void createManagedProject(String name, String projectTypeId) {
+	void createManagedProject(String name, String projectTypeId) throws CoreException, BuildException {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		proj = root.getProject(name);
 
@@ -341,16 +325,13 @@ public class MultiVersionSupportTests extends TestCase {
 				desc.create(CCorePlugin.BUILD_SCANNER_INFO_UNIQ_ID, ManagedBuildManager.INTERFACE_IDENTITY);
 				desc.saveProjectData();
 			} catch (CoreException e) {
-				fail("Cannot create project: " + e.getLocalizedMessage()); //$NON-NLS-1$
+				throw new AssertionError("Cannot create project: " + e.getLocalizedMessage(), e); //$NON-NLS-1$
 			}
 			// Call this function just to avoid init problems in getProjectType();
 			ManagedBuildManager.getDefinedProjectTypes();
 			IProjectType projType = ManagedBuildManager.getProjectType(projectTypeId);
 			assertNotNull(projType);
-			try {
-				mproj = ManagedBuildManager.createManagedProject(proj, projType);
-			} catch (BuildException e) {
-			}
+			mproj = ManagedBuildManager.createManagedProject(proj, projType);
 			ManagedBuildManager.setNewProjectVersion(proj);
 			IConfiguration[] cfgs = projType.getConfigurations();
 
@@ -363,10 +344,8 @@ public class MultiVersionSupportTests extends TestCase {
 				ManagedBuildManager.setDefaultConfiguration(proj, null);
 		}
 		// open project w/o progress monitor; no action performed if it's opened
-		try {
-			proj.open(null);
-		} catch (CoreException e) {
-		}
+		proj.open(null);
+
 	}
 
 	/*
@@ -387,7 +366,7 @@ public class MultiVersionSupportTests extends TestCase {
 	 *  doInit() - call it at the beginning of every test
 	 *
 	 */
-	private void doInit(String projectName, String projectTypeId) {
+	private void doInit(String projectName, String projectTypeId) throws Exception {
 		createManagedProject(projectName, projectTypeId);
 		assertNotNull(proj);
 		assertNotNull(mproj);
@@ -397,6 +376,8 @@ public class MultiVersionSupportTests extends TestCase {
 		assertNotNull(cfgs);
 	}
 
+	@Test
+	@Disabled("See Bug 193831")
 	public void testToolChainConversion_CDT20() throws Exception {
 		// Pass projDirName as 'test20', and 'true' to update Project
 		doTestProjectUpdate("test20", true); //$NON-NLS-1$
@@ -404,25 +385,21 @@ public class MultiVersionSupportTests extends TestCase {
 		String tmpDir = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
 
 		File inputFile = new File(tmpDir + "/converterOutput20.txt"); //$NON-NLS-1$
-		try {
-			assertTrue(inputFile.exists());
+		assertTrue(inputFile.exists());
 
-			String expectedContent = "Converter for CDT 2.0 Project is invoked"; //$NON-NLS-1$
+		String expectedContent = "Converter for CDT 2.0 Project is invoked"; //$NON-NLS-1$
 
-			try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
-				String actualContent;
+		try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
+			String actualContent;
 
-				if ((actualContent = data.readLine()) != null) {
-					assertEquals(actualContent, expectedContent);
-				}
+			if ((actualContent = data.readLine()) != null) {
+				assertEquals(actualContent, expectedContent);
 			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+
 	}
 
+	@Test
 	public void testToolChainConversion_CDT21() throws Exception {
 		// Pass projDirName as 'test21', and 'true' to update Project
 		doTestProjectUpdate("test21", true); //$NON-NLS-1$
@@ -430,25 +407,21 @@ public class MultiVersionSupportTests extends TestCase {
 		String tmpDir = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
 
 		File inputFile = new File(tmpDir + "/converterOutput21.txt"); //$NON-NLS-1$
-		try {
-			assertTrue(inputFile.exists());
+		assertTrue(inputFile.exists());
 
-			String expectedContent = "Converter for CDT 2.1 Project is invoked"; //$NON-NLS-1$
+		String expectedContent = "Converter for CDT 2.1 Project is invoked"; //$NON-NLS-1$
 
-			try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
-				String actualContent;
+		try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
+			String actualContent;
 
-				if ((actualContent = data.readLine()) != null) {
-					assertEquals(actualContent, expectedContent);
-				}
+			if ((actualContent = data.readLine()) != null) {
+				assertEquals(actualContent, expectedContent);
 			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+
 	}
 
+	@Test
 	public void testProjectConversion() throws Exception {
 		// Pass the 'projDirName' as 'testProjectConversion', and 'true' to update Project
 		doTestProjectUpdate("testProjectConversion", true); //$NON-NLS-1$
@@ -456,26 +429,21 @@ public class MultiVersionSupportTests extends TestCase {
 		String tmpDir = System.getProperty("java.io.tmpdir"); //$NON-NLS-1$
 
 		File inputFile = new File(tmpDir + "/testProjectConverterOutput.txt"); //$NON-NLS-1$
-		try {
-			assertTrue(inputFile.exists());
+		assertTrue(inputFile.exists());
 
-			String expectedContent = "The converter for the projectType testProject_1.0.0 is invoked"; //$NON-NLS-1$
+		String expectedContent = "The converter for the projectType testProject_1.0.0 is invoked"; //$NON-NLS-1$
 
-			try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
-				String actualContent;
+		try (BufferedReader data = new BufferedReader(new FileReader(inputFile))) {
+			String actualContent;
 
-				if ((actualContent = data.readLine()) != null) {
-					assertEquals(actualContent, expectedContent);
-				}
+			if ((actualContent = data.readLine()) != null) {
+				assertEquals(actualContent, expectedContent);
 			}
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+
 	}
 
-	private IProject getCDT_TestProject(String projDirName) {
+	private IProject getCDT_TestProject(String projDirName) throws Exception {
 
 		IProject project = null;
 		File file = null;
@@ -506,25 +474,21 @@ public class MultiVersionSupportTests extends TestCase {
 		ArrayList<IProject> projectList = new ArrayList<>(projectZips.length);
 		assertEquals(projectZips.length, 1);
 
-		try {
-			String projectName = projectZips[0].getName();
-			if (!projectName.endsWith(".zip"))
-				fail("No projects found in test 'toolChainConversionProjects' project directory " //$NON-NLS-1$
-						+ file.getName() + ".  The .zip file may be missing or corrupt."); //$NON-NLS-1$
+		String projectName = projectZips[0].getName();
+		if (!projectName.endsWith(".zip"))
+			fail("No projects found in test 'toolChainConversionProjects' project directory " //$NON-NLS-1$
+					+ file.getName() + ".  The .zip file may be missing or corrupt."); //$NON-NLS-1$
 
-			projectName = projectName.substring(0, projectName.length() - ".zip".length()); //$NON-NLS-1$
-			if (projectName.length() == 0)
-				fail("No projects found in test 'toolChainConversionProjects' project directory " //$NON-NLS-1$
-						+ file.getName() + ".  The .zip file may be missing or corrupt."); //$NON-NLS-1$
-			// IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-			// Path path = (Path) root.getLocation();
-			// IPath location = new Path( root.getLocation().toString() );
-			project = ManagedBuildTestHelper.createProject(projectName, projectZips[0], null, null);
-			if (project != null)
-				projectList.add(project);
-		} catch (Exception e) {
-			System.out.println("Exception Occured."); //$NON-NLS-1$
-		}
+		projectName = projectName.substring(0, projectName.length() - ".zip".length()); //$NON-NLS-1$
+		if (projectName.length() == 0)
+			fail("No projects found in test 'toolChainConversionProjects' project directory " //$NON-NLS-1$
+					+ file.getName() + ".  The .zip file may be missing or corrupt."); //$NON-NLS-1$
+		// IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		// Path path = (Path) root.getLocation();
+		// IPath location = new Path( root.getLocation().toString() );
+		project = ManagedBuildTestHelper.createProject(projectName, projectZips[0], null, null);
+		if (project != null)
+			projectList.add(project);
 
 		if (projectList.size() == 0) {
 			fail("No projects found in test project directory " //$NON-NLS-1$
@@ -534,7 +498,7 @@ public class MultiVersionSupportTests extends TestCase {
 		return project;
 	}
 
-	private void doTestProjectUpdate(String projDirName, boolean updateProject) {
+	private void doTestProjectUpdate(String projDirName, boolean updateProject) throws Exception {
 		IOverwriteQuery queryALL = new IOverwriteQuery() {
 			@Override
 			public String queryOverwrite(String file) {

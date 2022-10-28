@@ -10,6 +10,13 @@ This is the New & Noteworthy page for CDT 11.0 which is part of Eclipse 2022-12 
 
 Jave 17 is now required to build and run Eclipse CDT. See https://github.com/eclipse-cdt/cdt/issues/80
 
+## Removed plug-ins and features
+
+Various plug-ins and features are no longer part of the CDT release.
+Please see the corresponding issue for more details.
+
+- Qt plug-ins (`org.eclipse.cdt.qt.ui/core/feature`) https://github.com/eclipse-cdt/cdt/issues/123 _Note:_ the `org.eclipse.cdt.testsrunner.qttest` plug-in is still part of CDT.
+
 # Debug
 
 ## C/C++ Dynamic Printf Breakpoints
@@ -27,7 +34,7 @@ See [Bug 580873](https://bugs.eclipse.org/bugs/show_bug.cgi?id=580873).
 
 Please see [CHANGELOG-API](CHANGELOG-API.md) for details on the breaking API changes in this release as well as future planned API changes.
 
-## New Job Family for backgrond build settings update
+## New Job Family for background build settings update
 
 When the project is modified the managed build settings needs to update settings.
 

@@ -136,8 +136,6 @@
       <requirement
           name="org.eclipse.cdt.msw.feature.group"/>
       <requirement
-          name="org.eclipse.cdt.qt.feature.group"/>
-      <requirement
           name="org.eclipse.cdt.sdk.feature.group"/>
       <requirement
           name="org.eclipse.cdt.testsrunner.feature.feature.group"/>
@@ -272,7 +270,7 @@
             project="org.eclipse.cdt"/>
         <operand
             xsi:type="workingsets:ExclusionPredicate"
-            excludedWorkingSet="//'cdt.workingsets'/@workingSets[name='CDT%20Json%20CDB'] //'cdt.workingsets'/@workingSets[name='CDT%20JTag'] //'cdt.workingsets'/@workingSets[name='CDT%20Launch'] //'cdt.workingsets'/@workingSets[name='CDT%20Launchbar'] //'cdt.workingsets'/@workingSets[name='CDT%20Releng'] //'cdt.workingsets'/@workingSets[name='CDT%20Remote'] //'cdt.workingsets'/@workingSets[name='CDT%20Terminal'] //'cdt.workingsets'/@workingSets[name='CDT%20Build'] //'cdt.workingsets'/@workingSets[name='CDT%20CMake'] //'cdt.workingsets'/@workingSets[name='CDT%20Codan'] //'cdt.workingsets'/@workingSets[name='CDT%20Core'] //'cdt.workingsets'/@workingSets[name='CDT%20Cross'] //'cdt.workingsets'/@workingSets[name='CDT%20Debug'] //'cdt.workingsets'/@workingSets[name='CDT%20DSF'] //'cdt.workingsets'/@workingSets[name='CDT%20DSF%20GDB'] //'cdt.workingsets'/@workingSets[name='CDT%20Doc'] //'cdt.workingsets'/@workingSets[name='CDT%20LLVM'] //'cdt.workingsets'/@workingSets[name='CDT%20LSP'] //'cdt.workingsets'/@workingSets[name='CDT%20Memory'] //'cdt.workingsets'/@workingSets[name='CDT%20Native'] //'cdt.workingsets'/@workingSets[name='CDT%20QT'] //'cdt.workingsets'/@workingSets[name='CDT%20Tests%20Runner'] //'cdt.workingsets'/@workingSets[name='CDT%20Tools%20Templates'] //'cdt.workingsets'/@workingSets[name='CDT%20Unit%20Test'] //'cdt.workingsets'/@workingSets[name='CDT%20Util'] //'cdt.workingsets'/@workingSets[name='CDT%20Visualizer'] //'cdt.workingsets'/@workingSets[name='CDT%20Windows']"/>
+            excludedWorkingSet="//'cdt.workingsets'/@workingSets[name='CDT%20Json%20CDB'] //'cdt.workingsets'/@workingSets[name='CDT%20JTag'] //'cdt.workingsets'/@workingSets[name='CDT%20Launch'] //'cdt.workingsets'/@workingSets[name='CDT%20Launchbar'] //'cdt.workingsets'/@workingSets[name='CDT%20Releng'] //'cdt.workingsets'/@workingSets[name='CDT%20Remote'] //'cdt.workingsets'/@workingSets[name='CDT%20Terminal'] //'cdt.workingsets'/@workingSets[name='CDT%20Build'] //'cdt.workingsets'/@workingSets[name='CDT%20CMake'] //'cdt.workingsets'/@workingSets[name='CDT%20Codan'] //'cdt.workingsets'/@workingSets[name='CDT%20Core'] //'cdt.workingsets'/@workingSets[name='CDT%20Cross'] //'cdt.workingsets'/@workingSets[name='CDT%20Debug'] //'cdt.workingsets'/@workingSets[name='CDT%20DSF'] //'cdt.workingsets'/@workingSets[name='CDT%20DSF%20GDB'] //'cdt.workingsets'/@workingSets[name='CDT%20Doc'] //'cdt.workingsets'/@workingSets[name='CDT%20LLVM'] //'cdt.workingsets'/@workingSets[name='CDT%20LSP'] //'cdt.workingsets'/@workingSets[name='CDT%20Memory'] //'cdt.workingsets'/@workingSets[name='CDT%20Native'] //'cdt.workingsets'/@workingSets[name='CDT%20Tests%20Runner'] //'cdt.workingsets'/@workingSets[name='CDT%20Tools%20Templates'] //'cdt.workingsets'/@workingSets[name='CDT%20Unit%20Test'] //'cdt.workingsets'/@workingSets[name='CDT%20Util'] //'cdt.workingsets'/@workingSets[name='CDT%20Visualizer'] //'cdt.workingsets'/@workingSets[name='CDT%20Windows']"/>
       </predicate>
     </workingSet>
     <workingSet
@@ -393,13 +391,6 @@
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
           relativePathPattern="native/.*"/>
-    </workingSet>
-    <workingSet
-        name="CDT QT">
-      <predicate
-          xsi:type="predicates:RepositoryPredicate"
-          project="org.eclipse.cdt"
-          relativePathPattern="qt/.*"/>
     </workingSet>
     <workingSet
         name="CDT Releng">

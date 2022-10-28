@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
-public class UITestCaseWithProject extends BaseUITestCase {
+public abstract class UITestCaseWithProject extends BaseUITestCase {
 	ArrayList<File> tempFiles = new ArrayList<>();
 	protected File tmpDir;
 	protected ICProject cproject;

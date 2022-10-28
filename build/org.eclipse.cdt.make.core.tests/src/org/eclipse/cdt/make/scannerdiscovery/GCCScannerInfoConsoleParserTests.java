@@ -46,8 +46,8 @@ public class GCCScannerInfoConsoleParserTests extends BaseBOPConsoleParserTests 
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		fOutputParser.shutdown();
+		super.tearDown();
 	}
 
 	/*

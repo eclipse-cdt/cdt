@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
@@ -53,9 +54,11 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 
 	@Override
 	protected void setUp() throws Exception {
+		super.setUp();
 		fMonitor = new NullProgressMonitor();
 
-		fCProject = StandardBuildTestHelper.createProject("SCD", (IPath) null, MakeCorePlugin.MAKE_PROJECT_ID);
+		fCProject = StandardBuildTestHelper.createProject("SCD" + getName(), (IPath) null,
+				MakeCorePlugin.MAKE_PROJECT_ID);
 		fCFile = fCProject.getProject().getFile("main.c");
 		if (!fCFile.exists()) {
 			fCFile.create(new ByteArrayInputStream(" \n".getBytes()), false, fMonitor);
@@ -65,7 +68,8 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		ResourceHelper.cleanUp(getName());
-		StandardBuildTestHelper.removeProject("SCDC");
+		fCProject.getProject().delete(true, true, null);
+		super.tearDown();
 	}
 
 	public void testGetCCompilerBuiltins() throws CoreException {

@@ -16,6 +16,8 @@ package org.eclipse.cdt.make.builder.tests;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -28,11 +30,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 @SuppressWarnings("nls")
-public class CDataProviderTests extends TestCase {
+public class CDataProviderTests extends BaseTestCase {
 	/**
 	 * @param name
 	 */
@@ -41,18 +42,14 @@ public class CDataProviderTests extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(CDataProviderTests.class);
+		return new TestSuite(CDataProviderTests.class);
+	}
 
-		//		// Add the relevant tests to the suite
-		//		suite.addTest(new StandardBuildTests("testProjectCreation"));
-		//		suite.addTest(new StandardBuildTests("testProjectSettings"));
-		//		suite.addTest(new StandardBuildTests("testProjectConversion"));
-		//		suite.addTest(new StandardBuildTests("testProjectCleanup"));
-		//
-		//		suite.addTestSuite(ScannerConfigConsoleParserTests.class);
-		//		suite.addTestSuite(ScannerConfigDiscoveryTests.class);
+	@Override
+	protected void tearDown() throws Exception {
+		BaseTestCase5.removeLeftOverProjects();
 
-		return suite;
+		super.tearDown();
 	}
 
 	public void testCData() throws Exception {

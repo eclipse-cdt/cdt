@@ -41,16 +41,15 @@ public class TestProcesses extends BaseTestCase {
 	private static final String H_EXT = ".h"; //$NON-NLS-1$
 
 	private static final String PROJECT_TYPE = "org.eclipse.cdt.core.tests.projectType"; //$NON-NLS-1$
+	private IProject project;
 
 	@Override
 	protected void setUp() throws Exception {
 		TemplateEngineTestsHelper.turnOffAutoBuild();
-		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
+		project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT_NAME);
 		IPath projectLocation = project.getRawLocation();
 
-		if (project.exists()) {
-			project.delete(true, true, null);
-		}
+		assertFalse(project.exists());
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProjectDescription description = workspace.newProjectDescription(project.getName());
 
@@ -63,6 +62,11 @@ public class TestProcesses extends BaseTestCase {
 			project.open(null);
 		}
 
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		project.delete(true, true, null);
 	}
 
 	public void testAddFile() {

@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.text.CHelpSettings;
@@ -35,14 +36,13 @@ import org.eclipse.core.runtime.Platform;
 import org.junit.Assert;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  *
  * CHelpProvider tests
  */
-public class CHelpTest extends TestCase {
+public class CHelpTest extends BaseTestCase {
 	public final static String TEST_EXTENSION_ID_PREFIX = "org.eclipse.cdt.ui.tests.chelp.extension"; //$NON-NLS-1$
 	private final static String C_PROJECT_NAME = "cHelpTestProject"; //$NON-NLS-1$
 	private final static String CC_PROJECT_NAME = "ccHelpTestProject"; //$NON-NLS-1$
@@ -114,6 +114,12 @@ public class CHelpTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		CHelpTestInfoProvider.fgEnabled = false;
+		if (fCProject != null) {
+			fCProject.getProject().delete(true, true, null);
+		}
+		if (fCCProject != null) {
+			fCCProject.getProject().delete(true, true, null);
+		}
 		super.tearDown();
 	}
 

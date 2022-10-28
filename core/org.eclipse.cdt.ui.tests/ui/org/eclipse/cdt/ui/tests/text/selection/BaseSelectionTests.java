@@ -39,7 +39,6 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 
@@ -108,12 +107,7 @@ public abstract class BaseSelectionTests extends BaseUITestCase {
 			throw new ParserException("offset can not be less than 0 and was " + offset); //$NON-NLS-1$
 
 		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IEditorPart part = null;
-		try {
-			part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
-		} catch (PartInitException e) {
-			assertFalse(true);
-		}
+		IEditorPart part = page.openEditor(new FileEditorInput(file), "org.eclipse.cdt.ui.editor.CEditor"); //$NON-NLS-1$
 
 		if (part instanceof CEditor) {
 			CEditor editor = (CEditor) part;

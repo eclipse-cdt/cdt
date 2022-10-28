@@ -14,6 +14,8 @@
 package org.eclipse.cdt.make.scannerdiscovery;
 
 import java.io.ByteArrayInputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.CCProjectNature;
@@ -80,9 +82,9 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).getScannerInformation(fCFile);
 		assertNotNull(scInfo);
 		String[] includes = scInfo.getIncludePaths();
-		assertTrue(includes.length == 0);
+		assertEquals(List.of(), Arrays.asList(includes));
 		Map<String, String> symbols = scInfo.getDefinedSymbols();
-		assertTrue(symbols.isEmpty());
+		assertEquals(Map.of(), symbols);
 	}
 
 	public void testGetCCCompilerBuiltins() throws CoreException {
@@ -94,9 +96,9 @@ public class ScannerConfigDiscoveryTests extends BaseTestCase {
 		IScannerInfo scInfo = CCorePlugin.getDefault().getScannerInfoProvider(fCProject).getScannerInformation(fCFile);
 		assertNotNull(scInfo);
 		String[] includes = scInfo.getIncludePaths();
-		assertTrue(includes.length == 0);
+		assertEquals(List.of(), Arrays.asList(includes));
 		Map<String, String> symbols = scInfo.getDefinedSymbols();
-		assertTrue(symbols.isEmpty());
+		assertEquals(Map.of(), symbols);
 	}
 
 }

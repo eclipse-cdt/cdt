@@ -46,3 +46,4 @@ Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.ui.tests
+Import-Package: org.junit.jupiter.api;version="5.9.0"

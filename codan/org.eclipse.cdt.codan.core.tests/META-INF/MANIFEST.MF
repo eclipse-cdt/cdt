@@ -27,4 +27,5 @@ Export-Package: org.eclipse.cdt.codan.core.cfg,
  org.eclipse.cdt.codan.core.internal.checkers,
  org.eclipse.cdt.codan.core.param,
  org.eclipse.cdt.codan.core.tests
+Import-Package: org.junit.jupiter.api;version="5.9.0"
 Automatic-Module-Name: org.eclipse.cdt.codan.core.tests

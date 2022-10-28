@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 
-public class CompletionTestBase extends AbstractContentAssistTest {
+public abstract class CompletionTestBase extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "CompletionTest.h";
 	private static final String SOURCE_FILE_NAME = "CompletionTest.cpp";
 	private static final String CURSOR_LOCATION_TAG = "/*cursor*/";

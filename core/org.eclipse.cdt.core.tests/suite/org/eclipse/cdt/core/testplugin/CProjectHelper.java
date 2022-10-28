@@ -265,7 +265,7 @@ public class CProjectHelper {
 					System.runFinalization();
 					cproject.getProject().delete(true, true, null);
 				} catch (CoreException e2) {
-					Assert.fail(getMessage(e2.getStatus()));
+					throw new AssertionError("Failed to delete project", e2);
 				}
 			}
 		}

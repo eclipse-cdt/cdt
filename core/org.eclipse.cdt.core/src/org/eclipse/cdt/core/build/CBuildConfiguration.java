@@ -74,6 +74,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -521,6 +522,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 * @since 8.0
 	 */
 	protected int watchProcess(IConsole console, IProgressMonitor monitor) throws CoreException {
+		assertLauncherNotNull(launcher);
 		return launcher.waitAndRead(console.getInfoStream(), console.getErrorStream(), monitor);
 	}
 
@@ -529,8 +531,13 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 * @since 8.0
 	 */
 	protected int watchProcess(IConsoleParser[] consoleParsers, IProgressMonitor monitor) throws CoreException {
+		assertLauncherNotNull(launcher);
 		ConsoleOutputSniffer sniffer = new ConsoleOutputSniffer(consoleParsers);
 		return launcher.waitAndRead(sniffer.getOutputStream(), sniffer.getErrorStream(), monitor);
+	}
+
+	private void assertLauncherNotNull(ICommandLauncher launcher) {
+		Assert.isNotNull(launcher, "Only processes launched with startBuildProcess can be watched."); //$NON-NLS-1$
 	}
 
 	private File getScannerInfoCacheFile() {

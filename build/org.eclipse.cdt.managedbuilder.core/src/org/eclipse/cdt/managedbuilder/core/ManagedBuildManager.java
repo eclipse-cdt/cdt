@@ -847,7 +847,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * != IOption.UNDEF_LIBRARY_PATHS && option.getValueType() !=
 	 * IOption.UNDEF_LIBRARY_FILES && option.getValueType() !=
 	 * IOption.UNDEF_MACRO_FILES )) { return; } } catch (BuildException e) {return;}
-	 * 
+
 	 * // Figure out if there is a listener for this change IResource resource =
 	 * config.getOwner(); List listeners = (List)
 	 * getBuildModelListeners().get(resource); if (listeners == null) { return; }
@@ -1361,10 +1361,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 		 * // Create document Exception err = null; try { DocumentBuilder builder =
 		 * DocumentBuilderFactory.newInstance().newDocumentBuilder(); Document doc =
 		 * builder.newDocument();
-		 * 
+
 		 * // Get the build information for the project ManagedBuildInfo buildInfo =
 		 * (ManagedBuildInfo) getBuildInfo(project);
-		 * 
+
 		 * // Save the build info if (buildInfo != null && !buildInfo.isReadOnly() &&
 		 * buildInfo.isValid() && (force == true || buildInfo.isDirty())) { // For
 		 * post-2.0 projects, there will be a version String projectVersion =
@@ -1373,7 +1373,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		 * projectVersion); doc.appendChild(instruction); } Element rootElement =
 		 * doc.createElement(ROOT_NODE_NAME); doc.appendChild(rootElement);
 		 * buildInfo.serialize(doc, rootElement);
-		 * 
+
 		 * // Transform the document to something we can save in a file
 		 * ByteArrayOutputStream stream = new ByteArrayOutputStream(); Transformer
 		 * transformer = TransformerFactory.newInstance().newTransformer();
@@ -1382,10 +1382,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 		 * transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
 		 * DOMSource source = new DOMSource(doc); StreamResult result = new
 		 * StreamResult(stream); transformer.transform(source, result);
-		 * 
+
 		 * // Save the document IFile projectFile = project.getFile(SETTINGS_FILE_NAME);
 		 * String utfString = stream.toString("UTF-8"); //$NON-NLS-1$
-		 * 
+
 		 * if (projectFile.exists()) { if (projectFile.isReadOnly()) { // If we are not
 		 * running headless, and there is a UI Window around, grab it // and the
 		 * associated shell IWorkbenchWindow window =
@@ -1411,7 +1411,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		 * NullProgressMonitor()); //$NON-NLS-1$ } else { projectFile.create(new
 		 * ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new
 		 * NullProgressMonitor()); //$NON-NLS-1$ }
-		 * 
+
 		 * // Close the streams stream.close(); } } catch (ParserConfigurationException
 		 * e) { err = e; } catch (FactoryConfigurationError e) { err = e.getException();
 		 * } catch (TransformerConfigurationException e) { err = e; } catch
@@ -1419,13 +1419,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 		 * (TransformerException e) { err = e; } catch (IOException e) { // The save
 		 * failed err = e; } catch (CoreException e) { // Save to IFile failed err = e;
 		 * }
-		 * 
+
 		 * if (err != null) { // Put out an error message indicating that the attempted
 		 * write to the .cdtbuild project file failed IWorkbenchWindow window =
 		 * PlatformUI.getWorkbench().getActiveWorkbenchWindow(); if (window == null) {
 		 * IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 		 * window = windows[0]; }
-		 * 
+
 		 * final Shell shell = window.getShell(); if (shell != null) { final String
 		 * exceptionMsg = err.getMessage(); shell.getDisplay().syncExec( new Runnable()
 		 * { public void run() { MessageDialog.openError(shell,
@@ -1496,9 +1496,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 		 * configurations for (int i=0; i < configs.length; i++) {
 		 * ManagedBuildManager.performValueHandlerEvent(configs[i],
 		 * IManagedOptionValueHandler.EVENT_CLOSE); }
-		 * 
+
 		 * info.setValid(false);
-		 * 
+
 		 * try { resource.setSessionProperty(buildInfoProperty, null); } catch
 		 * (CoreException e) { } }
 		 */
@@ -1779,7 +1779,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return Status.OK_STATUS;
 		/*
 		 * ManagedBuildInfo buildInfo = null;
-		 * 
+
 		 * // Get the build info associated with this project for this session try {
 		 * buildInfo = findBuildInfo(resource.getProject(), true);
 		 * initBuildInfoContainer(buildInfo); } catch (CoreException e) { return new
@@ -2689,7 +2689,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		 * (buildInfo == null && resource instanceof IProject) { try { buildInfo =
 		 * loadBuildInfo((IProject)resource); } catch (Exception e) { // TODO: Issue
 		 * error reagarding not being able to load the project file (.cdtbuild) }
-		 * 
+
 		 * try { // Check if the project needs its container initialized
 		 * initBuildInfoContainer(buildInfo); } catch (CoreException e) { // We can live
 		 * without a path entry container if the build information is valid } }
@@ -2771,22 +2771,22 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * synchronized private static ManagedBuildInfo
 	 * findBuildInfoSynchronized(IProject project, boolean forceLoad) {
 	 * ManagedBuildInfo buildInfo = null;
-	 * 
+
 	 * // Check if there is any build info associated with this project for this
 	 * session try { buildInfo =
 	 * (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty); // Make sure
 	 * that if a project has build info, that the info is not corrupted if
 	 * (buildInfo != null) { buildInfo.updateOwner(project); } } catch
 	 * (CoreException e) { // return null; }
-	 * 
+
 	 * if(buildInfo == null && forceLoad){ // Make sure the extension information is
 	 * loaded first try { loadExtensions(); } catch (BuildException e) {
 	 * e.printStackTrace(); return null; }
-	 * 
-	 * 
+
+
 	 * // Check weather getBuildInfo is called from converter buildInfo =
 	 * UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
-	 * 
+
 	 * // Nothing in session store, so see if we can load it from cdtbuild if
 	 * (buildInfo == null) { try { buildInfo = loadBuildInfo(project); } catch
 	 * (Exception e) { // Issue error regarding not being able to load the project
@@ -2796,7 +2796,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * PlatformUI.getWorkbench().getActiveWorkbenchWindow(); if(window == null){
 	 * IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
 	 * window = windows[0]; }
-	 * 
+
 	 * final Shell shell = window.getShell(); final String exceptionMsg =
 	 * e.getMessage(); //using syncExec could cause a dead-lock //that is why
 	 * asyncExec is used shell.getDisplay().asyncExec( new Runnable() { public void
@@ -2805,7 +2805,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * ManagedMakeMessages.getFormattedString(
 	 * "ManagedBuildManager.error.open_failed", //$NON-NLS-1$ exceptionMsg)); } } );
 	 * }
-	 * 
+
 	 * if (buildInfo != null && !buildInfo.isContainerInited()) { // NOTE: If this
 	 * is called inside the above rule, then an IllegalArgumentException can //
 	 * occur when the CDT project file is saved - it uses the Workspace Root as the
@@ -2813,7 +2813,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * initialized initBuildInfoContainer(buildInfo); } catch (CoreException e) { //
 	 * We can live without a path entry container if the build information is valid
 	 * } } } }
-	 * 
+
 	 * return buildInfo; }
 	 */
 	/**

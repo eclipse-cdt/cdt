@@ -153,14 +153,16 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 
 /**
- * This is the main entry point for getting at the build information
- * for the managed build system.
+ * This is the main entry point for getting at the build information for the
+ * managed build system.
  *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ManagedBuildManager extends AbstractCExtension {
-	//	private static final QualifiedName buildInfoProperty = new QualifiedName(ManagedBuilderCorePlugin.PLUGIN_ID, "managedBuildInfo");	//$NON-NLS-1$
+	// private static final QualifiedName buildInfoProperty = new
+	// QualifiedName(ManagedBuilderCorePlugin.PLUGIN_ID, "managedBuildInfo");
+	// //$NON-NLS-1$
 	private static final String ROOT_NODE_NAME = "ManagedProjectBuildInfo"; //$NON-NLS-1$
 	public static final String SETTINGS_FILE_NAME = ".cdtbuild"; //$NON-NLS-1$
 	private static final ITarget[] emptyTargets = new ITarget[0];
@@ -240,19 +242,20 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	// "Selected configuraton" elements defined in the manifest files.
 	// These are configuration elements that map to objects in the internal
-	// representation of the manifest files.  For example, ListOptionValues
+	// representation of the manifest files. For example, ListOptionValues
 	// and enumeratedOptionValues are NOT included.
 	// Note that these "configuration elements" are not related to the
 	// managed build system "configurations".
 	// From the PDE Guide:
-	//  A configuration element, with its attributes and children, directly
-	//  reflects the content and structure of the extension section within the
-	//  declaring plug-in's manifest (plugin.xml) file.
-	// This map has a lifecycle corresponding to the build definitions extension loading.
+	// A configuration element, with its attributes and children, directly
+	// reflects the content and structure of the extension section within the
+	// declaring plug-in's manifest (plugin.xml) file.
+	// This map has a lifecycle corresponding to the build definitions extension
+	// loading.
 	private static Map<IBuildObject, IManagedConfigElement> configElementMap;
 
-	//	private static List sortedToolChains;
-	//	private static Map builtTypeToToolChainListMap;
+	// private static List sortedToolChains;
+	// private static Map builtTypeToToolChainListMap;
 	// Listeners interested in build model changes
 	private static Map<IResource, List<IScannerInfoChangeListener>> buildModelListeners;
 	// Random number for derived object model elements
@@ -277,10 +280,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 	static {
 		getEnvironmentVariableProvider()
 				.subscribe(fEnvironmentBuildPathsChangeListener = (configuration, buildPathType) -> {
-					//						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
-					//							initializePathEntries(configuration,null);
-					//							notifyListeners(configuration,null);
-					//						}
+					// if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
+					// initializePathEntries(configuration,null);
+					// notifyListeners(configuration,null);
+					// }
 				});
 	}
 
@@ -301,8 +304,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the list of project types that are defined by this project,
-	 * projects referenced by this project, and by the extensions.
+	 * @return the list of project types that are defined by this project, projects
+	 *         referenced by this project, and by the extensions.
 	 */
 	public static IProjectType[] getDefinedProjectTypes() {
 		try {
@@ -517,8 +520,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the targets owned by this resource.  If none are owned,
-	 * an empty array is returned.
+	 * @return the targets owned by this resource. If none are owned, an empty array
+	 *         is returned.
 	 */
 	public static ITarget[] getTargets(IResource resource) {
 		IManagedBuildInfo buildInfo = getBuildInfo(resource);
@@ -531,8 +534,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the project type from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 * @return the project type from the manifest with the ID specified in the
+	 *         argument or {@code null}.
 	 */
 	public static IProjectType getExtensionProjectType(String id) {
 		try {
@@ -547,8 +550,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the base extension configuration from the manifest (plugin.xml)
-	 *  or {@code null} if not found.
+	 * @return the base extension configuration from the manifest (plugin.xml) or
+	 *         {@code null} if not found.
 	 *
 	 * @since 8.0
 	 */
@@ -560,8 +563,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the configuration from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 * @return the configuration from the manifest with the ID specified in the
+	 *         argument or {@code null}.
 	 */
 	public static IConfiguration getExtensionConfiguration(String id) {
 		try {
@@ -589,8 +592,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the resource configuration from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 * @return the resource configuration from the manifest with the ID specified in
+	 *         the argument or {@code null}.
 	 */
 	public static IResourceConfiguration getExtensionResourceConfiguration(String id) {
 		try {
@@ -605,24 +608,24 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the tool-chain from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 * @return the tool-chain from the manifest with the ID specified in the
+	 *         argument or {@code null}.
 	 */
 	public static IToolChain getExtensionToolChain(String id) {
 		return getExtensionToolChainMapInternal().get(id);
 	}
 
 	/**
-	 * @return the tool from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 * @return the tool from the manifest with the ID specified in the argument or
+	 *         {@code null}.
 	 */
 	public static ITool getExtensionTool(String id) {
 		return getExtensionToolMapInternal().get(id);
 	}
 
 	/**
-	 * @return the target platform from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 * @return the target platform from the manifest with the ID specified in the
+	 *         argument or {@code null}.
 	 */
 	public static ITargetPlatform getExtensionTargetPlatform(String id) {
 		try {
@@ -638,7 +641,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * @return the builder from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 *         or {@code null}.
 	 */
 	public static IBuilder getExtensionBuilder(String id) {
 		return getExtensionBuilderMapInternal().get(id);
@@ -652,8 +655,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the option from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 * @return the option from the manifest with the ID specified in the argument or
+	 *         {@code null}.
 	 */
 	public static IOption getExtensionOption(String id) {
 		try {
@@ -669,7 +672,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * @return the InputType from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 *         or {@code null}.
 	 */
 	public static IInputType getExtensionInputType(String id) {
 		try {
@@ -684,8 +687,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the OutputType from the manifest with the ID specified in the argument
-	 *  or {@code null}.
+	 * @return the OutputType from the manifest with the ID specified in the
+	 *         argument or {@code null}.
 	 */
 	public static IOutputType getExtensionOutputType(String id) {
 		try {
@@ -700,8 +703,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the target from the manifest with the ID specified in the argument
-	 *  or {@code null} - CDT V2.0 object model.
+	 * @return the target from the manifest with the ID specified in the argument or
+	 *         {@code null} - CDT V2.0 object model.
 	 */
 	public static ITarget getExtensionTarget(String id) {
 		try {
@@ -717,10 +720,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * @param resource to find the target
-	 * @param id - ID of the target
+	 * @param id       - ID of the target
 	 *
 	 * @return the result of a best-effort search to find a target with the
-	 * specified ID, or {@code null} if one is not found.
+	 *         specified ID, or {@code null} if one is not found.
 	 */
 	public static ITarget getTarget(IResource resource, String id) {
 		ITarget target = null;
@@ -753,7 +756,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Sets the currently selected configuration.  This is used while the project
+	 * Sets the currently selected configuration. This is used while the project
 	 * property pages are displayed
 	 */
 	public static void setSelectedConfiguration(IProject project, IConfiguration config) {
@@ -779,7 +782,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * load tool provider defined or default (if not found) command line generator special for selected tool
+	 * load tool provider defined or default (if not found) command line generator
+	 * special for selected tool
+	 *
 	 * @param toolId - id selected tool ID
 	 */
 	public static IManagedCommandLineGenerator getCommandLineGenerator(IConfiguration config, String toolId) {
@@ -791,9 +796,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Targets may have a scanner config discovery profile defined that knows
-	 * how to discover built-in compiler defines and includes search paths.
-	 * Find the profile for the target specified.
+	 * Targets may have a scanner config discovery profile defined that knows how to
+	 * discover built-in compiler defines and includes search paths. Find the
+	 * profile for the target specified.
 	 *
 	 * @return scanner configuration discovery profile id
 	 */
@@ -803,8 +808,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Gets the currently selected target.  This is used while the project
-	 * property pages are displayed.
+	 * Gets the currently selected target. This is used while the project property
+	 * pages are displayed.
 	 *
 	 * @return target configuration.
 	 */
@@ -820,47 +825,36 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 *
 	 * @param config
+	 *
 	 * @param option
 	 */
 	/*
-	private static void notifyListeners(IConfiguration config, IOption option) {
-		// Continue if change is something that effect the scanner
-		try {
-			//an option can be null in the case of calling this method from the environment
-			//build path change listener
-			if (config.isTemporary() ||
-					(option != null && option.getValueType() != IOption.INCLUDE_PATH
-							&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
-							&& option.getValueType() != IOption.INCLUDE_FILES
-							&& option.getValueType() != IOption.LIBRARY_PATHS
-							&& option.getValueType() != IOption.LIBRARY_FILES
-							&& option.getValueType() != IOption.MACRO_FILES
-							&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
-							&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
-							&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
-							&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
-							&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
-							&& option.getValueType() != IOption.UNDEF_MACRO_FILES
-							)) {
-				return;
-			}
-		} catch (BuildException e) {return;}
-
-		// Figure out if there is a listener for this change
-		IResource resource = config.getOwner();
-		List listeners = (List) getBuildModelListeners().get(resource);
-		if (listeners == null) {
-			return;
-		}
-		ListIterator iter = listeners.listIterator();
-		while (iter.hasNext()) {
-			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, (IScannerInfo)getBuildInfo(resource));
-		}
-	}
-	*/
+	 * private static void notifyListeners(IConfiguration config, IOption option) {
+	 * // Continue if change is something that effect the scanner try { //an option
+	 * can be null in the case of calling this method from the environment //build
+	 * path change listener if (config.isTemporary() || (option != null &&
+	 * option.getValueType() != IOption.INCLUDE_PATH && option.getValueType() !=
+	 * IOption.PREPROCESSOR_SYMBOLS && option.getValueType() !=
+	 * IOption.INCLUDE_FILES && option.getValueType() != IOption.LIBRARY_PATHS &&
+	 * option.getValueType() != IOption.LIBRARY_FILES && option.getValueType() !=
+	 * IOption.MACRO_FILES && option.getValueType() != IOption.UNDEF_INCLUDE_PATH &&
+	 * option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS &&
+	 * option.getValueType() != IOption.UNDEF_INCLUDE_FILES && option.getValueType()
+	 * != IOption.UNDEF_LIBRARY_PATHS && option.getValueType() !=
+	 * IOption.UNDEF_LIBRARY_FILES && option.getValueType() !=
+	 * IOption.UNDEF_MACRO_FILES )) { return; } } catch (BuildException e) {return;}
+	 * 
+	 * // Figure out if there is a listener for this change IResource resource =
+	 * config.getOwner(); List listeners = (List)
+	 * getBuildModelListeners().get(resource); if (listeners == null) { return; }
+	 * ListIterator iter = listeners.listIterator(); while (iter.hasNext()) {
+	 * ((IScannerInfoChangeListener)iter.next()).changeNotification(resource,
+	 * (IScannerInfo)getBuildInfo(resource)); } }
+	 */
 	public static void initializePathEntries(IConfiguration config, IOption option) {
 		try {
 			if (config.isTemporary() || (option != null && option.getValueType() != IOption.INCLUDE_PATH
@@ -923,8 +917,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds the version of the managed build system to the project
-	 * specified in the argument.
+	 * Adds the version of the managed build system to the project specified in the
+	 * argument.
 	 *
 	 * @param newProject the project to version
 	 */
@@ -941,13 +935,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param config The configuration the option belongs to.
 	 * @param holder The holder/parent of the option.
 	 * @param option The option to set the value for.
-	 * @param value The boolean that the option should contain after the change.
+	 * @param value  The boolean that the option should contain after the change.
 	 *
-	 * @return The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option. This can be the same option or a newly created
+	 *         option.
 	 *
-	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
-	 *        has changed to <code>IHoldsOptions holder</code>. Client code
-	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter has
+	 *        changed to <code>IHoldsOptions holder</code>. Client code assuming
+	 *        <code>ITool</code> as type, will continue to work unchanged.
 	 */
 	public static IOption setOption(IConfiguration config, IHoldsOptions holder, IOption option, boolean value) {
 		IOption retOpt;
@@ -961,8 +956,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//			initializePathEntries(config,retOpt);
-			//			notifyListeners(config, retOpt);
+			// initializePathEntries(config,retOpt);
+			// notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -973,15 +968,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Set the boolean value for an option for a given config.
 	 *
 	 * @param resConfig The resource configuration the option belongs to.
-	 * @param holder The holder/parent of the option.
-	 * @param option The option to set the value for.
-	 * @param value The boolean that the option should contain after the change.
+	 * @param holder    The holder/parent of the option.
+	 * @param option    The option to set the value for.
+	 * @param value     The boolean that the option should contain after the change.
 	 *
-	 * @return The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option. This can be the same option or a newly created
+	 *         option.
 	 *
-	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
-	 *        has changed to <code>IHoldsOptions holder</code>. Client code
-	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter has
+	 *        changed to <code>IHoldsOptions holder</code>. Client code assuming
+	 *        <code>ITool</code> as type, will continue to work unchanged.
 	 */
 	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option, boolean value) {
 		IOption retOpt;
@@ -995,7 +991,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//		initializePathEntries(resConfig,retOpt);
+			// initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
@@ -1009,13 +1005,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * @param config The configuration the option belongs to.
 	 * @param holder The holder/parent of the option.
 	 * @param option The option to set the value for.
-	 * @param value The value that the option should contain after the change.
+	 * @param value  The value that the option should contain after the change.
 	 *
-	 * @return The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option. This can be the same option or a newly created
+	 *         option.
 	 *
-	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
-	 *        has changed to <code>IHoldsOptions holder</code>. Client code
-	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter has
+	 *        changed to <code>IHoldsOptions holder</code>. Client code assuming
+	 *        <code>ITool</code> as type, will continue to work unchanged.
 	 */
 	public static IOption setOption(IConfiguration config, IHoldsOptions holder, IOption option, String value) {
 		IOption retOpt;
@@ -1028,8 +1025,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//			initializePathEntries(config,retOpt);
-			//			notifyListeners(config, retOpt);
+			// initializePathEntries(config,retOpt);
+			// notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1037,18 +1034,19 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Set the string value for an option for a given  resource config.
+	 * Set the string value for an option for a given resource config.
 	 *
 	 * @param resConfig The resource configuration the option belongs to.
-	 * @param holder The holder/parent of the option.
-	 * @param option The option to set the value for.
-	 * @param value The value that the option should contain after the change.
+	 * @param holder    The holder/parent of the option.
+	 * @param option    The option to set the value for.
+	 * @param value     The value that the option should contain after the change.
 	 *
-	 * @return The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option. This can be the same option or a newly created
+	 *         option.
 	 *
-	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
-	 *        has changed to <code>IHoldsOptions holder</code>. Client code
-	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter has
+	 *        changed to <code>IHoldsOptions holder</code>. Client code assuming
+	 *        <code>ITool</code> as type, will continue to work unchanged.
 	 */
 	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option, String value) {
 		IOption retOpt;
@@ -1061,7 +1059,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//		initializePathEntries(resConfig,retOpt);
+			// initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
@@ -1070,19 +1068,20 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-		 * Set the string array value for an option for a given config.
-		 *
-		 * @param config The configuration the option belongs to.
-		 * @param holder The holder/parent of the option.
-		 * @param option The option to set the value for.
-		 * @param value The values the option should contain after the change.
-		 *
-		 * @return The modified option.  This can be the same option or a newly created option.
-		 *
-		 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
-		 *        has changed to <code>IHoldsOptions holder</code>. Client code
-		 *        assuming <code>ITool</code> as type, will continue to work unchanged.
-		 */
+	 * Set the string array value for an option for a given config.
+	 *
+	 * @param config The configuration the option belongs to.
+	 * @param holder The holder/parent of the option.
+	 * @param option The option to set the value for.
+	 * @param value  The values the option should contain after the change.
+	 *
+	 * @return The modified option. This can be the same option or a newly created
+	 *         option.
+	 *
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter has
+	 *        changed to <code>IHoldsOptions holder</code>. Client code assuming
+	 *        <code>ITool</code> as type, will continue to work unchanged.
+	 */
 	public static IOption setOption(IConfiguration config, IHoldsOptions holder, IOption option, String[] value) {
 		IOption retOpt;
 		try {
@@ -1094,8 +1093,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//			initializePathEntries(config,retOpt);
-			//			notifyListeners(config, retOpt);
+			// initializePathEntries(config,retOpt);
+			// notifyListeners(config, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1106,15 +1105,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Set the string array value for an option for a given resource config.
 	 *
 	 * @param resConfig The resource configuration the option belongs to.
-	 * @param holder The holder/parent of the option.
-	 * @param option The option to set the value for.
-	 * @param value The values the option should contain after the change.
+	 * @param holder    The holder/parent of the option.
+	 * @param option    The option to set the value for.
+	 * @param value     The values the option should contain after the change.
 	 *
-	 * @return The modified option.  This can be the same option or a newly created option.
+	 * @return The modified option. This can be the same option or a newly created
+	 *         option.
 	 *
-	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter
-	 *        has changed to <code>IHoldsOptions holder</code>. Client code
-	 *        assuming <code>ITool</code> as type, will continue to work unchanged.
+	 * @since 3.0 - The type and name of the <code>ITool tool</code> parameter has
+	 *        changed to <code>IHoldsOptions holder</code>. Client code assuming
+	 *        <code>ITool</code> as type, will continue to work unchanged.
 	 */
 	public static IOption setOption(IResourceInfo resConfig, IHoldsOptions holder, IOption option, String[] value) {
 		IOption retOpt;
@@ -1127,7 +1127,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//			initializePathEntries(resConfig,retOpt);
+			// initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
@@ -1147,7 +1147,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//			initializePathEntries(resConfig,retOpt);
+			// initializePathEntries(resConfig,retOpt);
 			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
@@ -1227,13 +1227,17 @@ public class ManagedBuildManager extends AbstractCExtension {
 							shell = window.getShell();
 						}
 						// Inform Eclipse that we are intending to modify this file
-						// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
+						// This will provide the user the opportunity, via UI prompts, to fetch the file
+						// from source code control
 						// reset a read-only file protection to write etc.
-						// If there is no shell, i.e. shell is null, then there will be no user UI interaction
+						// If there is no shell, i.e. shell is null, then there will be no user UI
+						// interaction
 						IStatus status = projectFile.getWorkspace().validateEdit(new IFile[] { projectFile }, shell);
-						// If the file is still read-only, then we should not attempt the write, since it will
+						// If the file is still read-only, then we should not attempt the write, since
+						// it will
 						// just fail - just throw an exception, to be caught below, and inform the user
-						// For other non-successful status, we take our chances, attempt the write, and pass
+						// For other non-successful status, we take our chances, attempt the write, and
+						// pass
 						// along any exception thrown
 						if (!status.isOK()) {
 							if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
@@ -1272,7 +1276,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 
 		if (err != null) {
-			// Put out an error message indicating that the attempted write to the .cdtbuild project file failed
+			// Put out an error message indicating that the attempted write to the .cdtbuild
+			// project file failed
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			if (window == null) {
 				IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -1288,13 +1293,18 @@ public class ManagedBuildManager extends AbstractCExtension {
 								ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED, exceptionMsg)));
 			}
 		}
-		// If we return an honest status when the operation fails, there are instances when the UI behavior
+		// If we return an honest status when the operation fails, there are instances
+		// when the UI behavior
 		// is not very good
-		// Specifically, if "OK" is clicked by the user from the property page UI, and the return status
-		// from this routine is false, the property page UI will not be closed (note: this is Eclispe code) and
+		// Specifically, if "OK" is clicked by the user from the property page UI, and
+		// the return status
+		// from this routine is false, the property page UI will not be closed (note:
+		// this is Eclispe code) and
 		// the OK button will simply be grayed out
-		// At this point, the only way out is to click "Cancel" to get the UI to go away; note however that any
-		// property page changes will be sticky, in the UI, which is nonintuitive and confusing
+		// At this point, the only way out is to click "Cancel" to get the UI to go
+		// away; note however that any
+		// property page changes will be sticky, in the UI, which is nonintuitive and
+		// confusing
 		// Therefore, just always return success, i.e. true, from this routine
 		return true;
 	}
@@ -1305,7 +1315,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		} catch (CoreException e) {
 			Throwable cause = e.getStatus().getException();
 			if (cause instanceof IllegalArgumentException) {
-				//can not acquire the root rule
+				// can not acquire the root rule
 				Job j = new Job("save build info job") { //$NON-NLS-1$
 
 					@Override
@@ -1330,8 +1340,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Saves the build information associated with a project and all resources
-	 * in the project to the build info file.
+	 * Saves the build information associated with a project and all resources in
+	 * the project to the build info file.
 	 */
 	private static boolean updateBuildInfo(IProject project, boolean force) throws CoreException {
 		IManagedBuildInfo info = getBuildInfo(project, false);
@@ -1341,137 +1351,98 @@ public class ManagedBuildManager extends AbstractCExtension {
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
 		projDes = BuildSettingsUtil.synchBuildInfo(info, projDes, force);
 
-		//		try {
+		// try {
 		BuildSettingsUtil.checkApplyDescription(project, projDes);
-		//		} catch (CoreException e) {
-		//			return false;
-		//		}
+		// } catch (CoreException e) {
+		// return false;
+		// }
 		return true;
 		/*
-		// Create document
-		Exception err = null;
-		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-			Document doc = builder.newDocument();
-
-			// Get the build information for the project
-			ManagedBuildInfo buildInfo = (ManagedBuildInfo) getBuildInfo(project);
-
-			// Save the build info
-			if (buildInfo != null &&
-					!buildInfo.isReadOnly() &&
-					buildInfo.isValid() &&
-					(force == true || buildInfo.isDirty())) {
-				// For post-2.0 projects, there will be a version
-				String projectVersion = buildInfo.getVersion();
-				if (projectVersion != null) {
-					ProcessingInstruction instruction = doc.createProcessingInstruction(VERSION_ELEMENT_NAME, projectVersion);
-					doc.appendChild(instruction);
-				}
-				Element rootElement = doc.createElement(ROOT_NODE_NAME);
-				doc.appendChild(rootElement);
-				buildInfo.serialize(doc, rootElement);
-
-				// Transform the document to something we can save in a file
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				Transformer transformer = TransformerFactory.newInstance().newTransformer();
-				transformer.setOutputProperty(OutputKeys.METHOD, "xml");	//$NON-NLS-1$
-				transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
-				transformer.setOutputProperty(OutputKeys.INDENT, "yes");	//$NON-NLS-1$
-				DOMSource source = new DOMSource(doc);
-				StreamResult result = new StreamResult(stream);
-				transformer.transform(source, result);
-
-				// Save the document
-				IFile projectFile = project.getFile(SETTINGS_FILE_NAME);
-				String utfString = stream.toString("UTF-8");	//$NON-NLS-1$
-
-				if (projectFile.exists()) {
-					if (projectFile.isReadOnly()) {
-						// If we are not running headless, and there is a UI Window around, grab it
-						// and the associated shell
-						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						if (window == null) {
-							IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-							window = windows[0];
-						}
-						Shell shell = null;
-						if (window != null) {
-							shell = window.getShell();
-						}
-		                // Inform Eclipse that we are intending to modify this file
-						// This will provide the user the opportunity, via UI prompts, to fetch the file from source code control
-						// reset a read-only file protection to write etc.
-						// If there is no shell, i.e. shell is null, then there will be no user UI interaction
-						IStatus status = projectFile.getWorkspace().validateEdit(new IFile[]{projectFile}, shell);
-						// If the file is still read-only, then we should not attempt the write, since it will
-						// just fail - just throw an exception, to be caught below, and inform the user
-						// For other non-successful status, we take our chances, attempt the write, and pass
-						// along any exception thrown
-						if (!status.isOK()) {
-						    if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) {
-						    	stream.close();
-		    	                throw new IOException(ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_READ_ONLY, projectFile.getFullPath().toString())); //$NON-NLS-1$
-						    }
-						}
-					}
-					projectFile.setContents(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
-				} else {
-					projectFile.create(new ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new NullProgressMonitor());	//$NON-NLS-1$
-				}
-
-				// Close the streams
-				stream.close();
-			}
-		} catch (ParserConfigurationException e) {
-			err = e;
-		} catch (FactoryConfigurationError e) {
-			err = e.getException();
-		} catch (TransformerConfigurationException e) {
-			err = e;
-		} catch (TransformerFactoryConfigurationError e) {
-			err = e.getException();
-		} catch (TransformerException e) {
-			err = e;
-		} catch (IOException e) {
-			// The save failed
-			err = e;
-		} catch (CoreException e) {
-			// Save to IFile failed
-		    err = e;
-		}
-
-		if (err != null) {
-			// Put out an error message indicating that the attempted write to the .cdtbuild project file failed
-			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-			if (window == null) {
-				IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-				window = windows[0];
-			}
-
-			final Shell shell = window.getShell();
-			if (shell != null) {
-				final String exceptionMsg = err.getMessage();
-				shell.getDisplay().syncExec( new Runnable() {
-					public void run() {
-						MessageDialog.openError(shell,
-								ManagedMakeMessages.getResourceString("ManagedBuildManager.error.write_failed_title"),	//$NON-NLS-1$
-								ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED,		//$NON-NLS-1$
-										exceptionMsg));
-					}
-			    } );
-			}
-		}
-		// If we return an honest status when the operation fails, there are instances when the UI behavior
-		// is not very good
-		// Specifically, if "OK" is clicked by the user from the property page UI, and the return status
-		// from this routine is false, the property page UI will not be closed (note: this is Eclispe code) and
-		// the OK button will simply be grayed out
-		// At this point, the only way out is to click "Cancel" to get the UI to go away; note however that any
-		// property page changes will be sticky, in the UI, which is nonintuitive and confusing
-		// Therefore, just always return success, i.e. true, from this routine
-		return true;
-		*/
+		 * // Create document Exception err = null; try { DocumentBuilder builder =
+		 * DocumentBuilderFactory.newInstance().newDocumentBuilder(); Document doc =
+		 * builder.newDocument();
+		 * 
+		 * // Get the build information for the project ManagedBuildInfo buildInfo =
+		 * (ManagedBuildInfo) getBuildInfo(project);
+		 * 
+		 * // Save the build info if (buildInfo != null && !buildInfo.isReadOnly() &&
+		 * buildInfo.isValid() && (force == true || buildInfo.isDirty())) { // For
+		 * post-2.0 projects, there will be a version String projectVersion =
+		 * buildInfo.getVersion(); if (projectVersion != null) { ProcessingInstruction
+		 * instruction = doc.createProcessingInstruction(VERSION_ELEMENT_NAME,
+		 * projectVersion); doc.appendChild(instruction); } Element rootElement =
+		 * doc.createElement(ROOT_NODE_NAME); doc.appendChild(rootElement);
+		 * buildInfo.serialize(doc, rootElement);
+		 * 
+		 * // Transform the document to something we can save in a file
+		 * ByteArrayOutputStream stream = new ByteArrayOutputStream(); Transformer
+		 * transformer = TransformerFactory.newInstance().newTransformer();
+		 * transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
+		 * transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
+		 * transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
+		 * DOMSource source = new DOMSource(doc); StreamResult result = new
+		 * StreamResult(stream); transformer.transform(source, result);
+		 * 
+		 * // Save the document IFile projectFile = project.getFile(SETTINGS_FILE_NAME);
+		 * String utfString = stream.toString("UTF-8"); //$NON-NLS-1$
+		 * 
+		 * if (projectFile.exists()) { if (projectFile.isReadOnly()) { // If we are not
+		 * running headless, and there is a UI Window around, grab it // and the
+		 * associated shell IWorkbenchWindow window =
+		 * PlatformUI.getWorkbench().getActiveWorkbenchWindow(); if (window == null) {
+		 * IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+		 * window = windows[0]; } Shell shell = null; if (window != null) { shell =
+		 * window.getShell(); } // Inform Eclipse that we are intending to modify this
+		 * file // This will provide the user the opportunity, via UI prompts, to fetch
+		 * the file from source code control // reset a read-only file protection to
+		 * write etc. // If there is no shell, i.e. shell is null, then there will be no
+		 * user UI interaction IStatus status =
+		 * projectFile.getWorkspace().validateEdit(new IFile[]{projectFile}, shell); //
+		 * If the file is still read-only, then we should not attempt the write, since
+		 * it will // just fail - just throw an exception, to be caught below, and
+		 * inform the user // For other non-successful status, we take our chances,
+		 * attempt the write, and pass // along any exception thrown if (!status.isOK())
+		 * { if (status.getCode() == IResourceStatus.READ_ONLY_LOCAL) { stream.close();
+		 * throw new
+		 * IOException(ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_READ_ONLY,
+		 * projectFile.getFullPath().toString())); //$NON-NLS-1$ } } }
+		 * projectFile.setContents(new
+		 * ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new
+		 * NullProgressMonitor()); //$NON-NLS-1$ } else { projectFile.create(new
+		 * ByteArrayInputStream(utfString.getBytes("UTF-8")), IResource.FORCE, new
+		 * NullProgressMonitor()); //$NON-NLS-1$ }
+		 * 
+		 * // Close the streams stream.close(); } } catch (ParserConfigurationException
+		 * e) { err = e; } catch (FactoryConfigurationError e) { err = e.getException();
+		 * } catch (TransformerConfigurationException e) { err = e; } catch
+		 * (TransformerFactoryConfigurationError e) { err = e.getException(); } catch
+		 * (TransformerException e) { err = e; } catch (IOException e) { // The save
+		 * failed err = e; } catch (CoreException e) { // Save to IFile failed err = e;
+		 * }
+		 * 
+		 * if (err != null) { // Put out an error message indicating that the attempted
+		 * write to the .cdtbuild project file failed IWorkbenchWindow window =
+		 * PlatformUI.getWorkbench().getActiveWorkbenchWindow(); if (window == null) {
+		 * IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+		 * window = windows[0]; }
+		 * 
+		 * final Shell shell = window.getShell(); if (shell != null) { final String
+		 * exceptionMsg = err.getMessage(); shell.getDisplay().syncExec( new Runnable()
+		 * { public void run() { MessageDialog.openError(shell,
+		 * ManagedMakeMessages.getResourceString(
+		 * "ManagedBuildManager.error.write_failed_title"), //$NON-NLS-1$
+		 * ManagedMakeMessages.getFormattedString(MANIFEST_ERROR_WRITE_FAILED,
+		 * //$NON-NLS-1$ exceptionMsg)); } } ); } } // If we return an honest status
+		 * when the operation fails, there are instances when the UI behavior // is not
+		 * very good // Specifically, if "OK" is clicked by the user from the property
+		 * page UI, and the return status // from this routine is false, the property
+		 * page UI will not be closed (note: this is Eclispe code) and // the OK button
+		 * will simply be grayed out // At this point, the only way out is to click
+		 * "Cancel" to get the UI to go away; note however that any // property page
+		 * changes will be sticky, in the UI, which is nonintuitive and confusing //
+		 * Therefore, just always return success, i.e. true, from this routine return
+		 * true;
+		 */
 	}
 
 	public static void updateCoreSettings(IProject project) throws CoreException {
@@ -1519,27 +1490,24 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static void removeBuildInfo(IResource resource) {
 		/*
-		IManagedBuildInfo info = findBuildInfo(resource, false);
-		if(info != null){
-			IConfiguration[] configs = info.getManagedProject().getConfigurations();
-			//  Send an event to each configuration and if they exist, its resource configurations
-			for (int i=0; i < configs.length; i++) {
-				ManagedBuildManager.performValueHandlerEvent(configs[i], IManagedOptionValueHandler.EVENT_CLOSE);
-			}
-
-			info.setValid(false);
-
-			try {
-				resource.setSessionProperty(buildInfoProperty, null);
-			} catch (CoreException e) {
-			}
-		}
-		*/
+		 * IManagedBuildInfo info = findBuildInfo(resource, false); if(info != null){
+		 * IConfiguration[] configs = info.getManagedProject().getConfigurations(); //
+		 * Send an event to each configuration and if they exist, its resource
+		 * configurations for (int i=0; i < configs.length; i++) {
+		 * ManagedBuildManager.performValueHandlerEvent(configs[i],
+		 * IManagedOptionValueHandler.EVENT_CLOSE); }
+		 * 
+		 * info.setValid(false);
+		 * 
+		 * try { resource.setSessionProperty(buildInfoProperty, null); } catch
+		 * (CoreException e) { } }
+		 */
 	}
 
 	/**
-	 * Resets the build information for the project and configuration specified in the arguments.
-	 * The build information will contain the settings defined in the plugin manifest.
+	 * Resets the build information for the project and configuration specified in
+	 * the arguments. The build information will contain the settings defined in the
+	 * plugin manifest.
 	 */
 	public static void resetConfiguration(IProject project, IConfiguration configuration) {
 		// reset the configuration
@@ -1595,9 +1563,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a ProjectType that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds a ProjectType that is is specified in the manifest to the build system.
+	 * It is available to any element that has a reference to it as part of its
+	 * description.
 	 */
 	public static void addExtensionProjectType(ProjectType projectType) {
 		if (projectTypes == null) {
@@ -1614,9 +1582,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a Configuration that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds a Configuration that is is specified in the manifest to the build
+	 * system. It is available to any element that has a reference to it as part of
+	 * its description.
 	 */
 	public static void addExtensionConfiguration(Configuration configuration) {
 		IConfiguration previous = getExtensionConfigurationMap().put(configuration.getId(), configuration);
@@ -1629,8 +1597,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * Adds a Resource Configuration that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * build system. It is available to any element that has a reference to it as
+	 * part of its description.
 	 */
 	public static void addExtensionResourceConfiguration(ResourceConfiguration resourceConfiguration) {
 		IResourceConfiguration previous = getExtensionResourceConfigurationMap().put(resourceConfiguration.getId(),
@@ -1643,9 +1611,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a ToolChain that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds a ToolChain that is is specified in the manifest to the build system. It
+	 * is available to any element that has a reference to it as part of its
+	 * description.
 	 */
 	public static void addExtensionToolChain(ToolChain toolChain) {
 		IToolChain previous = getExtensionToolChainMapInternal().put(toolChain.getId(), toolChain);
@@ -1657,10 +1625,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a tool that is is specified in the manifest to the
-	 * build system. This tool is available to any target that
-	 * has a reference to it as part of its description. This
-	 * permits a tool that is common to many targets to be defined
+	 * Adds a tool that is is specified in the manifest to the build system. This
+	 * tool is available to any target that has a reference to it as part of its
+	 * description. This permits a tool that is common to many targets to be defined
 	 * only once.
 	 */
 	public static void addExtensionTool(Tool tool) {
@@ -1673,9 +1640,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a TargetPlatform that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds a TargetPlatform that is is specified in the manifest to the build
+	 * system. It is available to any element that has a reference to it as part of
+	 * its description.
 	 */
 	public static void addExtensionTargetPlatform(TargetPlatform targetPlatform) {
 		ITargetPlatform previous = getExtensionTargetPlatformMap().put(targetPlatform.getId(), targetPlatform);
@@ -1687,9 +1654,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a Builder that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds a Builder that is is specified in the manifest to the build system. It
+	 * is available to any element that has a reference to it as part of its
+	 * description.
 	 */
 	public static void addExtensionBuilder(Builder builder) {
 		IBuilder previous = getExtensionBuilderMapInternal().put(builder.getId(), builder);
@@ -1701,9 +1668,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a Option that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds a Option that is is specified in the manifest to the build system. It is
+	 * available to any element that has a reference to it as part of its
+	 * description.
 	 */
 	public static void addExtensionOption(Option option) {
 		IOption previous = getExtensionOptionMap().put(option.getId(), option);
@@ -1715,9 +1682,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a OptionCategory that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds a OptionCategory that is is specified in the manifest to the build
+	 * system. It is available to any element that has a reference to it as part of
+	 * its description.
 	 */
 	public static void addExtensionOptionCategory(OptionCategory optionCategory) {
 		IOptionCategory previous = getExtensionOptionCategoryMap().put(optionCategory.getId(), optionCategory);
@@ -1729,9 +1696,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds an InputType that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds an InputType that is is specified in the manifest to the build system.
+	 * It is available to any element that has a reference to it as part of its
+	 * description.
 	 */
 	public static void addExtensionInputType(InputType inputType) {
 		IInputType previous = getExtensionInputTypeMap().put(inputType.getId(), inputType);
@@ -1743,9 +1710,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds an OutputType that is is specified in the manifest to the
-	 * build system. It is available to any element that
-	 * has a reference to it as part of its description.
+	 * Adds an OutputType that is is specified in the manifest to the build system.
+	 * It is available to any element that has a reference to it as part of its
+	 * description.
 	 */
 	public static void addExtensionOutputType(OutputType outputType) {
 		IOutputType previous = getExtensionOutputTypeMap().put(outputType.getId(), outputType);
@@ -1757,19 +1724,21 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Adds a Target that is is specified in the manifest to the
-	 * build system. It is available to any CDT 2.0 object model element that
-	 * has a reference to it as part of its description.
+	 * Adds a Target that is is specified in the manifest to the build system. It is
+	 * available to any CDT 2.0 object model element that has a reference to it as
+	 * part of its description.
 	 */
 	public static void addExtensionTarget(Target target) {
 		getExtensionTargetMap().put(target.getId(), target);
 	}
 
 	/**
-	 * Creates a new project instance for the resource based on the parent project type.
+	 * Creates a new project instance for the resource based on the parent project
+	 * type.
 	 *
 	 * @param parent - parent project type
-	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
+	 * @return new <code>ITarget</code> with settings based on the parent passed in
+	 *         the arguments
 	 */
 	public static IManagedProject createManagedProject(IResource resource, IProjectType parent) throws BuildException {
 		return new ManagedProject(resource, parent);
@@ -1778,7 +1747,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Creates a new target for the resource based on the parentTarget.
 	 *
-	 * @return new <code>ITarget</code> with settings based on the parent passed in the arguments
+	 * @return new <code>ITarget</code> with settings based on the parent passed in
+	 *         the arguments
 	 */
 	public static ITarget createTarget(IResource resource, ITarget parentTarget) throws BuildException {
 		IResource owner = parentTarget.getOwner();
@@ -1808,62 +1778,56 @@ public class ManagedBuildManager extends AbstractCExtension {
 	public static IStatus initBuildInfoContainer(IResource resource) {
 		return Status.OK_STATUS;
 		/*
-		ManagedBuildInfo buildInfo = null;
-
-		// Get the build info associated with this project for this session
-		try {
-			buildInfo = findBuildInfo(resource.getProject(), true);
-			initBuildInfoContainer(buildInfo);
-		} catch (CoreException e) {
-			return new Status(IStatus.ERROR,
-				ManagedBuilderCorePlugin.PLUGIN_ID,
-				IStatus.ERROR,
-				e.getLocalizedMessage(),
-				e);
-		}
-		return new Status(IStatus.OK,
-			ManagedBuilderCorePlugin.PLUGIN_ID,
-			IStatus.OK,
-			ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.init.ok", resource.getName()),	//$NON-NLS-1$
-			null);
-			*/
+		 * ManagedBuildInfo buildInfo = null;
+		 * 
+		 * // Get the build info associated with this project for this session try {
+		 * buildInfo = findBuildInfo(resource.getProject(), true);
+		 * initBuildInfoContainer(buildInfo); } catch (CoreException e) { return new
+		 * Status(IStatus.ERROR, ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.ERROR,
+		 * e.getLocalizedMessage(), e); } return new Status(IStatus.OK,
+		 * ManagedBuilderCorePlugin.PLUGIN_ID, IStatus.OK,
+		 * ManagedMakeMessages.getFormattedString("ManagedBuildInfo.message.init.ok",
+		 * resource.getName()), //$NON-NLS-1$ null);
+		 */
 	}
 
-	//	/**
-	//	 * Private helper method to initialize the path entry container once and
-	//	 * only once when the build info is first loaded or created.
-	//	 *
-	//	 * @param info
-	//	 * @throws CoreException
-	//	 */
-	//	private static void initBuildInfoContainer(ManagedBuildInfo info) throws CoreException {
-	//		if (info == null) {
-	//			throw new CoreException(new Status(IStatus.ERROR,
-	//					ManagedBuilderCorePlugin.PLUGIN_ID,
-	//					IStatus.ERROR,
-	//					"", //$NON-NLS-1$
-	//					null));
-	//		}
+	// /**
+	// * Private helper method to initialize the path entry container once and
+	// * only once when the build info is first loaded or created.
+	// *
+	// * @param info
+	// * @throws CoreException
+	// */
+	// private static void initBuildInfoContainer(ManagedBuildInfo info) throws
+	// CoreException {
+	// if (info == null) {
+	// throw new CoreException(new Status(IStatus.ERROR,
+	// ManagedBuilderCorePlugin.PLUGIN_ID,
+	// IStatus.ERROR,
+	// "", //$NON-NLS-1$
+	// null));
+	// }
 	//
-	//		if (info.isContainerInited()) return;
-	//		// Now associate the path entry container with the project
-	//		ICProject cProject = info.getCProject();
+	// if (info.isContainerInited()) return;
+	// // Now associate the path entry container with the project
+	// ICProject cProject = info.getCProject();
 	//
-	//		synchronized (cProject) {
+	// synchronized (cProject) {
 	//
-	//			// This does not block the workspace or trigger delta events
-	//		IPathEntry[] entries = cProject.getRawPathEntries();
-	//		// Make sure the container for this project is in the path entries
-	//		List newEntries = new ArrayList(Arrays.asList(entries));
-	//		if (!newEntries.contains(ManagedBuildInfo.containerEntry)) {
-	//			// In this case we should trigger an init and deltas
-	//			newEntries.add(ManagedBuildInfo.containerEntry);
-	//			cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new IPathEntry[newEntries.size()]), new NullProgressMonitor());
-	//		}
-	//		info.setContainerInited(true);
+	// // This does not block the workspace or trigger delta events
+	// IPathEntry[] entries = cProject.getRawPathEntries();
+	// // Make sure the container for this project is in the path entries
+	// List newEntries = new ArrayList(Arrays.asList(entries));
+	// if (!newEntries.contains(ManagedBuildInfo.containerEntry)) {
+	// // In this case we should trigger an init and deltas
+	// newEntries.add(ManagedBuildInfo.containerEntry);
+	// cProject.setRawPathEntries((IPathEntry[])newEntries.toArray(new
+	// IPathEntry[newEntries.size()]), new NullProgressMonitor());
+	// }
+	// info.setContainerInited(true);
 	//
-	//		}  //  end synchronized
-	//	}
+	// } // end synchronized
+	// }
 
 	private static boolean isVersionCompatible(IExtension extension) {
 		// We can ignore the qualifier
@@ -1888,8 +1852,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Determine if the .cdtbuild file is present, which will determine if build information
-	 * can be loaded externally or not. Return true if present, false otherwise.
+	 * Determine if the .cdtbuild file is present, which will determine if build
+	 * information can be loaded externally or not. Return true if present, false
+	 * otherwise.
 	 */
 	private static boolean canLoadBuildInfo(final IProject project) {
 		IFile file = project.getFile(SETTINGS_FILE_NAME);
@@ -1902,15 +1867,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Load the build information for the specified resource from its project
-	 * file. Pay attention to the version number too.
+	 * Load the build information for the specified resource from its project file.
+	 * Pay attention to the version number too.
 	 */
 	private static ManagedBuildInfo loadOldStyleBuildInfo(final IProject project) throws Exception {
 		ManagedBuildInfo buildInfo = null;
 		IFile file = project.getFile(SETTINGS_FILE_NAME);
 		File cdtbuild = file.getLocation().toFile();
 		if (!cdtbuild.exists()) {
-			// If we cannot find the .cdtbuild project file, throw an exception and let the user know
+			// If we cannot find the .cdtbuild project file, throw an exception and let the
+			// user know
 			throw new BuildException(ManagedMakeMessages.getFormattedString(PROJECT_FILE_ERROR, project.getName()));
 		}
 
@@ -1930,15 +1896,17 @@ public class ManagedBuildManager extends AbstractCExtension {
 				// Make sure that the version is compatible with the manager
 				fileVersion = rootElement.getNodeValue();
 				Version version = new Version(fileVersion);
-				//if buildInfoVersion is greater than fileVersion
+				// if buildInfoVersion is greater than fileVersion
 				if (buildInfoVersion.compareTo(version) > 0) {
-					// This is >= 2.0 project, but earlier than the current MBS version - it may need to be updated
+					// This is >= 2.0 project, but earlier than the current MBS version - it may
+					// need to be updated
 				} else {
 					// This is a
-					//  isCompatibleWith will return FALSE, if:
-					//   o  The major versions are not equal
-					//   o  The major versions are equal, but the remainder of the .cdtbuild version # is
-					//      greater than the MBS version #
+					// isCompatibleWith will return FALSE, if:
+					// o The major versions are not equal
+					// o The major versions are equal, but the remainder of the .cdtbuild version #
+					// is
+					// greater than the MBS version #
 					boolean compatible = false;
 					if (buildInfoVersion.getMajor() != version.getMajor())
 						compatible = false;
@@ -1964,20 +1932,20 @@ public class ManagedBuildManager extends AbstractCExtension {
 			if (nodes.getLength() > 0) {
 				Node node = nodes.item(0);
 
-				//  Create the internal representation of the project's MBS information
+				// Create the internal representation of the project's MBS information
 				buildInfo = new ManagedBuildInfo(project, XmlStorageUtil.createCStorageTree((Element) node), true,
 						fileVersion);
 				if (fileVersion != null) {
-					//				buildInfo.setVersion(fileVersion);
+					// buildInfo.setVersion(fileVersion);
 					Version version = new Version(fileVersion);
 					Version version21 = new Version("2.1"); //$NON-NLS-1$
-					//  CDT 2.1 is the first version using the new MBS model
+					// CDT 2.1 is the first version using the new MBS model
 					if (version.compareTo(version21) >= 0) {
-						//  Check to see if all elements could be loaded correctly - for example,
-						//  if references in the project file could not be resolved to extension
-						//  elements
+						// Check to see if all elements could be loaded correctly - for example,
+						// if references in the project file could not be resolved to extension
+						// elements
 						if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
-							//  The load failed
+							// The load failed
 							throw new Exception(ManagedMakeMessages
 									.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 						}
@@ -1990,7 +1958,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 						if (checkForMigrationSupport(buildInfo, false) != true) {
 							// display an error message that the project is not loadable
 							if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
-								//  The load failed
+								// The load failed
 								throw new Exception(ManagedMakeMessages
 										.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 							}
@@ -1998,35 +1966,36 @@ public class ManagedBuildManager extends AbstractCExtension {
 					}
 				}
 
-				//  Upgrade the project's CDT version if necessary
+				// Upgrade the project's CDT version if necessary
 				if (!UpdateManagedProjectManager.isCompatibleProject(buildInfo)) {
 					UpdateManagedProjectManager.updateProject(project, buildInfo);
 				}
-				//  Check to see if the upgrade (if required) succeeded
+				// Check to see if the upgrade (if required) succeeded
 				if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
-					//  The load failed
+					// The load failed
 					throw new Exception(ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.id.nomatch", //$NON-NLS-1$
 							project.getName()));
 				}
 
-				//  Walk through the project hierarchy and call the converters
-				//  written for current mbs version
+				// Walk through the project hierarchy and call the converters
+				// written for current mbs version
 				if (checkForMigrationSupport(buildInfo, true) != true) {
 					// display an error message.that the project is no loadable
 					if (buildInfo.getManagedProject() == null || (!buildInfo.getManagedProject().isValid())) {
-						//  The load failed
+						// The load failed
 						throw new Exception(ManagedMakeMessages
 								.getFormattedString("ManagedBuildManager.error.id.nomatch", project.getName())); //$NON-NLS-1$
 					}
 				}
 
 				IConfiguration[] configs = buildInfo.getManagedProject().getConfigurations();
-				//  Send an event to each configuration and if they exist, its resource configurations
+				// Send an event to each configuration and if they exist, its resource
+				// configurations
 				for (IConfiguration cfg : configs) {
 					ManagedBuildManager.performValueHandlerEvent(cfg, IManagedOptionValueHandler.EVENT_OPEN);
 				}
-				//  Finish up
-				//project.setSessionProperty(buildInfoProperty, buildInfo);
+				// Finish up
+				// project.setSessionProperty(buildInfoProperty, buildInfo);
 				setLoaddedBuildInfo(project, buildInfo);
 			}
 		}
@@ -2038,13 +2007,13 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * This method loads all of the managed build system manifest files
-	 * that have been installed with CDT.  An internal hierarchy of
-	 * objects is created that contains the information from the manifest
-	 * files.  The information is then accessed through the ManagedBuildManager.
+	 * This method loads all of the managed build system manifest files that have
+	 * been installed with CDT. An internal hierarchy of objects is created that
+	 * contains the information from the manifest files. The information is then
+	 * accessed through the ManagedBuildManager.
 	 *
-	 * Since the class does not have a constructor but all public methods
-	 * call this method first, it is effectively a startup method
+	 * Since the class does not have a constructor but all public methods call this
+	 * method first, it is effectively a startup method
 	 */
 	private static void loadExtensions() throws BuildException {
 		if (projectTypesLoaded)
@@ -2058,17 +2027,18 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if (projectTypesLoaded)
 			return;
 
-		// This routine gets called recursively.  If so, just return
+		// This routine gets called recursively. If so, just return
 		if (projectTypesLoading)
 			return;
 		projectTypesLoading = true;
 
-		// scalability issue:  configElementMap does not need to live past when loading is done, so we will
+		// scalability issue: configElementMap does not need to live past when loading
+		// is done, so we will
 		// deallocate it upon exit with a try...finally
 
 		try {
 
-			//The list of the IManagedBuildDefinitionsStartup callbacks
+			// The list of the IManagedBuildDefinitionsStartup callbacks
 			List<IManagedBuildDefinitionsStartup> buildDefStartupList = null;
 			// Get the extensions that use the current CDT managed build model
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
@@ -2081,8 +2051,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 					for (IExtension extension : extensions) {
 						// Can we read this manifest
 						if (!isVersionCompatible(extension)) {
-							//  The version of the Plug-in is greater than what the manager thinks it understands
-							//  Display error message
+							// The version of the Plug-in is greater than what the manager thinks it
+							// understands
+							// Display error message
 							IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 							if (window == null) {
 								IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -2102,9 +2073,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 							// Note that these "configuration elements" are not related to the
 							// managed build system "configurations".
 							// From the PDE Guide:
-							//  A configuration element, with its attributes and children, directly
-							//  reflects the content and structure of the extension section within the
-							//  declaring plug-in's manifest (plugin.xml) file.
+							// A configuration element, with its attributes and children, directly
+							// reflects the content and structure of the extension section within the
+							// declaring plug-in's manifest (plugin.xml) file.
 							IConfigurationElement[] elements = extension.getConfigurationElements();
 							String revision = null;
 
@@ -2132,7 +2103,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 								customConfigLoader = createStartUpConfigLoader(
 										(DefaultManagedConfigElement) startUpConfigElement);
 
-								//need to save the startup for the future notifications
+								// need to save the startup for the future notifications
 								buildDefStartupList.add(customConfigLoader);
 
 								// Now we can perform any actions on the build configurations
@@ -2147,17 +2118,18 @@ public class ManagedBuildManager extends AbstractCExtension {
 					//
 					// Here are notes on "references" within the managed build system.
 					// References are "pointers" from one model element to another.
-					// These are encoded in manifest and managed build system project files (.cdtbuild)
+					// These are encoded in manifest and managed build system project files
+					// (.cdtbuild)
 					// using unique string IDs (e.g. "cdt.managedbuild.tool.gnu.c.linker").
 					// These string IDs are "resolved" to pointers to interfaces in model
 					// elements in the in-memory represent of the managed build system information.
 					//
 					// Here are the current "rules" for references:
-					//  1.  A reference is always resolved to an interface pointer in the
-					//      referenced object.
-					//  2.  A reference is always TO an extension object - that is, an object
-					//      loaded from a manifest file or a dynamic element provider.  It cannot
-					//      be to an object loaded from a managed build system project file (.cdtbuild).
+					// 1. A reference is always resolved to an interface pointer in the
+					// referenced object.
+					// 2. A reference is always TO an extension object - that is, an object
+					// loaded from a manifest file or a dynamic element provider. It cannot
+					// be to an object loaded from a managed build system project file (.cdtbuild).
 					//
 
 					Collection<IProjectType> prjTypes = getExtensionProjectTypeMap().values();
@@ -2254,12 +2226,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 					if (extensions.length > 0) {
 
 						// Call the constructors of the internal classes that correspond to the
-						// V2.0 build model elements.  Some of these objects are converted to new model objects.
+						// V2.0 build model elements. Some of these objects are converted to new model
+						// objects.
 						// Others can use the same classes.
 						for (IExtension extension : extensions) {
 							// Can we read this manifest
 							if (!isVersionCompatible(extension)) {
-								//The version of the Plug-in is greater than what the manager thinks it understands
+								// The version of the Plug-in is greater than what the manager thinks it
+								// understands
 								throw new BuildException(ManagedMakeMessages.getResourceString(MANIFEST_VERSION_ERROR));
 							}
 							IConfigurationElement[] elements = extension.getConfigurationElements();
@@ -2301,7 +2275,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 						targets = getExtensionTargetMap().values();
 						for (ITarget target : targets) {
 							try {
-								//  Check to see if it has already been converted - if not, do it
+								// Check to see if it has already been converted - if not, do it
 								if (target.getCreatedProjectType() == null) {
 									target.convertToProjectType(revision);
 								}
@@ -2321,27 +2295,30 @@ public class ManagedBuildManager extends AbstractCExtension {
 							}
 						}
 
-						// TODO:  Clear the target and configurationV2 maps so that the object can be garbage collected
-						//        We can't do this yet, because the UpdateManagedProjectAction class may need these elements later
-						//        Can we change UpdateManagedProjectAction to see the converted model elements?
-						//targetIter = getExtensionTargetMap().values().iterator();
-						//while (targetIter.hasNext()) {
-						//	try {
-						//		Target target = (Target)targetIter.next();
-						//		ManagedBuildManager.removeConfigElement(target);
-						//		getExtensionTargetMap().remove(target);
-						//	} catch (Exception ex) {
-						//		// TODO: log
-						//		ex.printStackTrace();
-						//	}
-						//}
-						//getExtensionConfigurationV2Map().clear();
+						// TODO: Clear the target and configurationV2 maps so that the object can be
+						// garbage collected
+						// We can't do this yet, because the UpdateManagedProjectAction class may need
+						// these elements later
+						// Can we change UpdateManagedProjectAction to see the converted model elements?
+						// targetIter = getExtensionTargetMap().values().iterator();
+						// while (targetIter.hasNext()) {
+						// try {
+						// Target target = (Target)targetIter.next();
+						// ManagedBuildManager.removeConfigElement(target);
+						// getExtensionTargetMap().remove(target);
+						// } catch (Exception ex) {
+						// // TODO: log
+						// ex.printStackTrace();
+						// }
+						// }
+						// getExtensionConfigurationV2Map().clear();
 					}
 				}
 			}
 
 			// configs resolved...
-			// Call the start up config extensions again now that configs have been resolved.
+			// Call the start up config extensions again now that configs have been
+			// resolved.
 			if (buildDefStartupList != null) {
 				for (IManagedBuildDefinitionsStartup customConfigLoader : buildDefStartupList) {
 					// Now we can perform any actions on the build configurations
@@ -2405,8 +2382,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		IResourceConfiguration rcCfgs[] = cfg.getResourceConfigurations();
 
-		//		for (IResourceConfiguration rcCfg : rcCfgs) {
-		//		}
+		// for (IResourceConfiguration rcCfg : rcCfgs) {
+		// }
 
 	}
 
@@ -2491,19 +2468,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/*
-	 * Creates a new build information object and associates it with the
-	 * resource in the argument. Note that the information contains no
-	 * build target or configuation information. It is the responsibility
-	 * of the caller to populate it. It is also important to note that the
-	 * caller is responsible for associating an IPathEntryContainer with the
-	 * build information after it has been populated.
-	 * <p>
-	 * The typical sequence of calls to add a new build information object to
-	 * a managed build project is
-	 * <p><pre>
-	 * ManagedBuildManager.createBuildInfo(project);
-	 * &#047;&#047; Do whatever initialization you need here
-	 * ManagedBuildManager.createTarget(project);
+	 * Creates a new build information object and associates it with the resource in
+	 * the argument. Note that the information contains no build target or
+	 * configuation information. It is the responsibility of the caller to populate
+	 * it. It is also important to note that the caller is responsible for
+	 * associating an IPathEntryContainer with the build information after it has
+	 * been populated. <p> The typical sequence of calls to add a new build
+	 * information object to a managed build project is <p><pre>
+	 * ManagedBuildManager.createBuildInfo(project); &#047;&#047; Do whatever
+	 * initialization you need here ManagedBuildManager.createTarget(project);
 	 * ManagedBuildManager.initBuildInfoContainer(project);
 	 *
 	 * @param resource The resource the build information is associated with
@@ -2522,20 +2495,20 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static void setLoaddedBuildInfo(IProject project, IManagedBuildInfo info) throws CoreException {
 		// Associate the build info with the project for the duration of the session
-		//project.setSessionProperty(buildInfoProperty, info);
-		//		IResourceRuleFactory rcRf = ResourcesPlugin.getWorkspace().getRuleFactory();
-		//		ISchedulingRule rule = rcRf.modifyRule(project);
-		//		IJobManager mngr = Job.getJobManager();
+		// project.setSessionProperty(buildInfoProperty, info);
+		// IResourceRuleFactory rcRf = ResourcesPlugin.getWorkspace().getRuleFactory();
+		// ISchedulingRule rule = rcRf.modifyRule(project);
+		// IJobManager mngr = Job.getJobManager();
 
-		//		try {
-		//			mngr.beginRule(rule, null);
+		// try {
+		// mngr.beginRule(rule, null);
 		doSetLoaddedInfo(project, info, true);
-		//		} catch (IllegalArgumentException e) {
-		//			// TODO: set anyway for now
-		//			doSetLoaddedInfo(project, info);
-		//		}finally {
-		//			mngr.endRule(rule);
-		//		}
+		// } catch (IllegalArgumentException e) {
+		// // TODO: set anyway for now
+		// doSetLoaddedInfo(project, info);
+		// }finally {
+		// mngr.endRule(rule);
+		// }
 	}
 
 	private synchronized static void doSetLoaddedInfo(IProject project, IManagedBuildInfo info, boolean overwrite) {
@@ -2581,38 +2554,39 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return true;
 		return false;
 
-		//		// The managed build manager manages build information for the
-		//		// resource IFF it it is a project and has a build file with the proper
-		//		// root element
-		//		IProject project = null;
-		//		if (resource instanceof IProject){
-		//			project = (IProject)resource;
-		//		} else if (resource instanceof IFile) {
-		//			project = ((IFile)resource).getProject();
-		//		} else {
-		//			return false;
-		//		}
-		//		IFile file = project.getFile(SETTINGS_FILE_NAME);
-		//		if (file.exists()) {
-		//			try {
-		//				InputStream stream = file.getContents();
-		//				DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		//				Document document = parser.parse(stream);
-		//				NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
-		//				return (nodes.getLength() > 0);
-		//			} catch (Exception e) {
-		//				return false;
-		//			}
-		//		}
-		//		return false;
+		// // The managed build manager manages build information for the
+		// // resource IFF it it is a project and has a build file with the proper
+		// // root element
+		// IProject project = null;
+		// if (resource instanceof IProject){
+		// project = (IProject)resource;
+		// } else if (resource instanceof IFile) {
+		// project = ((IFile)resource).getProject();
+		// } else {
+		// return false;
+		// }
+		// IFile file = project.getFile(SETTINGS_FILE_NAME);
+		// if (file.exists()) {
+		// try {
+		// InputStream stream = file.getContents();
+		// DocumentBuilder parser =
+		// DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		// Document document = parser.parse(stream);
+		// NodeList nodes = document.getElementsByTagName(ROOT_NODE_NAME);
+		// return (nodes.getLength() > 0);
+		// } catch (Exception e) {
+		// return false;
+		// }
+		// }
+		// return false;
 	}
 
 	/**
-	 * Private helper method that first checks to see if a build information
-	 * object has been associated with the project for the current workspace
-	 * session. If one cannot be found, one is created from the project file
-	 * associated with the argument. If there is no project file or the load
-	 * fails for some reason, the method will return {@code null}.
+	 * Private helper method that first checks to see if a build information object
+	 * has been associated with the project for the current workspace session. If
+	 * one cannot be found, one is created from the project file associated with the
+	 * argument. If there is no project file or the load fails for some reason, the
+	 * method will return {@code null}.
 	 */
 	private static ManagedBuildInfo findBuildInfo(IResource rc, boolean forceLoad) {
 
@@ -2640,7 +2614,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 		if (buildInfo != null)
 			return buildInfo;
 
-		// Check if there is any build info associated with this project for this session
+		// Check if there is any build info associated with this project for this
+		// session
 		try {
 			buildInfo = getLoadedBuildInfo(proj);
 		} catch (CoreException e) {
@@ -2650,7 +2625,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return null;
 		}
 
-		if (buildInfo == null /*&& forceLoad*/) {
+		if (buildInfo == null /* && forceLoad */) {
 			int flags = forceLoad ? 0 : ICProjectDescriptionManager.GET_IF_LOADDED;
 
 			if (BuildDbgUtil.DEBUG)
@@ -2700,47 +2675,43 @@ public class ManagedBuildManager extends AbstractCExtension {
 						"build info load: project description in null"); //$NON-NLS-1$
 			}
 
-			//			if(buildInfo == null){
-			//				if(BuildDbgUtil.DEBUG)
-			//					BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: info is null, querying the update mngr"); //$NON-NLS-1$
-			//				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
-			//			}
+			// if(buildInfo == null){
+			// if(BuildDbgUtil.DEBUG)
+			// BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info
+			// load: info is null, querying the update mngr"); //$NON-NLS-1$
+			// buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(proj);
+			// }
 		}
-		//		if (buildInfo == null && resource instanceof IProject)
-		//			buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);
+		// if (buildInfo == null && resource instanceof IProject)
+		// buildInfo = findBuildInfoSynchronized((IProject)resource, forceLoad);
 		/*
-				// Nothing in session store, so see if we can load it from cdtbuild
-				if (buildInfo == null && resource instanceof IProject) {
-					try {
-						buildInfo = loadBuildInfo((IProject)resource);
-					} catch (Exception e) {
-						// TODO:  Issue error reagarding not being able to load the project file (.cdtbuild)
-					}
-
-					try {
-						// Check if the project needs its container initialized
-						initBuildInfoContainer(buildInfo);
-					} catch (CoreException e) {
-						// We can live without a path entry container if the build information is valid
-					}
-				}
-		*/
+		 * // Nothing in session store, so see if we can load it from cdtbuild if
+		 * (buildInfo == null && resource instanceof IProject) { try { buildInfo =
+		 * loadBuildInfo((IProject)resource); } catch (Exception e) { // TODO: Issue
+		 * error reagarding not being able to load the project file (.cdtbuild) }
+		 * 
+		 * try { // Check if the project needs its container initialized
+		 * initBuildInfoContainer(buildInfo); } catch (CoreException e) { // We can live
+		 * without a path entry container if the build information is valid } }
+		 */
 		if (buildInfo != null)
 			buildInfo.updateOwner(proj);
 
 		if (BuildDbgUtil.DEBUG) {
 			if (buildInfo == null)
 				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info is null"); //$NON-NLS-1$
-			//			else
-			//				BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info load: build info found");
+			// else
+			// BuildDbgUtil.getInstance().traceln(BuildDbgUtil.BUILD_INFO_LOAD, "build info
+			// load: build info found");
 		}
 
 		return buildInfo;
 	}
 
 	synchronized static ManagedBuildInfo getLoadedBuildInfo(IProject project) throws CoreException {
-		// Check if there is any build info associated with this project for this session
-		ManagedBuildInfo buildInfo = (ManagedBuildInfo) fInfoMap.get(project);//project.getSessionProperty(buildInfoProperty);
+		// Check if there is any build info associated with this project for this
+		// session
+		ManagedBuildInfo buildInfo = (ManagedBuildInfo) fInfoMap.get(project);// project.getSessionProperty(buildInfoProperty);
 		// Make sure that if a project has build info, that the info is not corrupted
 		if (buildInfo != null) {
 			buildInfo.updateOwner(project);
@@ -2749,8 +2720,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Determine if build information can be found. Various attempts are made
-	 * to find the information, and if successful, true is returned; false otherwise.
+	 * Determine if build information can be found. Various attempts are made to
+	 * find the information, and if successful, true is returned; false otherwise.
 	 * Typically, this routine would be called prior to findBuildInfo, to deterimine
 	 * if findBuildInfo should be called to actually do the loading of build
 	 * information, if possible
@@ -2770,7 +2741,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 		ManagedBuildInfo buildInfo = null;
 
-		// Check if there is any build info associated with this project for this session
+		// Check if there is any build info associated with this project for this
+		// session
 		try {
 			buildInfo = getLoadedBuildInfo(resource.getProject());
 		} catch (CoreException e) {
@@ -2790,96 +2762,69 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * this method is called if managed build info session property
-	 * was not set. The caller will use the project rule
-	 * to synchronize with other callers
-	 * findBuildInfoSynchronized could also be called from project converter
-	 * in this case the ManagedBuildInfo saved in the converter would be returned
+	 * this method is called if managed build info session property was not set. The
+	 * caller will use the project rule to synchronize with other callers
+	 * findBuildInfoSynchronized could also be called from project converter in this
+	 * case the ManagedBuildInfo saved in the converter would be returned
 	 */
-	/*	synchronized private static ManagedBuildInfo findBuildInfoSynchronized(IProject project, boolean forceLoad) {
-			ManagedBuildInfo buildInfo = null;
-
-			// Check if there is any build info associated with this project for this session
-			try {
-				buildInfo = (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty);
-				// Make sure that if a project has build info, that the info is not corrupted
-				if (buildInfo != null) {
-					buildInfo.updateOwner(project);
-				}
-			} catch (CoreException e) {
-		//		return null;
-			}
-
-			if(buildInfo == null && forceLoad){
-				// Make sure the extension information is loaded first
-				try {
-					loadExtensions();
-				} catch (BuildException e) {
-					e.printStackTrace();
-					return null;
-				}
-
-
-				// Check weather getBuildInfo is called from converter
-				buildInfo = UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
-
-				// Nothing in session store, so see if we can load it from cdtbuild
-				if (buildInfo == null) {
-					try {
-						buildInfo = loadBuildInfo(project);
-					} catch (Exception e) {
-						// Issue error regarding not being able to load the project file (.cdtbuild)
-						if (buildInfo == null) {
-							buildInfo = createBuildInfo(project);
-						}
-						buildInfo.setValid(false);
-						//  Display error message
-						IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-						if(window == null){
-							IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
-							window = windows[0];
-						}
-
-						final Shell shell = window.getShell();
-						final String exceptionMsg = e.getMessage();
-						//using syncExec could cause a dead-lock
-						//that is why asyncExec is used
-						shell.getDisplay().asyncExec( new Runnable() {
-							public void run() {
-								MessageDialog.openError(shell,
-										ManagedMakeMessages.getResourceString("ManagedBuildManager.error.open_failed_title"),	//$NON-NLS-1$
-										ManagedMakeMessages.getFormattedString("ManagedBuildManager.error.open_failed",			//$NON-NLS-1$
-												exceptionMsg));
-							}
-						} );
-					}
-
-					if (buildInfo != null && !buildInfo.isContainerInited()) {
-						//  NOTE:  If this is called inside the above rule, then an IllegalArgumentException can
-						//         occur when the CDT project file is saved - it uses the Workspace Root as the scheduling rule.
-						//
-						try {
-							// Check if the project needs its container initialized
-							initBuildInfoContainer(buildInfo);
-						} catch (CoreException e) {
-							// We can live without a path entry container if the build information is valid
-						}
-					}
-				}
-			}
-
-			return buildInfo;
-		}
-	*/
+	/*
+	 * synchronized private static ManagedBuildInfo
+	 * findBuildInfoSynchronized(IProject project, boolean forceLoad) {
+	 * ManagedBuildInfo buildInfo = null;
+	 * 
+	 * // Check if there is any build info associated with this project for this
+	 * session try { buildInfo =
+	 * (ManagedBuildInfo)project.getSessionProperty(buildInfoProperty); // Make sure
+	 * that if a project has build info, that the info is not corrupted if
+	 * (buildInfo != null) { buildInfo.updateOwner(project); } } catch
+	 * (CoreException e) { // return null; }
+	 * 
+	 * if(buildInfo == null && forceLoad){ // Make sure the extension information is
+	 * loaded first try { loadExtensions(); } catch (BuildException e) {
+	 * e.printStackTrace(); return null; }
+	 * 
+	 * 
+	 * // Check weather getBuildInfo is called from converter buildInfo =
+	 * UpdateManagedProjectManager.getConvertedManagedBuildInfo(project);
+	 * 
+	 * // Nothing in session store, so see if we can load it from cdtbuild if
+	 * (buildInfo == null) { try { buildInfo = loadBuildInfo(project); } catch
+	 * (Exception e) { // Issue error regarding not being able to load the project
+	 * file (.cdtbuild) if (buildInfo == null) { buildInfo =
+	 * createBuildInfo(project); } buildInfo.setValid(false); // Display error
+	 * message IWorkbenchWindow window =
+	 * PlatformUI.getWorkbench().getActiveWorkbenchWindow(); if(window == null){
+	 * IWorkbenchWindow windows[] = PlatformUI.getWorkbench().getWorkbenchWindows();
+	 * window = windows[0]; }
+	 * 
+	 * final Shell shell = window.getShell(); final String exceptionMsg =
+	 * e.getMessage(); //using syncExec could cause a dead-lock //that is why
+	 * asyncExec is used shell.getDisplay().asyncExec( new Runnable() { public void
+	 * run() { MessageDialog.openError(shell, ManagedMakeMessages.getResourceString(
+	 * "ManagedBuildManager.error.open_failed_title"), //$NON-NLS-1$
+	 * ManagedMakeMessages.getFormattedString(
+	 * "ManagedBuildManager.error.open_failed", //$NON-NLS-1$ exceptionMsg)); } } );
+	 * }
+	 * 
+	 * if (buildInfo != null && !buildInfo.isContainerInited()) { // NOTE: If this
+	 * is called inside the above rule, then an IllegalArgumentException can //
+	 * occur when the CDT project file is saved - it uses the Workspace Root as the
+	 * scheduling rule. // try { // Check if the project needs its container
+	 * initialized initBuildInfoContainer(buildInfo); } catch (CoreException e) { //
+	 * We can live without a path entry container if the build information is valid
+	 * } } } }
+	 * 
+	 * return buildInfo; }
+	 */
 	/**
-	 * Finds, but does not create, the managed build information for the
-	 * argument.
-	 * Loads the build info in case it is not currently loaded
-	 * Calling this method is the same as calling getBuildInfo(IResource resource, boolean forceLoad)
+	 * Finds, but does not create, the managed build information for the argument.
+	 * Loads the build info in case it is not currently loaded Calling this method
+	 * is the same as calling getBuildInfo(IResource resource, boolean forceLoad)
 	 * with the "forceLoad" argument set to true
 	 *
 	 * @param resource The resource to search for managed build information on.
-	 * @return IManagedBuildInfo The build information object for the resource, or null if it doesn't exist
+	 * @return IManagedBuildInfo The build information object for the resource, or
+	 *         null if it doesn't exist
 	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource) {
 		return getBuildInfo(resource, true);
@@ -2918,14 +2863,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Finds, but does not create, the managed build information for the
-	 * argument.
-	 * If the build info is not currently loaded and "forceLoad" argument is set to true,
-	 * loads the build info from the .cdtbuild file
-	 * In case "forceLoad" is false, does not load the build info and returns null in case it is not loaded
+	 * Finds, but does not create, the managed build information for the argument.
+	 * If the build info is not currently loaded and "forceLoad" argument is set to
+	 * true, loads the build info from the .cdtbuild file In case "forceLoad" is
+	 * false, does not load the build info and returns null in case it is not loaded
 	 *
-	 * @param resource The resource to search for managed build information on.
-	 * @param forceLoad specifies whether the build info should be loaded in case it is not loaded currently.
+	 * @param resource  The resource to search for managed build information on.
+	 * @param forceLoad specifies whether the build info should be loaded in case it
+	 *                  is not loaded currently.
 	 * @return IManagedBuildInfo The build information object for the resource.
 	 */
 	public static IManagedBuildInfo getBuildInfo(IResource resource, boolean forceLoad) {
@@ -2933,8 +2878,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Determines if the managed build information for the
-	 * argument can be found.
+	 * Determines if the managed build information for the argument can be found.
 	 *
 	 * @param resource The resource to search for managed build information on.
 	 * @return boolean True if the build info can be found; false otherwise.
@@ -2954,11 +2898,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Get the full URL for a path that is relative to the plug-in
-	 * in which .buildDefinitions are defined
+	 * Get the full URL for a path that is relative to the plug-in in which
+	 * .buildDefinitions are defined
 	 *
-	 * @return the full URL for a path relative to the .buildDefinitions
-	 *         plugin
+	 * @return the full URL for a path relative to the .buildDefinitions plugin
 	 */
 	public static URL getURLInBuildDefinitions(DefaultManagedConfigElement element, IPath path) {
 		IExtension extension = element.getExtension();
@@ -3001,8 +2944,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @noreference This method public for implementation reasons.  Not intended for use
-	 * by clients.
+	 * @noreference This method public for implementation reasons. Not intended for
+	 *              use by clients.
 	 *
 	 */
 	public static void putConfigElement(IBuildObject buildObj, IManagedConfigElement configElement) {
@@ -3010,8 +2953,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @noreference This method public for implementation reasons.  Not intended for use
-	 * by clients.
+	 * @noreference This method public for implementation reasons. Not intended for
+	 *              use by clients.
 	 */
 	public static IManagedConfigElement getConfigElement(IBuildObject buildObj) {
 		return getConfigElementMap().get(buildObj);
@@ -3077,16 +3020,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return the version, if 'id' contains a valid version
-	 *   or {@code null} otherwise.
+	 * @return the version, if 'id' contains a valid version or {@code null}
+	 *         otherwise.
 	 */
 
 	public static String getVersionFromIdAndVersion(String idAndVersion) {
 
-		//		 Get the index of the separator '_' in tool id.
+		// Get the index of the separator '_' in tool id.
 		int index = idAndVersion.lastIndexOf('_');
 
-		//Validate the version number if exists.
+		// Validate the version number if exists.
 		if (index != -1) {
 			// Get the version number from tool id.
 			String version = idAndVersion.substring(index + 1);
@@ -3104,8 +3047,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return If the input to this function contains 'id & a valid version', it returns only the 'id' part
-	 * Otherwise it returns the received input back.
+	 * @return If the input to this function contains 'id & a valid version', it
+	 *         returns only the 'id' part Otherwise it returns the received input
+	 *         back.
 	 */
 	public static String getIdFromIdAndVersion(String idAndVersion) {
 		// If there is a valid version return only 'id' part
@@ -3127,11 +3071,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Send event to value handlers of relevant configuration including
-	 * all its child resource configurations, if they exist.
+	 * Send event to value handlers of relevant configuration including all its
+	 * child resource configurations, if they exist.
 	 *
 	 * @param config configuration for which to send the event
-	 * @param event to be sent
+	 * @param event  to be sent
 	 *
 	 * @since 3.0
 	 */
@@ -3142,10 +3086,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Send event to value handlers of relevant configuration.
 	 *
-	 * @param config configuration for which to send the event
-	 * @param event to be sent
-	 * @param doChildren - if true, also perform the event for all
-	 *        resource configurations that are children if this configuration.
+	 * @param config     configuration for which to send the event
+	 * @param event      to be sent
+	 * @param doChildren - if true, also perform the event for all resource
+	 *                   configurations that are children if this configuration.
 	 *
 	 * @since 3.0
 	 */
@@ -3156,7 +3100,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 			return;
 
 		IOption[] options = toolChain.getOptions();
-		// Get global options directly under Toolchain (not associated with a particular tool)
+		// Get global options directly under Toolchain (not associated with a particular
+		// tool)
 		// This has to be sent to all the Options associated with this configuration.
 		for (IOption option : options) {
 			// Ignore invalid options
@@ -3204,7 +3149,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Send event to value handlers of relevant configuration.
 	 *
 	 * @param config configuration for which to send the event
-	 * @param event to be sent
+	 * @param event  to be sent
 	 *
 	 * @since 3.0
 	 */
@@ -3379,10 +3324,10 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/*
-	 * Generic Converter function.
-	 * If the converter is available for the given Build Object, it calls the corresponding converter.
-	 * It returns null if there are no converters or if the conversion is not successful
-	 * It returns 'IBuildObject' if the conversion is successful.
+	 * Generic Converter function. If the converter is available for the given Build
+	 * Object, it calls the corresponding converter. It returns null if there are no
+	 * converters or if the conversion is not successful It returns 'IBuildObject'
+	 * if the conversion is successful.
 	 */
 
 	public static IBuildObject convert(IBuildObject buildObj, String toId, boolean userhasConfirmed) {
@@ -3418,8 +3363,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	 * Generic routine for checking the availability of converters for the given
 	 * Build Object.
 	 *
-	 * @return true if there are converters for the given Build Object.
-	 * Returns false if there are no converters.
+	 * @return true if there are converters for the given Build Object. Returns
+	 *         false if there are no converters.
 	 */
 	public static boolean hasTargetConversionElements(IBuildObject buildObj) {
 
@@ -3444,7 +3389,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/*
-	 * Generic function for getting the list of converters for the given Build Object
+	 * Generic function for getting the list of converters for the given Build
+	 * Object
 	 */
 
 	public static Map<String, IConfigurationElement> getConversionElements(IBuildObject buildObj) {
@@ -3473,8 +3419,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/*
-	 * Generic function that checks whether the given conversion element can be used to convert the given
-	 * build object. It returns true if the given build object is convertable, otherwise it returns false.
+	 * Generic function that checks whether the given conversion element can be used
+	 * to convert the given build object. It returns true if the given build object
+	 * is convertable, otherwise it returns false.
 	 */
 
 	private static boolean isBuildObjectApplicableForConversion(IBuildObject buildObj, IConfigurationElement element) {
@@ -3562,7 +3509,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * @return base id when the given id was generated by {@link #calculateChildId(String, String)}.
+	 * @return base id when the given id was generated by
+	 *         {@link #calculateChildId(String, String)}.
 	 * @since 8.0
 	 */
 	public static String calculateBaseId(String id) {
@@ -3610,16 +3558,14 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return path;
 	}
 
-	/*	private static IBuildObject getBuildObjectFromDataObject(CDataObject data){
-			if(data instanceof BuildConfigurationData)
-				return ((BuildConfigurationData)data).getConfiguration();
-			else if(data instanceof BuildFolderData)
-				return ((BuildFolderData)data).getFolderInfo();
-			else if(data instanceof BuildFileData)
-				return ((BuildFileData)data).getFileInfo();
-			return null;
-		}
-	*/
+	/*
+	 * private static IBuildObject getBuildObjectFromDataObject(CDataObject data){
+	 * if(data instanceof BuildConfigurationData) return
+	 * ((BuildConfigurationData)data).getConfiguration(); else if(data instanceof
+	 * BuildFolderData) return ((BuildFolderData)data).getFolderInfo(); else if(data
+	 * instanceof BuildFileData) return ((BuildFileData)data).getFileInfo(); return
+	 * null; }
+	 */
 	private static final boolean TEST_CONSISTENCE = false;
 
 	public static IConfiguration getConfigurationForDescription(ICConfigurationDescription cfgDes) {
@@ -3651,7 +3597,56 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Convert the IOption integer type ID to the {@link ICSettingEntry#getKind()} type ID
+	 * Creates a new <code>IConfiguration</code> object associated to the specified
+	 * managed project and adds it to the corresponding project description.<br>
+	 * This purpose of this method is to set up build configurations for MBS
+	 * projects that are in the phase of being created programmatically.
+	 *
+	 * @param projectDescription the <code>ICProjectDescription</code> to use for
+	 *                           creating the new configuration
+	 * @param managedProject     the managed project to associate the new
+	 *                           <code>IConfiguration</code> with
+	 * @param cloneConfiguration the <code>IConfiguration</code> to copy the
+	 *                           settings from
+	 * @param buildSystemId      buildSystemId build system id, i.e. the extension
+	 *                           id contributing to the
+	 *                           org.eclipse.cdt.core.CConfigurationDataProvider
+	 *                           extension point
+	 *
+	 * @return the newly created <code>IConfiguration</code> object
+	 *
+	 * @throws CoreException            if the creation of a new
+	 *                                  ICConfigurationDescription failed
+	 * @throws IllegalArgumentException if the <code>IProject</code> associated with
+	 *                                  the specified
+	 *                                  <code>ICProjectDescription</code> does not
+	 *                                  match the project associated with the given
+	 *                                  <code>IManagedProject</code>
+	 */
+	// TODO artifactExtension
+	public static IConfiguration createConfigurationForProject(ICProjectDescription projectDescription,
+			IManagedProject managedProject, IConfiguration cloneConfiguration, String buildSystemId)
+			throws CoreException {
+		// sanity checks..
+		if (projectDescription.getProject() != managedProject.getOwner()) {
+			String msg = String.format(
+					"IProject associated with 'projectDescription' (%s) does not match the one associated with 'managedProject' (%s)", //$NON-NLS-1$
+					projectDescription.getProject(), managedProject.getOwner());
+			throw new IllegalArgumentException(msg);
+		}
+		String id = calculateChildId(cloneConfiguration.getId(), null);
+		Configuration config = new Configuration((ManagedProject) managedProject, (Configuration) cloneConfiguration,
+				id, false, true);
+		CConfigurationData data = config.getConfigurationData();
+		ICConfigurationDescription cfgDes = projectDescription.createConfiguration(buildSystemId, data);
+		config.setConfigurationDescription(cfgDes);
+		return config;
+	}
+
+	/**
+	 * Convert the IOption integer type ID to the {@link ICSettingEntry#getKind()}
+	 * type ID
+	 *
 	 * @param type {@link IOption#getValueType()}
 	 * @return ICSettingEntry type
 	 */
@@ -3675,7 +3670,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Convert the IOption integer type ID to the {@link ICSettingEntry#getKind()} type ID
+	 * Convert the IOption integer type ID to the {@link ICSettingEntry#getKind()}
+	 * type ID
+	 *
 	 * @param type {@link IOption#getValueType()}
 	 * @return ICSettingEntry type
 	 */
@@ -3708,7 +3705,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		case ICSettingEntry.MACRO_FILE:
 			return IOption.MACRO_FILES;
 		case ICSettingEntry.LIBRARY_PATH:
-			return IOption.LIBRARY_PATHS;//TODO IOption.LIBRARIES;
+			return IOption.LIBRARY_PATHS;// TODO IOption.LIBRARIES;
 		case ICSettingEntry.LIBRARY_FILE:
 			return IOption.LIBRARY_FILES;
 		}
@@ -3726,7 +3723,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		case ICSettingEntry.MACRO_FILE:
 			return IOption.UNDEF_MACRO_FILES;
 		case ICSettingEntry.LIBRARY_PATH:
-			return IOption.UNDEF_LIBRARY_PATHS;//TODO IOption.LIBRARIES;
+			return IOption.UNDEF_LIBRARY_PATHS;// TODO IOption.LIBRARIES;
 		case ICSettingEntry.LIBRARY_FILE:
 			return IOption.UNDEF_LIBRARY_FILES;
 		}
@@ -3769,7 +3766,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static IPath getBuildFullPath(IConfiguration cfg, IBuilder builder) {
 		IProject project = cfg.getOwner().getProject();
-		//		String path = builder.getBuildPath();
+		// String path = builder.getBuildPath();
 
 		IPath buildDirectory = builder.getBuildLocation();
 		IPath fullPath = null;
@@ -3804,13 +3801,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns a string representing the workspace relative path with ${workspace_loc: stripped
-	 * or null if the String path doesn't contain workspace_loc
+	 * Returns a string representing the workspace relative path with
+	 * ${workspace_loc: stripped or null if the String path doesn't contain
+	 * workspace_loc
+	 *
 	 * @param path String path to have workspace_loc removed
 	 * @return workspace path or null
 	 *
-	 * @deprecated as of CDT 8.3. This method is useless as API as it does something very specfic to {@link BuildEntryStorage}.
-	 *    It was moved there as private method {@link BuildEntryStorage#locationToFullPath}.
+	 * @deprecated as of CDT 8.3. This method is useless as API as it does something
+	 *             very specfic to {@link BuildEntryStorage}. It was moved there as
+	 *             private method {@link BuildEntryStorage#locationToFullPath}.
 	 */
 	@Deprecated
 	public static String locationToFullPath(String path) {
@@ -3891,57 +3891,42 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return ManagedBuilderCorePlugin.createBuilderForEclipseBuilder(cfg, eclipseBuilderID);
 	}
 
-	/*	public static IToolChain[] getExtensionsToolChains(String propertyType, String propertyValue){
-			List all = getSortedToolChains();
-			List result = new ArrayList();
-			for(int i = 0; i < all.size(); i++){
-				List list = (List)all.get(i);
-				IToolChain tc = findToolChain(list, propertyType, propertyValue);
-				if(tc != null)
-					result.add(tc);
-			}
-			return (IToolChain[])result.toArray(new ToolChain[result.size()]);
-		}
-	*/
-	/*	public static void resortToolChains(){
-			sortedToolChains = null;
-			getSortedToolChains();
-		}
-	*/
-	/*	private static List getSortedToolChains(){
-			if(sortedToolChains == null){
-				sortedToolChains = new ArrayList();
-				SortedMap map = getExtensionToolChainMapInternal();
-				for(Iterator iter = map.values().iterator(); iter.hasNext();){
-					ToolChain tc = (ToolChain)iter.next();
-					if(tc.isAbstract())
-						continue;
-					List list = searchIdentical(sortedToolChains, tc);
-					if(list == null){
-						list = new ArrayList();
-						sortedToolChains.add(list);
-					}
-					list.add(tc);
-					tc.setIdenticalList(list);
-				}
-			}
-			return sortedToolChains;
-		}
-	*/
-	//	private static List findIdenticalToolChains(IToolChain tc){
-	//		ToolChain tCh = (ToolChain)tc;
-	//		List list = tCh.getIdenticalList();
-	//		if(list == null){
-	//			resortToolChains();
-	//			list = tCh.getIdenticalList();
-	//			if(list == null){
-	//				list = new ArrayList(0);
-	//				tCh.setIdenticalList(list);
-	//			}
-	//		}
+	/*
+	 * public static IToolChain[] getExtensionsToolChains(String propertyType,
+	 * String propertyValue){ List all = getSortedToolChains(); List result = new
+	 * ArrayList(); for(int i = 0; i < all.size(); i++){ List list =
+	 * (List)all.get(i); IToolChain tc = findToolChain(list, propertyType,
+	 * propertyValue); if(tc != null) result.add(tc); } return
+	 * (IToolChain[])result.toArray(new ToolChain[result.size()]); }
+	 */
+	/*
+	 * public static void resortToolChains(){ sortedToolChains = null;
+	 * getSortedToolChains(); }
+	 */
+	/*
+	 * private static List getSortedToolChains(){ if(sortedToolChains == null){
+	 * sortedToolChains = new ArrayList(); SortedMap map =
+	 * getExtensionToolChainMapInternal(); for(Iterator iter =
+	 * map.values().iterator(); iter.hasNext();){ ToolChain tc =
+	 * (ToolChain)iter.next(); if(tc.isAbstract()) continue; List list =
+	 * searchIdentical(sortedToolChains, tc); if(list == null){ list = new
+	 * ArrayList(); sortedToolChains.add(list); } list.add(tc);
+	 * tc.setIdenticalList(list); } } return sortedToolChains; }
+	 */
+	// private static List findIdenticalToolChains(IToolChain tc){
+	// ToolChain tCh = (ToolChain)tc;
+	// List list = tCh.getIdenticalList();
+	// if(list == null){
+	// resortToolChains();
+	// list = tCh.getIdenticalList();
+	// if(list == null){
+	// list = new ArrayList(0);
+	// tCh.setIdenticalList(list);
+	// }
+	// }
 	//
-	//		return ((ToolChain)tc).getIdenticalList();
-	//	}
+	// return ((ToolChain)tc).getIdenticalList();
+	// }
 
 	public static IToolChain[] getExtensionToolChains(IProjectType type) {
 		List<IToolChain> result = new ArrayList<>();
@@ -3997,7 +3982,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	public static IConfiguration[] getExtensionConfigurations(IToolChain tChain, String propertyType,
 			String propertyValue) {
-		//		List all = getSortedToolChains();
+		// List all = getSortedToolChains();
 		List<ToolChain> list = findIdenticalElements((ToolChain) tChain, fToolChainSorter);
 		LinkedHashSet<IConfiguration> result = new LinkedHashSet<>();
 		boolean tcFound = false;
@@ -4029,27 +4014,23 @@ public class ManagedBuildManager extends AbstractCExtension {
 			}
 		}
 
-		//		if(result.size() == 0){
-		//			if(((ToolChain)tChain).supportsValue(propertyType, propertyValue)){
-		//				IConfiguration cfg = getFirstExtensionConfiguration(tChain);
-		//				if(cfg != null){
-		//					result.add(cfg);
-		//				}
-		//			}
-		//		}
+		// if(result.size() == 0){
+		// if(((ToolChain)tChain).supportsValue(propertyType, propertyValue)){
+		// IConfiguration cfg = getFirstExtensionConfiguration(tChain);
+		// if(cfg != null){
+		// result.add(cfg);
+		// }
+		// }
+		// }
 		return result.toArray(new IConfiguration[result.size()]);
 	}
 
-	/*	public static IToolChain[] getRealToolChains(){
-			List all = getSortedToolChains();
-			IToolChain tcs[] = new ToolChain[all.size()];
-			for(int i = 0; i < tcs.length; i++){
-				List list = (List)all.get(i);
-				tcs[i] = (ToolChain)list.get(0);
-			}
-			return tcs;
-		}
-	*/
+	/*
+	 * public static IToolChain[] getRealToolChains(){ List all =
+	 * getSortedToolChains(); IToolChain tcs[] = new ToolChain[all.size()]; for(int
+	 * i = 0; i < tcs.length; i++){ List list = (List)all.get(i); tcs[i] =
+	 * (ToolChain)list.get(0); } return tcs; }
+	 */
 
 	private static HashMap<MatchKey<ToolChain>, List<ToolChain>> getSortedToolChains() {
 		if (fSortedToolChains == null) {
@@ -4150,7 +4131,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				}
 			}
 		} else {
-			//TODO:
+			// TODO:
 		}
 		return realBuilder;
 	}
@@ -4212,7 +4193,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 				}
 			}
 		} else {
-			//TODO:
+			// TODO:
 		}
 		return realToolChain;
 	}
@@ -4341,10 +4322,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Returns the configurations referenced by this configuration.
-	 * Returns an empty array if there are no referenced configurations.
+	 * Returns the configurations referenced by this configuration. Returns an empty
+	 * array if there are no referenced configurations.
 	 *
-	 * @see CoreModelUtil#getReferencedConfigurationDescriptions(ICConfigurationDescription, boolean)
+	 * @see CoreModelUtil#getReferencedConfigurationDescriptions(ICConfigurationDescription,
+	 *      boolean)
 	 * @return an array of IConfiguration objects referenced by this IConfiguration
 	 */
 	public static IConfiguration[] getReferencedConfigurations(IConfiguration config) {
@@ -4366,6 +4348,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * Build the specified build configurations
+	 *
 	 * @param configs - configurations to build
 	 * @param monitor - progress monitor
 	 */
@@ -4375,6 +4358,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	/**
 	 * Build the specified build configurations
+	 *
 	 * @param configs - configurations to build
 	 * @param builder - builder to retrieve build arguments
 	 * @param monitor - progress monitor
@@ -4387,11 +4371,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Build the specified build configurations.
 	 *
-	 * @param configs - configurations to build
-	 * @param builder - builder to retrieve build arguments
-	 * @param monitor - progress monitor
-	 * @param allBuilders - {@code true} if all builders need to be building
-	 *    or {@code false} to build with {@link CommonBuilder}
+	 * @param configs     - configurations to build
+	 * @param builder     - builder to retrieve build arguments
+	 * @param monitor     - progress monitor
+	 * @param allBuilders - {@code true} if all builders need to be building or
+	 *                    {@code false} to build with {@link CommonBuilder}
 	 */
 	public static void buildConfigurations(IConfiguration[] configs, IBuilder builder, IProgressMonitor monitor,
 			boolean allBuilders) throws CoreException {
@@ -4401,15 +4385,15 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Build the specified build configurations.
 	 *
-	 * @param configs - configurations to build
-	 * @param builder - builder to retrieve build arguments
-	 * @param monitor - progress monitor
-	 * @param allBuilders - {@code true} if all builders need to be building
-	 *    or {@code false} to build with {@link CommonBuilder}
-	 * @param buildKind - one of
-	 *    <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}</li>
-	 *    <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}</li>
-	 *    <li>{@link IncrementalProjectBuilder#FULL_BUILD}</li>
+	 * @param configs     - configurations to build
+	 * @param builder     - builder to retrieve build arguments
+	 * @param monitor     - progress monitor
+	 * @param allBuilders - {@code true} if all builders need to be building or
+	 *                    {@code false} to build with {@link CommonBuilder}
+	 * @param buildKind   - one of
+	 *                    <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}</li>
+	 *                    <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}</li>
+	 *                    <li>{@link IncrementalProjectBuilder#FULL_BUILD}</li>
 	 *
 	 * @since 7.0
 	 */
@@ -4452,16 +4436,16 @@ public class ManagedBuildManager extends AbstractCExtension {
 	/**
 	 * Build the specified build configurations for a given project.
 	 *
-	 * @param project - project the configurations belong to
-	 * @param configs - configurations to build
-	 * @param builder - builder to retrieve build arguments
-	 * @param monitor - progress monitor
-	 * @param allBuilders - {@code true} if all builders need to be building
-	 *    or {@code false} to build with {@link CommonBuilder}
-	 * @param buildKind - one of
-	 *    <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}</li>
-	 *    <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}</li>
-	 *    <li>{@link IncrementalProjectBuilder#FULL_BUILD}</li>
+	 * @param project     - project the configurations belong to
+	 * @param configs     - configurations to build
+	 * @param builder     - builder to retrieve build arguments
+	 * @param monitor     - progress monitor
+	 * @param allBuilders - {@code true} if all builders need to be building or
+	 *                    {@code false} to build with {@link CommonBuilder}
+	 * @param buildKind   - one of
+	 *                    <li>{@link IncrementalProjectBuilder#CLEAN_BUILD}</li>
+	 *                    <li>{@link IncrementalProjectBuilder#INCREMENTAL_BUILD}</li>
+	 *                    <li>{@link IncrementalProjectBuilder#FULL_BUILD}</li>
 	 *
 	 * @throws CoreException
 	 */
@@ -4473,7 +4457,9 @@ public class ManagedBuildManager extends AbstractCExtension {
 			/*
 			 * (non-Javadoc)
 			 *
-			 * @see org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.IProgressMonitor)
+			 * @see
+			 * org.eclipse.core.resources.IWorkspaceRunnable#run(org.eclipse.core.runtime.
+			 * IProgressMonitor)
 			 */
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -4612,7 +4598,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return true; // no target platform - nothing to check.
 	}
 
-	/*package*/ static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription,
+	/* package */ static void collectLanguageSettingsConsoleParsers(ICConfigurationDescription cfgDescription,
 			IWorkingDirectoryTracker cwdTracker, List<IConsoleParser> parsers) {
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
 			List<ILanguageSettingsProvider> lsProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
@@ -4634,10 +4620,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
-	 * Generic routine for checking the availability of converters for the given list of Build Objects.
+	 * Generic routine for checking the availability of converters for the given
+	 * list of Build Objects.
 	 *
-	 * @return true if there are converters for at least one object in the given list of Build Objects.
-	 *         Returns false if there are no converters.
+	 * @return true if there are converters for at least one object in the given
+	 *         list of Build Objects. Returns false if there are no converters.
 	 * @since 8.1
 	 */
 	public static boolean hasAnyTargetConversionElements(List<IBuildObject> buildObjs) {

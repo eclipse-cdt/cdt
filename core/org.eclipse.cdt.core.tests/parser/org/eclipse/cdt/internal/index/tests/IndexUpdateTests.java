@@ -103,8 +103,9 @@ public class IndexUpdateTests extends IndexTestBase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		fCppProject = CProjectHelper.createCCProject("indexUpdateTestsCpp", null, IPDOMManager.ID_FAST_INDEXER);
-		fCProject = CProjectHelper.createCProject("indexUpdateTestsC", null, IPDOMManager.ID_FAST_INDEXER);
+		fCppProject = CProjectHelper.createCCProject("indexUpdateTestsCpp_" + getName(), null,
+				IPDOMManager.ID_FAST_INDEXER);
+		fCProject = CProjectHelper.createCProject("indexUpdateTestsC_" + getName(), null, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fCppProject);
 		waitForIndexer(fCProject);
 		fIndex = CCorePlugin.getIndexManager().getIndex(new ICProject[] { fCProject, fCppProject });

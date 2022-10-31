@@ -15,6 +15,8 @@
 package org.eclipse.cdt.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
@@ -44,6 +46,17 @@ public class CommandLineUtil {
 		} else {
 			return argumentsToArrayUnixStyle(line);
 		}
+	}
+
+	/**
+	 * Parse a string containing compile options into individual argument strings.
+	 *
+	 * @param line - String to parse
+	 * @return List of arg Strings
+	 */
+	public static List<String> argumentsToList(String line) {
+		String[] args = CommandLineUtil.argumentsToArray(line);
+		return new ArrayList<>(Arrays.asList(args));
 	}
 
 	/**

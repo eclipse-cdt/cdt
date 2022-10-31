@@ -107,7 +107,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	private final String name;
 	private final IBuildConfiguration config;
-	private final IToolChain toolChain;
+	private IToolChain toolChain;
 	private String launchMode;
 
 	private Object scannerInfoLock = new Object();
@@ -307,6 +307,17 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	@Override
 	public IToolChain getToolChain() throws CoreException {
 		return toolChain;
+	}
+
+	/**
+	 * setToolChain() can be used by sub-classes that need to support multiple C compilers
+	 * in one Makefile. The sub-classes can override the processLine() methods, and
+	 * set a different toolChain based on the compiler used.
+	 *
+	 * @param toolChain
+	 */
+	protected void setToolChain(IToolChain toolChain) {
+		this.toolChain = toolChain;
 	}
 
 	@Override
@@ -747,23 +758,12 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		}
 	}
 
-	/**
-	 * Parse a string containing compile options into individual argument strings.
-	 *
-	 * @param argString - String to parse
-	 * @return List of arg Strings
-	 */
-	private List<String> stripArgs(String argString) {
-		String[] args = CommandLineUtil.argumentsToArray(argString);
-		return new ArrayList<>(Arrays.asList(args));
-	}
-
 	private boolean infoChanged = false;
 
 	@Override
 	public boolean processLine(String line) {
 		// Split line into args, taking into account quotes
-		List<String> command = stripArgs(line);
+		List<String> command = CommandLineUtil.argumentsToList(line);
 
 		// Make sure it's a compile command
 		String[] compileCommands = toolChain.getCompileCommands();
@@ -891,7 +891,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	@Override
 	public boolean processLine(String line, List<Job> jobsArray) {
 		// Split line into args, taking into account quotes
-		List<String> command = stripArgs(line);
+		List<String> command = CommandLineUtil.argumentsToList(line);
 
 		// Make sure it's a compile command
 		String[] compileCommands = toolChain.getCompileCommands();

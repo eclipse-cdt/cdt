@@ -109,9 +109,10 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 			}
 		}
 		if (adapter.equals(ISymbolReader.class)) {
-			PE64 pe = getAdapter(PE64.class);
-			if (pe != null) {
-				return (T) pe.getSymbolReader();
+			try (PE64 pe = getAdapter(PE64.class)) {
+				if (pe != null) {
+					return (T) pe.getSymbolReader();
+				}
 			}
 		}
 		return super.getAdapter(adapter);

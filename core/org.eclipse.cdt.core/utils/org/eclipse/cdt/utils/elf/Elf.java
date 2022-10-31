@@ -59,7 +59,6 @@ public class Elf implements AutoCloseable {
 	private Symbol[] symbolsTable;
 	/** .dynSym section */
 	private Symbol[] dynamicSymbols;
-	private boolean areSectionsMapped; // Have sections been mapped? Used to clean up properly in Elf.Dispose.
 
 	protected String EMPTY_STRING = ""; //$NON-NLS-1$
 	private long elfOffset;
@@ -339,7 +338,6 @@ public class Elf implements AutoCloseable {
 		 */
 		public ByteBuffer mapSectionData() throws IOException {
 			makeSureNotCompressed();
-			areSectionsMapped = true;
 			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset, sh_size).load().asReadOnlyBuffer();
 		}
 
@@ -987,9 +985,6 @@ public class Elf implements AutoCloseable {
 			if (efile != null) {
 				efile.close();
 				efile = null;
-				// ensure the mappings get cleaned up
-				if (areSectionsMapped)
-					System.gc();
 			}
 		} catch (IOException e) {
 		}
@@ -1304,6 +1299,12 @@ public class Elf implements AutoCloseable {
 		return reader;
 	}
 
+	/**
+	 * Creates a new symbol reader instance on each call. Caller is responsible for closing
+	 * the symbol reader
+	 *
+	 * @return symbol reader or {@code null} if couldn't create symbol reader
+	 */
 	public ISymbolReader getSymbolReader() {
 		ISymbolReader reader = null;
 		reader = createDwarfReader();

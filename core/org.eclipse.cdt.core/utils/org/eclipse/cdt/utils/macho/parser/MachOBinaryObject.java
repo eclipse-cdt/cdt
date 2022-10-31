@@ -395,9 +395,10 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 			}
 		}
 		if (adapter.equals(ISymbolReader.class)) {
-			MachO macho = getAdapter(MachO.class);
-			if (macho != null) {
-				return (T) macho.getSymbolReader();
+			try (MachO macho = getAdapter(MachO.class)) {
+				if (macho != null) {
+					return (T) macho.getSymbolReader();
+				}
 			}
 		}
 		return super.getAdapter(adapter);

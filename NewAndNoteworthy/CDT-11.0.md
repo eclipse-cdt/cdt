@@ -55,6 +55,10 @@ It may have other uses to other API consumers as well and is therefore included 
 
 This should allow ISV's to create MBS based project with a vendor-specific build-system ID without using internal API.
 
+## Binary Parser code uses AutoCloseable
+
+The binary parser classes which open binary files now implement AutoCloseable so they can (and should) be used in a try-with-resources block.
+See https://github.com/eclipse-cdt/cdt/pull/132
 
 # Bugs Fixed in this Release
 

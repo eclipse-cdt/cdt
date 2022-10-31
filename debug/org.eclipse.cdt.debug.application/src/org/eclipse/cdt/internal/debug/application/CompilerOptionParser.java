@@ -66,6 +66,7 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor monitor) {
+		ISymbolReader reader = null;
 		try {
 			// Calculate how many source files we have to process and use that as a basis
 			// for our work estimate.
@@ -102,7 +103,7 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 				return;
 			}
 
-			ISymbolReader reader = bf.getAdapter(ISymbolReader.class);
+			reader = bf.getAdapter(ISymbolReader.class);
 			String[] sourceFiles = reader.getSourceFiles();
 			monitor.beginTask(Messages.GetCompilerOptions, sourceFiles.length * 2 + 1);
 
@@ -157,6 +158,9 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 			e.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+		} finally {
+			if (reader != null)
+				reader.close();
 		}
 		monitor.done();
 	}

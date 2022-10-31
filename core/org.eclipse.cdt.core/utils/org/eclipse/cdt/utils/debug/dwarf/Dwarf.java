@@ -39,7 +39,7 @@ import org.eclipse.cdt.utils.elf.Elf.Section;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-public class Dwarf {
+public class Dwarf implements AutoCloseable {
 
 	/* Section names. */
 	final static String DWARF_DEBUG_INFO = ".debug_info"; //$NON-NLS-1$
@@ -357,6 +357,26 @@ public class Dwarf {
 			}
 		}
 
+	}
+
+	private void dispose() {
+		dwarfSections.clear();
+		dwarfAltSections.clear();
+		System.gc();
+	}
+
+	@Override
+	public void close() {
+		dispose();
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		try {
+			dispose();
+		} finally {
+			super.finalize();
+		}
 	}
 
 	int read_4_bytes(ByteBuffer in) throws IOException {

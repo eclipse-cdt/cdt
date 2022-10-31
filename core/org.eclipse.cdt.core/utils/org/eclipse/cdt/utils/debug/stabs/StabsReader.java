@@ -248,4 +248,7 @@ public class StabsReader implements ISymbolReader {
 		return getSourceFiles();
 	}
 
+	@Override
+	public void close() {
+	}
 }

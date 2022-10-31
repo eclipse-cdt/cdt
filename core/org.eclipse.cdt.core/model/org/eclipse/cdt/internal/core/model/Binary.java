@@ -306,11 +306,14 @@ public class Binary extends Openable implements IBinary {
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
 
-		ISymbolReader symbolreader = obj.getAdapter(ISymbolReader.class);
-		if (symbolreader == null)
-			return false;
+		String[] sourceFiles = null;
+		try (ISymbolReader symbolreader = obj.getAdapter(ISymbolReader.class)) {
+			if (symbolreader == null)
+				return false;
 
-		String[] sourceFiles = symbolreader.getSourceFiles();
+			sourceFiles = symbolreader.getSourceFiles();
+		}
+
 		if (sourceFiles != null && sourceFiles.length > 0) {
 			ISourceFinder srcFinder = getAdapter(ISourceFinder.class);
 			try {

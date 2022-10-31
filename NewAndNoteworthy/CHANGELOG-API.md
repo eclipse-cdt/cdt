@@ -14,6 +14,7 @@ This section describes API removals that occurred in past releases, and upcoming
 - [Removal of deprecated CBuildConfiguration.watchProcess() methods](#watchProcessCBuildConfig)
 - [Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb](#gdbBackendDebuggerCommandLine)
 - [Removal of Qt plug-ins and features](#qt-plugins)
+- [Removal of constructor org.eclipse.cdt.utils.coff.CodeViewReader(RandomAccessFile, int, boolean)](#CodeViewReader-constructor-removal)
 
 ## API Changes in CDT 10.5.0
 
@@ -162,6 +163,14 @@ The following bundles and all their related API has been removed:
 - org.eclipse.cdt.qt.core
 
 See https://github.com/eclipse-cdt/cdt/issues/123
+
+### <span id="CodeViewReader-constructor-removal">Removal of constructor org.eclipse.cdt.utils.coff.CodeViewReader(RandomAccessFile, int, boolean)</span>
+
+Same instance of RandomAccessFile was shared between multiple objects which
+causes problems in closing it properly. A new constructor is introduced which
+accepts filename and opens a RandomAccessFile.
+
+See https://github.com/eclipse-cdt/cdt/pull/132
 
 ---
 

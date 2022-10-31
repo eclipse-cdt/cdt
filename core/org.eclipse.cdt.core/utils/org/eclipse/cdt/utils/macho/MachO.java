@@ -34,7 +34,7 @@ import org.eclipse.cdt.utils.debug.stabs.StabsReader;
  * This class is planned for removal in next major release.
  */
 @Deprecated
-public class MachO {
+public class MachO implements AutoCloseable {
 	protected ERandomAccessFile efile;
 
 	protected MachOhdr mhdr;
@@ -1107,6 +1107,11 @@ public class MachO {
 		} catch (IOException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public void close() {
+		dispose();
 	}
 
 	public void dispose() {

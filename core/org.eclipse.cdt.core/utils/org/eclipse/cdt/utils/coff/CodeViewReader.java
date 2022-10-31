@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
@@ -30,12 +31,42 @@ public class CodeViewReader implements ISymbolReader {
 	private String[] files = null;
 	private boolean parsed = false;
 
-	public CodeViewReader(RandomAccessFile accessFile, int dataOffset, boolean littleEndian) {
-		file = accessFile;
+	/**
+	 * @since 8.0
+	 */
+	public CodeViewReader(String filename, int dataOffset, boolean littleEndian) throws FileNotFoundException {
+		file = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 		cvData = dataOffset;
 		isLe = littleEndian;
 
 		fileList = new ArrayList<>();
+	}
+
+	@Override
+	public void close() {
+		dispose();
+	}
+
+	/**
+	 * @since 8.0
+	 */
+	public void dispose() {
+		if (file != null) {
+			try {
+				file.close();
+			} catch (IOException e) {
+			}
+			file = null;
+		}
+	}
+
+	@Override
+	protected void finalize() throws Throwable {
+		try {
+			dispose();
+		} finally {
+			super.finalize();
+		}
 	}
 
 	@Override

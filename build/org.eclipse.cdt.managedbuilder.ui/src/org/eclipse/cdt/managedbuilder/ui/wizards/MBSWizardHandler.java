@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
-import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
 import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
@@ -611,20 +610,15 @@ public class MBSWizardHandler extends CWizardHandler {
 		cfgs = CfgHolder.unique(cfgs);
 		cfgs = CfgHolder.reorder(cfgs);
 
-		ICConfigurationDescription cfgDebug = null;
-		ICConfigurationDescription cfgFirst = null;
 		subMonitor.worked(1);
 
+		IConfiguration active = null;
 		SubMonitor cfgMonitor = SubMonitor.convert(subMonitor.split(1), cfgs.length);
 		for (CfgHolder cfg : cfgs) {
 			cf = (Configuration) cfg.getConfiguration();
-			String id = ManagedBuildManager.calculateChildId(cf.getId(), null);
-			Configuration config = new Configuration(mProj, cf, id, false, true);
-			CConfigurationData data = config.getConfigurationData();
-			ICConfigurationDescription cfgDes = des.createConfiguration(ManagedBuildManager.CFG_DATA_PROVIDER_ID, data);
-			config.setConfigurationDescription(cfgDes);
-			config.exportArtifactInfo();
-
+			IConfiguration config = ManagedBuildManager.createConfigurationForProject(des, mProj, cf,
+					ManagedBuildManager.CFG_DATA_PROVIDER_ID);
+			// TODO check 			config.exportArtifactInfo();
 			IBuilder bld = config.getEditableBuilder();
 			if (bld != null) {
 				bld.setManagedBuildOn(true);
@@ -633,12 +627,17 @@ public class MBSWizardHandler extends CWizardHandler {
 			config.setName(cfg.getName());
 			config.setArtifactName(mProj.getDefaultArtifactName());
 
-			IBuildProperty b = config.getBuildProperties().getProperty(PROPERTY);
-			if (cfgDebug == null && b != null && b.getValue() != null && PROP_VAL.equals(b.getValue().getId()))
-				cfgDebug = cfgDes;
-			if (cfgFirst == null) // select at least first configuration
-				cfgFirst = cfgDes;
+			IBuildProperty b = config.getBuildProperties().getProperty(ManagedBuildManager.BUILD_TYPE_PROPERTY_ID);
+			if (active == null && b != null && b.getValue() != null
+					&& ManagedBuildManager.BUILD_TYPE_PROPERTY_DEBUG.equals(b.getValue().getId())) {
+				active = config;
+			}
 			cfgMonitor.worked(1);
+		}
+		// activate DEBUG configuration...
+		if (active != null) {
+			ICConfigurationDescription conf = ManagedBuildManager.getDescriptionForConfiguration(active);
+			des.setActiveConfiguration(conf);
 		}
 		mngr.setProjectDescription(project, des);
 	}

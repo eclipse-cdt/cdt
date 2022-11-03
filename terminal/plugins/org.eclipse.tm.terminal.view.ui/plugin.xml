@@ -44,6 +44,11 @@
 
 <!-- Perspective extension contributions -->    
    <extension point="org.eclipse.ui.perspectiveExtensions">
+      <!-- This next line will be a warning about
+               Referenced identifier 'org.eclipse.tcf.te.ui.perspective' in attribute 'targetID' cannot be found
+           If you don't have TCF bundles in your target platform. As TCF is not part of standard CDT target platform
+           this message has been downgraded to a warning.
+        -->
       <perspectiveExtension targetID="org.eclipse.tcf.te.ui.perspective">
 		 <!-- Register the view shortcuts  -->
          <viewShortcut id="org.eclipse.tm.terminal.view.ui.TerminalsView"/>

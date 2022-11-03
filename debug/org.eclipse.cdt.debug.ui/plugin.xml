@@ -1103,12 +1103,12 @@
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
       <factory
-            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.containers.CProjectSourceContainer"
+            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
       <factory
-            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.containers.SourceFoldersRelativePathSourceContainer"
+            adaptableType="org.eclipse.cdt.debug.internal.core.sourcelookup.SourceFoldersRelativePathSourceContainer"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>

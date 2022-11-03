@@ -2575,7 +2575,7 @@
   <extension
         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
      <launchConfigurationTypeImage
-           configTypeID="org.eclipse.cdt.debug.core.localLaunchConfigurationType"
+           configTypeID="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType"
            icon="icons/obj16/c_app.gif"
            id="org.eclipse.cdt.debug.ui.localLaunchConfigurationTypeImage">
      </launchConfigurationTypeImage>

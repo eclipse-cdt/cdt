@@ -21,9 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
-import org.eclipse.cdt.utils.coff.PE;
-import org.eclipse.cdt.utils.coff.PE.Attribute;
+import org.eclipse.cdt.utils.coff.Coff64.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE64;
+import org.eclipse.cdt.utils.coff.PE64.Attribute;
 import org.eclipse.cdt.utils.debug.DebugArrayType;
 import org.eclipse.cdt.utils.debug.DebugBaseType;
 import org.eclipse.cdt.utils.debug.DebugCrossRefType;
@@ -71,7 +71,7 @@ public class Stabs {
 		try (Elf exe = new Elf(file)) {
 			init(exe);
 		} catch (IOException e) {
-			try (PE exe = new PE(file)) {
+			try (PE64 exe = new PE64(file)) {
 				init(exe);
 			}
 		}
@@ -104,7 +104,7 @@ public class Stabs {
 		}
 	}
 
-	void init(PE exe) throws IOException {
+	void init(PE64 exe) throws IOException {
 		byte[] data = null;
 		byte[] stabstr = null;
 

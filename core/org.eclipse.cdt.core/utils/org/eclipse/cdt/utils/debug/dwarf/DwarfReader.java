@@ -31,8 +31,7 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICompileOptionsFinder;
 import org.eclipse.cdt.core.ISymbolReader;
-import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
-import org.eclipse.cdt.utils.coff.PE;
+import org.eclipse.cdt.utils.coff.Coff64.SectionHeader;
 import org.eclipse.cdt.utils.coff.PE64;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
@@ -68,13 +67,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	}
 
 	public DwarfReader(Elf exe) throws IOException {
-		super(exe);
-	}
-
-	/**
-	 * @since 5.1
-	 */
-	public DwarfReader(PE exe) throws IOException {
 		super(exe);
 	}
 
@@ -259,7 +251,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	}
 
 	@Override
-	public void init(PE exe) throws IOException {
+	public void init(PE64 exe) throws IOException {
 
 		isLE = true;
 		SectionHeader[] sections = exe.getSectionHeaders();

@@ -15,6 +15,7 @@ This section describes API removals that occurred in past releases, and upcoming
 - [Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb](#gdbBackendDebuggerCommandLine)
 - [Removal of Qt plug-ins and features](#qt-plugins)
 - [Removal of constructor org.eclipse.cdt.utils.coff.CodeViewReader(RandomAccessFile, int, boolean)](#CodeViewReader-constructor-removal)
+- [Removal of 32-bit Binary parsers with 64-bit replacements](#32bitbinaryparsers)
 
 ## API Changes in CDT 10.5.0
 
@@ -171,6 +172,43 @@ causes problems in closing it properly. A new constructor is introduced which
 accepts filename and opens a RandomAccessFile.
 
 See https://github.com/eclipse-cdt/cdt/pull/132
+
+### <span id="32bitbinaryparsers">Removal of 32-bit Binary parsers with 64-bit replacements</span>
+
+The following binary parser classes have been removed, mostly due to these versions not supporting 64-bit variants of the binary files.
+The new 64-bit parsers support both 32 and 64 bit files and can be identified by the same name class followed by `64`.
+
+- org.eclipse.cdt.utils.coff.Coff
+- org.eclipse.cdt.utils.coff.PE
+- org.eclipse.cdt.utils.coff.PEArchive
+- org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryArchive
+- org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryExecutable
+- org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryObject
+- org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryShared
+- org.eclipse.cdt.utils.coff.parser.CygwinPEParser
+- org.eclipse.cdt.utils.coff.parser.CygwinSymbol
+- org.eclipse.cdt.utils.coff.parser.PEBinaryArchive
+- org.eclipse.cdt.utils.coff.parser.PEBinaryExecutable
+- org.eclipse.cdt.utils.coff.parser.PEBinaryObject
+- org.eclipse.cdt.utils.coff.parser.PEBinaryShared
+- org.eclipse.cdt.utils.coff.parser.PEParser
+- org.eclipse.cdt.utils.macho.MachO
+- org.eclipse.cdt.utils.macho.MachOHelper
+- org.eclipse.cdt.utils.macho.parser.MachOBinaryArchive
+- org.eclipse.cdt.utils.macho.parser.MachOBinaryExecutable
+- org.eclipse.cdt.utils.macho.parser.MachOBinaryObject
+- org.eclipse.cdt.utils.macho.parser.MachOBinaryShared
+- org.eclipse.cdt.utils.macho.parser.MachOParser
+
+In addition the following methods have been removed due to there existing a 64-bit compatible version.
+
+- org.eclipse.cdt.utils.debug.dwarf.Dwarf.Dwarf(PE), use Dwarf(PE64) constructor instead
+- org.eclipse.cdt.utils.debug.dwarf.Dwarf.init(PE), use init(PE64) method instead
+- org.eclipse.cdt.utils.debug.dwarf.DwarfReader.DwarfReader(PE), use DwarfReader(PE64) constructor instead
+- org.eclipse.cdt.utils.debug.dwarf.DwarfReader.init(PE), use init(PE64) method instead
+- org.eclipse.cdt.utils.debug.stabs.Stabs.init(PE), use init(PE64) method instead
+
+See https://github.com/eclipse-cdt/cdt/pull/135
 
 ---
 
@@ -480,31 +518,6 @@ The details and discussion on the removal happens in the GitHub issue (or Bugzil
 See the [policy](../POLICY.md) for the details.
 
 ## API Removals after June 2022
-
-### <span id="binaryparsers">32-bit Binary parsers with 64-bit replacements</span>
-
-The following binary parser classes have replacements, mostly due to
-these versions not supporting 64-bit variants of the binary files. The
-new 64-bit parsers support both 32 and 64 bit files.
-
-- org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryArchive
-- org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryExecutable
-- org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryObject
-- org.eclipse.cdt.utils.coff.parser.CygwinPEBinaryShared
-- org.eclipse.cdt.utils.coff.parser.CygwinPEParser
-- org.eclipse.cdt.utils.coff.parser.CygwinSymbol
-- org.eclipse.cdt.utils.coff.parser.PEBinaryArchive
-- org.eclipse.cdt.utils.coff.parser.PEBinaryExecutable
-- org.eclipse.cdt.utils.coff.parser.PEBinaryObject
-- org.eclipse.cdt.utils.coff.parser.PEBinaryShared
-- org.eclipse.cdt.utils.coff.parser.PEParser
-- org.eclipse.cdt.utils.macho.parser.MachOBinaryArchive
-- org.eclipse.cdt.utils.macho.parser.MachOBinaryExecutable
-- org.eclipse.cdt.utils.macho.parser.MachOBinaryObject
-- org.eclipse.cdt.utils.macho.parser.MachOBinaryShared
-- org.eclipse.cdt.utils.macho.parser.MachOParser
-
-See [Bug 562495](https://bugs.eclipse.org/bugs/show_bug.cgi?id=562495).
 
 ### <span id="baudrate">BaudRate enum in org.eclipse.cdt.serial</span>
 

@@ -58,15 +58,5 @@
       <super type="org.eclipse.cdt.examples.dsf.pda.markerType.lineBreakpoint"/>
       <persistent value="true"/>
    </extension>
-
-
-   <extension
-         point="org.eclipse.debug.core.logicalStructureTypes">
-      <logicalStructureType
-            class="org.eclipse.debug.examples.core.pda.model.WordStructureDelegate"
-            description="Words"
-            id="pda.wordStructure"
-            modelIdentifier="org.eclipse.cdt.examples.dsf.pda.debugModel"/>
-   </extension>
 </plugin>
 

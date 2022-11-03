@@ -59,7 +59,6 @@
  <extension point="org.eclipse.search.searchResultViewPages">
     <viewPage
         class="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResultsPage"
-        icon="icons/full/obj16/tsearch_dpdn_obj.gif"
         id="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResultsPage"
         label="Memory Search Results"
         searchResultClass="org.eclipse.cdt.debug.ui.memory.search.MemorySearchResult">

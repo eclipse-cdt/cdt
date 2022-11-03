@@ -52,7 +52,7 @@
       <persistent value="true"/>
    </extension>
    <extension
-         id="org.eclipse.cdt.examples.dsf.pda.markerType.watchpoint"
+         id="markerType.watchpoint"
          name="DD PDA Watchpoint Marker"
          point="org.eclipse.core.resources.markers">
       <super type="org.eclipse.cdt.examples.dsf.pda.markerType.lineBreakpoint"/>

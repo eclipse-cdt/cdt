@@ -40,20 +40,6 @@ public class BackwardCompatiblityTests extends BaseTestCase {
 	public void test3xStdMakeProject() {
 		String PROJ_NAME = "std_cpp_1";
 
-		//		String[] BIN_PARSERS = new String[]{
-		//				"org.eclipse.cdt.core.ELF",
-		//				"org.eclipse.cdt.core.PE",
-		//				"org.eclipse.cdt.core.GNU_ELF",
-		//				"org.eclipse.cdt.core.MachO"
-		//		};
-		//
-		//		String[] ERR_PARSERS = new String[]{
-		//				"org.eclipse.cdt.core.CWDLocator",
-		//				"org.eclipse.cdt.core.GASErrorParser",
-		//				"org.eclipse.cdt.core.VCErrorParser",
-		//				"org.eclipse.cdt.core.GmakeErrorParser",
-		//		};
-
 		IProject project = loadStdProject(PROJ_NAME);
 		projList.add(project);
 

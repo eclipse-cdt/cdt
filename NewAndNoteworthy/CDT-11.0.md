@@ -16,6 +16,7 @@ Various plug-ins and features are no longer part of the CDT release.
 Please see the corresponding issue for more details.
 
 - Qt plug-ins (`org.eclipse.cdt.qt.ui/core/feature`) https://github.com/eclipse-cdt/cdt/issues/123 _Note:_ the `org.eclipse.cdt.testsrunner.qttest` plug-in is still part of CDT.
+- Non-universal Welcome Screen Content has been removed from `org.eclipse.cdt` plug-in. The universal content is in `org.eclipse.cdt.doc.user`. https://github.com/eclipse-cdt/cdt/pull/136
 
 # Debug
 

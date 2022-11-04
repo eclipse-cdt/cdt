@@ -51,6 +51,11 @@ Job.getJobManager().join(ManagedBuilderCorePlugin.BUILD_SETTING_UPDATE_JOB_FAMIL
 This new job family was added to improve stability of tests to ensure background operations are complete.
 It may have other uses to other API consumers as well and is therefore included here.
 
+## New method ManagedBuildManager#createConfigurationForProject()
+
+This should allow ISV's to create MBS based project with a vendor-specific build-system ID without using internal API.
+
+
 # Bugs Fixed in this Release
 
 See [GitHub milestones](https://github.com/eclipse-cdt/cdt/milestone/2?closed=1) and for bugs that haven't been transitioned to GitHub please see Bugzilla report [Bugs Fixed in CDT 11.0](https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&classification=Tools&product=CDT&query_format=advanced&resolution=FIXED&target_milestone=11.0.0).

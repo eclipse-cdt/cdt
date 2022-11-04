@@ -3651,6 +3651,54 @@ public class ManagedBuildManager extends AbstractCExtension {
 	}
 
 	/**
+	 * Creates a new <code>IConfiguration</code> object associated to the specified
+	 * managed project and adds it to the corresponding project description.<br>
+	 * This purpose of this method is to set up build configurations for MBS
+	 * projects that are in the phase of being created programmatically.
+	 *
+	 * @param projectDescription the <code>ICProjectDescription</code> to use for
+	 *                           creating the new configuration
+	 * @param managedProject     the managed project to associate the new
+	 *                           <code>IConfiguration</code> with
+	 * @param cloneConfiguration the <code>IConfiguration</code> to copy the
+	 *                           settings from
+	 * @param buildSystemId      buildSystemId build system id, i.e. the extension
+	 *                           id contributing to the
+	 *                           org.eclipse.cdt.core.CConfigurationDataProvider
+	 *                           extension point
+	 *
+	 * @return the newly created <code>IConfiguration</code> object
+	 *
+	 * @throws CoreException            if the creation of a new
+	 *                                  ICConfigurationDescription failed
+	 * @throws IllegalArgumentException if the <code>IProject</code> associated with
+	 *                                  the specified
+	 *                                  <code>ICProjectDescription</code> does not
+	 *                                  match the project associated with the given
+	 *                                  <code>IManagedProject</code>
+	 * @since 9.5
+	 */
+	public static IConfiguration createConfigurationForProject(ICProjectDescription projectDescription,
+			IManagedProject managedProject, IConfiguration cloneConfiguration, String buildSystemId)
+			throws CoreException {
+		// sanity checks..
+		if (projectDescription.getProject() != managedProject.getOwner()) {
+			String msg = String.format(
+					"IProject associated with 'projectDescription' (%s) does not match the one associated with 'managedProject' (%s)", //$NON-NLS-1$
+					projectDescription.getProject(), managedProject.getOwner());
+			throw new IllegalArgumentException(msg);
+		}
+		String id = calculateChildId(cloneConfiguration.getId(), null);
+		Configuration config = new Configuration((ManagedProject) managedProject, (Configuration) cloneConfiguration,
+				id, false, true);
+		config.exportArtifactInfo();
+		CConfigurationData data = config.getConfigurationData();
+		ICConfigurationDescription cfgDes = projectDescription.createConfiguration(buildSystemId, data);
+		config.setConfigurationDescription(cfgDes);
+		return config;
+	}
+
+	/**
 	 * Convert the IOption integer type ID to the {@link ICSettingEntry#getKind()} type ID
 	 * @param type {@link IOption#getValueType()}
 	 * @return ICSettingEntry type

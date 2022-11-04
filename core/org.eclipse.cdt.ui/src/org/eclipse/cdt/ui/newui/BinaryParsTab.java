@@ -13,9 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModelUtil;
@@ -224,42 +231,38 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 
 	@Override
 	public void updateData(ICResourceDescription cfgd) {
-		String[] ids = null;
+		Set<String> selectedIds = new LinkedHashSet<>();
 		if (page.isForPrefs()) { // prefs
 			if (cfgd != null && cfgd.getConfiguration() != null) {
 				tps = cfgd.getConfiguration().getTargetPlatformSetting();
-				if (tps != null)
-					ids = tps.getBinaryParserIds();
+				if (tps != null) {
+					String[] binaryParserIds = tps.getBinaryParserIds();
+					if (binaryParserIds != null) {
+						selectedIds.addAll(Arrays.asList(binaryParserIds));
+					}
+				}
 			}
-			if (ids == null)
-				ids = new String[0]; // no selection
 		} else { // project
 			ICConfigurationDescription[] cfgs = page.getCfgsEditable();
-			ids = CoreModelUtil.getBinaryParserIds(cfgs);
-		}
-		Object[] data = new Object[configMap.size()];
-		HashMap<String, BinaryParserConfiguration> clone = new HashMap<>(configMap);
-		// add checked elements
-		int i;
-		for (i = 0; i < ids.length; i++) {
-			data[i] = clone.get(ids[i]);
-			clone.remove(ids[i]);
-		}
-		// add remaining parsers (unchecked)
-		Iterator<String> it = clone.keySet().iterator();
-		//		i = 0;
-		while (it.hasNext()) {
-			String s = it.next();
-			data[i++] = clone.get(s);
-		}
-		tv.setInput(data);
-		tv.setAllChecked(false);
-		// set check marks
-		for (i = 0; i < ids.length; i++) {
-			if (configMap.containsKey(ids[i])) {
-				tv.setChecked(configMap.get(ids[i]), true);
+			String[] binaryParserIds = CoreModelUtil.getBinaryParserIds(cfgs);
+			if (binaryParserIds != null) {
+				selectedIds.addAll(Arrays.asList(binaryParserIds));
 			}
 		}
+
+		List<BinaryParserConfiguration> selectedBinaryParsers = selectedIds.stream().map(configMap::get)
+				.filter(Objects::nonNull).toList();
+		List<BinaryParserConfiguration> notSelectedBinaryParsers = configMap.entrySet().stream()
+				.filter(e -> !selectedIds.contains(e.getKey())).map(Entry::getValue).toList();
+
+		// Add the selected ones first so they are at the top of the list
+		List<BinaryParserConfiguration> allBinaryParsers = new ArrayList<>();
+		allBinaryParsers.addAll(selectedBinaryParsers);
+		allBinaryParsers.addAll(notSelectedBinaryParsers);
+		tv.setInput(allBinaryParsers.toArray());
+
+		tv.setAllChecked(false);
+		selectedBinaryParsers.forEach(e -> tv.setChecked(e, true));
 		updateButtons();
 	}
 

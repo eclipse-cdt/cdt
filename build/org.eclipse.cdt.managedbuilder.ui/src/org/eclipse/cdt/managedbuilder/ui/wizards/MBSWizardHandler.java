@@ -618,7 +618,6 @@ public class MBSWizardHandler extends CWizardHandler {
 			cf = (Configuration) cfg.getConfiguration();
 			IConfiguration config = ManagedBuildManager.createConfigurationForProject(des, mProj, cf,
 					ManagedBuildManager.CFG_DATA_PROVIDER_ID);
-			// TODO check 			config.exportArtifactInfo();
 			IBuilder bld = config.getEditableBuilder();
 			if (bld != null) {
 				bld.setManagedBuildOn(true);

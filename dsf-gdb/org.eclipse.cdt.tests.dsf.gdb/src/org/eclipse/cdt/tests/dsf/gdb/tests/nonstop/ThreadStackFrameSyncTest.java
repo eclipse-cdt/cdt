@@ -65,6 +65,8 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	private IGDBFocusSynchronizer fGdbSync;
 	private DsfSession fSession;
 
+	private static final int NUM_THREADS = 5; // Should match value in MultiThread.cc
+
 	// Breakpoint tags in MultiThread.cc
 	public static final String[] LINE_TAGS = new String[] { "LINE_MAIN_BEFORE_THREAD_START", // Just before StartThread
 			"LINE_MAIN_AFTER_THREAD_START", // Just after StartThread
@@ -112,6 +114,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 
 		};
 		fSession.getExecutor().submit(runnable).get();
+
 	}
 
 	@Override
@@ -141,23 +144,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	*/
 	@Test
 	public void testChangingCurrentThreadCLINotification() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
-				MIStoppedEvent.class);
-
-		// add a breakpoint in main
-		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
-		// add a breakpoint in thread code
-		SyncUtil.addBreakpoint("36", false);
-		// Run program
-		SyncUtil.resumeAll();
-
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-
-		// *** at this point all 5 threads should be stopped
+		runAndWaitUntilAllThreadsStopped();
 
 		// Try some thread switching - SwitchThreadAndCaptureThreadSwitchedEvent will
 		// capture the "=thread-selected" event and return the newly selected thread
@@ -177,23 +164,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testChangingCurrentFrameCLINotification() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
-				MIStoppedEvent.class);
-
-		// add a breakpoint in main
-		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
-		// add a breakpoint in thread code
-		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_THREAD_IN_HELLO"), false);
-		// Run program
-		SyncUtil.resumeAll();
-
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-
-		// *** at this point all 5 threads should be stopped
+		runAndWaitUntilAllThreadsStopped();
 
 		// switch to a thread that has some stack frames
 		assertEquals("2", switchThreadAndCaptureThreadSwitchedEvent("2"));
@@ -213,23 +184,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testGdbSyncServiceCanSwitchGDBThread() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
-				MIStoppedEvent.class);
-
-		// add a breakpoint in main
-		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
-		// add a breakpoint in thread code
-		SyncUtil.addBreakpoint("36", false);
-		// Run program
-		SyncUtil.resumeAll();
-
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-
-		// *** at this point all 5 threads should be stopped
+		runAndWaitUntilAllThreadsStopped();
 
 		// have the sync service set GDB current tid to thread 5
 		IMIExecutionDMContext contextForThreadId5 = getContextForThreadId(5);
@@ -264,23 +219,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testGdbSyncServiceCanSwitchGDBStackFrame() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
-				MIStoppedEvent.class);
-
-		// add a breakpoint in main
-		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
-		// add a breakpoint in thread code
-		SyncUtil.addBreakpoint("36", false);
-		// Run program
-		SyncUtil.resumeAll();
-
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for second thread to stop
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
-
-		// *** at this point all 5 threads should be stopped
+		runAndWaitUntilAllThreadsStopped();
 
 		final IFrameDMContext frame1 = SyncUtil.getStackFrame(1, 1);
 		final IFrameDMContext frame0 = SyncUtil.getStackFrame(1, 0);
@@ -314,6 +253,27 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	//////////////////////////////////////////////////////////////////////////////////////
 	// End of tests
 	//////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Run the program and stop when all new threads + main thread are all stopped at known location.
+	 */
+	private void runAndWaitUntilAllThreadsStopped() throws Throwable {
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fMultiRunControl.getSession(),
+				MIStoppedEvent.class);
+
+		// add a breakpoint in main
+		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
+		// add a breakpoint in thread code
+		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_THREAD_IN_HELLO"), false);
+		// Run program
+		SyncUtil.resumeAll();
+
+		// We need NUM_THREADS + 1 to account for NUM_THREADS created by StartThread calls
+		// plus the main thread.
+		for (int i = 0; i < NUM_THREADS + 1; i++) {
+			eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000));
+		}
+	}
 
 	// SyncUtil.getExecutionContext() takes the index of the
 	// array of all threads, so it will return a thread off by one.

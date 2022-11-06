@@ -35,7 +35,7 @@ Individual p2 repos can be turned on and off to allow building CDT, or parts of 
 Using the `build-standalone-debugger-rcp` profile will include the standalone debugger, located
 in `debug/org.eclipse.cdt.debug.application.product`
 
-#### skip-all-tests, skip-tests-except-cdt-ui, skip-tests-except-dsf-gdb, skip-tests-except-lsp, skip-tests-except-cdt-other
+#### skip-all-tests, skip-tests-except-cdt-ui, skip-tests-except-dsf-gdb, skip-tests-except-cdt-other
 
 Using any of the above profiles can skip large sets of tests. The CI build uses this to parallelize tests. See https://ci.eclipse.org/cdt/view/Gerrit/
 

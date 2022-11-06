@@ -90,18 +90,6 @@
    <feature id="org.eclipse.cdt.managedbuilder.llvm.source">
       <category name="extra"/>
    </feature>
-   <feature id="org.eclipse.cdt.debug.dap">
-      <category name="extra"/>
-   </feature>
-   <feature id="org.eclipse.cdt.debug.dap.source">
-      <category name="extra"/>
-   </feature>
-   <feature id="org.eclipse.cdt.debug.dap.gdbjtag">
-      <category name="extra"/>
-   </feature>
-   <feature id="org.eclipse.cdt.debug.dap.gdbjtag.source">
-      <category name="extra"/>
-   </feature>
    <feature id="org.eclipse.cdt.debug.standalone">
       <category name="extra"/>
    </feature>
@@ -130,12 +118,6 @@
       <category name="extra"/>
    </feature>
    <feature id="org.eclipse.cdt.launch.serial.feature.source">
-      <category name="extra"/>
-   </feature>
-   <feature id="org.eclipse.cdt.lsp">
-      <category name="extra"/>
-   </feature>
-   <feature id="org.eclipse.cdt.lsp.source">
       <category name="extra"/>
    </feature>
    <feature id="org.eclipse.launchbar">

@@ -152,11 +152,6 @@
 		<module>debug/org.eclipse.cdt.debug.core</module>
 		<module>debug/org.eclipse.cdt.debug.ui</module>
 
-		<module>debug/org.eclipse.cdt.debug.dap</module>
-		<module>debug/org.eclipse.cdt.debug.dap-feature</module>
-		<module>jtag/org.eclipse.cdt.debug.dap.gdbjtag</module>
-		<module>jtag/org.eclipse.cdt.debug.dap.gdbjtag-feature</module>
-
 		<module>debug/org.eclipse.cdt.gdb</module>
 		<module>debug/org.eclipse.cdt.gdb.ui</module>
 		<module>debug/org.eclipse.cdt.gdb-feature</module>
@@ -199,12 +194,6 @@
 		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.core</module>
 		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.ui</module>
 		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb-feature</module>
-
-		<module>lsp/org.eclipse.cdt.lsp.core</module>
-		<module>lsp/org.eclipse.cdt.lsp.ui</module>
-		<module>lsp/org.eclipse.cdt.lsp.clangd</module>
-		<module>lsp/org.eclipse.cdt.lsp.cquery</module>
-		<module>lsp/org.eclipse.cdt.lsp-feature</module>
 
 		<module>memory/org.eclipse.cdt.debug.core.memory</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.memorybrowser</module>
@@ -315,8 +304,6 @@
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
 		<module>jtag/org.eclipse.cdt.debug.gdbjtag.core.tests</module>
-		<module>lsp/org.eclipse.cdt.lsp.core.tests</module>
-		<module>lsp/org.eclipse.cdt.lsp.cquery.tests</module>
 		<module>memory/org.eclipse.cdt.debug.core.memory.tests</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tests</module>
 
@@ -535,7 +522,6 @@
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -543,7 +529,6 @@
 			<properties>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -551,15 +536,6 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp.skip.tests>true</lsp.skip.tests>
-			</properties>
-		</profile>
-		<profile>
-			<id>skip-tests-except-lsp</id>
-			<properties>
-				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
-				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -567,7 +543,6 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
-				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>

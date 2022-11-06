@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -72,9 +74,15 @@ class LogMonitoring {
 							cause = cause != null ? cause : t;
 							if (t != null) {
 								msg.append(t.getMessage() != null ? t.getMessage() : t.getClass().getCanonicalName());
+								msg.append("\nStack Trace\n");
+								StringWriter writer = new StringWriter();
+								PrintWriter out = new PrintWriter(writer);
+								t.printStackTrace(out);
+								msg.append(writer.toString());
+
 							}
 
-							msg.append("\n");
+							msg.append("\n\n");
 						}
 					}
 				}

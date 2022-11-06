@@ -31,6 +31,11 @@ Alternatively, you can create a Launcher: Go to Run - Debug Configurations... Se
 
 Until you are familiar with the CDT code base, using a Debug Launcher and experimenting with breakpoints is probably the best way to get a warm fuzzy feeling if you have doubts about modifications you are making.
 
+### Testing
+
+The Eclipse CDT project has extensive JUnit Plug-in tests covering many parts of the CDT code base.
+These tests are run automatically by the CI system (currently Jenkins and GitHub actions) using Maven + Tycho Surefire.
+See [CDT Testing notes](TESTING.md) for more information.
 
 ### Creating Pull Requests
 

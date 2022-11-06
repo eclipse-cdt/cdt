@@ -121,6 +121,9 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 		assert !fIsWriteLocked : "Multiple write locks is not allowed"; //$NON-NLS-1$
 
 		getWritableFragment().acquireWriteLock(getReadLockCount(), monitor);
+		new Exception(
+				(System.currentTimeMillis() % 1000) + ": Acquiered lock in thread " + Thread.currentThread().getName())
+						.printStackTrace(System.out);
 		fIsWriteLocked = true;
 	}
 
@@ -140,6 +143,9 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 			clearResultCache();
 		}
 
+		new Exception(
+				(System.currentTimeMillis() % 1000) + ": Released lock in thread " + Thread.currentThread().getName())
+						.printStackTrace(System.out);
 		fIsWriteLocked = false;
 		getWritableFragment().releaseWriteLock(establishReadlockCount, flush);
 
@@ -158,6 +164,8 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 
 	@Override
 	public void clearResultCache() {
+		new Exception((System.currentTimeMillis() % 1000) + ": clearResultCache(" + fIsWriteLocked + ") in thread "
+				+ Thread.currentThread().getName()).printStackTrace(System.out);
 		assert fIsWriteLocked : "Need to hold a write lock to clear result caches"; //$NON-NLS-1$
 		super.clearResultCache();
 	}

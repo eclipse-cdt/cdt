@@ -198,6 +198,10 @@ public class PDOMIndexerJob extends Job {
 	}
 
 	public void cancelJobs(IPDOMIndexer indexer, boolean waitUntilCancelled) {
+		new Exception(
+				(System.currentTimeMillis() % 1000) + ": cancelJobs in thread " + Thread.currentThread().getName())
+						.printStackTrace(System.out);
+
 		synchronized (taskMutex) {
 			if (currentTask != null && (indexer == null || currentTask.getIndexer() == indexer)) {
 				synchronized (this) {

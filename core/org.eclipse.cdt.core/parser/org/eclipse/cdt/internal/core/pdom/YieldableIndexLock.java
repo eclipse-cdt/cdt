@@ -62,10 +62,16 @@ public class YieldableIndexLock {
 	 */
 	public void yield() throws InterruptedException {
 		if (index.hasWaitingReaders()) {
-			index.releaseWriteLock(false);
-			cumulativeLockTime += System.currentTimeMillis() - lastLockTime;
-			lastLockTime = 0;
-			acquire();
+			try {
+				index.releaseWriteLock(false);
+				cumulativeLockTime += System.currentTimeMillis() - lastLockTime;
+				lastLockTime = 0;
+				acquire();
+			} catch (Throwable t) {
+				new Exception((System.currentTimeMillis() % 1000) + " yield did not complete normally in thread"
+						+ Thread.currentThread().getName(), t).printStackTrace(System.out);
+				throw t;
+			}
 		}
 	}
 

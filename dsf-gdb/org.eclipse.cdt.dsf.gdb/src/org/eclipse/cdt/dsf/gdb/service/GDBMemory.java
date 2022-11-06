@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 Mentor Graphics and others.
+ * Copyright (c) 2013, 2022 Mentor Graphics and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  * 		John Dallaway - Add methods to get the endianness and address size (Bug 225609)
  * 		Philippe Gil (AdaCore) - Switch to c language when getting sizeof(void *) when required (Bug 421541)
  *      Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
+ *      John Dallaway - Enhance memory data initialization checks (#138)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -100,6 +101,7 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 		getSession().removeServiceEventListener(this);
 		fAddressableSizes.clear();
 		fAddressSizes.clear();
+		fIsBigEndian.clear();
 		super.shutdown(requestMonitor);
 	}
 
@@ -314,7 +316,13 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	@Override
 	public int getAddressSize(IMemoryDMContext context) {
 		Integer addressSize = fAddressSizes.get(context);
-		return (addressSize != null) ? addressSize.intValue() : 8;
+		assert addressSize != null;
+		if (addressSize == null) {
+			GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+					"Address size was never initialized for " + context)); //$NON-NLS-1$
+			return 8;
+		}
+		return addressSize.intValue();
 	}
 
 	/**
@@ -323,7 +331,13 @@ public class GDBMemory extends MIMemory implements IGDBMemory2 {
 	@Override
 	public int getAddressableSize(IMemoryDMContext context) {
 		Integer addressableSize = fAddressableSizes.get(context);
-		return (addressableSize != null) ? addressableSize.intValue() : 1;
+		assert addressableSize != null;
+		if (addressableSize == null) {
+			GdbPlugin.log(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID,
+					"Addressable size was never initialized for " + context)); //$NON-NLS-1$
+			return super.getAddressableSize(context);
+		}
+		return addressableSize.intValue();
 	}
 
 	@Override

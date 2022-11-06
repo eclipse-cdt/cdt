@@ -1927,16 +1927,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				break;
 			case IToken.tEOC:
 				throw new EndOfFileException(t.getOffset());
-
-			default:
-				if (content != null) {
-					if (needspace) {
-						content.append(' ');
-					}
-					content.append(t.getCharImage());
-					needspace = true;
+			}
+			if (open > 0 && content != null) {
+				if (needspace) {
+					content.append(' ');
 				}
-				break;
+				content.append(t.getCharImage());
+				needspace = true;
 			}
 		}
 		return t;

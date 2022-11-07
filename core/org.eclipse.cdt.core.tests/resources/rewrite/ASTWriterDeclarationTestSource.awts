@@ -4,7 +4,7 @@ asm("movl %1, %%eax;");
 
 //!GNUExtendedASMDeclarationTest
 //%CPP GNU
-asm("bswap %0" : "+r" (_data));
+asm("bswap %0" : "+r" ( _data ));
 
 //!FunctionDefinitionTest
 //%CPP

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
+import org.eclipse.cdt.internal.core.pdom.FailedToReAcquireLockException;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -84,7 +85,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 */
 	void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes,
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver,
-			YieldableIndexLock lock) throws CoreException, InterruptedException;
+			YieldableIndexLock lock) throws CoreException, FailedToReAcquireLockException;
 
 	/**
 	 * Acquires a write lock, while giving up a certain amount of read locks.

@@ -147,7 +147,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	@Override
 	public void addFileContent(IIndexFragmentFile sourceFile, IncludeInformation[] includes,
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver pathResolver,
-			YieldableIndexLock lock) throws CoreException, InterruptedException {
+			YieldableIndexLock lock) throws CoreException, FailedToReAcquireLockException {
 		assert sourceFile.getIndexFragment() == this;
 
 		PDOMFile pdomFile = (PDOMFile) sourceFile;

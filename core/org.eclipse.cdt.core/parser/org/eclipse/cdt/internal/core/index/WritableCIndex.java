@@ -20,6 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
+import org.eclipse.cdt.internal.core.pdom.FailedToReAcquireLockException;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -78,7 +79,7 @@ public class WritableCIndex extends CIndex implements IWritableIndex {
 	@Override
 	public void setFileContent(IIndexFragmentFile file, int linkageID, IncludeInformation[] includes,
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver,
-			YieldableIndexLock lock) throws CoreException, InterruptedException {
+			YieldableIndexLock lock) throws CoreException, FailedToReAcquireLockException {
 		assert getWritableFragment() == file.getIndexFragment();
 
 		for (IncludeInformation include : includes) {

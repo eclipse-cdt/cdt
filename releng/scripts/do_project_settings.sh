@@ -85,6 +85,18 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
                 '-es@compilers.p.not-externalized-att=1@compilers.p.not-externalized-att=2@' \
                 $d/.settings/org.eclipse.pde.prefs
         fi
+        if echo $i | grep -E '\.docs?[/\.]' > /dev/null; then
+            # Docs plug-ins have an index/ directory created at build time
+            sed -i \
+                '-es@compilers.p.build.bin.includes=0@compilers.p.build.bin.includes=1@' \
+                $d/.settings/org.eclipse.pde.prefs
+        fi
+        if echo $i | grep -E 'org.eclipse.remote.proxy.server' > /dev/null; then
+            # Proxy server has a tar file created at build time
+            sed -i \
+                '-es@compilers.p.build.bin.includes=0@compilers.p.build.bin.includes=1@' \
+                $d/.settings/org.eclipse.pde.prefs
+        fi
         if echo $i | grep 'org.eclipse.tm.terminal.view.ui' > /dev/null; then
             # Special case, see comment in org.eclipse.tm.terminal.view.ui/plugin.xml
             sed -i \

@@ -16,27 +16,26 @@ import org.eclipse.core.runtime.OperationCanceledException;
 /**
  * This exception is raised when {@link YieldableIndexLock#yield()} fails to
  * reacquire the lock after yielding, this may be due to an {@link InterruptedException}
- * or an {@link OperationCanceledException} which will be the nested exception.
+ * or an {@link OperationCanceledException} or some other type of runtime exception or
+ * error (especially assertion errors) which will be the nested exception.
  */
 public class FailedToReAcquireLockException extends Exception {
 
-	public FailedToReAcquireLockException(InterruptedException e) {
-		super(e);
-		Assert.isNotNull(e);
+	public FailedToReAcquireLockException(Throwable t) {
+		super(t);
+		Assert.isNotNull(t);
 	}
 
-	public FailedToReAcquireLockException(OperationCanceledException e) {
-		super(e);
-		Assert.isNotNull(e);
-	}
-
-	public void reThrow() throws InterruptedException, OperationCanceledException {
+	public void reThrow() throws InterruptedException {
 		if (getCause() instanceof InterruptedException ie) {
 			throw ie;
 		}
-		if (getCause() instanceof OperationCanceledException oce) {
-			throw oce;
+		if (getCause() instanceof RuntimeException re) {
+			throw re;
 		}
-		throw new RuntimeException("Unexpectedly the exception cause was none of the allowed types", this); //$NON-NLS-1$
+		if (getCause() instanceof Error er) {
+			throw er;
+		}
+		throw new RuntimeException("Checked exception changed wrapped in runtime exception", getCause()); //$NON-NLS-1$
 	}
 }

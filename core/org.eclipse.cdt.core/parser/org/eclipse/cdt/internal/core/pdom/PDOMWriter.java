@@ -645,6 +645,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		ISignificantMacros significantMacros = fileKey.getSignificantMacros();
 		IIndexFragmentFile oldFile = index.getWritableFile(storageLinkageID, location, significantMacros);
 		file = index.addUncommittedFile(storageLinkageID, location, significantMacros);
+		boolean hasLock = true;
 		try {
 			boolean pragmaOnce = owner != null ? owner.hasPragmaOnceSemantics() : data.fAST.hasPragmaOnceSemantics();
 			file.setPragmaOnceSemantics(pragmaOnce);
@@ -695,8 +696,21 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 			file.setSizeAndEncodingHashcode(computeFileSizeAndEncodingHashcode(astFile.fileSize, location));
 			file.setContentsHash(astFile.contentsHash);
 			file = index.commitUncommittedFile();
+		} catch (FailedToReAcquireLockException e) {
+			hasLock = false;
+			throw e;
 		} finally {
-			index.clearUncommittedFile();
+			try {
+				index.clearUncommittedFile();
+			} catch (Throwable e) {
+				// Without the lock we need to still do some cleanup, but some
+				// of it will fail with an assertion error when running unit tests
+				// so to not lose the original exception, we suppress it if
+				// we don't have the lock.
+				if (hasLock) {
+					throw e;
+				}
+			}
 		}
 		return file;
 	}

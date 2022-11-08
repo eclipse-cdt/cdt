@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
-import org.eclipse.cdt.internal.core.pdom.FailedToReAcquireLockException;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -117,7 +116,7 @@ public interface IWritableIndex extends IIndex {
 	 */
 	void setFileContent(IIndexFragmentFile sourceFile, int linkageID, IncludeInformation[] includes,
 			IASTPreprocessorStatement[] macros, IASTName[][] names, ASTFilePathResolver resolver,
-			YieldableIndexLock lock) throws CoreException, FailedToReAcquireLockException;
+			YieldableIndexLock lock) throws CoreException, InterruptedException;
 
 	/**
 	 * Clears the entire index.

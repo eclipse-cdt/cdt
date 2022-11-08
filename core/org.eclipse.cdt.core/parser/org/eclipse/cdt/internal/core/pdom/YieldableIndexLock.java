@@ -15,7 +15,6 @@ package org.eclipse.cdt.internal.core.pdom;
 
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Write lock on the index that can be yielded temporarily to unblock threads that need
@@ -57,21 +56,16 @@ public class YieldableIndexLock {
 	}
 
 	/**
-	 * Yields the lock temporarily if somebody is waiting for a read lock.
-	 * @throws FailedToReAcquireLockException when lock is not reacquired.
+	 * Yields the lock temporarily if it was held for YIELD_INTERVAL or more, and somebody is waiting
+	 * for a read lock.
+	 * @throws InterruptedException
 	 */
-	public void yield() throws FailedToReAcquireLockException {
+	public void yield() throws InterruptedException {
 		if (index.hasWaitingReaders()) {
 			index.releaseWriteLock(false);
 			cumulativeLockTime += System.currentTimeMillis() - lastLockTime;
 			lastLockTime = 0;
-			try {
-				acquire();
-			} catch (OperationCanceledException e) {
-				throw new FailedToReAcquireLockException(e);
-			} catch (InterruptedException e) {
-				throw new FailedToReAcquireLockException(e);
-			}
+			acquire();
 		}
 	}
 

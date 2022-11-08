@@ -20,23 +20,21 @@ import org.eclipse.core.runtime.OperationCanceledException;
  */
 public class FailedToReAcquireLockException extends Exception {
 
-	public FailedToReAcquireLockException(InterruptedException e) {
-		super(e);
-		Assert.isNotNull(e);
+	public FailedToReAcquireLockException(Throwable t) {
+		super(t);
+		Assert.isNotNull(t);
 	}
 
-	public FailedToReAcquireLockException(OperationCanceledException e) {
-		super(e);
-		Assert.isNotNull(e);
-	}
-
-	public void reThrow() throws InterruptedException, OperationCanceledException {
+	public void reThrow() throws InterruptedException {
 		if (getCause() instanceof InterruptedException ie) {
 			throw ie;
 		}
-		if (getCause() instanceof OperationCanceledException oce) {
-			throw oce;
+		if (getCause() instanceof RuntimeException re) {
+			throw re;
 		}
-		throw new RuntimeException("Unexpectedly the exception cause was none of the allowed types", this); //$NON-NLS-1$
+		if (getCause() instanceof Error er) {
+			throw er;
+		}
+		throw new RuntimeException("Unexpectedly the exception cause was none of the allowed types", getCause()); //$NON-NLS-1$
 	}
 }

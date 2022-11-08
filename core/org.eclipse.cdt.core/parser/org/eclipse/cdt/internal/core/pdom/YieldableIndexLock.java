@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.index.IWritableIndex;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Write lock on the index that can be yielded temporarily to unblock threads that need
@@ -67,10 +67,9 @@ public class YieldableIndexLock {
 			lastLockTime = 0;
 			try {
 				acquire();
-			} catch (OperationCanceledException e) {
-				throw new FailedToReAcquireLockException(e);
-			} catch (InterruptedException e) {
-				throw new FailedToReAcquireLockException(e);
+			} catch (Throwable t) {
+				CCorePlugin.log("Exception while reacquiring lock", t);
+				throw new FailedToReAcquireLockException(t);
 			}
 		}
 	}

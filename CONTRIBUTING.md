@@ -87,7 +87,7 @@ These are the steps that a committer should undertake for all Pull Requests.
 
 1. Set the milestone field to the release in which patch would be applied, If it is applied in two branches set milestone to maintenance branch
 2. Code inspect and test and the patch
-3. If the patch is > 1,000 lines and from a non-committer, it must be submitted for IP review, i.e. CQ in IPZilla. See [IP Log](https://wiki.eclipse.org/Development_Resources/Automatic_IP_Log)
+3. If the patch is > 1,000 lines and from a non-committer, it must be submitted for IP review, i.e. CQ in IPZilla. See [IP Log](https://www.eclipse.org/projects/handbook/#ip-iplog)
 4. Merge the Pull Request. Do so while keeping a clean history for CDT
 - Use "Rebase and Merge" when the Pull Request has multiple commits separated in a logical fashion.
 - Use "Squash and Merge" when merging the PR, especially one where subsequent commits are simply review fixes.

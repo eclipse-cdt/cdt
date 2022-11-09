@@ -130,3 +130,6 @@ Contact the project developers via the project's "dev" list, raise an issue or s
 * Dev list: https://dev.eclipse.org/mailman/listinfo/cdt-dev
 * Issues: https://github.com/eclipse-cdt/cdt/issues
 * Discussions: https://github.com/eclipse-cdt/cdt/discussions
+
+The Eclipse CDT project has a monthly call and everyone in the community is welcome to join.
+See [Eclipse CDT Calls](https://hackmd.io/@jonahgraham/EclipseCDTCalls)

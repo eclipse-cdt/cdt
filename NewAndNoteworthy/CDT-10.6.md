@@ -42,7 +42,7 @@ The Modules view does not do much and in most situations is not particularly rel
 
 ## Windows Pseudo Console (ConPTY) the default
 
-In [CDT 10.3](https://wiki.eclipse.org/CDT/User/NewIn103#Terminal_-_Windows_Pseudo_Console) the ConPTY implementation was introduced in preview mode.
+In [CDT 10.3](https://github.com/eclipse-cdt/cdt/blob/main/NewAndNoteworthy/CDT-10.3.md#terminal---windows-pseudo-console) the ConPTY implementation was introduced in preview mode.
 The response has been good and then ConPTY is now the default in the terminal on Windows where available.
 
 See [Bug 562776](https://bugs.eclipse.org/bugs/show_bug.cgi?id=562776) for details on the implementation.

@@ -13,7 +13,7 @@ See [572250](Bug)(https://bugs.eclipse.org/bugs/show_bug.cgi?id=572250).
 ## CDT Standalone debugger part of main download
 
 The CDT standalone debugger is no longer provided as a separate download.
-Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
+Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
 # Build
 

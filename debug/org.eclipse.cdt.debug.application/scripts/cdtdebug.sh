@@ -44,7 +44,7 @@ no target option brings up a dialog for debugging an executable with the
 executable path, program arguments, and build log filled in from the last -e
 invocation, if one exists.
 
-Wiki page: <http://wiki.eclipse.org/CDT/StandaloneDebugger>"
+More info: https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md"
 
 exit_missing_arg='
   echo $0": error: option [$1] requires an argument"; exit 1'

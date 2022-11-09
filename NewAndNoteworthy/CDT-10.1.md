@@ -22,7 +22,7 @@ See also [Bug 569790](http://eclip.se/569790)
 ## Update index and views with active configuration by default
 
 The default preference controlling which configuration the index uses along with the affected views has been changed to use the active configuration instead of a fixed configuration. The new default should be less confusing for users as an initial setting but might not be suitable for all projects.
-See the [CDT User FAQ](https://wiki.eclipse.org/CDT/User/FAQ#The_index_is_rebuilt_every_time_the_active_configuration_is_changed_and_it_takes_too_long) for instructions on how to change this preference.
+See the [CDT User FAQ](https://github.com/eclipse-cdt/cdt/tree/main/FAQ#the-index-is-rebuilt-every-time-the-active-configuration-is-changed-and-it-takes-too-long) for instructions on how to change this preference.
 
 CDT extenders can also customize products using plugin_customization.ini, with
 org.eclipse.cdt.core/cprojectdescription.configRelations=1 (1 for "fixed", 2 for "active")

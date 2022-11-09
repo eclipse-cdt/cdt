@@ -119,8 +119,8 @@ See [Bug 567261](https://bugs.eclipse.org/bugs/show_bug.cgi?id=567261)
 
 ## API Deletions and Deprecations
 
-Please see the [CDT Policy](https://wiki.eclipse.org/CDT/policy#Deprecating_and_Deleting_API) on Deprecating and Deleting API for more details of API that has been changed, removed, deprecated or scheduled for removal.
-In addition, the current version of the Deprecation and Removals can be previewed [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/eclipse-cdt/cdt/blob/main/doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html)
+Please see the [CDT Policy](https://github.com/eclipse-cdt/cdt/blob/main/POLICY.md#deprecating-and-deleting-api) on Deprecating and Deleting API for more details of API that has been changed, removed, deprecated or scheduled for removal.
+The current version of the Deprecation and Removals is stored in git [here](https://github.com/eclipse-cdt/cdt/blob/main/NewAndNoteworthy/CHANGELOG-API.md)
 
 ## [SerialPort](../native/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java) supports arbitrary baud rates
 

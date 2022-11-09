@@ -62,19 +62,6 @@ Requires verify phase of maven to run, i.e. will not run with `mvn package` even
 Runs the production steps of the build. This profile can only be run on the CDT CI machines
 as access to Eclipse key signing server is needed to sign the jars.
 
-#### regenHelp
-
-Some of the help systems in Eclipse CDT require the `regenHelp` profile to rebuild their HTML from the source documents. For example, to regenerate the help
-for Autotools or Meson do:
-
-```
-mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.meson.docs -PregenHelp
-```
-
-```
-mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.autotools.docs -PregenHelp
-```
-
 #### jniheaders
 
 The `jniheaders` profile can be used on the `core/org.eclipse.cdt.core.native` and

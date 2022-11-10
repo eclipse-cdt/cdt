@@ -106,6 +106,8 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	private static final List<String> DEFAULT_COMMAND = new ArrayList<>(0);
 
+	private final Map<IResource, IToolChain> tcMap = new HashMap<IResource, IToolChain>();
+
 	private final String name;
 	private final IBuildConfiguration config;
 	private final IToolChain toolChain;
@@ -308,6 +310,31 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	@Override
 	public IToolChain getToolChain() throws CoreException {
 		return toolChain;
+	}
+
+	/**
+	 * Get the toolchain based on the compiler found in the command line.
+	 * Sub-classes can override this method to set their own method for
+	 * getting the toolchain.
+	 *
+	 */
+	protected IToolChain getToolChain(List<String> command) throws CoreException {
+		return getToolChain();
+	}
+
+	/**
+	 * Get the toolchain that was used to compile this resource.
+	 *
+	 * @param resource
+	 * @return
+	 * @throws CoreException
+	 */
+	private IToolChain getToolChain(IResource resource) throws CoreException {
+		IToolChain tc = tcMap.get(resource);
+		if (tc == null)
+			return getToolChain();
+		else
+			return tc;
 	}
 
 	@Override
@@ -665,7 +692,8 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			if (celement instanceof ITranslationUnit) {
 				try {
 					ITranslationUnit tu = (ITranslationUnit) celement;
-					info = getToolChain().getDefaultScannerInfo(getBuildConfiguration(), getBaseScannerInfo(resource),
+					IToolChain tc = getToolChain(resource);
+					info = tc.getDefaultScannerInfo(getBuildConfiguration(), getBaseScannerInfo(resource),
 							tu.getLanguage(), getBuildDirectoryURI());
 					synchronized (scannerInfoLock) {
 						scannerInfoCache.addScannerInfo(DEFAULT_COMMAND, info, resource);
@@ -736,7 +764,15 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		List<String> command = stripArgs(line);
 
 		// Make sure it's a compile command
-		String[] compileCommands = toolChain.getCompileCommands();
+		String[] compileCommands;
+		IToolChain tc;
+		try {
+			tc = getToolChain(command);
+			compileCommands = tc.getCompileCommands();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
 		boolean found = false;
 		loop: for (String arg : command) {
 			// TODO we should really ask the toolchain, not all args start with '-'
@@ -769,18 +805,19 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		}
 
 		try {
-			IResource[] resources = toolChain.getResourcesFromCommand(command, getBuildDirectoryURI());
+			IResource[] resources = tc.getResourcesFromCommand(command, getBuildDirectoryURI());
 			if (resources != null && resources.length > 0) {
-				List<String> commandStrings = toolChain.stripCommand(command, resources);
+				List<String> commandStrings = tc.stripCommand(command, resources);
 
 				boolean needScannerRefresh = false;
 
-				String needRefresh = toolChain.getProperty(NEED_REFRESH);
+				String needRefresh = tc.getProperty(NEED_REFRESH);
 				if ("true".equals(needRefresh)) { //$NON-NLS-1$
 					needScannerRefresh = true;
 				}
 
 				for (IResource resource : resources) {
+					tcMap.put(resource, tc);
 					loadScannerInfoCache();
 					boolean hasCommand = true;
 					synchronized (scannerInfoLock) {
@@ -801,8 +838,8 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 						Path commandPath = findCommand(command.get(0));
 						if (commandPath != null) {
 							command.set(0, commandPath.toString());
-							IExtendedScannerInfo info = getToolChain().getScannerInfo(getBuildConfiguration(), command,
-									null, resource, getBuildDirectoryURI());
+							IExtendedScannerInfo info = tc.getScannerInfo(getBuildConfiguration(), command, null,
+									resource, getBuildDirectoryURI());
 							synchronized (scannerInfoLock) {
 								scannerInfoCache.addScannerInfo(commandStrings, info, resource);
 								infoChanged = true;
@@ -864,7 +901,15 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		List<String> command = stripArgs(line);
 
 		// Make sure it's a compile command
-		String[] compileCommands = toolChain.getCompileCommands();
+		String[] compileCommands;
+		IToolChain tc;
+		try {
+			tc = getToolChain(command);
+			compileCommands = tc.getCompileCommands();
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+			return false;
+		}
 		boolean found = false;
 		loop: for (String arg : command) {
 			// TODO we should really ask the toolchain, not all args start with '-'
@@ -897,18 +942,19 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		}
 
 		try {
-			IResource[] resources = toolChain.getResourcesFromCommand(command, getBuildDirectoryURI());
+			IResource[] resources = tc.getResourcesFromCommand(command, getBuildDirectoryURI());
 			if (resources != null && resources.length > 0) {
-				List<String> commandStrings = toolChain.stripCommand(command, resources);
+				List<String> commandStrings = tc.stripCommand(command, resources);
 
 				boolean needScannerRefresh = false;
 
-				String needRefresh = toolChain.getProperty(NEED_REFRESH);
+				String needRefresh = tc.getProperty(NEED_REFRESH);
 				if ("true".equals(needRefresh)) { //$NON-NLS-1$
 					needScannerRefresh = true;
 				}
 
 				for (IResource resource : resources) {
+					tcMap.put(resource, tc);
 					loadScannerInfoCache();
 					boolean hasCommand = true;
 					synchronized (scannerInfoLock) {
@@ -930,8 +976,8 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 						if (commandPath != null) {
 							command.set(0, commandPath.toString());
 							Job job = new ScannerInfoJob(
-									String.format(Messages.CBuildConfiguration_RunningScannerInfo, resource),
-									getToolChain(), command, resource, getBuildDirectoryURI(), commandStrings);
+									String.format(Messages.CBuildConfiguration_RunningScannerInfo, resource), tc,
+									command, resource, getBuildDirectoryURI(), commandStrings);
 							job.schedule();
 							jobsArray.add(job);
 						}

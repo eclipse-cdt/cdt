@@ -8,6 +8,15 @@
             class="org.eclipse.cdt.codan.internal.ui.cxx.Startup"></startup>
    </extension>
 
+   <!-- Suppress startup in org.eclipse.ease.runScript application (bug 580960) -->
+   <!-- Expect an 'Unknown extension point' warning when using the standard CDT target platform -->
+   <extension
+         point="org.eclipse.ease.headless">
+      <startupBlacklist
+            className="org.eclipse.cdt.codan.internal.ui.cxx.Startup">
+      </startupBlacklist>
+   </extension>
+
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution

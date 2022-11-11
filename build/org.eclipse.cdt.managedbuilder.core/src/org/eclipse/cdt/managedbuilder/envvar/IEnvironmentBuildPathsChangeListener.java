@@ -20,7 +20,10 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
  * listeners of the environment build path changes should implement this interface
  *
  * @since 3.0
+ *
+ * @deprecated Not referenced in CDT
  */
+@Deprecated(forRemoval = true)
 public interface IEnvironmentBuildPathsChangeListener {
 
 	/**

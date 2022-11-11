@@ -238,7 +238,10 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 
 	/**
 	 * notifies registered listeners
+	 *
+	 * @deprecated Not referenced in CDT
 	 */
+	@Deprecated(forRemoval = true)
 	private void notifyListeners(IConfiguration configuration, int buildPathType) {
 		List<IEnvironmentBuildPathsChangeListener> listeners = getListeners();
 		for (IEnvironmentBuildPathsChangeListener listener : listeners) {
@@ -246,6 +249,11 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 		}
 	}
 
+	/**
+	 *
+	 * @deprecated Not referenced in CDT
+	 */
+	@Deprecated(forRemoval = true)
 	@Override
 	public synchronized void subscribe(IEnvironmentBuildPathsChangeListener listener) {
 		if (listener == null)
@@ -257,6 +265,11 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 			listeners.add(listener);
 	}
 
+	/**
+	 *
+	 * @deprecated Not referenced in CDT
+	 */
+	@Deprecated(forRemoval = true)
 	@Override
 	public synchronized void unsubscribe(IEnvironmentBuildPathsChangeListener listener) {
 		if (listener == null)

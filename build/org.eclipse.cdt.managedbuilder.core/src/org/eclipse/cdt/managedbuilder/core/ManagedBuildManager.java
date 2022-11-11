@@ -820,47 +820,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 *
-	 * @param config
-	 * @param option
+	/**
+	 * Unreferenced in CDT
+	 * @deprecated
 	 */
-	/*
-	private static void notifyListeners(IConfiguration config, IOption option) {
-		// Continue if change is something that effect the scanner
-		try {
-			//an option can be null in the case of calling this method from the environment
-			//build path change listener
-			if (config.isTemporary() ||
-					(option != null && option.getValueType() != IOption.INCLUDE_PATH
-							&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
-							&& option.getValueType() != IOption.INCLUDE_FILES
-							&& option.getValueType() != IOption.LIBRARY_PATHS
-							&& option.getValueType() != IOption.LIBRARY_FILES
-							&& option.getValueType() != IOption.MACRO_FILES
-							&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
-							&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
-							&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
-							&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
-							&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
-							&& option.getValueType() != IOption.UNDEF_MACRO_FILES
-							)) {
-				return;
-			}
-		} catch (BuildException e) {return;}
-
-		// Figure out if there is a listener for this change
-		IResource resource = config.getOwner();
-		List listeners = (List) getBuildModelListeners().get(resource);
-		if (listeners == null) {
-			return;
-		}
-		ListIterator iter = listeners.listIterator();
-		while (iter.hasNext()) {
-			((IScannerInfoChangeListener)iter.next()).changeNotification(resource, (IScannerInfo)getBuildInfo(resource));
-		}
-	}
-	*/
+	@Deprecated(forRemoval = true)
 	public static void initializePathEntries(IConfiguration config, IOption option) {
 		try {
 			if (config.isTemporary() || (option != null && option.getValueType() != IOption.INCLUDE_PATH
@@ -885,6 +849,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	}
 
+	/**
+	 * Unreferenced in CDT
+	 * @deprecated
+	 */
+	@Deprecated(forRemoval = true)
 	public static void initializePathEntries(IResourceConfiguration resConfig, IOption option) {
 		IConfiguration cfg = resConfig.getParent();
 		if (cfg != null)
@@ -1478,6 +1447,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 		updateBuildInfo(project, true);
 	}
 
+	/**
+	 * Unreferenced in CDT
+	 * @deprecated
+	 */
+	@Deprecated
 	public static void updateCoreSettings(IConfiguration cfg) throws CoreException {
 		IProject project = cfg.getOwner().getProject();
 		ICProjectDescription projDes = CoreModel.getDefault().getProjectDescription(project);
@@ -1488,6 +1462,11 @@ public class ManagedBuildManager extends AbstractCExtension {
 		}
 	}
 
+	/**
+	 * Unreferenced in CDT
+	 * @deprecated
+	 */
+	@Deprecated(forRemoval = true)
 	public static void updateCoreSettings(IProject project, IConfiguration[] cfgs) throws CoreException {
 		updateCoreSettings(project, cfgs, false);
 	}

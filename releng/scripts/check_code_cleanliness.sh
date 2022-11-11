@@ -14,6 +14,7 @@ set -e
 
 if test ! -z "$(git status -s -uno)"; then
     echo "You have changes. Please stash them before continuing."
+    exit 1
 fi
 
 ##

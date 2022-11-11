@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -61,8 +60,6 @@ import org.eclipse.cdt.core.language.settings.providers.IWorkingDirectoryTracker
 import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.CoreModelUtil;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
@@ -72,7 +69,6 @@ import org.eclipse.cdt.core.settings.model.XmlStorageUtil;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyManager;
-import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListener;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.internal.buildproperties.BuildPropertyManager;
 import org.eclipse.cdt.managedbuilder.internal.core.BooleanExpressionApplicabilityCalculator;
@@ -251,14 +247,8 @@ public class ManagedBuildManager extends AbstractCExtension {
 	// This map has a lifecycle corresponding to the build definitions extension loading.
 	private static Map<IBuildObject, IManagedConfigElement> configElementMap;
 
-	//	private static List sortedToolChains;
-	//	private static Map builtTypeToToolChainListMap;
-	// Listeners interested in build model changes
-	private static Map<IResource, List<IScannerInfoChangeListener>> buildModelListeners;
 	// Random number for derived object model elements
 	private static Random randomNumber;
-	// Environment Build Paths Change Listener
-	private static IEnvironmentBuildPathsChangeListener fEnvironmentBuildPathsChangeListener;
 
 	private static HashMap<MatchKey<ToolChain>, List<ToolChain>> fSortedToolChains;
 	private static HashMap<MatchKey<Tool>, List<Tool>> fSortedTools;
@@ -272,16 +262,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 
 	private static interface ISorter {
 		void sort();
-	}
-
-	static {
-		getEnvironmentVariableProvider()
-				.subscribe(fEnvironmentBuildPathsChangeListener = (configuration, buildPathType) -> {
-					//						if(buildPathType == IEnvVarBuildPath.BUILDPATH_INCLUDE){
-					//							initializePathEntries(configuration,null);
-					//							notifyListeners(configuration,null);
-					//						}
-				});
 	}
 
 	/**
@@ -860,37 +840,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 			initializePathEntries(cfg, option);
 	}
 
-	private static void notifyListeners(IResourceInfo resConfig, IOption option) {
-		// Continue if change is something that effect the scanreser
-		try {
-			if (resConfig.getParent().isTemporary() || (option != null && option.getValueType() != IOption.INCLUDE_PATH
-					&& option.getValueType() != IOption.PREPROCESSOR_SYMBOLS
-					&& option.getValueType() != IOption.INCLUDE_FILES && option.getValueType() != IOption.LIBRARY_PATHS
-					&& option.getValueType() != IOption.LIBRARY_FILES && option.getValueType() != IOption.MACRO_FILES
-					&& option.getValueType() != IOption.UNDEF_INCLUDE_PATH
-					&& option.getValueType() != IOption.UNDEF_PREPROCESSOR_SYMBOLS
-					&& option.getValueType() != IOption.UNDEF_INCLUDE_FILES
-					&& option.getValueType() != IOption.UNDEF_LIBRARY_PATHS
-					&& option.getValueType() != IOption.UNDEF_LIBRARY_FILES
-					&& option.getValueType() != IOption.UNDEF_MACRO_FILES && !option.isForScannerDiscovery())) {
-				return;
-			}
-		} catch (BuildException e) {
-			return;
-		}
-
-		// Figure out if there is a listener for this change
-		IResource resource = resConfig.getParent().getOwner();
-		List<IScannerInfoChangeListener> listeners = getBuildModelListeners().get(resource);
-		if (listeners == null) {
-			return;
-		}
-		ListIterator<IScannerInfoChangeListener> iter = listeners.listIterator();
-		while (iter.hasNext()) {
-			iter.next().changeNotification(resource, (IScannerInfo) getBuildInfo(resource));
-		}
-	}
-
 	/**
 	 * Adds the version of the managed build system to the project
 	 * specified in the argument.
@@ -964,8 +913,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//		initializePathEntries(resConfig,retOpt);
-			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1030,8 +977,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//		initializePathEntries(resConfig,retOpt);
-			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1096,8 +1041,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//			initializePathEntries(resConfig,retOpt);
-			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -1116,8 +1059,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 			} else {
 				// Event handling Failed.
 			}
-			//			initializePathEntries(resConfig,retOpt);
-			notifyListeners(resConfig, retOpt);
 		} catch (BuildException e) {
 			return null;
 		}
@@ -2957,16 +2898,6 @@ public class ManagedBuildManager extends AbstractCExtension {
 		outputIconError(path.toString());
 
 		return null;
-	}
-
-	/*
-	 * @return
-	 */
-	private static Map<IResource, List<IScannerInfoChangeListener>> getBuildModelListeners() {
-		if (buildModelListeners == null) {
-			buildModelListeners = new HashMap<>();
-		}
-		return buildModelListeners;
 	}
 
 	private static Map<IBuildObject, IManagedConfigElement> getConfigElementMap() {

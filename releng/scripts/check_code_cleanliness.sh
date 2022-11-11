@@ -12,6 +12,10 @@
 
 set -e
 
+if test ! -z "$(git status -s -uno)"; then
+    echo "You have changes. Please stash them before continuing."
+fi
+
 ##
 # Check the features are all branded and all content has proper licenses
 ##
@@ -28,7 +32,7 @@ ${DIR}/do_all_code_cleanups.sh
 ##
 # Check that none of the above caused any changes
 ##
-if test -z "$(git status -s)"; then
+if test -z "$(git status -s -uno)"; then
     echo "Tree looks clean!"
 else
     echo "Tree is dirty - something needs to be cleaned up in your commit (more info below)"

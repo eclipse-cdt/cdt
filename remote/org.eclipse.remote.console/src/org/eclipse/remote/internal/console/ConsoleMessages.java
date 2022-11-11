@@ -31,7 +31,7 @@ public class ConsoleMessages extends NLS {
 	public static String STATUS_CLOSED;
 
 	public static String CONNECTING_TO_TERMINAL;
-	public static String OPENNING_TERMINAL;
+	public static String OPENING_TERMINAL;
 	public static String MAKING_CONNECTION;
 	public static String DISCONNECTING;
 	public static String TerminalConsoleConnector_0;

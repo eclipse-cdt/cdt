@@ -42,7 +42,7 @@ public class TerminalConsoleFactory implements IConsoleFactory {
 	}
 
 	public static void openConsole(final IRemoteConnection connection, final String encoding) {
-		Job j = new Job(ConsoleMessages.OPENNING_TERMINAL) {
+		Job j = new Job(ConsoleMessages.OPENING_TERMINAL) {
 			@Override
 			public IStatus run(IProgressMonitor monitor) {
 				return openConsoleImplementation(connection, encoding, monitor);

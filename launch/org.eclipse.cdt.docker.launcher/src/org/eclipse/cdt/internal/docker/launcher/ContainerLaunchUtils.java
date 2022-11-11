@@ -96,13 +96,10 @@ public class ContainerLaunchUtils {
 	/**
 	 * Pull an Docker-Image if is not locally available.
 	 *
-	 * The interface is rather bad, as it returns null on success to keep things simple at the call site.
-	 * This should probably be moved to linuxtools anyway.
-	 *
 	 * @param monitor A Monitor to show progress
 	 * @param connectionName The name of the connection
 	 * @param imageName The image to pull
-	 * @return null on success, otherwise an error string
+	 * @return Status.OK on success, Status.CANCEL_STATUS if cancelled, and Status.ERROR if an error occurs
 	 *
 	 */
 	public static @NonNull IStatus provideDockerImage(IProgressMonitor monitor, @NonNull final String connectionName,

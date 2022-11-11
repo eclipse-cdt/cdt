@@ -123,11 +123,17 @@ public interface IEnvironmentVariableProvider {
 	 * adds the listener that will return notifications about the include and library paths changes.
 	 * The ManagedBuildManager will register the change listener and will notify all registered
 	 * Scanned Info Change Listeners about the include paths change.
+	 *
+	 * @deprecated Not referenced in CDT
 	 */
+	@Deprecated(forRemoval = true)
 	void subscribe(IEnvironmentBuildPathsChangeListener listener);
 
 	/**
 	 * removes the include and library paths change listener
+	 *
+	 * @deprecated Not referenced in CDT
 	 */
+	@Deprecated(forRemoval = true)
 	void unsubscribe(IEnvironmentBuildPathsChangeListener listener);
 }

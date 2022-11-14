@@ -17,6 +17,7 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
@@ -33,10 +34,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class ManagedCommandLineGeneratorTest extends TestCase {
+public class ManagedCommandLineGeneratorTest extends BaseTestCase {
 
 	private static String[] testCommandLinePatterns = { null, "${COMMAND}", "${COMMAND} ${FLAGS}",
 			"${COMMAND} ${FLAGS} ${OUTPUT_FLAG}", "${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}",

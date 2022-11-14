@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.cdt.core.tests
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: org.eclipse.core.filesystem
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: org.eclipse.core.filesystem,
+ org.junit.jupiter.api;version="5.9.0"
 Automatic-Module-Name: org.eclipse.cdt.make.core.tests
 Bundle-Localization: plugin

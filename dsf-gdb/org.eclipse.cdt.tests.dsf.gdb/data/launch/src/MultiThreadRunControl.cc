@@ -22,7 +22,7 @@ static ThreadRet THREAD_CALL_CONV PrintHello(void *void_arg) {
 
 	firstBreakpoint(thread_id);  // Stop a second time
 
-	SLEEP(3); // Resuming past this will give us a running thread
+	SLEEP(30); // Resuming past this will give us a running thread
 
 	return THREAD_DEFAULT_RET;
 }
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
 
 	SLEEP(1);  // Resuming past this will make this thread run, while we stop the second thread
 
-	SLEEP(3);  // Resuming past this will make this thread run, while we also run the second thread
+	SLEEP(30);  // Resuming past this will make this thread run, while we also run the second thread
 
 	return 0;
 }

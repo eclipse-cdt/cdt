@@ -3234,8 +3234,8 @@ public class GDBMultiNonStopRunControlTest extends BaseParametrizedTestCase {
 			}
 		});
 
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100)); // confirm one thread was suspended
-		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(100)); // confirm the other thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000)); // confirm one thread was suspended
+		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000)); // confirm the other thread was suspended
 
 		// Also confirm that all processes are suspended
 		Boolean result = runAsyncCall(new AsyncRunnable<Boolean>() {

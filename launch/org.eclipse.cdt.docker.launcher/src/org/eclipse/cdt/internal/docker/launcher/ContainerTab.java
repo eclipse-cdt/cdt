@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Red Hat and others.
+ * Copyright (c) 2015, 2022 Red Hat and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,7 +29,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.linuxtools.docker.core.DockerConnectionManager;
 import org.eclipse.linuxtools.docker.core.IDockerConnection;
 import org.eclipse.linuxtools.docker.core.IDockerConnectionManagerListener;
@@ -242,7 +243,6 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 		removeButton.setEnabled(false);
 	}
 
-	@SuppressWarnings("unchecked")
 	private void createPortSettingsSection(final Composite parent) {
 		Font font = parent.getFont();
 		Composite comp = createComposite(parent, 1, 2, GridData.FILL_BOTH);
@@ -289,7 +289,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 		ViewerSupport.bind(exposedPortsTableViewer, model.getExposedPorts(),
 				BeanProperties.values(ExposedPortModel.class, ExposedPortModel.CONTAINER_PORT,
 						ExposedPortModel.PORT_TYPE, ExposedPortModel.HOST_ADDRESS, ExposedPortModel.HOST_PORT));
-		dbc.bindSet(ViewersObservables.observeCheckedElements(exposedPortsTableViewer, ExposedPortModel.class),
+		dbc.bindSet(ViewerProperties.checkedElements(ExposedPortModel.class).observe((Viewer) exposedPortsTableViewer),
 				BeanProperties.set(ContainerTabModel.SELECTED_PORTS).observe(model));
 		checkAllElements(exposedPortsTableViewer);
 
@@ -371,6 +371,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	private CheckboxTableViewer createPortSettingsTable(final Composite container) {
 		final Table table = new Table(container,
 				SWT.BORDER | SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.H_SCROLL | SWT.CHECK);

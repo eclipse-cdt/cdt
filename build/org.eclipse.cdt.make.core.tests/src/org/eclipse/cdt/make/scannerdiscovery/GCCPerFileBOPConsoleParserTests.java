@@ -66,7 +66,6 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 
 	@Override
 	protected void tearDown() throws Exception {
-		super.tearDown();
 		if (fOutputParser != null) {
 			fOutputParser.shutdown();
 		}
@@ -74,6 +73,7 @@ public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
+		super.tearDown();
 	}
 
 	public void testParsingIfStatement_bug197930() throws Exception {

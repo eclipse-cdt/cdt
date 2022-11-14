@@ -24,6 +24,8 @@ import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author Thomas Corbat
@@ -31,12 +33,12 @@ import org.eclipse.core.runtime.Path;
  * Base class for PDOM tests relying on code placed in comments in front
  * of the test.
  */
-public class PDOMInlineCodeTestBase extends PDOMTestBase {
+public abstract class PDOMInlineCodeTestBase extends PDOMTestBase {
 	protected PDOM pdom;
 	protected ICProject cproject;
 
-	@Override
-	public void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		cproject = CProjectHelper.createCCProject("classTemplateTests" + System.currentTimeMillis(), "bin",
 				IPDOMManager.ID_NO_INDEXER);
 	}
@@ -53,8 +55,8 @@ public class PDOMInlineCodeTestBase extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		if (pdom != null) {
 			pdom.releaseReadLock();
 		}

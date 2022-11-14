@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -59,7 +60,7 @@ import org.junit.jupiter.api.TestInfo;
  * <li>Cleaning up the workspace at the end</li>
  * </ul>
  */
-public abstract class AbstractBuilderTest {
+public abstract class AbstractBuilderTest extends BaseTestCase5 {
 	private static final boolean WINDOWS = java.io.File.separatorChar == '\\';
 
 	static final String PATH = "builderTests";
@@ -67,13 +68,15 @@ public abstract class AbstractBuilderTest {
 	private String workspace;
 	private List<IProject> projects;
 
+	private boolean autoBuildingRestoreValue;
+
 	@BeforeEach
-	public void setUp() throws Exception {
-		setAutoBuilding(false);
+	public void setUpBaseLocal() throws Exception {
+		autoBuildingRestoreValue = setAutoBuilding(false);
 	}
 
 	@AfterEach
-	public void tearDown(TestInfo testInfo) throws Exception {
+	public void tearDownBaseLocal(TestInfo testInfo) throws Exception {
 		ResourceHelper.cleanUp(testInfo.getDisplayName());
 		// Bug 327126 Stop the indexer before tearing down so we don't deadlock
 		Job.getJobManager().cancel(CCorePlugin.getPDOMManager());
@@ -86,6 +89,8 @@ public abstract class AbstractBuilderTest {
 			}
 			projects.clear();
 		}
+
+		setAutoBuilding(autoBuildingRestoreValue);
 	}
 
 	/**
@@ -308,13 +313,17 @@ public abstract class AbstractBuilderTest {
 		}
 	}
 
-	protected void setAutoBuilding(boolean value) throws CoreException {
+	/**
+	 * Return previous value
+	 */
+	protected boolean setAutoBuilding(boolean value) throws CoreException {
 		IWorkspace workspace = getWorkspace();
 		if (workspace.isAutoBuilding() == value)
-			return;
+			return value;
 		IWorkspaceDescription desc = workspace.getDescription();
 		desc.setAutoBuilding(value);
 		workspace.setDescription(desc);
+		return !value;
 	}
 
 	protected IWorkspace getWorkspace() throws CoreException {

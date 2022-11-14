@@ -21,8 +21,10 @@ import org.eclipse.jface.text.BadLocationException;
 
 /**
  * Disassembly view backends need this limited access to the
- * editor/view Document. The known backends are DSF, TCF and Dap. Formerly
+ * editor/view Document. The known backends are DSF and TCF. Formerly
  * the CDI backend used it before it was removed from the CDT soure tree.
+ * Formerly the DAP backend used it before it was removed from the
+ * CDT soure tree (See https://github.com/eclipse-cdt/cdt/issues/139).
  */
 public interface IDisassemblyDocument {
 

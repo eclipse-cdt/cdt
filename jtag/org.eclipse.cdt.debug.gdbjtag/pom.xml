@@ -17,13 +17,13 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>10.7.0-SNAPSHOT</version>
+		<version>11.0.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>org.eclipse.cdt.debug.gdbjtag</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<version>7.0.800-SNAPSHOT</version>
+	<version>7.1.0-SNAPSHOT</version>
 
 	<build>
 		<plugins>

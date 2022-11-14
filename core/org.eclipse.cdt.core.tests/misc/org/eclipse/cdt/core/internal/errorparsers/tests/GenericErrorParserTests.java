@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.internal.errorparsers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,57 +29,38 @@ import java.util.List;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * This test is designed to exercise the error parser capabilities.
  */
-public abstract class GenericErrorParserTests extends TestCase {
+public abstract class GenericErrorParserTests extends BaseTestCase5 {
 	public static final String GCC_ERROR_PARSER_ID = "org.eclipse.cdt.core.GCCErrorParser";
 	public static final String GLD_ERROR_PARSER_ID = "org.eclipse.cdt.core.GLDErrorParser";
 	public static final String GMAKE_ERROR_PARSER_ID = "org.eclipse.cdt.core.GmakeErrorParser";
 
 	protected IProject fTempProject;
 
-	/**
-	 * Constructor for IndexManagerTest.
-	 *
-	 * @param name
-	 */
-	public GenericErrorParserTests(String name) {
-		super(name);
-	}
-
-	public GenericErrorParserTests() {
-		super();
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void beforeEachCreateProject() throws Exception {
 		fTempProject = ResourcesPlugin.getWorkspace().getRoot().getProject("temp-" + System.currentTimeMillis());
 		if (!fTempProject.exists()) {
 			fTempProject.create(new NullProgressMonitor());
 		}
 	}
 
-	@Override
-	protected void tearDown() {
-		try {
-			super.tearDown();
-		} catch (Exception ex) {
-		}
-		try {
-			fTempProject.delete(true, true, new NullProgressMonitor());
-		} catch (Exception ex) {
-		}
+	@AfterEach
+	protected void afterEachDeleteProject() throws CoreException {
+		fTempProject.delete(true, true, new NullProgressMonitor());
 	}
 
 	protected IProject getTempProject() {

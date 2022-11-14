@@ -21,14 +21,14 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class BackwardCompatiblityTests extends TestCase {
+public class BackwardCompatiblityTests extends BaseTestCase {
 	private static final String TEST_3X_STD_MAKE_PROJECTS = "test3xStdMakeProjects";
 
 	private List<IProject> projList = new LinkedList<>();
@@ -39,20 +39,6 @@ public class BackwardCompatiblityTests extends TestCase {
 
 	public void test3xStdMakeProject() {
 		String PROJ_NAME = "std_cpp_1";
-
-		//		String[] BIN_PARSERS = new String[]{
-		//				"org.eclipse.cdt.core.ELF",
-		//				"org.eclipse.cdt.core.PE",
-		//				"org.eclipse.cdt.core.GNU_ELF",
-		//				"org.eclipse.cdt.core.MachO"
-		//		};
-		//
-		//		String[] ERR_PARSERS = new String[]{
-		//				"org.eclipse.cdt.core.CWDLocator",
-		//				"org.eclipse.cdt.core.GASErrorParser",
-		//				"org.eclipse.cdt.core.VCErrorParser",
-		//				"org.eclipse.cdt.core.GmakeErrorParser",
-		//		};
 
 		IProject project = loadStdProject(PROJ_NAME);
 		projList.add(project);
@@ -78,11 +64,6 @@ public class BackwardCompatiblityTests extends TestCase {
 
 	private IProject loadStdProject(String name) {
 		return ManagedBuildTestHelper.loadProject(name, TEST_3X_STD_MAKE_PROJECTS);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
 	}
 
 	@Override

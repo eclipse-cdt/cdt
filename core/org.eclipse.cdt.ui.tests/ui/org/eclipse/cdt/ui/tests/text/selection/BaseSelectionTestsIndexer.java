@@ -21,6 +21,7 @@ import java.io.InputStream;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
 import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
@@ -54,7 +55,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
  *
  * @author dsteffle
  */
-public class BaseSelectionTestsIndexer extends BaseSelectionTests {
+public abstract class BaseSelectionTestsIndexer extends BaseSelectionTests {
 	protected ICProject fCProject;
 	static FileManager fileManager = new FileManager();
 	IProgressMonitor monitor = new NullProgressMonitor();
@@ -109,8 +110,7 @@ public class BaseSelectionTestsIndexer extends BaseSelectionTests {
 		//Obtain file handle
 		IFile file = fCProject.getProject().getFile(fileName);
 
-		IPath location = new Path(
-				fCProject.getProject().getLocation().removeLastSegments(1).toOSString() + File.separator + fileName);
+		IPath location = ResourceHelper.createTemporaryFolder().append(fileName);
 
 		File linkFile = new File(location.toOSString());
 		if (linkFile.exists()) {

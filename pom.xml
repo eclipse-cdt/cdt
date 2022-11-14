@@ -20,7 +20,7 @@
 
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>cdt-parent</artifactId>
-	<version>10.7.0-SNAPSHOT</version>
+	<version>11.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>CDT Parent</name>
 
@@ -30,11 +30,11 @@
 			 runs with. It may work with older versions, but this is not
 			 tested or supported. -->
 		<required-maven-version>3.6.3</required-maven-version>
-		<tycho-version>2.7.1</tycho-version>
+		<tycho-version>2.7.5</tycho-version>
 		<cbi-plugins.version>1.3.2</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
-		<simrel-site>https://download.eclipse.org/staging/2022-06/</simrel-site>
+		<simrel-site>https://download.eclipse.org/staging/2022-12/</simrel-site>
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -43,12 +43,12 @@
 
 		<!-- When changing this value, consider also bumping the version numbers of all the docs plug-ins (those with build-doc profile in pom.xml)
 		     so that compare&replace does not replace the the newly built docs because the only change is in the filtered out index/* resources. -->
-		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.24/</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.26-I-builds/</help-docs-eclipserun-repo>
 
 		<tycho.scmUrl>scm:git:https://github.com/eclipse-cdt/cdt</tycho.scmUrl>
 		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->
 		<base.test.vmargs>-Xms256m -Xmx512m -ea --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.6/cdt-10.6.0/</comparator.repo>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/10.7/cdt-10.7.1/</comparator.repo>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want
 		     to avoid baseline replace and compare, especially if you have different versions of Java than
 			 the baseline was built with. This is the default.
@@ -73,8 +73,8 @@
 		     -DskipTests will override anything else as normal maven
 		     users expect. -->
 		<skipTests>${cdt-other.skip.tests}</skipTests>
-		<dsf.gdb.tests.gdbPath>/shared/common/gdb/gdb-all/bin</dsf.gdb.tests.gdbPath>
-		<cdt.tests.dsf.gdb.versions>gdb.10,gdbserver.10</cdt.tests.dsf.gdb.versions>
+		<dsf.gdb.tests.gdbPath></dsf.gdb.tests.gdbPath>
+		<cdt.tests.dsf.gdb.versions></cdt.tests.dsf.gdb.versions>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<buildTimestamp>${maven.build.timestamp}</buildTimestamp>
 	    <buildId>${buildTimestamp}</buildId>
@@ -152,11 +152,6 @@
 		<module>debug/org.eclipse.cdt.debug.core</module>
 		<module>debug/org.eclipse.cdt.debug.ui</module>
 
-		<module>debug/org.eclipse.cdt.debug.dap</module>
-		<module>debug/org.eclipse.cdt.debug.dap-feature</module>
-		<module>jtag/org.eclipse.cdt.debug.dap.gdbjtag</module>
-		<module>jtag/org.eclipse.cdt.debug.dap.gdbjtag-feature</module>
-
 		<module>debug/org.eclipse.cdt.gdb</module>
 		<module>debug/org.eclipse.cdt.gdb.ui</module>
 		<module>debug/org.eclipse.cdt.gdb-feature</module>
@@ -200,12 +195,6 @@
 		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb.ui</module>
 		<module>llvm/org.eclipse.cdt.llvm.dsf.lldb-feature</module>
 
-		<module>lsp/org.eclipse.cdt.lsp.core</module>
-		<module>lsp/org.eclipse.cdt.lsp.ui</module>
-		<module>lsp/org.eclipse.cdt.lsp.clangd</module>
-		<module>lsp/org.eclipse.cdt.lsp.cquery</module>
-		<module>lsp/org.eclipse.cdt.lsp-feature</module>
-
 		<module>memory/org.eclipse.cdt.debug.core.memory</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.memorybrowser</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory.floatingpoint</module>
@@ -215,10 +204,6 @@
 		<module>memory/org.eclipse.cdt.debug.ui.memory-feature</module>
 
 		<module>native/org.eclipse.cdt.native.serial</module>
-
-		<module>qt/org.eclipse.cdt.qt.core</module>
-		<module>qt/org.eclipse.cdt.qt.ui</module>
-		<module>qt/org.eclipse.cdt.qt-feature</module>
 
 		<module>remote/org.eclipse.cdt.remote.core</module>
 
@@ -319,10 +304,7 @@
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
 		<module>jtag/org.eclipse.cdt.debug.gdbjtag.core.tests</module>
-		<module>lsp/org.eclipse.cdt.lsp.core.tests</module>
-		<module>lsp/org.eclipse.cdt.lsp.cquery.tests</module>
 		<module>memory/org.eclipse.cdt.debug.core.memory.tests</module>
-		<module>qt/org.eclipse.cdt.qt.ui.tests</module>
 		<module>testsrunner/org.eclipse.cdt.testsrunner.tests</module>
 
 		<module>releng/org.eclipse.cdt.testing</module>
@@ -332,10 +314,7 @@
 		<!-- TODO:  Investigate/Fix hanging before re-enable re-enabling
 		<module>debug/org.eclipse.cdt.debug.application.tests</module>
 		-->
-		
-		<!--
-		<module>qt/org.eclipse.cdt.qt.core.tests</module>
-		-->
+
 	</modules>
 
 	<pluginRepositories>
@@ -456,12 +435,11 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>org.eclipse.tycho.extras</groupId>
-						<artifactId>tycho-source-feature-plugin</artifactId>
-						<version>${tycho-version}</version>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-source-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>source-feature</id>
+								<id>attach-feature-source</id>
 								<phase>none</phase>
 							</execution>
 						</executions>
@@ -544,7 +522,6 @@
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -552,7 +529,6 @@
 			<properties>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -560,15 +536,6 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<lsp.skip.tests>true</lsp.skip.tests>
-			</properties>
-		</profile>
-		<profile>
-			<id>skip-tests-except-lsp</id>
-			<properties>
-				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
-				<cdt-other.skip.tests>true</cdt-other.skip.tests>
-				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -576,7 +543,6 @@
 			<properties>
 				<cdt-ui.skip.tests>true</cdt-ui.skip.tests>
 				<dsf-gdb.skip.tests>true</dsf-gdb.skip.tests>
-				<lsp.skip.tests>true</lsp.skip.tests>
 			</properties>
 		</profile>
 		<profile>
@@ -736,23 +702,14 @@
 							<goal>plugin-source</goal>
 						</goals>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-source-feature-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<includeBinaryFeature>false</includeBinaryFeature>
-				</configuration>
-				<executions>
 					<execution>
-						<id>source-feature</id>
+						<id>attach-feature-source</id>
 						<phase>package</phase>
 						<goals>
-							<goal>source-feature</goal>
+							<goal>feature-source</goal>
 						</goals>
 						<configuration>
+							<includeBinaryFeature>false</includeBinaryFeature>
 							<excludes>
 								<plugin id="org.eclipse.cdt.autotools.docs"/>
 								<plugin id="org.eclipse.cdt.meson.docs"/>
@@ -846,14 +803,6 @@
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-source-plugin</artifactId>
 					<version>${tycho-version}</version>
-					<executions>
-						<execution>
-							<id>plugin-source</id>
-							<goals>
-								<goal>plugin-source</goal>
-							</goals>
-						</execution>
-					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>

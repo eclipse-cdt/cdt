@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -24,9 +26,9 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -37,12 +39,8 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	private ICProject project;
 	private PDOM pdom;
 
-	public static Test suite() {
-		return new TestSuite(CCompositeTypeTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		CCompositeTypeTests foo = null;
 
 		project = createProject("compositeTypeTests");
@@ -50,8 +48,8 @@ public class CCompositeTypeTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
@@ -69,24 +67,28 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test struct definitions and struct member declarations in C
+	@Test
 	public void testSimpleCStructureDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "SimpleCStructure", 1);
 		assertDeclarationCount(pdom, "SimpleCStructure::scsa", 1);
 	}
 
 	// test struct definitions and struct member definitions in C
+	@Test
 	public void testSimpleCStructureDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "SimpleCStructure", 1);
 		assertDefinitionCount(pdom, "SimpleCStructure::scsa", 1);
 	}
 
 	// test struct definitions and struct member references in C
+	@Test
 	public void testSimpleCStructureReferences() throws Exception {
 		assertReferenceCount(pdom, "SimpleCStructure", 2);
 		assertReferenceCount(pdom, "SimpleCStructure::scsa", 2);
 	}
 
 	// test nesting of structs in C, they should not nest
+	@Test
 	public void testDeepCStructure() throws Exception {
 		assertType(pdom, "CStructure1", ICompositeType.class);
 		assertType(pdom, "CStructure2", ICompositeType.class);
@@ -94,6 +96,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" struct declarations in C, they should not nest
+	@Test
 	public void testDeepCStructureDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "CStructure1", 1);
 		assertDeclarationCount(pdom, "CStructure1::CStructure2", 0);
@@ -103,6 +106,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" struct member declarations in C, they should not nest
+	@Test
 	public void testDeepCStructureMemberDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "CStructure1::cs1a", 1);
 		assertDeclarationCount(pdom, "CStructure1::cs1b", 1);
@@ -114,6 +118,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" struct definitions in C, they should not nest
+	@Test
 	public void testDeepCStructureDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "CStructure1", 1);
 		assertDefinitionCount(pdom, "CStructure1::CStructure2", 0);
@@ -123,6 +128,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" struct member definitions in C, they should not nest
+	@Test
 	public void testDeepCStructureMemberDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "CStructure1::cs1a", 1);
 		assertDefinitionCount(pdom, "CStructure1::cs1b", 1);
@@ -134,6 +140,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" struct references in C, they should not nest
+	@Test
 	public void testDeepCStructureReferences() throws Exception {
 		assertReferenceCount(pdom, "CStructure1", 2);
 		assertReferenceCount(pdom, "CStructure1::CStructure2", 0);
@@ -143,6 +150,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" struct member references in C, they should not nest
+	@Test
 	public void testDeepCStructureMemberReferences() throws Exception {
 		assertReferenceCount(pdom, "CStructure1::cs1a", 2);
 		assertReferenceCount(pdom, "CStructure1::cs1b", 3);
@@ -162,6 +170,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	//test union and "nested" union declarations in C, but there is no nesting in C
+	@Test
 	public void testCUnionDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "CUnion1", 1);
 		assertDeclarationCount(pdom, "CUnion1::CUnion2", 0);
@@ -169,6 +178,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	//test union and "nested" union definitons in C, but there is no nesting in C
+	@Test
 	public void testCUnionDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "CUnion1", 1);
 		assertDefinitionCount(pdom, "CUnion1::CUnion2", 0);
@@ -176,6 +186,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	//test union and "nested" union references in C, but there is no nesting in C
+	@Test
 	public void testCUnionReferences() throws Exception {
 		assertReferenceCount(pdom, "CUnion1", 2);
 		assertReferenceCount(pdom, "CUnion1::CUnion2", 0);
@@ -183,24 +194,28 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	//test union member declarations in C
+	@Test
 	public void testCUnionMemberDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "CUnion1::cu1a", 1);
 		assertDeclarationCount(pdom, "CUnion1::cu1d", 1);
 	}
 
 	//test union member defintions in C
+	@Test
 	public void testCUnionMemberDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "CUnion1::cu1a", 1);
 		assertDefinitionCount(pdom, "CUnion1::cu1d", 1);
 	}
 
 	//test union member references in C
+	@Test
 	public void testCUnionMemberReferences() throws Exception {
 		assertReferenceCount(pdom, "CUnion1::cu1a", 2);
 		assertReferenceCount(pdom, "CUnion1::cu1d", 1);
 	}
 
 	// test "nested" unions and structs declarations in C, they should not nest
+	@Test
 	public void testCMixedDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "CMixedS1::CMixedU1", 0);
 		assertDeclarationCount(pdom, "CMixedS1::CMixedU1::CMixedS2", 0);
@@ -214,6 +229,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" unions and structs definitions in C, they should not nest
+	@Test
 	public void testCMixedDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "CMixedS1::CMixedU1", 0);
 		assertDefinitionCount(pdom, "CMixedS1::CMixedU1::CMixedS2", 0);
@@ -227,6 +243,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" unions and structs references in C, they should not nest
+	@Test
 	public void testCMixedReferences() throws Exception {
 		assertReferenceCount(pdom, "CMixedS1::CMixedU1", 0);
 		assertReferenceCount(pdom, "CMixedS1::CMixedU1::CMixedS2", 0);
@@ -240,6 +257,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" union members and struct members declarations in C, they should not nest
+	@Test
 	public void testCMixedMemberDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "CMixedS1::CMixedU1::cmu1a", 0);
 		assertDeclarationCount(pdom, "CMixedS1::CMixedU1::CMixedS2::cms2a", 0);
@@ -253,6 +271,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" union members and struct members definitions in C, they should not nest
+	@Test
 	public void testCMixedMemberDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "CMixedS1::CMixedU1::cmu1a", 0);
 		assertDefinitionCount(pdom, "CMixedS1::CMixedU1::CMixedS2::cms2a", 0);
@@ -266,6 +285,7 @@ public class CCompositeTypeTests extends PDOMTestBase {
 	}
 
 	// test "nested" union members and struct members references in C, they should not nest
+	@Test
 	public void testCMixedMemberReferences() throws Exception {
 		assertReferenceCount(pdom, "CMixedS1::CMixedU1::cmu1a", 0);
 		assertReferenceCount(pdom, "CMixedS1::CMixedU1::CMixedS2::cms2a", 0);

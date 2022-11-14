@@ -70,7 +70,7 @@ and project structure).
 It's worth reading even the older "What's new and noteworthy in CDT" to
 understand CDT features.
 
-<http://wiki.eclipse.org/CDT/User/NewInCDT>
+<https://github.com/eclipse-cdt/cdt/blob/main/NewAndNoteworthy/README.md>
 
 #### How do I find out about future releases of the CDT?
 
@@ -764,10 +764,14 @@ so you'll see if the indexer had problems understanding the syntax of
 the code that you've just been working on. It will not reveal semantic
 issues.
 
+#### More on the Indexer
+
+There is an entire [page dedicated to troubleshooting the Indexer](Indexer.md)
+
 #### What is a Scanner Discovery?
 
 See
-<http://help.eclipse.org/kepler/index.jsp?topic=%2Forg.eclipse.cdt.doc.user%2Fconcepts%2Fcdt_c_scanner_discovery.htm>
+<http://help.eclipse.org/latest/index.jsp?topic=%2Forg.eclipse.cdt.doc.user%2Fconcepts%2Fcdt_c_scanner_discovery.htm>
 
 #### I installed a new version of my compiler but old include paths of old compiler are still there under "Paths and Symbols" in project properties. I cannot get rid of them\! What do I edit to remove the old paths by hand?
 
@@ -831,7 +835,7 @@ information.
 
 Since Eclipse Juno this new Scanner Discovery is integrated in CDT, see
 "What's new in CDT 8.1" here:
-<http://wiki.eclipse.org/CDT/User/NewIn81#Scanner_Discovery>
+<https://htmlpreview.github.io/?https://raw.githubusercontent.com/eclipse-cdt/cdt/blob/main/NewAndNoteworthy/OlderReleases/CDT-8.1.html#Scanner_Discovery>
 
 #### Why is this key/arrow/push pin emblem is shown on my file? Or maybe it is a wrench icon.
 
@@ -855,7 +859,7 @@ Open Project Properties-\>C/C++ Build-\>Settings-\>Tool Settings-\>GCC
 C++ Compiler-\>Miscellaneous-\>Other Flags. Put "-std=c++0x" at the end.
 
 Since CDT 8.3 there is a new "Dialect" option in the compiler option
-settings, see: <https://wiki.eclipse.org/CDT/User/NewIn83#Toolchains>
+settings, see: <https://htmlpreview.github.io/?https://raw.githubusercontent.com/eclipse-cdt/cdt/blob/main/NewAndNoteworthy/OlderReleases/CDT-8.3.html#Toolchains>
 
 <u>Makefile project:</u>
 

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.templateengine.tests;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +25,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IOption;
@@ -33,10 +38,11 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
-
-public class TestProcesses extends TestCase {
+public class TestProcesses extends BaseTestCase5 {
 	private static final String INCLUDE_FOLDER = "Include"; //$NON-NLS-1$
 	private static final String APPEND = "Append"; //$NON-NLS-1$
 	private static final String MBS_GNU_CPP_LINK_OPTION_ID = ".*gnu.cpp.link.option.*"; //$NON-NLS-1$
@@ -47,27 +53,23 @@ public class TestProcesses extends TestCase {
 
 	String projectName;
 
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		TemplateEngineTestsHelper.turnOffAutoBuild();
 		projectName = "TemplateEngineTestsProject" + System.currentTimeMillis();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
 		project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
 		ResourceHelper.cleanUp(getName());
 		if (project.exists()) {
-			try {
-				ManagedBuildTestHelper.delete(CoreModel.getDefault().create(project));
-			} catch (Exception e) {
-				e.printStackTrace();
-				fail(e.getMessage());
-			}
+			ManagedBuildTestHelper.delete(CoreModel.getDefault().create(project));
 		}
 	}
 
+	@Test
 	public void testCreateIncludeFolder() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
 				".*CreateIncludeFolder"); //$NON-NLS-1$
@@ -93,6 +95,7 @@ public class TestProcesses extends TestCase {
 		assertTrue(folder.exists());
 	}
 
+	@Test
 	public void testNewManagedProject() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*NewManagedProject"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());
@@ -110,6 +113,7 @@ public class TestProcesses extends TestCase {
 		assertTrue(project.exists());
 	}
 
+	@Test
 	public void testSetMBSBooleanOptionValue() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
 				".*SetMBSBooleanOptionValue"); //$NON-NLS-1$
@@ -136,6 +140,7 @@ public class TestProcesses extends TestCase {
 
 	}
 
+	@Test
 	public void testSetMBSStringOptionValue() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
 				".*SetMBSStringOptionValue"); //$NON-NLS-1$
@@ -162,6 +167,7 @@ public class TestProcesses extends TestCase {
 		}
 	}
 
+	@Test
 	public void testSetMBSStringListOptionValues() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
 				".*SetMBSStringListOptionValues"); //$NON-NLS-1$
@@ -191,6 +197,7 @@ public class TestProcesses extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAppendToMBSStringOptionValue() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
 				".*AppendToMBSStringOptionValue"); //$NON-NLS-1$
@@ -218,6 +225,7 @@ public class TestProcesses extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAppendToMBSStringListOptionValues() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null,
 				".*AppendToMBSStringListOptionValues"); //$NON-NLS-1$
@@ -252,6 +260,7 @@ public class TestProcesses extends TestCase {
 		}
 	}
 
+	@Test
 	public void testExcludeResources() {
 		TemplateCore template = TemplateEngine.getDefault().getFirstTemplate(PROJECT_TYPE, null, ".*ExcludeResources"); //$NON-NLS-1$
 		template.getTemplateInfo().setConfigurations(getConfigurations());

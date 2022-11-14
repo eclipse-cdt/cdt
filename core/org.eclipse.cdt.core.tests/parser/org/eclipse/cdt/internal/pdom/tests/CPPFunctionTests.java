@@ -15,6 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -33,8 +39,9 @@ import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for verifying whether the PDOM correctly stores information about
@@ -44,62 +51,64 @@ public class CPPFunctionTests extends PDOMTestBase {
 	protected ICProject project;
 	protected PDOM pdom;
 
-	public static Test suite() {
-		return suite(CPPFunctionTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		project = createProject("functionTests");
 		pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 		if (project != null) {
 			project.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, npm());
 		}
 	}
 
+	@Test
 	public void testPointerToFunctionType() throws Exception {
 		assertDeclarationCount(pdom, "int2intPtr", 1);
 		IIndexFragmentBinding[] b = pdom.findBindings(new char[][] { "int2intPtr".toCharArray() }, IndexFilter.ALL,
 				npm());
 		assertEquals(1, b.length);
-		assertInstance(b[0], ICPPVariable.class);
+		assertInstanceOf(ICPPVariable.class, b[0]);
 		ICPPVariable v = (ICPPVariable) b[0];
-		assertInstance(v.getType(), IPointerType.class);
+		assertInstanceOf(IPointerType.class, v.getType());
 		IPointerType pt = (IPointerType) v.getType();
-		assertInstance(pt.getType(), IFunctionType.class);
+		assertInstanceOf(IFunctionType.class, pt.getType());
 		IFunctionType ft = (IFunctionType) pt.getType();
-		assertInstance(ft.getReturnType(), ICPPBasicType.class);
+		assertInstanceOf(ICPPBasicType.class, ft.getReturnType());
 		assertEquals(1, ft.getParameterTypes().length);
-		assertInstance(ft.getParameterTypes()[0], ICPPBasicType.class);
+		assertInstanceOf(ICPPBasicType.class, ft.getParameterTypes()[0]);
 	}
 
+	@Test
 	public void testFunctionType() throws Exception {
 		assertType(pdom, "normalDeclaration1", ICPPFunction.class);
 		assertType(pdom, "normalDeclaration2", ICPPFunction.class);
 	}
 
+	@Test
 	public void testFunctionDeclarations() throws Exception {
 		assertDeclarationCount(pdom, "normalDeclaration1", 1);
 		assertDeclarationCount(pdom, "normalDeclaration2", 1);
 	}
 
+	@Test
 	public void testFunctionDefinitions() throws Exception {
 		assertDefinitionCount(pdom, "normalDeclaration1", 1);
 		assertDefinitionCount(pdom, "normalDeclaration2", 1);
 	}
 
+	@Test
 	public void testFunctionReferences() throws Exception {
 		assertReferenceCount(pdom, "normalDeclaration1", 2);
 		assertReferenceCount(pdom, "normalDeclaration2", 3);
 		assertReferenceCount(pdom, "forwardDeclaration", 2);
 	}
 
+	@Test
 	public void testParameters() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "normalCPPFunction");
 		assertEquals(1, bindings.length);
@@ -113,6 +122,7 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertEquals("p3", parameters[2].getName());
 	}
 
+	@Test
 	public void testStorageClassSpecParameters() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "storageClassCPPFunction");
 		assertEquals(1, bindings.length);
@@ -121,12 +131,14 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertEquals(2, parameters.length);
 	}
 
+	@Test
 	public void testExternCPPFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "externCPPFunction");
 		assertEquals(1, bindings.length);
 		assertTrue(((ICPPFunction) bindings[0]).isExtern());
 	}
 
+	@Test
 	public void testStaticCPPFunction() throws Exception {
 		// Static elements cannot be found in global scope, see bug 161216
 		IBinding[] bindings = findUnqualifiedName(pdom, "staticCPPFunction");
@@ -134,12 +146,14 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertTrue(((ICPPFunction) bindings[0]).isStatic());
 	}
 
+	@Test
 	public void testInlineCPPFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "inlineCPPFunction");
 		assertEquals(1, bindings.length);
 		assertTrue(((ICPPFunction) bindings[0]).isInline());
 	}
 
+	@Test
 	public void testVarArgsCPPFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "varArgsCPPFunction");
 		assertEquals(1, bindings.length);
@@ -158,6 +172,7 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertTrue(((ICPPFunction) bindings[0]).isNoDiscard());
 	}
 
+	@Test
 	public void testNoReturnCPPFunction() throws Exception {
 		assertNoReturnFunction("noReturnCPPFunction");
 		assertNoReturnFunction("trailingNoReturnStdAttributeDecl");
@@ -166,6 +181,7 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertNoReturnFunction("leadingNoReturnStdAttributeDef");
 	}
 
+	@Test
 	public void testNoDiscardCPPFunction() throws Exception {
 		assertNoDiscardFunction("noDiscardCPPFunction");
 		assertNoDiscardFunction("trailingNoDiscardStdAttributeDecl");
@@ -174,35 +190,43 @@ public class CPPFunctionTests extends PDOMTestBase {
 		assertNoDiscardFunction("leadingNoDiscardStdAttributeDef");
 	}
 
+	@Test
 	public void testForwardDeclarationType() throws Exception {
 		assertType(pdom, "forwardDeclaration", ICPPFunction.class);
 	}
 
+	@Test
 	public void testForwardDeclaration() throws Exception {
 		assertDeclarationCount(pdom, "forwardDeclaration", 2);
 		assertDefinitionCount(pdom, "forwardDeclaration", 1);
 	}
 
+	@Test
 	public void testVoidFunction() throws Exception {
 		assertReturnType(pdom, "voidCPPFunction", IBasicType.t_void);
 	}
 
+	@Test
 	public void testIntFunction() throws Exception {
 		assertReturnType(pdom, "intCPPFunction", IBasicType.t_int);
 	}
 
+	@Test
 	public void testDoubleFunction() throws Exception {
 		assertReturnType(pdom, "doubleCPPFunction", IBasicType.t_double);
 	}
 
+	@Test
 	public void testCharFunction() throws Exception {
 		assertReturnType(pdom, "charCPPFunction", IBasicType.t_char);
 	}
 
+	@Test
 	public void testFloatFunction() throws Exception {
 		assertReturnType(pdom, "floatCPPFunction", IBasicType.t_float);
 	}
 
+	@Test
 	public void testOverloadedFunction() throws Exception {
 		IBinding[] bindings = findQualifiedName(pdom, "overloadedFunction");
 		assertEquals(2, bindings.length);

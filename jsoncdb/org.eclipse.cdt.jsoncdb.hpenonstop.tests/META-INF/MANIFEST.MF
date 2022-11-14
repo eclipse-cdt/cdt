@@ -6,6 +6,6 @@ Bundle-Version: 1.0.200.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Fragment-Host: org.eclipse.cdt.jsoncdb.hpenonstop
 Import-Package: org.junit
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.jsoncdb.hpenonstop.tests
 Bundle-Name: %Bundle-Name

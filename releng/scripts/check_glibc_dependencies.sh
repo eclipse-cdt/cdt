@@ -12,6 +12,14 @@
 
 set -eu
 
+SCRIPT=$( basename "${BASH_SOURCE[0]}" )
+
+if ! command -v aarch64-linux-gnu-readelf &> /dev/null
+then
+    echo "WARNING: Skipping ${SCRIPT} because aarch/powerpc cross compiler tools are not available"
+    exit 0
+fi
+
 
 ###
 # Check that all .so files in CDT for a given ${ARCH} (using ${PREFIX} toolchain) 

@@ -673,13 +673,16 @@ public class PE64 implements AutoCloseable {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
 		dispose();
 	}
 
-	public void dispose() throws IOException {
+	public void dispose() {
 		if (rfile != null) {
-			rfile.close();
+			try {
+				rfile.close();
+			} catch (IOException e) {
+			}
 			rfile = null;
 		}
 	}
@@ -881,7 +884,6 @@ public class PE64 implements AutoCloseable {
 	}
 
 	private ISymbolReader createCodeViewReader() {
-		ISymbolReader symReader = null;
 		final int IMAGE_DIRECTORY_ENTRY_DEBUG = 6;
 
 		try {
@@ -942,8 +944,7 @@ public class PE64 implements AutoCloseable {
 							String s2 = accessFile.readLine();
 							if (s2.startsWith("NB11")) { //$NON-NLS-1$
 								Attribute att = getAttribute();
-								symReader = new CodeViewReader(accessFile, debugBase, att.isLittleEndian());
-								return symReader;
+								return new CodeViewReader(filename, debugBase, att.isLittleEndian());
 							}
 						}
 						fileOffset += dir.DEBUGDIRSZ;
@@ -954,7 +955,7 @@ public class PE64 implements AutoCloseable {
 			e.printStackTrace();
 		}
 
-		return symReader;
+		return null;
 	}
 
 	private ISymbolReader createStabsReader() {

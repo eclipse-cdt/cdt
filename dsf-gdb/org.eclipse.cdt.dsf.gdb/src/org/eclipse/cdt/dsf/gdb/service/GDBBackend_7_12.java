@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2021 Ericsson and others.
+ * Copyright (c) 2016, 2022 Ericsson and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,9 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     John Dallaway - Eliminate deprecated method (#112)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -124,15 +127,12 @@ public class GDBBackend_7_12 extends GDBBackend {
 		return fDummyErrorStream;
 	}
 
-	/** @deprecated Override {@link #getDebuggerCommandLineArray()} instead */
 	@Override
-	@Deprecated(since = "6.4", forRemoval = true)
-	protected String[] getDebuggerCommandLine() {
-		// Start from the original command line method which
-		// could have been overridden by extenders, and add what we need
+	public String[] getDebuggerCommandLineArray() {
+		// Start from the original command line method and add what we need
 		// to convert it to a command that will launch in CLI mode.
 		// Then trigger the MI console
-		String[] originalCommandLine = getGDBCommandLineArray();
+		String[] originalCommandLine = super.getDebuggerCommandLineArray();
 
 		if (!isFullGdbConsoleSupported()) {
 			return originalCommandLine;

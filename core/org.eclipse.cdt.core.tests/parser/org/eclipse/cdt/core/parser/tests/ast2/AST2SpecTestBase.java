@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 /**
  * @author dsteffle
  */
-public class AST2SpecTestBase extends AST2TestBase {
+public abstract class AST2SpecTestBase extends AST2TestBase {
 	public AST2SpecTestBase() {
 		super();
 	}

@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,40 +25,36 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMProjectIndexLocationConverter;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests behavior related to location representation in the PDOM
  */
-public class PDOMLocationTests extends BaseTestCase {
+public class PDOMLocationTests extends BaseTestCase5 {
 	ICProject cproject;
 
-	public static Test suite() {
-		return suite(PDOMLocationTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		cproject = CProjectHelper.createCCProject("PDOMLocationTests" + System.currentTimeMillis(), "bin",
 				IPDOMManager.ID_NO_INDEXER);
-		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		if (cproject != null) {
 			cproject.getProject().delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT,
 					new NullProgressMonitor());
 		}
-		super.tearDown();
 	}
 
+	@Test
 	public void testLocationConverter() {
 		PDOMProjectIndexLocationConverter converter = new PDOMProjectIndexLocationConverter(cproject.getProject());
 		String[] winExternals = new String[] { "c:/a/b/c/d.foo", "c:\\a\\b\\c\\d\\e.foo", "d:/foo.bar",

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.remote.proxy.core;singleton:=true
-Bundle-Version: 1.0.200.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.eclipse.remote.internal.proxy.core.Activator
 Bundle-Vendor: %pluginProvider
 Bundle-ActivationPolicy: lazy
@@ -10,7 +10,7 @@ Export-Package: org.eclipse.remote.internal.proxy.core;x-friends:="org.eclipse.r
  org.eclipse.remote.internal.proxy.core.commands;x-friends:="org.eclipse.remote.proxy.ui",
  org.eclipse.remote.internal.proxy.core.messages;x-friends:="org.eclipse.remote.proxy.ui"
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Import-Package: com.jcraft.jsch,
  org.eclipse.core.filesystem,
  org.eclipse.core.filesystem.provider,

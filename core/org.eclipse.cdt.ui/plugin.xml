@@ -4,7 +4,7 @@
 
    <extension-point id="CHelpProvider" name="%cHelpProviderName" schema="schema/CHelpProvider.exsd"/>
    <extension-point id="CElementFilters" name="%elementFiltersName"/>
-   <extension-point id="BinaryParserPage" name="%binaryParserPage"/>
+   <extension-point id="BinaryParserPage" name="%binaryParserPage" schema="schema/BinaryParserPage.exsd"/>
    <extension-point id="PathContainerPage" name="%pathContainerPage" schema="schema/PathContainerPage.exsd"/>
    <extension-point id="foldingStructureProviders" name="%foldingStructureProvidersExtensionPoint" schema="schema/foldingStructureProviders.exsd"/>
    <extension-point id="cPropertyTab" name="%cPropertyTabName" schema="schema/cPropertyTab.exsd"/>

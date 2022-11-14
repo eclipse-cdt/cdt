@@ -49,7 +49,7 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 
 import junit.framework.AssertionFailedError;
 
-public class CompletionTestBase extends BaseTestCase {
+public abstract class CompletionTestBase extends BaseTestCase {
 
 	private static final IParserLogService NULL_LOG = new NullLogService();
 

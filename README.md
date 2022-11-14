@@ -6,6 +6,8 @@
 
 The Eclipse CDT™ Project provides a fully functional C and C++ Integrated Development Environment based on the Eclipse platform. Features include: support for project creation and managed build for various toolchains, standard make build, source navigation, various source knowledge tools, such as type hierarchy, call graph, include browser, macro definition browser, code editor with syntax highlighting, folding and hyperlink navigation, source code refactoring and code generation, visual debugging tools, including memory, registers, and disassembly viewers.
 
+Highlights of recent releases and release notes are available in the [New & Noteworthy](NewAndNoteworthy/README.md).
+
 See also https://projects.eclipse.org/projects/tools.cdt and https://eclipse.org/cdt
 
 <img src="images/snapshots.gif" width="66%">
@@ -44,6 +46,17 @@ We encourage all vendors who are extending and redistributing Eclipse CDT to eng
 
 Please bear in mind that this project is almost entirely developed by volunteers. If you do not provide the implementation yourself (or pay someone to do it for you), the bug might never get fixed. If it is a serious bug, other people than you might care enough to provide a fix.
 
+## Add-ons for CDT
+
+There are many third-party addons for CDT to make it more productive.
+
+* [cmake4eclipse](https://github.com/15knots/cmake4eclipse#abstract): This Eclipse plug-in automatically generates build-scripts for the Eclipse CDT managed build system from CMake scripts.
+* [Sloeber](http://eclipse.baeyens.it/): Eclipse Plugins based on Arduino toolchains or a enhanced Arduino IDE.
+* [CUTE](https://cute-test.com/): C++ unit testing plug-in
+* [Bracketeer](https://marketplace.eclipse.org/content/bracketeer-cc-cdt): Auto-comments on closing brackets and highlight of matching/mismatching brackets
+* And many more in the [Eclipse Marketplace](https://marketplace.eclipse.org/), for example, try the [CDT tag](https://marketplace.eclipse.org/category/free-tagging/cdt)
+
+_Have a tool that you want listed here? Please open a [PR](https://github.com/eclipse-cdt/cdt/pulls)_
 ## Code of Conduct
 
 This project follows the [Eclipse Community Code of Conduct](https://www.eclipse.org/org/documents/Community_Code_of_Conduct.php).

@@ -24,7 +24,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Deque;
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -37,10 +40,16 @@ import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -103,7 +112,9 @@ public abstract class BaseTestCase5 {
 	 * enough for the general use case of getName.
 	 */
 	public String getName() {
-		return testInfo.getDisplayName();
+		String displayName = testInfo.getDisplayName();
+		String replaceFirst = displayName.replaceFirst("\\(.*\\)", "");
+		return replaceFirst;
 	}
 
 	public static NullProgressMonitor npm() {
@@ -115,6 +126,7 @@ public abstract class BaseTestCase5 {
 		this.testInfo = testInfo;
 
 		logMonitoring.start();
+		removeLeftOverProjects();
 
 		CPPASTNameBase.sAllowRecursionBindings = false;
 		CPPASTNameBase.sAllowNameComputation = false;
@@ -130,6 +142,36 @@ public abstract class BaseTestCase5 {
 		TestScannerProvider.clear();
 
 		logMonitoring.stop(fExpectedLoggedNonOK);
+		BaseTestCase5.removeLeftOverProjects();
+	}
+
+	/**
+	 * assert that the virtual workspace is empty and that
+	 * there are no files left on disk in the workspace directory
+	 * this latter one is important because a new project can
+	 * be created with the same named and then those old files
+	 * will end up part of the project unexpectedly
+	 */
+	@AfterAll
+	public static void assertWorkspaceIsEmpty() throws CoreException {
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		// use lists because error messages are nicer
+		assertEquals(List.of(), Arrays.asList(root.members()),
+				"Found projects in workspace. This test or an earlier test did not clean up after itself.");
+
+		File workspaceFile = root.getLocation().toFile();
+
+		// Special permission for an empty "tmp" directory so
+		// that ResourceHelper.createTemporaryFolder() does not
+		// need to be reworked
+		File file = new File(workspaceFile, "tmp");
+		List<String> permitted = new ArrayList<>(List.of(".metadata"));
+		if (file.isDirectory()) {
+			assertEquals(List.of(), Arrays.asList(file.list()));
+			permitted.add("tmp");
+		}
+		assertEquals(List.of(), Arrays.asList(workspaceFile.list((dir, name) -> !permitted.contains(name))),
+				"Found files in workspace directory. This test or an earlier test did not clean up after itself.");
 	}
 
 	protected void deleteOnTearDown(File file) {
@@ -158,6 +200,26 @@ public abstract class BaseTestCase5 {
 	 */
 	public void setExpectedNumberOfLoggedNonOKStatusObjects(int count) {
 		fExpectedLoggedNonOK = count;
+	}
+
+	/**
+	 * Some tests don't cleanup after themselves well and leave projects
+	 * in the workspace. Therefore run this code before each test
+	 * to make sure all left over projects are deleted.
+	 */
+	public static void removeLeftOverProjects() throws CoreException {
+		MultiStatus multiStatus = new MultiStatus(BaseTestCase5.class, 0,
+				"Failed to remove left over projects from previous tests");
+		for (IProject p : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
+			try {
+				p.delete(IResource.FORCE | IResource.ALWAYS_DELETE_PROJECT_CONTENT, new NullProgressMonitor());
+			} catch (CoreException e) {
+				multiStatus.add(Status.error("failed to delete " + p.toString(), e));
+			}
+		}
+		if (multiStatus.getChildren().length > 0) {
+			throw new CoreException(multiStatus);
+		}
 	}
 
 	public static void waitForIndexer(ICProject project) throws InterruptedException {

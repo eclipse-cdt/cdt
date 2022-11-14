@@ -308,6 +308,12 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		additionalDirs.addAll(additionalPaths.stream().map(p -> ContainerLaunchUtils.toDockerVolume(pathMap, p))
 				.collect(Collectors.toList()));
 
+		final var getImg = ContainerLaunchUtils.provideDockerImage(monitor, connectionName, imageName);
+		if (!getImg.isOK()) {
+			setErrorMessage(getImg.getMessage());
+			return null;
+		}
+
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
 				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);
 

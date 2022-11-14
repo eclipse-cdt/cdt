@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.cdt.lsp.internal.cquery.ui.CqueryProtocolExtension">
-   <service>
-      <provide interface="org.eclipse.cdt.lsp.LanguageProtocolExtension"/>
-   </service>
-   <implementation class="org.eclipse.cdt.lsp.internal.cquery.ui.CqueryProtocolExtension"/>
-</scr:component>

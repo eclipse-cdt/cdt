@@ -298,7 +298,7 @@ public class ConfigurationDataProvider extends CConfigurationDataProvider implem
 		newCfg.setConfigurationDescription(cfgDescription);
 		newCfg.setName(cfgDescription.getName());
 
-		cfgDescription.setConfigurationData(ManagedBuildManager.CFG_DATA_PROVIDER_ID, newCfg.getConfigurationData());
+		cfgDescription.setConfigurationData(cfgDescription.getBuildSystemId(), newCfg.getConfigurationData());
 
 		ManagedBuildManager.performValueHandlerEvent(newCfg, IManagedOptionValueHandler.EVENT_OPEN);
 

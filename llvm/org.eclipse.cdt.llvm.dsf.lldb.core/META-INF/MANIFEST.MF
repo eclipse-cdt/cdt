@@ -3,8 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.cdt.llvm.dsf.lldb.core;singleton:=true
-Bundle-Version: 1.101.200.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-Version: 1.102.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.debug.core,
  org.eclipse.cdt.dsf.gdb,

@@ -60,8 +60,8 @@ The Eclipse CDT project follows the same guidelines and policies as the Eclipse 
 
 - Removal of any Eclipse CDT API requires approval from the Eclipse CDT Committers.
 - Announcement must be made on [cdt-dev](CONTRIBUTING.md#Contact) mailing list - it can be additionally made to  [cross-project-issues-dev](https://accounts.eclipse.org/mailing-list/cross-project-issues-dev) mailing list if there is concern that the impact of such removal would affect other Eclipse projects.
-- API Changes should be listed in the [New and Noteworthy](https://wiki.eclipse.org/CDT/User/NewInCDT) wiki page.
-- API removals and API breakages, actual or planned, should be added to CDT's git repo at [deprecated_API_removals.html](doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html) and published (starting with CDT 10.0 in Sept 2020) in [Eclipe Help](https://help.eclipse.org/latest/topic/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html). The current version can be previewed [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/eclipse-cdt/cdt/blob/main/doc/org.eclipse.cdt.doc.isv/guide/deprecated_API_removals.html).
+- Non-breaking API changes and improvements should be considered for listing as a [New and Noteworthy](NewAndNoteworthy/) item for a release.
+- API removals and API breakages, actual or planned, should be added to [New and Noteworthy's API Changelog](NewAndNoteworthy/CHANGELOG-API.md).
 
 ### Using API Tooling
 

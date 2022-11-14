@@ -187,9 +187,10 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 			}
 		}
 		if (adapter.equals(ISymbolReader.class)) {
-			Elf elf = getAdapter(Elf.class);
-			if (elf != null) {
-				return (T) elf.getSymbolReader();
+			try (Elf elf = getAdapter(Elf.class)) {
+				if (elf != null) {
+					return (T) elf.getSymbolReader();
+				}
 			}
 		}
 		return super.getAdapter(adapter);

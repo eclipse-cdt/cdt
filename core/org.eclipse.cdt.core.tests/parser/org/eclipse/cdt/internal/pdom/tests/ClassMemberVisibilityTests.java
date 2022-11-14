@@ -15,12 +15,13 @@
 package org.eclipse.cdt.internal.pdom.tests;
 
 import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibility;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Thomas Corbat
@@ -29,13 +30,8 @@ import junit.framework.Test;
  */
 public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 
-	public static Test suite() {
-		return suite(ClassMemberVisibilityTests.class);
-	}
-
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void beforeEach2() throws Exception {
 		setUpSections(1);
 	}
 
@@ -48,6 +44,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 	// private:
 	//   void privateMemFun();
 	// };
+	@Test
 	public void testVisibilityDefaultMemberFunction() throws Exception {
 		IBinding[] defaultFunction = findQualifiedPossiblyImplicit(pdom, "A::defaultMemFun");
 		assertVisibility(ICPPClassType.v_private, getMemberVisibility(defaultFunction[0]));
@@ -71,6 +68,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 	// private:
 	//   int privateVariable;
 	// };
+	@Test
 	public void testVisibilityDefaultMemberVariable() throws Exception {
 		IBinding[] defaultVariable = findQualifiedPossiblyImplicit(pdom, "A::defaultVariable");
 		assertVisibility(ICPPClassType.v_private, getMemberVisibility(defaultVariable[0]));
@@ -94,6 +92,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 	// private:
 	//   class PrivateNested {};
 	// };
+	@Test
 	public void testVisibilityDefaultNestedClass() throws Exception {
 		IBinding[] defaultNested = findQualifiedPossiblyImplicit(pdom, "A::DefaultNested");
 		assertVisibility(ICPPClassType.v_private, getMemberVisibility(defaultNested[0]));
@@ -110,6 +109,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 
 	// class A {
 	// };
+	@Test
 	public void testVisibilityImplicitClassMembers() throws Exception {
 		IBinding[] memberBindings = findQualifiedPossiblyImplicit(pdom, "A::A");
 
@@ -123,6 +123,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 	// template<>
 	// class Tpl<int> {
 	// };
+	@Test
 	public void testVisibilityImplicitTemplateMembers() throws Exception {
 		IBinding[] memberBindings = findQualifiedPossiblyImplicit(pdom, "Tpl::Tpl");
 
@@ -140,6 +141,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 	// class Tpl<int> {
 	//   int specializedDefaultVariable;
 	// };
+	@Test
 	public void testVisibilitySpecializedDefaultVariable() throws Exception {
 		IBinding[] memberBindings = findQualifiedPossiblyImplicit(pdom, "Tpl::specializedDefaultVariable");
 		assertVisibility(ICPPClassType.v_private, getMemberVisibility(memberBindings[0]));
@@ -153,6 +155,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 	// public:
 	//   int specializedPublicVariable;
 	// };
+	@Test
 	public void testVisibilitySpecializedPublicVariable() throws Exception {
 		IBinding[] memberBindings = findQualifiedPossiblyImplicit(pdom, "Tpl::specializedPublicVariable");
 		assertVisibility(ICPPClassType.v_public, getMemberVisibility(memberBindings[0]));
@@ -166,6 +169,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 	// protected:
 	//   int specializedProtectedVariable;
 	// };
+	@Test
 	public void testVisibilitySpecializedProtectedVariable() throws Exception {
 		IBinding[] memberBindings = findQualifiedPossiblyImplicit(pdom, "Tpl::specializedProtectedVariable");
 		assertVisibility(ICPPClassType.v_protected, getMemberVisibility(memberBindings[0]));
@@ -179,6 +183,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 	// private:
 	//   int specializedPrivateVariable;
 	// };
+	@Test
 	public void testVisibilitySpecializedPrivateVariable() throws Exception {
 		IBinding[] memberBinding = findQualifiedPossiblyImplicit(pdom, "Tpl::specializedPrivateVariable");
 		assertVisibility(ICPPClassType.v_private, getMemberVisibility(memberBinding[0]));
@@ -186,7 +191,7 @@ public class ClassMemberVisibilityTests extends PDOMInlineCodeTestBase {
 
 	private int getMemberVisibility(IBinding memberBinding) throws CoreException {
 		IBinding owner = memberBinding.getOwner();
-		assertInstance(owner, ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, owner);
 		ICPPClassType classBinding = (ICPPClassType) owner;
 		return classBinding.getVisibility(memberBinding);
 	}

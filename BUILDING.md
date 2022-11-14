@@ -35,7 +35,7 @@ Individual p2 repos can be turned on and off to allow building CDT, or parts of 
 Using the `build-standalone-debugger-rcp` profile will include the standalone debugger, located
 in `debug/org.eclipse.cdt.debug.application.product`
 
-#### skip-all-tests, skip-tests-except-cdt-ui, skip-tests-except-dsf-gdb, skip-tests-except-lsp, skip-tests-except-cdt-other
+#### skip-all-tests, skip-tests-except-cdt-ui, skip-tests-except-dsf-gdb, skip-tests-except-cdt-other
 
 Using any of the above profiles can skip large sets of tests. The CI build uses this to parallelize tests. See https://ci.eclipse.org/cdt/view/Gerrit/
 
@@ -61,19 +61,6 @@ Requires verify phase of maven to run, i.e. will not run with `mvn package` even
 
 Runs the production steps of the build. This profile can only be run on the CDT CI machines
 as access to Eclipse key signing server is needed to sign the jars.
-
-#### regenHelp
-
-Some of the help systems in Eclipse CDT require the `regenHelp` profile to rebuild their HTML from the source documents. For example, to regenerate the help
-for Autotools or Meson do:
-
-```
-mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.meson.docs -PregenHelp
-```
-
-```
-mvn generate-resources -DuseSimrelRepo -f build/org.eclipse.cdt.autotools.docs -PregenHelp
-```
 
 #### jniheaders
 
@@ -116,6 +103,9 @@ uncommited changes use `-Djgit.dirtyWorkingTree-cdtDefault=warning`
 
 For running CDT's DSF-GDB tests, this specifies the path to the location of gdb.
 
+The default, defined in the root pom.xml, it is blank, which uses gdb from the `PATH`.
+See BaseTestCase for more info.
+
 #### cdt.tests.dsf.gdb.versions
 
 For running CDT's DSF-GDB tests, this specifies the executable names of the gdbs to run, comma-separated.
@@ -126,7 +116,8 @@ There are a few special values that can be specified (see BaseParametrizedTestCa
 - supported: run all versions listed in ITestConstants.ALL_SUPPORTED_VERSIONS
 - unsupported: run all versions listed in ITestConstants.ALL_UNSUPPORTED_VERSIONS
 
-The default, defined in the root pom.xml, should be the most recent released version of gdb.
+The default, defined in the root pom.xml, it is blank, which uses `gdb` and `gdbserver`.
+See BaseParametrizedTestCase for more info.
 
 To build all gdb versions for testing CDT see [download-build-gdb.sh](https://github.com/eclipse-cdt/cdt-infra/blob/master/docker/scripts/download-build-gdb.sh)
 

@@ -32,7 +32,7 @@ import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 /**
  * @since 5.2
  */
-public class MachO64 {
+public class MachO64 implements AutoCloseable {
 	protected ERandomAccessFile efile;
 
 	protected MachOhdr mhdr;
@@ -1182,6 +1182,11 @@ public class MachO64 {
 		} catch (IOException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public void close() {
+		dispose();
 	}
 
 	public void dispose() {

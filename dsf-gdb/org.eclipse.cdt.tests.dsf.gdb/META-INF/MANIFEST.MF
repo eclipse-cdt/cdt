@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.mockito,
  org.hamcrest.library
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ClassPath: .
 Export-Package: org.eclipse.cdt.dsf.mi.service;x-internal:=true,
  org.eclipse.cdt.tests.dsf.gdb.framework;x-internal:=true,

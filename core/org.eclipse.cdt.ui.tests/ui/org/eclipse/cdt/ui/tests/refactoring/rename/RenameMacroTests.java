@@ -28,15 +28,7 @@ public class RenameMacroTests extends RenameTestBase {
 	}
 
 	public static Test suite() {
-		return suite(true);
-	}
-
-	public static Test suite(boolean cleanup) {
-		TestSuite suite = new TestSuite(RenameMacroTests.class);
-		if (cleanup) {
-			suite.addTest(new RenameMacroTests("cleanupProject"));
-		}
-		return suite;
+		return new TestSuite(RenameMacroTests.class);
 	}
 
 	public void testMacroRename() throws Exception {

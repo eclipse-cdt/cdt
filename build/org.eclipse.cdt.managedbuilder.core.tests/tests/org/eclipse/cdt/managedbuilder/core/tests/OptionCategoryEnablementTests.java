@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -31,10 +32,9 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class OptionCategoryEnablementTests extends TestCase {
+public class OptionCategoryEnablementTests extends BaseTestCase {
 
 	private static final String testName = "optcaten"; //$NON-NLS-1$
 	private static boolean fHandleValueCalled;

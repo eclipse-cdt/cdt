@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2022 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,7 +53,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
-import org.eclipse.jface.databinding.viewers.ViewersObservables;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -63,6 +63,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.linuxtools.docker.core.DockerConnectionManager;
 import org.eclipse.linuxtools.docker.core.IDockerConnection;
 import org.eclipse.linuxtools.docker.core.IDockerConnectionManagerListener;
@@ -298,6 +299,21 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				}
 
 			});
+
+			imageCombo.addVerifyListener(new VerifyListener() {
+				@Override
+				public void verifyText(VerifyEvent e) {
+					if (e.keyCode == 0x00)
+						return;
+					// When inserting text, check if we already have that image
+					final String currentText = imageCombo.getText();
+					final String nimg = currentText.substring(0, e.start) + e.text + currentText.substring(e.end);
+					var t = displayedImages.stream().filter(x -> x.repoTags().contains(nimg)).findAny().orElse(null);
+					// Set to 0 if it does not exist
+					setImageId(imageCombo.getText());
+					model.setSelectedImage(t);
+				}
+			});
 		}
 		// Volume
 		createVolumeSettingsContainer(usercomp);
@@ -384,7 +400,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		// update table content when selected image changes
 		bind(dataVolumesTableViewer, model.getDataVolumes(), BeanProperties.values(DataVolumeModel.class,
 				DataVolumeModel.CONTAINER_PATH, DataVolumeModel.MOUNT, DataVolumeModel.READ_ONLY_VOLUME));
-		dbc.bindSet(ViewersObservables.observeCheckedElements(dataVolumesTableViewer, DataVolumeModel.class),
+		dbc.bindSet(ViewerProperties.checkedElements(DataVolumeModel.class).observe((Viewer) dataVolumesTableViewer),
 				BeanProperties.set(ContainerPropertyVolumesModel.SELECTED_DATA_VOLUMES).observe(model));
 		// disable the edit and removeButton if the table is empty
 		dataVolumesTableViewer.addSelectionChangedListener(onSelectionChanged(editButton, removeButton));
@@ -401,6 +417,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 	 * @param input
 	 * @param labelProperties
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void bind(final StructuredViewer viewer, final IObservableList input,
 			final IBeanValueProperty[] labelProperties) {
 		final ObservableListContentProvider contentProvider = new ObservableListContentProvider();
@@ -493,7 +510,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		final CheckboxTableViewer tableViewer = new CheckboxTableViewer(table);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-		dbc.bindSet(ViewersObservables.observeCheckedElements(tableViewer, DataVolumeModel.class),
+		dbc.bindSet(ViewerProperties.checkedElements(DataVolumeModel.class).observe((Viewer) tableViewer),
 				BeanProperties.set(ContainerPropertyVolumesModel.SELECTED_DATA_VOLUMES).observe(model));
 		addTableViewerColumn(tableViewer, WizardMessages.getString("ImageRunResourceVolVarPage.containerPathColumn"), //$NON-NLS-1$
 				180);
@@ -520,6 +537,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 		private Image FOLDER_CLOSED_IMAGE = SWTImagesFactory.DESC_FOLDER_CLOSED.createImage();
 		private Image FILE_IMAGE = SWTImagesFactory.DESC_FILE.createImage();
 
+		@SuppressWarnings("rawtypes")
 		public DataVolumesLabelProvider(final IObservableMap[] attributeMaps) {
 			super(attributeMaps);
 		}
@@ -781,6 +799,8 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 					model.setSelectedImage(displayedImages.get(index));
 					setVolumeControlsEnabled(new Button[] { addButton }, true);
 				} else {
+					model.setSelectedImage(null);
+					imageCombo.setText(initialImageId);
 				}
 			}
 			connection.addImageListener(containerTab);

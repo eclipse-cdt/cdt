@@ -20,11 +20,12 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.ide;bundle-version="3.6.0",
  org.eclipse.cdt.codan.ui.cxx;bundle-version="2.0.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: %Bundle-Vendor
 Export-Package: org.eclipse.cdt.codan.core.cfg,
  org.eclipse.cdt.codan.core.cxx,
  org.eclipse.cdt.codan.core.internal.checkers,
  org.eclipse.cdt.codan.core.param,
  org.eclipse.cdt.codan.core.tests
+Import-Package: org.junit.jupiter.api;version="5.9.0"
 Automatic-Module-Name: org.eclipse.cdt.codan.core.tests

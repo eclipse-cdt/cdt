@@ -322,6 +322,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 				Throwable th = null;
 				YieldableIndexLock lock = new YieldableIndexLock(data.fIndex, false, progress.split(1));
 				lock.acquire();
+				boolean hasLock = true;
 				try {
 					final boolean isReplacement = ctx != null && fileInAST.includeStatement == null;
 					IIndexFragmentFile ifile = null;
@@ -342,17 +343,28 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 							}
 						}
 					}
+				} catch (FailedToReAcquireLockException e) {
+					hasLock = false;
+					e.reThrow();
 				} catch (OperationCanceledException e) {
 					throw e;
 				} catch (RuntimeException | StackOverflowError | AssertionError e) {
 					th = e;
 				} finally {
-					// Because the caller holds a read-lock, the result cache of the index is never cleared.
-					// Before releasing the lock for the last time in this AST, we clear the result cache.
-					if (i == data.fSelectedFiles.length - 1) {
-						data.fIndex.clearResultCache();
+					// If we failed to reacquire the yieldable index lock after yielding (for example
+					// because the project got closed) then FailedToReAcquireLockException will
+					// have been thrown and we are done here.
+					//
+					// Note - we can't ask the index if it is locked because someone else may have now
+					// locked it once we failed to reacquire the lock.
+					if (hasLock) {
+						// Because the caller holds a read-lock, the result cache of the index is never cleared.
+						// Before releasing the lock for the last time in this AST, we clear the result cache.
+						if (i == data.fSelectedFiles.length - 1) {
+							data.fIndex.clearResultCache();
+						}
+						lock.release();
 					}
-					lock.release();
 				}
 				if (th != null) {
 					data.fStatuses.add(createStatus(NLS.bind(Messages.PDOMWriter_errorWhileParsing,
@@ -619,7 +631,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 	}
 
 	private IIndexFragmentFile storeFileInIndex(Data data, FileInAST astFile, int storageLinkageID,
-			YieldableIndexLock lock, IProgressMonitor monitor) throws CoreException, InterruptedException {
+			YieldableIndexLock lock, IProgressMonitor monitor) throws CoreException, FailedToReAcquireLockException {
 		final IWritableIndex index = data.fIndex;
 		IIndexFragmentFile file;
 		// We create a temporary PDOMFile with zero timestamp, add names to it, then replace
@@ -633,6 +645,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 		ISignificantMacros significantMacros = fileKey.getSignificantMacros();
 		IIndexFragmentFile oldFile = index.getWritableFile(storageLinkageID, location, significantMacros);
 		file = index.addUncommittedFile(storageLinkageID, location, significantMacros);
+		boolean hasLock = true;
 		try {
 			boolean pragmaOnce = owner != null ? owner.hasPragmaOnceSemantics() : data.fAST.hasPragmaOnceSemantics();
 			file.setPragmaOnceSemantics(pragmaOnce);
@@ -683,8 +696,21 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 			file.setSizeAndEncodingHashcode(computeFileSizeAndEncodingHashcode(astFile.fileSize, location));
 			file.setContentsHash(astFile.contentsHash);
 			file = index.commitUncommittedFile();
+		} catch (FailedToReAcquireLockException e) {
+			hasLock = false;
+			throw e;
 		} finally {
-			index.clearUncommittedFile();
+			try {
+				index.clearUncommittedFile();
+			} catch (Throwable e) {
+				// Without the lock we need to still do some cleanup, but some
+				// of it will fail with an assertion error when running unit tests
+				// so to not lose the original exception, we suppress it if
+				// we don't have the lock.
+				if (hasLock) {
+					throw e;
+				}
+			}
 		}
 		return file;
 	}

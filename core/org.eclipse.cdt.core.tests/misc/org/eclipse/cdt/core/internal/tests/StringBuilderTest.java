@@ -14,17 +14,18 @@
 
 package org.eclipse.cdt.core.internal.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.lang.reflect.Method;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
+import org.junit.jupiter.api.Test;
 
-public class StringBuilderTest extends TestCase {
-	public static Test suite() {
-		return new TestSuite(StringBuilderTest.class);
-	}
+public class StringBuilderTest extends BaseTestCase5 {
 
+	@Test
 	public void testSafe() {
 		StringBuilder b1 = new StringBuilder();
 		StringBuilder b2 = new StringBuilder();
@@ -35,6 +36,7 @@ public class StringBuilderTest extends TestCase {
 		assertEquals("ab", b1.toString());
 	}
 
+	@Test
 	public void testBug220158() {
 		StringBuilder b1 = new StringBuilder();
 		StringBuilder b2 = new StringBuilder();
@@ -44,6 +46,7 @@ public class StringBuilderTest extends TestCase {
 		assertEquals("ab", b1.toString());
 	}
 
+	@Test
 	public void testStringBuilderMethods() throws Exception {
 		Class clazz = StringBuilder.class;
 		Method method = clazz.getMethod("append", CharSequence.class);

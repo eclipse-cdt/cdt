@@ -56,16 +56,19 @@ public class YieldableIndexLock {
 	}
 
 	/**
-	 * Yields the lock temporarily if it was held for YIELD_INTERVAL or more, and somebody is waiting
-	 * for a read lock.
-	 * @throws InterruptedException
+	 * Yields the lock temporarily if somebody is waiting for a read lock.
+	 * @throws FailedToReAcquireLockException when lock is not reacquired.
 	 */
-	public void yield() throws InterruptedException {
+	public void yield() throws FailedToReAcquireLockException {
 		if (index.hasWaitingReaders()) {
 			index.releaseWriteLock(false);
 			cumulativeLockTime += System.currentTimeMillis() - lastLockTime;
 			lastLockTime = 0;
-			acquire();
+			try {
+				acquire();
+			} catch (Throwable t) {
+				throw new FailedToReAcquireLockException(t);
+			}
 		}
 	}
 

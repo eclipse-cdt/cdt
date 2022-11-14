@@ -32,7 +32,6 @@ import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -51,26 +50,17 @@ import junit.framework.TestSuite;
  */
 public class ContentAssistTests extends BaseUITestCase {
 	private final NullProgressMonitor monitor = new NullProgressMonitor();
-	static IProject project;
-	static ICProject cproject;
-	static boolean disabledHelpContributions;
+	IProject project;
+	ICProject cproject;
+	boolean disabledHelpContributions;
 
 	@Override
-	public void setUp() throws InterruptedException {
-		//(CCorePlugin.getDefault().getCoreModel().getIndexManager()).reset();
-
-		if (project == null) {
-			try {
-				cproject = CProjectHelper.createCCProject("ContentAssistTestProject", "bin", //$NON-NLS-1$//$NON-NLS-2$
-						IPDOMManager.ID_FAST_INDEXER);
-				project = cproject.getProject();
-				waitForIndexer(cproject);
-			} catch (CoreException e) {
-				/*boo*/
-			}
-			if (project == null)
-				fail("Unable to create project"); //$NON-NLS-1$
-		}
+	public void setUp() throws InterruptedException, CoreException {
+		cproject = CProjectHelper.createCCProject("ContentAssistTestProject", "bin", //$NON-NLS-1$//$NON-NLS-2$
+				IPDOMManager.ID_FAST_INDEXER);
+		project = cproject.getProject();
+		waitForIndexer(cproject);
+		assertNotNull(project);
 	}
 
 	public ContentAssistTests() {
@@ -106,18 +96,7 @@ public class ContentAssistTests extends BaseUITestCase {
 
 	public static Test suite() {
 		TestSuite suite = suite(ContentAssistTests.class, "_");
-		suite.addTest(new ContentAssistTests("cleanupProject")); //$NON-NLS-1$
 		return suite;
-	}
-
-	public void cleanupProject() throws Exception {
-		closeAllEditors();
-		try {
-			project.delete(true, false, monitor);
-			project = null;
-		} catch (Throwable e) {
-			/*boo*/
-		}
 	}
 
 	@Override
@@ -129,20 +108,8 @@ public class ContentAssistTests extends BaseUITestCase {
 
 		// wait for indexer before deleting project to avoid errors in the log
 		waitForIndexer(cproject);
-
-		IResource[] members = project.members();
-		for (IResource member : members) {
-			if (member.getName().equals(".project") || member.getName().equals(".cproject")) //$NON-NLS-1$ //$NON-NLS-2$
-				continue;
-			if (member.getName().equals(".settings"))
-				continue;
-			try {
-				member.delete(false, monitor);
-			} catch (Throwable e) {
-				/*boo*/
-			}
-		}
-
+		project.delete(true, false, monitor);
+		super.tearDown();
 	}
 
 	protected IFile importFile(String fileName, String contents) throws Exception {

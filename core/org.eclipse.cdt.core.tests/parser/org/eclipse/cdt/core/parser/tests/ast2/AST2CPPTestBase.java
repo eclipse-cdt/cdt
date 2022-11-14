@@ -17,7 +17,7 @@ import java.io.IOException;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
-public class AST2CPPTestBase extends AST2TestBase {
+public abstract class AST2CPPTestBase extends AST2TestBase {
 	public AST2CPPTestBase() {
 	}
 

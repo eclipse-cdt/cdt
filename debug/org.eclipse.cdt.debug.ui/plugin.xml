@@ -1103,12 +1103,12 @@
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
       <factory
-            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.containers.CProjectSourceContainer"
+            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.CProjectSourceContainer"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
       <factory
-            adaptableType="org.eclipse.cdt.debug.core.sourcelookup.containers.SourceFoldersRelativePathSourceContainer"
+            adaptableType="org.eclipse.cdt.debug.internal.core.sourcelookup.SourceFoldersRelativePathSourceContainer"
             class="org.eclipse.cdt.debug.internal.ui.sourcelookup.SourceContainerAdapterFactory">
          <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
       </factory>
@@ -2575,7 +2575,7 @@
   <extension
         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
      <launchConfigurationTypeImage
-           configTypeID="org.eclipse.cdt.debug.core.localLaunchConfigurationType"
+           configTypeID="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType"
            icon="icons/obj16/c_app.gif"
            id="org.eclipse.cdt.debug.ui.localLaunchConfigurationTypeImage">
      </launchConfigurationTypeImage>

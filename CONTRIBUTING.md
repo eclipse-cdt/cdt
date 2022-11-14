@@ -31,6 +31,11 @@ Alternatively, you can create a Launcher: Go to Run - Debug Configurations... Se
 
 Until you are familiar with the CDT code base, using a Debug Launcher and experimenting with breakpoints is probably the best way to get a warm fuzzy feeling if you have doubts about modifications you are making.
 
+### Testing
+
+The Eclipse CDT project has extensive JUnit Plug-in tests covering many parts of the CDT code base.
+These tests are run automatically by the CI system (currently Jenkins and GitHub actions) using Maven + Tycho Surefire.
+See [CDT Testing notes](TESTING.md) for more information.
 
 ### Creating Pull Requests
 
@@ -59,6 +64,7 @@ These steps apply to anyone, whether a member of Eclipse CDT or a contributor on
 - Create a Pull Request for your commit(s).
   - Eclipse CDT follows standard [GitHub practice](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) on using Pull Requests.
   - Eclipse CDT borrows process when possible from the Eclipse Platform project rather than duplicating it here. See the Eclipse Platform's [recommended workflow](https://github.com/eclipse-platform/.github/blob/main/CONTRIBUTING.md#recommended-workflow) for creating Pull Requests.
+- There are various GitHub actions and Jenkins CI jobs that may run on the Pull Request. Click on the details of those runs to understand more about them.
 - Normally committers are watching new Issues and Pull Requests and somebody would look at your contribution in a few days
 - If it has not received attention in a week or so, some nagging can help. Send email to [cdt-dev](#contact) asking committers to look at the contribution. Continue sending e-mails until somebody would give up and look :)
 
@@ -81,7 +87,7 @@ These are the steps that a committer should undertake for all Pull Requests.
 
 1. Set the milestone field to the release in which patch would be applied, If it is applied in two branches set milestone to maintenance branch
 2. Code inspect and test and the patch
-3. If the patch is > 1,000 lines and from a non-committer, it must be submitted for IP review, i.e. CQ in IPZilla. See [IP Log](https://wiki.eclipse.org/Development_Resources/Automatic_IP_Log)
+3. If the patch is > 1,000 lines and from a non-committer, it must be submitted for IP review, i.e. CQ in IPZilla. See [IP Log](https://www.eclipse.org/projects/handbook/#ip-iplog)
 4. Merge the Pull Request. Do so while keeping a clean history for CDT
 - Use "Rebase and Merge" when the Pull Request has multiple commits separated in a logical fashion.
 - Use "Squash and Merge" when merging the PR, especially one where subsequent commits are simply review fixes.
@@ -124,3 +130,6 @@ Contact the project developers via the project's "dev" list, raise an issue or s
 * Dev list: https://dev.eclipse.org/mailman/listinfo/cdt-dev
 * Issues: https://github.com/eclipse-cdt/cdt/issues
 * Discussions: https://github.com/eclipse-cdt/cdt/discussions
+
+The Eclipse CDT project has a monthly call and everyone in the community is welcome to join.
+See [Eclipse CDT Calls](https://hackmd.io/@jonahgraham/EclipseCDTCalls)

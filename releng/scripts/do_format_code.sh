@@ -22,6 +22,15 @@ set -e
 # Format code
 ##
 : ${ECLIPSE:=~/buildtools/eclipse-SDK-4.23/eclipse}
+
+if test ! -e "$ECLIPSE" ; then
+    echo "The Eclipse binary was not found at \"$ECLIPSE\"!"
+    echo "You can download it to and pass it via environment variable:"
+    echo "  curl -L http://download.eclipse.org/eclipse/downloads/drops4/R-4.23-202203080310/eclipse-SDK-4.23-linux-gtk-x86_64.tar.gz | tar xzC /tmp"
+    echo "  ECLIPSE=/tmp/eclipse/eclipse ./releng/scripts/check_code_cleanliness.sh"
+    exit 1
+fi
+
 if test -e check_code_cleanliness_workspace; then
     echo check_code_cleanliness_workspace needs to be deleted
     exit 1

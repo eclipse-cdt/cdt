@@ -17,6 +17,7 @@ import java.net.URL;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -46,7 +47,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 // TODO LK - write test for resource configurations + IOptionCategory.getOptions(config)
@@ -56,7 +56,7 @@ import junit.framework.TestSuite;
 /*
  *  These tests exercise CDT 3.0 shared tool options extensions
  */
-public class ManagedBuildCore_SharedToolOptionsTests extends TestCase {
+public class ManagedBuildCore_SharedToolOptionsTests extends BaseTestCase {
 
 	class IconComparator {
 		static final int None = 0;

@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.index.IIndex;
@@ -25,8 +29,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Doug Schaefer
@@ -35,12 +40,8 @@ public class IncludesTests extends PDOMTestBase {
 	protected ICProject project;
 	protected IIndex index;
 
-	public static Test suite() {
-		return suite(IncludesTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		if (index == null) {
 			project = createProject("includesTests");
 			index = CCorePlugin.getIndexManager().getIndex(project);
@@ -48,18 +49,19 @@ public class IncludesTests extends PDOMTestBase {
 		index.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		index.releaseReadLock();
 	}
 
 	private IIndexFile getIndexFile(IFile file) throws CoreException {
 		IIndexFile[] files = index.getFiles(ILinkage.CPP_LINKAGE_ID, IndexLocationFactory.getWorkspaceIFL(file));
-		assertTrue("Can't find " + file.getLocation(), files.length > 0);
-		assertEquals("Found " + files.length + " files for " + file.getLocation() + " instead of one", 1, files.length);
+		assertTrue(files.length > 0, "Can't find " + file.getLocation());
+		assertEquals(1, files.length, "Found " + files.length + " files for " + file.getLocation() + " instead of one");
 		return files[0];
 	}
 
+	@Test
 	public void testIncludedBy() throws Exception {
 		IResource loc = project.getProject().findMember("I2.h");
 		IIndexFile file = getIndexFile((IFile) loc);
@@ -67,6 +69,7 @@ public class IncludesTests extends PDOMTestBase {
 		assertEquals(9, allIncludedBy.length); // i.e. all of them
 	}
 
+	@Test
 	public void testIncludes() throws Exception {
 		IResource loc = project.getProject().findMember("I1.cpp");
 		IIndexFile file = getIndexFile((IFile) loc);
@@ -74,6 +77,7 @@ public class IncludesTests extends PDOMTestBase {
 		assertEquals(2, allIncludesTo.length); // i.e. I1.h, I2.h
 	}
 
+	@Test
 	public void testIncludeName() throws Exception {
 		IResource loc = project.getProject().findMember("a/b/I6.h");
 		IIndexFile file = getIndexFile((IFile) loc);

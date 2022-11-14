@@ -68,6 +68,8 @@ import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.IStreamMonitor;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Ignore;
@@ -107,7 +109,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	protected IExpressions fExpressionService;
 	protected IGDBControl fCommandControl;
 	// Event Management
-	protected static Boolean lock = true;
+	protected static Object lock = new Object();
 
 	protected enum Events {
 		BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT, WP_HIT, WP_OOS
@@ -141,7 +143,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 
 	// Target application 'special' locations
 	private static final String[] LINE_TAGS = new String[] { "LINE_NUMBER_1", "LINE_NUMBER_2", "LINE_NUMBER_3",
-			"LINE_NUMBER_4", "LINE_NUMBER_5", "LINE_NUMBER_6", };
+			"LINE_NUMBER_4", "LINE_NUMBER_5", "LINE_NUMBER_6", "LINE_LOOP_1" };
 
 	private int LINE_NUMBER_1;
 	private int LINE_NUMBER_2;
@@ -149,6 +151,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 	private int LINE_NUMBER_4;
 	private int LINE_NUMBER_5;
 	private int LINE_NUMBER_6;
+	private int LINE_LOOP_1;
 
 	protected final String FUNCTION = "zeroBlocks";
 	protected final String SIGNED_FUNCTION = "zeroBlocks(int)";
@@ -216,6 +219,7 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		LINE_NUMBER_4 = getLineForTag("LINE_NUMBER_4");
 		LINE_NUMBER_5 = getLineForTag("LINE_NUMBER_5");
 		LINE_NUMBER_6 = getLineForTag("LINE_NUMBER_6");
+		LINE_LOOP_1 = getLineForTag("LINE_LOOP_1");
 	}
 
 	@Override
@@ -3311,5 +3315,48 @@ public class MIBreakpointsTest extends BaseParametrizedTestCase {
 		assertTrue("BreakpointService problem: breakpoint mismatch", fBreakpointRef.equals(breakpoint1.getNumber()));
 		assertTrue("BreakpointService problem: breakpoint mismatch (not pending)", breakpoint1.isPending());
 		clearEventCounters();
+	}
+
+	@Test
+	public void insertDprintfBreakpoint() throws Throwable {
+		Map<String, Object> printfBreakpoint = new HashMap<>();
+		printfBreakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.DYNAMICPRINTF);
+		printfBreakpoint.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
+		printfBreakpoint.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_1);
+		printfBreakpoint.put(MIBreakpoints.PRINTF_STRING, "\"format %d\\n\", i");
+
+		IBreakpointDMContext printfRef = insertBreakpoint(fBreakpointsDmc, printfBreakpoint);
+		waitForBreakpointEvent(1);
+		insertBreakpoint(fBreakpointsDmc, Map.of(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG, FILE_NAME_TAG, SOURCE_NAME,
+				LINE_NUMBER_TAG, LINE_NUMBER_5));
+		SyncUtil.resumeUntilStopped(5000);
+		IProcess[] processes = getGDBLaunch().getProcesses();
+		IStreamMonitor outputStreamMonitor = processes[1].getStreamsProxy().getOutputStreamMonitor();
+		String[] contents = outputStreamMonitor.getContents().split("\n");
+		for (int i = 0; i < 256; i++) {
+			assertEquals("format " + i, contents[i].trim());
+		}
+	}
+
+	@Test
+	public void insertDprintfBreakpointBug580873() throws Throwable {
+		Map<String, Object> printfBreakpoint = new HashMap<>();
+		printfBreakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.DYNAMICPRINTF);
+		printfBreakpoint.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
+		printfBreakpoint.put(MIBreakpoints.LINE_NUMBER, LINE_LOOP_1);
+		printfBreakpoint.put(MIBreakpoints.PRINTF_STRING,
+				"\"===> XML_EVENT_TEXT(%s)\\n\", (char *)strtok(Text,\"\\n\")");
+
+		IBreakpointDMContext printfRef = insertBreakpoint(fBreakpointsDmc, printfBreakpoint);
+		waitForBreakpointEvent(1);
+		insertBreakpoint(fBreakpointsDmc, Map.of(BREAKPOINT_TYPE_TAG, BREAKPOINT_TAG, FILE_NAME_TAG, SOURCE_NAME,
+				LINE_NUMBER_TAG, LINE_NUMBER_5));
+		SyncUtil.resumeUntilStopped(5000);
+		IProcess[] processes = getGDBLaunch().getProcesses();
+		IStreamMonitor outputStreamMonitor = processes[1].getStreamsProxy().getOutputStreamMonitor();
+		String[] contents = outputStreamMonitor.getContents().split("\n");
+		for (int i = 0; i < 256; i++) {
+			assertEquals("===> XML_EVENT_TEXT(Text " + i + ")", contents[i].trim());
+		}
 	}
 }

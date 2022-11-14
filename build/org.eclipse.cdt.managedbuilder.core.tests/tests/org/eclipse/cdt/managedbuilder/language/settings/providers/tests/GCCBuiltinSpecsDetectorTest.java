@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +35,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.Cygwin;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
@@ -43,11 +48,12 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases to test GCC built-in specs detector.
  */
-public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
+public class GCCBuiltinSpecsDetectorTest extends BaseTestCase5 {
 	private static final String LANGUAGE_ID_C = GCCLanguage.ID;
 	private static final String SAMPLE_COMMAND = "NEW_COMMAND";
 	private static final String PROJECT_TYPE_EXECUTABLE_GNU = "cdt.managedbuild.target.gnu.exe";
@@ -99,16 +105,6 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 	/**
 	 * Helper method to fetch configuration descriptions.
 	 */
@@ -127,6 +123,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test expansion of variables in build command.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_ResolvedCommand() throws Exception {
 		{
 			// check ${COMMAND} and ${INPUTS}
@@ -197,6 +194,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test expansion of relevant tool options in build command.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_ResolvedCommand_Flags() throws Exception {
 		// check ${FLAGS}
 		MockLspToolchainBuiltinSpecsDetectorCommandResolver detector = new MockLspToolchainBuiltinSpecsDetectorCommandResolver();
@@ -215,6 +213,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro without value.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_NoValue() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -232,6 +231,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro with ordinary value.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_Simple() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -250,6 +250,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro with value in round brackets.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_Const() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -267,6 +268,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro definition with tabs.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_WhiteSpaces() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -295,6 +297,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro definition with empty argument list.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_EmptyArgList() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -313,6 +316,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro definition with unused parameter.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_ParamUnused() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -331,6 +335,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro definition with multiple parameters.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_ParamSpace() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -350,6 +355,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro definition with multiple parameters and no value.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_ArgsNoValue() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -368,6 +374,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro definition having white spaces in various places.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Macro_Args_WhiteSpaces() throws Exception {
 		MockGCCBuiltinSpecsDetector detector = new MockGCCBuiltinSpecsDetector();
 
@@ -396,6 +403,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of include directives.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Includes() throws Exception {
 		// Create model project and folders to test
 		String projectName = getName();
@@ -461,6 +469,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of macro definition of include directives having white spaces.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Includes_WhiteSpaces() throws Exception {
 		String loc = ResourceHelper.createTemporaryFolder().toString();
 
@@ -500,6 +509,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of include directives incorporating symbolic links.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Includes_SymbolicLinkUp() throws Exception {
 		// do not test on systems where symbolic links are not supported
 		if (!ResourceHelper.isSymbolicLinkSupported()) {
@@ -537,6 +547,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of include directives included multiple times.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Includes_Duplicates() throws Exception {
 		// Create model project and folders to test
 		String projectName = getName();
@@ -568,6 +579,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of include directives for Cygwin for global provider.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Cygwin_NoProject() throws Exception {
 		if (!Cygwin.isAvailable()) {
 			// Skip the test if Cygwin is not available.
@@ -576,7 +588,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 		String cygwinLocation = "/usr/include";
 		String windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
-		assertTrue("windowsLocation=[" + windowsLocation + "]", new Path(windowsLocation).getDevice() != null);
+		assertTrue(new Path(windowsLocation).getDevice() != null, "windowsLocation=[" + windowsLocation + "]");
 
 		MockGCCBuiltinSpecsDetectorCygwin detector = new MockGCCBuiltinSpecsDetectorCygwin();
 
@@ -598,6 +610,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test parsing of include directives for Cygwin for provider running for a configuration.
 	 */
+	@Test
 	public void testGCCBuiltinSpecsDetector_Cygwin_Configuration() throws Exception {
 		if (!Cygwin.isAvailable()) {
 			// Skip the test if Cygwin is not available.
@@ -606,7 +619,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 
 		String cygwinLocation = "/usr/include";
 		String windowsLocation = ResourceHelper.cygwinToWindowsPath(cygwinLocation);
-		assertTrue("windowsLocation=[" + windowsLocation + "]", new Path(windowsLocation).getDevice() != null);
+		assertTrue(new Path(windowsLocation).getDevice() != null, "windowsLocation=[" + windowsLocation + "]");
 
 		// Create model project and folders to test
 		String projectName = getName();
@@ -634,6 +647,7 @@ public class GCCBuiltinSpecsDetectorTest extends BaseTestCase {
 	/**
 	 * Test expansion of variable ${COMMAND} for case when the command was modified in tool-chain.
 	 */
+	@Test
 	public void test_GCCBuiltinSpecsDetector_ResolveModifiedCommand() throws Exception {
 		// create a new project
 		IProject project = ManagedBuildTestHelper.createProject(this.getName(), PROJECT_TYPE_EXECUTABLE_GNU);

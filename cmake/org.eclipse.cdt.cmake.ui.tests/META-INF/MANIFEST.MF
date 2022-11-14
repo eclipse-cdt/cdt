@@ -4,7 +4,7 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.cmake.ui.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.swtbot.go;bundle-version="2.7.0",
  org.eclipse.cdt.core;bundle-version="6.4.0",
  org.eclipse.core.resources;bundle-version="3.12.0",

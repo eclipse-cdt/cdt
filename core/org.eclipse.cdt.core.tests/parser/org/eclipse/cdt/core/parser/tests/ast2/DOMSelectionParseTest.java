@@ -48,18 +48,6 @@ import org.eclipse.core.resources.IFile;
  * @author dsteffle
  */
 public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
-
-	public DOMSelectionParseTest() {
-	}
-
-	public DOMSelectionParseTest(String name, Class className) {
-		super(name, className);
-	}
-
-	public DOMSelectionParseTest(String name) {
-		super(name, DOMSelectionParseTest.class);
-	}
-
 	public void testBaseCase_VariableReference() throws Exception {
 		String code = "void f() { int x; x=3; }";
 		int offset1 = code.indexOf("x=");

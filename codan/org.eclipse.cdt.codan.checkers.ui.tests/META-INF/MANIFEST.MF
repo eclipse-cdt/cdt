@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.mockito,
  org.eclipse.cdt.core
 Fragment-Host: org.eclipse.cdt.codan.checkers.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
 Automatic-Module-Name: org.eclipse.cdt.codan.checkers.ui.tests

@@ -104,7 +104,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 	private IExpressions fExpressionService;
 
 	// Event Management
-	private static Boolean fEventHandlerLock = true;
+	private static Object fEventHandlerLock = new Object();
 
 	private enum Events {
 		BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT

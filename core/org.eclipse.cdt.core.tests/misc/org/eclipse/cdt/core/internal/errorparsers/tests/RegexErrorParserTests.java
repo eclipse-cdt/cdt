@@ -14,6 +14,13 @@
 
 package org.eclipse.cdt.core.internal.errorparsers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -27,19 +34,20 @@ import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
 import org.eclipse.cdt.core.errorparsers.RegexErrorPattern;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.errorparsers.ErrorParserExtensionManager;
 import org.eclipse.cdt.internal.errorparsers.GASErrorParser;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases testing RegexErrorParser functionality
  */
-public class RegexErrorParserTests extends TestCase {
+public class RegexErrorParserTests extends BaseTestCase5 {
 	// These should match id and name of extension point defined in plugin.xml
 	private static final String REGEX_ERRORPARSER_ID = "org.eclipse.cdt.core.tests.RegexErrorParserId";
 	private static final String REGEX_ERRORPARSER_NAME = "Test Plugin RegexErrorParser";
@@ -78,44 +86,16 @@ public class RegexErrorParserTests extends TestCase {
 		}
 	}
 
-	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public RegexErrorParserTests(String name) {
-		super(name);
-
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		fProject = ResourceHelper.createCDTProject(TEST_PROJECT_NAME);
 		assertNotNull(fProject);
 		errorList = new ArrayList<>();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		ResourceHelper.cleanUp(getName());
-		fProject = null;
-
+	@AfterEach
+	protected void resetUserDefinedErrorParsers() throws Exception {
 		ErrorParserManager.setUserDefinedErrorParsers(null);
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(RegexErrorParserTests.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
@@ -123,6 +103,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRegexErrorParserAddDeletePattern() throws Exception {
 		RegexErrorParser regexErrorParser = new RegexErrorParser();
 		regexErrorParser.addPattern(
@@ -151,6 +132,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRegexErrorParserPatternOrder() throws Exception {
 		final int ERR = IMarkerGenerator.SEVERITY_ERROR_RESOURCE;
 		RegexErrorParser regexErrorParser = new RegexErrorParser();
@@ -186,7 +168,11 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRegexErrorParserParseOutput() throws Exception {
+		// This test generates an expected error in the log
+		setExpectedNumberOfLoggedNonOKStatusObjects(1);
+
 		RegexErrorParser regexErrorParser = new RegexErrorParser();
 		regexErrorParser.addPattern(new RegexErrorPattern("(.*)#(.*)#(.*)#(.*)", "$1", "$2", "$3 $4", "var=$4",
 				IMarkerGenerator.SEVERITY_ERROR_RESOURCE, true));
@@ -261,6 +247,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testCompatibility() throws Exception {
 		final CCorePlugin cCorePlugin = CCorePlugin.getDefault();
 
@@ -280,6 +267,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testExtension() throws Exception {
 		// ErrorParserManager.getErrorParser
 		{
@@ -322,6 +310,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testExtensionsSorting() throws Exception {
 		{
 			String[] ids = ErrorParserManager.getErrorParserExtensionIds();
@@ -339,14 +328,14 @@ public class RegexErrorParserTests extends TestCase {
 
 				// inside the same category sorted by names
 				if (lastIsDeprecated == isDeprecated && lastIsTestPlugin == isTestPlugin) {
-					assertTrue(message, lastName.compareTo(name) <= 0);
+					assertTrue(lastName.compareTo(name) <= 0, message);
 				}
 				// deprecated follow non-deprecated (unless parsers from test plugin show up)
 				if (lastIsTestPlugin == isTestPlugin) {
-					assertFalse(message, lastIsDeprecated == true && isDeprecated == false);
+					assertFalse(lastIsDeprecated == true && isDeprecated == false, message);
 				}
 				// error parsers from test plugin are the last
-				assertFalse(message, lastIsTestPlugin == true && isTestPlugin == false);
+				assertFalse(lastIsTestPlugin == true && isTestPlugin == false, message);
 
 				lastName = name;
 				lastIsDeprecated = isDeprecated;
@@ -360,6 +349,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testAvailableErrorParsers() throws Exception {
 		final String TESTING_ID = "org.eclipse.cdt.core.test.errorparser";
 		final String TESTING_NAME = "An error parser";
@@ -438,6 +428,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testUserDefinedErrorParsers() throws Exception {
 		final String TESTING_ID = "org.eclipse.cdt.core.test.errorparser";
 		final String TESTING_NAME = "An error parser";
@@ -469,6 +460,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testDefaultErrorParserIds() throws Exception {
 		final String[] availableParserIds = ErrorParserManager.getErrorParserAvailableIds();
 		assertNotNull(availableParserIds);
@@ -507,6 +499,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testSerializeErrorParser() throws Exception {
 		final String TESTING_ID = "org.eclipse.cdt.core.test.errorparser";
 		final String TESTING_NAME = "An error parser";
@@ -549,6 +542,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testSerializeRegexErrorParser() throws Exception {
 
 		final String TESTING_ID = "org.eclipse.cdt.core.test.regexerrorparser";
@@ -609,6 +603,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testSerializeRegexErrorParserSpecialCharacters() throws Exception {
 
 		final String TESTING_ID = "org.eclipse.cdt.core.test.regexerrorparser";
@@ -653,6 +648,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testSerializeDefaultErrorParserIds() throws Exception {
 		final String[] testingDefaultErrorParserIds = { "org.eclipse.cdt.core.test.errorparser0",
 				"org.eclipse.cdt.core.test.errorparser1", "org.eclipse.cdt.core.test.errorparser2", };
@@ -705,6 +701,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testGetErrorParserCopy() throws Exception {
 		{
 			IErrorParserNamed clone1 = ErrorParserManager.getErrorParserCopy(REGEX_ERRORPARSER_ID);
@@ -731,6 +728,7 @@ public class RegexErrorParserTests extends TestCase {
 	 *
 	 * @throws Exception...
 	 */
+	@Test
 	public void testRegexErrorParserExternalLocation_bug301338() throws Exception {
 		RegexErrorParser regexErrorParser = new RegexErrorParser();
 		regexErrorParser.addPattern(

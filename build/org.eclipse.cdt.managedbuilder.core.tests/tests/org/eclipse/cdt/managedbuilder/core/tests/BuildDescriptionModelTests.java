@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;
@@ -48,6 +49,7 @@ import org.eclipse.cdt.managedbuilder.core.IResourceConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.core.IToolChain;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildDescription;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildIOType;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildResource;
@@ -63,14 +65,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-public class BuildDescriptionModelTests extends TestCase {
+public class BuildDescriptionModelTests extends BaseTestCase {
 	private static final String PREFIX = "BuildDescription_";
 	private static final String PROJ_PATH = "testBuildDescriptionProjects";
 
@@ -123,6 +126,19 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public static Test suite() {
 		return new TestSuite(BuildDescriptionModelTests.class);
+	}
+
+	/**
+	 * Add the CC Nature and wait until the project settings are fully updated.
+	 */
+	private void addCCNatureAndWait(IProject project) {
+		try {
+			CCProjectNature.addCCNature(project, null);
+			// wait for the build setting update that is trigged by adding the CC nature finishes
+			Job.getJobManager().join(ManagedBuilderCorePlugin.BUILD_SETTING_UPDATE_JOB_FAMILY, null);
+		} catch (CoreException | OperationCanceledException | InterruptedException e1) {
+			throw new RuntimeException("fail to add CC nature", e1);
+		}
 	}
 
 	public void testDes_Model() {
@@ -908,12 +924,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDes_gnu30_exe() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
-
+		addCCNatureAndWait(project);
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
 		ManagedBuildTestHelper.createFile(project, "c.cpp");
@@ -1020,11 +1031,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDes_gnu30_exe_deps() {
 		IProject project = createProject(PREFIX + "gnu30_exe_deps", "cdt.managedbuild.target.gnu30.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		ManagedBuildTestHelper.createFile(project, "a.c", "\n#include \"a.h\"\n#include \"d.h\"\n");
 		ManagedBuildTestHelper.createFile(project, "b.c");
@@ -1174,11 +1181,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDesTestgnu21_exe() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.testgnu21.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
@@ -1285,11 +1288,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDesRcCfg() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		IFile ac = ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
@@ -1402,11 +1401,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDesRcbs() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
@@ -1586,11 +1581,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDesAddlInVarUserObjs() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
@@ -1773,11 +1764,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDesAddlInVar() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.bdm.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
@@ -1943,11 +1930,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDes_gnu30_exe_objsInProj() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
@@ -2057,11 +2040,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDesRebuildState() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");
@@ -2400,11 +2379,7 @@ public class BuildDescriptionModelTests extends TestCase {
 	public void testDesRebuildStateWithCustomBuildStep() {
 		/* This test captures Bug 389536 */
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.gnu30.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		IFile testYFile = ManagedBuildTestHelper.createFile(project, "test.y");
 
@@ -2605,11 +2580,7 @@ public class BuildDescriptionModelTests extends TestCase {
 
 	public void testDesRebuildStateInDescription() {
 		IProject project = createProject(PREFIX + "1", "cdt.managedbuild.target.bdm.exe");
-		try {
-			CCProjectNature.addCCNature(project, null);
-		} catch (CoreException e1) {
-			fail("fail to add CC nature");
-		}
+		addCCNatureAndWait(project);
 
 		ManagedBuildTestHelper.createFile(project, "a.c");
 		ManagedBuildTestHelper.createFile(project, "b.c");

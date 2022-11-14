@@ -14,6 +14,10 @@
 
 package org.eclipse.cdt.core.internal.errorparsers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,6 +33,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -42,16 +47,15 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Alena Laskavaia
  *
  * Tests for ErrorParser manager and different parsers
  */
-public class ErrorParserManagerTest extends TestCase {
+public class ErrorParserManagerTest extends BaseTestCase5 {
 	IWorkspace workspace;
 	IWorkspaceRoot root;
 
@@ -62,14 +66,6 @@ public class ErrorParserManagerTest extends TestCase {
 	private IMarkerGenerator markerGenerator;
 
 	/**
-	 * Constructor for CModelTests.
-	 * @param name
-	 */
-	public ErrorParserManagerTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Sets up the test fixture.
 	 *
 	 * Called before every test case method.
@@ -77,8 +73,8 @@ public class ErrorParserManagerTest extends TestCase {
 	 * Example code test the packages in the project
 	 *  "com.qnx.tools.ide.cdt.core"
 	 */
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		/***
 		 * The test of the tests assume that they have a working workspace
 		 * and workspace root object to use to create projects/files in,
@@ -115,24 +111,6 @@ public class ErrorParserManagerTest extends TestCase {
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, errorParsersIds);
 	}
 
-	/**
-	 * Tears down the test fixture.
-	 *
-	 * Called after every test case method.
-	 */
-	@Override
-	protected void tearDown() {
-		// release resources here and clean-up
-	}
-
-	public static TestSuite suite() {
-		return new TestSuite(ErrorParserManagerTest.class);
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
-
 	private ICProject createProject(String name) throws CoreException {
 		ICProject testProject;
 		testProject = CProjectHelper.createCProject(name, "none", IPDOMManager.ID_NO_INDEXER);
@@ -152,6 +130,7 @@ public class ErrorParserManagerTest extends TestCase {
 		epManager.getOutputStream().close();
 	}
 
+	@Test
 	public void testParsersSanity() throws CoreException, IOException {
 		output("catchpoints.cpp:12: warning: no return statement in function returning non-void\n");
 		end();
@@ -162,6 +141,7 @@ public class ErrorParserManagerTest extends TestCase {
 		assertEquals(new Path("catchpoints.cpp"), problemMarkerInfo.externalPath);
 	}
 
+	@Test
 	public void testParsersSanityTrimmed() throws CoreException, IOException {
 		output("   catchpoints.cpp:12: warning: no return statement in function returning non-void   \n");
 		end();
@@ -172,6 +152,7 @@ public class ErrorParserManagerTest extends TestCase {
 		assertEquals(new Path("catchpoints.cpp"), problemMarkerInfo.externalPath);
 	}
 
+	@Test
 	public void testOutput() throws IOException {
 		try (FileInputStream fileInputStream = new FileInputStream(
 				CTestPlugin.getDefault().getFileInPlugin(new Path("resources/errortests/output-1")))) {
@@ -195,7 +176,7 @@ public class ErrorParserManagerTest extends TestCase {
 		boolean added = Platform.getExtensionRegistry().addContribution(new ByteArrayInputStream(ext.getBytes()),
 				contributor, false, shortId, null,
 				((ExtensionRegistry) Platform.getExtensionRegistry()).getTemporaryUserToken());
-		assertTrue("failed to add extension", added);
+		assertTrue(added, "failed to add extension");
 		String fullId = "org.eclipse.cdt.core.tests." + shortId;
 		IErrorParser[] errorParser = CCorePlugin.getDefault().getErrorParser(fullId);
 		assertTrue(errorParser.length > 0);
@@ -227,6 +208,7 @@ public class ErrorParserManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testNoTrimParser() throws IOException {
 		String id = addErrorParserExtension("test1", TestParser1.class);
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, new String[] { id });
@@ -256,6 +238,7 @@ public class ErrorParserManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testLongLinesParser() throws IOException {
 		String id = addErrorParserExtension("test2", TestParser2.class);
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, new String[] { id });
@@ -293,6 +276,7 @@ public class ErrorParserManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testLongLinesUntrimmedParser() throws IOException {
 		String id = addErrorParserExtension("test3", TestParser3.class);
 		epManager = new ErrorParserManager(cProject.getProject(), markerGenerator, new String[] { id });
@@ -323,6 +307,7 @@ public class ErrorParserManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testWorkspaceLevelError() throws IOException {
 		String id = addErrorParserExtension("test4", TestParser4.class);
 		epManager = new ErrorParserManager(null, markerGenerator, new String[] { id });

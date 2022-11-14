@@ -34,9 +34,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Abstract base class for Quck Fix tests.
+ * Abstract base class for Quick Fix tests.
  */
-@SuppressWarnings("restriction")
 public abstract class QuickFixTestCase extends CheckerTestCase {
 	AbstractCodanCMarkerResolution quickFix;
 	Display display;

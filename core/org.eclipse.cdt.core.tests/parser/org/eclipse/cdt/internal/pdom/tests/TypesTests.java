@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -30,8 +32,9 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Doug Schaefer
@@ -41,12 +44,8 @@ public class TypesTests extends PDOMTestBase {
 
 	protected PDOM pdom;
 
-	public static Test suite() {
-		return suite(TypesTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 		if (pdom == null) {
 			ICProject project = createProject("types");
 			pdom = (PDOM) CCoreInternals.getPDOMManager().getPDOM(project);
@@ -54,11 +53,12 @@ public class TypesTests extends PDOMTestBase {
 		pdom.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		pdom.releaseReadLock();
 	}
 
+	@Test
 	public void testC() throws Exception {
 		// Get the binding for A::f
 		IBinding[] CAs = pdom.findBindings(Pattern.compile("CA"), false, IndexFilter.ALL, new NullProgressMonitor());
@@ -76,6 +76,7 @@ public class TypesTests extends PDOMTestBase {
 		assertEquals(offset("typedef.c", "x->x") + 3, loc.getNodeOffset());
 	}
 
+	@Test
 	public void testCPP() throws Exception {
 		// Get the binding for A::f
 		IBinding[] As = pdom.findBindings(Pattern.compile("A"), true, IndexFilter.ALL, new NullProgressMonitor());
@@ -93,6 +94,7 @@ public class TypesTests extends PDOMTestBase {
 		assertEquals(offset("typedef.cpp", "x->f") + 3, loc.getNodeOffset());
 	}
 
+	@Test
 	public void test145351() throws Exception {
 		IBinding[] bindings = pdom.findBindings(Pattern.compile("spinlock_t"), false, IndexFilter.ALL,
 				new NullProgressMonitor());

@@ -14,7 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.pdom.tests;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -41,21 +46,16 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentBinding;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests PDOM class template related bindings
  */
 public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 
-	public static Test suite() {
-		return suite(CPPClassTemplateTests.class);
-	}
-
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void beforeEach2() throws Exception {
 		setUpSections(1);
 	}
 
@@ -71,20 +71,21 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	//
 	//	Foo<A> a;
 	//	Foo<B> b;
+	@Test
 	public void testSpecializations() throws Exception {
 		IBinding[] as = pdom.findBindings(new char[][] { { 'a' } }, IndexFilter.ALL, npm());
 		IBinding[] bs = pdom.findBindings(new char[][] { { 'b' } }, IndexFilter.ALL, npm());
 
 		assertEquals(1, as.length);
 		assertEquals(1, bs.length);
-		assertInstance(as[0], ICPPVariable.class);
-		assertInstance(bs[0], ICPPVariable.class);
+		assertInstanceOf(ICPPVariable.class, as[0]);
+		assertInstanceOf(ICPPVariable.class, bs[0]);
 
 		ICPPVariable a = (ICPPVariable) as[0];
 		ICPPVariable b = (ICPPVariable) bs[0];
 
-		assertInstance(a.getType(), ICPPSpecialization.class);
-		assertInstance(b.getType(), ICPPSpecialization.class);
+		assertInstanceOf(ICPPSpecialization.class, a.getType());
+		assertInstanceOf(ICPPSpecialization.class, b.getType());
 
 		ICPPSpecialization asp = (ICPPSpecialization) a.getType();
 		ICPPSpecialization bsp = (ICPPSpecialization) b.getType();
@@ -94,8 +95,8 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		assertEquals(1, aArgs.getAllParameterPositions().length);
 		assertEquals(1, bArgs.getAllParameterPositions().length);
 
-		assertInstance(aArgs.getArgument(0).getTypeValue(), ICPPClassType.class);
-		assertInstance(bArgs.getArgument(0).getTypeValue(), ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, aArgs.getArgument(0).getTypeValue());
+		assertInstanceOf(ICPPClassType.class, bArgs.getArgument(0).getTypeValue());
 
 		assertEquals("A", ((ICPPClassType) aArgs.getArgument(0).getTypeValue()).getName());
 		assertEquals("B", ((ICPPClassType) bArgs.getArgument(0).getTypeValue()).getName());
@@ -109,6 +110,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// public:
 	// int foo(C c) {return 1};
 	// };
+	@Test
 	public void testSimpleDefinition() throws Exception {
 		assertDeclarationCount(pdom, "D", 1);
 		IIndexFragmentBinding[] b = pdom.findBindings(new char[][] { { 'D' } }, IndexFilter.ALL_DECLARED, npm());
@@ -128,6 +130,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// public:
 	// int foo(C c) {return 1};
 	// };
+	@Test
 	public void testDefinition() throws Exception {
 		assertDeclarationCount(pdom, "D", 1);
 		IIndexFragmentBinding[] b = pdom.findBindings(new char[][] { { 'D' } }, IndexFilter.ALL_DECLARED, npm());
@@ -138,8 +141,8 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		assertEquals(1, tp.length);
 		assertTrue(tp[0] instanceof ICPPTemplateTypeParameter);
 		assertEquals("C", tp[0].getName());
-		assertEquals(new String[] { "D", "C" }, tp[0].getQualifiedName());
-		assertEquals(new char[][] { { 'D' }, { 'C' } }, tp[0].getQualifiedNameCharArray());
+		assertArrayEquals(new String[] { "D", "C" }, tp[0].getQualifiedName());
+		assertArrayOfArrayEquals(new char[][] { { 'D' }, { 'C' } }, tp[0].getQualifiedNameCharArray());
 		ICPPTemplateTypeParameter ctp = (ICPPTemplateTypeParameter) tp[0];
 		IType def = ctp.getDefault();
 		assertTrue(def instanceof IBasicType);
@@ -154,6 +157,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// public:
 	// int foo(C c, B b, A a) {return 1};
 	// };
+	@Test
 	public void testDefinition2() throws Exception {
 		assertDeclarationCount(pdom, "E", 1);
 		IIndexFragmentBinding[] b = pdom.findBindings(new char[][] { { 'E' } }, IndexFilter.ALL_DECLARED, npm());
@@ -165,31 +169,31 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 
 		assertTrue(tp[0] instanceof ICPPTemplateTypeParameter);
 		assertEquals("A", tp[0].getName());
-		assertEquals(new String[] { "E", "A" }, tp[0].getQualifiedName());
-		assertEquals(new char[][] { { 'E' }, { 'A' } }, tp[0].getQualifiedNameCharArray());
+		assertArrayEquals(new String[] { "E", "A" }, tp[0].getQualifiedName());
+		assertArrayOfArrayEquals(new char[][] { { 'E' }, { 'A' } }, tp[0].getQualifiedNameCharArray());
 		ICPPTemplateTypeParameter ctpa = (ICPPTemplateTypeParameter) tp[0];
 		IType defa = ctpa.getDefault();
 		assertTrue(defa instanceof ICPPClassType);
 		ICPPClassType ctdefa = (ICPPClassType) defa;
-		assertEquals(new char[][] { { 'T', 'A' } }, ctdefa.getQualifiedNameCharArray());
+		assertArrayOfArrayEquals(new char[][] { { 'T', 'A' } }, ctdefa.getQualifiedNameCharArray());
 
 		assertTrue(tp[1] instanceof ICPPTemplateTypeParameter);
 		assertEquals("B", tp[1].getName());
-		assertEquals(new String[] { "E", "B" }, tp[1].getQualifiedName());
-		assertEquals(new char[][] { { 'E' }, { 'B' } }, tp[1].getQualifiedNameCharArray());
+		assertArrayEquals(new String[] { "E", "B" }, tp[1].getQualifiedName());
+		assertArrayOfArrayEquals(new char[][] { { 'E' }, { 'B' } }, tp[1].getQualifiedNameCharArray());
 		ICPPTemplateTypeParameter ctpb = (ICPPTemplateTypeParameter) tp[1];
 		IType defb = ctpb.getDefault();
 		assertNull(defb);
 
 		assertTrue(tp[2] instanceof ICPPTemplateTypeParameter);
 		assertEquals("C", tp[2].getName());
-		assertEquals(new String[] { "E", "C" }, tp[2].getQualifiedName());
-		assertEquals(new char[][] { { 'E' }, { 'C' } }, tp[2].getQualifiedNameCharArray());
+		assertArrayEquals(new String[] { "E", "C" }, tp[2].getQualifiedName());
+		assertArrayOfArrayEquals(new char[][] { { 'E' }, { 'C' } }, tp[2].getQualifiedNameCharArray());
 		ICPPTemplateTypeParameter ctpc = (ICPPTemplateTypeParameter) tp[2];
 		IType defc = ctpc.getDefault();
 		assertTrue(defc instanceof ICPPClassType);
 		ICPPClassType ctdefc = (ICPPClassType) defc;
-		assertEquals(new char[][] { { 'T', 'C' } }, ctdefc.getQualifiedNameCharArray());
+		assertArrayOfArrayEquals(new char[][] { { 'T', 'C' } }, ctdefc.getQualifiedNameCharArray());
 
 		assertEquals(0, ct.getPartialSpecializations().length);
 	}
@@ -205,22 +209,23 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// void bar() {
 	//    foo->f(*new A());
 	// }
+	@Test
 	public void testFunctionPointer() throws Exception {
 		IIndexFragmentBinding[] bs = pdom.findBindings(new char[][] { "foo".toCharArray() }, IndexFilter.ALL, npm());
 		assertEquals(1, bs.length);
-		assertInstance(bs[0], ICPPVariable.class);
+		assertInstanceOf(ICPPVariable.class, bs[0]);
 		ICPPVariable var = (ICPPVariable) bs[0];
-		assertInstance(var.getType(), ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, var.getType());
 		ICPPClassType ct = (ICPPClassType) var.getType();
 		IField[] fields = ClassTypeHelper.getFields(ct);
 		assertEquals(1, fields.length);
-		assertInstance(fields[0].getType(), IPointerType.class);
+		assertInstanceOf(IPointerType.class, fields[0].getType());
 		IPointerType pt = (IPointerType) fields[0].getType();
-		assertInstance(pt.getType(), IFunctionType.class);
+		assertInstanceOf(IFunctionType.class, pt.getType());
 		IFunctionType ft = (IFunctionType) pt.getType();
-		assertInstance(ft.getReturnType(), ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, ft.getReturnType());
 		assertEquals(1, ft.getParameterTypes().length);
-		assertInstance(ft.getParameterTypes()[0], ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, ft.getParameterTypes()[0]);
 	}
 
 	// template<typename C>
@@ -239,6 +244,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	//
 	// D<N> dn;
 	// D<int> dint;
+	@Test
 	public void testExplicitInstantiation() throws Exception {
 		{
 			// template
@@ -247,11 +253,11 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 			assertTrue(!(b[0] instanceof ICPPClassTemplate) || !(b[1] instanceof ICPPClassTemplate));
 			int i = b[0] instanceof ICPPClassTemplate ? 0 : 1;
 
-			assertInstance(b[i], ICPPClassTemplate.class);
+			assertInstanceOf(ICPPClassTemplate.class, b[i]);
 			ICPPClassTemplate ct = (ICPPClassTemplate) b[i];
 			ICPPTemplateParameter[] tp = ct.getTemplateParameters();
 			assertEquals(1, tp.length);
-			assertInstance(tp[i], ICPPTemplateTypeParameter.class);
+			assertInstanceOf(ICPPTemplateTypeParameter.class, tp[i]);
 			ICPPTemplateTypeParameter ctp = (ICPPTemplateTypeParameter) tp[i];
 			assertNull(ctp.getDefault());
 		}
@@ -260,16 +266,16 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 			assertDeclarationCount(pdom, "dn", 1);
 			IIndexFragmentBinding[] b = pdom.findBindings(new char[][] { "dn".toCharArray() }, IndexFilter.ALL, npm());
 			assertEquals(1, b.length);
-			assertInstance(b[0], ICPPVariable.class);
+			assertInstanceOf(ICPPVariable.class, b[0]);
 			ICPPVariable var = (ICPPVariable) b[0];
-			assertInstance(var.getType(), ICPPClassType.class);
-			assertInstance(var.getType(), ICPPSpecialization.class);
+			assertInstanceOf(ICPPClassType.class, var.getType());
+			assertInstanceOf(ICPPSpecialization.class, var.getType());
 			ICPPSpecialization cp = (ICPPSpecialization) var.getType();
 			ICPPTemplateParameterMap m = cp.getTemplateParameterMap();
 			assertEquals(1, m.getAllParameterPositions().length);
 			ICPPTemplateArgument arg = m.getArgument(0);
-			assertInstance(arg.getTypeValue(), ICPPClassType.class);
-			assertEquals(new String[] { "N" }, ((ICPPClassType) arg.getTypeValue()).getQualifiedName());
+			assertInstanceOf(ICPPClassType.class, arg.getTypeValue());
+			assertArrayEquals(new String[] { "N" }, ((ICPPClassType) arg.getTypeValue()).getQualifiedName());
 		}
 
 		{
@@ -279,13 +285,13 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 			assertEquals(1, b.length);
 			assertTrue(b[0] instanceof ICPPVariable);
 			ICPPVariable var = (ICPPVariable) b[0];
-			assertInstance(var.getType(), ICPPClassType.class);
-			assertInstance(var.getType(), ICPPSpecialization.class);
+			assertInstanceOf(ICPPClassType.class, var.getType());
+			assertInstanceOf(ICPPSpecialization.class, var.getType());
 			ICPPSpecialization cp = (ICPPSpecialization) var.getType();
 			ICPPTemplateParameterMap m = cp.getTemplateParameterMap();
 			assertEquals(1, m.getAllParameterPositions().length);
 			ICPPTemplateArgument arg = m.getArgument(0);
-			assertInstance(arg.getTypeValue(), IBasicType.class);
+			assertInstanceOf(IBasicType.class, arg.getTypeValue());
 			assertEquals(IBasicType.Kind.eInt, ((IBasicType) arg.getTypeValue()).getKind());
 		}
 	}
@@ -296,6 +302,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// };
 	// template<typename aT>
 	// using A = S<aT>;
+	@Test
 	public void testSimpleAliasDefinition() throws Exception {
 		assertDeclarationCount(pdom, "A", 1);
 		IIndexFragmentBinding[] bindingA = pdom.findBindings(new char[][] { { 'A' } }, IndexFilter.ALL_DECLARED, npm());
@@ -328,6 +335,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// };
 	// template<typename aT1, typename aT2 = D>
 	// using A = S<aT1, aT2>;
+	@Test
 	public void testSimpleAliasDefinitionDefaultTemplateArgument() throws Exception {
 		assertDeclarationCount(pdom, "A", 1);
 		IIndexFragmentBinding[] bindingA = pdom.findBindings(new char[][] { { 'A' } }, IndexFilter.ALL_DECLARED, npm());
@@ -370,6 +378,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// };
 	// template<boolean aT1, int aT2 = 5>
 	// using A = S<aT1, aT2>;
+	@Test
 	public void testSimpleAliasDefinitionValueTemplateArguments() throws Exception {
 		assertDeclarationCount(pdom, "A", 1);
 		IIndexFragmentBinding[] bindingA = pdom.findBindings(new char[][] { { 'A' } }, IndexFilter.ALL_DECLARED, npm());
@@ -391,7 +400,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		ICPPTemplateArgument aT2DefaultArgument = templateParameterAT2.getDefaultValue();
 		assertNotNull(aT2DefaultArgument);
 		assertTrue(new CPPBasicType(IBasicType.Kind.eInt, 0).isSameType(aT2DefaultArgument.getTypeOfNonTypeValue()));
-		assertEquals(5, aT2DefaultArgument.getNonTypeValue().numberValue().longValue());
+		assertEquals(5L, aT2DefaultArgument.getNonTypeValue().numberValue().longValue());
 		assertEquals(0, templateParameterAT2.getTemplateNestingLevel());
 
 		assertDeclarationCount(pdom, "S", 1);
@@ -409,6 +418,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// };
 	// template<template<typename> class TT>
 	// using A = S<TT>;
+	@Test
 	public void testSimpleAliasTemplateParameter() throws Exception {
 		assertDeclarationCount(pdom, "A", 1);
 		IIndexFragmentBinding[] bindingA = pdom.findBindings(new char[][] { { 'A' } }, IndexFilter.ALL_DECLARED, npm());
@@ -434,11 +444,12 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// using A = S<aT>;
 	// A<B> aB;
 	// S<B> sB;
+	@Test
 	public void testSimpleAliasReference() throws Exception {
 		assertDeclarationCount(pdom, "A", 1);
 		IIndexFragmentBinding[] bindingA = pdom.findBindings(new char[][] { { 'A' } }, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, bindingA.length);
-		assertInstance(bindingA[0], ICPPAliasTemplate.class);
+		assertInstanceOf(ICPPAliasTemplate.class, bindingA[0]);
 		ICPPAliasTemplate aliasA = (ICPPAliasTemplate) bindingA[0];
 		ICPPTemplateParameter[] aliasParameters = aliasA.getTemplateParameters();
 		assertEquals(1, aliasParameters.length);
@@ -450,15 +461,15 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 
 		IIndexFragmentBinding[] bindingB = pdom.findBindings(new char[][] { { 'B' } }, IndexFilter.ALL_DECLARED, npm());
 		assertEquals(1, bindingB.length);
-		assertInstance(bindingB[0], ICPPClassType.class);
+		assertInstanceOf(ICPPClassType.class, bindingB[0]);
 
 		IIndexFragmentBinding[] bindingVarSB = pdom.findBindings(new char[][] { "sB".toCharArray() }, IndexFilter.ALL,
 				npm());
 		assertEquals(1, bindingVarSB.length);
-		assertInstance(bindingVarSB[0], ICPPVariable.class);
+		assertInstanceOf(ICPPVariable.class, bindingVarSB[0]);
 		ICPPVariable variableSB = (ICPPVariable) bindingVarSB[0];
 		IType varSBType = variableSB.getType();
-		assertInstance(varSBType, ICPPClassSpecialization.class);
+		assertInstanceOf(ICPPClassSpecialization.class, varSBType);
 		ICPPClassSpecialization templateInstanceSB = (ICPPClassSpecialization) varSBType;
 
 		IIndexFragmentBinding[] bindingVarAB = pdom.findBindings(new char[][] { "aB".toCharArray() }, IndexFilter.ALL,
@@ -467,13 +478,13 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		assertTrue(bindingVarAB[0] instanceof ICPPVariable);
 		ICPPVariable variableAB = (ICPPVariable) bindingVarAB[0];
 		IType varABType = variableAB.getType();
-		assertInstance(varABType, ICPPAliasTemplateInstance.class);
+		assertInstanceOf(ICPPAliasTemplateInstance.class, varABType);
 		ICPPAliasTemplateInstance aliasInstanceAB = (ICPPAliasTemplateInstance) varABType;
 		assertTrue(varABType.isSameType(templateInstanceSB));
 		assertTrue(aliasInstanceAB.getTemplateDefinition().isSameType(aliasA));
 		assertEquals("A", aliasInstanceAB.getName());
 		IType aliasedType = aliasInstanceAB.getType();
-		assertInstance(aliasedType, ICPPTemplateInstance.class);
+		assertInstanceOf(ICPPTemplateInstance.class, aliasedType);
 		ICPPTemplateArgument[] args = ((ICPPTemplateInstance) aliasedType).getTemplateArguments();
 		assertEquals(1, args.length);
 		assertTrue(((ICPPClassType) bindingB[0]).isSameType(args[0].getTypeValue()));
@@ -483,6 +494,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	//     template<typename T> using A= T;   // nesting level 1
 	//     A<int> x;
 	// };
+	@Test
 	public void testPDOMNestedAliasDeclarationNestingLevel() throws Exception {
 		IIndexFragmentBinding[] bindingCT = pdom.findBindings(new char[][] { "CT".toCharArray() },
 				IndexFilter.ALL_DECLARED, npm());
@@ -509,6 +521,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 	// template<typename T> class CT {           // nesting level 0
 	//     typedef Alias<T> TYPE;
 	// };
+	@Test
 	public void testPDOMAliasDeclarationNestingLevel() throws Exception {
 		assertDeclarationCount(pdom, "A", 1);
 		IIndexFragmentBinding[] bindingA = pdom.findBindings(new char[][] { { 'A' } }, IndexFilter.ALL_DECLARED, npm());
@@ -540,21 +553,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 		assertEquals(0, templateParameterTofCT.getTemplateNestingLevel());
 	}
 
-	@Override
-	protected void assertInstance(Object o, Class c) {
-		assertNotNull(o);
-		assertTrue("Expected " + c.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
-	}
-
-	protected void assertEquals(char[] c1, char[] c2) {
-		assertTrue(Arrays.equals(c1, c2));
-	}
-
-	protected void assertEquals(String[] s1, String[] s2) {
-		assertTrue(Arrays.equals(s1, s2));
-	}
-
-	protected void assertEquals(char[][] c1, char[][] c2) {
+	protected void assertArrayOfArrayEquals(char[][] c1, char[][] c2) {
 		if (c1 == null || c2 == null) {
 			assertTrue(c1 == c2);
 			return;
@@ -562,7 +561,7 @@ public class CPPClassTemplateTests extends PDOMInlineCodeTestBase {
 
 		assertEquals(c1.length, c2.length);
 		for (int i = 0; i < c1.length; i++) {
-			assertEquals(c1[i], c2[i]);
+			assertArrayEquals(c1[i], c2[i]);
 		}
 	}
 }

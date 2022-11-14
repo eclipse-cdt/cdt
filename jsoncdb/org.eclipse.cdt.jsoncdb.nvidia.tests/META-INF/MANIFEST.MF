@@ -7,6 +7,6 @@ Bundle-Vendor: %Bundle-Vendor
 Fragment-Host: org.eclipse.cdt.jsoncdb.nvidia
 Import-Package: org.eclipse.cdt.core.settings.model,
  org.junit
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.jsoncdb.nvidia.tests
 Bundle-Name: %Bundle-Name

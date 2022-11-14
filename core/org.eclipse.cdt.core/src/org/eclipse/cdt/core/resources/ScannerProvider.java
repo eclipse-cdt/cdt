@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.IPath;
  * @deprecated Since CDT 4.0 replaced by {@link ScannerInfoProviderProxy}. Still
  *     used as a default for projects created by earlier CDT versions.
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ScannerProvider extends AbstractCExtension implements IScannerInfoProvider, IElementChangedListener {
 
 	// Listeners interested in build model changes

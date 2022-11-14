@@ -16,7 +16,6 @@ package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;
 import org.eclipse.cdt.codan.ui.AbstractCodanCMarkerResolution;
 
 public class CaseBreakQuickFixBreakTest extends QuickFixTestCase {
-	@SuppressWarnings("restriction")
 	@Override
 	protected AbstractCodanCMarkerResolution createQuickFix() {
 		return new CaseBreakQuickFixBreak();

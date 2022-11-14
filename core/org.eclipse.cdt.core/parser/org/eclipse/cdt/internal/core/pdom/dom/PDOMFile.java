@@ -47,6 +47,7 @@ import org.eclipse.cdt.internal.core.index.IWritableIndex.IncludeInformation;
 import org.eclipse.cdt.internal.core.index.IWritableIndexFragment;
 import org.eclipse.cdt.internal.core.index.IndexFileLocation;
 import org.eclipse.cdt.internal.core.parser.scanner.SignificantMacros;
+import org.eclipse.cdt.internal.core.pdom.FailedToReAcquireLockException;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.YieldableIndexLock;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -472,7 +473,8 @@ public class PDOMFile implements IIndexFragmentFile {
 		return fLinkage;
 	}
 
-	public void addNames(IASTName[][] names, YieldableIndexLock lock) throws CoreException, InterruptedException {
+	public void addNames(IASTName[][] names, YieldableIndexLock lock)
+			throws CoreException, FailedToReAcquireLockException {
 		assert getFirstName() == null;
 		assert getFirstMacroReference() == null;
 		final PDOMLinkage linkage = getLinkage();

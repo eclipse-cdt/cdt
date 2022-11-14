@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)https://wiki.eclipse.org/CDT/User/NewIn50 -->
+<html lang="en" dir="ltr" class="client-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><script type="text/javascript" async="" src="./CDT-5.0_files/f.txt"></script><script type="text/javascript" async="" src="./CDT-5.0_files/insight.min.js"></script><script type="text/javascript" async="" src="./CDT-5.0_files/js"></script><script src="./CDT-5.0_files/conversations-embed.js" type="text/javascript" id="hubspot-messages-loader" data-loader="hs-scriptloader" data-hsjs-portal="5413615" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script src="./CDT-5.0_files/5413615.js" type="text/javascript" id="cookieBanner-5413615" data-cookieconsent="ignore" data-hs-ignore="true" data-loader="hs-scriptloader" data-hsjs-portal="5413615" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script src="./CDT-5.0_files/5413615(1).js" type="text/javascript" id="hs-analytics"></script><script src="./CDT-5.0_files/fb.js" type="text/javascript" id="hs-ads-pixel-5413615" data-ads-portal-id="5413615" data-ads-env="prod" data-loader="hs-scriptloader" data-hsjs-portal="5413615" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script type="text/javascript" async="" src="./CDT-5.0_files/analytics.js"></script><script async="" src="./CDT-5.0_files/gtm.js"></script>
+
+<title>CDT/User/NewIn50 - Eclipsepedia</title>
+<script>document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, "$1client-js$2" );</script>
+<script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":!1,"wgNamespaceNumber":0,"wgPageName":"CDT/User/NewIn50","wgTitle":"CDT/User/NewIn50","wgCurRevisionId":220505,"wgRevisionId":220505,"wgArticleId":13466,"wgIsArticle":!0,"wgIsRedirect":!1,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgBreakFrames":!1,"wgPageContentLanguage":"en","wgPageContentModel":"wikitext","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"CDT/User/NewIn50","wgRelevantArticleId":13466,"wgIsProbablyEditable":!1,"wgRestrictionEdit":[],"wgRestrictionMove":[],"wgWikiEditorEnabledModules":{"toolbar":!1,"dialogs":!1,"preview":!1,"publish":!1},
+"wgCategoryTreePageCategoryOptions":"{\"mode\":0,\"hideprefix\":20,\"showcount\":true,\"namespaces\":false}"});mw.loader.implement("user.options",function($,jQuery){mw.user.options.set({"variant":"en"});});mw.loader.implement("user.tokens",function($,jQuery){mw.user.tokens.set({"editToken":"+\\","patrolToken":"+\\","watchToken":"+\\"});});mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits"]);
+} );</script>
+<link rel="stylesheet" href="./CDT-5.0_files/load.php">
+<link rel="stylesheet" href="./CDT-5.0_files/styles.css" media="screen, print">
+<style>
+.mw-collapsible-toggle{float:right;-moz-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none}  .mw-content-ltr .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr .mw-collapsible-toggle{float:right} .mw-content-rtl .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl .mw-collapsible-toggle{float:left}.mw-customtoggle,.mw-collapsible-toggle{cursor:pointer} caption .mw-collapsible-toggle,.mw-content-ltr caption .mw-collapsible-toggle,.mw-content-rtl caption .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr caption .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl caption .mw-collapsible-toggle{float:none} li .mw-collapsible-toggle,.mw-content-ltr li .mw-collapsible-toggle,.mw-content-rtl li .mw-collapsible-toggle,.mw-content-rtl .mw-content-ltr li .mw-collapsible-toggle,.mw-content-ltr .mw-content-rtl li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left; overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.highlight{font-weight:bold}
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(/resources/src/mediawiki.action/images/green-checkmark.png?9048a)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{color:black;text-decoration:none}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}.suggestions a.mw-searchSuggest-link .special-query{ overflow:hidden;-o-text-overflow:ellipsis; text-overflow:ellipsis;white-space:nowrap}</style><meta name="ResourceLoaderDynamicStyles" content="">
+<style>a:lang(ar),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}</style>
+<script async="" src="./CDT-5.0_files/load(1).php"></script>
+<meta name="generator" content="MediaWiki 1.26.4">
+<link rel="shortcut icon" href="https://wiki.eclipse.org/eclipse.org-common/themes/solstice/public/images/favicon.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="https://wiki.eclipse.org/opensearch_desc.php" title="Eclipsepedia (en)">
+<link rel="EditURI" type="application/rsd+xml" href="https://wiki.eclipse.org/api.php?action=rsd">
+<link rel="alternate" type="application/atom+xml" title="Eclipsepedia Atom feed" href="https://wiki.eclipse.org/index.php?title=Special:RecentChanges&amp;feed=atom">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="./CDT-5.0_files/load(2).php"></script><style></style><script async="" src="./CDT-5.0_files/js(1)"></script><meta http-equiv="origin-trial" content="A7bG5hJ4XpMV5a3V1wwAR0PalkFSxLOZeL9D/YBYdupYUIgUgGhfVJ1zBFOqGybb7gRhswfJ+AmO7S2rNK2IOwkAAAB7eyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGV0YWdtYW5hZ2VyLmNvbTo0NDMiLCJmZWF0dXJlIjoiUHJpdmFjeVNhbmRib3hBZHNBUElzIiwiZXhwaXJ5IjoxNjY5NzY2Mzk5LCJpc1RoaXJkUGFydHkiOnRydWV9"><script type="text/javascript" async="" src="./CDT-5.0_files/f(1).txt"></script></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-CDT_User_NewIn50 skin-solstice action-view" id="solstice"><div class="cc-revoke cc-bottom cc-animate cc-color-override-1434350510" style="">Cookie settings</div><div role="dialog" aria-live="polite" aria-label="cookieconsent" aria-describedby="cookieconsent:desc" class="cc-window cc-banner cc-type-opt-in cc-theme-block cc-bottom cc-color-override-1434350510 cc-invisible" style="display: none;"><!--googleoff: all--><span id="cookieconsent:desc" class="cc-message">Some Eclipse Foundation pages use cookies to better serve you when you return to the site. You can set your browser to notify you before you receive a cookie or turn off cookies. If you do so, however, some areas of some sites may not function properly. To read Eclipse Foundation Privacy Policy <a aria-label="learn more about cookies" role="button" tabindex="0" class="cc-link" href="https://www.eclipse.org/legal/privacy.php" rel="noopener noreferrer nofollow" target="_blank">click here.</a></span><div class="cc-compliance cc-highlight"><a aria-label="deny cookies" role="button" tabindex="0" class="cc-btn cc-deny">Decline</a><a aria-label="allow cookies" role="button" tabindex="0" class="cc-btn cc-allow">Allow cookies</a></div><!--googleon: all--></div><style type="text/css">html.hs-messages-widget-open.hs-messages-mobile,html.hs-messages-widget-open.hs-messages-mobile body{overflow:hidden!important;position:relative!important}html.hs-messages-widget-open.hs-messages-mobile body{height:100%!important;margin:0!important}#hubspot-messages-iframe-container{display:initial!important;z-index:2147483647;position:fixed!important;bottom:0!important}#hubspot-messages-iframe-container.widget-align-left{left:0!important}#hubspot-messages-iframe-container.widget-align-right{right:0!important}#hubspot-messages-iframe-container.internal{z-index:1016}#hubspot-messages-iframe-container.internal iframe{min-width:108px}#hubspot-messages-iframe-container .shadow-container{display:initial!important;z-index:-1;position:absolute;width:0;height:0;bottom:0;content:""}#hubspot-messages-iframe-container .shadow-container.internal{display:none!important}#hubspot-messages-iframe-container .shadow-container.active{width:400px;height:400px}#hubspot-messages-iframe-container iframe{display:initial!important;width:100%!important;height:100%!important;border:none!important;position:absolute!important;bottom:0!important;right:0!important;background:transparent!important}</style>
+
+<a class="sr-only" href="https://wiki.eclipse.org/CDT/User/NewIn50#content">Skip to main content</a>
+<header class="header-wrapper" id="header-wrapper">
+  <div class="clearfix toolbar-container-wrapper">
+    <div class="container-fluid">
+      <div class="text-right toolbar-row row hidden-print">
+        <div class="col-md-24 row-toolbar-col">
+               <ul class="list-inline">
+                  <li id="pt-login">
+            <a href="https://wiki.eclipse.org/index.php?title=Special:UserLogin&amp;returnto=CDT%2FUser%2FNewIn50" class="toolbar-link toolbar-login">
+              <i class="fa fa-sign-in fa-fw"></i> Log in            </a>
+          </li>
+                <li><a class="toolbar-link toolbar-manage-cookies dropdown-toggle"><i class="fa fa-wrench"></i> Manage Cookies</a></li>
+      </ul>
+            </div>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row" id="header-row">
+      <div class="col-sm-5 col-md-4" id="header-left">
+        <div class="wrapper-logo-default"><a href="https://www.eclipse.org/"><img class="logo-eclipse-default hidden-xs" alt="Eclipse.org logo" width="160" src="./CDT-5.0_files/eclipse-foundation-white-orange.svg"></a></div>
+      </div>
+      <div class="col-sm-19 col-md-20 margin-top-10" id="main-menu-wrapper">
+        <div class="float-right hidden-xs" id="btn-call-for-action"><a href="https://eclipse.org/downloads/" class="btn btn-huge btn-warning"><i class="fa fa-download"></i> Download</a></div>
+        <div class="navbar yamm float-sm-right" id="main-menu">
+          <div class="navbar-collapse collapse" id="navbar-main-menu">
+            <ul class="nav navbar-nav">
+              <li><a href="https://www.eclipse.org/projects/" target="_self">Projects</a></li>
+              <li><a href="https://www.eclipse.org/org/workinggroups/" target="_self">Working Groups</a></li>
+              <li><a href="https://www.eclipse.org/membership/" target="_self">Members</a></li>
+              <li class="dropdown visible-xs">
+                <a href="https://wiki.eclipse.org/CDT/User/NewIn50#" data-toggle="dropdown" class="dropdown-toggle">Community <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://marketplace.eclipse.org/">Marketplace</a></li>
+                  <li><a href="http://events.eclipse.org/">Events</a></li>
+                  <li><a href="http://www.planeteclipse.org/">Planet Eclipse</a></li>
+                  <li><a href="https://www.eclipse.org/community/eclipse_newsletter/">Newsletter</a></li>
+                  <li><a href="https://www.youtube.com/user/EclipseFdn">Videos</a></li>
+                  <li><a href="https://blogs.eclipse.org/">Blogs</a></li>
+                </ul>
+              </li>
+              <li class="dropdown visible-xs">
+                <a href="https://wiki.eclipse.org/CDT/User/NewIn50#" data-toggle="dropdown" class="dropdown-toggle">Participate <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="https://bugs.eclipse.org/bugs/">Report a Bug</a></li>
+                  <li><a href="https://www.eclipse.org/forums/">Forums</a></li>
+                  <li><a href="https://www.eclipse.org/mail/">Mailing Lists</a></li>
+                  <li><a href="https://wiki.eclipse.org/">Wiki</a></li>
+                  <li><a href="https://wiki.eclipse.org/IRC">IRC</a></li>
+                  <li><a href="https://www.eclipse.org/org/research/">Research</a></li>
+                </ul>
+              </li>
+              <li class="dropdown visible-xs">
+                <a href="https://wiki.eclipse.org/CDT/User/NewIn50#" data-toggle="dropdown" class="dropdown-toggle">Eclipse IDE <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="https://www.eclipse.org/downloads">Download</a></li>
+                  <li><a href="https://www.eclipse.org/eclipseide">Learn More</a></li>
+                  <li><a href="https://help.eclipse.org/">Documentation</a></li>
+                  <li><a href="https://www.eclipse.org/getting_started">Getting Started / Support</a></li>
+                  <li><a href="https://www.eclipse.org/contribute/">How to Contribute</a></li>
+                  <li><a href="https://www.eclipse.org/ide/">IDE and Tools</a></li>
+                  <li><a href="https://www.eclipse.org/forums/index.php/f/89/">Newcomer Forum</a></li>
+                </ul>
+              </li>
+              <!-- More -->
+              <li class="dropdown eclipse-more hidden-xs">
+                <a data-toggle="dropdown" class="dropdown-toggle" role="button">More<b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <!-- Content container to add padding -->
+                    <div class="yamm-content">
+                      <div class="row">
+                        <ul class="col-sm-8 list-unstyled">
+                          <li>
+                            <p><strong>Community</strong></p>
+                          </li>
+                          <li><a href="http://marketplace.eclipse.org/">Marketplace</a></li>
+                          <li><a href="http://events.eclipse.org/">Events</a></li>
+                          <li><a href="http://www.planeteclipse.org/">Planet Eclipse</a></li>
+                          <li><a href="https://www.eclipse.org/community/eclipse_newsletter/">Newsletter</a></li>
+                          <li><a href="https://www.youtube.com/user/EclipseFdn">Videos</a></li>
+                          <li><a href="https://blogs.eclipse.org/">Blogs</a></li>
+                        </ul>
+                        <ul class="col-sm-8 list-unstyled">
+                          <li>
+                            <p><strong>Participate</strong></p>
+                          </li>
+                          <li><a href="https://bugs.eclipse.org/bugs/">Report a Bug</a></li>
+                          <li><a href="https://www.eclipse.org/forums/">Forums</a></li>
+                          <li><a href="https://www.eclipse.org/mail/">Mailing Lists</a></li>
+                          <li><a href="https://wiki.eclipse.org/">Wiki</a></li>
+                          <li><a href="https://wiki.eclipse.org/IRC">IRC</a></li>
+                          <li><a href="https://www.eclipse.org/org/research/">Research</a></li>
+                        </ul>
+                        <ul class="col-sm-8 list-unstyled">
+                          <li>
+                            <p><strong>Eclipse IDE</strong></p>
+                          </li>
+                          <li><a href="https://www.eclipse.org/downloads">Download</a></li>
+                          <li><a href="https://www.eclipse.org/eclipseide">Learn More</a></li>
+                          <li><a href="https://help.eclipse.org/">Documentation</a></li>
+                          <li><a href="https://www.eclipse.org/getting_started">Getting Started / Support</a></li>
+                          <li><a href="https://www.eclipse.org/contribute/">How to Contribute</a></li>
+                          <li><a href="https://www.eclipse.org/ide/">IDE and Tools</a></li>
+                          <li><a href="https://www.eclipse.org/forums/index.php/f/89/">Newcomer Forum</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-main-menu">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            </button>
+            <div class="wrapper-logo-mobile"><a class="navbar-brand visible-xs" href="https://www.eclipse.org/"><img class="logo-eclipse-default-mobile img-responsive" alt="Eclipse.org logo" width="160" src="./CDT-5.0_files/eclipse-foundation-white-orange.svg"></a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<section class="default-breadcrumbs hidden-print" id="breadcrumb">
+  <div class="container-fluid">
+    <h3 class="sr-only">Breadcrumbs</h3>
+    <div class="row">
+      <div class="col-sm-24">
+        <ol class="breadcrumb">
+          <li><a href="https://www.eclipse.org/">Home</a></li>
+          <li><a href="https://wiki.eclipse.org/Main_Page">Eclipse Wiki</a></li>
+          <li class="active">CDT/User/NewIn50</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- /#breadcrumb -->
+<main>
+<div class="container-fluid padding-15 padding-top-20">
+    
+    
+    <!-- content -->
+    <section id="content" class="mw-body container-full clearfix 0">
+      <div id="mw-js-message" style="display:none;"></div>
+
+      
+      <!-- bodyContent -->
+      <div id="bodyContent">
+
+        
+                <!-- jumpto -->
+        <div id="jump-to-nav" class="mw-jump">
+          Jump to: <a href="https://wiki.eclipse.org/CDT/User/NewIn50#mw-head">navigation</a>,
+          <a href="https://wiki.eclipse.org/CDT/User/NewIn50#p-search">search</a>
+        </div>
+        <!-- /jumpto -->
+        
+          <!-- leftcol -->
+          <aside class="col-md-4 noprint hidden-print" id="leftcol">
+                      <form class="input-group" role="form" id="form-eclipse-search" action="https://wiki.eclipse.org/index.php">
+              <input id="searchInput" class="search-query form-control" type="search" accesskey="f" title="Special:Search [alt-shift-f]" placeholder="Search" name="search" value="" autocomplete="off">
+
+              <span class="input-group-btn">
+                <button value="search" id="mw-searchButton" type="submit" class="btn btn-default" title="Search the pages for this text" name="fulltext">
+                  <i class="fa fa-search"></i>
+                </button>
+              </span>
+            </form>
+                      <select class="form-control margin-top-10 margin-bottom-10 visible-xs visible-sm" onchange="this.options[this.selectedIndex].value &amp;&amp; (window.location = this.options[this.selectedIndex].value);"><option class="fw-700 ">---Navigation---</option><option value="/Main_Page">Main Page</option><option value="/Eclipsepedia:Community_portal">Community portal</option><option value="/Eclipsepedia:Current_events">Current events</option><option value="/Special:RecentChanges">Recent changes</option><option value="/Special:Random">Random page</option><option value="https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents">Help</option></select><ul class="ul-left-nav fa-ul hidden-print leftnav hidden-xs hidden-sm"><li class="separator"><span class="separator">Navigation</span></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Main_Page" id="n-mainpage" title="Visit the main page [alt-shift-z]" accesskey="z">Main Page</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Eclipsepedia:Community_portal" id="n-portal" title="About the project, what you can do, where to find things">Community portal</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Eclipsepedia:Current_events" id="n-currentevents" title="Find background information on current events">Current events</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:RecentChanges" id="n-recentchanges" title="A list of recent changes in the wiki [alt-shift-r]" accesskey="r">Recent changes</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:Random" id="n-randompage" title="Load a random page [alt-shift-x]" accesskey="x">Random page</a></li>                <li class=""><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents" id="n-help" title="The place to find out">Help</a></li></ul>            <select class="form-control margin-top-10 margin-bottom-10 visible-xs visible-sm" onchange="this.options[this.selectedIndex].value &amp;&amp; (window.location = this.options[this.selectedIndex].value);"><option class="fw-700 ">---Toolbox---</option><option value="/index.php?title=CDT/User/NewIn50&amp;action=info">Page information</option><option value="/index.php?title=CDT/User/NewIn50&amp;oldid=220505">Permanent link</option><option value="/index.php?title=CDT/User/NewIn50&amp;printable=yes">Printable version</option><option value="/Special:SpecialPages">Special pages</option><option value="/Special:RecentChangesLinked/CDT/User/NewIn50">Related changes</option><option value="/Special:WhatLinksHere/CDT/User/NewIn50">What links here</option></select><ul class="ul-left-nav fa-ul hidden-print leftnav hidden-xs hidden-sm"><li class="separator"><span class="separator">Toolbox</span></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn50&amp;action=info" id="t-info" title="More information about this page">Page information</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn50&amp;oldid=220505" id="t-permalink" title="Permanent link to this revision of the page">Permanent link</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn50&amp;printable=yes" id="t-print" rel="alternate" title="Printable version of this page [alt-shift-p]" accesskey="p">Printable version</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:SpecialPages" id="t-specialpages" title="A list of all special pages [alt-shift-q]" accesskey="q">Special pages</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:RecentChangesLinked/CDT/User/NewIn50" id="t-recentchangeslinked" title="Recent changes in pages linked from this page [alt-shift-k]" accesskey="k">Related changes</a></li><li><i class="fa fa-angle-double-right orange fa-fw"></i> <a href="https://wiki.eclipse.org/Special:WhatLinksHere/CDT/User/NewIn50" id="t-whatlinkshere" title="A list of all wiki pages that link here [alt-shift-j]" accesskey="j">What links here</a></li></ul>                                  </aside>
+          <!-- /leftcol -->
+
+          <!-- mainContent -->
+          <div id="mainContent" class="col-md-20">
+                      <ul class="nav nav-tabs noprint hidden-print" role="tablist">
+                       <li id="ca-nstab-main" class="active"><a href="https://wiki.eclipse.org/CDT/User/NewIn50" title="View the content page [alt-shift-c]" accesskey="c" tabindex="-1">Page</a></li>
+                        <li id="ca-talk" class="new"><a href="https://wiki.eclipse.org/index.php?title=Talk:CDT/User/NewIn50&amp;action=edit&amp;redlink=1" title="Discussion about the content page [alt-shift-t]" accesskey="t" tabindex="-1">Discussion</a></li>
+                        <li id="ca-viewsource"><a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn50&amp;action=edit" title="This page is protected.
+You can view its source [alt-shift-e]" accesskey="e" tabindex="-1">View source</a></li>
+                        <li id="ca-history" class="collapsible"><a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn50&amp;action=history" title="Past revisions of this page [alt-shift-h]" accesskey="h" tabindex="-1">History</a></li>
+                      </ul>            <div class="tab-content background-white">
+              <div id="tab-pane-main-page-content" class="tab-pane active">
+
+                
+                <h1 id="firstHeading" class="firstHeading page-header">
+                  <span dir="auto">CDT/User/NewIn50</span>
+                </h1>
+                <div id="main-page-content">
+                                                      <!-- subtitle -->
+                  <div id="contentSub" class="alert alert-small alert-warning"><span class="subpages">&lt; <a href="https://wiki.eclipse.org/CDT" title="CDT">CDT</a></span></div>
+                  <!-- /subtitle -->
+                  
+                  
+                  <div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div id="toc" class="toc"><div id="toctitle"><h2>Contents</h2><span class="toctoggle">&nbsp;[<a href="https://wiki.eclipse.org/CDT/User/NewIn50#" id="togglelink">hide</a>]&nbsp;</span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#What_is_New_in_CDT_5"><span class="tocnumber">1</span> <span class="toctext">What is New in CDT 5</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#Java_5.0.2B_JRE_is_required"><span class="tocnumber">1.1</span> <span class="toctext">Java 5.0+ JRE is required</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#Editor"><span class="tocnumber">1.2</span> <span class="toctext">Editor</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#Navigation_and_Search"><span class="tocnumber">1.3</span> <span class="toctext">Navigation and Search</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#Call_Hierarchy"><span class="tocnumber">1.4</span> <span class="toctext">Call Hierarchy</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#Refactoring"><span class="tocnumber">1.5</span> <span class="toctext">Refactoring</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#Indexer"><span class="tocnumber">1.6</span> <span class="toctext">Indexer</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#Projects_.26_Build"><span class="tocnumber">1.7</span> <span class="toctext">Projects &amp; Build</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="https://wiki.eclipse.org/CDT/User/NewIn50#Debug"><span class="tocnumber">1.8</span> <span class="toctext">Debug</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+
+<h1><span class="mw-headline" id="What_is_New_in_CDT_5">What is New in CDT 5</span></h1>
+<h2><span class="mw-headline" id="Java_5.0.2B_JRE_is_required">Java 5.0+ JRE is required</span></h2>
+<p>CDT 5.0 requires using the Java 5.0 or later JRE.
+</p>
+<h2><span class="mw-headline" id="Editor">Editor</span></h2>
+<table style="width:100%;">
+
+
+<tbody><tr style="vertical-align:top;">
+<td> <b>Code and File Templates</b>
+</td>
+<td> User-definable templates are now available and are used to populate new files.
+<table>
+
+<tbody><tr>
+<td> Code/File templates are used in the New Class and New Source/Header File wizards<br>
+</td></tr>
+<tr>
+<td> New preference page C/C++ &gt; Code Style &gt; Code Templates<br>
+</td></tr>
+<tr>
+<td> New generic wizard: File from Template
+</td></tr></tbody></table>
+</td>
+<td> <ul><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/88390">88390</a></li><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/190511">190511</a></li><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/147390">147390</a></li></ul>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Outline for assembly files</b> </td>
+<td> The outline view is now populated when editing assembly files. </td>
+<td> <ul><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/206288">206288</a></li><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/205567">205567</a></li></ul>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Code formatter improvements</b>
+</td>
+<td>
+<table style="width:100%;">
+
+<tbody><tr style="vertical-align:top;">
+<td> New whitespace options </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/178601">178601</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> New line wrapping options </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/191980">191980</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/192656">192656</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> Improve GNU coding style compliance </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/192764">192764</a>
+</td></tr></tbody></table>
+</td>
+<td>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Content Assist improvements</b>
+</td>
+<td>
+<table style="width:100%;">
+
+<tbody><tr style="vertical-align:top;">
+<td> Ignore auto activation when typing float </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/193464">193464</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> Proposals for include directives </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/113568">113568</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> Sort by relevance </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/172862">172862</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> Content assist within macro arguments </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/200208">200208</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> Maintenance </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/191315">191315</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/229062">229062</a>,<a rel="nofollow" class="external text" href="http://bugs.eclipse.org/230389">230389</a>
+</td></tr></tbody></table>
+</td>
+<td>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Doxygen editor support (plus framework)</b>
+</td>
+<td> Auto-generation of tags and a pluggable framework for other documentation tools is now available.<br>
+</td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/178386">178386</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Mark Occurrences</b>
+</td>
+<td> Highlights where the selected identifier occurs elsewhere in the editor.<br>
+</td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/159812">159812</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Folding of compound statements</b> </td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/174597">174597</a> (contributed by Elazar Leibovich)
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Macro expansion hover and exploration tool</b> </td>
+<td> Description </td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/23540">23540</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Spell Checking</b> </td>
+<td> Spell-checking is now available and enabled by default.<br></td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/190512">190512</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Scalability mode</b> </td>
+<td> The editor can now be opened with reduced functionality when working with very large files.<br> </td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226955">226955</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Visual Studio key bindings</b> </td>
+<td> You can now configure the IDE to recognize Visual Studio key bindings<br></td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/209218">209218</a>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Navigation_and_Search">Navigation and Search</span></h2>
+<table style="width:95%;">
+
+
+<tbody><tr style="vertical-align:top;">
+<td> <b>Open Declaration</b>
+</td>
+<td>
+<table style="width:100%;">
+
+<tbody><tr>
+<td> Operators </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/93281">93281</a>
+</td></tr>
+<tr>
+<td> Empty macros </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/198649">198649</a>
+</td></tr>
+<tr>
+<td> From elements in the Outline View </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/222721">222721</a>
+</td></tr>
+<tr>
+<td> From within preprocessing statements </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/215906">215906</a>
+</td></tr>
+<tr>
+<td> From arguments to a macro expansion </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/208300">208300</a>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Open Element</b>
+</td>
+<td>
+<table style="width:100%;">
+
+<tbody><tr>
+<td> Support for static functions/variables </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/193057">193057</a>
+</td></tr>
+<tr>
+<td> Improvements to the Open Element dialog </td>
+<td align="right"> <ul><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/209550">209550</a></li><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/209762">209762</a></li></ul>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Search</b>
+</td>
+<td>
+<table style="width:100%;">
+
+<tbody><tr>
+<td> Static functions/variables </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/196414">196414</a>
+</td></tr>
+<tr>
+<td> Search for macros </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/156561">156561</a>
+</td></tr>
+<tr>
+<td> Search for references of local variables </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/151334">151334</a>
+</td></tr>
+<tr>
+<td> Search view usability improvements </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/212166">212166</a>
+</td></tr></tbody></table>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Call_Hierarchy">Call Hierarchy</span></h2>
+<table style="width:100%;">
+
+
+<tbody><tr style="vertical-align:top;">
+<td> <b>Read/Write decorators</b> </td>
+<td> Icon decorator to show read and write-access for variables </td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/156692">156692</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Polymorphic method calls</b> </td>
+<td> Support for polymorphic method calls (virtual methods) </td>
+<td> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/156689">156689</a>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Refactoring">Refactoring</span></h2>
+<table style="width:95%;">
+
+
+<tbody><tr style="vertical-align:top;">
+<td> <b>Infrastructure</b> </td>
+<td>
+<table style="width:100%;">
+
+<tbody><tr style="vertical-align:top;">
+<td> Modelling transformations on the AST </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/214334">214334</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> Filtering context-menu based on selection </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/60249">60249</a>
+</td></tr></tbody></table>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Generate Getter Setters</b> </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226658">226658</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Hide Method</b> </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226490">226490</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Implement Method</b> </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226646">226646</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Extract Constant</b> </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/181493">181493</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Extract Function</b> </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226484">226484</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Maintenance of rename-refactoring</b> </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/220741">220741</a>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Indexer">Indexer</span></h2>
+<table style="width:95%;">
+
+
+<tbody><tr style="vertical-align:top;">
+<td> <b>Improved Accuracy</b>
+</td>
+<td>
+<table style="width:100%;vertical-align:top;">
+
+<tbody><tr style="vertical-align:top;">
+<td> Projects with c and c++ files </td>
+<td align="right"> <ul><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/191989">191989</a></li><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/191315">191315</a></li><li> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/183126">183126</a></li><li><a rel="nofollow" class="external text" href="http://bugs.eclipse.org/224711">224711</a></li></ul>
+</td></tr>
+<tr>
+<td> Handling static variables/functions defined in a header </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/180305">180305</a>
+</td></tr>
+<tr>
+<td> Support for unnamed namespaces </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/162226">162226</a>
+</td></tr>
+<tr>
+<td> Support for nested anonymous struct members </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/216791">216791</a>
+</td></tr>
+<tr>
+<td> Support for namespace composition </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/200673">200673</a>
+</td></tr>
+<tr>
+<td> Support for using declarations </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/216527">216527</a>
+</td></tr>
+<tr>
+<td> Support for long long </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/209049">209049</a>
+</td></tr>
+<tr>
+<td> Support for asm labels </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226121">226121</a>
+</td></tr>
+<tr>
+<td> Support for ommitted operands in conditional expressions </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/212905">212905</a>
+</td></tr>
+<tr>
+<td> Support for case-declarations with ranges </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/211882">211882</a>
+</td></tr></tbody></table>
+</td>
+<td>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Improved Performance</b>
+</td>
+<td>
+<table style="width:100%;vertical-align:top;">
+
+<tbody><tr>
+<td> Performance improvement when using large include search paths </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/225302">225302</a>
+</td></tr>
+<tr>
+<td> Smaller index databases </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/210392">210392</a>
+</td></tr></tbody></table>
+</td>
+<td>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Entirely new Preprocessor</b>
+</td>
+<td>
+<table style="width:100%;vertical-align:top;">
+
+<tbody><tr>
+<td> Comment tokens ignored when on same line as directive </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/192546">192546</a>
+</td></tr>
+<tr>
+<td> ASCII control characters in C/C++ files are flagged as errors </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/106344">106344</a>
+</td></tr>
+<tr>
+<td> Support for alternate keywords (or, ...) </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/187776">187776</a>
+</td></tr>
+<tr>
+<td> Scanner incorrectly handles #include line with macro </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/156990">156990</a>
+</td></tr>
+<tr>
+<td> Unreported references to macros when passed as argument to another macro </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/94673">94673</a>
+</td></tr>
+<tr>
+<td> Fix the location concept for the AST </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/202459">202459</a>
+</td></tr>
+<tr>
+<td> Support for trigraphs and digraphs </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/64993">64993</a>
+</td></tr>
+<tr>
+<td> Others </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/145270">145270</a> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/117029">117029</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/210344">210344</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/190884">190884</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/188855">188855</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/180140">180140</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/122891">122891</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/120472">120472</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/116962">116962</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/90956">90956</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/90978">90978</a>
+</td></tr></tbody></table>
+</td>
+<td>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Improved Infrastructure</b>
+</td>
+<td>
+<table style="width:100%;vertical-align:top;">
+
+<tbody><tr>
+<td> Diagnostics for indexer </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/213561">213561</a>
+</td></tr>
+<tr>
+<td> Improved configuration of indexer </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/215789">215789</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/173848">173848</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/215783,">215783</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/220358">220358</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/227088">227088</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/228012">228012</a>
+</td></tr></tbody></table>
+</td>
+<td>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Visual indication of indexer status</b> </td>
+<td>
+<table>
+
+</table>
+</td>
+<td>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Maintenance</b> </td>
+<td>
+<table>
+
+<tbody><tr>
+<td> </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/104706">104706</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/162470">162470</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/168924">168924</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/185343">185343</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/203170">203170</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/209682">209682</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/209813">209813</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/210730">210730</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/211457">211457</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/211603">211603</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/213029">213029</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/213287">213287</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/213861">213861</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/214017">214017</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/214146">214146</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/215629">215629</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/215642">215642</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/217102">217102</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/217271">217271</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/217414">217414</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/209582">209582</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/218389">218389</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/219424">219424</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/219834">219834</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/221796">221796</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/222026">222026</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/223020">223020</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/223777">223777</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226274">226274</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226492">226492</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/226877">226877</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/227082">227082</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/227085">227085</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/227110">227110</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/227122">227122</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/227393">227393</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/228118">228118</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/228422">228422</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/228504">228504</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/229917">229917</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/229218">229218</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/229917">229917</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/231744">231744</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/232086">232086</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/233511">233511</a>
+</td></tr></tbody></table>
+</td>
+<td>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Projects_.26_Build">Projects &amp; Build</span></h2>
+<table style="width:95%;">
+
+<tbody><tr style="vertical-align:top;">
+<td> <b>Project Properties</b> </td>
+<td> Improved usability of Project Properties pages </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=228953">228953</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=228958">228958</a>, <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=229771">229771</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Make target locations</b> </td>
+<td> Make targets at the project level are built in the project build directory </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=176906">176906</a>.
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Debug">Debug</span></h2>
+<table style="width:95%;">
+
+<tbody><tr style="vertical-align:top;">
+<td> <b>Executables View</b> </td>
+<td> </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/182388">182388</a>
+</td></tr>
+<tr style="vertical-align:top;">
+<td> <b>Event breakpoints</b> </td>
+<td> Added gdb catchpoints (event breakpoints) support </td>
+<td align="right"> <a rel="nofollow" class="external text" href="http://bugs.eclipse.org/bugs/show_bug.cgi?id=226689">226689</a>
+</td></tr></tbody></table>
+
+<!-- 
+NewPP limit report
+Cached time: 20220930080601
+Cache expiry: 86400
+Dynamic content: false
+CPU time usage: 0.056 seconds
+Real time usage: 0.056 seconds
+Preprocessor visited node count: 34/1000000
+Preprocessor generated node count: 40/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/40
+Expensive parser function count: 0/100
+-->
+
+<!-- 
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 - -total
+-->
+
+<!-- Saved in parser cache with key my_wiki:pcache:idhash:13466-0!*!*!!en!*!* and timestamp 20220930080600 and revision id 220505
+ -->
+</div>
+                                      <!-- catlinks -->
+                    <div id="catlinks" class="catlinks catlinks-allhidden"></div>                     <!-- /catlinks -->
+                                  </div>
+              </div>
+            </div>
+          </div>
+        <!-- /maincontent -->
+
+                <!-- printfooter -->
+        <div class="printfooter">
+        Retrieved from "<a dir="ltr" href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn50&amp;oldid=220505">https://wiki.eclipse.org/index.php?title=CDT/User/NewIn50&amp;oldid=220505</a>"        </div>
+        <!-- /printfooter -->
+        
+        
+        <!-- debughtml -->
+                <!-- /debughtml -->
+
+      </div>
+      <!-- /bodyContent -->
+    </section>
+    <!-- /content -->
+
+    <!-- footer -->
+    
+</div>
+<div class="featured-footer featured-footer-newsletter background-secondary">
+  <div class="container">
+    <p id="footercredit">This page was last modified 13:26, 17 September 2010 by <a href="https://wiki.eclipse.org/index.php?title=User:Cdtdoug.gmail.com&amp;action=edit&amp;redlink=1" class="new" title="User:Cdtdoug.gmail.com (page does not exist)">Doug Schaefer</a>. Based on work by <a href="https://wiki.eclipse.org/index.php?title=User:Elaskavaia.qnx.com&amp;action=edit&amp;redlink=1" class="new" title="User:Elaskavaia.qnx.com (page does not exist)">Alena Laskavaia</a>, <a href="https://wiki.eclipse.org/index.php?title=User:Cjashfor.us.ibm.com&amp;action=edit&amp;redlink=1" class="new" title="User:Cjashfor.us.ibm.com (page does not exist)">Corey Ashford</a> and <a href="https://wiki.eclipse.org/index.php?title=User:Richard.miskin.ipl.com&amp;action=edit&amp;redlink=1" class="new" title="User:Richard.miskin.ipl.com (page does not exist)">Richard Miskin</a> and <a href="https://wiki.eclipse.org/index.php?title=CDT/User/NewIn50&amp;action=credits" title="CDT/User/NewIn50">others</a>.</p><p id="footerviews"></p>  </div>
+</div>
+</main> <!-- /#main-content-container-row -->
+<p id="back-to-top" class="noprint hidden-print">
+  <a class="visible-xs" href="https://wiki.eclipse.org/CDT/User/NewIn50#top">Back to the top</a>
+</p>
+<footer id="solstice-footer">
+  <div class="container">
+    <div class="row">
+      <section class="col-sm-6 hidden-print" id="footer-eclipse-foundation">
+        <h2 class="section-title">Eclipse Foundation</h2>
+        <ul class="nav">
+          <li><a href="https://www.eclipse.org/org/">About Us</a></li>
+          <li><a href="https://www.eclipse.org/org/foundation/contact.php">Contact Us</a></li>
+          <li><a href="https://www.eclipse.org/donate">Donate</a></li>
+          <li><a href="https://www.eclipse.org/membership/">Members</a></li>
+          <li><a href="https://www.eclipse.org/org/documents/">Governance</a></li>
+          <li><a href="https://www.eclipse.org/org/documents/Community_Code_of_Conduct.php">Code of Conduct</a></li>
+          <li><a href="https://www.eclipse.org/artwork/">Logo and Artwork</a></li>
+          <li><a href="https://www.eclipse.org/org/foundation/directors.php">Board of Directors</a></li>
+        </ul>
+      </section>
+      <section class="col-sm-6 hidden-print" id="footer-legal">
+        <h2 class="section-title">Legal</h2>
+        <ul class="nav">
+          <li><a href="https://www.eclipse.org/legal/privacy.php">Privacy Policy</a></li>
+          <li><a href="https://www.eclipse.org/legal/termsofuse.php">Terms of Use</a></li>
+          <li><a href="https://www.eclipse.org/legal/copyright.php">Copyright Agent</a></li>
+          <li><a href="https://www.eclipse.org/legal/epl-2.0/">Eclipse Public License</a></li>
+          <li><a href="https://www.eclipse.org/legal/">Legal Resources</a></li>
+        </ul>
+      </section>
+      <section class="col-sm-6 hidden-print" id="footer-useful-links">
+        <h2 class="section-title">Useful Links</h2>
+        <ul class="nav">
+          <li><a href="https://bugs.eclipse.org/bugs/">Report a Bug</a></li>
+          <li><a href="https://help.eclipse.org/">Documentation</a></li>
+          <li><a href="https://www.eclipse.org/contribute/">How to Contribute</a></li>
+          <li><a href="https://www.eclipse.org/mail/">Mailing Lists</a></li>
+          <li><a href="https://www.eclipse.org/forums/">Forums</a></li>
+          <li><a href="https://marketplace.eclipse.org/">Marketplace</a></li>
+        </ul>
+      </section>
+      <section class="col-sm-6 hidden-print" id="footer-other">
+        <h2 class="section-title">Other</h2>
+        <ul class="nav">
+          <li><a href="https://www.eclipse.org/ide/">IDE and Tools</a></li>
+          <li><a href="https://www.eclipse.org/projects">Projects</a></li>
+          <li><a href="https://www.eclipse.org/org/workinggroups/">Working Groups</a></li>
+          <li><a href="https://www.eclipse.org/org/research/">Research@Eclipse</a></li>
+          <li><a href="https://www.eclipse.org/security/">Report a Vulnerability</a></li>
+          <li><a href="https://status.eclipse.org/">Service Status</a></li>
+        </ul>
+      </section>
+      <div class="col-sm-24 margin-top-20">
+        <div class="row">
+          <div id="copyright" class="col-md-16">
+            <p id="copyright-text">Copyright © Eclipse Foundation, Inc. All Rights Reserved.</p>
+          </div>
+          <div class="col-md-8 social-media">
+            <ul class="list-inline">
+              <li>
+                <a class="social-media-link fa-stack fa-lg" href="https://twitter.com/EclipseFdn">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x"></i>
+                </a>
+              </li>
+              <li>
+                <a class="social-media-link fa-stack fa-lg" href="https://www.facebook.com/eclipse.org">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-facebook fa-stack-1x"></i>
+                </a>
+              </li>
+              <li>
+                <a class="social-media-link fa-stack fa-lg" href="https://www.youtube.com/user/EclipseFdn">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-youtube fa-stack-1x"></i>
+                </a>
+              </li>
+              <li>
+                <a class="social-media-link fa-stack fa-lg" href="https://www.linkedin.com/company/eclipse-foundation">
+                <i class="fa fa-circle-thin fa-stack-2x"></i>
+                <i class="fa fa-linkedin fa-stack-1x"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <a href="https://wiki.eclipse.org/CDT/User/NewIn50#" class="scrollup">Back to the top</a>
+    </div>
+  </div>
+</footer>
+    <!-- /footer -->
+    <script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.loader.state({"skins.solstice":"loading","user":"ready","user.groups":"ready"});mw.loader.load("/load.php?debug=false\u0026lang=en\u0026modules=skins.solstice\u0026only=scripts\u0026skin=solstice");mw.loader.load(["mediawiki.toc","mediawiki.action.view.postEdit","site","mediawiki.user","mediawiki.hidpi","mediawiki.page.ready","mediawiki.searchSuggest"]);
+} );</script><script>window.RLQ = window.RLQ || []; window.RLQ.push( function () {
+mw.config.set({"wgBackendResponseTime":406});
+} );</script>  
+
+
+<script type="text/javascript" id="hs-script-loader" src="./CDT-5.0_files/5413615(2).js"></script>
+<div class="suggestions" style="display: none; font-size: 14px;"><div class="suggestions-results"></div><div class="suggestions-special"></div></div></body></html>

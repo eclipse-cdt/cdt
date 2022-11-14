@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.resources.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -32,6 +37,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.WriteAccessException;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFolder;
@@ -44,16 +50,15 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author crecoskie
  *
  */
-public class RefreshScopeTests extends TestCase {
+public class RefreshScopeTests extends BaseTestCase5 {
 
 	private IProject fProject;
 	private IProject fGeneralProject;
@@ -65,11 +70,8 @@ public class RefreshScopeTests extends TestCase {
 	private IFolder fFolder6;
 	private String config1, config2;
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void beforeEach() throws Exception {
 
 		// create project
 		CTestPlugin.getWorkspace().run(new IWorkspaceRunnable() {
@@ -141,14 +143,14 @@ public class RefreshScopeTests extends TestCase {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void afterEach() throws Exception {
 		fProject.delete(true, true, null);
+		fGeneralProject.delete(true, true, null);
+		BaseTestCase5.assertWorkspaceIsEmpty();
 	}
 
+	@Test
 	public void testAddDeleteResource() throws CoreException {
 
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
@@ -221,6 +223,7 @@ public class RefreshScopeTests extends TestCase {
 		assertEquals(config2_resourcesAfterDelete.contains(fProject), true);
 	}
 
+	@Test
 	public void testSetResourcesToExclusionsMapRefresh() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.clearAllData();
@@ -239,6 +242,7 @@ public class RefreshScopeTests extends TestCase {
 
 	}
 
+	@Test
 	public void testAddRemoveExclusion() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.clearAllData();
@@ -272,6 +276,7 @@ public class RefreshScopeTests extends TestCase {
 
 	}
 
+	@Test
 	public void testPersistAndLoad() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.clearAllData();
@@ -418,6 +423,7 @@ public class RefreshScopeTests extends TestCase {
 		manager.clearAllData();
 	}
 
+	@Test
 	public void testResourceExclusion() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.clearAllData();
@@ -534,6 +540,7 @@ public class RefreshScopeTests extends TestCase {
 
 	}
 
+	@Test
 	public void testDefaults() {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.clearAllData();
@@ -602,6 +609,7 @@ public class RefreshScopeTests extends TestCase {
 		return conf.getName();
 	}
 
+	@Test
 	public void testEmptyRefreshScopeCloseAndReopen() {
 
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
@@ -641,6 +649,7 @@ public class RefreshScopeTests extends TestCase {
 		assertEquals(0, config_resources.size());
 	}
 
+	@Test
 	public void testAddEmptyConfiguration() {
 		final String CFG_NAME = "empty_config";
 
@@ -673,6 +682,7 @@ public class RefreshScopeTests extends TestCase {
 
 	}
 
+	@Test
 	public void testNullProjectDescription_bug387428() {
 		final String CFG_NAME = "empty_config";
 
@@ -686,10 +696,6 @@ public class RefreshScopeTests extends TestCase {
 		List<IResource> empty_config_resources = manager.getResourcesToRefresh(fGeneralProject, CFG_NAME);
 		assertEquals(1, empty_config_resources.size());
 		assertEquals(true, empty_config_resources.contains(fGeneralProject));
-	}
-
-	public static Test suite() {
-		return new TestSuite(RefreshScopeTests.class);
 	}
 
 }

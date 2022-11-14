@@ -85,6 +85,30 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
                 '-es@compilers.p.not-externalized-att=1@compilers.p.not-externalized-att=2@' \
                 $d/.settings/org.eclipse.pde.prefs
         fi
+        if echo $i | grep -E '\.docs?[/\.]' > /dev/null; then
+            # Docs plug-ins have an index/ directory created at build time
+            sed -i \
+                '-es@compilers.p.build.bin.includes=0@compilers.p.build.bin.includes=1@' \
+                $d/.settings/org.eclipse.pde.prefs
+        fi
+        if echo $i | grep -E 'org.eclipse.remote.proxy.server' > /dev/null; then
+            # Proxy server has a tar file created at build time
+            sed -i \
+                '-es@compilers.p.build.bin.includes=0@compilers.p.build.bin.includes=1@' \
+                $d/.settings/org.eclipse.pde.prefs
+        fi
+        if echo $i | grep 'org.eclipse.tm.terminal.view.ui' > /dev/null; then
+            # Special case, see comment in org.eclipse.tm.terminal.view.ui/plugin.xml
+            sed -i \
+                '-es@compilers.p.unknown-identifier=0@compilers.p.unknown-identifier=1@' \
+                $d/.settings/org.eclipse.pde.prefs
+        fi
+        if echo $i | grep 'org.eclipse.cdt.codan.ui.cxx' > /dev/null; then
+            # Special case, see comment in org.eclipse.cdt.codan.ui.cxx/plugin.xml
+            sed -i \
+                '-es@compilers.p.unresolved-ex-points=0@compilers.p.unresolved-ex-points=1@' \
+                $d/.settings/org.eclipse.pde.prefs
+        fi
     else
         rm -f $d/.settings/org.eclipse.pde*.prefs
     fi
@@ -98,7 +122,7 @@ git ls-files  -- \*\*/.project | while read i ; do
     natures=$(xmllint --xpath 'string(//projectDescription/natures)' $i)
     if [[ $natures == *"org.eclipse.pde.PluginNature"* ]] && [[ $natures == *"org.eclipse.jdt.core.javanature"* ]]; then
         if [[ $natures != *"org.eclipse.pde.api.tools.apiAnalysisNature"* ]]; then
-            if ! echo $i | grep -E '\.tests?[/\.]' > /dev/null && ! echo $i | grep -E '\.examples?[/\.]' > /dev/null; then
+            if ! echo $i | grep -E '\.tests?[/\.]' > /dev/null && ! echo $i | grep -E '\.examples?[/\.]' > /dev/null > /dev/null; then
                 echo "$d is missing API Tools Nature - Turn it on in Eclipse by 1) Right-click project 2) Plug-in tools -> API Tools Setup"
                 exit 1
             fi

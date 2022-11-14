@@ -22,7 +22,7 @@ Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.internal.ui.dialogs;x-internal:=true,
  org.eclipse.cdt.internal.ui.dialogs.cpaths;x-internal:=true,
  org.eclipse.cdt.internal.ui.dnd;x-internal:=true,
- org.eclipse.cdt.internal.ui.editor;x-friends:="org.eclipse.cdt.codan.ui,org.eclipse.cdt.codan.ui.cxx,org.eclipse.cdt.dsf.ui,org.eclipse.cdt.lsp.core",
+ org.eclipse.cdt.internal.ui.editor;x-friends:="org.eclipse.cdt.codan.ui,org.eclipse.cdt.codan.ui.cxx,org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.internal.ui.editor.asm;x-internal:=true,
  org.eclipse.cdt.internal.ui.filters;x-internal:=true,
  org.eclipse.cdt.internal.ui.help;x-internal:=true,
@@ -51,7 +51,7 @@ Export-Package: org.eclipse.cdt.internal.corext;x-internal:=true,
  org.eclipse.cdt.internal.ui.resources,
  org.eclipse.cdt.internal.ui.search;x-internal:=true,
  org.eclipse.cdt.internal.ui.search.actions;x-internal:=true,
- org.eclipse.cdt.internal.ui.text;x-friends:="org.eclipse.cdt.codan.ui.cxx,org.eclipse.cdt.dsf.ui,org.eclipse.cdt.lsp.core",
+ org.eclipse.cdt.internal.ui.text;x-friends:="org.eclipse.cdt.codan.ui.cxx,org.eclipse.cdt.dsf.ui",
  org.eclipse.cdt.internal.ui.text.asm;x-internal:=true,
  org.eclipse.cdt.internal.ui.text.c.hover;x-internal:=true,
  org.eclipse.cdt.internal.ui.text.contentassist;x-internal:=true,
@@ -127,5 +127,5 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="[8.0.0,9.0.0)",
  org.eclipse.e4.ui.css.swt.theme,
  org.eclipse.tools.templates.ui;bundle-version="[1.2.200,2.0.0)"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.ui

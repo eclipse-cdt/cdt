@@ -15,19 +15,14 @@ package org.eclipse.cdt.dsf.gdb.breakpoints;
 
 import org.eclipse.osgi.util.NLS;
 
-/** @since 4.4 */
+/**
+ * @noreference This class is not intended to be referenced by clients.
+ */
 public class Messages extends NLS {
 	public static String DynamicPrintf_Invalid_string;
 	public static String DynamicPrintf_Printf_must_start_with_quote;
 	public static String DynamicPrintf_Printf_missing_closing_quote;
-	/**
-	 * @since 5.3
-	 */
-	public static String DynamicPrintf_Printf_not_expecting_a_closing_parenthesis;
 	public static String DynamicPrintf_Missing_comma;
-	public static String DynamicPrintf_Empty_arg;
-	public static String DynamicPrintf_Extra_arg;
-	public static String DynamicPrintf_Missing_arg;
 
 	static {
 		// initialize resource bundle

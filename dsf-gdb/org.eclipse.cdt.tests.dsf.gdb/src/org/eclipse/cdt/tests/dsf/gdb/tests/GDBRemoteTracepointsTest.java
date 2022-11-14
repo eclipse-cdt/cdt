@@ -217,7 +217,7 @@ public class GDBRemoteTracepointsTest extends BaseParametrizedTestCase {
 	// *********************************************************************
 	// Below are utility methods.
 	// *********************************************************************
-	private static Boolean lock = true;
+	private static Object lock = new Object();
 
 	enum Events {
 		BP_ADDED, BP_UPDATED, BP_REMOVED, BP_HIT

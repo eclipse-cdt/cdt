@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
     &lt;process type="org.eclipse.cdt.managedbuilder.core.AddLanguageSettingsProvider">
         &lt;simple name="projectName" value="$(projectName)"/>
         &lt;simple-array name="languageSettingsProviders">
-            &lt;element value="org.eclipse.cdt.qt.core.QtPathsProvider"/>
+            &lt;element value="com.yourcompany.core.YourPathsProvider"/>
         &lt;/simple-array>
     &lt;/process>
  * </pre>

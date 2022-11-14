@@ -14,19 +14,23 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.builder.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.make.core.IMakeBuilderInfo;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.MakeBuilder;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,37 +38,35 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-@SuppressWarnings("nls")
-public class StandardBuildTests extends TestCase {
+public class StandardBuildTests extends BaseTestCase5 {
 	private static final boolean OFF = false;
 	private static final boolean ON = true;
 	private static final String OVR_BUILD_ARGS = "-f";
 	private static final String OVR_BUILD_COMMAND = "/home/tester/bin/nmake";
 	private static final String OVR_BUILD_LOCATION = "src";
 	private static final String PROJECT_NAME = "StandardBuildTest";
+	private IProject project;
 
-	/**
-	 * @param name
-	 */
-	public StandardBuildTests(String name) {
-		super(name);
+	@BeforeEach
+	public void projectCreation() throws Exception {
+		project = createProject(PROJECT_NAME);
+		// Convert the new project to a standard make project
+		MakeProjectNature.addNature(project, null);
 	}
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(StandardBuildTests.class.getName());
+	@AfterEach
+	public void projectCleanup() throws CoreException, IOException {
+		project.delete(true, true, null);
+	}
 
-		// Add the relevant tests to the suite
-		suite.addTest(new StandardBuildTests("testProjectCreation"));
-		suite.addTest(new StandardBuildTests("testProjectSettings"));
-		suite.addTest(new StandardBuildTests("testProjectConversion"));
-		suite.addTest(new StandardBuildTests("testProjectCleanup"));
-
-		return suite;
+	@Test
+	public void test() throws Exception {
+		doProjectSettings();
+		doProjectConversion();
 	}
 
 	private void checkDefaultProjectSettings(IProject project) throws Exception {
@@ -120,11 +122,8 @@ public class StandardBuildTests extends TestCase {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 				IProject project = root.getProject(name);
-				if (!project.exists()) {
-					project.create(null);
-				} else {
-					project.refreshLocal(IResource.DEPTH_INFINITE, null);
-				}
+				assertFalse(project.exists());
+				project.create(null);
 
 				if (!project.isOpen()) {
 					project.open(null);
@@ -137,114 +136,36 @@ public class StandardBuildTests extends TestCase {
 		return (IProject) result[0];
 	}
 
-	/**
-	 * Remove the <code>IProject</code> with the name specified in the argument from the
-	 * receiver's workspace.
-	 *
-	 * @param name
-	 */
-	private void removeProject(String name) throws CoreException, IOException {
-		ResourceHelper.cleanUp(getName());
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(name);
-		if (project.exists()) {
-			try {
-				project.delete(true, false, null);
-			} catch (CoreException e) {
-				assertTrue(false);
-			}
-		}
-	}
-
-	/**
-	 * Remove all the project information associated with the project used during test.
-	 */
-	public void testProjectCleanup() throws CoreException, IOException {
-		removeProject(PROJECT_NAME);
-	}
-
-	public void testProjectConversion() throws Exception {
-		// Open the project
-		IProject project = null;
-		try {
-			project = createProject(PROJECT_NAME);
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectConversion failed opening project: " + e.getLocalizedMessage());
-		}
-		assertNotNull(project);
-
+	public void doProjectConversion() throws Exception {
 		// Check the settings (they should be the override values)
 		checkOverriddenProjectSettings(project);
 
 		// Now convert the project
-		try {
-			CCorePlugin.getDefault().convertProjectFromCtoCC(project, new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectConversion failed to convert project: " + e.getLocalizedMessage());
-		}
+		CCorePlugin.getDefault().convertProjectFromCtoCC(project, new NullProgressMonitor());
 
 		// Close, and Reopen the project
-		try {
-			project.close(new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectConversion failed to close project " + e.getLocalizedMessage());
-		}
-		try {
-			project.open(new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectConversion failed to open project " + e.getLocalizedMessage());
-		}
+		project.close(new NullProgressMonitor());
+		project.open(new NullProgressMonitor());
 
 		// Make sure it has a CCNature
-		try {
-			project.hasNature(CCProjectNature.CC_NATURE_ID);
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectConversion failed getting nature: " + e.getLocalizedMessage());
-		}
+		assertTrue(project.hasNature(CCProjectNature.CC_NATURE_ID));
 
 		// Nothing should have changed in the settings
 		checkOverriddenProjectSettings(project);
 	}
 
-	/**
-	 *
-	 */
-	public void testProjectCreation() throws Exception {
-		// Create a new project
-		IProject project = null;
-		try {
-			project = createProject(PROJECT_NAME);
-			// Convert the new project to a standard make project
-			MakeProjectNature.addNature(project, null);
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectCreation failed creating project: " + e.getLocalizedMessage());
-		}
-		assertNotNull(project);
-
+	private void doCheckInitialSettings() throws CoreException, Exception {
 		// Make sure it has a CNature
-		try {
-			project.hasNature(CProjectNature.C_NATURE_ID);
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectCreation failed getting nature: " + e.getLocalizedMessage());
-		}
+		assertTrue(project.hasNature(CProjectNature.C_NATURE_ID));
+
 		// Make sure it has a MakeNature
-		try {
-			project.hasNature(MakeProjectNature.NATURE_ID);
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectCreation failed getting nature: " + e.getLocalizedMessage());
-		}
+		assertTrue(project.hasNature(MakeProjectNature.NATURE_ID));
+
 		// Check the default settings
 		checkDefaultProjectSettings(project);
 	}
 
-	public void testProjectSettings() throws Exception {
-		// Get the project
-		IProject project = null;
-		try {
-			project = createProject(PROJECT_NAME);
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectSettings failed opening project: " + e.getLocalizedMessage());
-		}
+	public void doProjectSettings() throws Exception {
 		assertNotNull(project);
 
 		// Use the build info for the rest of the settings
@@ -254,16 +175,9 @@ public class StandardBuildTests extends TestCase {
 		builderInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_COMMAND, OVR_BUILD_COMMAND);
 		builderInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_ARGUMENTS, OVR_BUILD_ARGS);
 		builderInfo.setBuildAttribute(IMakeCommonBuildInfo.BUILD_LOCATION, OVR_BUILD_LOCATION);
-		try {
-			project.close(new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectSettings failed to close project " + e.getLocalizedMessage());
-		}
-		try {
-			project.open(new NullProgressMonitor());
-		} catch (CoreException e) {
-			fail("StandardBuildTest testProjectSettings failed to open project " + e.getLocalizedMessage());
-		}
+
+		project.close(new NullProgressMonitor());
+		project.open(new NullProgressMonitor());
 
 		// Retest
 		checkOverriddenProjectSettings(project);

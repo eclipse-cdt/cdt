@@ -12,6 +12,11 @@
 
 set -e
 
+if test ! -z "$(git status -s -uno)"; then
+    echo "You have changes. Please stash them before continuing."
+    exit 1
+fi
+
 ##
 # Check the features are all branded and all content has proper licenses
 ##
@@ -28,7 +33,7 @@ ${DIR}/do_all_code_cleanups.sh
 ##
 # Check that none of the above caused any changes
 ##
-if test -z "$(git status -s)"; then
+if test -z "$(git status -s -uno)"; then
     echo "Tree looks clean!"
 else
     echo "Tree is dirty - something needs to be cleaned up in your commit (more info below)"
@@ -56,7 +61,6 @@ ${DIR}/check_glibc_dependencies.sh
 ##
 # Make sure all versions have been bumped appropriately compared to the baseline
 ##
-java -XX:+PrintFlagsFinal -version 
 logfile=baseline-compare-and-replace.log
 echo "Running 'mvn verify -P baseline-compare-and-replace' to make sure all versions"
 echo "have been appropriately incremented. The check output is very verbose, so it is"

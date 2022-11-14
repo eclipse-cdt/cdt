@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.debug.application.GCCCompileOptionsParser;
 import org.eclipse.cdt.debug.application.Messages;
-import org.eclipse.cdt.utils.coff.parser.PEParser;
+import org.eclipse.cdt.utils.coff.parser.PEParser64;
 import org.eclipse.cdt.utils.elf.parser.GNUElfParser;
 import org.eclipse.cdt.utils.macho.parser.MachOParser64;
 import org.eclipse.core.resources.IContainer;
@@ -66,6 +66,7 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 
 	@Override
 	public void run(IProgressMonitor monitor) {
+		ISymbolReader reader = null;
 		try {
 			// Calculate how many source files we have to process and use that as a basis
 			// for our work estimate.
@@ -79,7 +80,7 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 			// Try Portable Executable (Windows)
 			if (bf == null) {
 				try {
-					bf = new PEParser().getBinary(new Path(executable));
+					bf = new PEParser64().getBinary(new Path(executable));
 				} catch (IOException e) {
 					// Will try other parsers
 				}
@@ -89,7 +90,7 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 			if (bf == null) {
 				bf = new MachOParser64().getBinary(new Path(executable));
 				try {
-					bf = new PEParser().getBinary(new Path(executable));
+					bf = new PEParser64().getBinary(new Path(executable));
 				} catch (IOException e) {
 					// ignored, see below early return
 				}
@@ -102,7 +103,7 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 				return;
 			}
 
-			ISymbolReader reader = bf.getAdapter(ISymbolReader.class);
+			reader = bf.getAdapter(ISymbolReader.class);
 			String[] sourceFiles = reader.getSourceFiles();
 			monitor.beginTask(Messages.GetCompilerOptions, sourceFiles.length * 2 + 1);
 
@@ -157,6 +158,9 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 			e.printStackTrace();
 		} catch (IOException e1) {
 			e1.printStackTrace();
+		} finally {
+			if (reader != null)
+				reader.close();
 		}
 		monitor.done();
 	}

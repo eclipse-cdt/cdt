@@ -25,7 +25,9 @@ void zeroBlocks(int abc)
 void setBlocks()
 {
 	for (int i = 0; i < ARRAY_SIZE; i++) { // LINE_NUMBER_3
-		charBlock[i] = (char) i;
+		char Text[1000];
+		sprintf(Text, "Text %d\nAfter", i);
+		charBlock[i] = (char) i; // LINE_LOOP_1
 		integerBlock[i] = i;
 	}
 }
@@ -46,6 +48,7 @@ int main()
 	loop();
 	setBlocks();
 	SLEEP(1);
+	cout << flush;
 	a++; // LINE_NUMBER_5
 	return 0; // LINE_NUMBER_6
 }

@@ -728,10 +728,10 @@ public class ResourceHelper {
 		// Remove IResources created by this helper
 		for (IResource r : resourcesCreated) {
 			if (r.exists()) {
-				try {
+				if (r instanceof IProject p) {
+					p.delete(true, true, NULL_MONITOR);
+				} else {
 					r.delete(true, NULL_MONITOR);
-				} catch (CoreException e) {
-					// Ignore
 				}
 			}
 		}

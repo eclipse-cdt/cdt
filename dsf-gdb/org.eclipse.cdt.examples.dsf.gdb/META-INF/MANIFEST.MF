@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.examples.dsf.gdb;singleton:=true
-Bundle-Version: 1.1.200.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.cdt.examples.dsf.gdb.GDBExamplePlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -18,7 +18,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.debug.ui,
  org.eclipse.ui.console,
  org.eclipse.tm.terminal.control
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Export-Package: org.eclipse.cdt.examples.dsf.gdb;x-internal:=true,

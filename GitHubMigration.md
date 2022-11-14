@@ -40,7 +40,7 @@ Please see the GitHub issues on the migration for current status and things left
 - The Eclipse Wiki is being discontinued. The CDT content has being moved to live in the main CDT git repo. The pages on the Eclipse Wiki (under https://wiki.eclipse.org/CDT) have been marked as obsolete or outdated and where appropriate links to the new page have been put in place. The majority of the content is on or linked from the CDT's root [README.md](README.md).
 
 - With all the existing content of the Eclipse Wiki being migrated into CDT's git repo, going forward there won't be a Wiki for Eclipse CDT. While GitHub provides a Wiki functionality, it is not well integrated into other flows (for example, non-committers cannot edit wikis). Making the contributions via Pull Requests to the main repo seems like the better option.
-  - This may be revisited in the future and a Wiki may be reintroduced as items like Monthly Calls and planning items may not fit in well to the current model.
+  - The exception is the CDT calls. The CDT calls minutes are stored on hackmd: https://hackmd.io/@jonahgraham/EclipseCDTCalls
 
 - The Eclipse Forum for [C/C++ IDE (CDT)](https://www.eclipse.org/forums/index.php/f/80/) has been shutdown for new posts. The archive will remain as long as the Eclipse Foundation leaves it there. Track [helpdesk#187](https://gitlab.eclipse.org/eclipsefdn/helpdesk/-/issues/187) for details. 
 

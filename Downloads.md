@@ -5,7 +5,7 @@ All downloads are provided under the terms and conditions of the [Eclipse Found
 
 The CDT can either be installed as part of the Eclipse C/C++ IDE packaged zip file or installed into an existing Eclipse using the "Install New Software..." dialog and entering the p2 repository URLs listed below.
 
-CDT can be used as a standalone debugger. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
+CDT can be used as a standalone debugger. Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
 ### CDT 10.7.1 for Eclipse 2022-06
 
@@ -20,7 +20,7 @@ Archived p2 repos:
 -   [cdt-10.7.1.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.7/cdt-10.7.1/cdt-10.7.1.zip)
 -   [cdt-10.7.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.7/cdt-10.7.0/cdt-10.7.0.zip)
 
-As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
+As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
 ### CDT 10.6.2 for Eclipse 2022-03
 
@@ -36,7 +36,7 @@ Archived p2 repos:
 -   [cdt-10.6.1.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.6/cdt-10.6.1/cdt-10.6.1.zip)
 -   [cdt-10.6.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.6/cdt-10.6.0/cdt-10.6.0.zip)
 
-As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
+As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
 ### CDT 10.5.0 for Eclipse 2021-12
 
@@ -50,7 +50,7 @@ Archived p2 repos:
 
 -   [cdt-10.5.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.5/cdt-10.5.0/cdt-10.5.0.zip)
 
-As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
+As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
 ### CDT 10.4.1 for Eclipse 2021-09
 
@@ -65,7 +65,7 @@ Archived p2 repos:
 -   [cdt-10.4.1.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.4/cdt-10.4.1/cdt-10.4.1.zip)
 -   [cdt-10.4.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.4/cdt-10.4.0/cdt-10.4.0.zip)
 
-As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
+As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
 ### CDT 10.3.3 for Eclipse 2021-06
 
@@ -82,7 +82,7 @@ Archived p2 repos:
 -   [cdt-10.3.1.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.3/cdt-10.3.1/cdt-10.3.1.zip)
 -   [cdt-10.3.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.3/cdt-10.3.0/cdt-10.3.0.zip)
 
-As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
+As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
 ### CDT 10.2.0 for Eclipse 2021-03
 
@@ -96,7 +96,7 @@ Archived p2 repos:
 
 -   [cdt-10.2.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/10.2/cdt-10.2.0/cdt-10.2.0.zip)
 
-As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on Wiki](https://wiki.eclipse.org/CDT/StandaloneDebugger) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
+As of CDT 10.2.0 CDT no longer provides a separate standalone debugger download. Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
 ### CDT 10.1.0 for Eclipse 2020-12
 
@@ -412,9 +412,9 @@ Archived p2 repos:
 
 ### Development Builds
 
-Development builds of the Eclipse C/C++ IDE can be found on the [Eclipse Downloads page](https://www.eclipse.org/downloads) by clicking on the Development Builds tab.
+Development builds of the Eclipse C/C++ IDE can be found on the [Eclipse Downloads page](https://www.eclipse.org/downloads/packages/) by clicking on the Eclipse Developer Builds tab.
 
-Bleeding edge continuous builds are available from the [cdt-master Jenkins build page](https://ci.eclipse.org/cdt/job/cdt-master) and the p2 software repository: <https://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository/>
+Bleeding edge continuous builds are available from the [cdt/main Jenkins build page](https://ci.eclipse.org/cdt/job/cdt/job/main/) and the p2 software repository: <https://ci.eclipse.org/cdt/job/cdt/job/main/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository/>
 
 Some older builds are available in the old [CDT Nightly Build page](https://archive.eclipse.org/tools/cdt/builds/).
 

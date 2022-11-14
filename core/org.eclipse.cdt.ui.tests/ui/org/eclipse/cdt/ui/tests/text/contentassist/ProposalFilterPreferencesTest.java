@@ -27,6 +27,22 @@ import junit.framework.TestCase;
  */
 public class ProposalFilterPreferencesTest extends TestCase {
 
+	private IPreferenceStore store;
+	private String filterComboStateStringBefore;
+
+	@Override
+	protected void setUp() throws Exception {
+		super.setUp();
+		store = CUIPlugin.getDefault().getPreferenceStore();
+		filterComboStateStringBefore = store.getString(ContentAssistPreference.PROPOSALS_FILTER);
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		store.setValue(ContentAssistPreference.PROPOSALS_FILTER, filterComboStateStringBefore);
+		super.tearDown();
+	}
+
 	public void testPreferences() {
 		// Check that the test filter is among the filter names.
 		String[] filterNames = ProposalFilterPreferencesUtil.getProposalFilterNames();
@@ -41,10 +57,8 @@ public class ProposalFilterPreferencesTest extends TestCase {
 		assertTrue("Did not find expected filter!", index >= 0);
 
 		// Set the preference to the tested filter
-		IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
-		String filterComboStateString = store.getString(ContentAssistPreference.PROPOSALS_FILTER);
 		ProposalFilterPreferencesUtil.ComboState state = ProposalFilterPreferencesUtil
-				.getComboState(filterComboStateString);
+				.getComboState(filterComboStateStringBefore);
 		StringBuilder newStateText = new StringBuilder();
 		newStateText.append(index + 1); // First entry is always the <Default Filter>, index+1 must be selected
 		for (int i = 0; i < state.items.length; i++) {

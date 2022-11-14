@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -86,7 +87,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 	// Keeps track of the MemoryChangedEvents
 	private final int BLOCK_SIZE = 256;
 	private IAddress fBaseAddress;
-	private Integer fMemoryChangedEventCount = 0;
+	private AtomicInteger fMemoryChangedEventCount = new AtomicInteger(0);
 	private boolean[] fMemoryAddressesChanged = new boolean[BLOCK_SIZE];
 
 	@Rule
@@ -168,9 +169,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 	*/
 	@DsfServiceEventHandler
 	public void eventDispatched(IMemoryChangedEvent e) {
-		synchronized (fMemoryChangedEventCount) {
-			fMemoryChangedEventCount++;
-		}
+		fMemoryChangedEventCount.incrementAndGet();
 		IAddress[] addresses = e.getAddresses();
 		for (int i = 0; i < addresses.length; i++) {
 			int offset = Math.abs(addresses[i].distanceTo(fBaseAddress).intValue());
@@ -183,9 +182,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 
 	// Clears the counters
 	private void clearEventCounters() {
-		synchronized (fMemoryChangedEventCount) {
-			fMemoryChangedEventCount = 0;
-		}
+		fMemoryChangedEventCount.set(0);
 		synchronized (fMemoryAddressesChanged) {
 			for (int i = 0; i < BLOCK_SIZE; i++)
 				fMemoryAddressesChanged[i] = false;
@@ -194,11 +191,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 
 	// Returns the total number of events received
 	private int getEventCount() {
-		int count;
-		synchronized (fMemoryChangedEventCount) {
-			count = fMemoryChangedEventCount;
-		}
-		return count;
+		return fMemoryChangedEventCount.get();
 	}
 
 	// Returns the number of distinct addresses reported

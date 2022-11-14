@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-SymbolicName: org.eclipse.cdt.dsf.gdb.ui;singleton:=true
-Bundle-Version: 2.7.500.qualifier
+Bundle-Version: 2.8.0.qualifier
 Bundle-Activator: org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.dsf.ui,
  org.eclipse.debug.ui,
  org.eclipse.cdt.debug.core,
- org.eclipse.cdt.dsf.gdb;bundle-version="[6.0.0,7.0.0)",
+ org.eclipse.cdt.dsf.gdb;bundle-version="[7.0.0,8.0.0)",
  org.eclipse.cdt.debug.ui,
  org.eclipse.cdt.core,
  org.eclipse.cdt.ui,
@@ -30,7 +30,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.native.serial;bundle-version="1.1.100",
  org.eclipse.launchbar.ui;bundle-version="2.3.0"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.cdt.dsf.gdb.internal.ui;x-friends:="org.eclipse.cdt.docker.launcher",
  org.eclipse.cdt.dsf.gdb.internal.ui.actions;x-friends:="org.eclipse.cdt.examples.dsf.gdb",
  org.eclipse.cdt.dsf.gdb.internal.ui.breakpoints;x-internal:=true,

@@ -32,16 +32,7 @@ public class RenameVariableTests extends RenameTestBase {
 	}
 
 	public static Test suite() {
-		return suite(true);
-	}
-
-	public static Test suite(boolean cleanup) {
-		TestSuite suite = new TestSuite(RenameVariableTests.class);
-
-		if (cleanup) {
-			suite.addTest(new RenameVariableTests("cleanupProject"));
-		}
-		return suite;
+		return new TestSuite(RenameVariableTests.class);
 	}
 
 	public void testLocalNameConflicts() throws Exception {

@@ -43,20 +43,9 @@ import org.eclipse.core.resources.IFile;
 /**
  * @author dsteffle
  */
-public class AST2SelectionParseTestBase extends FileBasePluginTestCase {
-
-	public AST2SelectionParseTestBase() {
-	}
-
-	public AST2SelectionParseTestBase(String name) {
-		super(name);
-	}
+public abstract class AST2SelectionParseTestBase extends FileBasePluginTestCase {
 
 	private static final IParserLogService NULL_LOG = new NullLogService();
-
-	public AST2SelectionParseTestBase(String name, Class className) {
-		super(name, className);
-	}
 
 	protected IASTNode parse(String code, ParserLanguage lang, int offset, int length) throws ParserException {
 		return parse(code, lang, false, false, offset, length);

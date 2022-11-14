@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -885,7 +885,7 @@ public class LaunchBarManager2Test {
 		ILaunchBarListener lis = mock(ILaunchBarListener.class);
 		manager.addListener(lis);
 		manager.removeListener(lis);
-		verifyZeroInteractions(lis);
+		verifyNoInteractions(lis);
 	}
 
 	@Test

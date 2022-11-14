@@ -17,17 +17,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.stream.Stream;
 
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.Path;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 
 public class FileBasedErrorParserTests extends GenericErrorParserTests {
-	@ParameterizedTest
-	@MethodSource("provideFilenames")
 	public void testErrorsInFiles(File errorFile) throws IOException {
 		InputStream stream = new FileInputStream(errorFile);
 
@@ -35,9 +30,12 @@ public class FileBasedErrorParserTests extends GenericErrorParserTests {
 		stream.close();
 	}
 
-	public static Stream<Arguments> provideFilenames() {
+	@Test
+	public void test() throws IOException {
 		File dir = CTestPlugin.getDefault().getFileInPlugin(new Path("resources/errortests/"));
 		File[] testsfiles = dir.listFiles();
-		return Stream.of(testsfiles).map(Arguments::of);
+		for (File file : testsfiles) {
+			testErrorsInFiles(file);
+		}
 	}
 }

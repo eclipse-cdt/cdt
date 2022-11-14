@@ -39,7 +39,7 @@ Require-Bundle: org.eclipse.jface.text,
  org.eclipse.ltk.ui.refactoring,
  org.eclipse.osgi,
  org.eclipse.e4.core.contexts;bundle-version="[1.8.300,2.0.0)",
- org.mockito,
+ org.mockito.mockito-core,
  org.hamcrest.core,
  org.hamcrest.library
 Bundle-ActivationPolicy: lazy

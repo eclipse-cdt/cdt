@@ -76,6 +76,12 @@ This should allow ISV's to create MBS based project with a vendor-specific build
 The binary parser classes which open binary files now implement AutoCloseable so they can (and should) be used in a try-with-resources block.
 See https://github.com/eclipse-cdt/cdt/pull/132
 
+## Core Build tool chains can now return multiple binary parsers
+
+The `ICBuildConfiguration` and `IToolChain` interfaces now have a method, `getBinaryParserIds` that allows a build configuration or tool chain to return multiple binary parsers.
+
+See https://github.com/eclipse-cdt/cdt/pull/75
+
 # Bugs Fixed in this Release
 
 See [GitHub milestones](https://github.com/eclipse-cdt/cdt/milestone/2?closed=1) and for bugs that haven't been transitioned to GitHub please see Bugzilla report [Bugs Fixed in CDT 11.0](https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&classification=Tools&product=CDT&query_format=advanced&resolution=FIXED&target_milestone=11.0.0).

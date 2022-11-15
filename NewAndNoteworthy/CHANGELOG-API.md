@@ -16,8 +16,7 @@ This section describes API removals that occurred in past releases, and upcoming
 - [Removal of Qt plug-ins and features](#qt-plugins)
 - [Removal of constructor org.eclipse.cdt.utils.coff.CodeViewReader(RandomAccessFile, int, boolean)](#CodeViewReader-constructor-removal)
 - [Removal of 32-bit Binary parsers with 64-bit replacements](#32bitbinaryparsers)
-- [Removal of method to get a single binary parser ID (ICBuildConfiguration.getBinaryParserId()) and replaced with method that returns a list of binary parser IDs (ICBuildConfiguration.getBinaryParserIds())](#getBinaryParserId)
-- [Removal of method to get a single binary parser ID (IToolChain.getBinaryParserId()) and replaced with method that returns a list of binary parser IDs (IToolChain.getBinaryParserIds())](#getBinaryParserId)
+- [Removal of single entry binary parser ID methods](#getBinaryParserId)
 
 ## API Changes in CDT 10.5.0
 
@@ -211,6 +210,15 @@ In addition the following methods have been removed due to there existing a 64-b
 - org.eclipse.cdt.utils.debug.stabs.Stabs.init(PE), use init(PE64) method instead
 
 See https://github.com/eclipse-cdt/cdt/pull/135
+
+### <span id="getBinaryParserId">Removal of single entry binary parser ID methods</span>
+
+To support tool chains having multiple binary parsers the singular return value methods have been replaced with versions returning lists. The following methods have been removed
+
+- `ICBuildConfiguration.getBinaryParserId()` replaced with `ICBuildConfiguration.getBinaryParserIds()`
+- `IToolChain.getBinaryParserId()` replaced with `IToolChain.getBinaryParserIds()`
+
+See https://github.com/eclipse-cdt/cdt/pull/75
 
 ---
 

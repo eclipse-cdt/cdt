@@ -6,6 +6,13 @@ This is the New & Noteworthy page for CDT 11.0 which is part of Eclipse 2022-12 
 
 # Release Notes
 
+## GitHub
+
+The Eclipse CDT project is now hosted on GitHub.
+[Eclipse CDT's GitHub Repo](https://github.com/eclipse-cdt/cdt) is the primary source for the CDT project and all other resources (Bugzilla, Gerrit, Wiki) have migrated to GitHub.
+Please see the [Git Hub Migration](https://github.com/eclipse-cdt/cdt/blob/main/GitHubMigration.md) for detailed information and the tracking issue https://github.com/eclipse-cdt/cdt/issues/32 for discussion and the TODO list.
+
+
 ## Java 17
 
 Jave 17 is now required to build and run Eclipse CDT. See https://github.com/eclipse-cdt/cdt/issues/80

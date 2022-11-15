@@ -205,13 +205,8 @@ public class MSVCToolChain extends PlatformObject implements IToolChain {
 	}
 
 	@Override
-	public String getBinaryParserId() {
-		return CCorePlugin.PLUGIN_ID + ".PE64"; //$NON-NLS-1$
-	}
-
-	@Override
 	public List<String> getBinaryParserIds() {
-		return List.of(getBinaryParserId());
+		return List.of(CCorePlugin.PLUGIN_ID + ".PE64"); //$NON-NLS-1$
 	}
 
 	@Override

@@ -16,6 +16,8 @@ This section describes API removals that occurred in past releases, and upcoming
 - [Removal of Qt plug-ins and features](#qt-plugins)
 - [Removal of constructor org.eclipse.cdt.utils.coff.CodeViewReader(RandomAccessFile, int, boolean)](#CodeViewReader-constructor-removal)
 - [Removal of 32-bit Binary parsers with 64-bit replacements](#32bitbinaryparsers)
+- [Removal of method to get a single binary parser ID (ICBuildConfiguration.getBinaryParserId()) and replaced with method that returns a list of binary parser IDs (ICBuildConfiguration.getBinaryParserIds())](#getBinaryParserId)
+- [Removal of method to get a single binary parser ID (IToolChain.getBinaryParserId()) and replaced with method that returns a list of binary parser IDs (IToolChain.getBinaryParserIds())](#getBinaryParserId)
 
 ## API Changes in CDT 10.5.0
 

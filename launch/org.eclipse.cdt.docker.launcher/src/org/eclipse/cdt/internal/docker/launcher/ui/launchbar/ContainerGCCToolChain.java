@@ -170,8 +170,8 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 	}
 
 	@Override
-	public String getBinaryParserId() {
-		return CCorePlugin.PLUGIN_ID + ".ELF"; //$NON-NLS-1$
+	public List<String> getBinaryParserIds() {
+		return List.of(CCorePlugin.PLUGIN_ID + ".ELF"); //$NON-NLS-1$
 	}
 
 	protected void addDiscoveryOptions(List<String> command) {
@@ -645,5 +645,4 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 
 		return p;
 	}
-
 }

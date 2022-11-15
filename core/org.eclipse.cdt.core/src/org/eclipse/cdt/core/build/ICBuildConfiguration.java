@@ -80,17 +80,6 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 *
 	 * @return binary parser ids
 	 * @throws CoreException
-	 * @deprecated As of 8.0 replaced by {@link ICBuildConfiguration#getBinaryParserIds}
-	 */
-	@Deprecated(since = "8.0")
-	String getBinaryParserId() throws CoreException;
-
-	/**
-	 * Ids for the Binary Parsers to use when checking whether a file is a
-	 * binary that can be launched.
-	 *
-	 * @return binary parser ids
-	 * @throws CoreException
 	 * @since 8.0
 	 */
 	List<String> getBinaryParserIds() throws CoreException;

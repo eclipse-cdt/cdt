@@ -132,12 +132,6 @@ public class ErrorBuildConfiguration extends PlatformObject implements ICBuildCo
 	}
 
 	@Override
-	public String getBinaryParserId() throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IEnvironmentVariable getVariable(String name) throws CoreException {
 		// TODO Auto-generated method stub
 		return null;

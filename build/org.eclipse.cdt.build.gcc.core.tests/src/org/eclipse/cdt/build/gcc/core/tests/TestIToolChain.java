@@ -8,7 +8,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.core.build;
+package org.eclipse.cdt.build.gcc.core.tests;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.build.gcc.core.GCCToolChain;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
+import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
-import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,7 +66,8 @@ public class TestIToolChain {
 	}
 
 	/**
-	 * Tests that IToolChain.getBinaryParserIds() can return a list of Binary Parser IDs.
+	 * Tests that IToolChain.getBinaryParserIds() can return a list of Binary Parser
+	 * IDs.
 	 */
 	@Test
 	public void getBinaryParserIdsTest01() throws Exception {
@@ -75,7 +78,7 @@ public class TestIToolChain {
 		}
 
 		// Get our test toolchain.
-		Map props = new HashMap<String, String>();
+		Map<String, String> props = new HashMap<>();
 		props.put(IToolChain.ATTR_OS, "testOs");
 		props.put(IToolChain.ATTR_ARCH, "testArch");
 		Collection<IToolChain> testTcs = toolchainMgr.getToolChainsMatching(props);
@@ -114,7 +117,7 @@ public class TestIToolChain {
 	}
 
 	private static <T> T getService(Class<T> serviceClass) {
-		BundleContext bundleContext = FrameworkUtil.getBundle(CTestPlugin.class).getBundleContext();
+		BundleContext bundleContext = FrameworkUtil.getBundle(TestIToolChain.class).getBundleContext();
 		ServiceReference<T> serviceReference = bundleContext.getServiceReference(serviceClass);
 		return bundleContext.getService(serviceReference);
 	}

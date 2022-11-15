@@ -220,8 +220,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		properties.put(key, value);
 	}
 
-	@Override
-	public String getBinaryParserId() {
+	private String getBinaryParserId() {
 		// Assume local builds
 		// TODO be smarter and use the id which should be the target
 		switch (Platform.getOS()) {

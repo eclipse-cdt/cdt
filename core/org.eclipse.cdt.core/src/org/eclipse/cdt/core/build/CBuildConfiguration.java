@@ -212,11 +212,6 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	}
 
 	@Override
-	public String getBinaryParserId() throws CoreException {
-		return toolChain != null ? toolChain.getBinaryParserId() : CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID;
-	}
-
-	@Override
 	public List<String> getBinaryParserIds() throws CoreException {
 		return toolChain != null ? toolChain.getBinaryParserIds() : List.of(CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID);
 	}

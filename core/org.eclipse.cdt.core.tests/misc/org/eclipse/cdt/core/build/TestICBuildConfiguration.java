@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -23,12 +24,28 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Tests for org.eclipse.cdt.core.build.ICBuildConfiguration
  */
 public class TestICBuildConfiguration {
+	private IProject testProject = null;
+
+	@Before
+	public void setup() throws Exception {
+		testProject = getProject();
+		assertNotNull("Test project must not be null", testProject);
+	}
+
+	@After
+	public void shutdown() throws Exception {
+		if (testProject != null) {
+			testProject.delete(true, true, new NullProgressMonitor());
+		}
+	}
 
 	/**
 	 * Tests that ICBuildConfiguration.getBinaryParserIds() meets API. <br>
@@ -38,8 +55,7 @@ public class TestICBuildConfiguration {
 	 */
 	@Test
 	public void getBinaryParserIdsTest00() throws Exception {
-		IProject proj = getProject();
-		IBuildConfiguration[] buildConfigs = proj.getBuildConfigs();
+		IBuildConfiguration[] buildConfigs = testProject.getBuildConfigs();
 		assertNotNull(buildConfigs, "Must not be null");
 		assertNotEquals(0, buildConfigs.length, "Must not be empty");
 		IBuildConfiguration buildConfig = buildConfigs[0];

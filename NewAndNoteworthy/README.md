@@ -50,7 +50,7 @@ This may lead to some minor rendering issues that hopefully do not detract too m
 
 ## API Changes
 
-The Eclipse CDT project announces and tracks breaking API changes in [CHANGELOG-API][CHANGELOG-API.md].
+The Eclipse CDT project announces and tracks breaking API changes in [CHANGELOG-API](CHANGELOG-API.md).
 
 <details>
 <summary>How to write a New & Noteworthy entry</summary>

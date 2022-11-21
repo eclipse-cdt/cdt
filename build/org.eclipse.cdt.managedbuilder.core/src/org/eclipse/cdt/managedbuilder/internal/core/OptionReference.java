@@ -927,6 +927,11 @@ public class OptionReference implements IOption {
 	}
 
 	@Override
+	public boolean isExcludedFromScannerDiscovery() {
+		return option.isExcludedFromScannerDiscovery();
+	}
+
+	@Override
 	public ITreeRoot getTreeRoot() {
 		if (!resolved) {
 			resolveReferences();

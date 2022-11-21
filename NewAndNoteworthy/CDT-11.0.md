@@ -34,6 +34,28 @@ Please see the corresponding issue for more details.
   - `org.eclipse.cdt.lsp.cquery`
   - `org.eclipse.cdt.lsp.ui`
 
+# Build
+
+## Scanner Discovery able to consider all flags
+
+By default CDT only considers some other compile flags when computing the compiler built-in includes and macros.
+To have CDT consider all compiler flags when computing the compiler built-in includes and macros the `${ALL_FLAGS}` can be specified in  _Command to get compiler specs:_.
+
+For example, when `-ansi` is passed to GCC, the `__STRICT_ANSI__` macros is defined.
+For CDT to know that, the `-ansi` needs to be passed to GCC when collecting the compiler built-ins, sometimes in CDT called "scanning" or "compiler specs".
+If you code with, for example, `#ifdef __STRICT_ANSI__` it will be highlighted correctly only if CDT knows about it.
+Therefore in this situation it may be best to use this new feature.
+
+To enable using all flags when calculating built-ins, change the default `${FLAGS}` to `${ALL_FLAGS}` in _Project Properties_ -\> _C/C++ General_ -\> _Preprocessor Include Paths, Macros etc._ -\> _Providers_ tab -\> _CDT GCC Built-in Compiler Settings_ -\> _Command to get compiler specs:_.
+
+<p align="center"><img src="images/CDT-11.0-all-flags.png" width="50%"></p>
+
+If your compiler has a command line option that interferes with scanner discovery, it can be declared as such in the `plugin.xml` (see below) or entered into the _Other flags (excluded from discovery)_ option in the _Miscellaneous_ of build settings.
+
+See the online help sections on [scanner discovery](https://help.eclipse.org/latest/topic/org.eclipse.cdt.doc.user/concepts/cdt_c_scanner_discovery.htm) and [scanner discovery preferences](https://help.eclipse.org/latest/topic/org.eclipse.cdt.doc.user/reference/cdt_u_pref_build_scanner_discovery.htm) for more information on scanner discovery.
+
+See https://github.com/eclipse-cdt/cdt/pull/158.
+
 # Debug
 
 ## C/C++ Dynamic Printf Breakpoints
@@ -81,6 +103,13 @@ See https://github.com/eclipse-cdt/cdt/pull/132
 The `ICBuildConfiguration` and `IToolChain` interfaces now have a method, `getBinaryParserIds` that allows a build configuration or tool chain to return multiple binary parsers.
 
 See https://github.com/eclipse-cdt/cdt/pull/75
+
+## Exclude from scanner discovery flag for options
+
+`IOption` has a new flag called `isExcludedFromScannerDiscovery`.
+This flag can be set on options to exclude them from scanner discovery when using the new `${ALL_FLAGS}` variable.
+
+See https://github.com/eclipse-cdt/cdt/pull/158.
 
 # Bugs Fixed in this Release
 

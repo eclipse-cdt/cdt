@@ -9602,6 +9602,21 @@
                   valueType="string">
             </option>
             <option
+                  command="-not-excluded-from-scanner-discovery"
+                  id="cdt.managedbuilder.lsp.tests.option.not-excluded-sd"
+                  isAbstract="false"
+                  resourceFilter="all"
+                  valueType="string">
+            </option>
+            <option
+                  command="-is-excluded-from-scanner-discovery"
+                  id="cdt.managedbuilder.lsp.tests.option.is-excluded-sd"
+                  isAbstract="false"
+                  resourceFilter="all"
+                  excludeFromScannerDiscovery="true"
+                  valueType="string">
+            </option>
+            <option
                   command="-bool-option"
                   defaultValue="true"
                   id="cdt.managedbuilder.lsp.tests.option.bool"

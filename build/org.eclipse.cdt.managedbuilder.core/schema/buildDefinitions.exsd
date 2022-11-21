@@ -1410,7 +1410,14 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="useByScannerDiscovery" type="boolean">
             <annotation>
                <documentation>
-                  An optional field to allow the option additionally to be passed to scanner discovery of built-in compiler macros and paths. The default is false.
+                  An optional field to allow the option additionally to be passed to scanner discovery of built-in compiler macros and paths in the ${FLAGS} variable. The default is false.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="excludeFromScannerDiscovery" type="boolean">
+            <annotation>
+               <documentation>
+                  An optional field to allow the option to be excluded from scanner discovery's ${ALL_FLAGS} variable. The default is false.
                </documentation>
             </annotation>
          </attribute>

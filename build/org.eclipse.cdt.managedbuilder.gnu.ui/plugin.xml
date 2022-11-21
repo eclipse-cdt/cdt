@@ -1441,6 +1441,15 @@
 			  valueType="string">
 		  </option>
 		  <option
+			  defaultValue=""
+			  name="%Option.OtherFlagsExcludedFromScannerDiscovery"
+			  tip="%Option.OtherFlagsExcludedFromScannerDiscoveryTip"
+			  category="gnu.c.compiler.category.other"
+			  id="gnu.c.compiler.option.misc.otherExcludedFromScannerDiscovery"
+			  excludeFromScannerDiscovery="true"
+			  valueType="string">
+		  </option>
+		  <option
 			  defaultValue="false"
 			  name="%Option.Posix.Verbose"
 			  category="gnu.c.compiler.category.other"
@@ -2034,6 +2043,15 @@
 			  name="%Option.OtherFlags"
 			  category="gnu.cpp.compiler.category.other"
 			  id="gnu.cpp.compiler.option.other.other"
+			  valueType="string">
+		  </option>
+		  <option
+			  defaultValue=""
+			  name="%Option.OtherFlagsExcludedFromScannerDiscovery"
+			  tip="%Option.OtherFlagsExcludedFromScannerDiscoveryTip"
+			  category="gnu.cpp.compiler.category.other"
+			  id="gnu.cpp.compiler.option.other.otherExcludedFromScannerDiscovery"
+			  excludeFromScannerDiscovery="true"
 			  valueType="string">
 		  </option>
 		  <option

@@ -569,7 +569,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	 */
 	protected void setOption(IOption op1, IOption op2, IHoldsOptions dst, IResourceInfo res) {
 		try {
-			if (op1.isForScannerDiscovery() && ((Option) op1).isDirty())
+			if (((Option) op1).isDirty())
 				isIndexerAffected = true;
 			switch (op1.getValueType()) {
 			case IOption.BOOLEAN:
@@ -596,8 +596,6 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			case IOption.UNDEF_LIBRARY_PATHS:
 			case IOption.UNDEF_LIBRARY_FILES:
 			case IOption.UNDEF_MACRO_FILES:
-				if (((Option) op1).isDirty())
-					isIndexerAffected = true;
 				@SuppressWarnings("unchecked")
 				String[] data = ((List<String>) op1.getValue()).toArray(new String[0]);
 				ManagedBuildManager.setOption(res, dst, op2, data);
@@ -793,28 +791,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			IOption op1[] = t.getOptions();
 			for (IOption op : op1) {
 				if (((Option) op).isDirty()) {
-					if (op.isForScannerDiscovery())
-						isIndexerAffected = true;
-					else {
-						try {
-							switch (op.getValueType()) {
-							case IOption.INCLUDE_PATH:
-							case IOption.PREPROCESSOR_SYMBOLS:
-							case IOption.INCLUDE_FILES:
-							case IOption.MACRO_FILES:
-							case IOption.UNDEF_INCLUDE_PATH:
-							case IOption.UNDEF_PREPROCESSOR_SYMBOLS:
-							case IOption.UNDEF_INCLUDE_FILES:
-							case IOption.UNDEF_LIBRARY_PATHS:
-							case IOption.UNDEF_LIBRARY_FILES:
-							case IOption.UNDEF_MACRO_FILES:
-								isIndexerAffected = true;
-								break;
-							}
-						} catch (BuildException e) {
-							// Do nothing
-						}
-					}
+					isIndexerAffected = true;
 				}
 			}
 		}

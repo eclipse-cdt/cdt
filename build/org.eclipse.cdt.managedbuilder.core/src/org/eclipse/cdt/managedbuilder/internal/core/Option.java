@@ -81,6 +81,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	private IOptionCommandGenerator commandGenerator;
 	private String commandFalse;
 	private Boolean isForScannerDiscovery;
+	private Boolean isExcludedFromScannerDiscovery;
 	private String tip;
 	private String contextId;
 	private List<String> applicableValuesList;
@@ -223,6 +224,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		}
 		if (option.isForScannerDiscovery != null) {
 			isForScannerDiscovery = option.isForScannerDiscovery;
+		}
+		if (option.isExcludedFromScannerDiscovery != null) {
+			isExcludedFromScannerDiscovery = option.isExcludedFromScannerDiscovery;
 		}
 		if (option.tip != null) {
 			tip = option.tip;
@@ -405,6 +409,12 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			isForScannerDiscovery = Boolean.parseBoolean(isForSD);
 		}
 
+		// isNotForScannerDiscovery
+		String isExcludeFromSD = element.getAttribute(EXCLUDE_FROM_SCANNER_DISCOVERY);
+		if (isExcludeFromSD != null) {
+			isExcludedFromScannerDiscovery = Boolean.parseBoolean(isExcludeFromSD);
+		}
+
 		// Get the tooltip for the option
 		tip = SafeStringInterner.safeIntern(element.getAttribute(TOOL_TIP));
 
@@ -575,6 +585,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			String isForSD = element.getAttribute(USE_BY_SCANNER_DISCOVERY);
 			if (isForSD != null) {
 				isForScannerDiscovery = Boolean.parseBoolean(isForSD);
+			}
+		}
+
+		// isNotForScannerDiscovery
+		if (element.getAttribute(EXCLUDE_FROM_SCANNER_DISCOVERY) != null) {
+			String isExcludeFromSD = element.getAttribute(EXCLUDE_FROM_SCANNER_DISCOVERY);
+			if (isExcludeFromSD != null) {
+				isForScannerDiscovery = Boolean.parseBoolean(isExcludeFromSD);
 			}
 		}
 
@@ -885,6 +903,10 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 		if (isForScannerDiscovery != null) {
 			element.setAttribute(USE_BY_SCANNER_DISCOVERY, isForScannerDiscovery.toString());
+		}
+
+		if (isExcludedFromScannerDiscovery != null) {
+			element.setAttribute(EXCLUDE_FROM_SCANNER_DISCOVERY, isExcludedFromScannerDiscovery.toString());
 		}
 
 		if (tip != null) {
@@ -1379,6 +1401,14 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			isForScannerDiscovery = superClass != null && superClass.isForScannerDiscovery();
 		}
 		return isForScannerDiscovery;
+	}
+
+	@Override
+	public boolean isExcludedFromScannerDiscovery() {
+		if (isExcludedFromScannerDiscovery == null) {
+			isExcludedFromScannerDiscovery = superClass != null && superClass.isExcludedFromScannerDiscovery();
+		}
+		return isExcludedFromScannerDiscovery;
 	}
 
 	@Override

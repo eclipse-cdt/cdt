@@ -54,6 +54,7 @@ public class Messages extends NLS {
 	public static String AbstractPage_7;
 	public static String AbstractPage_8;
 	public static String AbstractPage_9;
+	public static String AbstractPage_Rebuild_Index;
 	public static String AbstractPage_rebuildIndex_question;
 	public static String BinaryParsTab_0;
 	public static String BrowseEntryDialog_dir_title_add;

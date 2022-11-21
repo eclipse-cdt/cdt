@@ -183,6 +183,8 @@ Language settings providers can have options that affect the behavior of a provi
 				<ul>
 					<li><strong>${COMMAND}</strong> - compiler command from the tool-chain, such as "gcc".</li>
 					<li><strong>${FLAGS}</strong> - applicable compiler flags from the tool-chain, such as language dialect flag "-std=c++0x".</li>
+					<li><strong>${ALL_FLAGS}</strong> - all compiler flags from the tool-chain, except those explicity excluded, 
+						either by tool provider or by being entered in the "Other flags (excluded from discovery)" in the "Miscellaneous" tool page. </li>
 					<li><strong>${INPUTS}</strong> - indicates normally an empty specs file required by the compiler.
 						If no such file exists the file gets created temporarily in Eclipse workspace plugin area.
 					</li>

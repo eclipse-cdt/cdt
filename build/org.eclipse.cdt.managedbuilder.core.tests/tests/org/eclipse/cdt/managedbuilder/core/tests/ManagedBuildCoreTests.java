@@ -34,9 +34,6 @@ import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.junit.Assert;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 public class ManagedBuildCoreTests extends BaseTestCase {
 	private static IProjectType exeType;
 	private static IProjectType libType;
@@ -44,14 +41,6 @@ public class ManagedBuildCoreTests extends BaseTestCase {
 
 	public ManagedBuildCoreTests(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ManagedBuildCoreTests.class.getName());
-		suite.addTest(new ManagedBuildCoreTests("testLoadManifest"));
-		suite.addTest(new ManagedBuildCoreTests("testTreeOptions"));
-		suite.addTest(new ManagedBuildCoreTests("testOptionsAttributeUseByScannerDiscovery"));
-		return suite;
 	}
 
 	/**
@@ -672,5 +661,20 @@ public class ManagedBuildCoreTests extends BaseTestCase {
 		IOption option = ManagedBuildManager.getExtensionOption("cdt.managedbuilder.lsp.tests.option.string");
 		assertNotNull(option);
 		assertEquals(true, option.isForScannerDiscovery());
+	}
+
+	/**
+	 * Tests attribute excludedFromScannerDiscovery.
+	 * @throws Exception
+	 */
+	public void testExcludedFromScannerDiscovery() throws Exception {
+		IOption optionNotExcludedFromSD = ManagedBuildManager
+				.getExtensionOption("cdt.managedbuilder.lsp.tests.option.not-excluded-sd");
+		assertNotNull(optionNotExcludedFromSD);
+		assertEquals(false, optionNotExcludedFromSD.isExcludedFromScannerDiscovery());
+
+		IOption option = ManagedBuildManager.getExtensionOption("cdt.managedbuilder.lsp.tests.option.is-excluded-sd");
+		assertNotNull(option);
+		assertEquals(true, option.isExcludedFromScannerDiscovery());
 	}
 } // end class

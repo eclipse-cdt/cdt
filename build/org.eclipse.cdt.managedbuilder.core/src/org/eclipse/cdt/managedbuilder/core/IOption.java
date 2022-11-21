@@ -106,6 +106,8 @@ public interface IOption extends IBuildObject {
 	public static final String COMMAND_FALSE = "commandFalse"; //$NON-NLS-1$
 	/** @since 8.3 */
 	public static final String USE_BY_SCANNER_DISCOVERY = "useByScannerDiscovery"; //$NON-NLS-1$
+	/** @since 9.5 */
+	public static final String EXCLUDE_FROM_SCANNER_DISCOVERY = "excludeFromScannerDiscovery"; //$NON-NLS-1$
 	/** @since 8.0 */
 	public static final String COMMAND_GENERATOR = "commandGenerator"; //$NON-NLS-1$
 	public static final String TOOL_TIP = "tip"; //$NON-NLS-1$
@@ -629,6 +631,15 @@ public interface IOption extends IBuildObject {
 	 * @since 8.3
 	 */
 	public boolean isForScannerDiscovery();
+
+	/**
+	 * Flag to indicate whether the option should be excluded from scanner discovery.
+	 * @return {@code true} if the option should never be passed to scanner discovery command
+	 *    or {@code false} otherwise.
+	 *
+	 * @since 9.5
+	 */
+	public boolean isExcludedFromScannerDiscovery();
 
 	/**
 	 * Returns the tree root of this option if it is of type {@link #TREE}

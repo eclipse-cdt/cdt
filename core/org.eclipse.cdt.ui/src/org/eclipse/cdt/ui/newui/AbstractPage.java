@@ -751,7 +751,8 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		final String title = getTitle();
 		final String msg = Messages.AbstractPage_rebuildIndex_question;
 		int result = OptionalMessageDialog.open(PREF_ASK_REINDEX, shell, title, null /* default image */, msg,
-				MessageDialog.QUESTION, new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL }, 0);
+				MessageDialog.QUESTION, new String[] { Messages.AbstractPage_Rebuild_Index, IDialogConstants.NO_LABEL },
+				0);
 		if (result == OptionalMessageDialog.NOT_SHOWN) {
 			result = OptionalMessageDialog.getDialogDetail(PREF_ASK_REINDEX);
 		} else if (result != SWT.DEFAULT) {

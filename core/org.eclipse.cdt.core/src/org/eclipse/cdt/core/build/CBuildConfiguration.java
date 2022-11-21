@@ -106,7 +106,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	private static final List<String> DEFAULT_COMMAND = new ArrayList<>(0);
 
-	private final Map<IResource, IToolChain> tcMap = new HashMap<IResource, IToolChain>();
+	private final Map<IResource, IToolChain> tcMap = new HashMap<>();
 
 	private final String name;
 	private final IBuildConfiguration config;

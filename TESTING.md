@@ -89,3 +89,31 @@ To take advantage of new features, such as excluding flaky and slow tests, indiv
 - refactor complicated uses of TestSuites in JUnit3 that were workarounds for the lack of JUnit features like `@BeforeAll` and `@AfterAll`.
 - add `@Test` annotation (make sure to use `org.junit.jupiter.api.Test` and not JUnit4's `org.junit.Test`)
 - statically import assert methods from `org.junit.jupiter.api.Assertions` (note that in JUnit5 the message is now last instead of first, this generally leads to an error by changing the imports, except in the case of `assertEquals` where the first and third parameter are `String`)
+
+## Running GUI tests in the background (Linux only)
+
+When running tests that have a UI the test runs can interfere with using your computer.
+To avoid this, a dedicated `DISPLAY` can be used by the tests to run them in a way that does not interfere.
+Using Xvfb we can create an in memory only X-Server, this is what the test machines do.
+
+One time set-up:
+
+```sh
+sudo apt install xvfb # or see your distribution for install instructions
+```
+
+Create the X-Server on `99`:
+
+```sh
+Xvfb -ac :99 -screen 0 1280x1024x24 &
+```
+
+Then when running tests, use `DISPLAY=:99` as a prefix to the command, like this:
+
+```sh
+DISPLAY=:99 mvn verify
+```
+
+or specify the `DISPLAY` in the Eclipse JUnit launch configuration:
+
+![junit_env_display.png](images/junit_env_display.png "screenshot of how to set custom DISPLAY")

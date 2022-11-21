@@ -316,6 +316,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 * Get the toolchain based on the compiler found in the command line.
 	 * Sub-classes can override this method to set their own method for
 	 * getting the toolchain.
+	 * @since 8.0
 	 *
 	 */
 	protected IToolChain getToolChain(List<String> command) throws CoreException {

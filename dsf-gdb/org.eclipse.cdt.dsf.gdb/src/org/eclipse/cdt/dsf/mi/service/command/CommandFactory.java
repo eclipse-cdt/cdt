@@ -135,6 +135,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetDisconnectedTraci
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetHostCharset;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetLanguage;
+import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetMIAsync;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNewConsole;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetNonStop;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIGDBSetPagination;
@@ -893,6 +894,11 @@ public class CommandFactory {
 
 	public ICommand<MIInfo> createMIGDBSetTargetAsync(ICommandControlDMContext ctx, boolean isSet) {
 		return new MIGDBSetTargetAsync(ctx, isSet);
+	}
+
+	/** @since 7.0 */
+	public ICommand<MIInfo> createMIGDBSetMIAsync(ICommandControlDMContext ctx, boolean isSet) {
+		return new MIGDBSetMIAsync(ctx, isSet);
 	}
 
 	/** @since 4.4 */

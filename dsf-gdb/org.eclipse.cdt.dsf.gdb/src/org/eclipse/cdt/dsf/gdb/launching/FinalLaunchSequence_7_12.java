@@ -115,7 +115,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 			asyncOn = true;
 		}
 
-		fCommandControl.queueCommand(fCommandFactory.createMIGDBSetTargetAsync(fCommandControl.getContext(), asyncOn),
+		fCommandControl.queueCommand(fCommandFactory.createMIGDBSetMIAsync(fCommandControl.getContext(), asyncOn),
 				new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor) {
 					@Override
 					protected void handleError() {

@@ -246,7 +246,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	// {badXML6}
 	// <cdtprojectproperties>
 	// <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
-	// <language name="GNU C++">
+	// <language name="C++">
 	// <macro>
 	// <name>aaaa</name>
 	// </macro>
@@ -257,7 +257,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	// {badXML7}
 	// <cdtprojectproperties>
 	// <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
-	// <language name="GNU C++">
+	// <language name="C++">
 	// <macro>
 	// <name>aaaa</name><value></value><value></value>
 	// </macro>
@@ -268,7 +268,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	// {badXML8}
 	// <cdtprojectproperties>
 	// <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePaths">
-	// <language name="GNU C++">
+	// <language name="C++">
 	// <includepath>C:\WINDOWS</includepath><invalid></invalid>
 	// </language>
 	// </section>

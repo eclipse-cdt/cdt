@@ -36,7 +36,8 @@ Please see the corresponding issue for more details.
 
 ## GNU removed from display name language for C/C++
 
-C and C++ have been renamed from "GNU C" and "GNU C++" to just "C" and "C++". If you have exported settings with CDT prior to CDT 10.5 they may not import successfully with CDT 11. See #178
+C and C++ have been renamed from "GNU C" and "GNU C++" to just "C" and "C++". If you have exported settings with CDT prior to CDT 10.5 they may not import
+successfully with CDT 11. See #178
 
 # Build
 

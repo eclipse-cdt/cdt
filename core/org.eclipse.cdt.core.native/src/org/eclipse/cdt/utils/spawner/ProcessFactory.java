@@ -129,8 +129,7 @@ public class ProcessFactory {
 	 * @since 6.2
 	 */
 	public Process exec(String cmdarray[], String[] envp, File dir, int gracefulExitTimeMs) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		Process p = ProcessFactory2.exec(cmdarray, envp, dir);
+		Process p = exec(cmdarray, envp, dir);
 		return p;
 	}
 

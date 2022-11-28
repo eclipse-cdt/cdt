@@ -18,6 +18,7 @@ package org.eclipse.cdt.utils.spawner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.internal.core.natives.Messages;
@@ -64,15 +65,12 @@ public class ProcessFactory {
 	 */
 	@Deprecated
 	public Process exec(String cmd) throws IOException {
-		cmd = modifyCmdIfFlatpak(cmd);
-		String[] cmdarray = new String[] { cmd };
-		Process p = ProcessFactory2.exec(cmdarray, null, null);
+		Process p = exec(cmd, null, null);
 		return p;
 	}
 
 	public Process exec(String[] cmdarray) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		Process p = ProcessFactory2.exec(cmdarray, null, null);
+		Process p = exec(cmdarray, null, null);
 		return p;
 	}
 
@@ -80,14 +78,12 @@ public class ProcessFactory {
 	 * @since 6.2
 	 */
 	public Process exec(String[] cmdarray, int gracefulExitTimeMs) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		Process p = ProcessFactory2.exec(cmdarray, null, null);
+		Process p = exec(cmdarray, null, null);
 		return p;
 	}
 
 	public Process exec(String[] cmdarray, String[] envp) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		Process p = ProcessFactory2.exec(cmdarray, envp, null);
+		Process p = exec(cmdarray, envp, null);
 		return p;
 	}
 
@@ -95,8 +91,7 @@ public class ProcessFactory {
 	 * @since 6.2
 	 */
 	public Process exec(String[] cmdarray, String[] envp, int gracefulExitTimeMs) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		Process p = ProcessFactory2.exec(cmdarray, envp, null);
+		Process p = exec(cmdarray, envp, null);
 		return p;
 	}
 
@@ -105,9 +100,7 @@ public class ProcessFactory {
 	 */
 	@Deprecated
 	public Process exec(String cmd, String[] envp) throws IOException {
-		cmd = modifyCmdIfFlatpak(cmd);
-		String[] cmdarray = new String[] { cmd };
-		Process p = ProcessFactory2.exec(cmdarray, envp, null);
+		Process p = exec(cmd, envp, null);
 		return p;
 	}
 
@@ -117,8 +110,13 @@ public class ProcessFactory {
 	@Deprecated
 	public Process exec(String cmd, String[] envp, File dir) throws IOException {
 		cmd = modifyCmdIfFlatpak(cmd);
-		String[] cmdarray = new String[] { cmd };
-		Process p = ProcessFactory2.exec(cmdarray, envp, dir);
+		if (cmd.isEmpty())
+			throw new IllegalArgumentException("Empty command");
+		StringTokenizer st = new StringTokenizer(cmd);
+		String[] cmdarray = new String[st.countTokens()];
+		for (int i = 0; st.hasMoreTokens(); i++)
+			cmdarray[i] = st.nextToken();
+		Process p = exec(cmdarray, envp, dir);
 		return p;
 	}
 

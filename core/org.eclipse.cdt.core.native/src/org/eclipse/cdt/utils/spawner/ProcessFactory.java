@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Martin Oberhuber (Wind River) - [303083] Split out the Spawner
  *     Red Hat Inc. - add flatpak support
+ *     徐持恒 Xu Chiheng - call ProcessFactory2.exec(), which use ProcessBuilder to launch process
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
@@ -64,16 +65,15 @@ public class ProcessFactory {
 	@Deprecated
 	public Process exec(String cmd) throws IOException {
 		cmd = modifyCmdIfFlatpak(cmd);
-		if (hasSpawner)
-			return new Spawner(cmd);
-		return runtime.exec(cmd);
+		String[] cmdarray = new String[] { cmd };
+		Process p = ProcessFactory2.exec(cmdarray, null, null);
+		return p;
 	}
 
 	public Process exec(String[] cmdarray) throws IOException {
 		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray);
-		return runtime.exec(cmdarray);
+		Process p = ProcessFactory2.exec(cmdarray, null, null);
+		return p;
 	}
 
 	/**
@@ -81,16 +81,14 @@ public class ProcessFactory {
 	 */
 	public Process exec(String[] cmdarray, int gracefulExitTimeMs) throws IOException {
 		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, gracefulExitTimeMs);
-		return runtime.exec(cmdarray);
+		Process p = ProcessFactory2.exec(cmdarray, null, null);
+		return p;
 	}
 
 	public Process exec(String[] cmdarray, String[] envp) throws IOException {
 		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp);
-		return runtime.exec(cmdarray, envp);
+		Process p = ProcessFactory2.exec(cmdarray, envp, null);
+		return p;
 	}
 
 	/**
@@ -98,9 +96,8 @@ public class ProcessFactory {
 	 */
 	public Process exec(String[] cmdarray, String[] envp, int gracefulExitTimeMs) throws IOException {
 		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp, gracefulExitTimeMs);
-		return runtime.exec(cmdarray, envp);
+		Process p = ProcessFactory2.exec(cmdarray, envp, null);
+		return p;
 	}
 
 	/**
@@ -109,9 +106,9 @@ public class ProcessFactory {
 	@Deprecated
 	public Process exec(String cmd, String[] envp) throws IOException {
 		cmd = modifyCmdIfFlatpak(cmd);
-		if (hasSpawner)
-			return new Spawner(cmd, envp);
-		return runtime.exec(cmd, envp);
+		String[] cmdarray = new String[] { cmd };
+		Process p = ProcessFactory2.exec(cmdarray, envp, null);
+		return p;
 	}
 
 	/**
@@ -120,16 +117,15 @@ public class ProcessFactory {
 	@Deprecated
 	public Process exec(String cmd, String[] envp, File dir) throws IOException {
 		cmd = modifyCmdIfFlatpak(cmd);
-		if (hasSpawner)
-			return new Spawner(cmd, envp, dir);
-		return runtime.exec(cmd, envp, dir);
+		String[] cmdarray = new String[] { cmd };
+		Process p = ProcessFactory2.exec(cmdarray, envp, dir);
+		return p;
 	}
 
 	public Process exec(String cmdarray[], String[] envp, File dir) throws IOException {
 		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp, dir);
-		return runtime.exec(cmdarray, envp, dir);
+		Process p = ProcessFactory2.exec(cmdarray, envp, dir);
+		return p;
 	}
 
 	/**
@@ -137,9 +133,8 @@ public class ProcessFactory {
 	 */
 	public Process exec(String cmdarray[], String[] envp, File dir, int gracefulExitTimeMs) throws IOException {
 		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp, dir, gracefulExitTimeMs);
-		return runtime.exec(cmdarray, envp, dir);
+		Process p = ProcessFactory2.exec(cmdarray, envp, dir);
+		return p;
 	}
 
 	public Process exec(String cmdarray[], String[] envp, File dir, PTY pty) throws IOException {

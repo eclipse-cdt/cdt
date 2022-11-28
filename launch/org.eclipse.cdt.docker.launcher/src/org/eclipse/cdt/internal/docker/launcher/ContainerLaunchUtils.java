@@ -31,6 +31,8 @@ import org.eclipse.osgi.util.NLS;
 
 public class ContainerLaunchUtils {
 
+	private static final String LATEST = ":latest"; //$NON-NLS-1$
+
 	/**
 	 * Maps the local path, to a path that is used within a docker container.
 	 * @param path The host path
@@ -103,7 +105,7 @@ public class ContainerLaunchUtils {
 	 *
 	 */
 	public static @NonNull IStatus provideDockerImage(IProgressMonitor monitor, @NonNull final String connectionName,
-			@NonNull final String imageName) {
+			@NonNull String imageName) {
 
 		// Try to pull image, if necessary
 		final var connection = (IDockerConnection4) DockerConnectionManager.getInstance()
@@ -113,6 +115,12 @@ public class ContainerLaunchUtils {
 			// This is unlikely to happen, but who knows
 			return new Status(Status.ERROR, DockerLaunchUIPlugin.PLUGIN_ID,
 					NLS.bind(Messages.ContainerCommandLauncher_pullerr_noConn, imageName, connectionName));
+		}
+
+		// Make sure to not pull all images if no tag is found
+		// Nothing found -> -1 ; Make sure the : comes after the last /. If neither exists, both are -1.
+		if (imageName.lastIndexOf(':') <= imageName.lastIndexOf('/')) {
+			imageName = imageName + LATEST;
 		}
 
 		// See if the image already exists

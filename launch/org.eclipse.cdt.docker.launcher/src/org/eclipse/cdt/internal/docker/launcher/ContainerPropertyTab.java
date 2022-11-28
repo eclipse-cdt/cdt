@@ -310,7 +310,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 					final String nimg = currentText.substring(0, e.start) + e.text + currentText.substring(e.end);
 					var t = displayedImages.stream().filter(x -> x.repoTags().contains(nimg)).findAny().orElse(null);
 					// Set to 0 if it does not exist
-					setImageId(imageCombo.getText());
+					setImageId(nimg);
 					model.setSelectedImage(t);
 				}
 			});

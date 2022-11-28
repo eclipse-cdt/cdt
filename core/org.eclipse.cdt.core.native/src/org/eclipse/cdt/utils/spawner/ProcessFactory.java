@@ -109,7 +109,6 @@ public class ProcessFactory {
 	 */
 	@Deprecated
 	public Process exec(String cmd, String[] envp, File dir) throws IOException {
-		cmd = modifyCmdIfFlatpak(cmd);
 		if (cmd.isEmpty())
 			throw new IllegalArgumentException("Empty command");
 		StringTokenizer st = new StringTokenizer(cmd);

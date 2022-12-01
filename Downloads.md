@@ -7,6 +7,13 @@ The CDT can either be installed as part of the Eclipse C/C++ IDE packaged zip fi
 
 CDT can be used as a standalone debugger. Please See [Standalone Debugger on GitHub](https://github.com/eclipse-cdt/cdt/blob/main/StandaloneDebugger.md) and download the Eclipse C/C++ IDE from [main downloads site](https://www.eclipse.org/downloads/).
 
+Starting with CDT 11, the downloads information is part of the [release page](https://github.com/eclipse-cdt/cdt/releases). The older release information below is kept for historical significance.
+
+<details>
+  <summary>CDT 10.x release series</summary>
+  
+Please use the latest release available on the [release page](https://github.com/eclipse-cdt/cdt/releases) whenever possible. Old releases are not maintained and bug reports should be created on latest release.
+
 ### CDT 10.7.1 for Eclipse 2022-06
 
 Eclipse package: [Eclipse C/C++ IDE for 2022-06](https://www.eclipse.org/downloads/packages/release/2022-06/r/eclipse-ide-cc-developers) and run Check for Updates to get CDT 10.7.1.
@@ -130,6 +137,13 @@ Archived p2 repos:
 CDT also provides its debugger as a stand-alone RCP application which can be downloaded and installed on its own, from: <https://download.eclipse.org/tools/cdt/releases/10.0/cdt-10.0.0/rcp>
 
 The RCP stand-alone debugger has its own p2 software repository to be used within the RCP itself to upgrade it: <https://download.eclipse.org/tools/cdt/releases/10.0/cdt-10.0.0/rcp-repository> (CDT 10.0.1 does not include any changes to the stand-alone debugger and therefore there is no updated release for CDT 10.0.1)
+
+</details>
+  
+<details>
+  <summary>CDT 9.x release series</summary>
+  
+Please use the latest release available on the [release page](https://github.com/eclipse-cdt/cdt/releases) whenever possible. Old releases are not maintained and bug reports should be created on latest release.
 
 ### CDT 9.11.1 for Eclipse 2020-03 and 2020-06
 
@@ -311,6 +325,12 @@ Archived p2 repos:
 CDT also provides its debugger as a stand-alone RCP application which can be downloaded and installed on its own, from: <https://download.eclipse.org/tools/cdt/releases/9.2/r.1/rcp>
 
 The RCP stand-alone debugger has its own p2 software repository to be used within the RCP itself to upgrade it: <https://download.eclipse.org/tools/cdt/releases/9.2/r.1/rcp-repository>
+</details>
+  
+<details>
+  <summary>CDT 6.x - 8.x release series</summary>
+  
+Please use the latest release available on the [release page](https://github.com/eclipse-cdt/cdt/releases) whenever possible. Old releases are not maintained and bug reports should be created on latest release.
 
 ### CDT 8.8.1 for Eclipse Mars
 
@@ -385,7 +405,7 @@ Archived p2 repos:
 -   [cdt-master-8.0.2.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/indigo/dist/cdt-master-8.0.2.zip)
 -   [cdt-master-8.0.1.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/indigo/dist/cdt-master-8.0.1.zip)
 -   [cdt-master-8.0.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/indigo/dist/cdt-master-8.0.0.zip)
-
+  
 ### CDT 7.0.2 for Eclipse Helios
 
 Eclipse package: [Eclipse C/C++ IDE Helios SR2](https://www.eclipse.org/downloads/packages/eclipse-ide-cc-developers/heliossr2).
@@ -409,7 +429,13 @@ Archived p2 repos:
 -   [cdt-master-6.0.2.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/galileo/dist/cdt-master-6.0.2.zip)
 -   [cdt-master-6.0.1.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/galileo/dist/cdt-master-6.0.1.zip)
 -   [cdt-master-6.0.0.zip](https://www.eclipse.org/downloads/download.php?file=/tools/cdt/releases/galileo/dist/cdt-master-6.0.0.zip)
-
+</details>
+  
+<details>
+  <summary>CDT 0.x - 5.x release series</summary>
+ 
+  There is limited information preserved about these old releases. Some of the download files are available on <https://archive.eclipse.org/tools/cdt/releases/> and <https://archive.eclipse.org/tools/cdt/updates/>
+</details>
 ### Development Builds
 
 Development builds of the Eclipse C/C++ IDE can be found on the [Eclipse Downloads page](https://www.eclipse.org/downloads/packages/) by clicking on the Eclipse Developer Builds tab.

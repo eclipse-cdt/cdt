@@ -111,6 +111,10 @@ This flag can be set on options to exclude them from scanner discovery when usin
 
 See https://github.com/eclipse-cdt/cdt/pull/158.
 
+# Noteworthy Issues and Pull Requests
+
+See [Noteworthy issues and PRs](https://github.com/eclipse-cdt/cdt/issues?q=is%3Aclosed+label%3Anoteworthy+milestone%3A11.0.0) for this release in the issue/PR tracker.
+
 # Bugs Fixed in this Release
 
 See [GitHub milestones](https://github.com/eclipse-cdt/cdt/milestone/2?closed=1) and for bugs that haven't been transitioned to GitHub please see Bugzilla report [Bugs Fixed in CDT 11.0](https://bugs.eclipse.org/bugs/buglist.cgi?bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&classification=Tools&product=CDT&query_format=advanced&resolution=FIXED&target_milestone=11.0.0).

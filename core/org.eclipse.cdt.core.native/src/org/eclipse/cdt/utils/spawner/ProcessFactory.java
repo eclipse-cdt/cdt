@@ -44,7 +44,7 @@ public class ProcessFactory {
 
 		public Builder(String cmd) throws IOException {
 			if (cmd.isEmpty()) {
-				throw new IllegalArgumentException("Empty command");
+				throw new IllegalArgumentException("Empty command"); //$NON-NLS-1$
 			}
 			StringTokenizer st = new StringTokenizer(cmd);
 			this.cmdarray = new String[st.countTokens()];
@@ -54,7 +54,7 @@ public class ProcessFactory {
 
 		public Builder(String[] cmdarray) throws IOException {
 			if (cmdarray.length == 0 || cmdarray[0].isEmpty()) {
-				throw new IllegalArgumentException("Empty command");
+				throw new IllegalArgumentException("Empty command"); //$NON-NLS-1$
 			}
 			this.cmdarray = cmdarray;
 		}

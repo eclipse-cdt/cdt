@@ -17,6 +17,7 @@ package org.eclipse.cdt.utils.spawner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.StringTokenizer;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.internal.core.natives.Messages;
@@ -31,7 +32,82 @@ public class ProcessFactory {
 	static private ProcessFactory instance;
 	private boolean hasSpawner;
 	private Runtime runtime;
-	private final static String FLATPAK_CMD = "flatpak-spawn --host --watch-bus "; //$NON-NLS-1$
+
+	private class Builder {
+		String[] cmdarray;
+		String[] envp;
+		File dir;
+		boolean use_pty;
+		PTY pty;
+		boolean has_gracefulExitTimeMs;
+		int gracefulExitTimeMs;
+
+		public Builder(String cmd) throws IOException {
+			if (cmd.isEmpty()) {
+				throw new IllegalArgumentException("Empty command"); //$NON-NLS-1$
+			}
+			StringTokenizer st = new StringTokenizer(cmd);
+			this.cmdarray = new String[st.countTokens()];
+			for (int i = 0; st.hasMoreTokens(); i++)
+				this.cmdarray[i] = st.nextToken();
+		}
+
+		public Builder(String[] cmdarray) throws IOException {
+			if (cmdarray.length == 0 || cmdarray[0].isEmpty()) {
+				throw new IllegalArgumentException("Empty command"); //$NON-NLS-1$
+			}
+			this.cmdarray = cmdarray;
+		}
+
+		public Builder environment(String[] envp) {
+			this.envp = envp;
+			return this;
+		}
+
+		public Builder directory(File directory) {
+			this.dir = directory;
+			return this;
+		}
+
+		public Builder pty(PTY pty) {
+			this.use_pty = true;
+			this.pty = pty;
+			return this;
+		}
+
+		public Builder gracefulExitTimeMs(int gracefulExitTimeMs) {
+			this.has_gracefulExitTimeMs = true;
+			this.gracefulExitTimeMs = gracefulExitTimeMs;
+			return this;
+		}
+
+		public Process start() throws IOException {
+			cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
+			Process p;
+			if (hasSpawner) {
+				if (use_pty) {
+					if (has_gracefulExitTimeMs) {
+						p = new Spawner(cmdarray, envp, dir, pty, gracefulExitTimeMs);
+					} else {
+						p = new Spawner(cmdarray, envp, dir, pty);
+					}
+				} else {
+					if (has_gracefulExitTimeMs) {
+						p = new Spawner(cmdarray, envp, dir, gracefulExitTimeMs);
+					} else {
+						p = new Spawner(cmdarray, envp, dir);
+					}
+				}
+			} else {
+				if (use_pty || has_gracefulExitTimeMs) {
+					throw new UnsupportedOperationException(Messages.Util_exception_cannotCreatePty);
+				} else {
+					p = runtime.exec(cmdarray, envp, dir);
+				}
+			}
+			return p;
+		}
+	}
 
 	private ProcessFactory() {
 		hasSpawner = false;
@@ -63,44 +139,34 @@ public class ProcessFactory {
 	 */
 	@Deprecated
 	public Process exec(String cmd) throws IOException {
-		cmd = modifyCmdIfFlatpak(cmd);
-		if (hasSpawner)
-			return new Spawner(cmd);
-		return runtime.exec(cmd);
+		Process p = new Builder(cmd).start();
+		return p;
 	}
 
 	public Process exec(String[] cmdarray) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray);
-		return runtime.exec(cmdarray);
+		Process p = new Builder(cmdarray).start();
+		return p;
 	}
 
 	/**
 	 * @since 6.2
 	 */
 	public Process exec(String[] cmdarray, int gracefulExitTimeMs) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, gracefulExitTimeMs);
-		return runtime.exec(cmdarray);
+		Process p = new Builder(cmdarray).gracefulExitTimeMs(gracefulExitTimeMs).start();
+		return p;
 	}
 
 	public Process exec(String[] cmdarray, String[] envp) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp);
-		return runtime.exec(cmdarray, envp);
+		Process p = new Builder(cmdarray).environment(envp).start();
+		return p;
 	}
 
 	/**
 	 * @since 6.2
 	 */
 	public Process exec(String[] cmdarray, String[] envp, int gracefulExitTimeMs) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp, gracefulExitTimeMs);
-		return runtime.exec(cmdarray, envp);
+		Process p = new Builder(cmdarray).environment(envp).gracefulExitTimeMs(gracefulExitTimeMs).start();
+		return p;
 	}
 
 	/**
@@ -108,10 +174,8 @@ public class ProcessFactory {
 	 */
 	@Deprecated
 	public Process exec(String cmd, String[] envp) throws IOException {
-		cmd = modifyCmdIfFlatpak(cmd);
-		if (hasSpawner)
-			return new Spawner(cmd, envp);
-		return runtime.exec(cmd, envp);
+		Process p = new Builder(cmd).environment(envp).start();
+		return p;
 	}
 
 	/**
@@ -119,34 +183,27 @@ public class ProcessFactory {
 	 */
 	@Deprecated
 	public Process exec(String cmd, String[] envp, File dir) throws IOException {
-		cmd = modifyCmdIfFlatpak(cmd);
-		if (hasSpawner)
-			return new Spawner(cmd, envp, dir);
-		return runtime.exec(cmd, envp, dir);
+		Process p = new Builder(cmd).environment(envp).directory(dir).start();
+		return p;
 	}
 
 	public Process exec(String cmdarray[], String[] envp, File dir) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp, dir);
-		return runtime.exec(cmdarray, envp, dir);
+		Process p = new Builder(cmdarray).environment(envp).directory(dir).start();
+		return p;
 	}
 
 	/**
 	 * @since 6.2
 	 */
 	public Process exec(String cmdarray[], String[] envp, File dir, int gracefulExitTimeMs) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp, dir, gracefulExitTimeMs);
-		return runtime.exec(cmdarray, envp, dir);
+		Process p = new Builder(cmdarray).environment(envp).directory(dir).gracefulExitTimeMs(gracefulExitTimeMs)
+				.start();
+		return p;
 	}
 
 	public Process exec(String cmdarray[], String[] envp, File dir, PTY pty) throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp, dir, pty);
-		throw new UnsupportedOperationException(Messages.Util_exception_cannotCreatePty);
+		Process p = new Builder(cmdarray).environment(envp).directory(dir).pty(pty).start();
+		return p;
 	}
 
 	/**
@@ -154,17 +211,9 @@ public class ProcessFactory {
 	 */
 	public Process exec(String cmdarray[], String[] envp, File dir, PTY pty, int gracefulExitTimeMs)
 			throws IOException {
-		cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-		if (hasSpawner)
-			return new Spawner(cmdarray, envp, dir, pty, gracefulExitTimeMs);
-		throw new UnsupportedOperationException(Messages.Util_exception_cannotCreatePty);
-	}
-
-	private String modifyCmdIfFlatpak(String cmd) {
-		if (System.getenv("FLATPAK_SANDBOX_DIR") != null) { //$NON-NLS-1$
-			cmd = FLATPAK_CMD + cmd;
-		}
-		return cmd;
+		Process p = new Builder(cmdarray).environment(envp).directory(dir).pty(pty)
+				.gracefulExitTimeMs(gracefulExitTimeMs).start();
+		return p;
 	}
 
 	private String[] modifyCmdArrayIfFlatpak(String[] cmdarray) {

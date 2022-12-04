@@ -12,16 +12,23 @@
  *     QNX Software Systems - Initial API and implementation
  *     Martin Oberhuber (Wind River) - [303083] Split out the Spawner
  *     Red Hat Inc. - add flatpak support
+ *     徐持恒 Xu Chiheng - refactor to help debugging
  *******************************************************************************/
 package org.eclipse.cdt.utils.spawner;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.cdt.internal.core.natives.Messages;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -32,6 +39,94 @@ public class ProcessFactory {
 	static private ProcessFactory instance;
 	private boolean hasSpawner;
 	private Runtime runtime;
+
+	private static TreeMap<String, String> newEmptyEnvironment() {
+		TreeMap<String, String> environment;
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			environment = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+		} else {
+			environment = new TreeMap<>();
+		}
+		return environment;
+	}
+
+	private static TreeMap<String, String> envpToEnvMap(String[] envp) {
+		TreeMap<String, String> environment = newEmptyEnvironment();
+		if (envp != null) {
+			for (String envstring : envp) {
+				int eqlsign = envstring.indexOf('=');
+				if (eqlsign != -1) {
+					environment.put(envstring.substring(0, eqlsign), envstring.substring(eqlsign + 1));
+				} else {
+					// Silently ignore envstrings lacking the required `='.
+				}
+			}
+		}
+		return environment;
+	}
+
+	private static TreeMap<String, String> getDefaultEnvironment() {
+		TreeMap<String, String> environment = newEmptyEnvironment();
+		Map<String, String> env = new ProcessBuilder().environment();
+		environment.putAll(env);
+		return environment;
+	}
+
+	private static void appendEnvMapComparison(StringBuilder sb, TreeMap<String, String> environmentA,
+			TreeMap<String, String> environmentB) {
+		TreeMap<String, String> environmentC = newEmptyEnvironment();
+		environmentC.putAll(environmentA);
+		environmentC.putAll(environmentB);
+		Iterator<Entry<String, String>> iterator = environmentC.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String, String> entry = iterator.next();
+			String key = entry.getKey();
+			String valueA, valueB;
+			if (environmentA.containsKey(key)) {
+				valueA = environmentA.get(key);
+				if (environmentB.containsKey(key)) {
+					valueB = environmentB.get(key);
+					int result = valueA.compareTo(valueB);
+					if (result == 0) {
+						// not changed
+						sb.append(' ');
+						sb.append(key);
+						sb.append('=');
+						sb.append(valueA);
+						sb.append('\n');
+					} else {
+						// changed
+						sb.append('-');
+						sb.append(key);
+						sb.append('=');
+						sb.append(valueA);
+						sb.append('\n');
+						sb.append('+');
+						sb.append(key);
+						sb.append('=');
+						sb.append(valueB);
+						sb.append('\n');
+					}
+				} else {
+					// removed
+					sb.append('-');
+					sb.append(key);
+					sb.append('=');
+					sb.append(valueA);
+					sb.append('\n');
+				}
+			} else {
+				// environmentB.containsKey(key)
+				valueB = environmentB.get(key);
+				// added
+				sb.append('+');
+				sb.append(key);
+				sb.append('=');
+				sb.append(valueB);
+				sb.append('\n');
+			}
+		}
+	}
 
 	private class Builder {
 		String[] cmdarray;
@@ -81,8 +176,74 @@ public class ProcessFactory {
 			return this;
 		}
 
+		private StringBuilder debug() {
+			/*
+			 * for debug purpose
+			 */
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("command :\n"); //$NON-NLS-1$
+			for (int i = 0; i < cmdarray.length; i++) {
+				sb.append(i);
+				sb.append(" : \""); //$NON-NLS-1$
+				sb.append(cmdarray[i]);
+				sb.append("\"\n"); //$NON-NLS-1$
+			}
+			sb.append("\n\n"); //$NON-NLS-1$
+
+			sb.append("directory :\n"); //$NON-NLS-1$
+			if (dir != null) {
+				String pathString = dir.toString();
+				sb.append(pathString);
+				sb.append('\n');
+				Path path = new Path(pathString);
+				String pathDevice = path.getDevice();
+				String[] pathSegments = path.segments();
+				if (pathDevice != null) {
+					sb.append("device : "); //$NON-NLS-1$
+					sb.append(pathDevice);
+					sb.append('\n');
+				}
+				sb.append("segments : \n"); //$NON-NLS-1$
+				for (int i = 0; i < pathSegments.length; i++) {
+					sb.append(i);
+					sb.append(" : "); //$NON-NLS-1$
+					sb.append(pathSegments[i]);
+					sb.append('\n');
+				}
+			} else {
+				sb.append("not specified\n"); //$NON-NLS-1$
+			}
+			sb.append("\n\n"); //$NON-NLS-1$
+
+			{
+				TreeMap<String, String> environmentA = getDefaultEnvironment();
+				TreeMap<String, String> environmentB = envpToEnvMap(envp);
+
+				sb.append("environment :\n"); //$NON-NLS-1$
+				appendEnvMapComparison(sb, environmentA, environmentB);
+				sb.append("\n\n"); //$NON-NLS-1$
+			}
+			if (use_pty) {
+				sb.append("use pty : "); //$NON-NLS-1$
+				sb.append(pty.toString());
+				sb.append("\n\n"); //$NON-NLS-1$
+			}
+			if (has_gracefulExitTimeMs) {
+				sb.append("has gracefulExitTimeMs : "); //$NON-NLS-1$
+				sb.append(gracefulExitTimeMs);
+				sb.append("\n\n"); //$NON-NLS-1$
+			}
+			/*
+			 * set breakpoint on next line to inspect sb when debugging, to see the
+			 * ultimate parameters of ProcessBuilder
+			 */
+			return sb;
+		}
+
 		public Process start() throws IOException {
 			cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
+			debug();
 			Process p;
 			if (hasSpawner) {
 				if (use_pty) {

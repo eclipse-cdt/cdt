@@ -40,6 +40,18 @@ public class ProcessFactory {
 	private boolean hasSpawner;
 	private Runtime runtime;
 
+	private String[] modifyCmdArrayIfFlatpak(String[] cmdarray) {
+		if (System.getenv("FLATPAK_SANDBOX_DIR") != null) { //$NON-NLS-1$
+			String[] newArray = new String[cmdarray.length + 3];
+			System.arraycopy(cmdarray, 0, newArray, 3, cmdarray.length);
+			newArray[0] = "flatpak-spawn"; //$NON-NLS-1$
+			newArray[1] = "--host"; //$NON-NLS-1$
+			newArray[2] = "--watch-bus"; //$NON-NLS-1$
+			cmdarray = newArray;
+		}
+		return cmdarray;
+	}
+
 	private static TreeMap<String, String> newEmptyEnvironment() {
 		TreeMap<String, String> environment;
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
@@ -145,6 +157,7 @@ public class ProcessFactory {
 			this.cmdarray = new String[st.countTokens()];
 			for (int i = 0; st.hasMoreTokens(); i++)
 				this.cmdarray[i] = st.nextToken();
+			this.cmdarray = modifyCmdArrayIfFlatpak(this.cmdarray);
 		}
 
 		public Builder(String[] cmdarray) throws IOException {
@@ -152,6 +165,7 @@ public class ProcessFactory {
 				throw new IllegalArgumentException("Empty command"); //$NON-NLS-1$
 			}
 			this.cmdarray = cmdarray;
+			this.cmdarray = modifyCmdArrayIfFlatpak(this.cmdarray);
 		}
 
 		public Builder environment(String[] envp) {
@@ -177,9 +191,7 @@ public class ProcessFactory {
 		}
 
 		private StringBuilder debug() {
-			/*
-			 * for debug purpose
-			 */
+			// for debug purpose
 			StringBuilder sb = new StringBuilder();
 
 			sb.append("command :\n"); //$NON-NLS-1$
@@ -234,16 +246,15 @@ public class ProcessFactory {
 				sb.append(gracefulExitTimeMs);
 				sb.append("\n\n"); //$NON-NLS-1$
 			}
-			/*
-			 * set breakpoint on next line to inspect sb when debugging, to see the
-			 * ultimate parameters of ProcessBuilder
-			 */
+			// set breakpoint on next line to inspect sb when debugging, to see the
+			// ultimate parameters of ProcessBuilder
 			return sb;
 		}
 
 		public Process start() throws IOException {
-			cmdarray = modifyCmdArrayIfFlatpak(cmdarray);
-			debug();
+			// Uncomment the next line, set a breakpoint in the last line of debug() method,
+			// when the breakpoint is triggered, inspect the sb variable to see detailed info on what is being launched.
+			// debug();
 			Process p;
 			if (hasSpawner) {
 				if (use_pty) {
@@ -375,17 +386,5 @@ public class ProcessFactory {
 		Process p = new Builder(cmdarray).environment(envp).directory(dir).pty(pty)
 				.gracefulExitTimeMs(gracefulExitTimeMs).start();
 		return p;
-	}
-
-	private String[] modifyCmdArrayIfFlatpak(String[] cmdarray) {
-		if (System.getenv("FLATPAK_SANDBOX_DIR") != null) { //$NON-NLS-1$
-			String[] newArray = new String[cmdarray.length + 3];
-			System.arraycopy(cmdarray, 0, newArray, 3, cmdarray.length);
-			newArray[0] = "flatpak-spawn"; //$NON-NLS-1$
-			newArray[1] = "--host"; //$NON-NLS-1$
-			newArray[2] = "--watch-bus"; //$NON-NLS-1$
-			cmdarray = newArray;
-		}
-		return cmdarray;
 	}
 }

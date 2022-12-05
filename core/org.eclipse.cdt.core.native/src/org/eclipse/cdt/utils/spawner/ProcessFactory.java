@@ -128,7 +128,7 @@ public class ProcessFactory {
 					sb.append('\n');
 				}
 			} else {
-				// environmentB.containsKey(key)
+				// environmentB contains the key
 				valueB = environmentB.get(key);
 				// added
 				sb.append('+');

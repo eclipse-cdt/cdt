@@ -26,8 +26,6 @@ public class PTY2 {
 		// terminal emulator process
 		String command = null;
 		InputStream in = null;
-		// Bundle bundle = Platform.getBundle(CNativePlugin.PLUGIN_ID);
-
 		try {
 			command = PTY2Util.getTerminalEmulatorCommand();
 			// both mintty.exe and konsole support --opentty and --title option
@@ -56,8 +54,7 @@ public class PTY2 {
 		} catch (IOException e) {
 
 		} finally {
-			// if (in != null)
-			// in.close();
+
 		}
 		if (slaveName == null) {
 			throw new IOException("can not start terminal emulator and get pty's slave name"); //$NON-NLS-1$

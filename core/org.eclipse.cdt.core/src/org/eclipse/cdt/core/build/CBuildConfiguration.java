@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.parser.IScannerInfoChangeListener;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.BuildRunnerHelper;
 import org.eclipse.cdt.internal.core.ConsoleOutputSniffer;
+import org.eclipse.cdt.internal.core.build.CBuildConfigurationManager;
 import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.cdt.internal.core.model.BinaryRunner;
 import org.eclipse.cdt.internal.core.model.CModelManager;
@@ -94,6 +95,19 @@ import com.google.gson.GsonBuilder;
 /**
  * Root class for CDT build configurations. Provides access to the build
  * settings for subclasses.
+ *
+ * Each Eclipse project has one or more build configurations ({@link IBuildConfiguration}).
+ * A CDT Core Build project pairs each build configuration with a Core Build configuration
+ * ({@link ICBuildConfiguration}). A Core Build configuration has variable config pointing to
+ * the IBuildConfiguration. The link from IBuildConfiguration to ICBuildConfiguration
+ * goes via getAdapter(ICBuildConfiguration.class) which gets the ICBuildConfiguration
+ * from Map configs in the {@link CBuildConfigurationManager}.
+ *
+ * In a new project the initial Core Build configurations creation is triggered by the
+ * {@link CoreBuildLaunchBarTracker}. The initial configuration for Debug will only be
+ * created if the user selects the Debug launch mode. Restoration of Core Build configurations,
+ * after an Eclipse restart or close and open of the project, uses the settings which are
+ * persistently stored in the backing store. @see org.osgi.service.prefs.Preferences
  *
  * @since 6.0
  */

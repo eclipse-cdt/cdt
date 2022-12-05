@@ -367,7 +367,12 @@ public class CBuildConfigurationManager
 					Preferences projectNode = parentNode.node(project.getName());
 					if (projectNode != null) {
 						try {
-							projectNode.removeNode();
+							if (event.getType() == IResourceChangeEvent.PRE_DELETE) {
+								// We need to keep the settings when the project is closed. They are used by
+								// CBuildConfiguration.CBuildConfiguration(IBuildConfiguration config, String name)
+								// to restore Debug core build configurations when the project is reopened.
+								projectNode.removeNode();
+							}
 							parentNode.flush();
 						} catch (BackingStoreException e) {
 							CCorePlugin.log(e);

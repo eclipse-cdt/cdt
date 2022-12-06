@@ -62,9 +62,17 @@ public class ProcessFactory {
 		return environment;
 	}
 
-	private static TreeMap<String, String> envpToEnvMap(String[] envp) {
+	private static TreeMap<String, String> getDefaultEnvironment() {
 		TreeMap<String, String> environment = newEmptyEnvironment();
+		Map<String, String> env = new ProcessBuilder().environment();
+		environment.putAll(env);
+		return environment;
+	}
+
+	private static TreeMap<String, String> envpToEnvMap(String[] envp) {
+		TreeMap<String, String> environment;
 		if (envp != null) {
+			environment = newEmptyEnvironment();
 			for (String envstring : envp) {
 				int eqlsign = envstring.indexOf('=');
 				if (eqlsign != -1) {
@@ -73,14 +81,9 @@ public class ProcessFactory {
 					// Silently ignore envstrings lacking the required `='.
 				}
 			}
+		} else {
+			environment = getDefaultEnvironment();
 		}
-		return environment;
-	}
-
-	private static TreeMap<String, String> getDefaultEnvironment() {
-		TreeMap<String, String> environment = newEmptyEnvironment();
-		Map<String, String> env = new ProcessBuilder().environment();
-		environment.putAll(env);
 		return environment;
 	}
 

@@ -9,12 +9,16 @@
  ********************************************************************************/
 package org.eclipse.cdt.utils;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
 // A collection of Cygwin-related utilities.
 public class Cygwin {
-	private static String cygwinDir = null;
+	@SuppressWarnings("unused")
+	private static String cygwinDir;
 	static {
 		initializeCygwinDir();
 	}
@@ -35,6 +39,56 @@ public class Cygwin {
 	 * @since 5.3
 	 */
 	private static IPath findProgramLocation(String prog, String pathsStr) {
+		if (prog == null || prog.trim().isEmpty())
+			return null;
+
+		if (pathsStr == null)
+			pathsStr = System.getenv("PATH"); //$NON-NLS-1$
+
+		if (pathsStr.trim().isEmpty())
+			return null;
+
+		String locationStr = null;
+		String[] dirs = pathsStr.split(File.pathSeparator);
+
+		// Try to find "prog.exe" or "prog.com" on Windows
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			for (String dir : dirs) {
+				IPath dirLocation = new Path(dir);
+				File file = null;
+
+				file = dirLocation.append(prog + ".exe").toFile(); //$NON-NLS-1$
+				if (file.isFile() && file.canRead()) {
+					locationStr = file.getAbsolutePath();
+					break;
+				}
+				file = dirLocation.append(prog + ".com").toFile(); //$NON-NLS-1$
+				if (file.isFile() && file.canRead()) {
+					locationStr = file.getAbsolutePath();
+					break;
+				}
+			}
+		}
+
+		// Check "prog" on Unix and Windows too (if was not found) - could be
+		// cygwin or something
+		// do it in separate loop due to performance and correctness of Windows
+		// regular case
+		if (locationStr == null) {
+			for (String dir : dirs) {
+				IPath dirLocation = new Path(dir);
+				File file = null;
+
+				file = dirLocation.append(prog).toFile();
+				if (file.isFile() && file.canRead()) {
+					locationStr = file.getAbsolutePath();
+					break;
+				}
+			}
+		}
+
+		if (locationStr != null)
+			return new Path(locationStr);
 
 		return null;
 	}

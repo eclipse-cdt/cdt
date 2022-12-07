@@ -70,26 +70,6 @@ public class Cygwin {
 			}
 		}
 
-		// Check "prog" on Unix and Windows too (if was not found) - could be
-		// cygwin or something
-		// do it in separate loop due to performance and correctness of Windows
-		// regular case
-		if (locationStr == null) {
-			for (String dir : dirs) {
-				IPath dirLocation = new Path(dir);
-				File file = null;
-
-				file = dirLocation.append(prog).toFile();
-				if (file.isFile() && file.canRead()) {
-					locationStr = file.getAbsolutePath();
-					break;
-				}
-			}
-		}
-
-		if (locationStr != null)
-			return new Path(locationStr);
-
 		return null;
 	}
 

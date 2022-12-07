@@ -41,4 +41,27 @@ public class PTY2Util {
 
 		return command;
 	}
+
+	public static String[] getTerminalEmulatorCommandArray(String[] commandArray) {
+		String command = "konsole"; //$NON-NLS-1$
+		try {
+			command = PTY2Util.getTerminalEmulatorCommand();
+		} catch (IOException e) {
+		}
+		String[] terminalEmulatorCommand;
+
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			terminalEmulatorCommand = new String[] { command, "--hold=always", "--exec" }; //$NON-NLS-1$  //$NON-NLS-2$
+		} else if (Platform.getOS().equals(Platform.OS_LINUX)) {
+			terminalEmulatorCommand = new String[] { command, "--nofork", "--hold", "-e" }; //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$
+		} else {
+			terminalEmulatorCommand = new String[] { command, "--nofork", "--hold", "-e" }; //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$
+		}
+
+		String[] result = new String[terminalEmulatorCommand.length + commandArray.length];
+		System.arraycopy(terminalEmulatorCommand, 0, result, 0, terminalEmulatorCommand.length);
+		System.arraycopy(commandArray, 0, result, terminalEmulatorCommand.length, commandArray.length);
+
+		return result;
+	}
 }

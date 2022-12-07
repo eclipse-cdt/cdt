@@ -31,7 +31,7 @@
 			 tested or supported. -->
 		<required-maven-version>3.6.3</required-maven-version>
 		<tycho-version>2.7.5</tycho-version>
-		<cbi-plugins.version>1.3.2</cbi-plugins.version>
+		<cbi-plugins.version>1.3.4</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
 		<simrel-site>https://download.eclipse.org/staging/2023-03/</simrel-site>

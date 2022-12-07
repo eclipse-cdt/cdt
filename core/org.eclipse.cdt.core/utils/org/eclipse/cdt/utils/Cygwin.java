@@ -106,6 +106,56 @@ public class Cygwin {
 	}
 
 	/**
+	 * Conversion from Windows path to Cygwin path.
+	 *
+	 * @param windowsPath
+	 *            - Windows path.
+	 * @return Cygwin style converted path.
+	 *
+	 */
+	public static String windowsToCygwinPath(String windowsPath) {
+		if (windowsPath == null || windowsPath.trim().length() == 0)
+			return windowsPath;
+
+		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+			return windowsPath;
+		}
+
+		IPath cygwinDirPath = Path.fromOSString(cygwinDir);
+		IPath path = Path.fromOSString(windowsPath);
+		String cygwinPath;
+		if (cygwinDirPath.isPrefixOf(path)) {
+			int matchingFirstSegments = cygwinDirPath.matchingFirstSegments(path);
+			String[] segments = path.segments();
+			String[] newSegments = new String[segments.length - matchingFirstSegments];
+			System.arraycopy(segments, matchingFirstSegments, newSegments, 0, segments.length - matchingFirstSegments);
+
+			StringBuilder builder = new StringBuilder();
+			for (String s : newSegments) {
+				builder.append('/');
+				builder.append(s);
+			}
+			cygwinPath = builder.toString();
+		} else {
+			String device = path.getDevice().replace(':', ' ').trim();
+			String[] segments = path.segments();
+			String[] newSegments = new String[segments.length + 2];
+			newSegments[0] = "cygdrive"; //$NON-NLS-1$
+			newSegments[1] = device.toLowerCase();
+			System.arraycopy(segments, 0, newSegments, 2, segments.length);
+
+			StringBuilder builder = new StringBuilder();
+			for (String s : newSegments) {
+				builder.append('/');
+				builder.append(s);
+			}
+			cygwinPath = builder.toString();
+		}
+
+		return cygwinPath;
+	}
+
+	/**
 	 * Finds location of the program inspecting each path in the path list.
 	 *
 	 * @param prog

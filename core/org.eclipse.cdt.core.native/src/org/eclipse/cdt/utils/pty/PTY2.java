@@ -50,4 +50,11 @@ public class PTY2 {
 		}
 	}
 
+	public Process getTerminalEmulator() {
+		return terminalEmulator;
+	}
+
+	public String getSlaveName() {
+		return slaveName;
+	}
 }

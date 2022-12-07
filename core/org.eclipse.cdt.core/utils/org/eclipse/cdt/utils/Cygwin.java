@@ -48,6 +48,7 @@ public class Cygwin {
 		if (pathsStr.trim().isEmpty())
 			return null;
 
+		@SuppressWarnings("unused")
 		String locationStr = null;
 		String[] dirs = pathsStr.split(File.pathSeparator);
 

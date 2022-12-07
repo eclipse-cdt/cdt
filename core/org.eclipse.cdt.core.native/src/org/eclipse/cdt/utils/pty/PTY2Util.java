@@ -2,6 +2,7 @@ package org.eclipse.cdt.utils.pty;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import org.eclipse.cdt.internal.core.natives.CNativePlugin;
 import org.eclipse.core.runtime.FileLocator;

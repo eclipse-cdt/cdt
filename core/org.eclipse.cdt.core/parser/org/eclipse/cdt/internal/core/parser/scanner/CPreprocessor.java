@@ -99,6 +99,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final int ORIGIN_INACTIVE_CODE = OffsetLimitReachedException.ORIGIN_INACTIVE_CODE;
 
 	private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
+	private static final char[] CPP_IMPL_THREE_WAY_COMPARISON = "__cpp_impl_three_way_comparison".toCharArray(); //$NON-NLS-1$
 
 	// Standard built-ins
 	private static final ObjectStyleMacro __CDT_PARSER__ = new ObjectStyleMacro("__CDT_PARSER__".toCharArray(), //$NON-NLS-1$
@@ -351,6 +352,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 		fIncludeSearchPath = configureIncludeSearchPath(new File(contextPath).getParentFile(), info);
 		setupMacroDictionary(configuration, info, language);
+
+		if (fMacroDictionary.containsKey(CPP_IMPL_THREE_WAY_COMPARISON)) {
+			fLexOptions.fSupportThreeWayComparisonOperator = true;
+		}
 
 		ILocationCtx ctx = fLocationMap.pushTranslationUnit(fRootContent.getFileLocation(), fRootContent.getSource());
 		Lexer lexer = new Lexer(fRootContent.getSource(), fLexOptions, this, this);

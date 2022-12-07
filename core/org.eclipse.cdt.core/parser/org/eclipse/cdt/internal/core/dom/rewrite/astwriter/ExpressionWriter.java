@@ -91,6 +91,7 @@ public class ExpressionWriter extends NodeWriter {
 	private static final String ELLIPSES = " ... "; //$NON-NLS-1$
 	private static final String NOT_EQUALS_OP = " != "; //$NON-NLS-1$
 	private static final String EQUALS_OP = " == "; //$NON-NLS-1$
+	private static final String THREEWAYCOMPARISON_OP = " <=> "; //$NON-NLS-1$
 	private static final String BINARY_OR_ASSIGN = " |= "; //$NON-NLS-1$
 	private static final String BINARY_XOR_ASSIGN_OP = " ^= "; //$NON-NLS-1$
 	private static final String BINARY_AND_ASSIGN_OP = " &= "; //$NON-NLS-1$
@@ -226,6 +227,8 @@ public class ExpressionWriter extends NodeWriter {
 			return EQUALS_OP;
 		case IASTBinaryExpression.op_notequals:
 			return NOT_EQUALS_OP;
+		case IASTBinaryExpression.op_threewaycomparison:
+			return THREEWAYCOMPARISON_OP;
 		case ICPPASTBinaryExpression.op_pmdot:
 			return PMDOT_OP;
 		case ICPPASTBinaryExpression.op_pmarrow:

@@ -1123,6 +1123,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		case IToken.tNOTEQUAL:
 			op = IASTBinaryExpression.op_notequals;
 			break;
+		case IToken.tTHREEWAYCOMPARISON:
+			op = IASTBinaryExpression.op_threewaycomparison;
+			break;
 		case IToken.tGT:
 			op = IASTBinaryExpression.op_greaterThan;
 			break;
@@ -2731,6 +2734,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			case IToken.tDOT:
 			case IToken.tDOTSTAR:
 			case IToken.tEQUAL:
+			case IToken.tTHREEWAYCOMPARISON:
 			case IToken.tGT:
 			case IToken.tGT_in_SHIFTR:
 			case IToken.tGTEQUAL:

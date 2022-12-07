@@ -78,6 +78,7 @@ public class TokenUtil {
 		case IToken.tGTEQUAL:
 		case IToken.tLT:
 		case IToken.tLTEQUAL:
+		case IToken.tTHREEWAYCOMPARISON:
 
 			// other
 		case IToken.tASSIGN:
@@ -164,6 +165,8 @@ public class TokenUtil {
 			return Keywords.cpNOT;
 		case IToken.tEQUAL:
 			return Keywords.cpEQUAL;
+		case IToken.tTHREEWAYCOMPARISON:
+			return Keywords.cpTHREEWAYCOMPARISON;
 		case IToken.tASSIGN:
 			return Keywords.cpASSIGN;
 		case IToken.tSHIFTL:

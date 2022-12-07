@@ -29,14 +29,18 @@ public class LexerTests extends BaseTestCase {
 	private static final LexerOptions DEFAULT_OPTIONS = new LexerOptions();
 	private static final LexerOptions NO_DOLLAR = new LexerOptions();
 	private static final LexerOptions NO_MINMAX = new LexerOptions();
+	private static final LexerOptions NO_MINMAX_CPP = new LexerOptions();
 	private static final LexerOptions SLASH_PERCENT = new LexerOptions();
 	private static final LexerOptions CPP_OPTIONS = new LexerOptions();
 	static {
 		NO_DOLLAR.fSupportDollarInIdentifiers = false;
 		NO_MINMAX.fSupportMinAndMax = false;
+		NO_MINMAX_CPP.fSupportMinAndMax = false;
+		NO_MINMAX_CPP.fSupportThreeWayComparisonOperator = true;
 		SLASH_PERCENT.fSupportSlashPercentComments = true;
 		CPP_OPTIONS.fSupportRawStringLiterals = true;
 		CPP_OPTIONS.fSupportDigitSeparators = true;
+		CPP_OPTIONS.fSupportThreeWayComparisonOperator = true;
 	}
 
 	static String TRIGRAPH_REPLACES_CHARS = "#^[]|{}~\\";
@@ -716,11 +720,26 @@ public class LexerTests extends BaseTestCase {
 				IToken.tGTEQUAL, IToken.tAND, IToken.tOR, IToken.tINCR, IToken.tDECR, IToken.tCOMMA, IToken.tARROWSTAR,
 				IToken.tARROW, IGCCToken.tMIN, IGCCToken.tMAX, Lexer.tOTHER_CHARACTER, };
 
+		verifyOperatorAndPunctuators(ops, tokens, DEFAULT_OPTIONS, NO_MINMAX);
+	}
+
+	public void testOperatorAndPunctuatorsCpp20() throws Exception {
+		final String ops = "<<>><<=>>===!=<=>>=<=&&";
+
+		final int[] tokens = new int[] { IToken.tSHIFTL, IToken.tSHIFTR, IToken.tSHIFTLASSIGN, IToken.tSHIFTRASSIGN,
+				IToken.tEQUAL, IToken.tNOTEQUAL, IToken.tTHREEWAYCOMPARISON, IToken.tGTEQUAL, IToken.tLTEQUAL,
+				IToken.tAND, };
+
+		verifyOperatorAndPunctuators(ops, tokens, CPP_OPTIONS, NO_MINMAX_CPP);
+	}
+
+	private void verifyOperatorAndPunctuators(String ops, int[] tokens, LexerOptions options,
+			LexerOptions optionsNoMinMax) throws Exception {
 		for (int splices = 0; splices < 9; splices++) {
 			for (int trigraphs = 0; trigraphs < 6; trigraphs++) {
 				StringBuilder buf = new StringBuilder();
 				String input = useTrigraphs(ops.toCharArray(), trigraphs);
-				init(instertLineSplices(input, splices));
+				init(instertLineSplices(input, splices), options);
 				for (int token2 : tokens) {
 					Token token = fLexer.currentToken();
 					buf.append(token.getCharImage());
@@ -729,7 +748,7 @@ public class LexerTests extends BaseTestCase {
 				eof();
 				assertEquals(ops, buf.toString()); // check token image
 
-				init(input, NO_MINMAX);
+				init(input, optionsNoMinMax);
 				for (int token : tokens) {
 					switch (token) {
 					case IGCCToken.tMIN:

@@ -15,9 +15,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
-/**
- * A collection of Cygwin-related utilities.
- */
+// A collection of Cygwin-related utilities.
 public class Cygwin {
 	private static String cygwinDir = null;
 
@@ -25,14 +23,7 @@ public class Cygwin {
 		initializeCygwinDir();
 	}
 
-	/**
-	 * Conversion from Cygwin path to Windows path.
-	 *
-	 * @param cygwinPath
-	 *            - Cygwin path.
-	 * @return Windows style converted path.
-	 *
-	 */
+	// Conversion from Cygwin path to Windows path.
 	public static String cygwinToWindowsPath(String cygwinPath) {
 		if (cygwinPath == null || cygwinPath.trim().length() == 0)
 			return cygwinPath;
@@ -107,14 +98,7 @@ public class Cygwin {
 		return windowsPath;
 	}
 
-	/**
-	 * Conversion from Windows path to Cygwin path.
-	 *
-	 * @param windowsPath
-	 *            - Windows path.
-	 * @return Cygwin style converted path.
-	 *
-	 */
+	// Conversion from Windows path to Cygwin path.
 	public static String windowsToCygwinPath(String windowsPath) {
 		if (windowsPath == null || windowsPath.trim().length() == 0)
 			return windowsPath;
@@ -157,21 +141,7 @@ public class Cygwin {
 		return cygwinPath;
 	}
 
-	/**
-	 * Finds location of the program inspecting each path in the path list.
-	 *
-	 * @param prog
-	 *            - program to find. For Windows, extensions "com" and "exe" can
-	 *            be omitted.
-	 * @param pathsStr
-	 *            - the list of paths to inspect separated by path separator
-	 *            defined in the platform (i.e. ":" in Unix and ";" in Windows).
-	 *            In case pathStr is {@code null} environment variable ${PATH}
-	 *            is inspected.
-	 * @return - absolute location of the file on the file system or
-	 *         {@code null} if not found.
-	 * @since 5.3
-	 */
+	// Finds location of the program inspecting each path in the path list.
 	private static IPath findProgramLocation(String prog, String pathsStr) {
 		if (prog == null || prog.trim().isEmpty())
 			return null;
@@ -227,9 +197,7 @@ public class Cygwin {
 		return null;
 	}
 
-	/**
-	 * initialize static data field cygwinDir.
-	 */
+	// initialize static data field cygwinDir.
 	private static void initializeCygwinDir() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			IPath cygwin1DllPath = findProgramLocation("cygwin1.dll", null); //$NON-NLS-1$

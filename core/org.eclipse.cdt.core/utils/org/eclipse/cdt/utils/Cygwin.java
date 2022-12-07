@@ -9,8 +9,55 @@
  ********************************************************************************/
 package org.eclipse.cdt.utils;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
+
 // A collection of Cygwin-related utilities.
 public class Cygwin {
 	private static String cygwinDir = null;
+	static {
+		initializeCygwinDir();
+	}
+
+	/**
+	 * Finds location of the program inspecting each path in the path list.
+	 *
+	 * @param prog
+	 *            - program to find. For Windows, extensions "com" and "exe" can
+	 *            be omitted.
+	 * @param pathsStr
+	 *            - the list of paths to inspect separated by path separator
+	 *            defined in the platform (i.e. ":" in Unix and ";" in Windows).
+	 *            In case pathStr is {@code null} environment variable ${PATH}
+	 *            is inspected.
+	 * @return - absolute location of the file on the file system or
+	 *         {@code null} if not found.
+	 * @since 5.3
+	 */
+	private static IPath findProgramLocation(String prog, String pathsStr) {
+
+		return null;
+	}
+
+	/**
+	 * initialize static data field cygwinDir.
+	 */
+	private static void initializeCygwinDir() {
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			IPath cygwin1DllPath = findProgramLocation("cygwin1.dll", null); //$NON-NLS-1$
+			if (cygwin1DllPath != null && cygwin1DllPath.segmentCount() >= 2
+					&& cygwin1DllPath.segments()[cygwin1DllPath.segmentCount() - 2].equals("bin")) { //$NON-NLS-1$
+				IPath cygwinDirPath = cygwin1DllPath.removeLastSegments(2);
+				cygwinDir = cygwinDirPath.toPortableString();
+				return;
+			}
+			// Cygwin not found, set cygwinDir to default
+			if (Platform.getOSArch().equals(Platform.ARCH_X86_64)) {
+				cygwinDir = "C:/cygwin64"; //$NON-NLS-1$
+			} else {
+				cygwinDir = "C:/cygwin"; //$NON-NLS-1$
+			}
+		}
+	}
 
 }

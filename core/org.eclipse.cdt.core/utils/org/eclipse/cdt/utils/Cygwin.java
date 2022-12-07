@@ -24,6 +24,88 @@ public class Cygwin {
 	}
 
 	/**
+	 * Conversion from Cygwin path to Windows path.
+	 *
+	 * @param cygwinPath
+	 *            - Cygwin path.
+	 * @return Windows style converted path.
+	 *
+	 */
+	public static String cygwinToWindowsPath(String cygwinPath) {
+		if (cygwinPath == null || cygwinPath.trim().length() == 0)
+			return cygwinPath;
+
+		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+			return cygwinPath;
+		}
+		String windowsPath;
+		IPath path = Path.fromOSString(cygwinPath);
+		if (path.getDevice() != null) {
+			// already a windows path
+			windowsPath = path.toPortableString();
+			return windowsPath;
+		}
+		String[] segments = path.segments();
+		String[] newSegments;
+
+		if (cygwinPath.startsWith("/")) { //$NON-NLS-1$
+			// absolute path
+			if (segments.length < 0) {
+				// error
+				return cygwinPath;
+			} else if (segments.length >= 2) {
+				if (segments[0].equals("cygdrive")) { //$NON-NLS-1$
+					String device = segments[1].toUpperCase();
+
+					newSegments = new String[segments.length - 2];
+					System.arraycopy(segments, 2, newSegments, 0, segments.length - 2);
+
+					StringBuilder builder = new StringBuilder();
+					builder.append(device);
+					builder.append(':');
+					for (String s : newSegments) {
+						builder.append('/');
+						builder.append(s);
+					}
+					windowsPath = builder.toString();
+					return windowsPath;
+				}
+				if (segments[0].equals("usr") && (segments[1].equals("bin") || segments[1].equals("lib"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					/*
+					 * /usr/lib --> /lib ; /usr/bin --> /bin ; /usr/include
+					 * unchanged
+					 */
+					newSegments = new String[segments.length - 1];
+					System.arraycopy(segments, 1, newSegments, 0, segments.length - 1);
+					segments = newSegments;
+				}
+			}
+			// cygwinPath.startsWith("/") && segments.length >= 0
+			StringBuilder builder = new StringBuilder();
+			builder.append(cygwinDir);
+			for (String s : segments) {
+				builder.append('/');
+				builder.append(s);
+			}
+			windowsPath = builder.toString();
+
+		} else {
+			// relative path
+			StringBuilder builder = new StringBuilder();
+			for (int i = 0; i < segments.length; i++) {
+				String s = segments[i];
+				if (i != 0) {
+					builder.append('/');
+				}
+				builder.append(s);
+			}
+			windowsPath = builder.toString();
+		}
+
+		return windowsPath;
+	}
+
+	/**
 	 * Finds location of the program inspecting each path in the path list.
 	 *
 	 * @param prog
@@ -70,6 +152,7 @@ public class Cygwin {
 				}
 			}
 		}
+
 		// Check "prog" on Unix and Windows too (if was not found) - could be
 		// cygwin or something
 		// do it in separate loop due to performance and correctness of Windows

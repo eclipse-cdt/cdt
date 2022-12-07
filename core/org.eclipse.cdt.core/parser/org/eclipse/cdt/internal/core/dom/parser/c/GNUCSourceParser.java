@@ -548,6 +548,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 				break;
 			case IToken.tEQUAL:
 			case IToken.tNOTEQUAL:
+			case IToken.tTHREEWAYCOMPARISON:
 				lastOperator = new BinaryOperator(lastOperator, lastExpression, lt1, 80, 81);
 				break;
 			case IToken.tGT:

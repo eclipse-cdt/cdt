@@ -439,6 +439,7 @@ public abstract class VariableReadWriteFlags {
 		case IASTBinaryExpression.op_notequals:
 		case IASTBinaryExpression.op_shiftLeft:
 		case IASTBinaryExpression.op_shiftRight:
+		case IASTBinaryExpression.op_threewaycomparison:
 			return Optional.of(READ);
 
 		case IASTBinaryExpression.op_minus:

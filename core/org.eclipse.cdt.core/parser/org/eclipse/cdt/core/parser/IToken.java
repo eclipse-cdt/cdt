@@ -85,6 +85,8 @@ public interface IToken {
 	int tNOTEQUAL = 35;
 	int tNOT = 36;
 	int tEQUAL = 37;
+	/** @since 8.0 */
+	int tTHREEWAYCOMPARISON = 8001;
 	int tASSIGN = 38;
 	int tUNKNOWN_CHAR = 39;
 	int tSHIFTL = 40;

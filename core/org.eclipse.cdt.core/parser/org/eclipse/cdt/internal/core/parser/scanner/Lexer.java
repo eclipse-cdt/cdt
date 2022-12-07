@@ -63,6 +63,7 @@ final public class Lexer implements ITokenSequence {
 		public boolean fSupportRawStringLiterals = false;
 		public boolean fSupportUserDefinedLiterals = false;
 		public boolean fSupportDigitSeparators = false;
+		public boolean fSupportThreeWayComparisonOperator = false;
 		public IncludeExportPatterns fIncludeExportPatterns;
 
 		@Override
@@ -641,7 +642,13 @@ final public class Lexer implements ITokenSequence {
 
 				switch (d) {
 				case '=':
-					nextCharPhase3();
+					final int se = nextCharPhase3();
+					if (fOptions.fSupportThreeWayComparisonOperator) {
+						if (se == '>') {
+							nextCharPhase3();
+							return newToken(IToken.tTHREEWAYCOMPARISON, start);
+						}
+					}
 					return newToken(IToken.tLTEQUAL, start);
 				case '<':
 					final int e = nextCharPhase3();

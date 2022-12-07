@@ -650,6 +650,11 @@ public class BindingClassifier {
 						}
 					}
 
+					if (binaryExpression.getOperator() == IASTBinaryExpression.op_threewaycomparison) {
+						// TODO: implement for three-way comparison operator x <=> y
+						return PROCESS_CONTINUE;
+					}
+
 					IType operand1Type = binaryExpression.getOperand1().getExpressionType();
 					IASTInitializerClause operand2 = binaryExpression.getInitOperand2();
 					IType operand2Type;

@@ -1311,6 +1311,9 @@ public class ASTSignatureUtil {
 		case IASTBinaryExpression.op_notequals:
 			opString = String.valueOf(Keywords.cpNOTEQUAL);
 			break;
+		case IASTBinaryExpression.op_threewaycomparison:
+			opString = String.valueOf(Keywords.cpTHREEWAYCOMPARISON);
+			break;
 		case IASTBinaryExpression.op_max:
 			opString = String.valueOf(Keywords.cpMAX);
 			break;

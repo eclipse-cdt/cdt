@@ -167,6 +167,10 @@ class BuiltinOperators {
 			comparison(true);
 			break;
 
+		case THREEWAYCOMPARISON:
+			// TODO: implement for <=>
+			break;
+
 		case GT:
 		case GTEQUAL:
 		case LT:

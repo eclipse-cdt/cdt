@@ -224,19 +224,21 @@ public abstract class ASTAmbiguousBinaryVsCastExpression extends ASTAmbiguousNod
 		case IASTBinaryExpression.op_max:
 		case IASTBinaryExpression.op_min:
 			return 7;
+		case IASTBinaryExpression.op_threewaycomparison:
+			return 8;
 		case IASTBinaryExpression.op_shiftLeft:
 		case IASTBinaryExpression.op_shiftRight:
-			return 8;
+			return 9;
 		case IASTBinaryExpression.op_plus:
 		case IASTBinaryExpression.op_minus:
-			return 9;
+			return 10;
 		case IASTBinaryExpression.op_multiply:
 		case IASTBinaryExpression.op_divide:
 		case IASTBinaryExpression.op_modulo:
-			return 10;
+			return 11;
 		case IASTBinaryExpression.op_pmarrow:
 		case IASTBinaryExpression.op_pmdot:
-			return 11;
+			return 12;
 		}
 		assert false;
 		return 0;

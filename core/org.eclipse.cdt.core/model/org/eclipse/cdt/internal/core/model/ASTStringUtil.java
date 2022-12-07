@@ -1167,6 +1167,8 @@ public class ASTStringUtil {
 			return Keywords.cpEQUAL;
 		case IASTBinaryExpression.op_notequals:
 			return Keywords.cpNOTEQUAL;
+		case IASTBinaryExpression.op_threewaycomparison:
+			return Keywords.cpTHREEWAYCOMPARISON;
 		case IASTBinaryExpression.op_max:
 			return Keywords.cpMAX;
 		case IASTBinaryExpression.op_min:

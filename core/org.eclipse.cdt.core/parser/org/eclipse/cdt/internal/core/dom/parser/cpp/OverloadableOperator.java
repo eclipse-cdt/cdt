@@ -34,9 +34,9 @@ public enum OverloadableOperator {
 	GT(">"), LT("<"), NOT("!"), BITCOMPLEMENT("~"), BITOR("|"), AMPER("&"), XOR("^"), MOD("%"), DIV("/"), STAR("*"),
 	PLUS("+"), BRACKET("[]"), PAREN("()"), ARROW("->"), ARROWSTAR("->*"), COMMA(","), MINUS("-"), DECR("--"),
 	INCR("++"), OR("||"), AND("&&"), ASSIGN("="), GTEQUAL(">="), LTEQUAL("<="), NOTEQUAL("!="), EQUAL("=="),
-	SHIFTR(">>"), SHIFTL("<<"), SHIFTLASSIGN("<<="), SHIFTRASSIGN(">>="), BITORASSIGN("|="), AMPERASSIGN("&="),
-	XORASSIGN("^="), MODASSIGN("%="), DIVASSIGN("/="), STARASSIGN("*="), MINUSASSIGN("-="), PLUSASSIGN("+="),
-	NEW("new"), DELETE_ARRAY("delete[]"), DELETE("delete"), NEW_ARRAY("new[]"),
+	SHIFTR(">>"), SHIFTL("<<"), SHIFTLASSIGN("<<="), SHIFTRASSIGN(">>="), THREEWAYCOMPARISON("<=>"), BITORASSIGN("|="),
+	AMPERASSIGN("&="), XORASSIGN("^="), MODASSIGN("%="), DIVASSIGN("/="), STARASSIGN("*="), MINUSASSIGN("-="),
+	PLUSASSIGN("+="), NEW("new"), DELETE_ARRAY("delete[]"), DELETE("delete"), NEW_ARRAY("new[]"),
 
 	/**
 	 * Cannot be overloaded by the user, however overload resolution needs to be performed.
@@ -155,6 +155,8 @@ public enum OverloadableOperator {
 			return LT;
 		case IToken.tLTEQUAL:
 			return LTEQUAL;
+		case IToken.tTHREEWAYCOMPARISON:
+			return THREEWAYCOMPARISON;
 
 		// other
 		case IToken.tASSIGN:
@@ -247,6 +249,8 @@ public enum OverloadableOperator {
 			return LT;
 		case IASTBinaryExpression.op_lessEqual:
 			return LTEQUAL;
+		case IASTBinaryExpression.op_threewaycomparison:
+			return THREEWAYCOMPARISON;
 
 		// other
 		case IASTBinaryExpression.op_assign:

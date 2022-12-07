@@ -227,6 +227,13 @@ public interface IASTBinaryExpression extends IASTExpression {
 	public static final int op_ellipses = 34;
 
 	/**
+	 * For c++, only.
+	 * <code>op_threewaycompare</code> represents <code><=></code> three-way comparison operator.
+	 * @since 8.0
+	 */
+	public static final int op_threewaycomparison = 35;
+
+	/**
 	 * Get the first operand.
 	 *
 	 * @return <code>IASTExpression</code> representing operand 1.

@@ -234,6 +234,10 @@ public class CASTBinaryExpression extends ASTNode implements IASTBinaryExpressio
 		case op_notequals:
 			return new CBasicType(Kind.eInt, 0, this);
 
+		case op_threewaycomparison:
+			// TODO: implement for <=>
+			break;
+
 		case IASTBinaryExpression.op_plus:
 			if (type1 instanceof IArrayType) {
 				return Conversions.arrayTypeToPointerType((ICArrayType) type1);

@@ -224,6 +224,9 @@ public class ValueFactory {
 		case IASTBinaryExpression.op_greaterEqual:
 			value = v1 >= v2 ? 1l : 0l;
 			break;
+		case IASTBinaryExpression.op_threewaycomparison:
+			// TODO: implement for <=>
+			break;
 		case IASTBinaryExpression.op_binaryAnd:
 			value = v1 & v2;
 			break;

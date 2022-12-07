@@ -45,6 +45,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftLeft;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftLeftAssign;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftRight;
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftRightAssign;
+import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_threewaycomparison;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
@@ -387,6 +388,10 @@ public class EvalBinary extends CPPDependentEvaluation {
 		case op_equals:
 		case op_notequals:
 			return CPPBasicType.BOOLEAN;
+
+		case op_threewaycomparison:
+			// TODO: implement for <=>
+			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 
 		case op_plus:
 			if (type1 instanceof IPointerType) {

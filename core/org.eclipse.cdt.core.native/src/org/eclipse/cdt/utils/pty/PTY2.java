@@ -44,8 +44,6 @@ public class PTY2 {
 
 		} catch (IOException e) {
 
-		} finally {
-
 		}
 		if (slaveName == null) {
 			throw new IOException("can not start terminal emulator and get pty's slave name"); //$NON-NLS-1$

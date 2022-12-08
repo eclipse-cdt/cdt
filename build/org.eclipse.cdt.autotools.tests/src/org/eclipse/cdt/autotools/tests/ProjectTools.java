@@ -150,9 +150,9 @@ public class ProjectTools {
 		// if the path points to an actual object, use its resource to get its location
 		// which will handle any linked directories
 		if (project.findMember(filePath) != null)
-			args[1] = project.findMember(filePath).getLocation().toOSString();
+			args[1] = project.findMember(filePath).getLocation().toPortableString();
 		else // otherwise, just append to project location
-			args[1] = project.getLocation().append(filePath).toOSString();
+			args[1] = project.getLocation().append(filePath).toPortableString();
 		try {
 			Process proc = launcher.execute(commandPath, args, new String[0], runPath, new NullProgressMonitor());
 			if (proc != null) {

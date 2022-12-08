@@ -105,7 +105,7 @@ public class SetConfigurationParameterTest extends AbstractTest {
 		assertNotNull(project);
 		IPath path = project.getLocation();
 		path = path.append(".autotools");
-		File f = new File(path.toOSString());
+		File f = new File(path.toPortableString());
 		assertTrue(f.exists());
 
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -156,9 +156,9 @@ public class SetConfigurationParameterTest extends AbstractTest {
 		IProject project = root.getProject(projectName);
 		assertNotNull(project);
 		IPath path = project.getLocation();
-		File f = new File(path.append("src/a.out").toOSString());
+		File f = new File(path.append("src/a.out").toPortableString());
 		assertTrue(f.exists());
-		f = new File(path.append("config.status").toOSString());
+		f = new File(path.append("config.status").toPortableString());
 		assertTrue(f.exists());
 
 		try (BufferedReader r = new BufferedReader(new FileReader(f))) {
@@ -203,13 +203,13 @@ public class SetConfigurationParameterTest extends AbstractTest {
 		// sleep a bit and look for it...give up after 120 seconds
 		for (int i = 0; i < 240; ++i) {
 			bot.sleep(500);
-			f = new File(path.append("src/a.out").toOSString());
+			f = new File(path.append("src/a.out").toPortableString());
 			if (f.exists()) {
 				break;
 			}
 		}
 		assertTrue(f.exists());
-		f = new File(path.append("config.status").toOSString());
+		f = new File(path.append("config.status").toPortableString());
 		assertTrue(f.exists());
 		long newDate = f.lastModified();
 		assertEquals(newDate, oldDate);
@@ -279,13 +279,13 @@ public class SetConfigurationParameterTest extends AbstractTest {
 		File f = null;
 		for (int i = 0; i < 40; ++i) {
 			bot.sleep(500);
-			f = new File(path.append("build-debug/src/a.out").toOSString());
+			f = new File(path.append("build-debug/src/a.out").toPortableString());
 			if (f.exists()) {
 				break;
 			}
 		}
 		assertTrue(f.exists());
-		f = new File(path.append("build-debug/config.status").toOSString());
+		f = new File(path.append("build-debug/config.status").toPortableString());
 		assertTrue(f.exists());
 		try (BufferedReader r = new BufferedReader(new FileReader(f))) {
 			int ch;
@@ -315,10 +315,10 @@ public class SetConfigurationParameterTest extends AbstractTest {
 		// Verify we cleaned out the top-level build directory (i.e. that there
 		// is no config.status there anymore).
 		path = project.getLocation().append("config.status");
-		f = new File(path.toOSString());
+		f = new File(path.toPortableString());
 		assertTrue(!f.exists());
 		path = project.getLocation().append(".autotools");
-		f = new File(path.toOSString());
+		f = new File(path.toPortableString());
 		assertTrue(f.exists());
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();

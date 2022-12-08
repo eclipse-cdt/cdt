@@ -28,9 +28,9 @@ public class MSYS2 {
 	private static void initialize() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			Map<String, String> environment = System.getenv();
-			msys2Dir = environment.get("CYGWIN_DIR"); //$NON-NLS-1$
+			msys2Dir = environment.get("MSYS2_DIR"); //$NON-NLS-1$
 			if (msys2Dir != null) {
-				if (dirHasCygwin1Dll(msys2Dir)) {
+				if (dirHasMsys2Dll(msys2Dir)) {
 					isPresent = true;
 					msys2Dir = new Path(msys2Dir).toPortableString();
 					return;
@@ -39,9 +39,9 @@ public class MSYS2 {
 				for (char drive = 'C'; drive < 'H'; drive++) {
 					StringBuilder dirStringBuilder = new StringBuilder();
 					dirStringBuilder.append(drive);
-					dirStringBuilder.append(":/cygwin64"); //$NON-NLS-1$
+					dirStringBuilder.append(":/msys64"); //$NON-NLS-1$
 					String dirString = dirStringBuilder.toString();
-					if (dirHasCygwin1Dll(dirString)) {
+					if (dirHasMsys2Dll(dirString)) {
 						isPresent = true;
 						msys2Dir = dirString;
 						return;
@@ -51,11 +51,11 @@ public class MSYS2 {
 		}
 	}
 
-	private static boolean dirHasCygwin1Dll(String dirString) {
+	private static boolean dirHasMsys2Dll(String dirString) {
 		IPath dirLocation = new Path(dirString);
 		File dir = dirLocation.toFile();
 		if (dir.isAbsolute() && dir.exists() && dir.isDirectory()) {
-			File file = dirLocation.append("/bin/cygwin1.dll").toFile(); //$NON-NLS-1$
+			File file = dirLocation.append("/usr/bin/msys-2.0.dll").toFile(); //$NON-NLS-1$
 			if (file.exists() && file.isFile() && file.canRead()) {
 				return true;
 			}

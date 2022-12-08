@@ -207,17 +207,17 @@ public class TestToolActions extends AbstractTest {
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
 			bot.sleep(500);
-			f = new File(path.toOSString());
-			f2 = new File(path2.toOSString());
+			f = new File(path.toPortableString());
+			f2 = new File(path2.toPortableString());
 			if (f.exists() && f2.exists()) {
 				break;
 			}
 		}
 		assertTrue(f.exists() && f2.exists());
 		// Verify we now have Makefile.in files created
-		f = new File(path.toOSString());
+		f = new File(path.toPortableString());
 		assertTrue(f.exists());
-		f2 = new File(path2.toOSString());
+		f2 = new File(path2.toPortableString());
 		assertTrue(f2.exists());
 	}
 
@@ -260,23 +260,23 @@ public class TestToolActions extends AbstractTest {
 	public void t7canAccessAutoreconf() throws Exception {
 		IPath path = checkProject().getLocation();
 		// Remove a number of generated files
-		File f = new File(path.append("src/Makefile.in").toOSString());
+		File f = new File(path.append("src/Makefile.in").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		f = new File(path.append("Makefile.in").toOSString());
+		f = new File(path.append("Makefile.in").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		f = new File(path.append("configure").toOSString());
+		f = new File(path.append("configure").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		f = new File(path.append("config.status").toOSString());
+		f = new File(path.append("config.status").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		f = new File(path.append("config.sub").toOSString());
+		f = new File(path.append("config.sub").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
@@ -304,12 +304,12 @@ public class TestToolActions extends AbstractTest {
 		// Verify a number of generated files now exist
 		String[] fileList = { "Makefile.in", "src/Makefile.in", "configure", "config.sub" };
 		for (String name : fileList) {
-			f = new File(path.append(name).toOSString());
+			f = new File(path.append(name).toPortableString());
 			assertTrue("Missing: " + name, f.exists());
 		}
 
 		String name = "config.status";
-		f = new File(path.append(name).toOSString());
+		f = new File(path.append(name).toPortableString());
 		assertTrue("Mistakenly found: " + name, !f.exists()); // shouldn't have run configure
 	}
 

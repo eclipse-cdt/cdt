@@ -144,25 +144,19 @@ public class Cygwin {
 		} else if (cygwinDirPath.isPrefixOf(path)) {
 			int matchingFirstSegments = cygwinDirPath.matchingFirstSegments(path);
 			String[] segments = path.segments();
-			String[] newSegments = new String[segments.length - matchingFirstSegments];
-			System.arraycopy(segments, matchingFirstSegments, newSegments, 0, segments.length - matchingFirstSegments);
-
 			StringBuilder builder = new StringBuilder();
-			for (String s : newSegments) {
+			for (int i = matchingFirstSegments; i < segments.length; i++) {
 				builder.append('/');
-				builder.append(s);
+				builder.append(segments[i]);
 			}
 			unixPath = builder.toString();
 		} else {
 			String device = path.getDevice().replace(':', ' ').trim();
 			String[] segments = path.segments();
-			String[] newSegments = new String[segments.length + 2];
-			newSegments[0] = "cygdrive"; //$NON-NLS-1$
-			newSegments[1] = device.toLowerCase();
-			System.arraycopy(segments, 0, newSegments, 2, segments.length);
-
 			StringBuilder builder = new StringBuilder();
-			for (String s : newSegments) {
+			builder.append("/cygdrive/"); //$NON-NLS-1$
+			builder.append(device.toLowerCase());
+			for (String s : segments) {
 				builder.append('/');
 				builder.append(s);
 			}

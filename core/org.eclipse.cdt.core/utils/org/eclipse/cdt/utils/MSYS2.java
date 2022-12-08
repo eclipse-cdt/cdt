@@ -143,7 +143,7 @@ public class MSYS2 {
 			String[] segments = path.segments();
 			StringBuilder builder = new StringBuilder();
 			builder.append('/');
-			builder.append(device);
+			builder.append(device.toLowerCase());
 			for (String s : segments) {
 				builder.append('/');
 				builder.append(s);

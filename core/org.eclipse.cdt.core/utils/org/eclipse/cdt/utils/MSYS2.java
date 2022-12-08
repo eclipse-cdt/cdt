@@ -16,10 +16,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
-// A collection of Cygwin-related utilities.
-public class Cygwin {
+// A collection of MSYS2-related utilities.
+public class MSYS2 {
 	public static boolean isPresent;
-	public static String cygwinDir;
+	public static String msys2Dir;
 	static {
 		initialize();
 	}
@@ -28,11 +28,11 @@ public class Cygwin {
 	private static void initialize() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			Map<String, String> environment = System.getenv();
-			cygwinDir = environment.get("CYGWIN_DIR"); //$NON-NLS-1$
-			if (cygwinDir != null) {
-				if (dirHasCygwin1Dll(cygwinDir)) {
+			msys2Dir = environment.get("CYGWIN_DIR"); //$NON-NLS-1$
+			if (msys2Dir != null) {
+				if (dirHasCygwin1Dll(msys2Dir)) {
 					isPresent = true;
-					cygwinDir = new Path(cygwinDir).toPortableString();
+					msys2Dir = new Path(msys2Dir).toPortableString();
 					return;
 				}
 			} else {
@@ -43,7 +43,7 @@ public class Cygwin {
 					String dirString = dirStringBuilder.toString();
 					if (dirHasCygwin1Dll(dirString)) {
 						isPresent = true;
-						cygwinDir = dirString;
+						msys2Dir = dirString;
 						return;
 					}
 				}
@@ -115,7 +115,7 @@ public class Cygwin {
 			}
 			// unixPath.startsWith("/") && segments.length >= 0
 			StringBuilder builder = new StringBuilder();
-			builder.append(cygwinDir);
+			builder.append(msys2Dir);
 			for (String s : segments) {
 				builder.append('/');
 				builder.append(s);
@@ -146,14 +146,14 @@ public class Cygwin {
 			return windowsPath;
 		}
 
-		IPath cygwinDirPath = Path.fromOSString(cygwinDir);
+		IPath msys2DirPath = Path.fromOSString(msys2Dir);
 		IPath path = Path.fromOSString(windowsPath);
 		String unixPath;
 		if (!path.isAbsolute()) {
 			// relative path
 			unixPath = path.toPortableString();
-		} else if (cygwinDirPath.isPrefixOf(path)) {
-			int matchingFirstSegments = cygwinDirPath.matchingFirstSegments(path);
+		} else if (msys2DirPath.isPrefixOf(path)) {
+			int matchingFirstSegments = msys2DirPath.matchingFirstSegments(path);
 			String[] segments = path.segments();
 			String[] newSegments = new String[segments.length - matchingFirstSegments];
 			System.arraycopy(segments, matchingFirstSegments, newSegments, 0, segments.length - matchingFirstSegments);

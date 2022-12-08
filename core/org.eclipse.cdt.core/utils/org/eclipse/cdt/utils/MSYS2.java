@@ -80,8 +80,6 @@ public class MSYS2 {
 			return windowsPath;
 		}
 		String[] segments = path.segments();
-		String[] newSegments;
-
 		if (unixPath.startsWith("/")) { //$NON-NLS-1$
 			// absolute path
 			if (segments.length >= 1) {

@@ -60,7 +60,7 @@ public class TestToolActions extends AbstractTest {
 		IPath path = checkProject().getLocation();
 		// Verify configure does not exist initially
 		path = path.append("aclocal.m4");
-		File f = new File(path.toOSString());
+		File f = new File(path.toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
@@ -77,7 +77,7 @@ public class TestToolActions extends AbstractTest {
 				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// Verify we still don't have an aclocal.m4 file yet
-		f = new File(path.toOSString());
+		f = new File(path.toPortableString());
 		assertFalse(f.exists());
 		// Now lets run aclocal for our hello world project which hasn't had any
 		// autotool files generated yet.
@@ -93,7 +93,7 @@ public class TestToolActions extends AbstractTest {
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
 			bot.sleep(500);
-			f = new File(path.toOSString());
+			f = new File(path.toPortableString());
 			if (f.exists()) {
 				break;
 			}
@@ -108,7 +108,7 @@ public class TestToolActions extends AbstractTest {
 		IPath path = checkProject().getLocation();
 		// Verify configure does not exist initially
 		path = path.append("configure");
-		File f = new File(path.toOSString());
+		File f = new File(path.toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
@@ -122,13 +122,13 @@ public class TestToolActions extends AbstractTest {
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
 			bot.sleep(500);
-			f = new File(path.toOSString());
+			f = new File(path.toPortableString());
 			if (f.exists()) {
 				break;
 			}
 		}
 		// Verify we now have a configure script
-		f = new File(path.toOSString());
+		f = new File(path.toPortableString());
 		assertTrue(f.exists());
 		// Now lets delete the configure file and run autoconf from the project
 		// explorer menu directly from the configure.ac file.
@@ -144,13 +144,13 @@ public class TestToolActions extends AbstractTest {
 		// sleep a bit and look for it...give up after 20 seconds
 		for (int i = 0; i < 40; ++i) {
 			bot.sleep(500);
-			f = new File(path.toOSString());
+			f = new File(path.toPortableString());
 			if (f.exists()) {
 				break;
 			}
 		}
 		// Verify we now have a configure script again
-		f = new File(path.toOSString());
+		f = new File(path.toPortableString());
 		assertTrue(f.exists());
 
 		exitProjectFolder();
@@ -163,11 +163,11 @@ public class TestToolActions extends AbstractTest {
 		// Verify configure does not exist initially
 		IPath path2 = path.append("src/Makefile.in");
 		path = path.append("Makefile.in");
-		File f = new File(path.toOSString());
+		File f = new File(path.toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		File f2 = new File(path2.toOSString());
+		File f2 = new File(path2.toPortableString());
 		if (f2.exists()) {
 			f2.delete();
 		}
@@ -183,9 +183,9 @@ public class TestToolActions extends AbstractTest {
 				Pattern.DOTALL);
 		bot.waitUntil(consoleTextMatches(consoleView, p));
 		// Verify we still don't have Makefile.in files yet
-		f = new File(path.toOSString());
+		f = new File(path.toPortableString());
 		assertTrue(!f.exists());
-		f2 = new File(path2.toOSString());
+		f2 = new File(path2.toPortableString());
 		assertTrue(!f2.exists());
 		// Now lets run automake for our hello world project which hasn't had
 		// any

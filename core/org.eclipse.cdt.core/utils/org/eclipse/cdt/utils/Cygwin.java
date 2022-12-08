@@ -23,12 +23,20 @@ public class Cygwin {
 	@SuppressWarnings("unused")
 	private static String cygwinDir;
 	static {
+		initialize();
+	}
+
+	/**
+	 * initialize static data field cygwinDir.
+	 */
+	private static void initialize() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			Map<String, String> environment = System.getenv();
 			cygwinDir = environment.get("CYGWIN_DIR"); //$NON-NLS-1$
 			if (cygwinDir != null) {
 				if (dirHasCygwin1Dll(cygwinDir)) {
 					isPresent = true;
+					return;
 				}
 			} else {
 				for (char drive = 'C'; drive < 'H'; drive++) {
@@ -39,7 +47,7 @@ public class Cygwin {
 					if (dirHasCygwin1Dll(dirString)) {
 						isPresent = true;
 						cygwinDir = dirString;
-						break;
+						return;
 					}
 				}
 			}
@@ -259,27 +267,6 @@ public class Cygwin {
 			return new Path(locationStr);
 
 		return null;
-	}
-
-	/**
-	 * initialize static data field cygwinDir.
-	 */
-	private static void initializeCygwinDir() {
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			IPath cygwin1DllPath = findProgramLocation("cygwin1.dll", null); //$NON-NLS-1$
-			if (cygwin1DllPath != null && cygwin1DllPath.segmentCount() >= 2
-					&& cygwin1DllPath.segments()[cygwin1DllPath.segmentCount() - 2].equals("bin")) { //$NON-NLS-1$
-				IPath cygwinDirPath = cygwin1DllPath.removeLastSegments(2);
-				cygwinDir = cygwinDirPath.toPortableString();
-				return;
-			}
-			// Cygwin not found, set cygwinDir to default
-			if (Platform.getOSArch().equals(Platform.ARCH_X86_64)) {
-				cygwinDir = "C:/cygwin64"; //$NON-NLS-1$
-			} else {
-				cygwinDir = "C:/cygwin"; //$NON-NLS-1$
-			}
-		}
 	}
 
 }

@@ -43,7 +43,7 @@ public class Cygwin {
 					String dirString = dirStringBuilder.toString();
 					if (dirHasCygwin1Dll(dirString)) {
 						isPresent = true;
-						cygwinDir = dirString;
+						cygwinDir = new Path(dirString).toPortableString();
 						return;
 					}
 				}

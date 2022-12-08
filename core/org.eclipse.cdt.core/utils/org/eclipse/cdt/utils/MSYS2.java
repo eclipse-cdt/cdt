@@ -43,7 +43,7 @@ public class MSYS2 {
 					String dirString = dirStringBuilder.toString();
 					if (dirHasMsys2Dll(dirString)) {
 						isPresent = true;
-						msys2Dir = dirString;
+						msys2Dir = new Path(dirString).toPortableString();
 						return;
 					}
 				}

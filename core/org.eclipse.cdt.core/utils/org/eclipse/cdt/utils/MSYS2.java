@@ -108,15 +108,7 @@ public class MSYS2 {
 			windowsPath = builder.toString();
 		} else {
 			// relative path
-			StringBuilder builder = new StringBuilder();
-			for (int i = 0; i < segments.length; i++) {
-				String s = segments[i];
-				if (i != 0) {
-					builder.append('/');
-				}
-				builder.append(s);
-			}
-			windowsPath = builder.toString();
+			windowsPath = path.toPortableString();
 		}
 
 		return windowsPath;

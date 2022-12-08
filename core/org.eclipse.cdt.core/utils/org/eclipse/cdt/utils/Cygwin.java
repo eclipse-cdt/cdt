@@ -85,16 +85,21 @@ public class Cygwin {
 			String[] segments = path.segments();
 			if (segments.length >= 2) {
 				if (segments[0].equals("cygdrive")) { //$NON-NLS-1$
-					String device = segments[1].toUpperCase();
-					StringBuilder builder = new StringBuilder();
-					builder.append(device);
-					builder.append(':');
-					for (int i = 2; i < segments.length; i++) {
-						builder.append('/');
-						builder.append(segments[i]);
+					if (segments[1].length() == 1) {
+						char drive = segments[1].charAt(0);
+						if ((drive >= 'a' && drive <= 'z') || (drive >= 'A' && drive <= 'Z')) {
+							String device = segments[1].toUpperCase();
+							StringBuilder builder = new StringBuilder();
+							builder.append(device);
+							builder.append(':');
+							for (int i = 2; i < segments.length; i++) {
+								builder.append('/');
+								builder.append(segments[i]);
+							}
+							windowsPath = builder.toString();
+							return windowsPath;
+						}
 					}
-					windowsPath = builder.toString();
-					return windowsPath;
 				}
 				if (segments[0].equals("usr") && (segments[1].equals("bin") || segments[1].equals("lib"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					// /usr/lib --> /lib

@@ -86,8 +86,9 @@ public class MSYS2 {
 				if (segments[0].length() == 1) {
 					char drive = segments[0].charAt(0);
 					if ((drive >= 'a' && drive <= 'z') || (drive >= 'A' && drive <= 'Z')) {
+						String device = segments[0].toUpperCase();
 						StringBuilder builder = new StringBuilder();
-						builder.append(drive);
+						builder.append(device);
 						builder.append(':');
 						for (int i = 1; i < segments.length; i++) {
 							builder.append('/');

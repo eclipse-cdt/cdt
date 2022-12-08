@@ -79,24 +79,19 @@ public class Cygwin {
 			windowsPath = path.toPortableString();
 			return windowsPath;
 		}
-		String[] segments = path.segments();
-		String[] newSegments;
 
 		if (unixPath.startsWith("/")) { //$NON-NLS-1$
 			// absolute path
+			String[] segments = path.segments();
 			if (segments.length >= 2) {
 				if (segments[0].equals("cygdrive")) { //$NON-NLS-1$
 					String device = segments[1].toUpperCase();
-
-					newSegments = new String[segments.length - 2];
-					System.arraycopy(segments, 2, newSegments, 0, segments.length - 2);
-
 					StringBuilder builder = new StringBuilder();
 					builder.append(device);
 					builder.append(':');
-					for (String s : newSegments) {
+					for (int i = 2; i < segments.length; i++) {
 						builder.append('/');
-						builder.append(s);
+						builder.append(segments[i]);
 					}
 					windowsPath = builder.toString();
 					return windowsPath;
@@ -105,7 +100,7 @@ public class Cygwin {
 					// /usr/lib --> /lib
 					// /usr/bin --> /bin
 					// /usr/include unchanged
-					newSegments = new String[segments.length - 1];
+					String[] newSegments = new String[segments.length - 1];
 					System.arraycopy(segments, 1, newSegments, 0, segments.length - 1);
 					segments = newSegments;
 				}

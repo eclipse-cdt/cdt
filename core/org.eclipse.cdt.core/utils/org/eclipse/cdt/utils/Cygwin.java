@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.Platform;
 
 // A collection of Cygwin-related utilities.
 public class Cygwin {
-	public static boolean isPresent;
-	private static String cygwinDir;
+	private static boolean present;
+	private static String rootDir;
 	static {
 		initialize();
 	}
@@ -28,11 +28,11 @@ public class Cygwin {
 	private static void initialize() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			Map<String, String> environment = System.getenv();
-			cygwinDir = environment.get("CYGWIN_DIR"); //$NON-NLS-1$
-			if (cygwinDir != null) {
-				if (dirHasCygwin1Dll(cygwinDir)) {
-					isPresent = true;
-					cygwinDir = new Path(cygwinDir).toPortableString();
+			rootDir = environment.get("CYGWIN_DIR"); //$NON-NLS-1$
+			if (rootDir != null) {
+				if (dirHasCygwin1Dll(rootDir)) {
+					present = true;
+					rootDir = new Path(rootDir).toPortableString();
 					return;
 				}
 			} else {
@@ -42,8 +42,8 @@ public class Cygwin {
 					dirStringBuilder.append(":/cygwin64"); //$NON-NLS-1$
 					String dirString = dirStringBuilder.toString();
 					if (dirHasCygwin1Dll(dirString)) {
-						isPresent = true;
-						cygwinDir = new Path(dirString).toPortableString();
+						present = true;
+						rootDir = new Path(dirString).toPortableString();
 						return;
 					}
 				}
@@ -63,9 +63,17 @@ public class Cygwin {
 		return false;
 	}
 
+	public boolean isPresent() {
+		return present;
+	}
+
+	public String getRootDir() {
+		return rootDir;
+	}
+
 	// Convert Unix path to Windows path
 	public static String pathToWindows(String unixPath) {
-		if (!isPresent) {
+		if (!present) {
 			return unixPath;
 		}
 		if (unixPath == null || unixPath.trim().length() == 0) {
@@ -112,7 +120,7 @@ public class Cygwin {
 			}
 			// unixPath.startsWith("/") && segments.length >= 0
 			StringBuilder builder = new StringBuilder();
-			builder.append(cygwinDir);
+			builder.append(rootDir);
 			for (String s : segments) {
 				builder.append('/');
 				builder.append(s);
@@ -128,21 +136,21 @@ public class Cygwin {
 
 	// Convert Windows path to Unix path
 	public static String pathToUnix(String windowsPath) {
-		if (!isPresent) {
+		if (!present) {
 			return windowsPath;
 		}
 		if (windowsPath == null || windowsPath.trim().length() == 0) {
 			return windowsPath;
 		}
 
-		IPath cygwinDirPath = Path.fromOSString(cygwinDir);
+		IPath rootDirPath = Path.fromOSString(rootDir);
 		IPath path = Path.fromOSString(windowsPath);
 		String unixPath;
 		if (!path.isAbsolute()) {
 			// relative path
 			unixPath = path.toPortableString();
-		} else if (cygwinDirPath.isPrefixOf(path)) {
-			int matchingFirstSegments = cygwinDirPath.matchingFirstSegments(path);
+		} else if (rootDirPath.isPrefixOf(path)) {
+			int matchingFirstSegments = rootDirPath.matchingFirstSegments(path);
 			String[] segments = path.segments();
 			StringBuilder builder = new StringBuilder();
 			for (int i = matchingFirstSegments; i < segments.length; i++) {

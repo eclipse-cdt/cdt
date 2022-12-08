@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.Platform;
 
 // A collection of MSYS2-related utilities.
 public class MSYS2 {
-	public static boolean isPresent;
-	private static String msys2Dir;
+	public static boolean present;
+	private static String rootDir;
 	static {
 		initialize();
 	}
@@ -28,11 +28,11 @@ public class MSYS2 {
 	private static void initialize() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			Map<String, String> environment = System.getenv();
-			msys2Dir = environment.get("MSYS2_DIR"); //$NON-NLS-1$
-			if (msys2Dir != null) {
-				if (dirHasMsys2Dll(msys2Dir)) {
-					isPresent = true;
-					msys2Dir = new Path(msys2Dir).toPortableString();
+			rootDir = environment.get("MSYS2_DIR"); //$NON-NLS-1$
+			if (rootDir != null) {
+				if (dirHasMsys2Dll(rootDir)) {
+					present = true;
+					rootDir = new Path(rootDir).toPortableString();
 					return;
 				}
 			} else {
@@ -42,8 +42,8 @@ public class MSYS2 {
 					dirStringBuilder.append(":/msys64"); //$NON-NLS-1$
 					String dirString = dirStringBuilder.toString();
 					if (dirHasMsys2Dll(dirString)) {
-						isPresent = true;
-						msys2Dir = new Path(dirString).toPortableString();
+						present = true;
+						rootDir = new Path(dirString).toPortableString();
 						return;
 					}
 				}
@@ -63,9 +63,17 @@ public class MSYS2 {
 		return false;
 	}
 
+	public boolean isPresent() {
+		return present;
+	}
+
+	public String getRootDir() {
+		return rootDir;
+	}
+
 	// Convert Unix path to Windows path
 	public static String pathToWindows(String unixPath) {
-		if (!isPresent) {
+		if (!present) {
 			return unixPath;
 		}
 		if (unixPath == null || unixPath.trim().length() == 0) {
@@ -101,7 +109,7 @@ public class MSYS2 {
 			}
 			// unixPath.startsWith("/") && segments.length >= 0
 			StringBuilder builder = new StringBuilder();
-			builder.append(msys2Dir);
+			builder.append(rootDir);
 			for (String s : segments) {
 				builder.append('/');
 				builder.append(s);
@@ -117,21 +125,21 @@ public class MSYS2 {
 
 	// Convert Windows path to Unix path
 	public static String pathToUnix(String windowsPath) {
-		if (!isPresent) {
+		if (!present) {
 			return windowsPath;
 		}
 		if (windowsPath == null || windowsPath.trim().length() == 0) {
 			return windowsPath;
 		}
 
-		IPath msys2DirPath = Path.fromOSString(msys2Dir);
+		IPath rootDirPath = Path.fromOSString(rootDir);
 		IPath path = Path.fromOSString(windowsPath);
 		String unixPath;
 		if (!path.isAbsolute()) {
 			// relative path
 			unixPath = path.toPortableString();
-		} else if (msys2DirPath.isPrefixOf(path)) {
-			int matchingFirstSegments = msys2DirPath.matchingFirstSegments(path);
+		} else if (rootDirPath.isPrefixOf(path)) {
+			int matchingFirstSegments = rootDirPath.matchingFirstSegments(path);
 			String[] segments = path.segments();
 			StringBuilder builder = new StringBuilder();
 			for (int i = matchingFirstSegments; i < segments.length; i++) {

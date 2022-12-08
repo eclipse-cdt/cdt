@@ -34,6 +34,11 @@ Please see the corresponding issue for more details.
   - `org.eclipse.cdt.lsp.cquery`
   - `org.eclipse.cdt.lsp.ui`
 
+## Dwarf Versions
+
+Starting with GCC 11, GCC will default to using Dwarf5 in most circumstances. CDT does not yet support Dwarf5 and therefore to ensure compatibility with CDT compile your programs with `-gdwarf-4`.
+For more information, refer to the [GCC 11 release notes](https://gcc.gnu.org/gcc-11/changes.html) and see CDT's tracking issue https://github.com/eclipse-cdt/cdt/issues/198.
+
 # Build
 
 ## Scanner Discovery able to consider all flags

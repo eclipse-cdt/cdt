@@ -317,23 +317,23 @@ public class TestToolActions extends AbstractTest {
 	public void t8canReconfigureProject() {
 		IPath path = checkProject().getLocation();
 		// Remove a number of generated files
-		File f = new File(path.append("src/Makefile.in").toOSString());
+		File f = new File(path.append("src/Makefile.in").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		f = new File(path.append("Makefile.in").toOSString());
+		f = new File(path.append("Makefile.in").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		f = new File(path.append("configure").toOSString());
+		f = new File(path.append("configure").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		f = new File(path.append("config.status").toOSString());
+		f = new File(path.append("config.status").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
-		f = new File(path.append("config.sub").toOSString());
+		f = new File(path.append("config.sub").toPortableString());
 		if (f.exists()) {
 			f.delete();
 		}
@@ -342,22 +342,22 @@ public class TestToolActions extends AbstractTest {
 		// sleep a bit and look for it...give up after 40 seconds
 		for (int i = 0; i < 40; ++i) {
 			bot.sleep(500);
-			f = new File(path.append("config.status").toOSString());
+			f = new File(path.append("config.status").toPortableString());
 			if (f.exists()) {
 				break;
 			}
 		}
 		assertTrue(f.exists());
 		// Verify a number of generated files now exist
-		f = new File(path.append("src/Makefile.in").toOSString());
+		f = new File(path.append("src/Makefile.in").toPortableString());
 		assertTrue(f.exists());
-		f = new File(path.append("Makefile.in").toOSString());
+		f = new File(path.append("Makefile.in").toPortableString());
 		assertTrue(f.exists());
-		f = new File(path.append("configure").toOSString());
+		f = new File(path.append("configure").toPortableString());
 		assertTrue(f.exists());
-		f = new File(path.append("config.status").toOSString());
+		f = new File(path.append("config.status").toPortableString());
 		assertTrue(f.exists());
-		f = new File(path.append("config.sub").toOSString());
+		f = new File(path.append("config.sub").toPortableString());
 		assertTrue(f.exists());
 	}
 

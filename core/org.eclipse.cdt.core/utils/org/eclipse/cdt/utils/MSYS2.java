@@ -35,17 +35,16 @@ public class MSYS2 {
 					rootDir = new Path(rootDir).toPortableString();
 					return;
 				}
-			} else {
-				for (char drive = 'C'; drive < 'H'; drive++) {
-					StringBuilder dirStringBuilder = new StringBuilder();
-					dirStringBuilder.append(drive);
-					dirStringBuilder.append(":/msys64"); //$NON-NLS-1$
-					String dirString = dirStringBuilder.toString();
-					if (dirHasMsys2Dll(dirString)) {
-						present = true;
-						rootDir = new Path(dirString).toPortableString();
-						return;
-					}
+			}
+			for (char drive = 'C'; drive < 'H'; drive++) {
+				StringBuilder dirStringBuilder = new StringBuilder();
+				dirStringBuilder.append(drive);
+				dirStringBuilder.append(":/msys64"); //$NON-NLS-1$
+				String dirString = dirStringBuilder.toString();
+				if (dirHasMsys2Dll(dirString)) {
+					present = true;
+					rootDir = new Path(dirString).toPortableString();
+					return;
 				}
 			}
 		}

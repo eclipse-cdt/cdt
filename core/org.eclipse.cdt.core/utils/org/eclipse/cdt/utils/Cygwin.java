@@ -149,7 +149,10 @@ public class Cygwin {
 		IPath cygwinDirPath = Path.fromOSString(cygwinDir);
 		IPath path = Path.fromOSString(windowsPath);
 		String unixPath;
-		if (cygwinDirPath.isPrefixOf(path)) {
+		if (!path.isAbsolute()) {
+			// relative path
+			unixPath = path.toPortableString();
+		} else if (cygwinDirPath.isPrefixOf(path)) {
 			int matchingFirstSegments = cygwinDirPath.matchingFirstSegments(path);
 			String[] segments = path.segments();
 			String[] newSegments = new String[segments.length - matchingFirstSegments];

@@ -18,9 +18,7 @@ import org.eclipse.core.runtime.Platform;
 
 // A collection of Cygwin-related utilities.
 public class Cygwin {
-	@SuppressWarnings("unused")
 	private static boolean isPresent;
-	@SuppressWarnings("unused")
 	private static String cygwinDir;
 	static {
 		initialize();
@@ -34,6 +32,7 @@ public class Cygwin {
 			if (cygwinDir != null) {
 				if (dirHasCygwin1Dll(cygwinDir)) {
 					isPresent = true;
+					cygwinDir = new Path(cygwinDir).toPortableString();
 					return;
 				}
 			} else {
@@ -76,7 +75,7 @@ public class Cygwin {
 		String windowsPath;
 		IPath path = Path.fromOSString(unixPath);
 		if (path.getDevice() != null) {
-			// already a windows path
+			// already a windows absolute path
 			windowsPath = path.toPortableString();
 			return windowsPath;
 		}

@@ -111,13 +111,13 @@ public abstract class FileContent {
 		if (location == null) {
 			fileContent = new InternalFileContent(tu.getElementName(), new CharArray(tu.getContents()));
 		} else if (tu.isWorkingCopy()) {
-			fileContent = new InternalFileContent(location.toOSString(), new CharArray(tu.getContents()));
+			fileContent = new InternalFileContent(location.toPortableString(), new CharArray(tu.getContents()));
 		} else {
 			IResource res = tu.getResource();
 			if (res instanceof IFile) {
 				fileContent = InternalParserUtil.createWorkspaceFileContent((IFile) res);
 			} else {
-				fileContent = InternalParserUtil.createExternalFileContent(location.toOSString(),
+				fileContent = InternalParserUtil.createExternalFileContent(location.toPortableString(),
 						InternalParserUtil.SYSTEM_DEFAULT_ENCODING);
 			}
 		}

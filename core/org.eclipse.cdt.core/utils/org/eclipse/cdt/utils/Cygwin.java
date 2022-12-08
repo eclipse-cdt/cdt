@@ -65,13 +65,14 @@ public class Cygwin {
 	}
 
 	// Convert Unix path to Windows path
-	public static String cygwinToWindowsPath(String unixPath) {
-		if (unixPath == null || unixPath.trim().length() == 0)
-			return unixPath;
-
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+	public static String pathToWindows(String unixPath) {
+		if (!isPresent) {
 			return unixPath;
 		}
+		if (unixPath == null || unixPath.trim().length() == 0) {
+			return unixPath;
+		}
+
 		String windowsPath;
 		IPath path = Path.fromOSString(unixPath);
 		if (path.getDevice() != null) {
@@ -105,10 +106,9 @@ public class Cygwin {
 					return windowsPath;
 				}
 				if (segments[0].equals("usr") && (segments[1].equals("bin") || segments[1].equals("lib"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					/*
-					 * /usr/lib --> /lib ; /usr/bin --> /bin ; /usr/include
-					 * unchanged
-					 */
+					// /usr/lib --> /lib
+					// /usr/bin --> /bin
+					// /usr/include unchanged
 					newSegments = new String[segments.length - 1];
 					System.arraycopy(segments, 1, newSegments, 0, segments.length - 1);
 					segments = newSegments;
@@ -140,11 +140,11 @@ public class Cygwin {
 	}
 
 	// Convert Windows path to Unix path
-	public static String windowsTounixPath(String windowsPath) {
-		if (windowsPath == null || windowsPath.trim().length() == 0)
+	public static String pathToUnix(String windowsPath) {
+		if (!isPresent) {
 			return windowsPath;
-
-		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
+		}
+		if (windowsPath == null || windowsPath.trim().length() == 0) {
 			return windowsPath;
 		}
 

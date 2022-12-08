@@ -460,11 +460,22 @@ public class Dwarf implements AutoCloseable {
 					header.offsetSize = sectionLength.offsetSize;
 
 					header.version = read_2_bytes(data);
-					if (header.offsetSize == 8)
-						header.abbreviationOffset = (int) read_8_bytes(data);
-					else
-						header.abbreviationOffset = read_4_bytes(data);
-					header.addressSize = data.get();
+					if (header.version >= 5) {
+						// XXX: We don't use this new field in DWARF v5 yet
+						var unit_type = data.get();
+						header.addressSize = data.get();
+
+						if (header.offsetSize == 8)
+							header.abbreviationOffset = (int) read_8_bytes(data);
+						else
+							header.abbreviationOffset = read_4_bytes(data);
+					} else {
+						if (header.offsetSize == 8)
+							header.abbreviationOffset = (int) read_8_bytes(data);
+						else
+							header.abbreviationOffset = read_4_bytes(data);
+						header.addressSize = data.get();
+					}
 
 					if (printEnabled) {
 						System.out.println("Compilation Unit @ " + Long.toHexString(data.position())); //$NON-NLS-1$
@@ -476,10 +487,20 @@ public class Dwarf implements AutoCloseable {
 					// A 4-byte or 12-byte unsigned integer representing the length of the .debug_info
 					// contribution for that compilation unit, not including the length field itself.
 					ByteBuffer entryBuffer = data.slice();
-					entryBuffer.limit(((int) header.length) - (header.offsetSize == 8 ? 11 : 7));
+					int newLimit = ((int) header.length) - (header.offsetSize == 8 ? 11 : 7);
+					if (header.version >= 5) {
+						// account for new field in DWARF v5
+						newLimit -= 1;
+					}
+					entryBuffer.limit(newLimit);
 					parseDebugInfoEntry(requestor, entryBuffer, abbrevs, header);
 
-					data.position(data.position() + ((int) header.length) - (header.offsetSize == 8 ? 11 : 7));
+					int newLimit2 = ((int) header.length) - (header.offsetSize == 8 ? 11 : 7);
+					if (header.version >= 5) {
+						// account for new field in DWARF v5
+						newLimit2 -= 1;
+					}
+					data.position(data.position() + newLimit2);
 
 					if (printEnabled)
 						System.out.println();

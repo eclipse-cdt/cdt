@@ -18,8 +18,8 @@ import org.eclipse.core.runtime.Platform;
 
 // A collection of Cygwin-related utilities.
 public class Cygwin {
-	private static boolean isPresent;
-	private static String cygwinDir;
+	public static boolean isPresent;
+	public static String cygwinDir;
 	static {
 		initialize();
 	}
@@ -121,7 +121,6 @@ public class Cygwin {
 				builder.append(s);
 			}
 			windowsPath = builder.toString();
-
 		} else {
 			// relative path
 			StringBuilder builder = new StringBuilder();

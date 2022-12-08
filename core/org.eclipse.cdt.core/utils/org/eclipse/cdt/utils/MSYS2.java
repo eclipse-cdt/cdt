@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Platform;
 // A collection of MSYS2-related utilities.
 public class MSYS2 {
 	public static boolean isPresent;
-	public static String msys2Dir;
+	private static String msys2Dir;
 	static {
 		initialize();
 	}
@@ -84,33 +84,20 @@ public class MSYS2 {
 
 		if (unixPath.startsWith("/")) { //$NON-NLS-1$
 			// absolute path
-			if (segments.length < 0) {
-				// error
-				return unixPath;
-			} else if (segments.length >= 2) {
-				if (segments[0].equals("cygdrive")) { //$NON-NLS-1$
-					String device = segments[1].toUpperCase();
-
-					newSegments = new String[segments.length - 2];
-					System.arraycopy(segments, 2, newSegments, 0, segments.length - 2);
-
-					StringBuilder builder = new StringBuilder();
-					builder.append(device);
-					builder.append(':');
-					for (String s : newSegments) {
-						builder.append('/');
-						builder.append(s);
+			if (segments.length >= 1) {
+				if (segments[0].length() == 1) {
+					char drive = segments[0].charAt(0);
+					if ((drive >= 'a' && drive <= 'z') || (drive >= 'A' && drive <= 'Z')) {
+						StringBuilder builder = new StringBuilder();
+						builder.append(drive);
+						builder.append(':');
+						for (int i = 1; i < segments.length; i++) {
+							builder.append('/');
+							builder.append(segments[i]);
+						}
+						windowsPath = builder.toString();
+						return windowsPath;
 					}
-					windowsPath = builder.toString();
-					return windowsPath;
-				}
-				if (segments[0].equals("usr") && (segments[1].equals("bin") || segments[1].equals("lib"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					// /usr/lib --> /lib
-					// /usr/bin --> /bin
-					// /usr/include unchanged
-					newSegments = new String[segments.length - 1];
-					System.arraycopy(segments, 1, newSegments, 0, segments.length - 1);
-					segments = newSegments;
 				}
 			}
 			// unixPath.startsWith("/") && segments.length >= 0

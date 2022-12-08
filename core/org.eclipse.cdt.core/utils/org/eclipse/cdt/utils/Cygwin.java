@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.Platform;
 // A collection of Cygwin-related utilities.
 public class Cygwin {
 	public static boolean isPresent;
-	public static String cygwinDir;
+	private static String cygwinDir;
 	static {
 		initialize();
 	}
@@ -84,10 +84,7 @@ public class Cygwin {
 
 		if (unixPath.startsWith("/")) { //$NON-NLS-1$
 			// absolute path
-			if (segments.length < 0) {
-				// error
-				return unixPath;
-			} else if (segments.length >= 2) {
+			if (segments.length >= 2) {
 				if (segments[0].equals("cygdrive")) { //$NON-NLS-1$
 					String device = segments[1].toUpperCase();
 

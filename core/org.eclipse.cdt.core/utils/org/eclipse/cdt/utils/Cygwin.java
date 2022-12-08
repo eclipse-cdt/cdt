@@ -10,6 +10,7 @@
 package org.eclipse.cdt.utils;
 
 import java.io.File;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -18,9 +19,43 @@ import org.eclipse.core.runtime.Platform;
 // A collection of Cygwin-related utilities.
 public class Cygwin {
 	@SuppressWarnings("unused")
+	private static boolean isPresent;
+	@SuppressWarnings("unused")
 	private static String cygwinDir;
 	static {
-		initializeCygwinDir();
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			Map<String, String> environment = System.getenv();
+			cygwinDir = environment.get("CYGWIN_DIR"); //$NON-NLS-1$
+			if (cygwinDir != null) {
+				if (dirHasCygwin1Dll(cygwinDir)) {
+					isPresent = true;
+				}
+			} else {
+				for (char drive = 'C'; drive < 'H'; drive++) {
+					StringBuilder dirStringBuilder = new StringBuilder();
+					dirStringBuilder.append(drive);
+					dirStringBuilder.append(":/cygwin64"); //$NON-NLS-1$
+					String dirString = dirStringBuilder.toString();
+					if (dirHasCygwin1Dll(dirString)) {
+						isPresent = true;
+						cygwinDir = dirString;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	private static boolean dirHasCygwin1Dll(String dirString) {
+		IPath dirLocation = new Path(dirString);
+		File dir = dirLocation.toFile();
+		if (dir.isAbsolute() && dir.exists() && dir.isDirectory()) {
+			File file = dirLocation.append("/bin/cygwin1.dll").toFile(); //$NON-NLS-1$
+			if (file.exists() && file.isFile() && file.canRead()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

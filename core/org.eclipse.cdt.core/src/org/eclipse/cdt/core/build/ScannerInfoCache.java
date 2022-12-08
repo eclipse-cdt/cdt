@@ -54,7 +54,7 @@ public class ScannerInfoCache {
 	}
 
 	public IExtendedScannerInfo getScannerInfo(IResource resource) {
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toPortableString();
 		Command command = resourceMap.get(resourcePath);
 		return command != null ? command.info : null;
 	}
@@ -70,7 +70,7 @@ public class ScannerInfoCache {
 
 	public void addScannerInfo(List<String> commandStrings, IExtendedScannerInfo info, IResource resource) {
 		// Do I need to remove the resource from an existing command?
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toPortableString();
 		Command oldCommand = resourceMap.get(resourcePath);
 		if (oldCommand != null) {
 			if (oldCommand.command.equals(commandStrings)) {
@@ -108,7 +108,7 @@ public class ScannerInfoCache {
 	 * @since 6.3
 	 */
 	public boolean hasResource(List<String> commandStrings, IResource resource) {
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toPortableString();
 		Command command = commandMap.get(commandStrings);
 		if (command == null) {
 			return false;
@@ -117,7 +117,7 @@ public class ScannerInfoCache {
 	}
 
 	public void addResource(List<String> commandStrings, IResource resource) {
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toPortableString();
 		Command command = commandMap.get(commandStrings);
 		Command current = resourceMap.get(resourcePath);
 		if (current != null) {

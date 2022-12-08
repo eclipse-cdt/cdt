@@ -56,12 +56,12 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public long getLastModified(IIndexFileLocation location) {
-		return new File(URIUtil.toPath(location.getURI()).toOSString()).lastModified();
+		return new File(URIUtil.toPath(location.getURI()).toPortableString()).lastModified();
 	}
 
 	@Override
 	public long getFileSize(IIndexFileLocation location) {
-		return new File(URIUtil.toPath(location.getURI()).toOSString()).length();
+		return new File(URIUtil.toPath(location.getURI()).toPortableString()).length();
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
 
 	@Override
 	public String getASTPath(IIndexFileLocation ifl) {
-		return URIUtil.toPath(ifl.getURI()).toOSString();
+		return URIUtil.toPath(ifl.getURI()).toPortableString();
 	}
 
 	@Override

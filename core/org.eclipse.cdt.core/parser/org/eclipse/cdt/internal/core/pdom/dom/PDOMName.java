@@ -363,7 +363,7 @@ public final class PDOMName implements IIndexFragmentName {
 			if (location == null) {
 				return null;
 			}
-			String filename = location.toOSString();
+			String filename = location.toPortableString();
 			return new PDOMASTFileLocation(filename, getNodeOffset(), getNodeLength());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

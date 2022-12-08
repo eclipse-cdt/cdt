@@ -140,11 +140,11 @@ public class MSYS2 {
 			}
 			unixPath = builder.toString();
 		} else {
-			String device = path.getDevice().replace(':', ' ').trim();
+			String device = path.getDevice().replace(':', ' ').trim().toLowerCase();
 			String[] segments = path.segments();
 			StringBuilder builder = new StringBuilder();
 			builder.append('/');
-			builder.append(device.toLowerCase());
+			builder.append(device);
 			for (String s : segments) {
 				builder.append('/');
 				builder.append(s);

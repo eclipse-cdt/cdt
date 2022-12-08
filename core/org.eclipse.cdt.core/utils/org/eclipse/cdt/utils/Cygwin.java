@@ -26,7 +26,7 @@ public class Cygwin {
 		initialize();
 	}
 
-	// initialize static data field cygwinDir
+	// initialize static data fields
 	private static void initialize() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			Map<String, String> environment = System.getenv();
@@ -65,15 +65,15 @@ public class Cygwin {
 	}
 
 	// Convert Unix path to Windows path
-	public static String cygwinToWindowsPath(String cygwinPath) {
-		if (cygwinPath == null || cygwinPath.trim().length() == 0)
-			return cygwinPath;
+	public static String cygwinToWindowsPath(String unixPath) {
+		if (unixPath == null || unixPath.trim().length() == 0)
+			return unixPath;
 
 		if (!Platform.getOS().equals(Platform.OS_WIN32)) {
-			return cygwinPath;
+			return unixPath;
 		}
 		String windowsPath;
-		IPath path = Path.fromOSString(cygwinPath);
+		IPath path = Path.fromOSString(unixPath);
 		if (path.getDevice() != null) {
 			// already a windows path
 			windowsPath = path.toPortableString();
@@ -82,11 +82,11 @@ public class Cygwin {
 		String[] segments = path.segments();
 		String[] newSegments;
 
-		if (cygwinPath.startsWith("/")) { //$NON-NLS-1$
+		if (unixPath.startsWith("/")) { //$NON-NLS-1$
 			// absolute path
 			if (segments.length < 0) {
 				// error
-				return cygwinPath;
+				return unixPath;
 			} else if (segments.length >= 2) {
 				if (segments[0].equals("cygdrive")) { //$NON-NLS-1$
 					String device = segments[1].toUpperCase();
@@ -114,7 +114,7 @@ public class Cygwin {
 					segments = newSegments;
 				}
 			}
-			// cygwinPath.startsWith("/") && segments.length >= 0
+			// unixPath.startsWith("/") && segments.length >= 0
 			StringBuilder builder = new StringBuilder();
 			builder.append(cygwinDir);
 			for (String s : segments) {
@@ -140,7 +140,7 @@ public class Cygwin {
 	}
 
 	// Convert Windows path to Unix path
-	public static String windowsToCygwinPath(String windowsPath) {
+	public static String windowsTounixPath(String windowsPath) {
 		if (windowsPath == null || windowsPath.trim().length() == 0)
 			return windowsPath;
 
@@ -150,7 +150,7 @@ public class Cygwin {
 
 		IPath cygwinDirPath = Path.fromOSString(cygwinDir);
 		IPath path = Path.fromOSString(windowsPath);
-		String cygwinPath;
+		String unixPath;
 		if (cygwinDirPath.isPrefixOf(path)) {
 			int matchingFirstSegments = cygwinDirPath.matchingFirstSegments(path);
 			String[] segments = path.segments();
@@ -162,7 +162,7 @@ public class Cygwin {
 				builder.append('/');
 				builder.append(s);
 			}
-			cygwinPath = builder.toString();
+			unixPath = builder.toString();
 		} else {
 			String device = path.getDevice().replace(':', ' ').trim();
 			String[] segments = path.segments();
@@ -176,9 +176,9 @@ public class Cygwin {
 				builder.append('/');
 				builder.append(s);
 			}
-			cygwinPath = builder.toString();
+			unixPath = builder.toString();
 		}
 
-		return cygwinPath;
+		return unixPath;
 	}
 }

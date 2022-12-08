@@ -26,9 +26,7 @@ public class Cygwin {
 		initialize();
 	}
 
-	/**
-	 * initialize static data field cygwinDir.
-	 */
+	// initialize static data field cygwinDir
 	private static void initialize() {
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			Map<String, String> environment = System.getenv();
@@ -66,14 +64,7 @@ public class Cygwin {
 		return false;
 	}
 
-	/**
-	 * Conversion from Cygwin path to Windows path.
-	 *
-	 * @param cygwinPath
-	 *            - Cygwin path.
-	 * @return Windows style converted path.
-	 *
-	 */
+	// Convert Unix path to Windows path
 	public static String cygwinToWindowsPath(String cygwinPath) {
 		if (cygwinPath == null || cygwinPath.trim().length() == 0)
 			return cygwinPath;
@@ -148,14 +139,7 @@ public class Cygwin {
 		return windowsPath;
 	}
 
-	/**
-	 * Conversion from Windows path to Cygwin path.
-	 *
-	 * @param windowsPath
-	 *            - Windows path.
-	 * @return Cygwin style converted path.
-	 *
-	 */
+	// Convert Windows path to Unix path
 	public static String windowsToCygwinPath(String windowsPath) {
 		if (windowsPath == null || windowsPath.trim().length() == 0)
 			return windowsPath;
@@ -197,76 +181,4 @@ public class Cygwin {
 
 		return cygwinPath;
 	}
-
-	/**
-	 * Finds location of the program inspecting each path in the path list.
-	 *
-	 * @param prog
-	 *            - program to find. For Windows, extensions "com" and "exe" can
-	 *            be omitted.
-	 * @param pathsStr
-	 *            - the list of paths to inspect separated by path separator
-	 *            defined in the platform (i.e. ":" in Unix and ";" in Windows).
-	 *            In case pathStr is {@code null} environment variable ${PATH}
-	 *            is inspected.
-	 * @return - absolute location of the file on the file system or
-	 *         {@code null} if not found.
-	 * @since 5.3
-	 */
-	private static IPath findProgramLocation(String prog, String pathsStr) {
-		if (prog == null || prog.trim().isEmpty())
-			return null;
-
-		if (pathsStr == null)
-			pathsStr = System.getenv("PATH"); //$NON-NLS-1$
-
-		if (pathsStr.trim().isEmpty())
-			return null;
-
-		@SuppressWarnings("unused")
-		String locationStr = null;
-		String[] dirs = pathsStr.split(File.pathSeparator);
-
-		// Try to find "prog.exe" or "prog.com" on Windows
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			for (String dir : dirs) {
-				IPath dirLocation = new Path(dir);
-				File file = null;
-
-				file = dirLocation.append(prog + ".exe").toFile(); //$NON-NLS-1$
-				if (file.isFile() && file.canRead()) {
-					locationStr = file.getAbsolutePath();
-					break;
-				}
-				file = dirLocation.append(prog + ".com").toFile(); //$NON-NLS-1$
-				if (file.isFile() && file.canRead()) {
-					locationStr = file.getAbsolutePath();
-					break;
-				}
-			}
-		}
-
-		// Check "prog" on Unix and Windows too (if was not found) - could be
-		// cygwin or something
-		// do it in separate loop due to performance and correctness of Windows
-		// regular case
-		if (locationStr == null) {
-			for (String dir : dirs) {
-				IPath dirLocation = new Path(dir);
-				File file = null;
-
-				file = dirLocation.append(prog).toFile();
-				if (file.isFile() && file.canRead()) {
-					locationStr = file.getAbsolutePath();
-					break;
-				}
-			}
-		}
-
-		if (locationStr != null)
-			return new Path(locationStr);
-
-		return null;
-	}
-
 }

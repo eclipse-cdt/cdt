@@ -77,7 +77,7 @@ public class Cygwin {
 		String cygpathLocation = cygpathLocationCache.get(envPath);
 		if (cygpathLocation == null) {
 			IPath loc = PathUtil.findProgramLocation(CYGPATH, envPath);
-			cygpathLocation = loc != null ? loc.toString() : null;
+			cygpathLocation = loc != null ? loc.toOSString() : null;
 			cygpathLocationCache.put(envPath, cygpathLocation);
 		}
 		return cygpathLocation;
@@ -299,7 +299,7 @@ public class Cygwin {
 			IPath location = new Path(envCygwinHomeValue + "/bin/" + CYGWIN_DLL); //$NON-NLS-1$
 			if (location.toFile().exists()) {
 				// get rootValue from "rootValue\bin\cygwin1.dll"
-				rootValue = location.removeLastSegments(2).toString();
+				rootValue = location.removeLastSegments(2).toOSString();
 			}
 		}
 
@@ -308,7 +308,7 @@ public class Cygwin {
 			IPath location = PathUtil.findProgramLocation(CYGWIN_DLL, envPathValue);
 			if (location != null) {
 				// get rootValue from "rootValue\bin\cygwin1.dll"
-				rootValue = location.removeLastSegments(2).toString();
+				rootValue = location.removeLastSegments(2).toOSString();
 			}
 		}
 

@@ -64,6 +64,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
@@ -104,6 +105,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFoldExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator.RefQualifier;
@@ -206,6 +208,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private final boolean supportAutoTypeSpecifier;
 	private final boolean supportUserDefinedLiterals;
 	private final boolean supportGCCStyleDesignators;
+	private final boolean supportFoldExpression;
 
 	private final IIndex index;
 	protected ICPPASTTranslationUnit translationUnit;
@@ -243,6 +246,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		scanner.setSplitShiftROperator(true);
 		fContextSensitiveTokens = createContextSensitiveTokenMap(config);
 		additionalNumericalSuffixes = scanner.getAdditionalNumericLiteralSuffixes();
+		supportFoldExpression = true;
 	}
 
 	@Override
@@ -984,7 +988,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 * else where.
 	 */
 	private enum BinaryExprCtx {
-		eInTemplateID, eNotInTemplateID
+		eInTemplateID, eNotInTemplateID, eInPrimaryExpression
 	}
 
 	@Override
@@ -1014,6 +1018,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		IToken variantMark = mark();
 		if (expr == null) {
+			// Could be ellipsis of unary left fold expression
+			IASTExpression foldExpression = foldStartingExpression(ctx, strat);
+			if (foldExpression != null) {
+				lt1 = LT(1);
+				lastOperator = new BinaryOperator(lastOperator, foldExpression, lt1, 0, 0);
+				consume(); // consume operator token
+			}
+
 			Object e = castExpressionForBinaryExpression(strat);
 			if (e instanceof IASTExpression) {
 				expr = (IASTExpression) e;
@@ -1022,7 +1034,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 				final Variant variant = (Variant) e;
 				expr = variant.getExpression();
-				variants.addBranchPoint(variant.getNext(), null, allowAssignment, conditionCount);
+				variants.addBranchPoint(variant.getNext(), lastOperator, allowAssignment, conditionCount);
 			}
 		}
 
@@ -1196,7 +1208,12 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 						if (lt1 != IToken.tCOLON && lt1 != IToken.tCOMMA)
 							stopWithNextOperator = true;
 					} else {
-						Object e = castExpressionForBinaryExpression(strat);
+						// Could be ellipsis of any right fold expression or ellipsis of binary left fold expression
+						Object e = foldInsideExpression(ctx, strat, lt1);
+						if (e == null) {
+							e = castExpressionForBinaryExpression(strat);
+						}
+
 						if (e instanceof IASTExpression) {
 							expr = (IASTExpression) e;
 						} else {
@@ -1256,6 +1273,134 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return (ICPPASTExpression) buildExpression(lastOperator, expr);
 	}
 
+	private int calculateFirstOffset(BinaryOperator leftChain, IASTInitializerClause expr) {
+		int firstOffset = ((ASTNode) expr).getOffset();
+
+		while (leftChain != null) {
+			expr = leftChain.getExpression();
+			if (expr != null) {
+				int exprOffset = ((ASTNode) expr).getOffset();
+				if (firstOffset > exprOffset) {
+					firstOffset = exprOffset;
+				}
+			}
+			leftChain = leftChain.getNext();
+		}
+
+		return firstOffset;
+	}
+
+	@Override
+	public final IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) {
+		if (supportFoldExpression && leftChain != null && expr != null) {
+			int foldCount = 0;
+			int foldOpToken = 0;
+
+			int firstOffset = calculateFirstOffset(leftChain, expr);
+			int endOffset = calculateEndOffset(expr);
+
+			if (expr instanceof CPPASTFoldExpressionToken) {
+				// unary right fold: (pack op ...)
+				++foldCount;
+			}
+
+			BinaryOperator prev = null;
+			BinaryOperator foldOp = null;
+			BinaryOperator foldOpPrev = null;
+
+			scanFoldExpressions: for (BinaryOperator op = leftChain; op != null; op = op.getNext()) {
+				if (op.getExpression() instanceof CPPASTFoldExpressionToken) {
+					if (++foldCount == 1) {
+						foldOp = op;
+						foldOpPrev = prev;
+					} else {
+						// only single fold token allowed
+						foldOp = null;
+						foldOpPrev = null;
+						break scanFoldExpressions;
+					}
+				} else {
+					prev = op;
+				}
+			}
+
+			if (foldCount == 1) {
+				BinaryOperator rightChain;
+				if (foldOp == null) {
+					// unary right fold, remove expression and use left chain as is
+					foldOpToken = leftChain.getOperatorToken();
+					expr = null;
+					rightChain = null;
+				} else {
+					foldOpToken = foldOp.getOperatorToken();
+
+					if (foldOpPrev != null) {
+						// if fold token is not the rightmost one in original chain,
+						// break the chain and move front part to the right
+						foldOpPrev.setNext(null);
+						rightChain = leftChain;
+					} else {
+						rightChain = null;
+					}
+					// move tail part to the left
+					leftChain = foldOp.getNext();
+				}
+
+				IASTExpression lhs = leftChain == null ? null
+						: super.buildExpression(leftChain.getNext(), leftChain.getExpression());
+				IASTExpression rhs = super.buildExpression(rightChain, expr);
+
+				return buildFoldExpression(foldOpToken, lhs, rhs, firstOffset, endOffset);
+			} else if (foldCount > 1) {
+				IASTProblem problem = createProblem(IProblem.SYNTAX_ERROR, firstOffset, endOffset - firstOffset);
+				IASTProblemExpression pexpr = getNodeFactory().newProblemExpression(problem);
+				((ASTNode) pexpr).setOffsetAndLength(((ASTNode) problem));
+				return pexpr;
+			}
+		}
+
+		return super.buildExpression(leftChain, expr);
+	}
+
+	private IASTExpression foldStartingExpression(final BinaryExprCtx ctx, ITemplateIdStrategy strat)
+			throws EndOfFileException, BacktrackException {
+
+		if (supportFoldExpression && ctx == BinaryExprCtx.eInPrimaryExpression) {
+			if (LTcatchEOF(1) == IToken.tELLIPSIS) {
+				int rightOpToken = LTcatchEOF(2);
+				if (allowedFoldExpressionOpToken(rightOpToken)) {
+					// unary left fold expression: (... op pack)
+					IToken foldToken = consume();
+					return buildFoldExpressionToken(foldToken.getOffset(), foldToken.getEndOffset());
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private IASTExpression foldInsideExpression(final BinaryExprCtx ctx, ITemplateIdStrategy strat, int leftOpToken)
+			throws EndOfFileException, BacktrackException {
+
+		if (supportFoldExpression && ctx == BinaryExprCtx.eInPrimaryExpression) {
+			if (LTcatchEOF(1) == IToken.tELLIPSIS) {
+				if (allowedFoldExpressionOpToken(leftOpToken)) {
+					int rightOpToken = LTcatchEOF(2);
+					if (rightOpToken == 0 || rightOpToken == IToken.tRPAREN || rightOpToken == leftOpToken) {
+						// unary right fold:  (... op pack)
+						// or
+						// binary right fold: (pack op ... op init)
+						// binary left fold:  (init op ... op pack)
+						IToken foldToken = consume();
+						return buildFoldExpressionToken(foldToken.getOffset(), foldToken.getEndOffset());
+					}
+				}
+			}
+		}
+
+		return null;
+	}
+
 	public Object castExpressionForBinaryExpression(ITemplateIdStrategy s)
 			throws EndOfFileException, BacktrackException {
 		if (s != null) {
@@ -1309,6 +1454,124 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		IASTBinaryExpression result = getNodeFactory().newBinaryExpression(operator, expr1, expr2);
 		int o = ((ASTNode) expr1).getOffset();
 		((ASTNode) result).setOffsetAndLength(o, lastOffset - o);
+		return result;
+	}
+
+	private IASTExpression buildFoldExpressionToken(int firstOffset, int lastOffset) {
+		IASTExpression result = getNodeFactory().newFoldExpressionToken();
+		((ASTNode) result).setOffsetAndLength(firstOffset, lastOffset - firstOffset);
+		return result;
+	}
+
+	private ICPPASTFoldExpression buildFoldExpression(int opToken, IASTExpression expr1, IASTExpression expr2,
+			int firstOffset, int lastOffset) {
+		int op = 0;
+		boolean isComma = false;
+
+		switch (opToken) {
+		case IToken.tPLUS:
+			op = IASTBinaryExpression.op_plus;
+			break;
+		case IToken.tMINUS:
+			op = IASTBinaryExpression.op_minus;
+			break;
+		case IToken.tSTAR:
+			op = IASTBinaryExpression.op_multiply;
+			break;
+		case IToken.tDIV:
+			op = IASTBinaryExpression.op_divide;
+			break;
+		case IToken.tMOD:
+			op = IASTBinaryExpression.op_modulo;
+			break;
+		case IToken.tXOR:
+			op = IASTBinaryExpression.op_binaryXor;
+			break;
+		case IToken.tAMPER:
+			op = IASTBinaryExpression.op_binaryAnd;
+			break;
+		case IToken.tBITOR:
+			op = IASTBinaryExpression.op_binaryOr;
+			break;
+		case IToken.tASSIGN:
+			op = IASTBinaryExpression.op_assign;
+			break;
+		case IToken.tLT:
+			op = IASTBinaryExpression.op_lessThan;
+			break;
+		case IToken.tGT:
+			op = IASTBinaryExpression.op_greaterThan;
+			break;
+		case IToken.tSHIFTL:
+			op = IASTBinaryExpression.op_shiftLeft;
+			break;
+		case IToken.tSHIFTR:
+			op = IASTBinaryExpression.op_shiftRight;
+			break;
+		case IToken.tPLUSASSIGN:
+			op = IASTBinaryExpression.op_plusAssign;
+			break;
+		case IToken.tMINUSASSIGN:
+			op = IASTBinaryExpression.op_minusAssign;
+			break;
+		case IToken.tSTARASSIGN:
+			op = IASTBinaryExpression.op_multiplyAssign;
+			break;
+		case IToken.tDIVASSIGN:
+			op = IASTBinaryExpression.op_divideAssign;
+			break;
+		case IToken.tMODASSIGN:
+			op = IASTBinaryExpression.op_moduloAssign;
+			break;
+		case IToken.tXORASSIGN:
+			op = IASTBinaryExpression.op_binaryXorAssign;
+			break;
+		case IToken.tAMPERASSIGN:
+			op = IASTBinaryExpression.op_binaryAndAssign;
+			break;
+		case IToken.tBITORASSIGN:
+			op = IASTBinaryExpression.op_binaryOrAssign;
+			break;
+		case IToken.tSHIFTLASSIGN:
+			op = IASTBinaryExpression.op_shiftLeftAssign;
+			break;
+		case IToken.tSHIFTRASSIGN:
+			op = IASTBinaryExpression.op_shiftRightAssign;
+			break;
+		case IToken.tEQUAL:
+			op = IASTBinaryExpression.op_equals;
+			break;
+		case IToken.tNOTEQUAL:
+			op = IASTBinaryExpression.op_notequals;
+			break;
+		case IToken.tLTEQUAL:
+			op = IASTBinaryExpression.op_lessEqual;
+			break;
+		case IToken.tGTEQUAL:
+			op = IASTBinaryExpression.op_greaterEqual;
+			break;
+		case IToken.tAND:
+			op = IASTBinaryExpression.op_logicalAnd;
+			break;
+		case IToken.tOR:
+			op = IASTBinaryExpression.op_logicalOr;
+			break;
+		case IToken.tCOMMA:
+			isComma = true;
+			break;
+		case IToken.tDOTSTAR:
+			op = IASTBinaryExpression.op_pmdot;
+			break;
+		case IToken.tARROWSTAR:
+			op = IASTBinaryExpression.op_pmarrow;
+			break;
+
+		default:
+			return null;
+		}
+
+		ICPPASTFoldExpression result = getNodeFactory().newFoldExpression(op, isComma, expr1, expr2);
+		((ASTNode) result).setOffsetAndLength(firstOffset, lastOffset - firstOffset);
 		return result;
 	}
 
@@ -2013,12 +2276,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			literalExpr = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_this, t.getImage());
 			return setRange(literalExpr, t.getOffset(), t.getEndOffset());
 		case IToken.tLPAREN:
+			// ( expression ) or fold-expression
 			if (supportStatementsInExpressions && LT(2) == IToken.tLBRACE) {
 				return compoundStatementExpression();
 			}
 			t = consume();
 			int finalOffset = 0;
-			IASTExpression lhs = expression(ExprKind.eExpression, BinaryExprCtx.eNotInTemplateID, null, null); // instead of expression(), to keep the stack smaller
+			IASTExpression lhs = expression(ExprKind.eExpression, BinaryExprCtx.eInPrimaryExpression, null, null); // instead of expression(), to keep the stack smaller
 			switch (LT(1)) {
 			case IToken.tRPAREN:
 			case IToken.tEOC:
@@ -2027,7 +2291,11 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			default:
 				throwBacktrack(LA(1));
 			}
-			return buildUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset);
+			if (lhs instanceof ICPPASTFoldExpression) {
+				return setRange(lhs, t.getOffset(), finalOffset);
+			} else {
+				return buildUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset);
+			}
 		case IToken.tIDENTIFIER:
 		case IToken.tCOLONCOLON:
 		case IToken.t_operator:
@@ -2085,6 +2353,47 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		ICPPASTLiteralExpression r = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_string_literal,
 				t.getImage());
 		return setRange(r, t.getOffset(), t.getEndOffset());
+	}
+
+	private boolean allowedFoldExpressionOpToken(int opToken) {
+		switch (opToken) {
+		case IToken.tPLUS:
+		case IToken.tMINUS:
+		case IToken.tSTAR:
+		case IToken.tDIV:
+		case IToken.tMOD:
+		case IToken.tXOR:
+		case IToken.tAMPER:
+		case IToken.tBITOR:
+		case IToken.tASSIGN:
+		case IToken.tLT:
+		case IToken.tGT:
+		case IToken.tSHIFTL:
+		case IToken.tSHIFTR:
+		case IToken.tPLUSASSIGN:
+		case IToken.tMINUSASSIGN:
+		case IToken.tSTARASSIGN:
+		case IToken.tDIVASSIGN:
+		case IToken.tMODASSIGN:
+		case IToken.tXORASSIGN:
+		case IToken.tAMPERASSIGN:
+		case IToken.tBITORASSIGN:
+		case IToken.tSHIFTLASSIGN:
+		case IToken.tSHIFTRASSIGN:
+		case IToken.tEQUAL:
+		case IToken.tNOTEQUAL:
+		case IToken.tLTEQUAL:
+		case IToken.tGTEQUAL:
+		case IToken.tAND:
+		case IToken.tOR:
+		case IToken.tCOMMA:
+		case IToken.tDOTSTAR:
+		case IToken.tARROWSTAR:
+			return true;
+
+		default:
+			return false;
+		}
 	}
 
 	private IASTExpression lambdaExpression() throws EndOfFileException, BacktrackException {

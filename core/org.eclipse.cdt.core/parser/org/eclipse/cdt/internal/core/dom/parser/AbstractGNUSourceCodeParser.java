@@ -1010,9 +1010,13 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		public void setNext(BinaryOperator next) {
 			fNext = next;
 		}
+
+		public int getOperatorToken() {
+			return fOperatorToken;
+		}
 	}
 
-	public final IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) {
+	public IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) {
 		BinaryOperator rightChain = null;
 		for (;;) {
 			if (leftChain == null) {

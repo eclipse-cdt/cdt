@@ -86,7 +86,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
 				if (CP_COMPILATION_PATH.equals(property))
 					return entry.getBackendPathStr();
 				if (CP_FILE_SYSTEM_PATH.equals(property))
-					return entry.getLocalPath().toOSString();
+					return entry.getLocalPath().toString();
 			}
 			return null;
 		}
@@ -153,7 +153,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
 				if (columnIndex == 0)
 					return entry.getBackendPathStr();
 				if (columnIndex == 1)
-					return entry.getLocalPath().toOSString();
+					return entry.getLocalPath().toString();
 			}
 			return null;
 		}

@@ -80,7 +80,7 @@ class ExecutablesContentProvider extends ColumnLabelProvider
 			if (cell.getColumnIndex() == 1)
 				cellText = exe.getProject().getName();
 			else if (cell.getColumnIndex() == 2)
-				cellText = exe.getPath().toOSString();
+				cellText = exe.getPath().toString();
 			else if (cell.getColumnIndex() == 3) {
 				cellText = ""; //$NON-NLS-1$
 				IPath path = exe.getPath();

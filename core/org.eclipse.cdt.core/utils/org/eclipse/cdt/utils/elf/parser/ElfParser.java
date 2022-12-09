@@ -134,7 +134,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 				// continue, the array was to small.
 			}
 		}
-		return Elf.getAttributes(path.toOSString());
+		return Elf.getAttributes(path.toString());
 	}
 
 	private static boolean hasInterpProgramHeader(byte[] hints, IPath path) throws IOException {

@@ -125,7 +125,7 @@ public class CygPath {
 				ipath = ipath.makeAbsolute();
 				ipath = ipath.setDevice(drive.toString());
 			}
-			return ipath.toOSString();
+			return ipath.toString();
 		} finally {
 			if (reader != null) {
 				reader.close();

@@ -52,7 +52,7 @@ public class PartialWorkingCopyCodeReaderFactory extends AbstractCodeReaderFacto
 	}
 
 	public CodeReader createCodeReaderForTranslationUnit(ITranslationUnit tu) {
-		return new CodeReader(tu.getPath().toOSString(), tu.getContents());
+		return new CodeReader(tu.getPath().toString(), tu.getContents());
 	}
 
 	protected CodeReader checkWorkingCopyThenCache(String path) {

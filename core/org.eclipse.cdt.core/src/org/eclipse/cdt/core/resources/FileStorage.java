@@ -83,7 +83,7 @@ public class FileStorage extends PlatformObject implements IStorage {
 	 */
 	@Override
 	public String toString() {
-		return path.toOSString();
+		return path.toString();
 	}
 
 	@Override

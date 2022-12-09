@@ -179,7 +179,7 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 			}
 			String externalLocation = null;
 			if (problemMarkerInfo.externalPath != null && !problemMarkerInfo.externalPath.isEmpty()) {
-				externalLocation = problemMarkerInfo.externalPath.toOSString();
+				externalLocation = problemMarkerInfo.externalPath.toString();
 			}
 
 			if (!problemMarkerInfo.isDeferDeDuplication()) {

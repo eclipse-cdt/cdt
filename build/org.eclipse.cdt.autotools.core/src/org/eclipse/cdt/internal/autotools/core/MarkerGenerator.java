@@ -129,7 +129,7 @@ public abstract class MarkerGenerator {
 				marker.setAttribute(IAutotoolsMarker.MARKER_VARIABLE, info.variableName);
 			}
 			if (info.externalPath != null) {
-				marker.setAttribute(IAutotoolsMarker.MARKER_EXTERNAL_LOCATION, info.externalPath.toOSString());
+				marker.setAttribute(IAutotoolsMarker.MARKER_EXTERNAL_LOCATION, info.externalPath.toString());
 			}
 
 			// Add all other client defined attributes.

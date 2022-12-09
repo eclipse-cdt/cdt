@@ -147,7 +147,7 @@ public abstract class AbstractExternalToolBasedChecker extends AbstractCheckerWi
 	}
 
 	private void logResourceProcessingFailure(Throwable error, IResource resource) {
-		String location = resource.getLocation().toOSString();
+		String location = resource.getLocation().toString();
 		String msg = String.format("Unable to process resource %s", location); //$NON-NLS-1$
 		Activator.log(msg, error);
 	}

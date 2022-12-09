@@ -46,7 +46,7 @@ public class AutomakeDocumentProvider extends TextFileDocumentProvider implement
 		if (element instanceof IFileEditorInput) {
 			IFileEditorInput input = (IFileEditorInput) element;
 			if (input.getFile().exists())
-				original = createMakefile(input.getFile().getLocation().toOSString());
+				original = createMakefile(input.getFile().getLocation().toString());
 		} else if (element instanceof IURIEditorInput) {
 			IURIEditorInput input = (IURIEditorInput) element;
 			original = createMakefile(input.getURI().getPath().toString());

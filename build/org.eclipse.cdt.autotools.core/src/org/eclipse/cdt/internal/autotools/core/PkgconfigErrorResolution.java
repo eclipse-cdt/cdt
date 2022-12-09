@@ -93,7 +93,7 @@ public class PkgconfigErrorResolution implements IMarkerResolution {
 				"--queryformat", //$NON-NLS-1$
 				"%{NAME}", //$NON-NLS-1$
 				"--whatprovides", //$NON-NLS-1$
-				pkgconfigPath.toOSString() };
+				pkgconfigPath.toString() };
 		try {
 			// Use CDT launcher to run rpm to query the package that provides
 			// the pkgconfig .pc file for the package in question.

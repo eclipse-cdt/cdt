@@ -200,7 +200,7 @@ public class PDOMUpdateTask implements IPDOMIndexerTask {
 	private static boolean canResolveUnresolvedInclude(IIndexFile file, IScannerInfo scannerInfo,
 			ProjectIndexerIncludeResolutionHeuristics includeResolutionHeuristics) {
 		try {
-			String filePath = IndexLocationFactory.getAbsolutePath(file.getLocation()).toOSString();
+			String filePath = IndexLocationFactory.getAbsolutePath(file.getLocation()).toString();
 			long fileReadTime = file.getSourceReadTime();
 			IncludeSearchPath includeSearchPath = CPreprocessor
 					.configureIncludeSearchPath(new File(filePath).getParentFile(), scannerInfo);

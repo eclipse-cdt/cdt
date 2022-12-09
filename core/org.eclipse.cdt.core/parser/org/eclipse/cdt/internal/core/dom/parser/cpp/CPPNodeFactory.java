@@ -88,6 +88,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFoldExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTForStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -563,6 +564,17 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	@Override
 	public ICPPASTLambdaExpression newLambdaExpression() {
 		return new CPPASTLambdaExpression();
+	}
+
+	@Override
+	public IASTExpression newFoldExpressionToken() {
+		return new CPPASTFoldExpressionToken();
+	}
+
+	@Override
+	public ICPPASTFoldExpression newFoldExpression(int operator, boolean fIsComma, IASTExpression lhs,
+			IASTExpression rhs) {
+		return new CPPASTFoldExpression(operator, fIsComma, lhs, rhs);
 	}
 
 	@Override

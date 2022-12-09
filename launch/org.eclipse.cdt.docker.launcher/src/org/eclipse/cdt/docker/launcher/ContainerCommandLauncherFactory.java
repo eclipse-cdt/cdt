@@ -316,7 +316,7 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 		for (String path : includePaths) {
 			if (copiedVolumes.contains(new Path(path))) {
 				IPath newPath = tpath.append(path);
-				String newEntry = newPath.toOSString();
+				String newEntry = newPath.toString();
 				newEntries.add(newEntry);
 			} else {
 				newEntries.add(path);

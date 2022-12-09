@@ -190,27 +190,27 @@ public class CDebugUIUtils {
 		if (input instanceof IFileEditorInput) {
 			IPath location = ((IFileEditorInput) input).getFile().getLocation();
 			if (location != null) {
-				return location.toOSString();
+				return location.toString();
 			}
 			URI locationURI = ((IFileEditorInput) input).getFile().getLocationURI();
 			if (locationURI != null) {
 				IPath uriPath = URIUtil.toPath(locationURI);
 				if (uriPath != null) {
-					return uriPath.toOSString();
+					return uriPath.toString();
 				}
 			}
 			return ""; //$NON-NLS-1$
 		}
 		if (input instanceof IStorageEditorInput) {
-			return ((IStorageEditorInput) input).getStorage().getFullPath().toOSString();
+			return ((IStorageEditorInput) input).getStorage().getFullPath().toString();
 		}
 		if (input instanceof IPathEditorInput) {
-			return ((IPathEditorInput) input).getPath().toOSString();
+			return ((IPathEditorInput) input).getPath().toString();
 		}
 		if (input instanceof IURIEditorInput) {
 			IPath uriPath = URIUtil.toPath(((IURIEditorInput) input).getURI());
 			if (uriPath != null)
-				return uriPath.toOSString();
+				return uriPath.toString();
 		}
 		return ""; //$NON-NLS-1$
 	}

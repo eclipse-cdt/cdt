@@ -59,7 +59,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
-import org.eclipse.linuxtools.docker.core.Activator;
 import org.eclipse.linuxtools.docker.core.IDockerContainerInfo;
 import org.eclipse.linuxtools.docker.core.IDockerNetworkSettings;
 import org.eclipse.linuxtools.docker.core.IDockerPortBinding;
@@ -180,7 +179,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				// the project
 				if (workingDir == null && projectName != null) {
 					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-					workingDir = project.getLocation().toOSString();
+					workingDir = project.getLocation().toString();
 				}
 
 				if (workingDir != null) {
@@ -313,7 +312,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				// the project
 				if (workingDir == null && projectName != null) {
 					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-					workingDir = project.getLocation().toOSString();
+					workingDir = project.getLocation().toString();
 				}
 				if (workingDir != null) {
 					IPath workingPath = new Path(workingDir);

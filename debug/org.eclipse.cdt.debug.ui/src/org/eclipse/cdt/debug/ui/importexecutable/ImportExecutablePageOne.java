@@ -547,7 +547,7 @@ public class ImportExecutablePageOne extends WizardPage {
 		if (dirName.length() > 0) {
 			File path = new File(dirName);
 			if (path.exists())
-				dialog.setFilterPath(new Path(dirName).toOSString());
+				dialog.setFilterPath(new Path(dirName).toString());
 		}
 
 		String selectedDirectory = dialog.open();

@@ -722,7 +722,7 @@ abstract public class AbstractToggleBreakpointAdapter
 		if (tu != null) {
 			IPath location = tu.getLocation();
 			if (location != null) {
-				return location.toOSString();
+				return location.toString();
 			}
 		}
 		return ""; //$NON-NLS-1$

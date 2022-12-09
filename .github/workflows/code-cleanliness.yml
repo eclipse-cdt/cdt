@@ -2,9 +2,9 @@ name: Code Cleanliness Checks
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "cdt_11_0" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "cdt_11_0" ]
 
 jobs:
   build:

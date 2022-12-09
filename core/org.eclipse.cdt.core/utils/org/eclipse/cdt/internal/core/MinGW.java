@@ -62,7 +62,7 @@ public class MinGW {
 		if (envMinGWHomeValue != null && !envMinGWHomeValue.isEmpty()) {
 			IPath mingwBinDir = new Path(envMinGWHomeValue + "\\bin"); //$NON-NLS-1$
 			if (mingwBinDir.toFile().isDirectory()) {
-				rootValue = mingwBinDir.removeLastSegments(1).toOSString();
+				rootValue = mingwBinDir.removeLastSegments(1).toString();
 			}
 		}
 
@@ -72,7 +72,7 @@ public class MinGW {
 			IPath installPath = new Path(Platform.getInstallLocation().getURL().getFile());
 			IPath mingwBinDir = installPath.append("mingw\\bin"); //$NON-NLS-1$
 			if (mingwBinDir.toFile().isDirectory()) {
-				rootValue = mingwBinDir.removeLastSegments(1).toOSString();
+				rootValue = mingwBinDir.removeLastSegments(1).toString();
 			}
 		}
 
@@ -154,7 +154,7 @@ public class MinGW {
 	private static Optional<String> findMinGwInstallationLocation(String exeName, String envPath) {
 		IPath exeLocation = PathUtil.findProgramLocation(exeName, envPath);
 		if (exeLocation != null) {
-			return Optional.of(exeLocation.removeLastSegments(2).toOSString());
+			return Optional.of(exeLocation.removeLastSegments(2).toString());
 		}
 		return Optional.empty();
 	}

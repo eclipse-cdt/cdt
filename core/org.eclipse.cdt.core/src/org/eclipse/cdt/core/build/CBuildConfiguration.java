@@ -372,7 +372,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			}
 			String externalLocation = null;
 			if (problemMarkerInfo.externalPath != null && !problemMarkerInfo.externalPath.isEmpty()) {
-				externalLocation = problemMarkerInfo.externalPath.toOSString();
+				externalLocation = problemMarkerInfo.externalPath.toString();
 			}
 
 			// Try to find matching markers and don't put in duplicates

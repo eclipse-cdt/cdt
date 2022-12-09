@@ -55,7 +55,7 @@ public class FixitErrorParser extends RegexErrorParser {
 					ProblemMarkerInfo info = ProblemMarkerFilterManager.getInstance().getLastProblemMarker(f);
 					String externalLocation = null;
 					if (info.externalPath != null && !info.externalPath.isEmpty()) {
-						externalLocation = info.externalPath.toOSString();
+						externalLocation = info.externalPath.toString();
 					}
 
 					// Try to find matching marker to tie to fix-it

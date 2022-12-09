@@ -190,7 +190,7 @@ public class BreakpointProblems {
 			}
 			if (problemMarkerInfo.externalPath != null) {
 				marker.setAttribute(ICModelMarker.C_MODEL_MARKER_EXTERNAL_LOCATION,
-						problemMarkerInfo.externalPath.toOSString());
+						problemMarkerInfo.externalPath.toString());
 			}
 
 			return marker;

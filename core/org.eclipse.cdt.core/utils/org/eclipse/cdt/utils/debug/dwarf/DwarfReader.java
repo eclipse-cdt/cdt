@@ -588,7 +588,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 		// This convert the path to canonical path (but not necessarily absolute, which
 		// is different from java.io.File.getCanonicalPath()).
-		fullName = pa.toOSString();
+		fullName = pa.toString();
 
 		if (!m_fileCollection.contains(fullName))
 			m_fileCollection.add(fullName);

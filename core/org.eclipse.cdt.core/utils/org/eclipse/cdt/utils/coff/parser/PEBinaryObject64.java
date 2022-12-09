@@ -102,9 +102,9 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 		if (adapter.equals(PE64.class)) {
 			try {
 				if (header != null) {
-					return (T) new PE64(getPath().toOSString(), header.getObjectDataOffset());
+					return (T) new PE64(getPath().toString(), header.getObjectDataOffset());
 				}
-				return (T) new PE64(getPath().toOSString());
+				return (T) new PE64(getPath().toString());
 			} catch (IOException e) {
 			}
 		}
@@ -120,9 +120,9 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 
 	protected PE64 getPE() throws IOException {
 		if (header != null) {
-			return new PE64(getPath().toOSString(), header.getObjectDataOffset());
+			return new PE64(getPath().toString(), header.getObjectDataOffset());
 		}
-		return new PE64(getPath().toOSString());
+		return new PE64(getPath().toString());
 	}
 
 	protected void loadAll() throws IOException {

@@ -177,11 +177,11 @@ public class ModulePropertyPage extends PropertyPage {
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(fBrowseButton.getShell());
 				dialog.setFileName(
-						((IPath) getModuleProperties().getProperty(ModuleProperties.SYMBOLS_FILE)).toOSString());
+						((IPath) getModuleProperties().getProperty(ModuleProperties.SYMBOLS_FILE)).toString());
 				String fn = dialog.open();
 				if (fn != null) {
 					IPath path = new Path(fn);
-					fSymbolsFileField.setText(path.toOSString());
+					fSymbolsFileField.setText(path.toString());
 					getModuleProperties().setProperty(ModuleProperties.SYMBOLS_FILE, path);
 				}
 			}
@@ -229,7 +229,7 @@ public class ModulePropertyPage extends PropertyPage {
 
 		// Symbols file:
 		IPath path = (IPath) getModuleProperties().getProperty(ModuleProperties.SYMBOLS_FILE);
-		value = (path != null) ? path.toOSString() : PropertyPageMessages.getString("ModulePropertyPage.14"); //$NON-NLS-1$
+		value = (path != null) ? path.toString() : PropertyPageMessages.getString("ModulePropertyPage.14"); //$NON-NLS-1$
 		fSymbolsFileField.setText(value);
 	}
 

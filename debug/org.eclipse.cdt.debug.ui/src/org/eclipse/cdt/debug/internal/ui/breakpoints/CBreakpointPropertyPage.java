@@ -270,7 +270,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 							IFile file = (IFile) result[0];
 							IPath location = file.getRawLocation();
 							if (location != null) {
-								String newValue = location.makeAbsolute().toOSString();
+								String newValue = location.makeAbsolute().toString();
 								setStringValue(newValue);
 							}
 						}

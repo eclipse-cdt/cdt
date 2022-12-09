@@ -1037,15 +1037,15 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		if (location == null)
 			return new org.eclipse.cdt.core.parser.CodeReader(getContents());
 		if (isWorkingCopy()) {
-			return new org.eclipse.cdt.core.parser.CodeReader(location.toOSString(), getContents());
+			return new org.eclipse.cdt.core.parser.CodeReader(location.toString(), getContents());
 		}
 
 		IResource res = getResource();
 		try {
 			if (res instanceof IFile)
-				return InternalParserUtil.createWorkspaceFileReader(location.toOSString(), (IFile) res, null);
+				return InternalParserUtil.createWorkspaceFileReader(location.toString(), (IFile) res, null);
 			else
-				return InternalParserUtil.createExternalFileReader(location.toOSString(), null);
+				return InternalParserUtil.createExternalFileReader(location.toString(), null);
 		} catch (CoreException e) {
 			CCorePlugin.log(e);
 		} catch (IOException e) {

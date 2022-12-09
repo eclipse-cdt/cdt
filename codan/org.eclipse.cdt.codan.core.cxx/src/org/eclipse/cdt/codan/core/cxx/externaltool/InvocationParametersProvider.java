@@ -35,7 +35,7 @@ public class InvocationParametersProvider implements IInvocationParametersProvid
 	 */
 	@Override
 	public InvocationParameters createParameters(IResource fileToProcess) {
-		String path = fileToProcess.getLocation().toOSString();
+		String path = fileToProcess.getLocation().toString();
 		return new InvocationParameters(fileToProcess, fileToProcess, path, null);
 	}
 }

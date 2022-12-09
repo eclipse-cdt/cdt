@@ -131,8 +131,8 @@ public class CMakePropertyPage extends PropertyPage {
 					IProject project = (IProject) getElement();
 					try {
 						String configName = project.getActiveBuildConfig().getName();
-						String sourceDir = project.getLocation().toOSString();
-						String buildDir = project.getLocation().append("build").append(configName).toOSString(); //$NON-NLS-1$
+						String sourceDir = project.getLocation().toString();
+						String buildDir = project.getLocation().append("build").append(configName).toString(); //$NON-NLS-1$
 
 						Runtime.getRuntime().exec(new String[] { "cmake-gui", "-H" + sourceDir, "-B" + buildDir }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					} catch (CoreException | IOException e1) {

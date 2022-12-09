@@ -52,7 +52,7 @@ public class SOMParser extends AbstractCExtension implements IBinaryParser {
 
 			//Take a second run at it if the data array failed.
 			if (attribute == null) {
-				attribute = SOM.getAttributes(path.toOSString());
+				attribute = SOM.getAttributes(path.toString());
 			}
 
 			if (attribute != null) {

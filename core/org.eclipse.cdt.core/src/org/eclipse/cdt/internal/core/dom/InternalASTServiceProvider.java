@@ -72,20 +72,20 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse) throws UnsupportedDialectException {
-		return getTranslationUnit(fileToParse.getLocation().toOSString(), fileToParse,
+		return getTranslationUnit(fileToParse.getLocation().toString(), fileToParse,
 				SavedCodeReaderFactory.getInstance(), null);
 	}
 
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator)
 			throws UnsupportedDialectException {
-		return getTranslationUnit(fileToParse.getLocation().toOSString(), fileToParse, fileCreator, null);
+		return getTranslationUnit(fileToParse.getLocation().toString(), fileToParse, fileCreator, null);
 	}
 
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator,
 			IParserConfiguration configuration) throws UnsupportedDialectException {
-		return getTranslationUnit(fileToParse.getLocation().toOSString(), fileToParse, fileCreator, configuration);
+		return getTranslationUnit(fileToParse.getLocation().toString(), fileToParse, fileCreator, configuration);
 	}
 
 	public IASTTranslationUnit getTranslationUnit(String filename, IResource infoProvider,
@@ -170,13 +170,13 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 	@Override
 	public IASTCompletionNode getCompletionNode(IStorage fileToParse, IProject project, int offset,
 			ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
-		return getCompletionNode(fileToParse.getFullPath().toOSString(), project, offset, fileCreator);
+		return getCompletionNode(fileToParse.getFullPath().toString(), project, offset, fileCreator);
 	}
 
 	@Override
 	public IASTCompletionNode getCompletionNode(IFile fileToParse, int offset, ICodeReaderFactory fileCreator)
 			throws UnsupportedDialectException {
-		return getCompletionNode(fileToParse.getLocation().toOSString(), fileToParse, offset, fileCreator);
+		return getCompletionNode(fileToParse.getLocation().toString(), fileToParse, offset, fileCreator);
 	}
 
 	public IASTCompletionNode getCompletionNode(String filename, IResource infoProvider, int offset,
@@ -264,26 +264,26 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project,
 			ICodeReaderFactory fileCreator) throws UnsupportedDialectException {
-		return getTranslationUnit(fileToParse.getFullPath().toOSString(), project, fileCreator, null);
+		return getTranslationUnit(fileToParse.getFullPath().toString(), project, fileCreator, null);
 	}
 
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project)
 			throws UnsupportedDialectException {
-		return getTranslationUnit(fileToParse.getFullPath().toOSString(), project, SavedCodeReaderFactory.getInstance(),
+		return getTranslationUnit(fileToParse.getFullPath().toString(), project, SavedCodeReaderFactory.getInstance(),
 				null);
 	}
 
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, boolean parseComments)
 			throws UnsupportedDialectException {
-		return getTranslationUnit(fileToParse.getLocation().toOSString(), fileToParse,
+		return getTranslationUnit(fileToParse.getLocation().toString(), fileToParse,
 				SavedCodeReaderFactory.getInstance(), null);
 	}
 
 	@Override
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, ICodeReaderFactory fileCreator,
 			boolean parseComments) throws UnsupportedDialectException {
-		return getTranslationUnit(fileToParse.getLocation().toOSString(), fileToParse, fileCreator, null);
+		return getTranslationUnit(fileToParse.getLocation().toString(), fileToParse, fileCreator, null);
 	}
 }

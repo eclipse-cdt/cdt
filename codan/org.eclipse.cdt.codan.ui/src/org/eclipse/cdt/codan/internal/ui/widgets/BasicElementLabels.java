@@ -46,7 +46,7 @@ public class BasicElementLabels {
 	public static String getPathLabel(IPath path, boolean isOSPath) {
 		String label;
 		if (isOSPath) {
-			label = path.toOSString();
+			label = path.toString();
 		} else {
 			label = path.makeRelative().toString();
 		}

@@ -168,7 +168,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 			for (IASTComment comm : commentsArray) {
 				IASTFileLocation fileLocation = comm.getFileLocation();
 				if (fileLocation.getStartingLineNumber() == loc.getLineNumber()) {
-					String problemFile = loc.getFile().getLocation().toOSString();
+					String problemFile = loc.getFile().getLocation().toString();
 					String commentFile = fileLocation.getFileName();
 					if (problemFile.equals(commentFile)) {
 						lineComments.add(comm);

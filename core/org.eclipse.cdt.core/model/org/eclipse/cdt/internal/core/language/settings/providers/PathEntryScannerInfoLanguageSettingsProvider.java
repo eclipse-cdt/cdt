@@ -156,20 +156,20 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 		switch (pathEntry.getEntryKind()) {
 		case IPathEntry.CDT_INCLUDE:
 			IIncludeEntry includeEntry = (IIncludeEntry) pathEntry;
-			return CDataUtil.createCIncludePathEntry(includeEntry.getFullIncludePath().toOSString(),
+			return CDataUtil.createCIncludePathEntry(includeEntry.getFullIncludePath().toString(),
 					includeEntry.isSystemInclude() ? 0 : ICSettingEntry.LOCAL);
 		case IPathEntry.CDT_MACRO:
 			IMacroEntry macroEntry = (IMacroEntry) pathEntry;
 			return CDataUtil.createCMacroEntry(macroEntry.getMacroName(), macroEntry.getMacroValue(), 0);
 		case IPathEntry.CDT_INCLUDE_FILE:
 			IIncludeFileEntry includeFileEntry = (IIncludeFileEntry) pathEntry;
-			return CDataUtil.createCIncludeFileEntry(includeFileEntry.getFullIncludeFilePath().toOSString(), 0);
+			return CDataUtil.createCIncludeFileEntry(includeFileEntry.getFullIncludeFilePath().toString(), 0);
 		case IPathEntry.CDT_MACRO_FILE:
 			IMacroFileEntry macroFileEntry = (IMacroFileEntry) pathEntry;
-			return CDataUtil.createCMacroFileEntry(macroFileEntry.getFullMacroFilePath().toOSString(), 0);
+			return CDataUtil.createCMacroFileEntry(macroFileEntry.getFullMacroFilePath().toString(), 0);
 		case IPathEntry.CDT_LIBRARY:
 			ILibraryEntry libraryEntry = (ILibraryEntry) pathEntry;
-			return CDataUtil.createCLibraryFileEntry(libraryEntry.getFullLibraryPath().toOSString(), 0);
+			return CDataUtil.createCLibraryFileEntry(libraryEntry.getFullLibraryPath().toString(), 0);
 		}
 		return null;
 	}

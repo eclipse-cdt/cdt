@@ -334,7 +334,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 	public void stepSetExecutableFile(final RequestMonitor rm) {
 		final IPath programPath = fGDBBackend.getProgramPath();
 		if (!programPath.isEmpty()) {
-			final String file = programPath.toOSString();
+			final String file = programPath.toString();
 			fCommandControl.queueCommand(
 					fCommandControl.getCommandFactory().createMIFileExecFile(fCommandControl.getContext(), file),
 					new ImmediateDataRequestMonitor<MIInfo>(rm));
@@ -361,7 +361,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 								IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_SYMBOLS)) {
 					IPath programFile = fGDBBackend.getProgramPath();
 					if (programFile != null) {
-						symbolsFileName = programFile.toOSString();
+						symbolsFileName = programFile.toString();
 					}
 				} else {
 					symbolsFileName = CDebugUtils.getAttribute(getAttributes(),
@@ -569,7 +569,7 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 								IGDBJtagConstants.DEFAULT_USE_PROJ_BINARY_FOR_IMAGE)) {
 					IPath programFile = fGDBBackend.getProgramPath();
 					if (programFile != null) {
-						imageFileName = programFile.toOSString();
+						imageFileName = programFile.toString();
 					}
 				} else {
 					imageFileName = CDebugUtils.getAttribute(getAttributes(), IGDBJtagConstants.ATTR_IMAGE_FILE_NAME,

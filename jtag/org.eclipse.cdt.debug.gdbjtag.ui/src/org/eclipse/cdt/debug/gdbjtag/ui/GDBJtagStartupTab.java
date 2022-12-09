@@ -147,7 +147,7 @@ public class GDBJtagStartupTab extends AbstractLaunchConfigurationTab {
 		dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			IResource resource = (IResource) dialog.getFirstResult();
-			String arg = resource.getFullPath().toOSString();
+			String arg = resource.getFullPath().toString();
 			String fileLoc = VariablesPlugin.getDefault().getStringVariableManager()
 					.generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
 			text.setText(fileLoc);

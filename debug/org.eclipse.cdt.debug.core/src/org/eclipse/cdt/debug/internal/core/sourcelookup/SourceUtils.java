@@ -192,7 +192,7 @@ public class SourceUtils {
 					MappingSourceContainer mapping = new MappingSourceContainer(
 							InternalSourceLookupMessages.SourceUtils_0 + (++mappingCount));
 					mapping.addMapEntries(new MapEntrySourceContainer[] {
-							new MapEntrySourceContainer(a.toOSString(), d.getDirectory()) });
+							new MapEntrySourceContainer(a.toString(), d.getDirectory()) });
 					containers.add(mapping);
 
 				}

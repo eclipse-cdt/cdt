@@ -105,7 +105,7 @@ public class CodeReaderCache implements ICodeReaderCache {
 						removeKeys(delta.getAffectedChildren());
 					} else if (delta.getResource() instanceof IFile
 							&& ((IFile) delta.getResource()).getLocation() != null) {
-						removeKey(((IFile) delta.getResource()).getLocation().toOSString());
+						removeKey(((IFile) delta.getResource()).getLocation().toString());
 					}
 				}
 			}

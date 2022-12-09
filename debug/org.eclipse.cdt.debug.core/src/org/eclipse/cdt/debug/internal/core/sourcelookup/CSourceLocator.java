@@ -150,7 +150,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 			}
 			if (resource instanceof IFile) {
 				try {
-					Object result = locations[i].findSourceElement(resource.getLocation().toOSString());
+					Object result = locations[i].findSourceElement(resource.getLocation().toString());
 					if (result instanceof IFile && ((IFile) result).equals(resource))
 						return true;
 					if (result instanceof List && ((List<?>) result).contains(resource))

@@ -53,7 +53,7 @@ public class XCOFF32Parser extends AbstractCExtension implements IBinaryParser {
 
 			//Take a second run at it if the data array failed.
 			if (attribute == null) {
-				attribute = XCoff32.getAttributes(path.toOSString());
+				attribute = XCoff32.getAttributes(path.toString());
 			}
 
 			if (attribute != null) {

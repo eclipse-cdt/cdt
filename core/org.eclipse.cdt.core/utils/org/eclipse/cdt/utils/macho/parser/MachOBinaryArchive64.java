@@ -33,7 +33,7 @@ public class MachOBinaryArchive64 extends BinaryFile implements IBinaryArchive {
 
 	public MachOBinaryArchive64(IBinaryParser parser, IPath p) throws IOException {
 		super(parser, p, IBinaryFile.ARCHIVE);
-		try (AR ar = new AR(p.toOSString())) {
+		try (AR ar = new AR(p.toString())) {
 			// create the object just to check file type
 
 		}
@@ -49,7 +49,7 @@ public class MachOBinaryArchive64 extends BinaryFile implements IBinaryArchive {
 			children.clear();
 			AR ar = null;
 			try {
-				ar = new AR(getPath().toOSString());
+				ar = new AR(getPath().toString());
 				AR.ARHeader[] headers = ar.getHeaders();
 				for (int i = 0; i < headers.length; i++) {
 					IBinaryObject bin = new MachOBinaryObject64(getBinaryParser(), getPath(), headers[i]);

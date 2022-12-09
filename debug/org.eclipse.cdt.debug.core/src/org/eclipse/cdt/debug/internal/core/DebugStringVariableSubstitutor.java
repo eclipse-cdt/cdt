@@ -66,7 +66,7 @@ public class DebugStringVariableSubstitutor implements IStringVariableManager {
 			if (name.endsWith("_name")) //$NON-NLS-1$
 				return project.getName();
 			if (name.endsWith("_loc")) //$NON-NLS-1$
-				return project.getLocation().toOSString();
+				return project.getLocation().toString();
 			if (name.endsWith("_path")) //$NON-NLS-1$
 				return project.getProjectRelativePath().toString();
 			return null;

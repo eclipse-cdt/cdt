@@ -154,7 +154,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 				e_phnumOffset = 0x38;
 				break;
 			default:
-				CCorePlugin.log(IStatus.WARNING, "Unknown ELF header class in file: " + path.toOSString()); //$NON-NLS-1$
+				CCorePlugin.log(IStatus.WARNING, "Unknown ELF header class in file: " + path.toString()); //$NON-NLS-1$
 				return false;
 			}
 			if (e_phnumOffset + 2 < hints.length) {
@@ -185,7 +185,7 @@ public class ElfParser extends AbstractCExtension implements IBinaryParser {
 	}
 
 	private static PHdr[] getPHdrs(IPath path) throws IOException {
-		try (Elf elf = new Elf(path.toOSString())) {
+		try (Elf elf = new Elf(path.toString())) {
 			return elf.getPHdrs();
 		}
 	}

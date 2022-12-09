@@ -80,7 +80,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(workingDirectory != null){
 						IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, inputFileLocation);
 						if(filePath != null)
-							value = filePath.toOSString();
+							value = filePath.toString();
 					}
 				}
 			}
@@ -90,7 +90,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(workingDirectory != null){
 						IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, inputFileLocation.removeLastSegments(1).addTrailingSeparator());
 						if(filePath != null)
-							value = filePath.toOSString();
+							value = filePath.toString();
 					}
 				}
 			}
@@ -109,7 +109,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(workingDirectory != null){
 						IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, outputFileLocation);
 						if(filePath != null)
-							value = filePath.toOSString();
+							value = filePath.toString();
 					}
 				}
 			}else if("OutputDirRelPath".equals(name)){	//$NON-NLS-1$
@@ -118,7 +118,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(workingDirectory != null){
 						IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, outputFileLocation.removeLastSegments(1).addTrailingSeparator());
 						if(filePath != null)
-							value = filePath.toOSString();
+							value = filePath.toString();
 					}
 				}
 			}
@@ -389,7 +389,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 				macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,mngProj.getOwner().getName());
 			}
 			else if (VAR_PROJ_DIR_PATH.equals(macroName)) {
-				macro = new BuildMacro(macroName,IBuildMacro.VALUE_PATH_DIR,mngProj.getOwner().getLocation().toOSString());
+				macro = new BuildMacro(macroName,IBuildMacro.VALUE_PATH_DIR,mngProj.getOwner().getLocation().toString());
 			}
 			return macro;
 		}
@@ -399,7 +399,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 			wsp = ResourcesPlugin.getWorkspace();
 		ICdtVariable macro = null;
 		if (VAR_WORKSPACE_DIR_PATH.equals(macroName)) {
-			macro = new CdtVariable(macroName, ICdtVariable.VALUE_PATH_DIR, wsp.getRoot().getLocation().toOSString());
+			macro = new CdtVariable(macroName, ICdtVariable.VALUE_PATH_DIR, wsp.getRoot().getLocation().toString());
 		} else if (VAR_DIRECTORY_DELIMITER.equals(macroName)) {
 			if (isWin32()) {
 				macro = new CdtVariable(macroName, ICdtVariable.VALUE_TEXT, "\\"); //$NON-NLS-1$

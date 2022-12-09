@@ -51,7 +51,7 @@ public class InternalParserUtil extends ParserFactory {
 	public static String normalizePath(String path, IFile file) {
 		IPath loc = file.getLocation();
 		if (loc != null) {
-			path = loc.toOSString();
+			path = loc.toString();
 		}
 		return path;
 	}

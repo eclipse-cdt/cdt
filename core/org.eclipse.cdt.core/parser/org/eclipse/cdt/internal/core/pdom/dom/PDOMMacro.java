@@ -303,7 +303,7 @@ public class PDOMMacro implements IIndexMacro, IPDOMBinding {
 			if (location == null) {
 				return null;
 			}
-			String filename = location.toOSString();
+			String filename = location.toString();
 			return new PDOMASTFileLocation(filename, getNodeOffset(), getNodeLength());
 		} catch (CoreException e) {
 			CCorePlugin.log(e);

@@ -54,7 +54,7 @@ public class ScannerInfoCache {
 	}
 
 	public IExtendedScannerInfo getScannerInfo(IResource resource) {
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toString();
 		Command command = resourceMap.get(resourcePath);
 		return command != null ? command.info : null;
 	}
@@ -70,7 +70,7 @@ public class ScannerInfoCache {
 
 	public void addScannerInfo(List<String> commandStrings, IExtendedScannerInfo info, IResource resource) {
 		// Do I need to remove the resource from an existing command?
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toString();
 		Command oldCommand = resourceMap.get(resourcePath);
 		if (oldCommand != null) {
 			if (oldCommand.command.equals(commandStrings)) {
@@ -108,7 +108,7 @@ public class ScannerInfoCache {
 	 * @since 6.3
 	 */
 	public boolean hasResource(List<String> commandStrings, IResource resource) {
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toString();
 		Command command = commandMap.get(commandStrings);
 		if (command == null) {
 			return false;
@@ -117,7 +117,7 @@ public class ScannerInfoCache {
 	}
 
 	public void addResource(List<String> commandStrings, IResource resource) {
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toString();
 		Command command = commandMap.get(commandStrings);
 		Command current = resourceMap.get(resourcePath);
 		if (current != null) {
@@ -133,7 +133,7 @@ public class ScannerInfoCache {
 				return;
 			}
 		}
-		command.resourcePaths.add(resource.getLocation().toOSString());
+		command.resourcePaths.add(resource.getLocation().toString());
 		resourceMap.put(resourcePath, command);
 	}
 
@@ -141,7 +141,7 @@ public class ScannerInfoCache {
 	 * @since 6.4
 	 */
 	public void removeResource(IResource resource) {
-		String resourcePath = resource.getLocation().toOSString();
+		String resourcePath = resource.getLocation().toString();
 		Command command = resourceMap.get(resourcePath);
 		if (command != null) {
 			command.resourcePaths.remove(resourcePath);

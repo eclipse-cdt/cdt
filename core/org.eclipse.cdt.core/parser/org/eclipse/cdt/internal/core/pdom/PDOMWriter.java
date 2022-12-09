@@ -651,7 +651,7 @@ public abstract class PDOMWriter implements IPDOMASTProcessor {
 			file.setPragmaOnceSemantics(pragmaOnce);
 
 			if (data.fReplacementHeaders != null) {
-				String headerKey = IndexLocationFactory.getAbsolutePath(location).toOSString();
+				String headerKey = IndexLocationFactory.getAbsolutePath(location).toString();
 				String replacementHeader = data.fReplacementHeaders.get(headerKey);
 				if (replacementHeader != null)
 					file.setReplacementHeader(replacementHeader);

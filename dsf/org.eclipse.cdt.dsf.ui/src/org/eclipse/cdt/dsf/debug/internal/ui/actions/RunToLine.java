@@ -52,7 +52,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
 
 	@Override
 	public boolean canRunToLine(final IFile file, final int lineNumber) {
-		return canRunToLine(file.getLocation().makeAbsolute().toOSString(), lineNumber);
+		return canRunToLine(file.getLocation().makeAbsolute().toString(), lineNumber);
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
 
 	@Override
 	public void runToLine(IFile file, int lineNumber, boolean skipBreakpoints) throws DebugException {
-		runToLine(file.getLocation().makeAbsolute().toOSString(), lineNumber, skipBreakpoints);
+		runToLine(file.getLocation().makeAbsolute().toString(), lineNumber, skipBreakpoints);
 	}
 
 	@Override

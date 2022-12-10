@@ -1026,7 +1026,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 					if (name == null) {
 						// Should not happen, but just in case...use the
 						// binary file name (absolute path)
-						name = fBackend.getProgramPath().toOSString();
+						name = fBackend.getProgramPath().toString();
 						fDebuggedProcessesAndNames.put(id, name);
 					} else if (name.isEmpty()) {
 						// We know of the process but haven't fetched its name yet.
@@ -1085,7 +1085,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 										if (name == null) {
 											// No way to get the name right now, so use the binary file name (absolute path)
-											name = fBackend.getProgramPath().toOSString();
+											name = fBackend.getProgramPath().toString();
 											fDebuggedProcessesAndNames.put(finalPId, name);
 										}
 										rm.done(new MIThreadDMData(name, finalPId));

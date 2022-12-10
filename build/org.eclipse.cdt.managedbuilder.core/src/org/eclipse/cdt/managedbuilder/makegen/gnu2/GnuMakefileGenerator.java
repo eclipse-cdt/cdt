@@ -3369,7 +3369,7 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		//  Get the input file name
 		String fileName = sourceLocation.removeFileExtension().lastSegment();
 		//  Replace the % with the file name
-		String outName = outPath.toOSString().replaceAll("%", fileName); //$NON-NLS-1$
+		String outName = outPath.toString().replaceAll("%", fileName); //$NON-NLS-1$
 		IPath result = Path.fromOSString(outName);
 		return DOT_SLASH_PATH.isPrefixOf(outPath) ? DOT_SLASH_PATH.append(result) : result;
 	}

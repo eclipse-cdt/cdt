@@ -154,7 +154,7 @@ public class FileTransferDragAdapter implements TransferDragSourceListener {
 				IPath location = resource.getLocation();
 
 				if (location != null) {
-					locations.add(location.toOSString());
+					locations.add(location.toString());
 				}
 			}
 

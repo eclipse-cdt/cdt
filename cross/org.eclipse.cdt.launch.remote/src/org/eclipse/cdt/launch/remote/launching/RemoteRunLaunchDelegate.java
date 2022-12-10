@@ -76,7 +76,7 @@ public class RemoteRunLaunchDelegate extends AbstractCLaunchDelegate {
 					monitor.setTaskName(Messages.RemoteRunLaunchDelegate_12);
 					remoteProcess = RemoteHelper.remoteShellExec(config, prelaunchCmd, remoteExePath, arguments,
 							new SubProgressMonitor(monitor, 20));
-					DebugPlugin.newProcess(launch, remoteProcess, renderProcessLabel(exePath.toOSString()));
+					DebugPlugin.newProcess(launch, remoteProcess, renderProcessLabel(exePath.toString()));
 				} catch (CoreException e) {
 					throw e;
 				} finally {

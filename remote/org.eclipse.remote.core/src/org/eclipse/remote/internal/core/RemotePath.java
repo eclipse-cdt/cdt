@@ -1089,7 +1089,7 @@ public class RemotePath implements IPath, Cloneable {
 	 */
 	@Override
 	public File toFile() {
-		return new File(toOSString());
+		return new File(toString());
 	}
 
 	/* (Intentionally not included in javadoc)

@@ -78,7 +78,7 @@ public class NewCProjectWizardPage extends WizardNewProjectCreationPage {
 			}
 
 			// Give a chance to the wizard to do its own validation
-			IStatus validLocation = ((NewCProjectWizard) getWizard()).isValidLocation(getLocationPath().toOSString());
+			IStatus validLocation = ((NewCProjectWizard) getWizard()).isValidLocation(getLocationPath().toString());
 			if (!validLocation.isOK()) {
 				setErrorMessage(validLocation.getMessage());
 				return false;

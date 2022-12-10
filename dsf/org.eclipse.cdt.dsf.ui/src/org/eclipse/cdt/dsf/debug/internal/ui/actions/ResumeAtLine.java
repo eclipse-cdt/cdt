@@ -49,7 +49,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
 
 	@Override
 	public boolean canResumeAtLine(IFile file, final int lineNumber) {
-		return canResumeAtLine(file.getLocation().makeAbsolute().toOSString(), lineNumber);
+		return canResumeAtLine(file.getLocation().makeAbsolute().toString(), lineNumber);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class ResumeAtLine implements IResumeAtLine, IResumeAtAddress {
 
 	@Override
 	public void resumeAtLine(IFile file, int lineNumber) throws DebugException {
-		resumeAtLine(file.getLocation().makeAbsolute().toOSString(), lineNumber);
+		resumeAtLine(file.getLocation().makeAbsolute().toString(), lineNumber);
 	}
 
 	@Override

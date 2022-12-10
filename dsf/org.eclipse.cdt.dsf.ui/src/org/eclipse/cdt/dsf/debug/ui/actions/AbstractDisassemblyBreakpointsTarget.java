@@ -333,10 +333,10 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 				if (location == null) {
 					return;
 				}
-				filePath = location.toOSString();
+				filePath = location.toString();
 			} else {
 				resource = ResourcesPlugin.getWorkspace().getRoot();
-				filePath = URIUtil.toPath(fileUri).toOSString();
+				filePath = URIUtil.toPath(fileUri).toString();
 			}
 			int srcLine = selection.getSourceLine();
 			if (interactive) {

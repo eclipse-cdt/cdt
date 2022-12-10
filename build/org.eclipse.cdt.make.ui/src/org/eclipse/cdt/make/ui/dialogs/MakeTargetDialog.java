@@ -399,7 +399,7 @@ public class MakeTargetDialog extends Dialog {
 		}
 		targetNameText.selectAll();
 		if (targetBuildCommand != null) {
-			StringBuilder cmd = new StringBuilder(targetBuildCommand.toOSString());
+			StringBuilder cmd = new StringBuilder(targetBuildCommand.toString());
 			if (targetBuildArguments != null && !targetBuildArguments.isEmpty()) {
 				cmd.append(" "); //$NON-NLS-1$
 				cmd.append(targetBuildArguments);
@@ -434,7 +434,7 @@ public class MakeTargetDialog extends Dialog {
 			return true;
 		}
 		if (!isUsingBuilderCommand) {
-			StringBuilder cmd = new StringBuilder(targetBuildCommand.toOSString()).append(targetBuildArguments);
+			StringBuilder cmd = new StringBuilder(targetBuildCommand.toString()).append(targetBuildArguments);
 			if (!getBuildLine().equals(cmd.toString())) {
 				return true;
 			}

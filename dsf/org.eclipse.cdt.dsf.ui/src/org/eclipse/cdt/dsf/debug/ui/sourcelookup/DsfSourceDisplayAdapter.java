@@ -471,7 +471,7 @@ public class DsfSourceDisplayAdapter implements ISourceDisplay, ISteppingControl
 						ITranslationUnit tunit = (ITranslationUnit) artifact;
 						IPath tuPath = tunit.getLocation();
 						if (tuPath != null)
-							missingFile = tuPath.toOSString();
+							missingFile = tuPath.toString();
 					} else {
 						missingFile = ""; //$NON-NLS-1$
 					}

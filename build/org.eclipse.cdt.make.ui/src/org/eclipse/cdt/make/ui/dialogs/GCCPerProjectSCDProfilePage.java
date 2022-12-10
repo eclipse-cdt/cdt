@@ -144,7 +144,7 @@ public class GCCPerProjectSCDProfilePage extends AbstractDiscoveryPage {
 					IPath filePath = new Path(fileName);
 					filterPath = filePath.removeLastSegments(1).makeAbsolute();
 				}
-				dialog.setFilterPath(filterPath.toOSString());
+				dialog.setFilterPath(filterPath.toString());
 				String res = dialog.open();
 				if (res == null) {
 					return;

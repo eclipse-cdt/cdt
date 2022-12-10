@@ -88,7 +88,7 @@ public class InclusionContext {
 	public IPath resolveInclude(IncludeInfo include) {
 		IPath path = fIncludeResolutionCache.get(include);
 		if (path == null) {
-			String directory = fCurrentDirectory == null ? null : fCurrentDirectory.toOSString();
+			String directory = fCurrentDirectory == null ? null : fCurrentDirectory.toString();
 			String filePath = CPreprocessor.getAbsoluteInclusionPath(include.getName(), directory);
 			if (filePath != null) {
 				path = new Path(filePath);
@@ -128,7 +128,7 @@ public class InclusionContext {
 		IncludeInfo include = fInverseIncludeResolutionCache.get(fullPath);
 		if (include != null)
 			return include;
-		String headerLocation = fullPath.toOSString();
+		String headerLocation = fullPath.toString();
 		String shortestInclude = null;
 		boolean isSystem = false;
 		for (IncludeSearchPathElement pathElement : fIncludeSearchPath.getElements()) {
@@ -162,7 +162,7 @@ public class InclusionContext {
 		IncludeInfo include = fInverseIncludeResolutionCache.get(fullPath);
 		if (include != null)
 			return include;
-		String headerLocation = fullPath.toOSString();
+		String headerLocation = fullPath.toString();
 		String shortestInclude = null;
 		for (IncludeSearchPathElement pathElement : fIncludeSearchPath.getElements()) {
 			if (isSystem && pathElement.isForQuoteIncludesOnly())

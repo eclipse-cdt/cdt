@@ -129,7 +129,7 @@ public final class CompilationDatabaseParserOptionPage extends AbstractLanguageS
 				dialog.setText(Messages.CompilationDatabaseParserOptionPage_ChooseFile);
 				String fileName = fCompileCommandsPath.getText();
 				IPath folder = new Path(fileName).removeLastSegments(1);
-				dialog.setFilterPath(folder.toOSString());
+				dialog.setFilterPath(folder.toString());
 				String chosenFile = dialog.open();
 				if (chosenFile != null) {
 					fCompileCommandsPath.setText(chosenFile);

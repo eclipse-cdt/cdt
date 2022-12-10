@@ -67,7 +67,7 @@ public class MbsEnvironmentSupplier implements IEnvironmentVariableSupplier {
 				//					IPath workingDirectory = projectLocation.append(topBuildDir);
 				//					String value = workingDirectory.toOSString();
 				if (topBuildDir != null) {
-					variable = new BuildEnvVar(name, topBuildDir.toOSString(), IBuildEnvironmentVariable.ENVVAR_REPLACE,
+					variable = new BuildEnvVar(name, topBuildDir.toString(), IBuildEnvironmentVariable.ENVVAR_REPLACE,
 							null);
 				}
 

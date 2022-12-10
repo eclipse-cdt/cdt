@@ -396,7 +396,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		if (programPath == null || !programPath.exists() || !programPath.getLocation().toFile().exists()) {
 			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist,
 					new FileNotFoundException(NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found,
-							programPath.getLocation().toOSString())),
+							programPath.getLocation().toString())),
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 		return programPath;
@@ -445,14 +445,14 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 			}
 		} else {
 			if (path.isAbsolute()) {
-				File dir = new File(path.toOSString());
+				File dir = new File(path.toString());
 				if (dir.isDirectory()) {
 					return dir;
 				}
 				abort(LaunchMessages.AbstractCLaunchDelegate_Working_directory_does_not_exist,
 						new FileNotFoundException(
 								NLS.bind(LaunchMessages.AbstractCLaunchDelegate_WORKINGDIRECTORY_PATH_not_found,
-										path.toOSString())),
+										path.toString())),
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			} else {
 				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
@@ -462,7 +462,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 				abort(LaunchMessages.AbstractCLaunchDelegate_Working_directory_does_not_exist,
 						new FileNotFoundException(
 								NLS.bind(LaunchMessages.AbstractCLaunchDelegate_WORKINGDIRECTORY_PATH_not_found,
-										path.toOSString())),
+										path.toString())),
 						ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 			}
 		}
@@ -835,7 +835,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		Status status = new Status(IStatus.ERROR, getPluginID(),
 				ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY,
 				LaunchMessages.AbstractCLaunchDelegate_Program_is_not_a_recognized_executable + " " //$NON-NLS-1$
-						+ exePath.toOSString(),
+						+ exePath.toString(),
 				exception);
 		throw new CoreException(status);
 	}

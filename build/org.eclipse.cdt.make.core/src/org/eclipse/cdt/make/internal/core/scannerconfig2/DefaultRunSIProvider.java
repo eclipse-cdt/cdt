@@ -212,8 +212,8 @@ public class DefaultRunSIProvider implements IExternalScannerInfoProvider {
 		Properties props = initialEnv != null ? initialEnv : launcher.getEnvironment();
 
 		if (fWorkingDirectory != null) {
-			props.put("CWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
-			props.put("PWD", fWorkingDirectory.toOSString()); //$NON-NLS-1$
+			props.put("CWD", fWorkingDirectory.toString()); //$NON-NLS-1$
+			props.put("PWD", fWorkingDirectory.toString()); //$NON-NLS-1$
 		}
 		// On POSIX (Linux, UNIX) systems reset LANG variable to English with
 		// UTF-8 encoding since GNU compilers can handle only UTF-8 characters.

@@ -650,7 +650,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		}
 
 		if (path.isAbsolute()) {
-			File dir = new File(path.toOSString());
+			File dir = new File(path.toString());
 			if (dir.isDirectory()) {
 				return dir;
 			}
@@ -662,8 +662,8 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		}
 
 		abort(LaunchMessages.AbstractCLaunchDelegate_Working_directory_does_not_exist,
-				new FileNotFoundException(NLS.bind(
-						LaunchMessages.AbstractCLaunchDelegate_WORKINGDIRECTORY_PATH_not_found, path.toOSString())),
+				new FileNotFoundException(NLS
+						.bind(LaunchMessages.AbstractCLaunchDelegate_WORKINGDIRECTORY_PATH_not_found, path.toString())),
 				ICDTLaunchConfigurationConstants.ERR_WORKING_DIRECTORY_DOES_NOT_EXIST);
 		return null;
 	}
@@ -698,7 +698,7 @@ public abstract class AbstractCLaunchDelegate2 extends LaunchConfigurationDelega
 		File executable = programPath.toFile();
 		if (!executable.exists() || !executable.isFile()) {
 			abort(LaunchMessages.AbstractCLaunchDelegate_Program_file_does_not_exist, new FileNotFoundException(
-					NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found, programPath.toOSString())),
+					NLS.bind(LaunchMessages.AbstractCLaunchDelegate_PROGRAM_PATH_not_found, programPath.toString())),
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 

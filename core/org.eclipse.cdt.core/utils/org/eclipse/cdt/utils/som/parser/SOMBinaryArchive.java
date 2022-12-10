@@ -39,7 +39,7 @@ public class SOMBinaryArchive extends BinaryFile implements IBinaryArchive {
 	 */
 	public SOMBinaryArchive(IBinaryParser parser, IPath path) throws IOException {
 		super(parser, path, IBinaryFile.ARCHIVE);
-		try (AR ar = new AR(path.toOSString())) {
+		try (AR ar = new AR(path.toString())) {
 			// create the object just to check file type
 		}
 		children = new ArrayList<>(5);
@@ -51,7 +51,7 @@ public class SOMBinaryArchive extends BinaryFile implements IBinaryArchive {
 			children.clear();
 			AR ar = null;
 			try {
-				ar = new AR(getPath().toOSString());
+				ar = new AR(getPath().toString());
 				AR.ARHeader[] headers = ar.getHeaders();
 				for (int i = 0; i < headers.length; i++) {
 					IBinaryObject bin = new SOMBinaryObject(getBinaryParser(), getPath(), headers[i]);

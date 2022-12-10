@@ -108,7 +108,7 @@ public class DefinitionFinder {
 				ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(indexFile.getLocation(), null);
 				if (tu == null)
 					return null;
-				if (searchedFiles.add(tu.getLocation().toOSString())) {
+				if (searchedFiles.add(tu.getLocation().toString())) {
 					findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions, pm);
 					if (definitions.size() > 1)
 						return null;
@@ -127,7 +127,7 @@ public class DefinitionFinder {
 				IEditorInput editorInput = editor.getEditorInput();
 				if (editorInput instanceof ITranslationUnitEditorInput) {
 					ITranslationUnit tu = ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
-					if (searchedFiles.add(tu.getLocation().toOSString())) {
+					if (searchedFiles.add(tu.getLocation().toString())) {
 						findDefinitionsInTranslationUnit(indexBinding, tu, context, definitions,
 								loopProgress.newChild(1));
 						if (definitions.size() > 1)
@@ -166,7 +166,7 @@ public class DefinitionFinder {
 			IEditorInput editorInput = editor.getEditorInput();
 			if (editorInput instanceof ITranslationUnitEditorInput) {
 				ITranslationUnit tu = ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
-				dirtyFiles.add(tu.getLocation().toOSString());
+				dirtyFiles.add(tu.getLocation().toString());
 			}
 		}
 
@@ -180,7 +180,7 @@ public class DefinitionFinder {
 				throw new OperationCanceledException();
 			}
 			ITranslationUnit tu = CoreModelUtil.findTranslationUnitForLocation(name.getFile().getLocation(), null);
-			String filename = tu.getLocation().toOSString();
+			String filename = tu.getLocation().toString();
 			if (searchedFiles.add(filename) && (!dirtyFiles.contains(filename)
 					|| hasDefinitionsInTranslationUnit(indexBinding, tu, context, loopProgress.newChild(1)))) {
 				return true;
@@ -197,7 +197,7 @@ public class DefinitionFinder {
 			IEditorInput editorInput = editor.getEditorInput();
 			if (editorInput instanceof ITranslationUnitEditorInput) {
 				ITranslationUnit tu = ((ITranslationUnitEditorInput) editorInput).getTranslationUnit();
-				String filename = tu.getLocation().toOSString();
+				String filename = tu.getLocation().toString();
 				if (searchedFiles.add(filename)
 						&& hasDefinitionsInTranslationUnit(indexBinding, tu, context, loopProgress.newChild(1))) {
 					return true;

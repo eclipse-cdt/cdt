@@ -83,7 +83,7 @@ abstract public class StorageEditorInput implements IStorageEditorInput {
 	 */
 	@Override
 	public String getToolTipText() {
-		return getStorage().getFullPath().toOSString();
+		return getStorage().getFullPath().toString();
 	}
 
 	/**

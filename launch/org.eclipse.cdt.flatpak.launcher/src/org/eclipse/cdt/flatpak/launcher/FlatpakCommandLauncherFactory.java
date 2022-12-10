@@ -191,11 +191,11 @@ public class FlatpakCommandLauncherFactory
 					}
 					try {
 						Process p1 = ProcessFactory.getFactory()
-								.exec(new String[] { "mkdir", "-p", pluginPath.append(path).toOSString() }); //$NON-NLS-1$ //$NON-NLS-2$
+								.exec(new String[] { "mkdir", "-p", pluginPath.append(path).toString() }); //$NON-NLS-1$ //$NON-NLS-2$
 						int rc1 = waitFor(p1);
 						if (rc1 == 0) {
 							Process p2 = ProcessFactory.getFactory().exec(new String[] { "cp", "-ru", "path", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-									pluginPath.append(path).removeLastSegments(1).toOSString() });
+									pluginPath.append(path).removeLastSegments(1).toString() });
 							int rc2 = waitFor(p2);
 							if (rc2 == 0) {
 								copiedDirs.add(path);
@@ -270,15 +270,15 @@ public class FlatpakCommandLauncherFactory
 					if (!copiedDirs.contains(path)) {
 						try {
 							Process p1 = ProcessFactory.getFactory()
-									.exec(new String[] { "mkdir", "-p", copiedPath.append(path).toOSString() }); //$NON-NLS-1$ //$NON-NLS-2$
+									.exec(new String[] { "mkdir", "-p", copiedPath.append(path).toString() }); //$NON-NLS-1$ //$NON-NLS-2$
 							int rc1 = waitFor(p1);
 							if (rc1 == 0) {
 								Process p2 = ProcessFactory.getFactory().exec(new String[] { "cp", "-ru", path, //$NON-NLS-1$ //$NON-NLS-2$
-										copiedPath.append(path).removeLastSegments(1).toOSString() });
+										copiedPath.append(path).removeLastSegments(1).toString() });
 								int rc2 = waitFor(p2);
 								if (rc2 == 0) {
 									copiedDirs.add(path);
-									newEntries.add(copiedPath.append(path).toOSString());
+									newEntries.add(copiedPath.append(path).toString());
 									String[] removedEntries = removedDirs.toArray(new String[0]);
 									for (String removedDir : removedEntries) {
 										if (removedDir.startsWith(path)) {
@@ -295,7 +295,7 @@ public class FlatpakCommandLauncherFactory
 							FlatpakLaunchPlugin.log(e);
 						}
 					} else {
-						newEntries.add(copiedPath.append(path).toOSString());
+						newEntries.add(copiedPath.append(path).toString());
 					}
 				}
 				return newEntries;
@@ -321,11 +321,11 @@ public class FlatpakCommandLauncherFactory
 					if (removedDirs.contains(path)) {
 						try {
 							Process p1 = ProcessFactory.getFactory()
-									.exec(new String[] { "mkdir", "-p", hostDir.append(path).toOSString() }); //$NON-NLS-1$ //$NON-NLS-2$
+									.exec(new String[] { "mkdir", "-p", hostDir.append(path).toString() }); //$NON-NLS-1$ //$NON-NLS-2$
 							int rc1 = waitFor(p1);
 							if (rc1 == 0) {
 								Process p2 = ProcessFactory.getFactory().exec(new String[] { "cp", "-ru", path, //$NON-NLS-1$ //$NON-NLS-2$
-										hostDir.append(path).removeLastSegments(1).toOSString() });
+										hostDir.append(path).removeLastSegments(1).toString() });
 								int rc2 = waitFor(p2);
 								if (rc2 == 0) {
 									copiedDirs.add(path);

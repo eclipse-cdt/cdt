@@ -132,7 +132,7 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 			pathProgName = pathProgName.removeLastSegments(1).append(newName);
 			if (progExtension != null)
 				pathProgName = pathProgName.addFileExtension(progExtension);
-			copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, pathProgName.toOSString());
+			copy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, pathProgName.toString());
 		}
 
 		try {

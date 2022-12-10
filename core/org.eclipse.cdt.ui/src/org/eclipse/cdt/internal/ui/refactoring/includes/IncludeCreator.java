@@ -117,7 +117,7 @@ public class IncludeCreator {
 	private MultiTextEdit createIncludeImpl(IASTTranslationUnit ast, ITextSelection selection) throws CoreException {
 		MultiTextEdit rootEdit = new MultiTextEdit();
 		ITranslationUnit tu = fContext.getTranslationUnit();
-		IASTNodeSelector selector = ast.getNodeSelector(tu.getLocation().toOSString());
+		IASTNodeSelector selector = ast.getNodeSelector(tu.getLocation().toString());
 		IASTName name = selector.findEnclosingName(selection.getOffset(), selection.getLength());
 		if (name == null) {
 			return rootEdit;

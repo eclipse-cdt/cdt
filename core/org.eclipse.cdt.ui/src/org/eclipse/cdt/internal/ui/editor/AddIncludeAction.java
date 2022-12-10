@@ -113,7 +113,7 @@ public class AddIncludeAction extends TextEditorAction {
 						IASTTranslationUnit ast = tu.getAST(index, ASTCache.PARSE_MODE);
 						if (ast == null) {
 							return CUIPlugin.createErrorStatus(
-									NLS.bind(CEditorMessages.AddInclude_ast_not_available, tu.getPath().toOSString()));
+									NLS.bind(CEditorMessages.AddInclude_ast_not_available, tu.getPath().toString()));
 						}
 						IncludeCreator creator = new IncludeCreator(tu, index, fAmbiguityResolver);
 						holder[0] = creator.createInclude(ast, (ITextSelection) selection);

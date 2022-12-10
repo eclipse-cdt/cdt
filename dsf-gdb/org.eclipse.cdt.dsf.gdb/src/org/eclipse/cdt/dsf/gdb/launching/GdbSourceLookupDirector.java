@@ -106,7 +106,7 @@ public class GdbSourceLookupDirector extends DsfSourceLookupDirector {
 				String from = sourceSubContainer.getBackendPathStr();
 				IPath to = sourceSubContainer.getLocalPath();
 				if (from != null && to != null) {
-					entries.put(from, to.toOSString());
+					entries.put(from, to.toString());
 				}
 			} else if (container.isComposite()) {
 				ISourceContainer[] childContainers;

@@ -202,7 +202,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 			fCLIPty = new PTY(Mode.TERMINAL);
 			IPath path = getGDBWorkingDirectory();
 			proc = ProcessFactory.getFactory().exec(commandLine, getGDBLaunch().getLaunchEnvironment(),
-					new File(path != null ? path.toOSString() : ""), //$NON-NLS-1$
+					new File(path != null ? path.toString() : ""), //$NON-NLS-1$
 					fCLIPty);
 		} catch (IOException e) {
 			String message = "Error while launching command: " + StringUtil.join(commandLine, " "); //$NON-NLS-1$ //$NON-NLS-2$

@@ -189,7 +189,7 @@ public class CygwinPathResolver implements IBuildPathResolver {
 				envPathValue = envPathVar.getValue();
 				IPath progPath = PathUtil.findProgramLocation(program, envPathValue);
 				if (progPath != null) {
-					program = progPath.toOSString();
+					program = progPath.toString();
 				}
 				// this resolves cygwin symbolic links
 				program = Cygwin.cygwinToWindowsPath(program, envPathValue);

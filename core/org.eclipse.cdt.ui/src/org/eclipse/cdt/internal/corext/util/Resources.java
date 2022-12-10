@@ -181,7 +181,7 @@ public class Resources {
 		for (int i = 0; i < resources.length; i++) {
 			IPath location = resources[i].getLocation();
 			if (location != null)
-				result.add(location.toOSString());
+				result.add(location.toString());
 		}
 		return result.toArray(new String[result.size()]);
 	}

@@ -61,7 +61,7 @@ public class LocalProcessService implements IRemoteProcessService {
 			if (workingDirectory == null) {
 				workingDirectory = System.getProperty("user.dir"); //$NON-NLS-1$
 				if (workingDirectory == null) {
-					workingDirectory = Path.ROOT.toOSString();
+					workingDirectory = Path.ROOT.toString();
 				}
 			}
 		}

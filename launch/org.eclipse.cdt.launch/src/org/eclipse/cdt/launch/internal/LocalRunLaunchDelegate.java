@@ -101,7 +101,7 @@ public class LocalRunLaunchDelegate extends AbstractCLaunchDelegate2 {
 
 			String[] arguments = CommandLineUtil.argumentsToArray(args);
 			ArrayList<String> command = new ArrayList<>(1 + arguments.length);
-			command.add(exePath.toOSString());
+			command.add(exePath.toString());
 			command.addAll(Arrays.asList(arguments));
 			monitor.worked(2);
 

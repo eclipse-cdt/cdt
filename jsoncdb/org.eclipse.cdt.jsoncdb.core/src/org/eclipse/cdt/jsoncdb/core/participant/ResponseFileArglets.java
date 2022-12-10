@@ -71,7 +71,7 @@ public class ResponseFileArglets {
 					IPath path = Path.fromOSString(fname);
 					if (!path.isAbsolute()) {
 						// relative path, prepend CWD
-						fname = parserHandler.getCompilerWorkingDirectory().append(path).toOSString();
+						fname = parserHandler.getCompilerWorkingDirectory().append(path).toString();
 					}
 
 					// parse file

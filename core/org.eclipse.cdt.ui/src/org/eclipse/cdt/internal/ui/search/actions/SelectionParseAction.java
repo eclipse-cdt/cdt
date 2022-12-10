@@ -113,7 +113,7 @@ public class SelectionParseAction extends Action {
 
 	protected void reportSourceFileOpenFailure(IPath path) {
 		showStatusLineMessage(MessageFormat.format(CSearchMessages.SelectionParseAction_FileOpenFailure_format,
-				new Object[] { path.toOSString() }));
+				new Object[] { path.toString() }));
 	}
 
 	protected void reportSelectionMatchFailure() {

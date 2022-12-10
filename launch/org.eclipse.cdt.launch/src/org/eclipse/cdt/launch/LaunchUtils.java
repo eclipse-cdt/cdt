@@ -159,11 +159,11 @@ public class LaunchUtils {
 		if (!executable.exists() || !executable.isFile()) {
 			throwException(Messages.LaunchUtils_program_file_does_not_exist,
 					new FileNotFoundException(
-							MessageFormat.format(Messages.LaunchUtils__0_not_found, programPath.toOSString())),
+							MessageFormat.format(Messages.LaunchUtils__0_not_found, programPath.toString())),
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 
-		return programPath.toOSString();
+		return programPath.toString();
 	}
 
 	/**

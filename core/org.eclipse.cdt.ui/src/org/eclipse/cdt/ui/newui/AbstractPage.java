@@ -1015,7 +1015,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 						else
 							out = cf.createFileDescription(p, out);
 					} catch (CoreException e) {
-						System.out.println(Messages.AbstractPage_10 + p.toOSString() + "\n" + e.getLocalizedMessage()); //$NON-NLS-1$
+						System.out.println(Messages.AbstractPage_10 + p.toString() + "\n" + e.getLocalizedMessage()); //$NON-NLS-1$
 					}
 				}
 			}

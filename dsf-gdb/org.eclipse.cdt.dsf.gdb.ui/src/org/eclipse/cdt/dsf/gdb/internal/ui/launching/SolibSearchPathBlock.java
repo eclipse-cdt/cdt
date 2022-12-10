@@ -260,7 +260,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			@Override
 			public String getText(Object element) {
 				if (element instanceof IPath)
-					return ((IPath) element).toOSString();
+					return ((IPath) element).toString();
 				return super.getText(element);
 			}
 		};
@@ -364,7 +364,7 @@ public class SolibSearchPathBlock extends Observable implements IMILaunchConfigu
 			ArrayList<String> values = new ArrayList<>(elements.size());
 			Iterator<IPath> it = elements.iterator();
 			while (it.hasNext()) {
-				values.add((it.next()).toOSString());
+				values.add((it.next()).toString());
 			}
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUGGER_SOLIB_PATH, values);
 		}

@@ -83,8 +83,8 @@ public class OrganizeIncludesAction extends TextEditorAction {
 						index.acquireReadLock();
 						IASTTranslationUnit ast = tu.getAST(index, ASTCache.PARSE_MODE);
 						if (ast == null) {
-							return CUIPlugin.createErrorStatus(NLS.bind(
-									CEditorMessages.OrganizeIncludes_ast_not_available, tu.getPath().toOSString()));
+							return CUIPlugin.createErrorStatus(NLS
+									.bind(CEditorMessages.OrganizeIncludes_ast_not_available, tu.getPath().toString()));
 						}
 						IncludeOrganizer organizer = new IncludeOrganizer(tu, index, headerChooser);
 						holder[0] = organizer.organizeIncludes(ast);

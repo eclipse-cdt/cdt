@@ -501,7 +501,7 @@ public class BuildStep implements IBuildStep {
 		for (int i = 0; i < rcs.length; i++) {
 			IPath path = BuildDescriptionManager.getRelPath(cwd, rcs[i].getLocation());
 			path = rmNamePrefix(path, prefixToRm);
-			list.add(path.toOSString());
+			list.add(path.toString());
 		}
 		return list.toArray(new String[list.size()]);
 	}
@@ -666,7 +666,7 @@ public class BuildStep implements IBuildStep {
 							if (j != 0) {
 								optVal += " "; //$NON-NLS-1$
 							}
-							optVal += BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
+							optVal += BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toString();
 						}
 						ManagedBuildManager.setOption(cfg, fTool, assignToOption, optVal);
 					} else if (optType == IOption.STRING_LIST || optType == IOption.LIBRARIES
@@ -682,7 +682,7 @@ public class BuildStep implements IBuildStep {
 						// to top build directory relative
 						String[] paths = new String[bRcs.length];
 						for (int j = 0; j < bRcs.length; j++) {
-							paths[j] = BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toOSString();
+							paths[j] = BuildDescriptionManager.getRelPath(cwd, bRcs[j].getLocation()).toString();
 						}
 						ManagedBuildManager.setOption(cfg, fTool, assignToOption, paths);
 					} else if (optType == IOption.BOOLEAN) {
@@ -694,7 +694,7 @@ public class BuildStep implements IBuildStep {
 					} else if (optType == IOption.ENUMERATED || optType == IOption.TREE) {
 						if (bRcs.length > 0) {
 							ManagedBuildManager.setOption(cfg, fTool, assignToOption,
-									BuildDescriptionManager.getRelPath(cwd, bRcs[0].getLocation()).toOSString());
+									BuildDescriptionManager.getRelPath(cwd, bRcs[0].getLocation()).toString());
 						}
 					}
 				} catch (BuildException ex) {

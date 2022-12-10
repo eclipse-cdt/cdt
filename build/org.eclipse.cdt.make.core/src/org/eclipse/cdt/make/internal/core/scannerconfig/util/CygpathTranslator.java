@@ -141,7 +141,7 @@ public class CygpathTranslator {
 						String drive = realPath.segment(1);
 						if (drive.length() == 1) {
 							translatedPath = realPath.removeFirstSegments(2).makeAbsolute()
-									.setDevice(drive.toUpperCase() + ':').toOSString();
+									.setDevice(drive.toUpperCase() + ':').toString();
 						}
 					}
 				}

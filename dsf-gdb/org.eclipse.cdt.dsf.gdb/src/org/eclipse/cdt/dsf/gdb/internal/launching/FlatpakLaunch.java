@@ -178,7 +178,7 @@ public class FlatpakLaunch {
 			// if we don't have a working directory, the default is to use
 			// the project
 			if (workingDir == null && projectName != null) {
-				workingDir = project.getLocation().toOSString();
+				workingDir = project.getLocation().toString();
 			}
 			if (workingDir != null) {
 				IPath workingPath = new Path(workingDir);

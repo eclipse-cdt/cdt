@@ -222,7 +222,7 @@ public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaun
 			attributes.put(IProcess.ATTR_CMDLINE, StringUtil.join(gdbBackend.getDebuggerCommandLineArray(), "\n")); //$NON-NLS-1$
 			attributes.put(DebugPlugin.ATTR_ENVIRONMENT, StringUtil.join(getLaunchEnvironment(), "\n")); //$NON-NLS-1$
 			attributes.put(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, Long.toString(System.currentTimeMillis()));
-			Optional.ofNullable(gdbBackend.getGDBWorkingDirectory()).map(IPath::toOSString)
+			Optional.ofNullable(gdbBackend.getGDBWorkingDirectory()).map(IPath::toString)
 					.ifPresent(dir -> attributes.put(DebugPlugin.ATTR_WORKING_DIRECTORY, dir));
 
 			// Need to go through DebugPlugin.newProcess so that we can use
@@ -530,7 +530,7 @@ public class GdbLaunch extends DsfLaunch implements ITracedLaunch, ITargetedLaun
 			return fGdbVersion;
 		}
 
-		String gdbPath = getGDBPath().toOSString();
+		String gdbPath = getGDBPath().toString();
 		String[] launchEnvironment = getLaunchEnvironment();
 
 		String gdbVersion = LaunchUtils.getGDBVersion(gdbPath, launchEnvironment);

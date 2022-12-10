@@ -118,7 +118,7 @@ public class ProcessLauncher {
 	 */
 	public ProcessLauncher(IPath _cmd, String[] args, String[] _env, IPath _cwd, OutputStream _out, OutputStream _err,
 			IProgressMonitor _monitor, boolean _show) {
-		cmd = createCmdArray(_cmd.toOSString(), args);
+		cmd = createCmdArray(_cmd.toString(), args);
 		env = _env;
 		cwd = _cwd.toFile();
 		out = _out;

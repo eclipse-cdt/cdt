@@ -380,7 +380,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 				if (dialog.open() == Window.OK) {
 					Object[] selection = dialog.getResult();
 					if (selection.length > 0) {
-						buildLocation.setText(((IPath) selection[0]).toOSString());
+						buildLocation.setText(((IPath) selection[0]).toString());
 					}
 				}
 			}
@@ -553,7 +553,7 @@ public class SettingsBlock extends AbstractCOptionPage {
 		else
 			stopOnErrorButton.setSelection(false);
 		if (info.getBuildCommand() != null) {
-			StringBuilder cmd = new StringBuilder(info.getBuildCommand().toOSString());
+			StringBuilder cmd = new StringBuilder(info.getBuildCommand().toString());
 			if (!info.isDefaultBuildCmd()) {
 				String args = info.getBuildArguments();
 				if (args != null && !args.isEmpty()) {

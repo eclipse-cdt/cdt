@@ -116,7 +116,7 @@ public class CopyAction extends SelectionListenerAction {
 			IPath location = resources[i].getLocation();
 			// location may be null. See bug 29491.
 			if (location != null)
-				fileNames[actualLength++] = location.toOSString();
+				fileNames[actualLength++] = location.toString();
 			if (i > 0)
 				buf.append("\n"); //$NON-NLS-1$
 			buf.append(resources[i].getName());

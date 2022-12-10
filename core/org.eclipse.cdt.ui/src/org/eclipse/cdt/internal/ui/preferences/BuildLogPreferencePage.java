@@ -105,7 +105,7 @@ public class BuildLogPreferencePage extends PropertyPage implements ICOptionCont
 					dialog.setText(PreferencesMessages.BuildLogPreferencePage_ChooseLogFile);
 					String fileName = logLocationText.getText();
 					IPath logFolder = new Path(fileName).removeLastSegments(1);
-					dialog.setFilterPath(logFolder.toOSString());
+					dialog.setFilterPath(logFolder.toString());
 					String chosenFile = dialog.open();
 					if (chosenFile != null) {
 						logLocationText.setText(chosenFile);

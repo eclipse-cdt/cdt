@@ -199,7 +199,7 @@ public class MakeCorePlugin extends Plugin {
 		if (isGnuStyle) {
 			GNUMakefile gnu = new GNUMakefile();
 			ArrayList<String> includeList = new ArrayList<>();
-			includeList.add(new Path(file.getAbsolutePath()).removeLastSegments(1).toOSString());
+			includeList.add(new Path(file.getAbsolutePath()).removeLastSegments(1).toString());
 			includeList.addAll(Arrays.asList(gnu.getIncludeDirectories()));
 			includeList.addAll(Arrays.asList(makefileDirs));
 			String[] includes = includeList.toArray(new String[includeList.size()]);

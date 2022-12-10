@@ -188,7 +188,7 @@ public abstract class CAbstractMainTab extends CLaunchConfigurationTab {
 			// New project selected for the first time, set the program name default too.
 			IBinary[] bins = getBinaryFiles(project);
 			if (bins != null && bins.length == 1) {
-				fProgText.setText(bins[0].getResource().getProjectRelativePath().toOSString());
+				fProgText.setText(bins[0].getResource().getProjectRelativePath().toString());
 			}
 		}
 	}

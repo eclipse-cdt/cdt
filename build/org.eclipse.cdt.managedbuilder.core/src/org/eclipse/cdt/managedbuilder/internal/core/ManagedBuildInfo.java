@@ -1020,7 +1020,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 								if (null != optionPathConverter) {
 									IPath platformPath = optionPathConverter.convertToPlatformLocation(paths[i], null,
 											null);
-									paths[i] = platformPath.toOSString();
+									paths[i] = platformPath.toString();
 								}
 							}
 							list.add(checkPath(paths[i]));

@@ -190,7 +190,7 @@ public class GdbCliConsoleManager implements ILaunchesListener2 {
 				gdbVersion = "???"; //$NON-NLS-1$
 				assert false : "Should not happen since the gdb version is cached"; //$NON-NLS-1$
 			}
-			String consoleTitle = fLaunch.getGDBPath().toOSString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			String consoleTitle = fLaunch.getGDBPath().toString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
 			DsfServicesTracker tracker = new DsfServicesTracker(GdbUIPlugin.getBundleContext(), fSession.getId());
 			IGDBControl control = tracker.getService(IGDBControl.class);

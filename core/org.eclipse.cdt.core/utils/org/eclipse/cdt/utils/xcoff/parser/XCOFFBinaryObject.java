@@ -125,9 +125,9 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 
 	protected XCoff32 getXCoff32() throws IOException {
 		if (header != null) {
-			return new XCoff32(getPath().toOSString(), header.getObjectDataOffset());
+			return new XCoff32(getPath().toString(), header.getObjectDataOffset());
 		}
-		return new XCoff32(getPath().toOSString());
+		return new XCoff32(getPath().toString());
 	}
 
 	protected void loadAll() throws IOException {

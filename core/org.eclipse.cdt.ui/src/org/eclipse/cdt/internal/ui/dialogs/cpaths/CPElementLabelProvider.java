@@ -281,12 +281,12 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				if (endPath != null) {
 					path = path.append(endPath);
 				}
-				str.append(path.makeRelative().toOSString());
+				str.append(path.makeRelative().toString());
 			} else {
 				//				str.append("From contribution ");
 				IPathEntryContainer container;
 				if (endPath != null) {
-					str.append(endPath.toOSString());
+					str.append(endPath.toString());
 				}
 				str.append(" - ("); //$NON-NLS-1$
 				try {
@@ -304,9 +304,9 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 				if (endPath != null) {
 					path = path.append(endPath);
 				}
-				str.insert(0, path.toOSString());
+				str.insert(0, path.toString());
 			} else if (endPath != null) {
-				str.insert(0, endPath.toOSString());
+				str.insert(0, endPath.toString());
 			}
 		}
 
@@ -322,7 +322,7 @@ class CPElementLabelProvider extends LabelProvider implements IColorProvider {
 		// //$NON-NLS-1$
 		//					new String[] { path.lastSegment(), appended});
 		//		} else {
-		return isExternal ? path.toOSString() : path.makeRelative().toString();
+		return isExternal ? path.toString() : path.makeRelative().toString();
 		//		}
 	}
 

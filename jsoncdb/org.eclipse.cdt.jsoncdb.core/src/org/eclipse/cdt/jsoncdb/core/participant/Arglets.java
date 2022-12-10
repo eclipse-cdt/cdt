@@ -194,7 +194,7 @@ public final class Arglets {
 					IPath path = Path.fromOSString(name);
 					if (!path.isAbsolute()) {
 						// prepend CWD
-						name = cwd.append(path).toOSString();
+						name = cwd.append(path).toString();
 					}
 					if (isSystemIncludePath) {
 						resultCollector.addSystemIncludePath(name);

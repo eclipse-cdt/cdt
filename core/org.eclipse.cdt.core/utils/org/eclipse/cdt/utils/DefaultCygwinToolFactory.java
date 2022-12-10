@@ -35,7 +35,7 @@ public class DefaultCygwinToolFactory extends DefaultGnuToolFactory implements I
 		CygPath cygpath = null;
 		if (cygPathPath != null && !cygPathPath.isEmpty()) {
 			try {
-				cygpath = new CygPath(cygPathPath.toOSString());
+				cygpath = new CygPath(cygPathPath.toString());
 			} catch (IOException e1) {
 			}
 		}

@@ -50,7 +50,7 @@ public class DeleteFileChange extends Change {
 
 	@Override
 	public String getName() {
-		return NLS.bind(Messages.DeleteFileChange_delete_file, path.toOSString());
+		return NLS.bind(Messages.DeleteFileChange_delete_file, path.toString());
 	}
 
 	@Override

@@ -236,7 +236,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				if (workingDirectory != null) {
 					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, inputFileLocation);
 					if (filePath != null)
-						value = filePath.toOSString();
+						value = filePath.toString();
 				}
 			}
 		} else if ("InputDirRelPath".equals(name)) { //$NON-NLS-1$
@@ -246,7 +246,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory,
 							inputFileLocation.removeLastSegments(1).addTrailingSeparator());
 					if (filePath != null)
-						value = filePath.toOSString();
+						value = filePath.toString();
 				}
 			}
 		} else if ("OutputFileName".equals(name)) { //$NON-NLS-1$
@@ -264,7 +264,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 				if (workingDirectory != null) {
 					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory, outputFileLocation);
 					if (filePath != null)
-						value = filePath.toOSString();
+						value = filePath.toString();
 				}
 			}
 		} else if ("OutputDirRelPath".equals(name)) { //$NON-NLS-1$
@@ -274,7 +274,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 					IPath filePath = ManagedBuildManager.calculateRelativePath(workingDirectory,
 							outputFileLocation.removeLastSegments(1).addTrailingSeparator());
 					if (filePath != null)
-						value = filePath.toOSString();
+						value = filePath.toString();
 				}
 			}
 		}
@@ -576,8 +576,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 		if (CdtVariableResolver.VAR_PROJ_NAME.equals(macroName)) {
 			macro = new BuildMacro(macroName, IBuildMacro.VALUE_TEXT, mngProj.getOwner().getName());
 		} else if (CdtVariableResolver.VAR_PROJ_DIR_PATH.equals(macroName)) {
-			macro = new BuildMacro(macroName, IBuildMacro.VALUE_PATH_DIR,
-					mngProj.getOwner().getLocation().toOSString());
+			macro = new BuildMacro(macroName, IBuildMacro.VALUE_PATH_DIR, mngProj.getOwner().getLocation().toString());
 		}
 		return macro;
 	}
@@ -585,7 +584,7 @@ public class MbsMacroSupplier extends BuildCdtVariablesSupplierBase {
 	public IBuildMacro getMacro(String macroName, IWorkspace wsp) {
 		IBuildMacro macro = null;
 		if (CdtVariableResolver.VAR_WORKSPACE_DIR_PATH.equals(macroName)) {
-			macro = new BuildMacro(macroName, IBuildMacro.VALUE_PATH_DIR, wsp.getRoot().getLocation().toOSString());
+			macro = new BuildMacro(macroName, IBuildMacro.VALUE_PATH_DIR, wsp.getRoot().getLocation().toString());
 		} else if (CdtVariableResolver.VAR_DIRECTORY_DELIMITER.equals(macroName)) {
 			if (isWin32()) {
 				macro = new BuildMacro(macroName, IBuildMacro.VALUE_TEXT, "\\"); //$NON-NLS-1$

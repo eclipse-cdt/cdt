@@ -175,7 +175,7 @@ public class AddressRulerColumn extends DisassemblyRulerColumn
 		BigInteger address = doc.getAddressOfLine(line);
 		SourceFileInfo info = doc.getSourceInfo(address);
 		if (info != null) {
-			return info.fFile.getFullPath().toOSString();
+			return info.fFile.getFullPath().toString();
 		}
 		return null;
 	}

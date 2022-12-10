@@ -372,7 +372,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			}
 			String externalLocation = null;
 			if (problemMarkerInfo.externalPath != null && !problemMarkerInfo.externalPath.isEmpty()) {
-				externalLocation = problemMarkerInfo.externalPath.toOSString();
+				externalLocation = problemMarkerInfo.externalPath.toString();
 			}
 
 			// Try to find matching markers and don't put in duplicates
@@ -641,13 +641,13 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		IIncludeEntry[] includeEntries = CoreModel.getIncludeEntries(resPath);
 		String[] includes = new String[includeEntries.length];
 		for (int i = 0; i < includeEntries.length; ++i) {
-			includes[i] = includeEntries[i].getFullIncludePath().toOSString();
+			includes[i] = includeEntries[i].getFullIncludePath().toString();
 		}
 
 		IIncludeFileEntry[] includeFileEntries = CoreModel.getIncludeFileEntries(resPath);
 		String[] includeFiles = new String[includeFileEntries.length];
 		for (int i = 0; i < includeFiles.length; ++i) {
-			includeFiles[i] = includeFileEntries[i].getFullIncludeFilePath().toOSString();
+			includeFiles[i] = includeFileEntries[i].getFullIncludeFilePath().toString();
 		}
 
 		IMacroEntry[] macros = CoreModel.getMacroEntries(resPath);
@@ -659,7 +659,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		IMacroFileEntry[] macroFileEntries = CoreModel.getMacroFileEntries(resPath);
 		String[] macroFiles = new String[macroFileEntries.length];
 		for (int i = 0; i < macroFiles.length; ++i) {
-			macroFiles[i] = macroFileEntries[i].getFullMacroFilePath().toOSString();
+			macroFiles[i] = macroFileEntries[i].getFullMacroFilePath().toString();
 		}
 		return new ExtendedScannerInfo(symbolMap, includes, includeFiles, macroFiles);
 	}

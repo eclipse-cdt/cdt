@@ -51,7 +51,7 @@ public class GlobalBuildLogPreferencePage extends FieldEditorPreferencePage impl
 			dialog.setText(getLabelText());
 			String fileName = super.oldValue;
 			IPath logFolder = new Path(fileName).removeLastSegments(1);
-			dialog.setFilterPath(logFolder.toOSString());
+			dialog.setFilterPath(logFolder.toString());
 			return dialog.open();
 		}
 	}

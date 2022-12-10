@@ -86,7 +86,7 @@ public class NamespaceHelper {
 		if (fileLoc == null) {
 			return false;
 		}
-		boolean fileNameOk = fileLoc.getFileName().endsWith(path.toOSString());
+		boolean fileNameOk = fileLoc.getFileName().endsWith(path.toString());
 		if (!fileNameOk) {
 			return false;
 		}

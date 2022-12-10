@@ -76,7 +76,7 @@ public class IBDragSourceListener implements DragSourceListener {
 			if (ifl != null) {
 				IPath location = IndexLocationFactory.getAbsolutePath(ifl);
 				if (location != null) {
-					files.add(location.toOSString());
+					files.add(location.toString());
 				}
 			}
 		}

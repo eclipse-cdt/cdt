@@ -393,7 +393,7 @@ public class MBSWizardHandler extends CWizardHandler {
 		data.put("baseName", getBaseName(projName)); //$NON-NLS-1$
 		data.put("baseNameUpper", getBaseName(projName).toUpperCase()); //$NON-NLS-1$
 		data.put("baseNameLower", getBaseName(projName).toLowerCase()); //$NON-NLS-1$
-		String location = page.getLocationPath().toOSString();
+		String location = page.getLocationPath().toString();
 		if (location == null)
 			location = EMPTY_STR;
 		data.put("location", location); //getProjectLocation().toPortableString()); //$NON-NLS-1$

@@ -282,7 +282,7 @@ public class SourceAttachmentBlock {
 		IPath resolvedPath = getResolvedPath(new Path(path));
 		if (resolvedPath != null) {
 			if (osPath) {
-				return resolvedPath.toOSString();
+				return resolvedPath.toString();
 			}
 			return resolvedPath.toString();
 		}
@@ -339,7 +339,7 @@ public class SourceAttachmentBlock {
 		FileDialog dialog = new FileDialog(getShell());
 		dialog.setText(CPathEntryMessages.SourceAttachmentBlock_extjardialog_text);
 		dialog.setFilterExtensions(new String[] { "*.jar;*.zip" }); //$NON-NLS-1$
-		dialog.setFilterPath(currPath.toOSString());
+		dialog.setFilterPath(currPath.toString());
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res).makeAbsolute();
@@ -358,7 +358,7 @@ public class SourceAttachmentBlock {
 
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setText(CPathEntryMessages.SourceAttachmentBlock_extfolderdialog_text);
-		dialog.setFilterPath(currPath.toOSString());
+		dialog.setFilterPath(currPath.toString());
 		String res = dialog.open();
 		if (res != null) {
 			return new Path(res).makeAbsolute();

@@ -76,7 +76,7 @@ public class ExternalEditorInputFactory implements IElementFactory {
 	static void saveState(IMemento memento, ExternalEditorInput input) {
 		IPath location = input.getPath();
 		if (location != null) {
-			memento.putString(TAG_PATH, location.toOSString());
+			memento.putString(TAG_PATH, location.toString());
 		}
 		IProject project = null;
 		ITranslationUnit unit = input.getTranslationUnit();

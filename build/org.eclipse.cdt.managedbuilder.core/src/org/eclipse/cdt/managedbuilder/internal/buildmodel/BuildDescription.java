@@ -1368,7 +1368,7 @@ public class BuildDescription implements IBuildDescription {
 			//     the output extension.
 
 			String outPrefix = tool.getOutputPrefix();
-			IPath outFullPath = Path.fromOSString(outDirPath.toOSString() + outPrefix + WILDCARD);
+			IPath outFullPath = Path.fromOSString(outDirPath.toString() + outPrefix + WILDCARD);
 			IPath outLocation;
 			String inExt = resPath.getFileExtension();
 			String outExt = tool.getOutputExtension(inExt);
@@ -1387,7 +1387,7 @@ public class BuildDescription implements IBuildDescription {
 				IInputType type = action.getInputType();
 				String ext = null;
 				if (type != null) {
-					String location = buildRc.getLocation().toOSString();
+					String location = buildRc.getLocation().toString();
 					for (String srcExt : type.getSourceExtensions(tool)) {
 						if (location.endsWith(srcExt)) {
 							ext = srcExt;
@@ -1446,7 +1446,7 @@ public class BuildDescription implements IBuildDescription {
 		//  Get the input file name
 		String fileName = sourceLocation.removeFileExtension().lastSegment();
 		//  Replace the % with the file name
-		String outName = outPath.toOSString().replaceAll("%", fileName); //$NON-NLS-1$
+		String outName = outPath.toString().replaceAll("%", fileName); //$NON-NLS-1$
 		return Path.fromOSString(outName);
 	}
 

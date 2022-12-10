@@ -527,7 +527,7 @@ public class BuildConsoleManager implements IBuildConsoleManager, IResourceChang
 	public String getDefaultConsoleLogLocation(IProject project) {
 		IPath defaultLogLocation = CUIPlugin.getDefault().getStateLocation()
 				.append(project.getName() + PROJECT_LOG_EXT);
-		return defaultLogLocation.toOSString();
+		return defaultLogLocation.toString();
 	}
 
 	/**

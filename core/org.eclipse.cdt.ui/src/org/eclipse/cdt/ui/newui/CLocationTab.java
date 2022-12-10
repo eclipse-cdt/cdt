@@ -97,7 +97,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 				return new String[0];
 			String[] s = new String[p.length];
 			for (int i = 0; i < p.length; i++)
-				s[i] = p[i].toOSString();
+				s[i] = p[i].toString();
 			return s;
 		}
 

@@ -88,7 +88,7 @@ public class MesonPropertyPage extends PropertyPage {
 			configName = ((CBuildConfiguration) project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class))
 					.getName();
 			IPath sourceDir = project.getLocation();
-			String buildDir = project.getLocation().append("build").append(configName).toOSString(); //$NON-NLS-1$
+			String buildDir = project.getLocation().append("build").append(configName).toString(); //$NON-NLS-1$
 			IPath buildPath = new Path(buildDir).append("build.ninja"); //$NON-NLS-1$
 			configured = buildPath.toFile().exists();
 			if (configured) {
@@ -275,7 +275,7 @@ public class MesonPropertyPage extends PropertyPage {
 				String configName = ((CBuildConfiguration) project.getActiveBuildConfig()
 						.getAdapter(ICBuildConfiguration.class)).getName();
 				IPath sourceDir = project.getLocation();
-				String buildDir = project.getLocation().append("build").append(configName).toOSString(); //$NON-NLS-1$
+				String buildDir = project.getLocation().append("build").append(configName).toString(); //$NON-NLS-1$
 				ICommandLauncher launcher = CommandLauncherManager.getInstance()
 						.getCommandLauncher(project.getActiveBuildConfig().getAdapter(ICBuildConfiguration.class));
 				launcher.setProject(project);

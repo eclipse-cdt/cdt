@@ -129,7 +129,7 @@ public class LaunchUtils {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
 					new FileNotFoundException(
 							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$
-									programPath.toOSString())),
+									programPath.toString())),
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
 
@@ -169,7 +169,7 @@ public class LaunchUtils {
 		abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_is_not_a_recognized_executable"), //$NON-NLS-1$
 				new FileNotFoundException(LaunchMessages.getFormattedString(
 						"AbstractCLaunchDelegate.Program_is_not_a_recognized_executable", //$NON-NLS-1$
-						exePath.toOSString())),
+						exePath.toString())),
 				ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY);
 
 		return null;
@@ -284,7 +284,7 @@ public class LaunchUtils {
 	 */
 	@Deprecated
 	public static String getGDBVersion(final ILaunchConfiguration configuration) throws CoreException {
-		String gdbPath = getGDBPath(configuration).toOSString();
+		String gdbPath = getGDBPath(configuration).toString();
 		String[] launchEnvironment = getLaunchEnvironment(configuration);
 
 		return getGDBVersion(gdbPath, launchEnvironment);

@@ -1579,13 +1579,13 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 				String fileName = null;
 				if (isSuccess()) {
 					if (getData() instanceof IFile) {
-						fileName = ((IFile) getData()).getLocation().toOSString();
+						fileName = ((IFile) getData()).getLocation().toString();
 					} else if (getData() instanceof File) {
 						fileName = ((File) getData()).getAbsolutePath();
 					} else if (getData() instanceof ITranslationUnit) {
 						IPath location = ((ITranslationUnit) getData()).getLocation();
 						if (location != null) {
-							fileName = location.toOSString();
+							fileName = location.toString();
 						}
 					} else if (getData() instanceof LocalFileStorage) {
 						fileName = ((LocalFileStorage) getData()).getFile().getAbsolutePath();

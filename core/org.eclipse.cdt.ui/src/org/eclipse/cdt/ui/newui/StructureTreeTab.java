@@ -666,7 +666,7 @@ public class StructureTreeTab extends AbstractCPropertyTab {
 		TreeItem ti1 = create(ti, "segmentCount()", p.segmentCount()); //$NON-NLS-1$
 		for (int i = 0; i < p.segmentCount(); i++)
 			create(ti1, "segment(" + i + ")", p.segment(i)); //$NON-NLS-1$  //$NON-NLS-2$
-		create(ti, "toOSString()", p.toOSString()); //$NON-NLS-1$
+		create(ti, "toString()", p.toString()); //$NON-NLS-1$
 		create(ti, "toPortableString()", p.toPortableString()); //$NON-NLS-1$
 		return ti;
 	}

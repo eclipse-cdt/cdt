@@ -107,7 +107,7 @@ public class FileTemplateContext extends TemplateContext {
 		setVariable(FileTemplateContextType.FILENAME, file.getName());
 		setVariable(FileTemplateContextType.FILEBASE, new Path(file.getName()).removeFileExtension().lastSegment());
 		IPath location = file.getLocation();
-		setVariable(FileTemplateContextType.FILELOCATION, location != null ? location.toOSString() : ""); //$NON-NLS-1$
+		setVariable(FileTemplateContextType.FILELOCATION, location != null ? location.toString() : ""); //$NON-NLS-1$
 		setVariable(FileTemplateContextType.FILEPATH, file.getFullPath().toString());
 		setVariable(FileTemplateContextType.PROJECTNAME, file.getProject().getName());
 	}

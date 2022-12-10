@@ -225,7 +225,7 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 			IPath buildCWD = getBuildCWD(cfgDescription);
 			// again, we avoid using org.eclipse.core.runtime.Path for manipulations being careful
 			// to preserve "../" segments and not let collapsing them which is not correct for symbolic links.
-			location = buildCWD.addTrailingSeparator().toOSString() + location;
+			location = buildCWD.addTrailingSeparator().toString() + location;
 		}
 		return location;
 	}
@@ -266,10 +266,10 @@ public class LanguageSettingsScannerInfoProvider implements IScannerInfoProvider
 					if (loc != null) {
 						if (checkBit(resolved.getFlags(), ICSettingEntry.FRAMEWORKS_MAC)) {
 							// handle frameworks, see IScannerInfo.getIncludePaths()
-							locations.add(loc.append(FRAMEWORK_HEADERS_INCLUDE).toOSString());
-							locations.add(loc.append(FRAMEWORK_PRIVATE_HEADERS_INCLUDE).toOSString());
+							locations.add(loc.append(FRAMEWORK_HEADERS_INCLUDE).toString());
+							locations.add(loc.append(FRAMEWORK_PRIVATE_HEADERS_INCLUDE).toString());
 						} else {
-							locations.add(loc.toOSString());
+							locations.add(loc.toString());
 						}
 					}
 				}

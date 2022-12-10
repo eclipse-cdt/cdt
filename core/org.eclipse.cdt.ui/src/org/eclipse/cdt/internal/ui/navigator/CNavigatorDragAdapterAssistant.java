@@ -80,7 +80,7 @@ public class CNavigatorDragAdapterAssistant extends CommonDragAdapterAssistant {
 						ITranslationUnit tu = (ITranslationUnit) element;
 						IPath location = tu.getLocation();
 						if (location != null) {
-							files.add(location.toOSString());
+							files.add(location.toString());
 						}
 					}
 				}

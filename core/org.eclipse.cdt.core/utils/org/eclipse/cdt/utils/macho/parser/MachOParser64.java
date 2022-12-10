@@ -55,7 +55,7 @@ public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 
 			//Take a second run at it if the data array failed.
 			if (attribute == null) {
-				attribute = MachO64.getAttributes(path.toOSString());
+				attribute = MachO64.getAttributes(path.toString());
 			}
 
 			if (attribute != null) {
@@ -103,7 +103,7 @@ public class MachOParser64 extends AbstractCExtension implements IBinaryParser {
 		CPPFilt cppfilt = null;
 		if (cppFiltPath != null && !cppFiltPath.isEmpty()) {
 			try {
-				cppfilt = new CPPFilt(cppFiltPath.toOSString());
+				cppfilt = new CPPFilt(cppFiltPath.toString());
 			} catch (IOException e2) {
 			}
 		}

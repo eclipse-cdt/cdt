@@ -55,7 +55,7 @@ public class PEParser64 extends AbstractCExtension implements IBinaryParser {
 			}
 			// the hints may have to small, keep on trying.
 			if (attribute == null) {
-				attribute = PE64.getAttribute(path.toOSString());
+				attribute = PE64.getAttribute(path.toString());
 			}
 
 			if (attribute != null) {

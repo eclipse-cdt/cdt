@@ -284,7 +284,7 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 		if (gdbPath == null) {
 			gdbPath = LaunchUtils.getGDBPath(config);
 		}
-		return gdbPath.toOSString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+		return gdbPath.toString().trim() + " (" + gdbVersion + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

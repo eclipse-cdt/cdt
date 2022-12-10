@@ -180,7 +180,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				// the project
 				if (workingDir == null && projectName != null) {
 					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-					workingDir = project.getLocation().toOSString();
+					workingDir = project.getLocation().toString();
 				}
 
 				if (workingDir != null) {
@@ -313,7 +313,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 				// the project
 				if (workingDir == null && projectName != null) {
 					IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(projectName);
-					workingDir = project.getLocation().toOSString();
+					workingDir = project.getLocation().toString();
 				}
 				if (workingDir != null) {
 					IPath workingPath = new Path(workingDir);

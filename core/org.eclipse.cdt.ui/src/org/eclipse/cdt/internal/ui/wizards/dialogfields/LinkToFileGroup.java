@@ -286,7 +286,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 		IPath path = new Path(linkTargetField.getText());
 		IPath resolvedPath = pathVariableManager.resolvePath(path);
 
-		resolvedPathLabelData.setText(resolvedPath.toOSString());
+		resolvedPathLabelData.setText(resolvedPath.toString());
 	}
 
 	/**

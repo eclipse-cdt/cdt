@@ -102,7 +102,7 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 
 		gdbLaunch.initializeControl();
 
-		gdbLaunch.addCLIProcess(gdbLaunch.getGDBPath().toOSString() + " (" + gdbVersion + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		gdbLaunch.addCLIProcess(gdbLaunch.getGDBPath().toString() + " (" + gdbVersion + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		Query<Object> ready = new Query<>() {
 			@Override

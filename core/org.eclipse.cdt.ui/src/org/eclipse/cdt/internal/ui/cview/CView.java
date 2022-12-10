@@ -971,7 +971,7 @@ public class CView extends ViewPart
 					ICElement e = (ICElement) o;
 					IResource res = e.getResource();
 					if (res != null && res.getLocation() != null) {
-						elementMem.putString(TAG_PATH, res.getLocation().toOSString());
+						elementMem.putString(TAG_PATH, res.getLocation().toString());
 					}
 				}
 			}

@@ -157,7 +157,7 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 		}
 
 		if (fileName != null && fileName.startsWith("/cygdrive/")) { //$NON-NLS-1$
-			fileName = AbstractGCCBOPConsoleParserUtility.convertCygpath(new Path(fileName)).toOSString();
+			fileName = AbstractGCCBOPConsoleParserUtility.convertCygpath(new Path(fileName)).toString();
 		}
 		if (fileName == null || fileName.trim().length() == 0) {
 			return false; // return when no file was given (analogous to GCCPerFileBOPConsoleParser)

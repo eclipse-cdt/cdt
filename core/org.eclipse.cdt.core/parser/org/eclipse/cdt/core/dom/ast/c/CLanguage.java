@@ -10,7 +10,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 
-public class CLanguage extends AbstractCLikeLanguage {
+public class CLanguage extends AbstractCLikeLanguage implements IActualCLanguage {
 
 	@Override
 	public String getId() {

@@ -13,6 +13,9 @@ import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 
+/**
+ * ILanguage implementation for the DOM no-dialect pure C++ Parser.
+ */
 public class CPPLanguage extends AbstractCLikeLanguage implements IActualCPPLanguage {
 
 	@Override

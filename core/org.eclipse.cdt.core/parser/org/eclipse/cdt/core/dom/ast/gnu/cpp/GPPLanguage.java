@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.cpp.PDOMCPPLinkageFactory;
 
 /**
- * Concrete ILanguage implementation for the DOM C++ parser.
+ * Concrete ILanguage implementation for the DOM GNU C++ parser.
  */
 public class GPPLanguage extends AbstractCLikeLanguage {
 	protected static final GPPScannerExtensionConfiguration CPP_GNU_SCANNER_EXTENSION = GPPScannerExtensionConfiguration

@@ -37,7 +37,7 @@ import org.eclipse.cdt.internal.core.pdom.dom.IPDOMLinkageFactory;
 import org.eclipse.cdt.internal.core.pdom.dom.c.PDOMCLinkageFactory;
 
 /**
- * Concrete ILanguage implementation for the DOM C parser.
+ * Concrete ILanguage implementation for the DOM GNU C parser.
  */
 public class GCCLanguage extends AbstractCLikeLanguage {
 	protected static final GCCScannerExtensionConfiguration C_GNU_SCANNER_EXTENSION = GCCScannerExtensionConfiguration

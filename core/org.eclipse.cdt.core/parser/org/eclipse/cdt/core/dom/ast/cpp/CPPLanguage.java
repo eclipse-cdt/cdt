@@ -3,10 +3,13 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.core.dom.parser.cpp.CPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 
@@ -21,6 +24,11 @@ public class CPPLanguage extends AbstractCLikeLanguage implements IActualCPPLang
 	@Override
 	public int getLinkageID() {
 		return ILinkage.CPP_LINKAGE_ID;
+	}
+
+	@Override
+	protected IScannerExtensionConfiguration getScannerExtensionConfiguration(IScannerInfo info) {
+		return CPPScannerExtensionConfiguration.getConfiguration(info);
 	}
 
 	@Override

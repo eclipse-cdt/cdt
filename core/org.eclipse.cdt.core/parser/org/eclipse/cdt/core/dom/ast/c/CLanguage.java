@@ -3,10 +3,13 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
+import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.core.dom.parser.c.CScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 
@@ -21,6 +24,11 @@ public class CLanguage extends AbstractCLikeLanguage implements IActualCLanguage
 	@Override
 	public int getLinkageID() {
 		return ILinkage.C_LINKAGE_ID;
+	}
+
+	@Override
+	protected IScannerExtensionConfiguration getScannerExtensionConfiguration(IScannerInfo info) {
+		return CScannerExtensionConfiguration.getConfiguration(info);
 	}
 
 	@Override

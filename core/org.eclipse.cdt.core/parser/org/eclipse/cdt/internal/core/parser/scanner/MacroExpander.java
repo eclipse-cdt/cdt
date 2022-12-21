@@ -19,6 +19,7 @@ import java.util.BitSet;
 import java.util.IdentityHashMap;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -379,7 +380,7 @@ public class MacroExpander {
 				} else if (protectIntrinsics && Arrays.equals(image, Keywords.c__HAS_INCLUDE)) {
 					t.setType(CPreprocessor.t__HAS_INCLUDE);
 					result.append(t);
-				} else if (protectIntrinsics && Arrays.equals(image, Keywords.c__HAS_INCLUDE_NEXT)) {
+				} else if (protectIntrinsics && Arrays.equals(image, GCCKeywords.c__HAS_INCLUDE_NEXT)) {
 					t.setType(CPreprocessor.t__HAS_INCLUDE_NEXT);
 					result.append(t);
 				} else if (macro == null || (macro.isFunctionStyle() && !input.findLParenthesis())) {

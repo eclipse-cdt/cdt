@@ -1173,9 +1173,9 @@ public class ASTStringUtil {
 		case IASTBinaryExpression.op_threewaycomparison:
 			return Keywords.cpTHREEWAYCOMPARISON;
 		case IASTBinaryExpression.op_max:
-			return Keywords.cpMAX;
+			return GCCKeywords.cpMAX;
 		case IASTBinaryExpression.op_min:
-			return Keywords.cpMIN;
+			return GCCKeywords.cpMIN;
 		case IASTBinaryExpression.op_pmarrow:
 			return Keywords.cpARROW;
 		case IASTBinaryExpression.op_pmdot:

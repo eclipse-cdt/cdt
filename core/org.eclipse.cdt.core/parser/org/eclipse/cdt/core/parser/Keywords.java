@@ -302,10 +302,6 @@ public class Keywords {
 	public static final char[] cpPOUND = "#".toCharArray();
 	public static final char[] cpPOUNDPOUND = "##".toCharArray();
 
-	// gcc extensions
-	public static final char[] cpMIN = "<?".toCharArray();
-	public static final char[] cpMAX = ">?".toCharArray();
-
 	// preprocessor keywords
 	public static final char[] cIFDEF = "ifdef".toCharArray();
 	public static final char[] cIFNDEF = "ifndef".toCharArray();
@@ -324,22 +320,15 @@ public class Keywords {
 	 * @since 7.1
 	 */
 	public static final char[] c__HAS_INCLUDE = "__has_include".toCharArray();
-	/**
-	 * @since 7.1
-	 */
-	public static final char[] c__HAS_INCLUDE_NEXT = "__has_include_next".toCharArray();
 	/** @since 5.2*/
 	public static final char[] _Pragma = "_Pragma".toCharArray();
 	public static final char[] cVA_ARGS = "__VA_ARGS__".toCharArray();
 
-	// Preprocessor extensions (supported by GCC).
-	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray();
-	public static final char[] cIMPORT = "import".toCharArray();
-	public static final char[] cIDENT = "ident".toCharArray();
-	public static final char[] cSCCS = "sccs".toCharArray();
+	// C23 and C++23
 	public static final char[] cWARNING = "warning".toCharArray();
+
+	// Not a keyword but kept here to match other macros also defined here
 	public static final char[] cASSERT = "assert".toCharArray();
-	public static final char[] cUNASSERT = "unassert".toCharArray();
 
 	public static void addKeywordsC(CharArrayIntMap kw) {
 		addCommon(kw);

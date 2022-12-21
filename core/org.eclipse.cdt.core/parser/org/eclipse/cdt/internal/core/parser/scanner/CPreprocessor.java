@@ -75,7 +75,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.CodeState;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.Conditional;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.osgi.framework.Version;
 
 /**
  * C-Preprocessor providing tokens for the parsers. The class should not be used directly,
@@ -2173,7 +2172,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				identifier.setType(t__HAS_INCLUDE);
 				return false;
 			}
-			if (CharArrayUtils.equals(name, Keywords.c__HAS_INCLUDE_NEXT)) {
+			if (CharArrayUtils.equals(name, GCCKeywords.c__HAS_INCLUDE_NEXT)) {
 				identifier.setType(t__HAS_INCLUDE_NEXT);
 				return false;
 			}
@@ -2181,7 +2180,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 		// These should not expand as macros and are not allowed outside #if, #ifdef
 		if (CharArrayUtils.equals(name, Keywords.c__HAS_INCLUDE)
-				|| CharArrayUtils.equals(name, Keywords.c__HAS_INCLUDE_NEXT)) {
+				|| CharArrayUtils.equals(name, GCCKeywords.c__HAS_INCLUDE_NEXT)) {
 			handleProblem(IProblem.PREPROCESSOR_INVALID_USE_OUTSIDE_PREPROCESSOR_DIRECTIVE, name,
 					identifier.getOffset(), identifier.getEndOffset());
 			return false;

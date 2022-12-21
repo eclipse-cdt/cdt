@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
+import org.eclipse.cdt.core.parser.GCCKeywords;
 import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.Keywords;
@@ -198,9 +199,9 @@ public class TokenUtil {
 			return Keywords.cpDIV;
 
 		case IGCCToken.tMIN:
-			return Keywords.cpMIN;
+			return GCCKeywords.cpMIN;
 		case IGCCToken.tMAX:
-			return Keywords.cpMAX;
+			return GCCKeywords.cpMAX;
 
 		case CPreprocessor.tSPACE:
 			return SPACE;

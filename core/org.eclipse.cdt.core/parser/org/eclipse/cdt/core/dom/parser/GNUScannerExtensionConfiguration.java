@@ -54,13 +54,13 @@ public abstract class GNUScannerExtensionConfiguration extends AbstractScannerEx
 		addMacro("__has_include", "");
 		addMacro("__has_include_next", "");
 
-		addPreprocessorKeyword(Keywords.cINCLUDE_NEXT, IPreprocessorDirective.ppInclude_next);
-		addPreprocessorKeyword(Keywords.cIMPORT, IPreprocessorDirective.ppImport);
+		addPreprocessorKeyword(GCCKeywords.cINCLUDE_NEXT, IPreprocessorDirective.ppInclude_next);
+		addPreprocessorKeyword(GCCKeywords.cIMPORT, IPreprocessorDirective.ppImport);
 		addPreprocessorKeyword(Keywords.cWARNING, IPreprocessorDirective.ppWarning);
-		addPreprocessorKeyword(Keywords.cIDENT, IPreprocessorDirective.ppIgnore);
-		addPreprocessorKeyword(Keywords.cSCCS, IPreprocessorDirective.ppIgnore);
+		addPreprocessorKeyword(GCCKeywords.cIDENT, IPreprocessorDirective.ppIgnore);
+		addPreprocessorKeyword(GCCKeywords.cSCCS, IPreprocessorDirective.ppIgnore);
 		addPreprocessorKeyword(Keywords.cASSERT, IPreprocessorDirective.ppIgnore);
-		addPreprocessorKeyword(Keywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
+		addPreprocessorKeyword(GCCKeywords.cUNASSERT, IPreprocessorDirective.ppIgnore);
 
 		addKeyword(GCCKeywords.cp__ALIGNOF, IGCCToken.t___alignof__);
 		addKeyword(GCCKeywords.cp__ALIGNOF__, IGCCToken.t___alignof__);

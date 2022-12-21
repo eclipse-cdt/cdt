@@ -1323,10 +1323,10 @@ public class ASTSignatureUtil {
 			opString = String.valueOf(Keywords.cpTHREEWAYCOMPARISON);
 			break;
 		case IASTBinaryExpression.op_max:
-			opString = String.valueOf(Keywords.cpMAX);
+			opString = String.valueOf(GCCKeywords.cpMAX);
 			break;
 		case IASTBinaryExpression.op_min:
-			opString = String.valueOf(Keywords.cpMIN);
+			opString = String.valueOf(GCCKeywords.cpMIN);
 			break;
 		case IASTBinaryExpression.op_pmarrow:
 			opString = String.valueOf(Keywords.cpARROW);

@@ -41,6 +41,22 @@ public class GCCKeywords {
 	/** @since 5.10  */
 	public static final String _DECIMAL128 = "_Decimal128";
 
+	/**
+	 * @since 7.1
+	 */
+	public static final char[] c__HAS_INCLUDE_NEXT = "__has_include_next".toCharArray();
+
+	// gcc extensions
+	public static final char[] cpMIN = "<?".toCharArray();
+	public static final char[] cpMAX = ">?".toCharArray();
+
+	// Preprocessor extensions (supported by GCC).
+	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray();
+	public static final char[] cIMPORT = "import".toCharArray();
+	public static final char[] cIDENT = "ident".toCharArray();
+	public static final char[] cSCCS = "sccs".toCharArray();
+	public static final char[] cUNASSERT = "unassert".toCharArray();
+
 	public static final char[] cpTYPEOF = TYPEOF.toCharArray(), cp__ALIGNOF__ = __ALIGNOF__.toCharArray(),
 			cp__ATTRIBUTE__ = __ATTRIBUTE__.toCharArray(), cp__DECLSPEC = __DECLSPEC.toCharArray(),
 			cp__ALIGNOF = "__alignof".toCharArray(), cp__ATTRIBUTE = "__attribute".toCharArray(),

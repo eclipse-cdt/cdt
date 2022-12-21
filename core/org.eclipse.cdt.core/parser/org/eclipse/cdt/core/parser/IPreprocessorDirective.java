@@ -100,7 +100,7 @@ public interface IPreprocessorDirective {
 	public static final int ppImport = 12;
 
 	/**
-	 * GNU preprocessor extension <code>#warning</code>.
+	 * C23 and C++23 preprocessor directive <code>#warning</code>.
 	 * Similar to <code>#error</code>.
 	 */
 	public static final int ppWarning = 13;

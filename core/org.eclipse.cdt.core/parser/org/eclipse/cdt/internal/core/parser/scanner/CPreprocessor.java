@@ -2164,7 +2164,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 				identifier.setType(tDEFINED);
 				return false;
 			}
-			if (CharArrayUtils.equals(name, Keywords.c__HAS_FEATURE)) {
+			if (CharArrayUtils.equals(name, GCCKeywords.c__HAS_FEATURE)) {
 				identifier.setType(t__HAS_FEATURE);
 				return false;
 			}

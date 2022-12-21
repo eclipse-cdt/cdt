@@ -42,6 +42,12 @@ public class GCCKeywords {
 	public static final String _DECIMAL128 = "_Decimal128";
 
 	/**
+	 * @since 5.11
+	 * This is actually a Clang extension, but I'll leave it here for now.
+	 */
+	public static final char[] c__HAS_FEATURE = "__has_feature".toCharArray();
+
+	/**
 	 * @since 7.1
 	 */
 	public static final char[] c__HAS_INCLUDE_NEXT = "__has_include_next".toCharArray();
@@ -55,6 +61,7 @@ public class GCCKeywords {
 	public static final char[] cIMPORT = "import".toCharArray();
 	public static final char[] cIDENT = "ident".toCharArray();
 	public static final char[] cSCCS = "sccs".toCharArray();
+	public static final char[] cASSERT = "assert".toCharArray();
 	public static final char[] cUNASSERT = "unassert".toCharArray();
 
 	public static final char[] cpTYPEOF = TYPEOF.toCharArray(), cp__ALIGNOF__ = __ALIGNOF__.toCharArray(),

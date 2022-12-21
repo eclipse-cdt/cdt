@@ -314,8 +314,6 @@ public class Keywords {
 	public static final char[] cPRAGMA = "pragma".toCharArray();
 	public static final char[] cLINE = "line".toCharArray();
 	public static final char[] cDEFINED = "defined".toCharArray();
-	/** @since 5.11 */
-	public static final char[] c__HAS_FEATURE = "__has_feature".toCharArray();
 	/**
 	 * @since 7.1
 	 */
@@ -326,9 +324,6 @@ public class Keywords {
 
 	// C23 and C++23
 	public static final char[] cWARNING = "warning".toCharArray();
-
-	// Not a keyword but kept here to match other macros also defined here
-	public static final char[] cASSERT = "assert".toCharArray();
 
 	public static void addKeywordsC(CharArrayIntMap kw) {
 		addCommon(kw);

@@ -373,7 +373,7 @@ public class MacroExpander {
 					t.setType(CPreprocessor.tDEFINED);
 					result.append(t);
 					protect = true;
-				} else if (protectIntrinsics && Arrays.equals(image, Keywords.c__HAS_FEATURE)) {
+				} else if (protectIntrinsics && Arrays.equals(image, GCCKeywords.c__HAS_FEATURE)) {
 					t.setType(CPreprocessor.t__HAS_FEATURE);
 					result.append(t);
 					protect = true;

@@ -103,7 +103,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 
 /**
- * Base class for the c- and c++ parser.
+ * Base class for the GNU C and C++ Parser.
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	// See TemplateIdStrategy for an explanation of what this does.

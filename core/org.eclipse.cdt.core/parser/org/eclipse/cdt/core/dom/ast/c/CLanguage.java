@@ -14,7 +14,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 
 /**
- * ILanguage implementation for the DOM no-dialect pure C Parser.
+ * ILanguage implementation for the DOM no-dialect, pure C Parser.
  */
 public class CLanguage extends AbstractCLikeLanguage implements IActualCLanguage {
 

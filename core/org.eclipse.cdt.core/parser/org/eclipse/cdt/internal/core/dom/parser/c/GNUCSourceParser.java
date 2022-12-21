@@ -107,7 +107,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 /**
- * Source parser for gnu-c syntax.
+ * Source Parser for the GNU C Syntax.
  */
 public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	private static final int DEFAULT_POINTEROPS_LIST_SIZE = 4;

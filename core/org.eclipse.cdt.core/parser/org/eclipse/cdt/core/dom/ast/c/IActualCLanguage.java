@@ -8,6 +8,6 @@ package org.eclipse.cdt.core.dom.ast.c;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
-public interface IActualCLanguage {
+interface IActualCLanguage {
 
 }

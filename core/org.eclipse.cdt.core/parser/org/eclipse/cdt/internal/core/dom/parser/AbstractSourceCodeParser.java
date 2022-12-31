@@ -1,5 +1,6 @@
 package org.eclipse.cdt.internal.core.dom.parser;
 
+import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
@@ -7,22 +8,26 @@ import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
+import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserMode;
 
 /**
- * Abstract class for the (pure) C and C++ Parser.
+ * Abstract class for the regular C and C++ Parser.
  */
 public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 	protected final AbstractParserLogService log;
+	protected final IScanner scanner;
 
 	protected boolean passing = true;
+	protected ASTCompletionNode completionNode;
 
 	public AbstractSourceCodeParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
 			INodeFactory factory, IBuiltinBindingsProvider provider) {
-		this.log = this.wrapLogService(logService);
+		this.scanner = scanner;
+		this.log = wrapLogService(logService);
 	}
 
 	@Override
@@ -33,8 +38,8 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 		resolveAmbiguities();
 		IASTTranslationUnit ast = getCompilationUnit();
 		if (log.isTracing()) {
-			ITranslationUnit tu = ast.getOriginatingTranslationUnit();
-			String name = tu == null ? "<unknown>" : tu.getElementName(); //$NON-NLS-1$
+			ITranslationUnit unit = ast.getOriginatingTranslationUnit();
+			String name = unit == null ? "<unknown>" : unit.getElementName(); //$NON-NLS-1$
 			String message = String.format("Parsed %s: %d ms%s. Ambiguity resolution: %d ms", //$NON-NLS-1$
 					name, end - start, passing ? "" : " - parse failure", System.currentTimeMillis() - end); //$NON-NLS-1$//$NON-NLS-2$
 			log.traceLog(message);
@@ -46,6 +51,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 	@Override
 	public void cancel() {
+
 	}
 
 	@Override
@@ -55,14 +61,26 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 	@Override
 	public IASTCompletionNode getCompletionNode() {
-		return null;
+		return completionNode;
 	}
 
 	protected abstract IASTTranslationUnit getCompilationUnit();
 
+	protected abstract void createCompilationUnit() throws Exception;
+
 	protected abstract void deleteCompilationUnit();
 
 	protected void processCompilationUnit() {
+		try {
+			createCompilationUnit();
+		} catch (Exception exception) {
+			logException("translationUnit::createCompilationUnit()", exception); //$NON-NLS-1$
+			return;
+		}
+		parseCompilationUnit();
+	}
+
+	protected void parseCompilationUnit() {
 
 	}
 
@@ -78,5 +96,16 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 			return (AbstractParserLogService) logService;
 		}
 		return new ParserLogServiceWrapper(logService);
+	}
+
+	protected void logException(String methodName, Exception exception) {
+		if (!(exception instanceof EndOfFileException) && exception != null) {
+			if (log.isTracing()) {
+				String message = String.format("Parser: Unexpected exception in %s:%s::%s. w/%s", //$NON-NLS-1$
+						methodName, exception.getClass().getName(), exception.getMessage(), scanner);
+				log.traceLog(message);
+			}
+			log.traceException(exception);
+		}
 	}
 }

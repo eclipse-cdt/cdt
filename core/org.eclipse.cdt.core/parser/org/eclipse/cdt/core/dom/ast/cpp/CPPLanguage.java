@@ -5,6 +5,7 @@ import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.cpp.CPPScannerExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.IParserLogService;
@@ -12,6 +13,7 @@ import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSourceParser;
 
 /**
  * ILanguage implementation for the DOM no-dialect, pure C++ Parser.
@@ -37,8 +39,7 @@ public class CPPLanguage extends AbstractCLikeLanguage implements IActualCPPLang
 	@Override
 	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
 			IIndex index) {
-		// TODO Auto-generated method stub
-		return null;
+		return new CPPSourceParser(scanner, parserMode, logService, new ANSICPPParserExtensionConfiguration(), index);
 	}
 
 	@Override

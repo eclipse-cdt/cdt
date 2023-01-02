@@ -75,6 +75,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.CodeState;
 import org.eclipse.cdt.internal.core.parser.scanner.ScannerContext.Conditional;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.osgi.framework.Version;
 
 /**
  * C-Preprocessor providing tokens for the parsers. The class should not be used directly,

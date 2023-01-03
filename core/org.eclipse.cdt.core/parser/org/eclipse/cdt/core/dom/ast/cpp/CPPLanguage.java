@@ -20,6 +20,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSourceParser;
  */
 public class CPPLanguage extends AbstractCLikeLanguage implements IActualCPPLanguage {
 
+	public static final ANSICPPParserExtensionConfiguration CPP_PARSER_EXTENSION = new ANSICPPParserExtensionConfiguration();
+
 	@Override
 	public String getId() {
 		// Must match the id in the extension
@@ -39,7 +41,7 @@ public class CPPLanguage extends AbstractCLikeLanguage implements IActualCPPLang
 	@Override
 	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
 			IIndex index) {
-		return new CPPSourceParser(scanner, parserMode, logService, new ANSICPPParserExtensionConfiguration(), index);
+		return new CPPSourceParser(scanner, parserMode, logService, CPP_PARSER_EXTENSION, index);
 	}
 
 	@Override

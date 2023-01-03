@@ -20,6 +20,8 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CSourceParser;
  */
 public class CLanguage extends AbstractCLikeLanguage implements IActualCLanguage {
 
+	public static final ANSICParserExtensionConfiguration C_PARSER_EXTENSION = new ANSICParserExtensionConfiguration();
+
 	@Override
 	public String getId() {
 		// Must match the id in the extension
@@ -39,7 +41,7 @@ public class CLanguage extends AbstractCLikeLanguage implements IActualCLanguage
 	@Override
 	protected ISourceCodeParser createParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
 			IIndex index) {
-		return new CSourceParser(scanner, parserMode, logService, new ANSICParserExtensionConfiguration(), index);
+		return new CSourceParser(scanner, parserMode, logService, C_PARSER_EXTENSION, index);
 	}
 
 	@Override

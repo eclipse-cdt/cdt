@@ -2,12 +2,14 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTranslationUnit;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.parser.EndOfFileException;
 import org.eclipse.cdt.core.parser.IParserLogService;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserMode;
+import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.AbstractSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
@@ -17,24 +19,36 @@ import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
  */
 public class CPPSourceParser extends AbstractSourceCodeParser {
 
+	private ICPPASTTranslationUnit compilationUnit;
+	private final IIndex index;
+
 	public CPPSourceParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
 			ICPPParserExtensionConfiguration config, IIndex index) {
 		super(scanner, parserMode, logService, CPPNodeFactory.getDefault(), config.getBuiltinBindingsProvider());
+		this.index = index;
 	}
 
 	@Override
 	protected IASTTranslationUnit getCompilationUnit() {
-		return null;
+		return compilationUnit;
 	}
 
 	@Override
 	protected void createCompilationUnit() throws Exception {
-		// TODO Auto-generated method stub
+		compilationUnit = (ICPPASTTranslationUnit) nodeFactory.newTranslationUnit(scanner);
+		compilationUnit.setIndex(index);
+
+		// Add built-in names to the scope.
+		if (builtinBindingsProvider != null) {
+			if (compilationUnit instanceof ASTTranslationUnit) {
+				((ASTTranslationUnit) compilationUnit).setupBuiltinBindings(builtinBindingsProvider);
+			}
+		}
 	}
 
 	@Override
 	protected void destroyCompilationUnit() {
-		// TODO Auto-generated method stub
+		compilationUnit = null;
 	}
 
 	@Override

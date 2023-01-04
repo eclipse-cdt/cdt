@@ -35,6 +35,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 	protected final IScanner scanner;
 	protected final ParserMode mode;
 	protected final INodeFactory nodeFactory;
+	protected final IBuiltinBindingsProvider builtinBindingsProvider;
 
 	protected boolean passing = true;
 	protected boolean cancelled = false;
@@ -51,6 +52,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 		this.nodeFactory = factory;
 		this.log = wrapLogService(logService);
 		this.mode = parserMode;
+		this.builtinBindingsProvider = provider;
 	}
 
 	@Override

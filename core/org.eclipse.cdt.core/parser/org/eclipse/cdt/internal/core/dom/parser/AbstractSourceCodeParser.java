@@ -176,8 +176,8 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 		// a node was detected by assuming additional tokens (e.g. missing semicolon)
 		IASTNode n = backtrack.getNodeBeforeProblem();
 		if (n instanceof IASTDeclaration) {
-			IToken la1 = lookaheadWithEndOfFile(1);
-			if (la1 == null || la1.getOffset() > offset) {
+			IToken lookahead = lookaheadWithEndOfFile(1);
+			if (lookahead == null || lookahead.getOffset() > offset) {
 				declarationMark = null;
 				return new IASTDeclaration[] { (IASTDeclaration) n, buildProblemDeclaration(origProblem) };
 			}
@@ -222,10 +222,10 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 			if (decl != null) {
 				IASTProblem problem = createProblem(IProblem.SYNTAX_ERROR, offset, endOffset - offset);
-				IASTDeclaration pd = buildProblemDeclaration(problem);
+				IASTDeclaration problemDecl = buildProblemDeclaration(problem);
 				if (trailingProblem != null)
-					return new IASTDeclaration[] { pd, decl, trailingProblem };
-				return new IASTDeclaration[] { pd, decl };
+					return new IASTDeclaration[] { problemDecl, decl, trailingProblem };
+				return new IASTDeclaration[] { problemDecl, decl };
 			}
 		}
 

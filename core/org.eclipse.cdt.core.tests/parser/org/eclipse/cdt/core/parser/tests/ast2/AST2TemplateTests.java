@@ -18,6 +18,7 @@
  *     Nathan Ridge
  *     Danny Ferreira
  *     Marc-Andre Laperle (Ericsson)
+ *     Igor V. Kovalenko
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
@@ -11399,5 +11400,23 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		ITypedef type1 = helper.assertNonProblem("type1");
 		ITypedef type2 = helper.assertNonProblem("type2");
 		assertSameType(type1, type2);
+	}
+
+	//	using size_t = decltype(sizeof(int));
+	//
+	//	template<typename T> struct A {
+	//		static constexpr size_t f(const T& arg) noexcept { return sizeof(arg); }
+	//	};
+	//
+	//	template<typename... Pack>
+	//	constexpr size_t g(const Pack&... pack) { return A<Pack...>::f(pack...); }
+	//
+	//	static constexpr auto val1 = g("123");
+	//	static constexpr auto val2 = g((const char*)"123");
+	public void testParameterPackExpansions_array() throws Exception {
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("val1", 4);
+		helper.assertVariableValue("val2", 8);
 	}
 }

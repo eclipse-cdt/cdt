@@ -454,7 +454,7 @@ public class EvalBinding extends CPPDependentEvaluation {
 				newBindingEval = new EvalBinding(newBinding, newBinding.getType(), getTemplateDefinition());
 			}
 			if (context.hasPackOffset()) {
-				return new EvalCompositeAccess(newBindingEval, packOffset);
+				return new EvalPackAccess(newBindingEval, packOffset);
 			} else {
 				return newBindingEval;
 			}

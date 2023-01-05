@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.CoreException;
  * Represents an access to a sub-value of a composite value, identified by an index.
  * Composite values can include arrays, structures, and parameter packs (see {@code CompositeValue}).
  */
-public final class EvalCompositeAccess implements ICPPEvaluation {
+public class EvalCompositeAccess implements ICPPEvaluation {
 	private final ICPPEvaluation parent; // The composite value being accessed
 	private final int elementId; // The index of the sub-value being accessed
 

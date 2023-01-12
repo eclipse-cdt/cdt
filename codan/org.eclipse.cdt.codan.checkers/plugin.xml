@@ -273,6 +273,16 @@
                messagePattern="%problem.messagePattern.12"
                name="%problem.name.12">
          </problem>
+         <problem
+               category="org.eclipse.cdt.codan.core.categories.CompilerErrors"
+               defaultEnabled="true"
+               defaultSeverity="Error"
+               description="%problem.description.13"
+               id="org.eclipse.cdt.codan.internal.checkers.StructuredBindingDeclarationProblem"
+               markerType="org.eclipse.cdt.codan.core.codanSemanticProblem"
+               messagePattern="%problem.messagePattern.13"
+               name="%problem.name.13">
+         </problem>
       </checker>
       <checker
             class="org.eclipse.cdt.codan.internal.checkers.AssignmentToItselfChecker"

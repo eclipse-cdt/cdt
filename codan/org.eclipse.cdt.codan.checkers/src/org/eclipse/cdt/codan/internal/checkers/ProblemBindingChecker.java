@@ -40,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStructuredBindingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -64,6 +65,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	public static String ERR_ID_FieldResolutionProblem = "org.eclipse.cdt.codan.internal.checkers.FieldResolutionProblem"; //$NON-NLS-1$
 	public static String ERR_ID_VariableResolutionProblem = "org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem"; //$NON-NLS-1$
 	public static String ERR_ID_Candidates = "org.eclipse.cdt.codan.internal.checkers.Candidates"; //$NON-NLS-1$
+	public static String ERR_ID_StructuredBindingDeclarationProblem = "org.eclipse.cdt.codan.internal.checkers.StructuredBindingDeclarationProblem"; //$NON-NLS-1$
 
 	@Override
 	public boolean runInEditor() {
@@ -124,6 +126,22 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 								}
 								reportProblem(ERR_ID_CircularReferenceProblem, problemNode, typeString,
 										contextFlagsString);
+								return PROCESS_CONTINUE;
+							}
+							if (id == IProblemBinding.SEMANTIC_INVALID_STRUCTURED_BINDING_INITIALIZER) {
+								IASTNode problemNode = parentNode;
+								while (problemNode != null) {
+									if (problemNode instanceof ICPPASTStructuredBindingDeclaration) {
+										break;
+									}
+									problemNode = problemNode.getParent();
+								}
+								if (problemNode == null) {
+									// this should not happen because problem binding should be inside structured binding initializer subtree
+									problemNode = parentNode;
+								}
+								reportProblem(ERR_ID_StructuredBindingDeclarationProblem, problemNode,
+										parentNode.getRawSignature(), contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
 							if (id == IProblemBinding.SEMANTIC_INVALID_REDECLARATION) {

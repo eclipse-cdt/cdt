@@ -409,6 +409,21 @@ public class CPPSemantics {
 			}
 		}
 
+		// If any name in the initializer refers to introduced names then declaration is ill-formed.
+		if (binding instanceof ICPPInternalBinding internalBinding && internalBinding.getDefinition() != null
+				&& internalBinding.getDefinition()
+						.getParent() instanceof ICPPASTStructuredBindingDeclaration declaration) {
+			IASTNode parent = lookupName.getParent();
+			while (parent != null) {
+				if (parent == declaration) {
+					binding = new ProblemBinding(lookupName, data.getLookupPoint(),
+							IProblemBinding.SEMANTIC_INVALID_STRUCTURED_BINDING_INITIALIZER, data.getFoundBindings());
+					break;
+				}
+				parent = parent.getParent();
+			}
+		}
+
 		if (binding instanceof IProblemBinding)
 			return binding;
 

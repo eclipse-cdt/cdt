@@ -415,4 +415,12 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 		assertEquals(IntegralValue.create(1), subvalues[0].getValue());
 		assertEquals(FloatingPointValue.create(2.0), subvalues[1].getValue());
 	}
+
+	//void f() {
+	//  auto& [x] = x.y;
+	//}
+	public void testInvalidReferenceToIntroducedName() throws Exception {
+		BindingAssertionHelper ba = getAssertionHelper();
+		ba.assertProblem("x.y;", 1);
+	}
 }

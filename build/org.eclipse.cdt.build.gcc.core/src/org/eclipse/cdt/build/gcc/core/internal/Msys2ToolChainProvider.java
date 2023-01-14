@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ * Contributors:
+ *     John Dallaway - Support multiple MSYS2 64-bit registry names (#237)
  *******************************************************************************/
 package org.eclipse.cdt.build.gcc.core.internal;
 
@@ -14,6 +16,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import org.eclipse.cdt.build.gcc.core.GCCToolChain;
 import org.eclipse.cdt.core.build.IToolChain;
@@ -27,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 public class Msys2ToolChainProvider implements IToolChainProvider {
 
 	private static final String ID = "org.eclipse.cdt.build.gcc.core.msys2Provider"; //$NON-NLS-1$
+	private static final Set<String> MSYS2_64BIT_NAMES = Set.of("MSYS2", "MSYS2 64bit"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	@Override
 	public String getId() {
@@ -45,7 +49,7 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 				String compKey = uninstallKey + '\\' + subkey;
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
 				if (on64bit) {
-					if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+					if (MSYS2_64BIT_NAMES.contains(displayName)) {
 						if (addToolChain64(manager, registry, compKey)) {
 							key32bit = null;
 							break;

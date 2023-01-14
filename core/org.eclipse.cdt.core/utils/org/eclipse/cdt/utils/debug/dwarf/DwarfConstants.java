@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     John Dallaway - Add DW_FORM_line_strp (#198)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -207,6 +208,10 @@ public class DwarfConstants {
 	 * @since 5.7
 	 */
 	public final static int DW_FORM_flag_present = 0x19;
+	/**
+	 * @since 8.0
+	 */
+	public final static int DW_FORM_line_strp = 0x1f;
 	/**
 	 * @since 5.7
 	 */

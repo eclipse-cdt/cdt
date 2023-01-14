@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 Nokia and others.
+ * Copyright (c) 2007, 2023 Nokia and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,7 +49,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	// These are sections that need be parsed to get the source file list.
 	final static String[] DWARF_SectionsToParse = { DWARF_DEBUG_INFO, DWARF_DEBUG_LINE, DWARF_DEBUG_ABBREV,
 			DWARF_DEBUG_STR, // this is optional. Some compilers don't generate it.
-			DWARF_DEBUG_MACRO, };
+			DWARF_DEBUG_MACRO, DWARF_DEBUG_LINE_STR };
 
 	final static String[] DWARF_ALT_SectionsToParse = { DWARF_DEBUG_STR, DWARF_DEBUG_MACRO };
 
@@ -335,6 +335,9 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				short version = read_2_bytes(data);
 				// Skip the following till "opcode_base"
 				short skip_bytes = 8;
+				if (version >= 5) {
+					skip_bytes += 2; // see address_size and segment_selector_size
+				}
 				if (version >= 4)
 					skip_bytes += 1; // see maximum_operations_per_instruction
 				if (dwarf64Bit)

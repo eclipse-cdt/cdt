@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Salvatore Culcasi - Bug 322475
  *     Serge Beauchamp - Bug 409916
+ *     John Dallaway - Support DW_FORM_line_strp (#198)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -56,6 +57,7 @@ public class Dwarf implements AutoCloseable {
 	final static String DWARF_DEBUG_MACINFO = ".debug_macinfo"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_MACRO = ".debug_macro"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_TYPES = ".debug_types"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_LINE_STR = ".debug_line_str"; //$NON-NLS-1$
 	final static String DWARF_GNU_DEBUGLINK = ".gnu_debuglink"; //$NON-NLS-1$
 	final static String DWARF_GNU_DEBUGALTLINK = ".gnu_debugaltlink"; //$NON-NLS-1$
 
@@ -705,6 +707,33 @@ public class Dwarf implements AutoCloseable {
 				offset = read_4_bytes(in) & 0xffffffffL;
 
 			ByteBuffer data = dwarfSections.get(DWARF_DEBUG_STR);
+			if (data == null) {
+				obj = ""; //$NON-NLS-1$
+			} else if (offset < 0 || offset > data.capacity()) {
+				obj = ""; //$NON-NLS-1$
+			} else {
+				StringBuilder sb = new StringBuilder();
+				data.position((int) offset);
+				while (data.hasRemaining()) {
+					byte c = data.get();
+					if (c == 0) {
+						break;
+					}
+					sb.append((char) c);
+				}
+				obj = sb.toString();
+			}
+		}
+			break;
+
+		case DwarfConstants.DW_FORM_line_strp: {
+			long offset;
+			if (header.offsetSize == 8)
+				offset = read_8_bytes(in);
+			else
+				offset = read_4_bytes(in) & 0xffffffffL;
+
+			ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE_STR);
 			if (data == null) {
 				obj = ""; //$NON-NLS-1$
 			} else if (offset < 0 || offset > data.capacity()) {

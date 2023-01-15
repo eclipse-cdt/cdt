@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2013 Andrew Gvozdev and others.
+ * Copyright (c) 2012, 2023 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
+ *     John Dallaway - Support multiple MSYS2 64-bit registry names (#237)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -36,6 +38,7 @@ public class MinGW {
 	public static final String ENV_MINGW_HOME = "MINGW_HOME"; //$NON-NLS-1$
 	public static final String ENV_MSYS_HOME = "MSYS_HOME"; //$NON-NLS-1$
 	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
+	private static final Set<String> MSYS2_64BIT_NAMES = Set.of("MSYS2", "MSYS2 64bit"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static final boolean isWindowsPlatform = Platform.getOS().equals(Platform.OS_WIN32);
 
@@ -93,7 +96,7 @@ public class MinGW {
 				String compKey = uninstallKey + '\\' + subkey;
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
 				if (on64bit) {
-					if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+					if (MSYS2_64BIT_NAMES.contains(displayName)) {
 						String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
 						String mingwLocation = installLocation + "\\mingw64"; //$NON-NLS-1$
 						File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
@@ -228,7 +231,7 @@ public class MinGW {
 				String compKey = uninstallKey + '\\' + subkey;
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
 				if (on64bit) {
-					if ("MSYS2 64bit".equals(displayName)) { //$NON-NLS-1$
+					if (MSYS2_64BIT_NAMES.contains(displayName)) {
 						String home = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
 						if (new File(home).isDirectory()) {
 							msysHome = home;

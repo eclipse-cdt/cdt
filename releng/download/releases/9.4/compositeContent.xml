@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?compositeMetadataRepository version='1.0.0'?>
+<repository name='CDT 9.4 Update Site'
+    type='org.eclipse.equinox.internal.p2.metadata.repository.CompositeMetadataRepository' version='1.0.0'>
+  <properties size='1'>
+    <property name='p2.timestamp' value='1673888544650'/>
+  </properties>
+  <children size='2'>
+    <child location='../../launchbar/oxygen.2'/>
+    <child location='cdt-9.4.3'/>
+  </children>
+</repository>

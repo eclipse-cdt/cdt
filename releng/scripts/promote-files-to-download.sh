@@ -8,6 +8,7 @@ SSHUSER="genie.cdt@projects-storage.eclipse.org"
 SSH="ssh ${SSHUSER}"
 SCP="scp"
 DOWNLOAD=/home/data/httpd/download.eclipse.org/tools/cdt
+ARCHIVE=/home/data/httpd/archive.eclipse.org/tools/cdt
 
 ECHO=echo
 if [ "$DRY_RUN" == "false" ]; then
@@ -23,3 +24,13 @@ $ECHO $SCP ./releng/download/releases/latest/* "${SSHUSER}:${DOWNLOAD}/releases/
 $ECHO $SCP ./releng/download/releases/10.6/* "${SSHUSER}:${DOWNLOAD}/releases/10.6/"
 $ECHO $SCP ./releng/download/releases/10.7/* "${SSHUSER}:${DOWNLOAD}/releases/10.7/"
 $ECHO $SCP ./releng/download/releases/11.0/* "${SSHUSER}:${DOWNLOAD}/releases/11.0/"
+
+# Issue #235 - some of the old archived releases had bad composites. For those
+# ones we started maintaining the files here as it was the easiest way to edit
+# the files. Add more here as needed.
+$ECHO $SCP ./releng/download/releases/9.3/* "${SSHUSER}:${ARCHIVE}/releases/9.3/"
+$ECHO $SCP ./releng/download/releases/9.4/* "${SSHUSER}:${ARCHIVE}/releases/9.4/"
+$ECHO $SCP ./releng/download/releases/9.5/* "${SSHUSER}:${ARCHIVE}/releases/9.5/"
+$ECHO $SCP ./releng/download/releases/9.6/* "${SSHUSER}:${ARCHIVE}/releases/9.6/"
+$ECHO $SCP ./releng/download/releases/9.7/* "${SSHUSER}:${ARCHIVE}/releases/9.7/"
+$ECHO $SCP ./releng/download/releases/9.8/* "${SSHUSER}:${ARCHIVE}/releases/9.8/"

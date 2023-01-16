@@ -18,6 +18,8 @@ import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ICheckStateListener;
@@ -28,7 +30,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -64,6 +65,11 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	}
 
 	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+
+	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setText(Messages.ConfigMultiSelectionDialog_0);
@@ -87,13 +93,13 @@ public class ConfigMultiSelectionDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 		composite.setFont(parent.getFont());
-		composite.setLayout(new GridLayout(1, true));
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		composite.setLayout(GridLayoutFactory.fillDefaults().margins(5, 5).create());
+		composite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 
 		// Create the current config table
 		table = new Table(composite,
 				SWT.CHECK | SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-		table.setLayoutData(new GridData(GridData.FILL));
+		table.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).create());
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 

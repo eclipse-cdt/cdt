@@ -5,7 +5,7 @@
   <properties size='1'>
     <property name='p2.timestamp' value='1673888544650'/>
   </properties>
-  <children size='5'>
+  <children size='2'>
     <child location='../../launchbar/oxygen.2'/>
     <child location='cdt-9.4.3'/>
   </children>

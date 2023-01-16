@@ -259,6 +259,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 				if (deltaKind == IResourceDelta.ADDED) {
 					if (hasTargetBuilder(project) && !fProjects.contains(project)) {
 						fProjects.add(project);
+						// Need to re-read the target settings, clear the cached version
+						projectMap.remove(project);
 						notifyListeners(
 								new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED, project));
 					}
@@ -278,6 +280,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 									project));
 						} else if (!fProjects.contains(project) && hasTargetBuilder(project)) {
 							fProjects.add(project);
+							// Need to re-read the target settings, clear the cached version
+							projectMap.remove(project);
 							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED,
 									project));
 						}
@@ -290,6 +294,8 @@ public class MakeTargetManager implements IMakeTargetManager, IResourceChangeLis
 									project));
 						} else if (project.isOpen() && hasTargetBuilder(project) && !fProjects.contains(project)) {
 							fProjects.add(project);
+							// Need to re-read the target settings, clear the cached version
+							projectMap.remove(project);
 							notifyListeners(new MakeTargetEvent(MakeTargetManager.this, MakeTargetEvent.PROJECT_ADDED,
 									project));
 						}

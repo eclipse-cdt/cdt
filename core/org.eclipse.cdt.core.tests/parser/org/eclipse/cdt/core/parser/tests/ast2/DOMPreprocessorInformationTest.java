@@ -95,7 +95,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	public void testError() throws Exception {
 		String msg = "Message";
 		StringBuilder buffer = new StringBuilder("#error " + msg + "\n"); //$NON-NLS-1$
-		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, ScannerKind.STD, false);
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(1, st.length);
 		assertTrue(st[0] instanceof IASTPreprocessorErrorStatement);
@@ -161,7 +161,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	public void testErrorWithSpaces() throws Exception {
 		String msg = "Message";
 		StringBuilder buffer = new StringBuilder("#  error \t" + msg + " \n"); //$NON-NLS-1$
-		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, ScannerKind.STD, false);
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(1, st.length);
 		assertTrue(st[0] instanceof IASTPreprocessorErrorStatement);
@@ -175,7 +175,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		sb.append("int x = add(foo, bar); \n");
 		String code = sb.toString();
 
-		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, ScannerKind.STD, false);
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(1, st.length);
 		assertTrue(st[0] instanceof IASTPreprocessorFunctionStyleMacroDefinition);
@@ -193,7 +193,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	// #endif
 	public void testElifWithoutCondition_bug185324() throws Exception {
 		CharSequence code = getContents(1)[0];
-		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, ScannerKind.STD, false);
 		IASTPreprocessorStatement[] st = tu.getAllPreprocessorStatements();
 		assertEquals(3, st.length);
 		assertTrue(st[0] instanceof IASTPreprocessorIfdefStatement);

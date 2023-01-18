@@ -223,7 +223,7 @@ public class AST2UtilTests extends AST2TestBase {
 		buff.append("int foo(x, y) char x; int y; {}\n"); //$NON-NLS-1$
 		buff.append("int foo2(char x, int y) {}\n"); //$NON-NLS-1$
 
-		IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C, true);
+		IASTTranslationUnit tu = parse(buff.toString(), ParserLanguage.C, ScannerKind.GNU);
 		IASTDeclaration[] d = tu.getDeclarations();
 
 		String fooSignature = ASTStringUtil.getSignatureString(((IASTFunctionDefinition) d[0]).getDeclarator());

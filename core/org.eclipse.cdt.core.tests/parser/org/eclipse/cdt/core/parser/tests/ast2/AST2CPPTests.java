@@ -416,9 +416,9 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	}
 
 	public void testBug95424() throws Exception {
-		IASTTranslationUnit tu = parse("void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", CPP, true,
-				true);
-		tu = parse("void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", CPP, false, true);
+		IASTTranslationUnit tu = parse("void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", CPP,
+				ScannerKind.GNU, true);
+		tu = parse("void f(){ traits_type::copy(__r->_M_refdata(), __buf, __i); }", CPP, ScannerKind.STD, true);
 		IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
 		IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
 		IASTExpressionStatement es = (IASTExpressionStatement) cs.getStatements()[0];
@@ -1932,7 +1932,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    AB::f(`c`);
 	// }
 	public void testBug84679() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, false, false);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.STD, false);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -3666,7 +3666,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	}
 
 	public void testBug87424() throws Exception {
-		IASTTranslationUnit tu = parse("int * __restrict x;", CPP, true);
+		IASTTranslationUnit tu = parse("int * __restrict x;", CPP, ScannerKind.GNU);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -3675,7 +3675,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertTrue(t instanceof IPointerType);
 		assertTrue(((IPointerType) t).isRestrict());
 
-		tu = parse("class A {}; int A::* __restrict x;", CPP, true);
+		tu = parse("class A {}; int A::* __restrict x;", CPP, ScannerKind.GNU);
 		col = new NameCollector();
 		tu.accept(col);
 
@@ -3686,7 +3686,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	}
 
 	public void testBug87705() throws Exception {
-		IASTTranslationUnit tu = parse("class A { friend class B::C; };", CPP, true);
+		IASTTranslationUnit tu = parse("class A { friend class B::C; };", CPP, ScannerKind.GNU);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -4439,7 +4439,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 
 	public void testBug92980() throws Exception {
 		String code = "struct A { A(); A(const A&) throw(1); ~A() throw(X); };";
-		parse(code, CPP, true, false);
+		parse(code, CPP, ScannerKind.GNU, false);
 	}
 
 	// class Dummy { int v(); int d; };
@@ -4940,7 +4940,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// float _Complex x;
 	// double _Complex y;
 	public void testBug95757() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		IASTDeclaration[] decls = tu.getDeclarations();
 
 		assertTrue(((IASTSimpleDeclSpecifier) ((IASTSimpleDeclaration) decls[0]).getDeclSpecifier()).isComplex());
@@ -4997,7 +4997,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	}
 
 	public void testBug96678() throws Exception {
-		parse("int x; // comment \r\n", CPP, false, true);
+		parse("int x; // comment \r\n", CPP, ScannerKind.STD, true);
 	}
 
 	// struct A {};
@@ -5233,7 +5233,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	}
 
 	public void testBug99262() throws Exception {
-		parse("void foo() {void *f; f=__null;}", CPP, true, true);
+		parse("void foo() {void *f; f=__null;}", CPP, ScannerKind.GNU, true);
 	}
 
 	// void f1(int*) {
@@ -5278,7 +5278,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    }
 	// }
 	public void testBug84478b() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -5302,7 +5302,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    free(p);
 	// }
 	public void testBug100415() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -5322,7 +5322,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    };
 	// }
 	public void testBug86688() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -5337,7 +5337,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// };
 	// int m::f(){}
 	public void testBug100403() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -5356,7 +5356,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    friend void A::f2(BT);
 	// };
 	public void testBug90609() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -5379,7 +5379,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    }
 	// }
 	public void testBug103281() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -5403,7 +5403,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    i;
 	// }
 	public void test10_2s3b() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 
@@ -5476,7 +5476,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// return 0;
 	// }
 	public void testBug108202() throws Exception {
-		parse(getAboveComment(), CPP, true, true);
+		parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 	}
 
 	// // Test redundant class specifiers
@@ -5486,7 +5486,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// };
 	// int MyClass::static_field;
 	public void testBug174791() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 
 		// check class
 		IASTSimpleDeclaration sd = (IASTSimpleDeclaration) tu.getDeclarations()[0];
@@ -5524,7 +5524,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// void nsSplit::a() {
 	// }
 	public void testBug180979() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 
 		// check class
 		IASTFunctionDefinition fd = (IASTFunctionDefinition) tu.getDeclarations()[2];
@@ -5540,7 +5540,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// _GLIBCXX_BEGIN_NAMESPACE(std)
 	// } // end the namespace
 	public void testBug195701() throws Exception {
-		parse(getAboveComment(), CPP, true, true);
+		parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 	}
 
 	// class A {
@@ -5551,14 +5551,14 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    using A::operator*;
 	// };
 	public void testBug178059() throws Exception {
-		parse(getAboveComment(), CPP, true, true);
+		parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 	}
 
 	// void foo (void *p) throw () ;
 	// void bar (void *p) __attribute__ ((__nonnull__(1)));
 	// void zot (void *p) throw () __attribute__ ((__nonnull__(1)));
 	public void testBug179712() throws Exception {
-		parse(getAboveComment(), CPP, true, true);
+		parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 	}
 
 	//	class C {
@@ -5621,7 +5621,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	outer::foo x;
 	//	outer::inner::foo y;
 	public void testAttributeInUsingDirective_351228() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	namespace source {
@@ -5646,7 +5646,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		fs(1);
 	//	}
 	public void testReferencesOfUsingDecls() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 
 		IASTDeclaration[] decls = tu.getDeclarations();
 		ICPPASTNamespaceDefinition nsdef = (ICPPASTNamespaceDefinition) decls[0];
@@ -5936,7 +5936,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// long       l(0L);
 	// long long  ll(0LL);
 	public void testInitializeUnsigned_245070() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	void foo/*_a*/(int x) {}
@@ -6111,7 +6111,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// }
 	public void testTrailingSyntaxErrorInNamespace() throws Exception {
 		final String comment = getAboveComment();
-		IASTTranslationUnit tu = parse(comment, CPP, false, false);
+		IASTTranslationUnit tu = parse(comment, CPP, ScannerKind.STD, false);
 		ICPPASTNamespaceDefinition ns = getDeclaration(tu, 0);
 		IASTDeclaration decl = getDeclaration(ns, 0);
 		IASTProblemDeclaration pdecl = getDeclaration(ns, 1);
@@ -6124,7 +6124,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// }
 	public void testTrailingSyntaxErrorInLinkageSpec() throws Exception {
 		final String comment = getAboveComment();
-		IASTTranslationUnit tu = parse(comment, CPP, false, false);
+		IASTTranslationUnit tu = parse(comment, CPP, ScannerKind.STD, false);
 		ICPPASTLinkageSpecification ls = getDeclaration(tu, 0);
 		IASTDeclaration decl = getDeclaration(ls, 0);
 		IASTProblemDeclaration pdecl = getDeclaration(ls, 1);
@@ -6359,8 +6359,8 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// void restrict();
 	public void testRestrictIsNoCPPKeyword_228826() throws Exception {
 		final String code = getAboveComment();
-		parseAndCheckBindings(code, CPP, false);
-		parseAndCheckBindings(getAboveComment(), CPP, true); // even with gnu extensions
+		parseAndCheckBindings(code, CPP, ScannerKind.STD);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU); // even with gnu extensions
 	}
 
 	// void test1();
@@ -6598,7 +6598,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    }
 	public void testFunctionCallOnLHS_252695() throws Exception {
 		final String code = getAboveComment();
-		IASTTranslationUnit tu = parseAndCheckBindings(code, CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(code, CPP, ScannerKind.GNU);
 		IASTFunctionDefinition fdef = getDeclaration(tu, 1);
 		IASTExpressionStatement exstmt = getStatement(fdef, 0);
 		assertInstance(exstmt.getExpression(), IASTBinaryExpression.class);
@@ -6614,7 +6614,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    template <int E> class B {};
 	public void testInvalidClassRedeclaration_254961() throws Exception {
 		final String code = getAboveComment();
-		IASTTranslationUnit tu = parse(code, CPP, true, false);
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.GNU, false);
 		NameCollector nc = new NameCollector();
 		tu.accept(nc);
 		assertProblemBindings(nc, 4);
@@ -6632,7 +6632,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//    template <typename T> class B {};
 	public void testInvalidClassRedeclaration_364226() throws Exception {
 		final String code = getAboveComment();
-		IASTTranslationUnit tu = parse(code, CPP, true, false);
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.GNU, false);
 		NameCollector nc = new NameCollector();
 		tu.accept(nc);
 		assertProblemBindings(nc, 4);
@@ -9169,7 +9169,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	enum E; // illegal
 	public void testScopedEnums_305975c() throws Exception {
 		String code = getAboveComment();
-		IASTTranslationUnit tu = parse(code, CPP, true, false);
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.GNU, false);
 		IASTDeclaration[] decls = tu.getDeclarations();
 		assertEquals(3, decls.length);
 		assertInstance(decls[0], IASTProblemDeclaration.class);
@@ -10499,7 +10499,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		~T();
 	//	};
 	public void testErrorForDestructorWithWrongName_367590() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, false, false);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.STD, false);
 		IASTCompositeTypeSpecifier S;
 		IASTProblemDeclaration p;
 		IASTSimpleDeclaration s;
@@ -10874,7 +10874,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		static const bool value = __is_trivially_constructible(S, Args...);
 	//	};
 	public void testParsingOfGcc5TypeTraitIntrinsics_485713() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU /* use GNU extensions */);
 	}
 
 	//	struct S1 {};
@@ -10940,7 +10940,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	const bool b = __is_base_of(S, int);
 	//	typedef A<b>::type T;
 	public void testIsBaseOf_395019() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	template<typename T, T v>
@@ -10978,7 +10978,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//
 	//	Waldo<A> c;
 	public void testIsBaseOf_446094() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//  struct Bool { Bool(bool); };
@@ -11117,7 +11117,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		return i ? "a" : "b";
 	//	}
 	public void testThrowExpressionInConditional_396663() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	struct A {};
@@ -11155,7 +11155,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	struct derived : base {};
 	//	typedef enable_if<__is_base_of(base, derived)>::type T;
 	public void testIsBaseOf_399353() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	struct base {};
@@ -11291,7 +11291,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		__sync_synchronize();
 	//	}
 	public void testGNUSyncBuiltins_389578() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	int main() {
@@ -11300,7 +11300,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		__sync_fetch_and_add(&p, p, 2);
 	//	}
 	public void testGNUSyncBuiltinsOnVoidPtr_533822() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	// __int128_t and __uint128_t are available but are not keywords.
@@ -11313,7 +11313,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	  int __uint128_t;
 	//	}
 	public void testGCCIntBuiltins_444577() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	template <typename T>
@@ -11379,7 +11379,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	  bar(2);
 	//	}
 	public void testUnderlyingType_540909() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU /* use GNU extensions */);
 	}
 
 	//	enum class TestEnum : char {
@@ -11392,7 +11392,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	  bar('a'); // Invalid arguments 'Candidates are: void bar(@120932903)'
 	//	}
 	public void testUnderlyingType_568625() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU /* use GNU extensions */);
 	}
 
 	//	void ptrFunc(void*);
@@ -11404,7 +11404,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		ptrFunc(__builtin_return_address(4));
 	//	}
 	public void testGCCBuiltins_512932a() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	void ptrFunc(void*);
@@ -11532,7 +11532,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 
 	//	void bar(void *a1, void *a2) __attribute__((nonnull(1, 2)));
 	public void testGCCAttributeSequence_416430() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, true);
 		IASTDeclaration[] declarations = tu.getDeclarations();
 		assertEquals(1, declarations.length);
 		IASTDeclaration declaration = declarations[0];
@@ -11722,7 +11722,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 
 	//	__attribute__((section(".example"))) alignas(4) static int waldo;
 	public void testAlignasAfterAttribute_538615() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU /* use GNU extensions */);
 	}
 
 	// int operator "" _A(unsigned long long i) { return 1; }
@@ -12102,7 +12102,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// Ret operator "" _Y(const char* s, unsigned sz) { return Ret(); }
 	// auto test = "123"_X "123"_Y;
 	public void testUserDefinedLiteralBadConcatenation1() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, false);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, false);
 
 		IASTProblem[] problems = tu.getPreprocessorProblems();
 		assertEquals(1, problems.length);
@@ -12183,7 +12183,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	// auto e5 = U"1" _X "2";
 	// auto d5 = U"1" _X;
 	public void testUserDefinedLiteralNoWhiteSpace2() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, true, false);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.GNU, false);
 		IASTDeclaration[] decls = tu.getDeclarations();
 
 		for (int i = 1; i < decls.length; i++) {
@@ -12648,7 +12648,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	    el1,
 	//	};
 	public void testEnumeratorAttribute_514821() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true /* use GNU extensions */);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU /* use GNU extensions */);
 	}
 
 	//	void foo([[maybe_unused]] int a);
@@ -13655,7 +13655,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		Test<TemplateArgs<int, int>::Value>::true_val;
 	//	}
 	public void testIsSame() throws Exception {
-		parseAndCheckBindings(getAboveComment(), CPP, true);
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU);
 	}
 
 	//	void function(int * a) { }

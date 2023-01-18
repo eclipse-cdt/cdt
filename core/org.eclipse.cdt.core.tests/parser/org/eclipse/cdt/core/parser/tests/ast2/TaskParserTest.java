@@ -39,7 +39,7 @@ public class TaskParserTest extends AST2TestBase {
 		String code = "/* TODO tag 1\n" + " * FIXME   tag 2\n" + " */\n" + "\n" + "// TODO(my name): tag 3\n"
 				+ "// TODO(his name): tag 4\n" + "// todo Not a tag\n" + "// TODO FIXME tag 5\n" + "\n"
 				+ "const char* x = \"TODO Not a tag\";";
-		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, false, true);
+		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, ScannerKind.STD, true);
 		TodoTaskParser parser = new TodoTaskParser(taskTags, taskPriorities, isTaskCaseSensitive);
 		Task[] tasks = parser.parse(tu.getComments());
 

@@ -44,7 +44,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	}
 
 	private IASTTranslationUnit parseGCC(String code) throws ParserException {
-		IASTTranslationUnit tu = parse(code, ParserLanguage.C, true, true);
+		IASTTranslationUnit tu = parse(code, ParserLanguage.C, ScannerKind.GNU, true);
 
 		CNameResolver resolver = new CNameResolver();
 		tu.accept(resolver);
@@ -56,7 +56,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	}
 
 	private IASTTranslationUnit parseGPP(String code) throws ParserException {
-		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, true, true);
+		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, ScannerKind.GNU, true);
 
 		CPPNameResolver resolver = new CPPNameResolver();
 		tu.accept(resolver);

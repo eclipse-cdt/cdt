@@ -33,14 +33,14 @@ public class CommentTests extends AST2TestBase {
 	}
 
 	public void testCountCommentsInHeaderFile() throws ParserException {
-		IASTTranslationUnit tu = parse(getHSource(), ParserLanguage.CPP, false, true);
+		IASTTranslationUnit tu = parse(getHSource(), ParserLanguage.CPP, ScannerKind.STD, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals(9, comments.length);
 	}
 
 	public void testCommentsInHeaderFile() throws ParserException {
-		IASTTranslationUnit tu = parse(getHSource(), ParserLanguage.CPP, false, true);
+		IASTTranslationUnit tu = parse(getHSource(), ParserLanguage.CPP, ScannerKind.STD, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals("/* A very cool class\n * isn't it?\n */", new String(comments[0].getComment()));
@@ -55,14 +55,14 @@ public class CommentTests extends AST2TestBase {
 	}
 
 	public void testCountCommentsInCPPFile() throws ParserException {
-		IASTTranslationUnit tu = parse(getCppSource(), ParserLanguage.CPP, false, true);
+		IASTTranslationUnit tu = parse(getCppSource(), ParserLanguage.CPP, ScannerKind.STD, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals(10, comments.length);
 	}
 
 	public void testCommentsInCPPFile() throws ParserException {
-		IASTTranslationUnit tu = parse(getCppSource(), ParserLanguage.CPP, false, true);
+		IASTTranslationUnit tu = parse(getCppSource(), ParserLanguage.CPP, ScannerKind.STD, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals("// Comment in cpp", new String(comments[0].getComment()));
@@ -78,14 +78,14 @@ public class CommentTests extends AST2TestBase {
 	}
 
 	public void testCountCommentsInCFile() throws ParserException {
-		IASTTranslationUnit tu = parse(getCSource(), ParserLanguage.C, false, true);
+		IASTTranslationUnit tu = parse(getCSource(), ParserLanguage.C, ScannerKind.STD, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals(4, comments.length);
 	}
 
 	public void testCommentsInCFile() throws ParserException {
-		IASTTranslationUnit tu = parse(getCSource(), ParserLanguage.C, false, true);
+		IASTTranslationUnit tu = parse(getCSource(), ParserLanguage.C, ScannerKind.STD, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals("//A little input/output programm", new String(comments[0].getComment()));
@@ -205,7 +205,7 @@ public class CommentTests extends AST2TestBase {
 	// #endif
 	public void testCommentsInInactiveCode_bug183930() throws Exception {
 		CharSequence code = getContents(1)[0];
-		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true);
+		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, ScannerKind.STD, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals(2, comments.length);
@@ -216,14 +216,14 @@ public class CommentTests extends AST2TestBase {
 	// //comment
 	public void testCommentLocation_bug186337() throws Exception {
 		CharSequence code = getContents(1)[0];
-		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, true);
+		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, ScannerKind.STD, true);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals(1, comments.length);
 		assertNotNull(comments[0].getFileLocation());
 		assertNotNull(comments[0].getNodeLocations());
 
-		tu = parse(code.toString(), ParserLanguage.C, false, true);
+		tu = parse(code.toString(), ParserLanguage.C, ScannerKind.STD, true);
 		comments = tu.getComments();
 
 		assertEquals(1, comments.length);
@@ -239,7 +239,7 @@ public class CommentTests extends AST2TestBase {
 	// // TODO: shows up in task list
 	public void testCommentInDirectives_bug192546() throws Exception {
 		CharSequence code = getContents(1)[0];
-		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, ScannerKind.STD, false);
 		IASTComment[] comments = tu.getComments();
 
 		assertEquals(5, comments.length);

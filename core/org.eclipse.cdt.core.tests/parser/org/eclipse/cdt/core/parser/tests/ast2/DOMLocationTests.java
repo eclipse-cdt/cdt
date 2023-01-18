@@ -204,7 +204,7 @@ public class DOMLocationTests extends AST2TestBase {
 
 	public void testBug83664() throws Exception {
 		String code = "int foo(x) int x; {\n 	return x;\n   }\n"; //$NON-NLS-1$
-		IASTTranslationUnit tu = parse(code, ParserLanguage.C, true);
+		IASTTranslationUnit tu = parse(code, ParserLanguage.C, ScannerKind.GNU);
 		IASTDeclaration[] declarations = tu.getDeclarations();
 		assertEquals(declarations.length, 1);
 		IASTFunctionDefinition definition = (IASTFunctionDefinition) declarations[0];
@@ -412,7 +412,7 @@ public class DOMLocationTests extends AST2TestBase {
 		buffer.append("int x;\n"); //$NON-NLS-1$
 		String code = buffer.toString();
 		for (ParserLanguage p : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(code, p, false, false);
+			IASTTranslationUnit tu = parse(code, p, ScannerKind.STD, false);
 			IASTDeclaration[] decls = tu.getDeclarations();
 			assertEquals(decls.length, 1);
 			IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
@@ -439,7 +439,7 @@ public class DOMLocationTests extends AST2TestBase {
 		buffer.append("int x;\n"); //$NON-NLS-1$
 		String code = buffer.toString();
 		for (ParserLanguage p : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(code, p, false, false);
+			IASTTranslationUnit tu = parse(code, p, ScannerKind.STD, false);
 			IASTDeclaration[] decls = tu.getDeclarations();
 			IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
 			IASTProblem[] problems = tu.getPreprocessorProblems();
@@ -462,7 +462,7 @@ public class DOMLocationTests extends AST2TestBase {
 		buffer.append("int x2;\n"); // [37-44]
 		String code = buffer.toString();
 		for (ParserLanguage p : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(code, p, false, false);
+			IASTTranslationUnit tu = parse(code, p, ScannerKind.STD, false);
 			IASTDeclaration[] decls = tu.getDeclarations();
 			IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
 			IASTProblem[] problems = tu.getPreprocessorProblems();
@@ -483,7 +483,7 @@ public class DOMLocationTests extends AST2TestBase {
 		buffer.append("int x;\n");
 		String code = buffer.toString();
 		for (ParserLanguage p : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(code, p, false, false);
+			IASTTranslationUnit tu = parse(code, p, ScannerKind.STD, false);
 			IASTDeclaration[] decls = tu.getDeclarations();
 			IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
 			IASTProblem[] problems = tu.getPreprocessorProblems();
@@ -502,7 +502,7 @@ public class DOMLocationTests extends AST2TestBase {
 		buffer.append("int x;\n");
 		String code = buffer.toString();
 		for (ParserLanguage p : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(code, p, false, false);
+			IASTTranslationUnit tu = parse(code, p, ScannerKind.STD, false);
 			IASTDeclaration[] decls = tu.getDeclarations();
 			IASTPreprocessorStatement[] statements = tu.getAllPreprocessorStatements();
 			IASTProblem[] problems = tu.getPreprocessorProblems();
@@ -521,7 +521,7 @@ public class DOMLocationTests extends AST2TestBase {
 		buffer.append("int x;\n");
 		String code = buffer.toString();
 		for (ParserLanguage p : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(code, p, false, false);
+			IASTTranslationUnit tu = parse(code, p, ScannerKind.STD, false);
 			IASTDeclaration[] decls = tu.getDeclarations();
 			IASTProblem[] problems = tu.getPreprocessorProblems();
 			assertEquals(1, decls.length);
@@ -597,7 +597,7 @@ public class DOMLocationTests extends AST2TestBase {
 	public void testBug157009_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifndef A\r\n#error X\r\n#else\r\n#error Y\r\n#endif");
-		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, ScannerKind.STD, false);
 
 		IASTProblem[] problems = tu.getPreprocessorProblems();
 		assertEquals(1, problems.length);
@@ -607,7 +607,7 @@ public class DOMLocationTests extends AST2TestBase {
 	public void testBug157009_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifndef A\n#error X\n#else\n#error Y\n#endif");
-		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, ScannerKind.STD, false);
 
 		IASTProblem[] problems = tu.getPreprocessorProblems();
 		assertEquals(1, problems.length);
@@ -618,7 +618,7 @@ public class DOMLocationTests extends AST2TestBase {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=171520
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int i = sizeof(int);");
-		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(buffer.toString(), ParserLanguage.CPP, ScannerKind.STD, false);
 		IASTDeclaration[] decls = tu.getDeclarations();
 		assertEquals(1, decls.length);
 		assertSoleLocation(decls[0], 0, buffer.length());
@@ -646,7 +646,7 @@ public class DOMLocationTests extends AST2TestBase {
 		buffer.append("#unassert thisIsTrue(value)\n");
 		buffer.append("#invalid");
 		String code = buffer.toString();
-		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, true, false);
+		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP, ScannerKind.GNU, false);
 
 		IASTProblem[] problems = tu.getPreprocessorProblems();
 		assertEquals(3, problems.length);

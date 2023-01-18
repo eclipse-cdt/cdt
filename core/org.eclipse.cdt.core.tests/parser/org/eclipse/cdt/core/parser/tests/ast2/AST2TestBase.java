@@ -99,6 +99,23 @@ import junit.framework.AssertionFailedError;
  * @author aniefer
  */
 public abstract class AST2TestBase extends SemanticTestBase {
+	public static enum ScannerKind {
+		STD {
+			@Override
+			public boolean isUseGNUExtensions() {
+				return false;
+			}
+		},
+		GNU {
+			@Override
+			public boolean isUseGNUExtensions() {
+				return true;
+			}
+		};
+
+		public abstract boolean isUseGNUExtensions();
+	}
+
 	public final static String TEST_CODE = "<testcode>";
 	protected static final IParserLogService NULL_LOG = new NullLogService();
 	protected static boolean sValidateCopy;
@@ -145,28 +162,28 @@ public abstract class AST2TestBase extends SemanticTestBase {
 	}
 
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang) throws ParserException {
-		return parse(code, lang, false, true);
+		return parse(code, lang, ScannerKind.STD, true);
 	}
 
-	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions)
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, ScannerKind scannerKind)
 			throws ParserException {
-		return parse(code, lang, useGNUExtensions, true);
+		return parse(code, lang, scannerKind, true);
 	}
 
-	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, ScannerKind scannerKind,
 			boolean expectNoProblems) throws ParserException {
-		return parse(code, lang, useGNUExtensions, expectNoProblems, Integer.MAX_VALUE);
+		return parse(code, lang, scannerKind, expectNoProblems, Integer.MAX_VALUE);
 	}
 
-	protected IASTTranslationUnit parse(String code, ParserLanguage lang, boolean useGNUExtensions,
+	protected IASTTranslationUnit parse(String code, ParserLanguage lang, ScannerKind scannerKind,
 			boolean expectNoProblems, int limitTrivialInitializers) throws ParserException {
 		IScanner scanner = createScanner(FileContent.create(TEST_CODE, code.toCharArray()), lang,
-				ParserMode.COMPLETE_PARSE, createScannerInfo(useGNUExtensions));
+				ParserMode.COMPLETE_PARSE, createScannerInfo(scannerKind));
 		configureScanner(scanner);
 		AbstractGNUSourceCodeParser parser = null;
 		if (lang == ParserLanguage.CPP) {
 			ICPPParserExtensionConfiguration config = null;
-			if (useGNUExtensions) {
+			if (scannerKind.isUseGNUExtensions()) {
 				config = new GPPParserExtensionConfiguration();
 			} else {
 				config = new ANSICPPParserExtensionConfiguration();
@@ -175,7 +192,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		} else {
 			ICParserExtensionConfiguration config = null;
 
-			if (useGNUExtensions) {
+			if (scannerKind.isUseGNUExtensions()) {
 				config = new GCCParserExtensionConfiguration();
 			} else {
 				config = new ANSICParserExtensionConfiguration();
@@ -206,10 +223,14 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		return tu;
 	}
 
-	public ScannerInfo createScannerInfo(boolean useGnu) {
-		if (useGnu)
+	public static ScannerInfo createScannerInfo(ScannerKind scannerKind) {
+		switch (scannerKind) {
+		case GNU:
 			return GNU_SCANNER_INFO;
-		return SCANNER_INFO;
+		case STD:
+		default:
+			return SCANNER_INFO;
+		}
 	}
 
 	protected void configureScanner(IScanner scanner) {
@@ -285,11 +306,16 @@ public abstract class AST2TestBase extends SemanticTestBase {
 
 	protected IASTExpression getExpressionFromStatementInCode(String code, ParserLanguage language)
 			throws ParserException {
+		return getExpressionFromStatementInCode(code, language, ScannerKind.STD);
+	}
+
+	protected IASTExpression getExpressionFromStatementInCode(String code, ParserLanguage language,
+			ScannerKind scannerKind) throws ParserException {
 		StringBuilder buffer = new StringBuilder("void f() { "); //$NON-NLS-1$
 		buffer.append("int x, y;\n"); //$NON-NLS-1$
 		buffer.append(code);
 		buffer.append(";\n}"); //$NON-NLS-1$
-		IASTTranslationUnit tu = parse(buffer.toString(), language);
+		IASTTranslationUnit tu = parse(buffer.toString(), language, scannerKind);
 		IASTFunctionDefinition f = (IASTFunctionDefinition) tu.getDeclarations()[0];
 		IASTCompoundStatement cs = (IASTCompoundStatement) f.getBody();
 		IASTExpressionStatement s = (IASTExpressionStatement) cs.getStatements()[1];
@@ -489,23 +515,23 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		}
 
 		public AST2AssertionHelper(String contents, ParserLanguage lang) throws ParserException {
-			super(contents, parse(contents, lang, true, false));
+			super(contents, parse(contents, lang, ScannerKind.GNU, false));
 			this.isCPP = lang.isCPP();
 		}
 	}
 
 	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang) throws Exception {
-		return parseAndCheckBindings(code, lang, false);
+		return parseAndCheckBindings(code, lang, ScannerKind.STD);
 	}
 
-	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang,
-			boolean useGnuExtensions) throws Exception {
-		return parseAndCheckBindings(code, lang, useGnuExtensions, Integer.MAX_VALUE);
+	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, ScannerKind scannerKind)
+			throws Exception {
+		return parseAndCheckBindings(code, lang, scannerKind, Integer.MAX_VALUE);
 	}
 
-	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang,
-			boolean useGnuExtensions, int limitTrivialInitializers) throws Exception {
-		IASTTranslationUnit tu = parse(code, lang, useGnuExtensions, true, limitTrivialInitializers);
+	final protected IASTTranslationUnit parseAndCheckBindings(String code, ParserLanguage lang, ScannerKind scannerKind,
+			int limitTrivialInitializers) throws Exception {
+		IASTTranslationUnit tu = parse(code, lang, scannerKind, true, limitTrivialInitializers);
 		NameCollector col = new NameCollector();
 		tu.accept(col);
 		assertNoProblemBindings(col);
@@ -513,7 +539,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 	}
 
 	final protected IASTTranslationUnit parseAndCheckImplicitNameBindings() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), CPP, false, true);
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.STD, true);
 		NameCollector col = new NameCollector(true /* Visit implicit names */);
 		tu.accept(col);
 		assertNoProblemBindings(col);

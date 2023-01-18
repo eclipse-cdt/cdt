@@ -55,7 +55,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testCompositeTypeWithoutSemi() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTCompositeTypeSpecifier def = getCompositeType(tu, 1);
 			IASTProblemDeclaration pdecl = getDeclaration(tu, 2);
 			IASTSimpleDeclaration sdecl = getDeclaration(tu, 3);
@@ -70,7 +70,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testCompositeTypeWithDtorWithoutSemi() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTSimpleDeclaration sdecl = getDeclaration(tu, 1);
 			assertInstance(sdecl.getDeclSpecifier(), IASTCompositeTypeSpecifier.class);
 			assertEquals(1, sdecl.getDeclarators().length);
@@ -85,7 +85,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testVariableWithoutSemi() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTSimpleDeclaration sdecl = getDeclaration(tu, 1);
 			assertEquals("int a", sdecl.getRawSignature());
 			IASTProblemDeclaration pdecl = getDeclaration(tu, 2);
@@ -99,7 +99,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testPrototypeWithoutSemi() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTSimpleDeclaration sdecl = getDeclaration(tu, 1);
 			assertEquals("int a()", sdecl.getRawSignature());
 			IASTProblemDeclaration pdecl = getDeclaration(tu, 2);
@@ -114,7 +114,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testExpressionWithoutSemi_314593() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTFunctionDefinition fdef = getDeclaration(tu, 0);
 			IASTStatement stmt = getStatement(fdef, 0);
 			assertEquals("int a= 1", stmt.getRawSignature());
@@ -130,7 +130,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testIncompleteCompositeType() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTCompositeTypeSpecifier comp = getCompositeType(tu, 0);
 			IASTProblemDeclaration pdecl = getDeclaration(tu, 1);
 
@@ -143,7 +143,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testIncompleteFunctionDefinition() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTFunctionDefinition fdef = getDeclaration(tu, 0);
 			IASTProblemDeclaration pdecl = getDeclaration(tu, 1);
 
@@ -155,7 +155,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//   int a;
 	public void testIncompleteNamespace() throws Exception {
 		final String comment = getAboveComment();
-		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, ScannerKind.STD, false);
 		ICPPASTNamespaceDefinition ns = getDeclaration(tu, 0);
 		IASTProblemDeclaration pdecl = getDeclaration(tu, 1);
 
@@ -166,7 +166,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//   int a;
 	public void testIncompleteLinkageSpec() throws Exception {
 		final String comment = getAboveComment();
-		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, ScannerKind.STD, false);
 		ICPPASTLinkageSpecification ls = getDeclaration(tu, 0);
 		IASTProblemDeclaration pdecl = getDeclaration(tu, 1);
 
@@ -179,7 +179,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testRangeOfProblemNode_Bug238151() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTFunctionDefinition fdef = getDeclaration(tu, 0);
 			IASTProblemStatement pdecl = getStatement(fdef, 0);
 			assertEquals("int a= offsetof(struct mystruct, singlechar);", pdecl.getRawSignature());
@@ -194,7 +194,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testProblemInIfExpression_Bug100321() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTFunctionDefinition fdef = getDeclaration(tu, 0);
 			IASTIfStatement ifstmt = getStatement(fdef, 0);
 			assertInstance(ifstmt.getConditionExpression(), IASTProblemExpression.class);
@@ -209,7 +209,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testUndefinedMacrosInFunctionDeclarations_Bug234085() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTProblemDeclaration pd = getDeclaration(tu, 0);
 			assertEquals("_MYMACRO_", pd.getRawSignature());
 			IASTSimpleDeclaration sdecl = getDeclaration(tu, 1);
@@ -239,7 +239,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	public void testEnumProblem() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
-			IASTTranslationUnit tu = parse(comment, lang, false, false);
+			IASTTranslationUnit tu = parse(comment, lang, ScannerKind.STD, false);
 			IASTSimpleDeclaration e = getDeclaration(tu, 0);
 			IASTProblemDeclaration p = getDeclaration(tu, 1);
 			assertEquals("J, K };", p.getRawSignature());
@@ -254,7 +254,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	// };
 	public void testEnumError_Bug72685() throws Exception {
 		final String comment = getAboveComment();
-		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, false, false);
+		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, ScannerKind.STD, false);
 		IASTCompositeTypeSpecifier ct = getCompositeType(tu, 0);
 		IASTSimpleDeclaration e = getDeclaration(ct, 0);
 		IASTProblemDeclaration p = getDeclaration(ct, 1);
@@ -269,12 +269,12 @@ public class FaultToleranceTests extends AST2TestBase {
 	//	);
 	//	int d;
 	public void testErrorRecovery_273759() throws Exception {
-		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C, false, false);
+		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C, ScannerKind.STD, false);
 		IASTSimpleDeclaration s = getDeclaration(tu, 0);
 		IASTProblemDeclaration p = getDeclaration(tu, 1);
 		s = getDeclaration(tu, 2);
 
-		tu = parse(getAboveComment(), ParserLanguage.CPP, false, false);
+		tu = parse(getAboveComment(), ParserLanguage.CPP, ScannerKind.STD, false);
 		s = getDeclaration(tu, 0);
 		p = getDeclaration(tu, 1);
 		s = getDeclaration(tu, 2);
@@ -313,7 +313,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//	    }
 	public void testPerformanceIssue_364108() throws Exception {
 		final String comment = getAboveComment();
-		parse(comment, ParserLanguage.CPP, false, false);
-		parse(comment, ParserLanguage.C, false, false);
+		parse(comment, ParserLanguage.CPP, ScannerKind.STD, false);
+		parse(comment, ParserLanguage.C, ScannerKind.STD, false);
 	}
 }

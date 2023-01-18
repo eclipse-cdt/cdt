@@ -249,7 +249,7 @@ public class DOMLocationMacroTests extends AST2TestBase {
 		String code = buffer.toString();
 
 		for (ParserLanguage language : languages) {
-			IASTTranslationUnit tu = parse(code, language, true, true);
+			IASTTranslationUnit tu = parse(code, language, ScannerKind.GNU, true);
 			final IASTPreprocessorMacroDefinition[] macroDefinitions = tu.getMacroDefinitions();
 			IASTPreprocessorObjectStyleMacroDefinition _PTR = (IASTPreprocessorObjectStyleMacroDefinition) macroDefinitions[0];
 			IASTPreprocessorFunctionStyleMacroDefinition _EXFUN = (IASTPreprocessorFunctionStyleMacroDefinition) macroDefinitions[2];

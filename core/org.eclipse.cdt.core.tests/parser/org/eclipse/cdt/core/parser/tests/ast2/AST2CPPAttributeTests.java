@@ -515,13 +515,13 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 
 	//	struct S __attribute__((__packed__)) {};
 	public void testGCCAttributedStruct() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTCompositeTypeSpecifier.class);
 	}
 
 	//	int a __attribute__ ((aligned ((64))));
 	public void testGCCAttributedVariableDeclarator_bug391572() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTDeclarator.class);
 	}
 
@@ -529,7 +529,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	  void foo() override __attribute__((attr));
 	//	};
 	public void testGCCAttributeAfterOverride_bug413615() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
 	}
 
@@ -537,33 +537,33 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//		value1 [[attr1]], value2 [[attr2]] = 1
 	//	};
 	public void testAttributedEnumerator_Bug535269() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTEnumerator.class, IASTEnumerator.class);
 	}
 
 	//void f([[attr1]] int [[attr2]] p) {
 	//}
 	public void testAttributedFunctionParameter_Bug535275() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTParameterDeclaration.class,
 				ICPPASTSimpleDeclSpecifier.class);
 	}
 
 	//namespace [[attr]] NS {}
 	public void testAttributedNamedNamespace_Bug535274() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
 	}
 
 	//namespace [[attr]] {}
 	public void testAttributedUnnamedNamespace_Bug535274() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
 	}
 
 	//namespace NS __attribute__((__visibility__("default"))) {}
 	public void testGnuAndCppMixedAttributedNamedNamespace_Bug535274() throws Exception {
-		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, true);
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
 	}
 }

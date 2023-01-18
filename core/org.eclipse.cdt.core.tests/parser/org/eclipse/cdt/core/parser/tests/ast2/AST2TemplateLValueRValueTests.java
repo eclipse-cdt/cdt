@@ -862,7 +862,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 
 	private void parseAndCheckBindingsForOneProblem() throws IOException, ParserException {
 		final String code = getAboveComment();
-		IASTTranslationUnit tu = parse(code, CPP, true, false);
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.GNU, false);
 		NameCollector nc = new NameCollector();
 		tu.accept(nc);
 		assertProblemBindings(nc, 1);
@@ -870,7 +870,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 
 	private void parseAndCheckBindingsForProblem() throws IOException, ParserException {
 		final String code = getAboveComment();
-		IASTTranslationUnit tu = parse(code, CPP, true, false);
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.GNU, false);
 		NameCollector nc = new NameCollector();
 		tu.accept(nc);
 		assertProblemBindings(nc);

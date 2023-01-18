@@ -505,6 +505,10 @@ public class AST2Tests extends AST2TestBase {
 		validateConditionalExpressionC("x ? y : x"); //$NON-NLS-1$
 	}
 
+	public void testCPP20Expressions() throws ParserException {
+		validateSimpleBinaryExpressionCPP20("x<=>y", IASTBinaryExpression.op_threewaycomparison); //$NON-NLS-1$
+	}
+
 	public void testMultipleDeclarators() throws Exception {
 		IASTTranslationUnit tu = parse("int r, s;", C); //$NON-NLS-1$
 		assertTrue(tu.isFrozen());

@@ -111,6 +111,12 @@ public abstract class AST2TestBase extends SemanticTestBase {
 			public boolean isUseGNUExtensions() {
 				return true;
 			}
+		},
+		STDCPP20 {
+			@Override
+			public boolean isUseGNUExtensions() {
+				return false;
+			}
 		};
 
 		public abstract boolean isUseGNUExtensions();
@@ -122,6 +128,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 
 	private static final ScannerInfo GNU_SCANNER_INFO = new ScannerInfo(getGnuMap());
 	private static final ScannerInfo SCANNER_INFO = new ScannerInfo(getStdMap());
+	private static final ScannerInfo STDCPP20_SCANNER_INFO = new ScannerInfo(getStdCpp20Map());
 
 	private static Map<String, String> getGnuMap() {
 		Map<String, String> map = new HashMap<>();
@@ -144,6 +151,12 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		map.put("__SIZEOF_LONG_LONG__", "8");
 		map.put("__SIZEOF_DOUBLE__", "8");
 		map.put("__SIZEOF_POINTER__", "8");
+		return map;
+	}
+
+	private static Map<String, String> getStdCpp20Map() {
+		Map<String, String> map = getStdMap();
+		map.put("__cpp_impl_three_way_comparison", "201907L");
 		return map;
 	}
 
@@ -227,6 +240,8 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		switch (scannerKind) {
 		case GNU:
 			return GNU_SCANNER_INFO;
+		case STDCPP20:
+			return STDCPP20_SCANNER_INFO;
 		case STD:
 		default:
 			return SCANNER_INFO;
@@ -294,14 +309,23 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		assertEquals(x.getName().toString(), x2.getName().toString());
 	}
 
-	protected void validateSimpleBinaryExpressionC(String code, int operand) throws ParserException {
-		IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode(code, ParserLanguage.C);
+	protected void validateSimpleBinaryExpression(String code, int operator, ParserLanguage language,
+			ScannerKind scannerKind) throws ParserException {
+		IASTBinaryExpression e = (IASTBinaryExpression) getExpressionFromStatementInCode(code, language, scannerKind);
 		assertNotNull(e);
-		assertEquals(e.getOperator(), operand);
+		assertEquals(e.getOperator(), operator);
 		IASTIdExpression x = (IASTIdExpression) e.getOperand1();
 		assertEquals(x.getName().toString(), "x"); //$NON-NLS-1$
 		IASTIdExpression y = (IASTIdExpression) e.getOperand2();
 		assertEquals(y.getName().toString(), "y"); //$NON-NLS-1$
+	}
+
+	protected void validateSimpleBinaryExpressionC(String code, int operator) throws ParserException {
+		validateSimpleBinaryExpression(code, operator, ParserLanguage.C, ScannerKind.STD);
+	}
+
+	protected void validateSimpleBinaryExpressionCPP20(String code, int operator) throws ParserException {
+		validateSimpleBinaryExpression(code, operator, ParserLanguage.CPP, ScannerKind.STDCPP20);
 	}
 
 	protected IASTExpression getExpressionFromStatementInCode(String code, ParserLanguage language)

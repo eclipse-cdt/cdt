@@ -2125,7 +2125,14 @@ public class CPPSemantics {
 				}
 				IASTTranslationUnit tu = node.getTranslationUnit();
 				IIndexFileSet indexFileSet = tu.getIndexFileSet();
-				return (indexFileSet != null && indexFileSet.containsDeclaration(indexBinding));
+				if (indexFileSet != null && indexFileSet.containsDeclaration(indexBinding)) {
+					return true;
+				} else if (indexBinding instanceof ICPPConstructor) {
+					IIndexFileSet astFileSet = tu.getASTFileSet();
+					return astFileSet != null && astFileSet.containsDeclaration(indexBinding);
+				} else {
+					return false;
+				}
 			}
 		}
 		return pointOfDecl < pointOfRef;

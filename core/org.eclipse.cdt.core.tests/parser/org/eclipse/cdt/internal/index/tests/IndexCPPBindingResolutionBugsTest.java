@@ -1397,4 +1397,21 @@ public abstract class IndexCPPBindingResolutionBugsTest extends IndexBindingReso
 		ast = workingCopy.getAST(strategy.getIndex(), ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 		checkBindings(ast);
 	}
+
+	// struct MyClass {
+	//   MyClass();
+	//   struct MyInnerClass;
+	// };
+
+	// struct MyClass::MyInnerClass {
+	// 	MyInnerClass(bool a, bool b) {
+	// 	}
+	// };
+	//
+	// MyClass::MyClass() {
+	// 	new MyInnerClass(true, true);
+	// }
+	public void testIssue_254() throws Exception {
+		checkBindings();
+	}
 }

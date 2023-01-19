@@ -539,7 +539,12 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		}
 
 		public AST2AssertionHelper(String contents, ParserLanguage lang) throws ParserException {
-			super(contents, parse(contents, lang, ScannerKind.GNU, false));
+			this(contents, lang, ScannerKind.GNU);
+		}
+
+		public AST2AssertionHelper(String contents, ParserLanguage lang, ScannerKind scannerKind)
+				throws ParserException {
+			super(contents, parse(contents, lang, scannerKind, false));
 			this.isCPP = lang.isCPP();
 		}
 	}

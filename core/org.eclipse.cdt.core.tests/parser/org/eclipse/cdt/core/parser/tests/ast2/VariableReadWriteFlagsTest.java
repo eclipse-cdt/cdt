@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.parser.ParserException;
@@ -34,6 +35,10 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	protected class AssertionHelper extends AST2AssertionHelper {
 		AssertionHelper(String contents, boolean isCPP) throws ParserException {
 			super(contents, isCPP);
+		}
+
+		AssertionHelper(String contents, ParserLanguage lang, ScannerKind scannerKind) throws ParserException {
+			super(contents, lang, scannerKind);
 		}
 
 		void assertReadWriteFlags(String context, String name, Optional<Integer> expectedFlags) throws Exception {
@@ -95,6 +100,11 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		return new AssertionHelper(code, true);
 	}
 
+	protected AssertionHelper getCPP20AssertionHelper() throws ParserException, IOException {
+		String code = getAboveComment();
+		return new AssertionHelper(code, ParserLanguage.CPP, ScannerKind.STDCPP20);
+	}
+
 	//	int test(int a) {
 	//	  a = 2;
 	//	  a *= 3;
@@ -105,6 +115,14 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		a.assertReadWriteFlags("a = 2", "a", WRITE);
 		a.assertReadWriteFlags("a *= 3", "a", READ | WRITE);
 		a.assertReadWriteFlags("a + 1", "a", READ);
+	}
+
+	//	auto test(int a) {
+	//	  return a <=> 1;
+	//	}
+	public void testThreeWayComparisonAccess() throws Exception {
+		AssertionHelper a = getCPP20AssertionHelper();
+		a.assertReadWriteFlags("a <=> 1", "a", READ);
 	}
 
 	//	class C {

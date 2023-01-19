@@ -84,6 +84,10 @@ bool b = 1 != x;
 int i = a.x;
 int i = a->x;
 
+//!CPP20BinaryExpression
+//%CPP20
+auto r = x <=> y;
+
 //!BinaryExpression with MacroExpansions
 //%CPP
 #define ZWO 2

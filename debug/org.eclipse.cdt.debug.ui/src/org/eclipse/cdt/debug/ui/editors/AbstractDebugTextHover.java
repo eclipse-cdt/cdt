@@ -294,6 +294,30 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 				return Status.OK_STATUS;
 			}
 
+			/**
+			 * Attempt to locate extent of the expression that name is part of.
+			 *
+			 * If name is a field or array reference, then try to find the
+			 * parent expression that contains the field.
+			 *
+			 * For example, if name is f and f is a field of a structure, try
+			 * to get the location of the variable containing the field.
+			 *
+			 * Given:
+			 * <pre>
+			 * struct s { int f1234; };
+			 * #define macro(a) a
+			 * struct s myvar;
+			 * macro(myvar.f1234);
+			 * </pre>
+			 *
+			 * if the name is f1234 from the last line, try to get the location
+			 * corresponding to myvar.f1234
+			 *
+			 * @param name the name to find extent for
+			 * @param pos out parameter for the the found position, or untouched
+			 * if no new information is available.
+			 */
 			private void computeMacroArgumentExtent(IASTName name, Position pos) {
 				IASTImageLocation imageLoc = name.getImageLocation();
 				if (imageLoc == null) {

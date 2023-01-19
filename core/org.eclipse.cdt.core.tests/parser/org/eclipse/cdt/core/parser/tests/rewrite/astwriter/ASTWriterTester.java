@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase.ScannerKind;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteBaseTest;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestHelper;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
@@ -94,16 +95,16 @@ public abstract class ASTWriterTester extends RewriteBaseTest {
 	protected ISourceCodeParser getParser(TestSourceFile testFile) throws Exception {
 		FileContent codeReader = FileContent.create(file);
 
-		ScannerInfo scannerInfo = new ScannerInfo();
 		ParserLanguage language = getLanguage(testFile);
-		boolean useGNUExtensions = getGNUExtension(testFile);
+		ScannerKind scannerKind = getScannerKind(testFile);
+		ScannerInfo scannerInfo = AST2TestBase.createScannerInfo(scannerKind);
 
 		IScanner scanner = AST2TestBase.createScanner(codeReader, language, ParserMode.COMPLETE_PARSE, scannerInfo);
 
 		ISourceCodeParser parser = null;
 		if (language == ParserLanguage.CPP) {
 			ICPPParserExtensionConfiguration config = null;
-			if (useGNUExtensions) {
+			if (scannerKind.isUseGNUExtensions()) {
 				config = new GPPParserExtensionConfiguration();
 			} else {
 				config = new ANSICPPParserExtensionConfiguration();
@@ -112,7 +113,7 @@ public abstract class ASTWriterTester extends RewriteBaseTest {
 		} else {
 			ICParserExtensionConfiguration config = null;
 
-			if (useGNUExtensions) {
+			if (scannerKind.isUseGNUExtensions()) {
 				config = new GCCParserExtensionConfiguration();
 			} else {
 				config = new ANSICParserExtensionConfiguration();
@@ -123,10 +124,10 @@ public abstract class ASTWriterTester extends RewriteBaseTest {
 		return parser;
 	}
 
-	private boolean getGNUExtension(TestSourceFile file) {
+	private ScannerKind getScannerKind(TestSourceFile file) {
 		if (file instanceof ASTWriterTestSourceFile)
-			return ((ASTWriterTestSourceFile) file).isUseGNUExtensions();
-		return false;
+			return ((ASTWriterTestSourceFile) file).getScannerKind();
+		return ScannerKind.STD;
 	}
 
 	private ParserLanguage getLanguage(TestSourceFile file) {

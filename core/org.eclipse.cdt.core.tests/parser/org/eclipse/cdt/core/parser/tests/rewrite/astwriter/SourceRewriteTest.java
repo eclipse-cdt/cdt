@@ -22,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase.ScannerKind;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteBaseTest;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.FileLocator;
@@ -34,7 +35,7 @@ import junit.framework.TestSuite;
 
 public class SourceRewriteTest extends TestSuite {
 	private static final String testRegexp = "//!(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
-	private static final String codeTypeRegexp = "//%(C|CPP)( GNU)?$"; //$NON-NLS-1$
+	private static final String codeTypeRegexp = "//%(C|CPP|CPP20)( GNU)?$"; //$NON-NLS-1$
 	private static final String resultRegexp = "//=.*$"; //$NON-NLS-1$
 
 	enum MatcherState {
@@ -149,7 +150,7 @@ public class SourceRewriteTest extends TestSuite {
 				matcherState = MatcherState.inSource;
 				if (file != null) {
 					file.setParserLanguage(getParserLanguage(line));
-					file.setUseGNUExtensions(useGNUExtensions(line));
+					file.setScannerKind(getScannerKind(line));
 				}
 				continue;
 			}
@@ -172,17 +173,20 @@ public class SourceRewriteTest extends TestSuite {
 		return testCases;
 	}
 
-	protected static boolean useGNUExtensions(String line) {
+	protected static ScannerKind getScannerKind(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(codeTypeRegexp, line);
 		if (matcherBeginOfTest.find()) {
-			String codeType = matcherBeginOfTest.group(2);
-			if (codeType == null) {
-				return false;
+			String codeType = matcherBeginOfTest.group(1);
+			String gnuExtensionsType = matcherBeginOfTest.group(2);
+			if (gnuExtensionsType == null) {
+				if (codeType.equalsIgnoreCase("CPP20")) { //$NON-NLS-1$
+					return ScannerKind.STDCPP20;
+				}
 			} else {
-				return true;
+				return ScannerKind.GNU;
 			}
 		}
-		return false;
+		return ScannerKind.STD;
 	}
 
 	protected static ParserLanguage getParserLanguage(String line) {
@@ -190,6 +194,8 @@ public class SourceRewriteTest extends TestSuite {
 		if (matcherBeginOfTest.find()) {
 			String codeType = matcherBeginOfTest.group(1);
 			if (codeType.equalsIgnoreCase("CPP")) { //$NON-NLS-1$
+				return ParserLanguage.CPP;
+			} else if (codeType.equalsIgnoreCase("CPP20")) { //$NON-NLS-1$
 				return ParserLanguage.CPP;
 			} else {
 				return ParserLanguage.C;

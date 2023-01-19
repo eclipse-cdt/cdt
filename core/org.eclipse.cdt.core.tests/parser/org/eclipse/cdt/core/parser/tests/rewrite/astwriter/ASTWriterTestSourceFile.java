@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase.ScannerKind;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
 
 /**
@@ -22,7 +23,7 @@ import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
  */
 public class ASTWriterTestSourceFile extends TestSourceFile {
 	private ParserLanguage parserLanguage = ParserLanguage.CPP;
-	private boolean useGNUExtensions = false;
+	private ScannerKind scannerKind = ScannerKind.STD;
 
 	public ASTWriterTestSourceFile(String name) {
 		super(name);
@@ -36,11 +37,11 @@ public class ASTWriterTestSourceFile extends TestSourceFile {
 		return parserLanguage;
 	}
 
-	public boolean isUseGNUExtensions() {
-		return useGNUExtensions;
+	public ScannerKind getScannerKind() {
+		return scannerKind;
 	}
 
-	public void setUseGNUExtensions(boolean useGNUExtensions) {
-		this.useGNUExtensions = useGNUExtensions;
+	public void setScannerKind(ScannerKind scannerKind) {
+		this.scannerKind = scannerKind;
 	}
 }

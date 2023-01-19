@@ -4181,6 +4181,18 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertEquals(col.getName(158).toString(), "operator >");
 	}
 
+	// struct C {
+	//    auto operator<=>(const C&);
+	// };
+	public void testThreeWayComparisonOperatorName() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP, ScannerKind.STDCPP20);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+
+		assertEquals(col.size(), 4);
+		assertEquals(col.getName(1).toString(), "operator <=>");
+	}
+
 	// typedef int I;
 	// typedef int I;
 	// typedef I I;

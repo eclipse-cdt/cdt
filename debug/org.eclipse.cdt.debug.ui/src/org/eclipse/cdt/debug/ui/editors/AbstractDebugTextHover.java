@@ -296,6 +296,9 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 
 			private void computeMacroArgumentExtent(IASTName name, Position pos) {
 				IASTImageLocation imageLoc = name.getImageLocation();
+				if (imageLoc == null) {
+					return;
+				}
 				int startOffset = imageLoc.getNodeOffset();
 				int endOffset = startOffset + imageLoc.getNodeLength();
 				// do some black magic to consider field reference expressions
@@ -314,10 +317,12 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 					if (ownerExpr instanceof IASTIdExpression) {
 						IASTName ownerName = ((IASTIdExpression) ownerExpr).getName();
 						IASTImageLocation ownerImageLoc = ownerName.getImageLocation();
-						final int nameOffset = ownerImageLoc.getNodeOffset();
-						// offset should be inside macro expansion
-						if (nameOffset < startOffset && nameOffset > macroOffset) {
-							startOffset = nameOffset;
+						if (ownerImageLoc != null) {
+							final int nameOffset = ownerImageLoc.getNodeOffset();
+							// offset should be inside macro expansion
+							if (nameOffset < startOffset && nameOffset > macroOffset) {
+								startOffset = nameOffset;
+							}
 						}
 					}
 				}

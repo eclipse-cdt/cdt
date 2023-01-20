@@ -1106,7 +1106,6 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				break;
 			case IToken.tEQUAL:
 			case IToken.tNOTEQUAL:
-			case IToken.tTHREEWAYCOMPARISON:
 				lastOperator = new BinaryOperator(lastOperator, expr, lt1, 80, 81);
 				break;
 			case IToken.tGT:
@@ -1121,6 +1120,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			case IGCCToken.tMAX:
 			case IGCCToken.tMIN:
 				lastOperator = new BinaryOperator(lastOperator, expr, lt1, 90, 91);
+				break;
+			case IToken.tTHREEWAYCOMPARISON:
+				lastOperator = new BinaryOperator(lastOperator, expr, lt1, 95, 96);
 				break;
 			case IToken.tGT_in_SHIFTR:
 				if (ctx == BinaryExprCtx.eInTemplateID) {

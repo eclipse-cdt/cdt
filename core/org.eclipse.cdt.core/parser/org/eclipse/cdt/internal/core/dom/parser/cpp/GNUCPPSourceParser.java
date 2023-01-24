@@ -1018,15 +1018,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		IToken variantMark = mark();
 		if (expr == null) {
-			// Could be ellipsis of unary left fold expression
-			IASTExpression foldExpression = foldStartingExpression(ctx, strat);
-			if (foldExpression != null) {
-				lt1 = LT(1);
-				lastOperator = new BinaryOperator(lastOperator, foldExpression, lt1, 0, 0);
-				consume(); // consume operator token
-			}
-
-			Object e = castExpressionForBinaryExpression(strat);
+			Object e = castExpressionForBinaryExpression(strat, ctx);
 			if (e instanceof IASTExpression) {
 				expr = (IASTExpression) e;
 			} else {
@@ -1212,10 +1204,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 							stopWithNextOperator = true;
 					} else {
 						// Could be ellipsis of any right fold expression or ellipsis of binary left fold expression
-						Object e = foldInsideExpression(ctx, strat, lt1);
-						if (e == null) {
-							e = castExpressionForBinaryExpression(strat);
-						}
+						Object e = castExpressionForBinaryExpression(strat, ctx);
 
 						if (e instanceof IASTExpression) {
 							expr = (IASTExpression) e;
@@ -1327,6 +1316,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				}
 			}
 
+			// Valid fold-expression has single ellipsis.
+
 			if (foldCount == 1) {
 				BinaryOperator rightChain;
 				if (foldOp == null) {
@@ -1349,12 +1340,27 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					leftChain = foldOp.getNext();
 				}
 
-				IASTExpression lhs = leftChain == null ? null
-						: super.buildExpression(leftChain.getNext(), leftChain.getExpression());
-				IASTExpression rhs = super.buildExpression(rightChain, expr);
+				// Valid fold-expression has at most one cast-expression on each side of ellipsis.
+				// This is easy to check since each of BinaryOperator chain elements carry single
+				// cast-expression.
 
-				return buildFoldExpression(foldOpToken, lhs, rhs, firstOffset, endOffset);
-			} else if (foldCount > 1) {
+				if (leftChain != null && foldOpToken != leftChain.getOperatorToken()) {
+					// Invalid, binary fold with different operator tokens
+				} else if (!allowedFoldExpressionOpToken(foldOpToken)) {
+					// Invalid, fold with invalid operator token
+				} else if (leftChain != null && leftChain.getNext() != null) {
+					// Invalid, more than one cast-expression on the left side
+				} else if (rightChain != null) {
+					// Invalid, more than one cast-expression on the right side
+				} else {
+					IASTExpression lhs = leftChain == null ? null : (IASTExpression) leftChain.getExpression();
+					IASTExpression rhs = (IASTExpression) expr;
+					return buildFoldExpression(foldOpToken, lhs, rhs, firstOffset, endOffset);
+				}
+			}
+
+			if (foldCount >= 1) {
+				// Invalid fold-expression
 				IASTProblem problem = createProblem(IProblem.SYNTAX_ERROR, firstOffset, endOffset - firstOffset);
 				IASTProblemExpression pexpr = getNodeFactory().newProblemExpression(problem);
 				((ASTNode) pexpr).setOffsetAndLength(((ASTNode) problem));
@@ -1365,47 +1371,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return super.buildExpression(leftChain, expr);
 	}
 
-	private IASTExpression foldStartingExpression(final BinaryExprCtx ctx, ITemplateIdStrategy strat)
+	public Object castExpressionForBinaryExpression(ITemplateIdStrategy s, final BinaryExprCtx ctx)
 			throws EndOfFileException, BacktrackException {
 
-		if (supportFoldExpression && ctx == BinaryExprCtx.eInPrimaryExpression) {
-			if (LTcatchEOF(1) == IToken.tELLIPSIS) {
-				int rightOpToken = LTcatchEOF(2);
-				if (allowedFoldExpressionOpToken(rightOpToken)) {
-					// unary left fold expression: (... op pack)
-					IToken foldToken = consume();
-					return buildFoldExpressionToken(foldToken.getOffset(), foldToken.getEndOffset());
-				}
-			}
+		if (supportFoldExpression && ctx == BinaryExprCtx.eInPrimaryExpression && LTcatchEOF(1) == IToken.tELLIPSIS) {
+			// Ellipsis of fold-expression
+			IToken foldToken = consume();
+			return buildFoldExpressionToken(foldToken.getOffset(), foldToken.getEndOffset());
 		}
 
-		return null;
-	}
-
-	private IASTExpression foldInsideExpression(final BinaryExprCtx ctx, ITemplateIdStrategy strat, int leftOpToken)
-			throws EndOfFileException, BacktrackException {
-
-		if (supportFoldExpression && ctx == BinaryExprCtx.eInPrimaryExpression) {
-			if (LTcatchEOF(1) == IToken.tELLIPSIS) {
-				if (allowedFoldExpressionOpToken(leftOpToken)) {
-					int rightOpToken = LTcatchEOF(2);
-					if (rightOpToken == 0 || rightOpToken == IToken.tRPAREN || rightOpToken == leftOpToken) {
-						// unary right fold:  (... op pack)
-						// or
-						// binary right fold: (pack op ... op init)
-						// binary left fold:  (init op ... op pack)
-						IToken foldToken = consume();
-						return buildFoldExpressionToken(foldToken.getOffset(), foldToken.getEndOffset());
-					}
-				}
-			}
-		}
-
-		return null;
-	}
-
-	public Object castExpressionForBinaryExpression(ITemplateIdStrategy s)
-			throws EndOfFileException, BacktrackException {
 		if (s != null) {
 			return castExpression(CastExprCtx.eDirectlyInBExpr, s);
 		}
@@ -2294,7 +2268,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			default:
 				throwBacktrack(LA(1));
 			}
-			if (lhs instanceof ICPPASTFoldExpression) {
+			if (lhs instanceof ICPPASTFoldExpression || lhs instanceof IASTProblemExpression) {
 				return setRange(lhs, t.getOffset(), finalOffset);
 			} else {
 				return buildUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, lhs, t.getOffset(), finalOffset);

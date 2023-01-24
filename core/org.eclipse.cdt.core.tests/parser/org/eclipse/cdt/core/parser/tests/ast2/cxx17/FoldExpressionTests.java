@@ -16,8 +16,10 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx17;
 import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
 
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFoldExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
 
@@ -79,6 +81,16 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 		helper.assertVariableValue("val42", 1);
 	}
 
+	//  template<typename... SP>
+	//  template<typename... TP>
+	//  void fold_multi(SP... sp, TP... tp) {
+	//    ((... + tp) + ... + sp);
+	//    (sp + ... + tp);
+	//  }
+	public void testFoldExpressionNested() throws Exception {
+		parseAndCheckBindings();
+	}
+
 	//	template <typename CharT>
 	//	struct ostream {
 	//	    template <typename T>
@@ -121,5 +133,57 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 		ICPPASTTemplateDeclaration tdef = getDeclaration(tu, 0);
 		IASTFunctionDefinition fdef = (IASTFunctionDefinition) tdef.getDeclaration();
 		IASTProblemStatement p1 = getStatement(fdef, 0);
+	}
+
+	//  template<typename... T>
+	//  void sum(T... vals) {
+	//      (++vals + ...);
+	//      ((2*vals) + ...);
+	//  }
+	public void testFoldExpressionRecognitionSuccess() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
+		ICPPASTTemplateDeclaration tdef = getDeclaration(tu, 0);
+		IASTFunctionDefinition fdef = (IASTFunctionDefinition) tdef.getDeclaration();
+		ICPPASTFoldExpression e1 = getExpressionOfStatement(fdef, 0);
+		ICPPASTFoldExpression e2 = getExpressionOfStatement(fdef, 1);
+	}
+
+	//  template<typename... T>
+	//  void sum(T... vals) {
+	//      (... + ... + ...);
+	//      (... + ... + vals);
+	//      (... + vals + ...);
+	//      (... + vals + vals);
+	//      (vals + ... + ...);
+	//      (vals + vals + ...);
+	//      (1 + vals + ...);
+	//      (1 * vals + ...);
+	//      (1 * ... + vals);
+	//      (... + 1 + vals);
+	//      (... + 1 * vals);
+	//      (vals + ... + 1 * 2);
+	//      (1 * 2 + ... + vals);
+	//  }
+	public void testFoldExpressionErrors() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
+		ICPPASTTemplateDeclaration tdef = getDeclaration(tu, 0);
+		IASTFunctionDefinition fdef = (IASTFunctionDefinition) tdef.getDeclaration();
+		for (int i = 0; i < 13; ++i) {
+			IASTProblemExpression e = getExpressionOfStatement(fdef, i);
+		}
+	}
+
+	//  template<typename... T>
+	//  void f(T... vals) {
+	//      (... <=> vals);
+	//  }
+	public void testFoldExpressionDisallowedOpToken() throws Exception {
+		final String code = getAboveComment();
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STDCPP20, false);
+		ICPPASTTemplateDeclaration tdef = getDeclaration(tu, 0);
+		IASTFunctionDefinition fdef = (IASTFunctionDefinition) tdef.getDeclaration();
+		IASTProblemExpression e1 = getExpressionOfStatement(fdef, 0);
 	}
 }

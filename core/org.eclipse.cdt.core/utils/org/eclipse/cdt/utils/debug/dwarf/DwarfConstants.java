@@ -209,7 +209,7 @@ public class DwarfConstants {
 	 */
 	public final static int DW_FORM_flag_present = 0x19;
 	/**
-	 * @since 8.0
+	 * @since 8.1
 	 */
 	public final static int DW_FORM_line_strp = 0x1f;
 	/**

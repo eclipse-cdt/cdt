@@ -279,6 +279,7 @@ public class Keywords {
 	public static final char[] cpNOTEQUAL = "!=".toCharArray();
 	public static final char[] cpNOT = "!".toCharArray();
 	public static final char[] cpEQUAL = "==".toCharArray();
+	/** @since 8.1 */
 	public static final char[] cpTHREEWAYCOMPARISON = "<=>".toCharArray();
 	public static final char[] cpASSIGN = "=".toCharArray();
 	public static final char[] cpSHIFTL = "<<".toCharArray();

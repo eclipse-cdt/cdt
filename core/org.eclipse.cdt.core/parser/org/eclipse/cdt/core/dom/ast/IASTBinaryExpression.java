@@ -229,7 +229,7 @@ public interface IASTBinaryExpression extends IASTExpression {
 	/**
 	 * For c++, only.
 	 * <code>op_threewaycompare</code> represents <code><=></code> three-way comparison operator.
-	 * @since 8.0
+	 * @since 8.1
 	 */
 	public static final int op_threewaycomparison = 35;
 

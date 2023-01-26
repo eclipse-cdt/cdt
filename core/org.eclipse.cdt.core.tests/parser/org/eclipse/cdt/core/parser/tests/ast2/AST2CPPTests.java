@@ -4193,6 +4193,32 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertEquals(col.getName(1).toString(), "operator <=>");
 	}
 
+	// constexpr bool less(int x, int y) { return x <=> y < 0; }
+	// constexpr bool equals(int x, int y) { return x <=> y == 0; }
+	// constexpr bool greater(int x, int y) { return x <=> y > 0; }
+	//
+	// static constexpr auto less01 = less(0, 1);
+	// static constexpr auto less00 = less(0, 0);
+	// static constexpr auto less10 = less(1, 0);
+	// static constexpr auto equals01 = equals(0, 1);
+	// static constexpr auto equals11 = equals(1, 1);
+	// static constexpr auto equals10 = equals(1, 0);
+	// static constexpr auto greater01 = greater(0, 1);
+	// static constexpr auto greater00 = greater(0, 0);
+	// static constexpr auto greater10 = greater(1, 0);
+	public void testThreeWayComparisonSimpleCase() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper(CPP, ScannerKind.STDCPP20);
+		helper.assertVariableValue("less01", 1);
+		helper.assertVariableValue("less00", 0);
+		helper.assertVariableValue("less10", 0);
+		helper.assertVariableValue("equals01", 0);
+		helper.assertVariableValue("equals11", 1);
+		helper.assertVariableValue("equals10", 0);
+		helper.assertVariableValue("greater01", 0);
+		helper.assertVariableValue("greater00", 0);
+		helper.assertVariableValue("greater10", 1);
+	}
+
 	// typedef int I;
 	// typedef int I;
 	// typedef I I;

@@ -576,8 +576,13 @@ public abstract class AST2TestBase extends SemanticTestBase {
 	}
 
 	protected BindingAssertionHelper getAssertionHelper(ParserLanguage lang) throws ParserException, IOException {
+		return getAssertionHelper(lang, ScannerKind.GNU);
+	}
+
+	protected BindingAssertionHelper getAssertionHelper(ParserLanguage lang, ScannerKind scannerKind)
+			throws ParserException, IOException {
 		String code = getAboveComment();
-		return new AST2AssertionHelper(code, lang);
+		return new AST2AssertionHelper(code, lang, scannerKind);
 	}
 
 	final protected void assertNoProblemBindings(NameCollector col) {

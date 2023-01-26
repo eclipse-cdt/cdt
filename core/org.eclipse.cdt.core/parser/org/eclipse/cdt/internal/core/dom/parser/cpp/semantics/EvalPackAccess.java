@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016,2022 Institute for Software, HSR Hochschule fuer Technik and others
+* Copyright (c) 2016,2022 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials

@@ -140,11 +140,13 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 				ILaunchDescriptor last = null;
 				for (String id : split) {
 					Pair<String, String> key = toId(id);
-					ILaunchDescriptor desc = descriptors.get(key);
-					if (desc != null) {
-						descriptors.remove(key);
-						descriptors.put(key, desc);
-						last = desc;
+					synchronized (descriptors) {
+						ILaunchDescriptor desc = descriptors.get(key);
+						if (desc != null) {
+							descriptors.remove(key);
+							descriptors.put(key, desc);
+							last = desc;
+						}
 					}
 				}
 				// Set the active desc, with MRU, it should be the last one
@@ -304,7 +306,10 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	private void addDescriptor(Object launchObject, ILaunchDescriptor descriptor) throws CoreException {
-		descriptors.put(getDescriptorId(descriptor), descriptor);
+		Pair<String, String> descriptorId = getDescriptorId(descriptor);
+		synchronized (descriptors) {
+			descriptors.put(descriptorId, descriptor);
+		}
 		objectDescriptorMap.put(launchObject, descriptor);
 		setActiveLaunchDescriptor(descriptor);
 	}
@@ -371,7 +376,10 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		Activator.trace("launch object removed " + launchObject); //$NON-NLS-1$
 		ILaunchDescriptor descriptor = objectDescriptorMap.remove(launchObject);
 		if (descriptor != null) {
-			descriptors.remove(getDescriptorId(descriptor));
+			Pair<String, String> descriptorId = getDescriptorId(descriptor);
+			synchronized (descriptors) {
+				descriptors.remove(descriptorId);
+			}
 			if (descriptor.equals(activeLaunchDesc)) {
 				setActiveLaunchDescriptor(getLastUsedDescriptor());
 			}
@@ -413,7 +421,10 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private ILaunchDescriptor getLastUsedDescriptor() {
 		if (descriptors.size() == 0)
 			return null;
-		ILaunchDescriptor[] descs = descriptors.values().toArray(new ILaunchDescriptor[descriptors.size()]);
+		ILaunchDescriptor[] descs;
+		synchronized (descriptors) {
+			descs = descriptors.values().toArray(new ILaunchDescriptor[descriptors.size()]);
+		}
 		return descs[descs.length - 1];
 	}
 
@@ -421,7 +432,10 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	public ILaunchDescriptor[] getLaunchDescriptors() {
 		// return descriptor in usage order (most used first). UI can sort them
 		// later as it wishes
-		ArrayList<ILaunchDescriptor> values = new ArrayList<>(descriptors.values());
+		ArrayList<ILaunchDescriptor> values = new ArrayList<>();
+		synchronized (descriptors) {
+			values.addAll(descriptors.values());
+		}
 		Collections.reverse(values);
 		return values.toArray(new ILaunchDescriptor[values.size()]);
 	}
@@ -475,8 +489,14 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			Activator.trace("resync for " + descriptor); //$NON-NLS-1$
 			return;
 		}
-		if (descriptor != null && !descriptors.containsValue(descriptor)) {
-			throw new IllegalStateException(Messages.LaunchBarManager_1);
+		if (descriptor != null) {
+			boolean isContained;
+			synchronized (descriptors) {
+				isContained = descriptors.containsValue(descriptor);
+			}
+			if (!isContained) {
+				throw new IllegalStateException(Messages.LaunchBarManager_1);
+			}
 		}
 		if (descriptor == null) {
 			// do not set to null unless no descriptors
@@ -498,8 +518,10 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		if (descriptor != null) {
 			// keeps most used descriptor last
 			Pair<String, String> id = getDescriptorId(descriptor);
-			descriptors.remove(id);
-			descriptors.put(id, descriptor);
+			synchronized (descriptors) {
+				descriptors.remove(id);
+				descriptors.put(id, descriptor);
+			}
 		}
 	}
 
@@ -508,7 +530,11 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		// Store the desc order, active one is the last one
 		StringBuffer buff = new StringBuffer();
 		// TODO: this can be very long string
-		for (Pair<String, String> key : descriptors.keySet()) {
+		ArrayList<Pair<String, String>> keys = new ArrayList<>();
+		synchronized (descriptors) {
+			keys.addAll(descriptors.keySet());
+		}
+		for (Pair<String, String> key : keys) {
 			if (buff.length() > 0) {
 				buff.append(',');
 			}

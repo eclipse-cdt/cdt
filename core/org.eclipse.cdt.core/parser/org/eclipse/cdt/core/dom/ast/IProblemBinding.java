@@ -65,6 +65,8 @@ public interface IProblemBinding extends IBinding, IScope, IType, ISemanticProbl
 	public static final int SEMANTIC_RECURSION_IN_LOOKUP = BINDING_RECURSION_IN_LOOKUP;
 	/** @since 5.1 */
 	public static final int SEMANTIC_INVALID_TEMPLATE_ARGUMENTS = BINDING_INVALID_TEMPLATE_ARGUMENTS;
+	/** @since 8.1 */
+	public static final int SEMANTIC_INVALID_STRUCTURED_BINDING_INITIALIZER = BINDING_INVALID_STRUCTURED_BINDING_INITIALIZER;
 
 	/**
 	 * @deprecated There may be additional problems.

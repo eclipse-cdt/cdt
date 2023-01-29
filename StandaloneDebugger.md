@@ -86,7 +86,7 @@ Eclipse installation:
 
 1. Download the IDE for C/C++ Developers tar file for your platform - <https://www.eclipse.org/downloads>
 2. Untar the C/C++ IDE into a local directory (let's call this `$CDT_DIR`)
-3. `cd $CDT_DIR/eclipse/plugins/org.eclipse.cdt.debug.application\_\*/scripts`
+3. `cd $CDT_DIR/eclipse/plugins/org.eclipse.cdt.debug.application_*/scripts`
 4. There, run the command:
     - `/bin/sh ./install.sh`
     - this will create the directory: `$HOME/cdtdebugger` for you where

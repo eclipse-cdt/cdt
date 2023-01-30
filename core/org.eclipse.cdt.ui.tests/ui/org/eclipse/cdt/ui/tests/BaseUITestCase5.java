@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.ui.testplugin.util.StringAsserts;
@@ -53,23 +58,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPartReference;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
 
-/**
- * @deprecated Use {@link BaseUITestCase5} for new code. See TESTING.md for details on converting to JUnit5
- */
-@Deprecated
-public abstract class BaseUITestCase extends BaseTestCase {
-	public BaseUITestCase() {
-		super();
-	}
+public abstract class BaseUITestCase5 extends BaseTestCase5 {
 
-	public BaseUITestCase(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void setupBaseUI(TestInfo testInfo) throws Exception {
 
 		final IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewPart view = activePage.findView("org.eclipse.cdt.ui.tests.DOMAST.DOMAST");
@@ -78,10 +74,9 @@ public abstract class BaseUITestCase extends BaseTestCase {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDownBaseUI() throws Exception {
 		runEventQueue(0);
-		super.tearDown();
 	}
 
 	/**
@@ -291,8 +286,8 @@ public abstract class BaseUITestCase extends BaseTestCase {
 			}
 			runEventQueue(10);
 		}
-		assertNotNull("No tree in viewpart", tree);
-		assertNotNull("Tree node " + label + "{" + i0 + "} does not exist!", root);
+		assertNotNull(tree, "No tree in viewpart");
+		assertNotNull(root, "Tree node " + label + "{" + i0 + "} does not exist!");
 		assertEquals(label, cands.toString());
 		return root;
 	}
@@ -352,7 +347,7 @@ public abstract class BaseUITestCase extends BaseTestCase {
 		}
 
 		if (label == null) {
-			assertFalse("Tree node {" + i0 + "," + i1 + "} exists but shouldn't!", nodePresent);
+			assertFalse(nodePresent, "Tree node {" + i0 + "," + i1 + "} exists but shouldn't!");
 		} else {
 			fail("Tree node " + label + "{" + i0 + "," + i1 + "} does not exist!");
 		}

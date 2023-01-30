@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.doctools;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +29,7 @@ import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.Accessor;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.tests.BaseUITestCase5;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -44,12 +47,11 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-public class DocCommentHighlightingTest extends BaseUITestCase {
+public class DocCommentHighlightingTest extends BaseUITestCase5 {
 	private static final DocCommentOwnerManager DCMAN = DocCommentOwnerManager.getInstance();
 	private static final String LINKED_FOLDER = "resources/docComments";
 	private static final String PROJECT = "DocCommentTests";
@@ -80,17 +82,8 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	private ICProject fCProject;
 	private final String fTestFilename = "/" + PROJECT + "/src/this.cpp";
 
-	public static Test suite() {
-		return new TestSuite(DocCommentHighlightingTest.class);
-	}
-
-	public DocCommentHighlightingTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void setupTest() throws Exception {
 		fCProject = EditorTestHelper.createCProject(PROJECT, LINKED_FOLDER);
 		IPreferenceStore preferenceStore = CUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.setValue(PreferenceConstants.REMOVE_TRAILING_WHITESPACE, false);
@@ -104,8 +97,8 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		assertTrue(EditorTestHelper.joinReconciler(sourceViewer, 0, 10000, 100));
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDownTest() throws Exception {
 		EditorTestHelper.closeAllEditors();
 
 		if (fCProject != null)
@@ -114,7 +107,6 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		IPreferenceStore preferenceStore = CUIPlugin.getDefault().getPreferenceStore();
 		preferenceStore.setToDefault(PreferenceConstants.REMOVE_TRAILING_WHITESPACE);
 		preferenceStore.setToDefault(PreferenceConstants.EDITOR_FOLDING_ENABLED);
-		super.tearDown();
 	}
 
 	/**
@@ -166,12 +158,13 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	private List<Position> mkPositions(int[][] raw) {
 		List<Position> result = new ArrayList<>();
 		for (int i = 0; i < raw.length; i++) {
-			Assert.assertEquals(2, raw[i].length);
+			assertEquals(2, raw[i].length);
 			result.add(new Position(raw[i][0], raw[i][1]));
 		}
 		return result;
 	}
 
+	@Test
 	public void testDCOM_A() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerA"), true);
 		runEventQueue(1000);
@@ -179,6 +172,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
 	}
 
+	@Test
 	public void testDCOM_B() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerB"), true);
 		runEventQueue(1000);
@@ -186,6 +180,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
 	}
 
+	@Test
 	public void testDCOM_C() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerC"), true);
 		runEventQueue(1000);
@@ -193,6 +188,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
 	}
 
+	@Test
 	public void testDCOM_ABC() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerABC"), true);
 		runEventQueue(1000);
@@ -201,6 +197,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
 	}
 
+	@Test
 	public void testDCOM_BDFG() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerBDFG"), true);
 		runEventQueue(1000);
@@ -209,6 +206,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
 	}
 
+	@Test
 	public void testDCOM_PUNC() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerPUNC"), true);
 		runEventQueue(1000);

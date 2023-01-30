@@ -101,7 +101,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		// Source positions depend on Windows line separator
 		adjustLineSeparator(sourceViewer.getDocument(), "\r\n");
 		fEditor.doSave(new NullProgressMonitor());
-		assertTrue(EditorTestHelper.joinReconciler(sourceViewer, 0, 10000, 100));
+		joinReconciler();
 	}
 
 	@Override
@@ -172,30 +172,36 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		return result;
 	}
 
+	private void joinReconciler() {
+		AbstractTextEditor editor = (AbstractTextEditor) get();
+		SourceViewer viewer = EditorTestHelper.getSourceViewer(editor);
+		assertTrue(EditorTestHelper.joinReconciler(viewer, 10, 10000, 100));
+	}
+
 	public void testDCOM_A() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerA"), true);
-		runEventQueue(1000);
+		joinReconciler();
 		List<Position> expected = mkPositions(new int[][] { comment1, scomment1 });
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
 	}
 
 	public void testDCOM_B() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerB"), true);
-		runEventQueue(1000);
+		joinReconciler();
 		List<Position> expected = mkPositions(new int[][] { comment2, scomment2 });
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
 	}
 
 	public void testDCOM_C() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerC"), true);
-		runEventQueue(1000);
+		joinReconciler();
 		List<Position> expected = mkPositions(new int[][] { comment3, scomment3 });
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
 	}
 
 	public void testDCOM_ABC() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerABC"), true);
-		runEventQueue(1000);
+		joinReconciler();
 		List<Position> expected = mkPositions(
 				new int[][] { comment1, comment2, comment3, scomment1, scomment2, scomment3 });
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
@@ -203,7 +209,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 
 	public void testDCOM_BDFG() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerBDFG"), true);
-		runEventQueue(1000);
+		joinReconciler();
 		List<Position> expected = mkPositions(
 				new int[][] { comment2, comment4, comment6, comment7, comment8, scomment2 });
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));
@@ -211,7 +217,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 
 	public void testDCOM_PUNC() throws BadLocationException, InterruptedException {
 		DCMAN.setCommentOwner(fCProject.getProject(), DCMAN.getOwner("org.cdt.test.ownerPUNC"), true);
-		runEventQueue(1000);
+		joinReconciler();
 		List<Position> expected = mkPositions(
 				new int[][] { comment9, comment10, scomment4, scomment5, comment11, comment12, scomment7 });
 		assertEquals(expected, findRangesColored(TestGenericTagConfiguration.DEFAULTRGB));

@@ -347,6 +347,25 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 							if (nameOffset < startOffset && nameOffset > macroOffset) {
 								startOffset = nameOffset;
 							}
+						} else if (name.getNodeLocations() != null && name.getNodeLocations().length == 1
+								&& name.getNodeLocations()[0] instanceof IASTMacroExpansionLocation expansionLocation) {
+							// Node is completely generated within a macro expansion
+							IASTPreprocessorMacroExpansion expansion = expansionLocation.getExpansion();
+							if (expansion != null) {
+								IASTName[] nestedMacroReferences = expansion.getNestedMacroReferences();
+
+								if (nestedMacroReferences != null && nestedMacroReferences.length == 1) {
+									IASTImageLocation imageLocation = nestedMacroReferences[0].getImageLocation();
+
+									if (imageLocation != null) {
+										final int nameOffset = imageLocation.getNodeOffset();
+										// offset should be inside macro expansion
+										if (nameOffset < startOffset && nameOffset > macroOffset) {
+											startOffset = nameOffset;
+										}
+									}
+								}
+							}
 						}
 					}
 				}

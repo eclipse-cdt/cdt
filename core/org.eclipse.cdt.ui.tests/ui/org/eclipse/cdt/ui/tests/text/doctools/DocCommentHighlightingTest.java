@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -49,8 +50,10 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+@Tag(BaseTestCase5.FLAKY_TEST_TAG)
 public class DocCommentHighlightingTest extends BaseUITestCase5 {
 	private static final DocCommentOwnerManager DCMAN = DocCommentOwnerManager.getInstance();
 	private static final String LINKED_FOLDER = "resources/docComments";

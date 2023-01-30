@@ -80,8 +80,6 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	private ICProject fCProject;
 	private final String fTestFilename = "/" + PROJECT + "/src/this.cpp";
 
-	private static SourceViewer fSourceViewer;
-
 	public static Test suite() {
 		return new TestSuite(DocCommentHighlightingTest.class);
 	}
@@ -99,11 +97,11 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 		preferenceStore.setValue(PreferenceConstants.EDITOR_FOLDING_ENABLED, false);
 		AbstractTextEditor fEditor = (CEditor) EditorTestHelper.openInEditor(ResourceTestHelper.findFile(fTestFilename),
 				true);
-		fSourceViewer = EditorTestHelper.getSourceViewer(fEditor);
+		SourceViewer sourceViewer = EditorTestHelper.getSourceViewer(fEditor);
 		// Source positions depend on Windows line separator
-		adjustLineSeparator(fSourceViewer.getDocument(), "\r\n");
+		adjustLineSeparator(sourceViewer.getDocument(), "\r\n");
 		fEditor.doSave(new NullProgressMonitor());
-		assertTrue(EditorTestHelper.joinReconciler(fSourceViewer, 0, 10000, 100));
+		assertTrue(EditorTestHelper.joinReconciler(sourceViewer, 0, 10000, 100));
 	}
 
 	@Override

@@ -13821,4 +13821,28 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		// Invalid argument (not null pointer constant)
 		assertTrue(collector.getName(callIndexStart + 13).resolveBinding() instanceof IProblemBinding);
 	}
+
+	//  template <typename SignedType, typename UnsignedType>
+	//  constexpr bool calculate(SignedType x, UnsignedType y) {
+	//    if (sizeof(x) == sizeof(y)) {
+	//      return x - y >= 0;
+	//    } else {
+	//      return true;
+	//    }
+	//  }
+	//
+	//	constexpr auto test_32 = calculate<signed long, unsigned int>(1, 2);
+	//	constexpr auto test_64 = calculate<signed long long, unsigned long>(1, 2);
+	public void testArithmeticConversionIssue_265() throws Exception {
+		// Depending on size of integer types above it may happen that the rank of unsigned type operand
+		// is less than rank of signed type operand, and both types are of same size.
+		// If so the conversion is to unsigned integer type corresponding to the type of the operand
+		// with signed integer type, and calculated result cannot be less than zero - check it.
+		// 32-bit case used to fail with signed long and unsigned int,
+		// 64-bit case used to fail with signed long long and unsigned long.
+		parseAndCheckBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("test_32", 1);
+		helper.assertVariableValue("test_64", 1);
+	}
 }

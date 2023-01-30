@@ -201,8 +201,8 @@ public abstract class ArithmeticConversion {
 			return unsignedType;
 		}
 
-		// The signed has the higher rank.
-		if (signedRank.ordinal() > unsignedRank.ordinal()) {
+		// The signed has the higher rank, check if signed type can represent all unsigned values
+		if (fitsIntoType(signedType, unsignedType)) {
 			return signedType;
 		}
 

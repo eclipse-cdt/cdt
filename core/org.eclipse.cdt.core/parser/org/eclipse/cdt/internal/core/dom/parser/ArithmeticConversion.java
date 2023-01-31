@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2015, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,6 +76,14 @@ public abstract class ArithmeticConversion {
 			// Gcc's minimum/maximum operators
 		case IASTBinaryExpression.op_max:
 		case IASTBinaryExpression.op_min:
+			return convert(op1, op2);
+		// Relational operators
+		case IASTBinaryExpression.op_lessEqual:
+		case IASTBinaryExpression.op_lessThan:
+		case IASTBinaryExpression.op_greaterEqual:
+		case IASTBinaryExpression.op_greaterThan:
+		case IASTBinaryExpression.op_equals:
+		case IASTBinaryExpression.op_notequals:
 			return convert(op1, op2);
 
 		case IASTBinaryExpression.op_shiftLeft:

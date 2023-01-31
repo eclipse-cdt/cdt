@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2008, 2014, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Igor V. Kovalenko
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser;
 
@@ -41,6 +42,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.Arrays;
+import java.util.function.LongBinaryOperator;
 
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -52,6 +54,7 @@ import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -92,8 +95,8 @@ public class ValueFactory {
 				return val;
 			}
 
-			if (expr instanceof ICPPASTInitializerClause) {
-				ICPPEvaluation evaluation = ((ICPPASTInitializerClause) expr).getEvaluation();
+			if (expr instanceof ICPPASTInitializerClause clause) {
+				ICPPEvaluation evaluation = clause.getEvaluation();
 				return evaluation.getValue();
 			}
 			return IntegralValue.UNKNOWN;
@@ -102,14 +105,14 @@ public class ValueFactory {
 		}
 	}
 
-	public static IValue evaluateUnaryExpression(final int unaryOp, final IValue value) {
-		IValue val = applyUnaryOperator(unaryOp, value);
+	public static IValue evaluateUnaryExpression(final int unaryOp, final IValue value, final IType type) {
+		IValue val = applyUnaryOperator(unaryOp, value, type);
 		if (isInvalidValue(val))
 			return IntegralValue.UNKNOWN;
 		return val;
 	}
 
-	public static IValue evaluateBinaryExpression(final int op, final IValue v1, final IValue v2) {
+	public static IValue evaluateBinaryExpression(final int op, final IValue v1, final IValue v2, final IType type) {
 		if (v1 instanceof FloatingPointValue && v2 instanceof FloatingPointValue) {
 			FloatingPointValue fv1 = (FloatingPointValue) v1;
 			FloatingPointValue fv2 = (FloatingPointValue) v2;
@@ -125,7 +128,7 @@ public class ValueFactory {
 		} else if (v1 instanceof IntegralValue && v2 instanceof IntegralValue) {
 			IntegralValue iv1 = (IntegralValue) v1;
 			IntegralValue iv2 = (IntegralValue) v2;
-			return applyBinaryOperator(op, iv1.numberValue().longValue(), iv2.numberValue().longValue());
+			return applyBinaryOperator(op, iv1.numberValue().longValue(), iv2.numberValue().longValue(), type);
 		}
 		return IntegralValue.UNKNOWN;
 	}
@@ -184,7 +187,16 @@ public class ValueFactory {
 		}
 	}
 
-	private static IntegralValue applyBinaryOperator(final int op, final long v1, final long v2) {
+	private static IntegralValue applyBinaryOperator(final int op, final long v1, final long v2, final IType type) {
+		if ((v1 < 0 || v2 < 0) && type instanceof IBasicType basicType && basicType.isUnsigned()) {
+			return applyBinaryOperator(op, v1, v2, (x, y) -> Long.compareUnsigned(x, y));
+		} else {
+			return applyBinaryOperator(op, v1, v2, (x, y) -> Long.compare(x, y));
+		}
+	}
+
+	private static IntegralValue applyBinaryOperator(final int op, final long v1, final long v2,
+			LongBinaryOperator comparator) {
 		Long value = null;
 		switch (op) {
 		case IASTBinaryExpression.op_multiply:
@@ -213,20 +225,20 @@ public class ValueFactory {
 			value = v1 >> v2;
 			break;
 		case IASTBinaryExpression.op_lessThan:
-			value = v1 < v2 ? 1l : 0l;
+			value = comparator.applyAsLong(v1, v2) < 0 ? 1l : 0l;
 			break;
 		case IASTBinaryExpression.op_greaterThan:
-			value = v1 > v2 ? 1l : 0l;
+			value = comparator.applyAsLong(v1, v2) > 0 ? 1l : 0l;
 			break;
 		case IASTBinaryExpression.op_lessEqual:
-			value = v1 <= v2 ? 1l : 0l;
+			value = comparator.applyAsLong(v1, v2) <= 0 ? 1l : 0l;
 			break;
 		case IASTBinaryExpression.op_greaterEqual:
-			value = v1 >= v2 ? 1l : 0l;
+			value = comparator.applyAsLong(v1, v2) >= 0 ? 1l : 0l;
 			break;
 		case IASTBinaryExpression.op_threewaycomparison:
 			// TODO: implement for <=>
-			value = v1 < v2 ? -1l : (v1 > v2 ? 1l : 0);
+			value = comparator.applyAsLong(v1, v2);
 			break;
 		case IASTBinaryExpression.op_binaryAnd:
 			value = v1 & v2;
@@ -250,10 +262,10 @@ public class ValueFactory {
 			value = v1 != v2 ? 1l : 0l;
 			break;
 		case IASTBinaryExpression.op_max:
-			value = Math.max(v1, v2);
+			value = comparator.applyAsLong(v1, v2) >= 0 ? v1 : v2;
 			break;
 		case IASTBinaryExpression.op_min:
-			value = Math.min(v1, v2);
+			value = comparator.applyAsLong(v1, v2) <= 0 ? v1 : v2;
 			break;
 		}
 
@@ -514,10 +526,10 @@ public class ValueFactory {
 			return value;
 		if (isDeferredValue(value))
 			return null; // the value will be computed using the evaluation
-		return applyUnaryOperator(unaryOp, value);
+		return applyUnaryOperator(unaryOp, value, exp.getExpressionType());
 	}
 
-	private static IValue applyUnaryOperator(final int unaryOp, final IValue value) {
+	private static IValue applyUnaryOperator(final int unaryOp, final IValue value, final IType type) {
 		if (isInvalidValue(value) || value.numberValue() == null) {
 			return IntegralValue.UNKNOWN;
 		}
@@ -548,6 +560,15 @@ public class ValueFactory {
 			}
 		case IASTUnaryExpression.op_minus:
 			if (value instanceof IntegralValue) {
+				if (type instanceof IBasicType basicType && basicType.isUnsigned()) {
+					SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(basicType);
+					if (sizeAndAlignment != null && sizeAndAlignment.size < 8) {
+						long range = (1L << (sizeAndAlignment.size * 8));
+						return IntegralValue.create(range - value.numberValue().longValue());
+					}
+
+					return IntegralValue.create(-value.numberValue().longValue());
+				}
 				return IntegralValue.create(-value.numberValue().longValue());
 			} else {
 				FloatingPointValue fpv = (FloatingPointValue) value;
@@ -593,7 +614,8 @@ public class ValueFactory {
 			return o2;
 		if (isDeferredValue(o1) || isDeferredValue(o2))
 			return null; // the value will be computed using the evaluation
-		return evaluateBinaryExpression(op, o1, o2);
+		IType exprType = exp.getExpressionType();
+		return evaluateBinaryExpression(op, o1, o2, exprType);
 	}
 
 	private static IValue applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator, IType type1,

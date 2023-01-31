@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2017 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2017, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -240,7 +240,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 			Number num2 = v2.numberValue();
 			if (num2 != null) {
-				return ValueFactory.evaluateBinaryExpression(fOperator, v1, v2);
+				return ValueFactory.evaluateBinaryExpression(fOperator, v1, v2, getType());
 			}
 		}
 		return DependentValue.create(this);

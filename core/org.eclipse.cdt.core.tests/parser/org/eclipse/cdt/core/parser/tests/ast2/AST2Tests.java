@@ -6947,6 +6947,45 @@ public class AST2Tests extends AST2TestBase {
 		}
 	}
 
+	//  unsigned long int unsignedLongInt = 1;
+	//  signed long long int signedLongLongInt = 1;
+	//  unsigned long long var = 1;
+	//  void test() {
+	//      // with 64bit long and long long types expression type should be an unsigned long long int
+	//      var = signedLongLongInt + unsignedLongInt;
+	//  }
+	public void testTypeConversion_signedHigherRankSameSizeInts() throws Exception {
+		for (ParserLanguage lang : ParserLanguage.values()) {
+			IASTTranslationUnit ast = parseAndCheckBindings(getAboveComment(), lang, ScannerKind.STD);
+			IASTFunctionDefinition func = null;
+
+			for (IASTDeclaration d : ast.getDeclarations()) {
+				if (d instanceof IASTFunctionDefinition) {
+					func = (IASTFunctionDefinition) d;
+					break;
+				}
+			}
+			assertNotNull(func);
+
+			IASTStatement[] bodyStmts = ((IASTCompoundStatement) func.getBody()).getStatements();
+
+			// STD scanner configuration defines 64bit long and long long types (aka LP64),
+			// result should be an unsigned long long int
+			{
+				IASTBinaryExpression expr = (IASTBinaryExpression) ((IASTBinaryExpression) ((IASTExpressionStatement) bodyStmts[0])
+						.getExpression()).getOperand2();
+
+				IBasicType type = (IBasicType) expr.getExpressionType();
+				assertNotNull(type);
+				assertEquals(Kind.eInt, type.getKind());
+				assertTrue(type.isUnsigned());
+				assertFalse(type.isShort());
+				assertFalse(type.isLong());
+				assertTrue(type.isLongLong());
+			}
+		}
+	}
+
 	// char c;
 	// void func() {
 	//    c;

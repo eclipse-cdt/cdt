@@ -425,6 +425,10 @@ public abstract class ArithmeticConversion {
 
 	/**
 	 * Checks whether a target integral type can represent all values of a source integral type.
+	 * <br><br>
+	 * If CPPSemantics current lookup point is set, size and alignment information is derived
+	 * from predefined type size macros available through current AST. If there is no current
+	 * lookup point, {@link #getApproximateSize(IBasicType)} is used to guess size of integral types.
 	 *
 	 * @param target the target integral type
 	 * @param source the source integral type

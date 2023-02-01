@@ -212,6 +212,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
@@ -323,12 +324,15 @@ public class CPPSemantics {
 
 	/**
 	 * Get the current point of instantiation / point of lookup for name lookups.
-	 *
+	 * <br><br>
 	 * NOTE: This is meant to be used primarily for "declaredBefore" purposes, that is,
 	 *       for determining whether something was declared before or after the point
 	 *       of lookup. It is NOT meant to be used as a general mechanism for accessing
 	 *       information about a call site without having to pass that information along
 	 *       the usual way (via function arguments).
+	 * <br><br>
+	 * NOTE: This is also used to provide {@link SizeofCalculator} with access to predefined
+	 *       type size macros of current translation unit via AST object.
 	 */
 	public static IASTNode getCurrentLookupPoint() {
 		Deque<IASTNode> lookupPoints = fLookupPoints.get();

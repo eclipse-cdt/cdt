@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 
 /**
  * Binary expression for c
@@ -213,6 +214,15 @@ public class CASTBinaryExpression extends ASTNode implements IASTBinaryExpressio
 
 	@Override
 	public IType getExpressionType() {
+		CPPSemantics.pushLookupPoint(this);
+		try {
+			return getExpressionTypeImpl();
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
+	}
+
+	private IType getExpressionTypeImpl() {
 		final int op = getOperator();
 		IType originalType1 = getOperand1().getExpressionType();
 		IType originalType2 = getOperand2().getExpressionType();

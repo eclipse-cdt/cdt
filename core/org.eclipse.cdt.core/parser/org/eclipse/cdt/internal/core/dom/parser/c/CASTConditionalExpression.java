@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICArrayType;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes;
 
 /**
@@ -163,6 +164,15 @@ public class CASTConditionalExpression extends ASTNode implements IASTConditiona
 
 	@Override
 	public IType getExpressionType() {
+		CPPSemantics.pushLookupPoint(this);
+		try {
+			return getExpressionTypeImpl();
+		} finally {
+			CPPSemantics.popLookupPoint();
+		}
+	}
+
+	private IType getExpressionTypeImpl() {
 		IASTExpression positiveExpression = getPositiveResultExpression();
 		if (positiveExpression == null) {
 			positiveExpression = getLogicalConditionExpression();

@@ -474,4 +474,13 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGCC(code);
 		parseGPP(code);
 	}
+
+	// void test() {
+	//   !__builtin_add_overflow_p(1,2,3);
+	// }
+	public void testIntegerOverflowBuiltin_bug271() throws Exception {
+		String code = getAboveComment();
+		parseGCC(code);
+		parseGPP(code);
+	}
 }

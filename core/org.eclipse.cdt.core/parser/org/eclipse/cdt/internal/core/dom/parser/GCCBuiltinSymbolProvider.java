@@ -190,6 +190,20 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("bool", "__atomic_always_lock_free", "size_t", "void*");
 		function("bool", "__atomic_is_lock_free", "size_t", "void*");
 
+		// Integer Overflow Builtins (https://gcc.gnu.org/onlinedocs/gcc/Integer-Overflow-Builtins.html)
+		for (String op : new String[] { "add", "sub", "mul" }) {
+			function("bool", "__builtin_" + op + "_overflow", "", "", "void*");
+			function("bool", "__builtin_" + op + "_overflow_p", "", "", "");
+			function("bool", "__builtin_s" + op + "_overflow", "int", "int", "int*");
+			function("bool", "__builtin_s" + op + "l_overflow", "long int", "long int", "long int*");
+			function("bool", "__builtin_s" + op + "ll_overflow", "long long int", "long long int", "long long int*");
+			function("bool", "__builtin_u" + op + "_overflow", "unsigned int", "unsigned int", "unsigned int*");
+			function("bool", "__builtin_u" + op + "l_overflow", "unsigned long int", "unsigned long int",
+					"unsigned long int*");
+			function("bool", "__builtin_u" + op + "ll_overflow", "unsigned long long int", "unsigned long long int",
+					"unsigned long long int*");
+		}
+
 		ICPPExecution builtinFfs = new ExecBuiltin(ExecBuiltin.BUILTIN_FFS);
 		ICPPExecution builtinFfsl = new ExecBuiltin(ExecBuiltin.BUILTIN_FFSL);
 		ICPPExecution builtinFfsll = new ExecBuiltin(ExecBuiltin.BUILTIN_FFSLL);

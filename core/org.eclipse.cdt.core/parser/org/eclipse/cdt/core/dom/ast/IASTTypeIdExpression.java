@@ -30,8 +30,8 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_typeid = 1;
 
 	/**
-	 * For gnu-parsers, only.
-	 * <code>op_alignOf</code> is used for __alignOf( typeId ) type expressions.
+	 * _Alignof and alignof operators.
+	 * <code>op_alignOf</code> _Alignof( exp ) or alignof( exp ).
 	 */
 	public static final int op_alignof = 2;
 

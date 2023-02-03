@@ -111,8 +111,8 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_typeof = 14;
 
 	/**
-	 * For GCC parsers, only. {@code op_alignOf} is used for __alignOf( unaryExpression ) type
-	 * expressions.
+	 * _Alignof and alignof operators.
+	 * {@code op_alignOf}: _Alignof( exp ) or alignof( exp ).
 	 */
 	public static final int op_alignOf = 15;
 
@@ -127,18 +127,6 @@ public interface IASTUnaryExpression extends IASTExpression {
 	 * @since 5.5
 	 */
 	public static final int op_noexcept = 17;
-
-	/**
-	 * For GCC parsers, only. {@code op_labelReference} is used for &amp;&amp;label type expressions.
-	 * @since 5.8
-	 */
-	public static final int op_labelReference = 18;
-
-	/**
-	 * For GCC parsers in C++ mode, only: '__integer_pack ( expression )'
-	 * @since 6.11
-	 */
-	public static final int op_integerPack = 19;
 
 	/**
 	 * {@code OPERAND} represents the relationship between an {@code IASTUnaryExpression} and

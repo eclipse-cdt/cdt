@@ -16,11 +16,22 @@ package org.eclipse.cdt.core.dom.ast.gnu;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 
 /**
- * @deprecated Replaced by {@link IASTUnaryExpression}.
  * @noreference This interface is not intended to be referenced by clients.
  */
-@Deprecated
 public interface IGNUASTUnaryExpression extends IASTUnaryExpression {
+
+	/**
+	 * For GCC parsers, only. {@code op_labelReference} is used for &amp;&amp;label type expressions.
+	 * @since 5.8
+	 */
+	public static final int op_labelReference = 18;
+
+	/**
+	 * For GCC parsers in C++ mode, only: '__integer_pack ( expression )'
+	 * @since 6.11
+	 */
+	public static final int op_integerPack = 19;
+
 	/**
 	 * @since 5.1
 	 */

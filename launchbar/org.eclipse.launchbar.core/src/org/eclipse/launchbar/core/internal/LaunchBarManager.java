@@ -69,7 +69,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	private final Map<ILaunchDescriptorType, LaunchDescriptorTypeInfo> descriptorTypeInfo = new HashMap<>();
 	private final Map<String, List<LaunchConfigProviderInfo>> configProviders = new HashMap<>();
 	// Descriptors in MRU order, key is desc type id and desc name.
-	private final Map<Pair<String, String>, ILaunchDescriptor> descriptors = new LinkedHashMap<>();
+	private final Map<Pair<String, String>, ILaunchDescriptor> descriptors = Collections
+			.synchronizedMap(new LinkedHashMap<>());
 	// Map of launch objects to launch descriptors
 	private final Map<Object, ILaunchDescriptor> objectDescriptorMap = new HashMap<>();
 	private ILaunchTargetManager launchTargetManager;
@@ -307,9 +308,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 
 	private void addDescriptor(Object launchObject, ILaunchDescriptor descriptor) throws CoreException {
 		Pair<String, String> descriptorId = getDescriptorId(descriptor);
-		synchronized (descriptors) {
-			descriptors.put(descriptorId, descriptor);
-		}
+		descriptors.put(descriptorId, descriptor);
 		objectDescriptorMap.put(launchObject, descriptor);
 		setActiveLaunchDescriptor(descriptor);
 	}
@@ -377,9 +376,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		ILaunchDescriptor descriptor = objectDescriptorMap.remove(launchObject);
 		if (descriptor != null) {
 			Pair<String, String> descriptorId = getDescriptorId(descriptor);
-			synchronized (descriptors) {
-				descriptors.remove(descriptorId);
-			}
+			descriptors.remove(descriptorId);
 			if (descriptor.equals(activeLaunchDesc)) {
 				setActiveLaunchDescriptor(getLastUsedDescriptor());
 			}
@@ -489,14 +486,8 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			Activator.trace("resync for " + descriptor); //$NON-NLS-1$
 			return;
 		}
-		if (descriptor != null) {
-			boolean isContained;
-			synchronized (descriptors) {
-				isContained = descriptors.containsValue(descriptor);
-			}
-			if (!isContained) {
-				throw new IllegalStateException(Messages.LaunchBarManager_1);
-			}
+		if (descriptor != null && !descriptors.containsValue(descriptor)) {
+			throw new IllegalStateException(Messages.LaunchBarManager_1);
 		}
 		if (descriptor == null) {
 			// do not set to null unless no descriptors

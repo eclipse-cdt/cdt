@@ -105,7 +105,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//  }
 	public void testFoldExpressionRecognition1() throws Exception {
 		final String code = getAboveComment();
-		IASTTranslationUnit tu = parse(code, CPP, false, false);
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
 		ICPPASTTemplateDeclaration tdef = getDeclaration(tu, 0);
 		IASTFunctionDefinition fdef = (IASTFunctionDefinition) tdef.getDeclaration();
 		IASTProblemStatement p1 = getStatement(fdef, 0);
@@ -117,7 +117,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//  }
 	public void testFoldExpressionRecognition2() throws Exception {
 		final String code = getAboveComment();
-		IASTTranslationUnit tu = parse(code, CPP, false, false);
+		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
 		ICPPASTTemplateDeclaration tdef = getDeclaration(tu, 0);
 		IASTFunctionDefinition fdef = (IASTFunctionDefinition) tdef.getDeclaration();
 		IASTProblemStatement p1 = getStatement(fdef, 0);

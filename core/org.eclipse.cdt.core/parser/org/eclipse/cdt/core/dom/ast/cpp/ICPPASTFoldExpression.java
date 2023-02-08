@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 /**
  * Fold expression, introduced in C++17.
  *
- * @since 8.0
+ * @since 8.1
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

@@ -130,7 +130,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatem
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFoldExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
@@ -1730,8 +1729,6 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return EvalNaryTypeId.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EVAL_PACK_ACCESS:
 			return EvalPackAccess.unmarshal(firstBytes, buffer);
-		case ITypeMarshalBuffer.EVAL_FOLD_EXPRESSION:
-			return EvalFoldExpression.unmarshal(firstBytes, buffer);
 		}
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an evaluation, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Google, Inc and others.
+ * Copyright (c) 2012, 2014, 2023 Google, Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  *     Nathan Ridge
+ *     Igor V. Kovalenko
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -34,6 +35,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.Rank;
 import org.eclipse.core.runtime.CoreException;
 
 public abstract class CPPEvaluation implements ICPPEvaluation {
@@ -207,9 +209,12 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 
 			// Source type is not a class type, or is but a conversion operator wasn't used.
 			// Check for standard conversions.
-			if (!Conversions.checkImplicitConversionSequence(targetType, type, valueCategory, UDCMode.FORBIDDEN,
-					Context.ORDINARY).converts()) {
+			Cost cost = Conversions.checkImplicitConversionSequence(targetType, type, valueCategory, UDCMode.FORBIDDEN,
+					Context.ORDINARY);
+			if (!cost.converts()) {
 				return EvalFixed.INCOMPLETE;
+			} else if (cost.getRank() == Rank.CONVERSION) {
+				return new EvalTypeId(targetType, argument.getTemplateDefinition(), false, false, argument);
 			}
 		} catch (DOMException e) {
 			CCorePlugin.log(e);

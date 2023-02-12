@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2015, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
  *     Nathan Ridge
+ *     Igor V. Kovalenko
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -78,6 +79,8 @@ import org.eclipse.cdt.core.parser.util.ObjectSet;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
+import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.ValueFactory;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
@@ -860,43 +863,73 @@ public class SemanticUtil {
 	 * @param type the type of the variable
 	 */
 	public static IValue getValueOfInitializer(IASTInitializer init, IType type) {
-		IASTInitializerClause clause = null;
+		// applyIntegerConversion() uses SizeofCalculator, make sure AST is available via lookup point
 		CPPSemantics.pushLookupPoint(init);
 		try {
-			if (init instanceof IASTEqualsInitializer) {
-				clause = ((IASTEqualsInitializer) init).getInitializerClause();
-			} else if (init instanceof ICPPASTConstructorInitializer) {
-				IASTInitializerClause[] args = ((ICPPASTConstructorInitializer) init).getArguments();
-				if (args.length == 1 && args[0] instanceof IASTExpression) {
-					IType typeUpToPointers = SemanticUtil.getUltimateTypeUptoPointers(type);
-					if (typeUpToPointers instanceof IPointerType || typeUpToPointers instanceof IBasicType) {
-						clause = args[0];
-					}
-				}
-			} else if (init instanceof ICPPASTInitializerList) {
-				ICPPASTInitializerList list = (ICPPASTInitializerList) init;
-				switch (list.getSize()) {
-				case 0:
-					return IntegralValue.create(0);
-				case 1:
-					clause = list.getClauses()[0];
-					break;
-				default:
-					return ((ICPPASTInitializerList) init).getEvaluation().getValue();
-
-				}
-			}
-			if (clause instanceof IASTExpression) {
-				return ValueFactory.create((IASTExpression) clause);
-			}
-
-			if (clause instanceof ICPPASTInitializerList) {
-				return ((ICPPASTInitializerList) clause).getEvaluation().getValue();
-			}
-			return IntegralValue.UNKNOWN;
+			return SemanticUtil.applyIntegerConversion(getValueOfInitializerImpl(init, type), type);
 		} finally {
 			CPPSemantics.popLookupPoint();
 		}
+	}
+
+	private static IValue getValueOfInitializerImpl(IASTInitializer init, IType type) {
+		IASTInitializerClause clause = null;
+		if (init instanceof IASTEqualsInitializer) {
+			clause = ((IASTEqualsInitializer) init).getInitializerClause();
+		} else if (init instanceof ICPPASTConstructorInitializer) {
+			IASTInitializerClause[] args = ((ICPPASTConstructorInitializer) init).getArguments();
+			if (args.length == 1 && args[0] instanceof IASTExpression) {
+				IType typeUpToPointers = SemanticUtil.getUltimateTypeUptoPointers(type);
+				if (typeUpToPointers instanceof IPointerType || typeUpToPointers instanceof IBasicType) {
+					clause = args[0];
+				}
+			}
+		} else if (init instanceof ICPPASTInitializerList) {
+			ICPPASTInitializerList list = (ICPPASTInitializerList) init;
+			switch (list.getSize()) {
+			case 0:
+				return IntegralValue.create(0);
+			case 1:
+				clause = list.getClauses()[0];
+				break;
+			default:
+				return ((ICPPASTInitializerList) init).getEvaluation().getValue();
+
+			}
+		}
+		if (clause instanceof IASTExpression) {
+			return ValueFactory.create((IASTExpression) clause);
+		}
+
+		if (clause instanceof ICPPASTInitializerList) {
+			return ((ICPPASTInitializerList) clause).getEvaluation().getValue();
+		}
+		return IntegralValue.UNKNOWN;
+	}
+
+	public static IValue applyIntegerConversion(IValue value, IType targetType) {
+		if (value instanceof IntegralValue && value.numberValue() != null
+				&& SemanticUtil.getUltimateTypeUptoPointers(targetType) instanceof IBasicType basicType) {
+			if (basicType.getKind() == Kind.eBoolean) {
+				return IntegralValue.create(value.numberValue().longValue() == 0 ? 0 : 1);
+			}
+
+			// Cast to different size and signedness
+			SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(basicType);
+			if (sizeAndAlignment != null && sizeAndAlignment.size < 8) {
+				long val = value.numberValue().longValue();
+				boolean doSignExtend = val < 0 && !basicType.isUnsigned();
+				long mask = (1L << (sizeAndAlignment.size * 8)) - 1;
+				// truncate
+				val &= mask;
+				if (doSignExtend) {
+					//sign-extend
+					val |= ~mask;
+				}
+				return IntegralValue.create(val);
+			}
+		}
+		return value;
 	}
 
 	/**

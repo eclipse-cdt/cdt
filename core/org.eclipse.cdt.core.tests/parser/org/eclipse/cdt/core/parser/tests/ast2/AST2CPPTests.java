@@ -12793,6 +12793,66 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		helper.assertVariableValue("waldo", 0);
 	}
 
+	//	constexpr int int_from_positive_long = (1L << 32) + 1;
+	//	constexpr short short_from_positive_long = (1L << 32) + 1;
+	//	constexpr unsigned int uint_from_positive_long = (1L << 32) + 1;
+	//	constexpr unsigned short ushort_from_positive_long = (1L << 32) + 1;
+	//
+	//	constexpr int int_from_negative_long = -((1L << 32) + 1);
+	//	constexpr short short_from_negative_long = -((1L << 32) + 1);
+	//	constexpr unsigned int uint_from_negative_long = -((1L << 32) + 1);
+	//	constexpr unsigned short ushort_from_negative_long = -((1L << 32) + 1);
+	public void testIntegerImplicitConversions() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+
+		helper.assertVariableValue("int_from_positive_long", 1);
+		helper.assertVariableValue("short_from_positive_long", 1);
+		helper.assertVariableValue("uint_from_positive_long", 1);
+		helper.assertVariableValue("ushort_from_positive_long", 1);
+
+		helper.assertVariableValue("int_from_negative_long", -1);
+		helper.assertVariableValue("short_from_negative_long", -1);
+		helper.assertVariableValue("uint_from_negative_long", (1L << 32) - 1);
+		helper.assertVariableValue("ushort_from_negative_long", (1L << 16) - 1);
+	}
+
+	//	constexpr bool bool_from_int_positive = 2;
+	//	constexpr bool bool_from_int_negative = -2;
+	//	constexpr bool bool_from_int_0 = 0;
+	//	constexpr bool bool_from_int_expr = int(0x100000001L) < 2;
+	//	constexpr bool bool_from_short_expr = short(0x100010001L) < 2;
+	//	constexpr int int_from_cast_to_int = (int)((1L << 32) + 1);
+	public void testIntegerTrunctatingConversions() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("bool_from_int_positive", 1);
+		helper.assertVariableValue("bool_from_int_negative", 1);
+		helper.assertVariableValue("bool_from_int_0", 0);
+		helper.assertVariableValue("bool_from_int_expr", 1);
+		helper.assertVariableValue("bool_from_short_expr", 1);
+		helper.assertVariableValue("int_from_cast_to_int", 1);
+	}
+
+	//	constexpr unsigned int uint_from_ulong_literal = -1UL;
+	//	constexpr unsigned int uint_from_ulong_negation = -(1UL);
+	//	constexpr unsigned short ushort_from_ulong_literal = -1UL;
+	//	constexpr unsigned short ushort_from_ulong_negation = -(1UL);
+	//
+	//	constexpr unsigned int uint_from_uint_literal_negation = -(1U);
+	//	constexpr unsigned int uint_from_uint_cast_negation = -(1U);
+	//	constexpr unsigned short ushort_from_ushort_cast_negation = -((unsigned short)1);
+	public void testUnsignedIntegerUnaryMinus() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+
+		helper.assertVariableValue("uint_from_ulong_literal", (1L << 32) - 1);
+		helper.assertVariableValue("uint_from_ulong_negation", (1L << 32) - 1);
+		helper.assertVariableValue("ushort_from_ulong_literal", (1L << 16) - 1);
+		helper.assertVariableValue("ushort_from_ulong_negation", (1L << 16) - 1);
+
+		helper.assertVariableValue("uint_from_uint_literal_negation", (1L << 32) - 1);
+		helper.assertVariableValue("uint_from_uint_cast_negation", (1L << 32) - 1);
+		helper.assertVariableValue("ushort_from_ushort_cast_negation", (1L << 16) - 1);
+	}
+
 	//  namespace x {
 	//  	void foo();
 	//	}

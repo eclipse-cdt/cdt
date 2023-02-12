@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2014, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Igor V. Kovalenko
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp.semantics;
 
@@ -41,8 +42,6 @@ import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
-import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -192,25 +191,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		}
 		if (fArguments.length == 1) {
 			IValue argVal = fArguments[0].getValue();
-			if (argVal instanceof IntegralValue && argVal.numberValue() != null) {
-				// Cast signed integer to unsigned.
-				Long val = argVal.numberValue().longValue();
-				if (val < 0 && inputType instanceof ICPPBasicType && ((ICPPBasicType) inputType).isUnsigned()) {
-					SizeAndAlignment sizeAndAlignment = SizeofCalculator.getSizeAndAlignment(inputType);
-					if (sizeAndAlignment != null) {
-						long sizeof = sizeAndAlignment.size;
-						if (sizeof > 4) {
-							// Java's "long" can't represent the full range of an 64-bit unsigned integer
-							// in C++.
-							sizeof = 4;
-						}
-						long range = (1L << (sizeof * 8 - 1));
-						val += range;
-						return IntegralValue.create(val);
-					}
-				}
-			}
-			return argVal;
+			return SemanticUtil.applyIntegerConversion(argVal, inputType);
 		}
 		return IntegralValue.UNKNOWN;
 	}
@@ -253,6 +234,11 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		if (getConstructor() == null && fArguments.length == 1) {
 			// maybe EvalTypeID represents a conversion
 			ICPPEvaluation conversionEval = maybeApplyConversion(fArguments[0], fInputType, false, false);
+			if (isEquivalentTo(conversionEval)) {
+				// still the same conversion, no need to recurse into isConstantExpression()
+				conversionEval = fArguments[0];
+			}
+
 			if (!conversionEval.isConstantExpression())
 				return false;
 		}
@@ -504,6 +490,10 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		} else if (fArguments.length == 1) {
 			// maybe EvalTypeID represents a conversion
 			ICPPEvaluation conversionEval = maybeApplyConversion(fArguments[0], fInputType, false, false);
+			if (isEquivalentTo(conversionEval)) {
+				// still the same conversion, no need to recurse into isConstantExpression()
+				conversionEval = fArguments[0];
+			}
 			return conversionEval.isNoexcept();
 		}
 		for (ICPPEvaluation arg : fArguments) {

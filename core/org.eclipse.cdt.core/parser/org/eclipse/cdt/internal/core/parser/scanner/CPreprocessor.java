@@ -2352,7 +2352,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			// missing: is_interface_class
 			// missing: is_literal
 			// missing: is_nothrow_assignable
-			// missing: is_nothrow_constructible
+			addTypeTraitPrimitive("is_nothrow_constructible", GCCKeywords.cp__is_nothrow_constructible);
 			// missing: is_nothrow_destructible
 			addTypeTraitPrimitive("is_pod", GCCKeywords.cp__is_pod);
 			addTypeTraitPrimitive("is_polymorphic", GCCKeywords.cp__is_polymorphic);

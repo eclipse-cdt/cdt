@@ -23,8 +23,10 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_a
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_constructor;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_copy;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_destructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_unique_object_representations;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_virtual_destructor;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_abstract;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_aggregate;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_class;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_empty;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_enum;
@@ -112,8 +114,10 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 		case op_has_trivial_constructor:
 		case op_has_trivial_copy:
 		case op_has_trivial_destructor:
+		case op_has_unique_object_representations:
 		case op_has_virtual_destructor:
 		case op_is_abstract:
+		case op_is_aggregate:
 		case op_is_class:
 		case op_is_empty:
 		case op_is_enum:
@@ -173,8 +177,10 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 		case op_has_trivial_constructor:
 		case op_has_trivial_copy:
 		case op_has_trivial_destructor:
+		case op_has_unique_object_representations:
 		case op_has_virtual_destructor:
 		case op_is_abstract:
+		case op_is_aggregate:
 		case op_is_class:
 		case op_is_empty:
 		case op_is_enum:

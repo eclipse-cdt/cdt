@@ -168,6 +168,18 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_is_trivially_copyable = 24;
 
 	/**
+	 * Built-in type trait of g++.
+	 * @since 8.1
+	 */
+	public static final int op_has_unique_object_representations = 25;
+
+	/**
+	 * Built-in type trait of g++.
+	 * @since 8.1
+	 */
+	public static final int op_is_aggregate = 26;
+
+	/**
 	 * Returns the operator for the expression.
 	 *
 	 * @return int

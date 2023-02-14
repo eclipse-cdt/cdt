@@ -101,4 +101,15 @@ public interface IGCCToken extends IToken {
 	 * @since 7.1
 	 */
 	int tTT_is_same = FIRST_RESERVED_IGCCToken + 37;
+
+	/** @since 8.1 */
+	int tTT_is_aggregate = FIRST_RESERVED_IGCCToken + 38;
+	/** @since 8.1 */
+	int tTT_is_assignable = FIRST_RESERVED_IGCCToken + 39;
+	/** @since 8.1 */
+	int tTT_is_nothrow_assignable = FIRST_RESERVED_IGCCToken + 40;
+	/** @since 8.1 */
+	int tTT_is_nothrow_constructible = FIRST_RESERVED_IGCCToken + 41;
+	/** @since 8.1 */
+	int tTT_has_unique_object_representations = FIRST_RESERVED_IGCCToken + 42;
 }

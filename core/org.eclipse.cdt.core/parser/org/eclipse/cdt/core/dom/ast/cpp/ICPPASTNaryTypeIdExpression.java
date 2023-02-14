@@ -30,7 +30,9 @@ public interface ICPPASTNaryTypeIdExpression extends ICPPASTExpression {
 	public static enum Operator {
 		__is_trivially_constructible,
 		/** @since 6.6 */
-		__is_constructible
+		__is_constructible,
+		/** @since 8.1 */
+		__is_nothrow_constructible,
 	}
 
 	/**

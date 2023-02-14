@@ -22,8 +22,10 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_a
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_constructor;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_copy;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_trivial_destructor;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_unique_object_representations;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_has_virtual_destructor;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_abstract;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_aggregate;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_class;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_empty;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_enum;
@@ -445,11 +447,16 @@ public class ValueFactory {
 					!(type instanceof ICPPClassType) || TypeTraits.hasTrivialCopyCtor((ICPPClassType) type) ? 1 : 0);
 		case op_has_trivial_destructor:
 			break; // TODO(sprigogin): Implement
+		case op_has_unique_object_representations:
+			break; // TODO: Implement
 		case op_has_virtual_destructor:
 			break; // TODO(sprigogin): Implement
 		case op_is_abstract:
 			return IntegralValue
 					.create(type instanceof ICPPClassType && TypeTraits.isAbstract((ICPPClassType) type) ? 1 : 0);
+		case op_is_aggregate:
+			return IntegralValue
+					.create(type instanceof ICPPClassType && TypeTraits.isAggregateClass((ICPPClassType) type) ? 1 : 0);
 		case op_is_class:
 			return IntegralValue.create(
 					type instanceof ICompositeType && ((ICompositeType) type).getKey() != ICompositeType.k_union ? 1
@@ -629,6 +636,10 @@ public class ValueFactory {
 				return IntegralValue.create(1);
 			}
 			return IntegralValue.create(0);
+		case __is_assignable:
+			return IntegralValue.UNKNOWN; // TODO: Implement.
+		case __is_nothrow_assignable:
+			return IntegralValue.UNKNOWN; // TODO: Implement.
 		case __is_same:
 			if (type1.isSameType(type2)) {
 				return IntegralValue.create(1);
@@ -654,6 +665,8 @@ public class ValueFactory {
 			return IntegralValue.create(
 					TypeTraits.isConstructible(typeToConstruct, argumentTypes, pointOfDefinition, checkTrivial) ? 1
 							: 0);
+		case __is_nothrow_constructible:
+			return IntegralValue.UNKNOWN; // TODO: Implement
 		}
 		return IntegralValue.UNKNOWN;
 	}

@@ -251,10 +251,12 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 							analyzer.visit(returnValue);
 					}
 				} else if (returnKind == ReturnTypeKind.Void) {
-					if (returnValue instanceof IASTExpression) {
-						IType type = ((IASTExpression) returnValue).getExpressionType();
-						if (isVoid(type))
+					if (returnValue instanceof IASTExpression expr) {
+						IType type = SemanticUtil.getNestedType(expr.getExpressionType(), SemanticUtil.TDEF);
+						if (isVoid(type) || CPPTemplates.isDependentType(type)) {
+							// For case of TypeOfDependentExpression see comment in getReturnTypeKind()
 							return PROCESS_SKIP;
+						}
 						reportProblem(RET_ERR_VALUE_ID, returnValue);
 					}
 				}
@@ -417,7 +419,8 @@ public class ReturnChecker extends AbstractAstFunctionChecker {
 
 	private IType getReturnType(IASTFunctionDefinition func) {
 		if (cachedReturnType == null) {
-			cachedReturnType = CxxAstUtils.getReturnType(func);
+			IType type = SemanticUtil.getNestedType(CxxAstUtils.getReturnType(func), SemanticUtil.TDEF);
+			cachedReturnType = type;
 		}
 		return cachedReturnType;
 	}

@@ -1789,8 +1789,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IGCCToken.tTT_has_trivial_constructor:
 		case IGCCToken.tTT_has_trivial_copy:
 		case IGCCToken.tTT_has_trivial_destructor:
+		case IGCCToken.tTT_has_unique_object_representations:
 		case IGCCToken.tTT_has_virtual_destructor:
 		case IGCCToken.tTT_is_abstract:
+		case IGCCToken.tTT_is_aggregate:
 		case IGCCToken.tTT_is_base_of:
 		case IGCCToken.tTT_is_class:
 		case IGCCToken.tTT_is_empty:
@@ -1807,6 +1809,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IGCCToken.tTT_is_trivially_assignable:
 		case IGCCToken.tTT_is_constructible:
 		case IGCCToken.tTT_is_same:
+		case IGCCToken.tTT_is_assignable:
+		case IGCCToken.tTT_is_nothrow_assignable:
+		case IGCCToken.tTT_is_nothrow_constructible:
 			return parseTypeTrait();
 
 		default:
@@ -1857,6 +1862,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private boolean isBinaryTrait(IToken first) {
 		switch (first.getType()) {
 		case IGCCToken.tTT_is_base_of:
+		case IGCCToken.tTT_is_assignable:
+		case IGCCToken.tTT_is_nothrow_assignable:
 		case IGCCToken.tTT_is_trivially_assignable:
 		case IGCCToken.tTT_is_same:
 			return true;
@@ -1868,6 +1875,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		switch (operatorToken.getType()) {
 		case IGCCToken.tTT_is_trivially_constructible:
 		case IGCCToken.tTT_is_constructible:
+		case IGCCToken.tTT_is_nothrow_constructible:
 			return true;
 		}
 		return false;
@@ -1877,6 +1885,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		switch (first.getType()) {
 		case IGCCToken.tTT_is_base_of:
 			return IASTBinaryTypeIdExpression.Operator.__is_base_of;
+		case IGCCToken.tTT_is_assignable:
+			return IASTBinaryTypeIdExpression.Operator.__is_assignable;
+		case IGCCToken.tTT_is_nothrow_assignable:
+			return IASTBinaryTypeIdExpression.Operator.__is_nothrow_assignable;
 		case IGCCToken.tTT_is_trivially_assignable:
 			return IASTBinaryTypeIdExpression.Operator.__is_trivially_assignable;
 		case IGCCToken.tTT_is_same:
@@ -1893,6 +1905,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			return ICPPASTNaryTypeIdExpression.Operator.__is_trivially_constructible;
 		case IGCCToken.tTT_is_constructible:
 			return ICPPASTNaryTypeIdExpression.Operator.__is_constructible;
+		case IGCCToken.tTT_is_nothrow_constructible:
+			return ICPPASTNaryTypeIdExpression.Operator.__is_nothrow_constructible;
 		}
 
 		assert false;
@@ -1915,10 +1929,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			return IASTTypeIdExpression.op_has_trivial_copy;
 		case IGCCToken.tTT_has_trivial_destructor:
 			return IASTTypeIdExpression.op_has_trivial_destructor;
+		case IGCCToken.tTT_has_unique_object_representations:
+			return IASTTypeIdExpression.op_has_unique_object_representations;
 		case IGCCToken.tTT_has_virtual_destructor:
 			return IASTTypeIdExpression.op_has_virtual_destructor;
 		case IGCCToken.tTT_is_abstract:
 			return IASTTypeIdExpression.op_is_abstract;
+		case IGCCToken.tTT_is_aggregate:
+			return IASTTypeIdExpression.op_is_aggregate;
 		case IGCCToken.tTT_is_class:
 			return IASTTypeIdExpression.op_is_class;
 		case IGCCToken.tTT_is_empty:

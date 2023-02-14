@@ -104,4 +104,14 @@ public class GCCKeywords {
 	 * @since 7.1
 	 */
 	public static final char[] cp__is_same = "__is_same".toCharArray(), cp__is_same_as = "__is_same_as".toCharArray();
+
+	/** @since 8.1 */
+	public static final char[] cp__has_unique_object_representations = "__has_unique_object_representations"
+			.toCharArray();
+
+	/** @since 8.1 */
+	public static final char[] cp__is_aggregate = "__is_aggregate".toCharArray(),
+			cp__is_assignable = "__is_assignable".toCharArray(),
+			cp__is_nothrow_assignable = "__is_nothrow_assignable".toCharArray(),
+			cp__is_nothrow_constructible = "__is_nothrow_constructible".toCharArray();
 }

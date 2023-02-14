@@ -101,6 +101,7 @@ public class EvalNaryTypeId extends CPPDependentEvaluation {
 		switch (fOperator) {
 		case __is_trivially_constructible:
 		case __is_constructible:
+		case __is_nothrow_constructible:
 			return CPPBasicType.BOOLEAN;
 		}
 		return ProblemType.UNKNOWN_FOR_EXPRESSION;

@@ -43,6 +43,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static final int VERSION_6_0 = version(6, 0);
 	private static final int VERSION_8_0 = version(8, 0);
 	private static final int VERSION_10_0 = version(10, 0);
+	private static final int VERSION_11_1 = version(11, 1);
 	private static GPPScannerExtensionConfiguration CONFIG = new GPPScannerExtensionConfiguration();
 	private static GPPScannerExtensionConfiguration CONFIG_4_2 = new GPPScannerExtensionConfiguration(VERSION_4_2);
 	private static GPPScannerExtensionConfiguration CONFIG_4_3 = new GPPScannerExtensionConfiguration(VERSION_4_3);
@@ -52,6 +53,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 	private static GPPScannerExtensionConfiguration CONFIG_6_0 = new GPPScannerExtensionConfiguration(VERSION_6_0);
 	private static GPPScannerExtensionConfiguration CONFIG_8_0 = new GPPScannerExtensionConfiguration(VERSION_8_0);
 	private static GPPScannerExtensionConfiguration CONFIG_10_0 = new GPPScannerExtensionConfiguration(VERSION_10_0);
+	private static GPPScannerExtensionConfiguration CONFIG_11_1 = new GPPScannerExtensionConfiguration(VERSION_11_1);
 	private static GPPScannerExtensionConfiguration CONFIG_CLANG = new GPPScannerExtensionConfiguration(
 			CompilerType.Clang, 0 /* version is ignored for now */);
 	private static GPPScannerExtensionConfiguration CONFIG_CLANG_CL = new GPPScannerExtensionConfiguration(
@@ -89,6 +91,9 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				int major = Integer.valueOf(definedSymbols.get("__GNUC__")); //$NON-NLS-1$
 				int minor = Integer.valueOf(definedSymbols.get("__GNUC_MINOR__")); //$NON-NLS-1$
 				int version = version(major, minor);
+				if (version >= VERSION_11_1) {
+					return CONFIG_11_1;
+				}
 				if (version >= VERSION_10_0) {
 					return CONFIG_10_0;
 				}
@@ -192,11 +197,19 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				addKeyword(GCCKeywords.cp__is_same_as, IGCCToken.tTT_is_same);
 			}
 			if (version >= VERSION_8_0) {
+				addKeyword(GCCKeywords.cp__has_unique_object_representations,
+						IGCCToken.tTT_has_unique_object_representations);
+				addKeyword(GCCKeywords.cp__is_aggregate, IGCCToken.tTT_is_aggregate);
+				addKeyword(GCCKeywords.cp__is_assignable, IGCCToken.tTT_is_assignable);
 				addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
 				addKeyword(GCCKeywords.cp__integer_pack, IGCCToken.tTT_integer_pack);
 			}
 			if (version >= VERSION_10_0) {
 				addKeyword(GCCKeywords.cp__is_same, IGCCToken.tTT_is_same);
+			}
+			if (version >= VERSION_11_1) {
+				addKeyword(GCCKeywords.cp__is_nothrow_assignable, IGCCToken.tTT_is_nothrow_assignable);
+				addKeyword(GCCKeywords.cp__is_nothrow_constructible, IGCCToken.tTT_is_nothrow_constructible);
 			}
 		} else if (compiler == CompilerType.Clang || compiler == CompilerType.ClangCl) {
 			// As documented at
@@ -212,13 +225,14 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			addKeyword(GCCKeywords.cp__has_trivial_copy, IGCCToken.tTT_has_trivial_copy);
 			addKeyword(GCCKeywords.cp__has_trivial_constructor, IGCCToken.tTT_has_trivial_constructor);
 			addKeyword(GCCKeywords.cp__has_trivial_destructor, IGCCToken.tTT_has_trivial_destructor);
-			// __has_unique_object_representations
+			addKeyword(GCCKeywords.cp__has_unique_object_representations,
+					IGCCToken.tTT_has_unique_object_representations);
 			addKeyword(GCCKeywords.cp__has_virtual_destructor, IGCCToken.tTT_has_virtual_destructor);
 			addKeyword(GCCKeywords.cp__is_abstract, IGCCToken.tTT_is_abstract);
-			// __is_aggregate
+			addKeyword(GCCKeywords.cp__is_aggregate, IGCCToken.tTT_is_aggregate);
 			// __is_arithmetic
 			// __is_array
-			// __is_assignable
+			addKeyword(GCCKeywords.cp__is_assignable, IGCCToken.tTT_is_assignable);
 			addKeyword(GCCKeywords.cp__is_base_of, IGCCToken.tTT_is_base_of);
 			addKeyword(GCCKeywords.cp__is_class, IGCCToken.tTT_is_class);
 			// __is_complete_type
@@ -242,8 +256,8 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 			// __is_member_object_pointer
 			// __is_member_function_pointer
 			// __is_member_pointer
-			// __is_nothrow_assignable
-			// __is_nothrow_constructible
+			addKeyword(GCCKeywords.cp__is_nothrow_assignable, IGCCToken.tTT_is_nothrow_assignable);
+			addKeyword(GCCKeywords.cp__is_nothrow_constructible, IGCCToken.tTT_is_nothrow_constructible);
 			// __is_nothrow_destructible
 			// __is_object
 			addKeyword(GCCKeywords.cp__is_pod, IGCCToken.tTT_is_pod);

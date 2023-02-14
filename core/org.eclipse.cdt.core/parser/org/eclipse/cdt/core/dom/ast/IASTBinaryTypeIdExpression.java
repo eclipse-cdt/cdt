@@ -35,6 +35,10 @@ public interface IASTBinaryTypeIdExpression extends IASTExpression {
 		* @since 7.1
 		*/
 		__is_same,
+		/** @since 8.1 */
+		__is_assignable,
+		/** @since 8.1 */
+		__is_nothrow_assignable,
 	}
 
 	/**

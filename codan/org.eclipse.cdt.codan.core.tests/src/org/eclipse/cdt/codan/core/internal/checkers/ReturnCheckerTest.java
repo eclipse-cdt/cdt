@@ -130,6 +130,36 @@ public class ReturnCheckerTest extends CheckerTestCase {
 		checkErrorLine(3, ReturnChecker.RET_ERR_VALUE_ID);
 	}
 
+	//	typedef void typedef_type;
+	//	typedef_type f()
+	//	{
+	//		return;
+	//	}
+	public void testTypedefVoidReturnType() throws Exception {
+		checkSampleAbove();
+	}
+
+	//	typedef void typedef_type;
+	//	typedef_type g();
+	//	void f()
+	//	{
+	//		return g();
+	//	}
+	public void testReturningTypedefVoidReturnType() throws Exception {
+		checkSampleAbove();
+	}
+
+	//	template<typename T>
+	//	void g(T t) {}
+	//
+	//	template<typename T>
+	//	void f(T t) {
+	//		return g(t);
+	//	}
+	public void testTemplateFunctionReturningVoidType() throws Exception {
+		checkSampleAbove();
+	}
+
 	//	class c {
 	//		c() {
 	//			return;

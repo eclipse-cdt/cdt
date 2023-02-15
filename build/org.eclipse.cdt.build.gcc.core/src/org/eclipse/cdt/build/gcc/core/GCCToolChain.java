@@ -56,6 +56,8 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.build.gcc"; //$NON-NLS-1$
 
+	private static Pattern definePattern = Pattern.compile("#define ([^\\s]*)\\s(.*)"); //$NON-NLS-1$
+
 	private final IToolChainProvider provider;
 	private final String id;
 	private final Path path;
@@ -471,7 +473,6 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		// Scan for the scanner info
 		Map<String, String> symbols = new HashMap<>();
 		List<String> includePath = new ArrayList<>();
-		Pattern definePattern = Pattern.compile("#define ([^\\s]*)\\s(.*)"); //$NON-NLS-1$
 
 		// First the include path off the error stream
 		Thread includePathReaderThread = new Thread("Include Path Reader") {
@@ -509,11 +510,9 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 				// Now the defines off the output stream
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
 					for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-						if (line.startsWith("#define ")) { //$NON-NLS-1$
-							Matcher matcher = definePattern.matcher(line);
-							if (matcher.matches()) {
-								symbols.put(matcher.group(1), matcher.group(2));
-							}
+						Map<String, String> matchDefines = matchDefines(line);
+						if (matchDefines != null) {
+							symbols.putAll(matchDefines);
 						}
 					}
 				} catch (IOException e) {
@@ -533,6 +532,23 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		Files.delete(tmpFile);
 
 		return new ExtendedScannerInfo(symbols, includePath.toArray(new String[includePath.size()]));
+	}
+
+	/**
+	 * Find any macro defines on the given input line and return a map of all such defines.
+	 *
+	 * @param line single line of output from the compiler
+	 * @return map of macro defines
+	 * @since 2.1
+	 */
+	protected Map<String, String> matchDefines(String line) {
+		if (line.startsWith("#define ")) { //$NON-NLS-1$
+			Matcher matcher = definePattern.matcher(line);
+			if (matcher.matches()) {
+				return Map.of(matcher.group(1), matcher.group(2));
+			}
+		}
+		return Map.of();
 	}
 
 	@Override

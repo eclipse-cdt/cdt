@@ -17,6 +17,8 @@ set -e
 # This script is reused by other projects, if so, COREPROJECT should be set
 # to the project to use a basis for project settings
 ##
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+CDTDIR=${DIR}/../..
 : ${COREPROJECT:=core/org.eclipse.cdt.core}
 
 ##
@@ -47,7 +49,7 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
 
     # JDT
     if [[ $natures == *"org.eclipse.jdt.core.javanature"* ]]; then
-        cp $COREPROJECT/.settings/org.eclipse.jdt.* $d/.settings
+        cp $CDTDIR/$COREPROJECT/.settings/org.eclipse.jdt.* $d/.settings
         # For test plug-ins we are more lenient so don't warn on some items
         if echo $i | grep -E '\.tests?[/\.]' > /dev/null; then
             sed -i \
@@ -78,8 +80,8 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
 
     # PDE
     if [[ $natures == *"org.eclipse.pde.PluginNature"* ]]; then
-        cp $COREPROJECT/.settings/org.eclipse.pde.prefs $d/.settings
-        cp $COREPROJECT/.settings/org.eclipse.pde.api.tools.prefs $d/.settings
+        cp $CDTDIR/$COREPROJECT/.settings/org.eclipse.pde.prefs $d/.settings
+        cp $CDTDIR/$COREPROJECT/.settings/org.eclipse.pde.api.tools.prefs $d/.settings
         if echo $i | grep -E '\.tests?[/\.]' > /dev/null; then
             sed -i \
                 '-es@compilers.p.not-externalized-att=1@compilers.p.not-externalized-att=2@' \

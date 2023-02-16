@@ -152,6 +152,7 @@ test_commands text
 # Other special files
 cdtOptions text
 .clang-format text
+.clangd text
 .contentsettings text
 *.csv text
 *.dia binary

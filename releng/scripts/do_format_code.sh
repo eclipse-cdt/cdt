@@ -16,6 +16,8 @@ set -e
 # This script is reused by other projects, if so, COREPROJECT should be set
 # to the project to use a basis for project settings
 ##
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+CDTDIR=${DIR}/../..
 : ${COREPROJECT:=core/org.eclipse.cdt.core}
 
 ##
@@ -37,6 +39,6 @@ if test -e check_code_cleanliness_workspace; then
 fi
 ${ECLIPSE} \
     -consolelog -nosplash -application org.eclipse.jdt.core.JavaCodeFormatter \
-    -config $PWD/$COREPROJECT/.settings/org.eclipse.jdt.core.prefs \
+    -config $CDTDIR/$COREPROJECT/.settings/org.eclipse.jdt.core.prefs \
     $PWD -data check_code_cleanliness_workspace
 rm -rf check_code_cleanliness_workspace

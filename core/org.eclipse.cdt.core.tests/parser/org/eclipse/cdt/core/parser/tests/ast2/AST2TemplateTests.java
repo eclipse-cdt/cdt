@@ -11419,4 +11419,78 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		helper.assertVariableValue("val1", 4);
 		helper.assertVariableValue("val2", 8);
 	}
+
+	//	template <typename T>
+	//	inline constexpr bool V = true;
+	//
+	//	template<typename T> bool f() {
+	//	  return V<T> + V<T>;
+	//	}
+	public void testBinaryExpressionWithVariableTemplateVsPlusUnaryExpression() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	inline constexpr bool V = true;
+	//
+	//	template<typename T> bool f() {
+	//	  return V<T> || V<T>;
+	//	}
+	public void testBinaryExpressionWithVariableTemplate() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	inline constexpr bool V = true;
+	//
+	//	template<typename T> bool f() {
+	//	  return V<T> && V<T>; // can be parsed as V < T > &&V<T>
+	//	}
+	public void testBinaryExpressionWithVariableTemplateAmbiguousLabelReference() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template <typename T>
+	//	inline constexpr bool W = true;
+	//	template <typename T>
+	//	inline constexpr bool X = true;
+	//	template <typename T>
+	//	inline constexpr bool Y = true;
+	//	template <typename T>
+	//	inline constexpr bool Z = true;
+	//
+	//	template<typename T> bool f() {
+	//	  return W<T> && X<T> && Y<T> && Z<T>; // can be parsed as (W) < (T) > (&&X<T>) ...
+	//	}
+	public void testBinaryExpressionWithVariableTemplateDeep() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	constexpr int factorial(int n) {
+	//		return n < 2 ? 1 : n * factorial(n - 1);
+	//	}
+	//
+	//	int f();
+	//
+	//	template <int>
+	//	class A {
+	//		template <int> class Waldo {
+	//			static void f();
+	//		};
+	//	};
+	//
+	//	template <>
+	//	class A<120> {
+	//	public:
+	//		static int Waldo;
+	//	};
+	//
+	//	int main() {
+	//		// This requires constexpr evaluation to find that return type of factorial(5) is int
+	//		// to decide if A<int>::Waldo is a template
+	//		A<factorial(5)>::Waldo<0>::f();
+	//	}
+	public void testBinaryExpressionWithVariableTemplate_bug497931_comment8() throws Exception {
+		parseAndCheckBindings();
+	}
 }

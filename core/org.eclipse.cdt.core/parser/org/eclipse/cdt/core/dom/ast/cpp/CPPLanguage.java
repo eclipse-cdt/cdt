@@ -3,6 +3,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
+import org.eclipse.cdt.core.dom.parser.IExactCLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.cpp.ANSICPPParserExtensionConfiguration;
@@ -18,7 +19,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPSourceParser;
 /**
  * ILanguage implementation for the DOM no-dialect, pure C++ Parser.
  */
-public class CPPLanguage extends AbstractCLikeLanguage implements IActualCPPLanguage {
+public class CPPLanguage extends AbstractCLikeLanguage implements IExactCLanguage {
 
 	public static final ANSICPPParserExtensionConfiguration CPP_PARSER_EXTENSION = new ANSICPPParserExtensionConfiguration();
 

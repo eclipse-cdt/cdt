@@ -3,6 +3,7 @@ package org.eclipse.cdt.core.dom.ast.c;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
+import org.eclipse.cdt.core.dom.parser.IExactCLanguage;
 import org.eclipse.cdt.core.dom.parser.IScannerExtensionConfiguration;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.dom.parser.c.ANSICParserExtensionConfiguration;
@@ -18,7 +19,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CSourceParser;
 /**
  * ILanguage implementation for the DOM no-dialect, pure C Parser.
  */
-public class CLanguage extends AbstractCLikeLanguage implements IActualCLanguage {
+public class CLanguage extends AbstractCLikeLanguage implements IExactCLanguage {
 
 	public static final ANSICParserExtensionConfiguration C_PARSER_EXTENSION = new ANSICParserExtensionConfiguration();
 

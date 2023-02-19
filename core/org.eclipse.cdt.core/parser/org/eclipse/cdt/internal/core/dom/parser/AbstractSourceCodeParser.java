@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTContinueStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
@@ -30,7 +29,6 @@ import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
-import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -40,7 +38,6 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLabelStatement;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNullStatement;
 import org.eclipse.cdt.core.dom.ast.IASTProblem;
@@ -48,7 +45,6 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
@@ -83,8 +79,6 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 	protected final ParserMode mode;
 	protected final INodeFactory nodeFactory;
 	protected final IBuiltinBindingsProvider builtinBindingsProvider;
-
-	protected boolean lvalueCanBeCall = false;
 
 	protected boolean passing = true;
 	protected boolean cancelled = false;
@@ -203,6 +197,9 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 			IASTFunctionCallExpression funcCall);
 
 	protected abstract IASTTypeId typeID(DeclarationOptions option) throws EndOfFileException, BacktrackException;
+
+	protected abstract IASTStatement parseDeclarationOrExpressionStatement(
+			List<IASTAttributeSpecifier> attributeSpecifiers) throws EndOfFileException, BacktrackException;
 
 	// Methods for parsing a type-id and an expression with an optional trailing ellipsis.
 	// The optional trailing ellipsis can only appear in C++ code, and only the C++ parser
@@ -897,109 +894,6 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 	 */
 	protected IASTStatement parseDeclarationOrExpressionStatement() throws EndOfFileException, BacktrackException {
 		return parseDeclarationOrExpressionStatement(null);
-	}
-
-	protected IASTStatement parseDeclarationOrExpressionStatement(List<IASTAttributeSpecifier> attributeSpecifiers)
-			throws EndOfFileException, BacktrackException {
-		// First attempt to parse an expressionStatement
-		// Note: the method style cast ambiguity is handled in expression
-		// Since it only happens when we are in a statement
-		IToken mark = mark();
-		IASTExpressionStatement expressionStatement = null;
-		IToken afterExpression = null;
-		boolean foundSemicolon = false;
-		try {
-			IASTExpression expression = expression();
-			expressionStatement = nodeFactory.newExpressionStatement(expression);
-			addAttributeSpecifiers(attributeSpecifiers, expressionStatement);
-			setRange(expressionStatement, expression);
-			afterExpression = lookahead();
-
-			IToken semi = consumeOrEndOfCompletion(IToken.tSEMI);
-			foundSemicolon = true;
-			adjustEndOffset(expressionStatement, semi.getEndOffset());
-			afterExpression = lookahead();
-		} catch (BacktrackException b) {
-		}
-
-		backup(mark);
-
-		// Now attempt to parse a declarationStatement
-		IASTDeclarationStatement declarationStatement = null;
-		try {
-			IASTDeclaration d = declaration(DeclarationOptions.LOCAL);
-			if (d instanceof IASTAttributeOwner) {
-				addAttributeSpecifiers(attributeSpecifiers, (IASTAttributeOwner) d);
-			}
-			declarationStatement = nodeFactory.newDeclarationStatement(d);
-			setRange(declarationStatement, d);
-		} catch (BacktrackException exception) {
-			IASTNode node = exception.getNodeBeforeProblem();
-			final boolean isProblemDecl = node instanceof IASTDeclaration;
-			if (expressionStatement == null
-					|| (!foundSemicolon && isProblemDecl && node.contains(expressionStatement))) {
-				if (isProblemDecl) {
-					declarationStatement = nodeFactory.newDeclarationStatement((IASTDeclaration) node);
-					exception.initialize(exception.getProblem(), setRange(declarationStatement, node));
-				}
-				throw exception;
-			}
-		}
-
-		if (declarationStatement == null) {
-			backup(afterExpression);
-			if (foundSemicolon)
-				return expressionStatement;
-
-			throwBacktrack(createProblem(IProblem.MISSING_SEMICOLON, calculateEndOffset(expressionStatement) - 1, 1),
-					expressionStatement);
-			return null; // Hint for java-compiler
-		}
-
-		if (expressionStatement == null || !foundSemicolon) {
-			return declarationStatement;
-		}
-
-		// At this point we know we have an ambiguity.
-		// Attempt to resolve some ambiguities that are easy to detect.
-
-		// A * B = C;  // A*B cannot be a lvalue.
-		// foo() = x;  // foo() cannot be a lvalue in C, in C++ it can.
-		if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
-			IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement.getExpression();
-			if (exp.getOperator() == IASTBinaryExpression.op_assign) {
-				IASTExpression left = exp.getOperand1();
-				if (left instanceof IASTBinaryExpression
-						&& ((IASTBinaryExpression) left).getOperator() == IASTBinaryExpression.op_multiply) {
-					return declarationStatement;
-				}
-				if (left instanceof IASTFunctionCallExpression && !lvalueCanBeCall) {
-					return declarationStatement;
-				}
-			}
-		}
-
-		final IASTDeclaration declaration = declarationStatement.getDeclaration();
-		if (declaration instanceof IASTSimpleDeclaration) {
-			final IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) declaration;
-			IASTDeclSpecifier declspec = simpleDecl.getDeclSpecifier();
-			if (declspec instanceof IASTNamedTypeSpecifier) {
-				final IASTDeclarator[] declarators = simpleDecl.getDeclarators();
-
-				// x;
-				// can be parsed as a named declaration specifier without a declarator
-				if (declarators.length == 0) {
-					backup(afterExpression);
-					return expressionStatement;
-				}
-			}
-		}
-
-		// create and return ambiguity node
-		IASTAmbiguousStatement statement = createAmbiguousStatement();
-		statement.addStatement(expressionStatement);
-		statement.addStatement(declarationStatement);
-		return setRange(statement, declarationStatement);
 	}
 
 	protected IASTStatement parseNullStatement() throws EndOfFileException, BacktrackException {

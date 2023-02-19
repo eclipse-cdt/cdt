@@ -8,6 +8,7 @@ import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
+import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
@@ -15,10 +16,12 @@ import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpressionStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
@@ -32,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
@@ -238,6 +242,110 @@ public class CSourceParser extends AbstractSourceCodeParser {
 		default:
 			return postfixExpression(ctx, strat);
 		}
+	}
+
+	@Override
+	protected IASTStatement parseDeclarationOrExpressionStatement(List<IASTAttributeSpecifier> attributeSpecifiers)
+			throws EndOfFileException, BacktrackException {
+		// First attempt to parse an expressionStatement
+		// Note: the method style cast ambiguity is handled in expression
+		// Since it only happens when we are in a statement
+		IToken mark = mark();
+		IASTExpressionStatement expressionStatement = null;
+		IToken afterExpression = null;
+		boolean foundSemicolon = false;
+		try {
+			IASTExpression expression = expression();
+			expressionStatement = nodeFactory.newExpressionStatement(expression);
+			addAttributeSpecifiers(attributeSpecifiers, expressionStatement);
+			setRange(expressionStatement, expression);
+			afterExpression = lookahead();
+
+			IToken semi = consumeOrEndOfCompletion(IToken.tSEMI);
+			foundSemicolon = true;
+			adjustEndOffset(expressionStatement, semi.getEndOffset());
+			afterExpression = lookahead();
+		} catch (BacktrackException b) {
+		}
+
+		backup(mark);
+
+		// Now attempt to parse a declarationStatement
+		IASTDeclarationStatement declarationStatement = null;
+		try {
+			IASTDeclaration d = declaration(DeclarationOptions.LOCAL);
+			if (d instanceof IASTAttributeOwner) {
+				addAttributeSpecifiers(attributeSpecifiers, (IASTAttributeOwner) d);
+			}
+			declarationStatement = nodeFactory.newDeclarationStatement(d);
+			setRange(declarationStatement, d);
+		} catch (BacktrackException exception) {
+			IASTNode node = exception.getNodeBeforeProblem();
+			final boolean isProblemDecl = node instanceof IASTDeclaration;
+			if (expressionStatement == null
+					|| (!foundSemicolon && isProblemDecl && node.contains(expressionStatement))) {
+				if (isProblemDecl) {
+					declarationStatement = nodeFactory.newDeclarationStatement((IASTDeclaration) node);
+					exception.initialize(exception.getProblem(), setRange(declarationStatement, node));
+				}
+				throw exception;
+			}
+		}
+
+		if (declarationStatement == null) {
+			backup(afterExpression);
+			if (foundSemicolon)
+				return expressionStatement;
+
+			throwBacktrack(createProblem(IProblem.MISSING_SEMICOLON, calculateEndOffset(expressionStatement) - 1, 1),
+					expressionStatement);
+			return null; // Hint for java-compiler
+		}
+
+		if (expressionStatement == null || !foundSemicolon) {
+			return declarationStatement;
+		}
+
+		// At this point we know we have an ambiguity.
+		// Attempt to resolve some ambiguities that are easy to detect.
+
+		// A * B = C;  // A*B cannot be a lvalue.
+		// foo() = x;  // foo() cannot be an lvalue in C.
+		if (expressionStatement.getExpression() instanceof IASTBinaryExpression) {
+			IASTBinaryExpression exp = (IASTBinaryExpression) expressionStatement.getExpression();
+			if (exp.getOperator() == IASTBinaryExpression.op_assign) {
+				IASTExpression left = exp.getOperand1();
+				if (left instanceof IASTBinaryExpression
+						&& ((IASTBinaryExpression) left).getOperator() == IASTBinaryExpression.op_multiply) {
+					return declarationStatement;
+				}
+				if (left instanceof IASTFunctionCallExpression) {
+					return declarationStatement;
+				}
+			}
+		}
+
+		final IASTDeclaration declaration = declarationStatement.getDeclaration();
+		if (declaration instanceof IASTSimpleDeclaration) {
+			final IASTSimpleDeclaration simpleDecl = (IASTSimpleDeclaration) declaration;
+			IASTDeclSpecifier declspec = simpleDecl.getDeclSpecifier();
+			if (declspec instanceof IASTNamedTypeSpecifier) {
+				final IASTDeclarator[] declarators = simpleDecl.getDeclarators();
+
+				// x;
+				// can be parsed as a named declaration specifier without a declarator
+				if (declarators.length == 0) {
+					backup(afterExpression);
+					return expressionStatement;
+				}
+			}
+		}
+
+		// create and return ambiguity node
+		IASTAmbiguousStatement statement = createAmbiguousStatement();
+		statement.addStatement(expressionStatement);
+		statement.addStatement(declarationStatement);
+		return setRange(statement, declarationStatement);
 	}
 
 	@Override

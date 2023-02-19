@@ -21,10 +21,12 @@ import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFieldDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
@@ -38,6 +40,7 @@ import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTStandardFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -71,6 +74,7 @@ import org.eclipse.cdt.internal.core.dom.parser.AbstractSourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 
 /**
  * Source Parser for the C Language Syntax.
@@ -295,7 +299,7 @@ public class CSourceParser extends AbstractSourceCodeParser {
 			return literalExpression;
 		case IToken.tLPAREN:
 			token = consume();
-			IASTExpression lhs = expression(ExprKind.eExpression); // instead of expression(), to keep the stack smaller
+			IASTExpression left = expression(ExprKind.eExpression); // instead of expression(), to keep the stack smaller
 			int finalOffset = 0;
 			switch (lookaheadType(1)) {
 			case IToken.tRPAREN:
@@ -305,7 +309,7 @@ public class CSourceParser extends AbstractSourceCodeParser {
 			default:
 				throwBacktrack(lookahead(1));
 			}
-			return buildUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, lhs, token.getOffset(), finalOffset);
+			return buildUnaryExpression(IASTUnaryExpression.op_bracketedPrimary, left, token.getOffset(), finalOffset);
 		case IToken.tIDENTIFIER:
 		case IToken.tCOMPLETION:
 		case IToken.tEOC:
@@ -374,6 +378,11 @@ public class CSourceParser extends AbstractSourceCodeParser {
 		int offset = ((ASTNode) expr).getOffset();
 		((ASTNode) result).setOffsetAndLength(offset, lastOffset - offset);
 		return result;
+	}
+
+	@Override
+	protected IASTAmbiguousStatement createAmbiguousStatement() {
+		return new CASTAmbiguousStatement();
 	}
 
 	@Override
@@ -756,6 +765,159 @@ public class CSourceParser extends AbstractSourceCodeParser {
 		ICASTElaboratedTypeSpecifier result = (ICASTElaboratedTypeSpecifier) nodeFactory
 				.newElaboratedTypeSpecifier(kind, name);
 		((ASTNode) result).setOffsetAndLength(token.getOffset(), calculateEndOffset(name) - token.getOffset());
+		return result;
+	}
+
+	protected IASTStatement parseForStatement() throws EndOfFileException, BacktrackException {
+		int startOffset;
+		startOffset = consume().getOffset();
+		consume(IToken.tLPAREN);
+		IASTStatement init = initStatement();
+		IASTExpression forCondition = null;
+		switch (lookaheadType(1)) {
+		case IToken.tSEMI:
+		case IToken.tEOC:
+			break;
+		default:
+			forCondition = condition(false);
+		}
+		switch (lookaheadType(1)) {
+		case IToken.tSEMI:
+			consume();
+			break;
+		case IToken.tEOC:
+			break;
+		default:
+			throw backtrack;
+		}
+		IASTExpression iterationExpression = null;
+		switch (lookaheadType(1)) {
+		case IToken.tRPAREN:
+		case IToken.tEOC:
+			break;
+		default:
+			iterationExpression = expression();
+		}
+		switch (lookaheadType(1)) {
+		case IToken.tRPAREN:
+			consume();
+			break;
+		case IToken.tEOC:
+			break;
+		default:
+			throw backtrack;
+		}
+
+		IASTForStatement forStatement = nodeFactory.newForStatement(init, forCondition, iterationExpression, null);
+		if (lookaheadType(1) != IToken.tEOC) {
+			IASTStatement forBody = statement();
+			((ASTNode) forStatement).setOffsetAndLength(startOffset, calculateEndOffset(forBody) - startOffset);
+			forStatement.setBody(forBody);
+		}
+		return forStatement;
+	}
+
+	protected IASTStatement parseSwitchStatement() throws EndOfFileException, BacktrackException {
+		int startOffset;
+		startOffset = consume().getOffset();
+		consume(IToken.tLPAREN);
+		IASTExpression switchCondition = condition(true);
+		switch (lookaheadType(1)) {
+		case IToken.tRPAREN:
+			consume();
+			break;
+		case IToken.tEOC:
+			break;
+		default:
+			throwBacktrack(lookahead(1));
+		}
+
+		IASTStatement switchBody = parseSwitchBody();
+		IASTSwitchStatement switch_statement = nodeFactory.newSwitchStatement(switchCondition, switchBody);
+		((ASTNode) switch_statement).setOffsetAndLength(startOffset,
+				(switchBody != null ? calculateEndOffset(switchBody) : lookahead(1).getEndOffset()) - startOffset);
+		return switch_statement;
+	}
+
+	protected IASTStatement parseIfStatement() throws EndOfFileException, BacktrackException {
+		IASTIfStatement result = null;
+		IASTIfStatement ifStatement = null;
+		int start = lookahead(1).getOffset();
+		ifLoop: while (true) {
+			int so = consume(IToken.t_if).getOffset();
+			consume(IToken.tLPAREN);
+			// condition
+			IASTExpression condition = condition(true);
+			if (lookaheadType(1) == IToken.tEOC) {
+				// Completing in the condition
+				IASTIfStatement newIf = nodeFactory.newIfStatement(condition, null, null);
+
+				if (ifStatement != null) {
+					ifStatement.setElseClause(newIf);
+				}
+				return result != null ? result : newIf;
+			}
+			consume(IToken.tRPAREN);
+
+			IASTStatement thenClause = statement();
+			IASTIfStatement newIfStatement = nodeFactory.newIfStatement(null, null, null);
+			((ASTNode) newIfStatement).setOffset(so);
+			// shouldn't be possible but failure in condition() makes it so
+			if (condition != null) {
+				newIfStatement.setConditionExpression(condition);
+			}
+			if (thenClause != null) {
+				newIfStatement.setThenClause(thenClause);
+				((ASTNode) newIfStatement)
+						.setLength(calculateEndOffset(thenClause) - ((ASTNode) newIfStatement).getOffset());
+			}
+			if (lookaheadType(1) == IToken.t_else) {
+				consume();
+				if (lookaheadType(1) == IToken.t_if) {
+					// an else if, don't recurse, just loop and do another if
+
+					if (ifStatement != null) {
+						ifStatement.setElseClause(newIfStatement);
+						((ASTNode) ifStatement)
+								.setLength(calculateEndOffset(newIfStatement) - ((ASTNode) ifStatement).getOffset());
+					}
+					if (result == null && ifStatement != null)
+						result = ifStatement;
+					if (result == null)
+						result = newIfStatement;
+
+					ifStatement = newIfStatement;
+					continue ifLoop;
+				}
+				IASTStatement elseStatement = statement();
+				newIfStatement.setElseClause(elseStatement);
+				if (ifStatement != null) {
+					ifStatement.setElseClause(newIfStatement);
+					((ASTNode) ifStatement)
+							.setLength(calculateEndOffset(newIfStatement) - ((ASTNode) ifStatement).getOffset());
+				} else {
+					if (result == null)
+						result = newIfStatement;
+					ifStatement = newIfStatement;
+				}
+			} else {
+				if (thenClause != null)
+					((ASTNode) newIfStatement).setLength(calculateEndOffset(thenClause) - start);
+				if (ifStatement != null) {
+					ifStatement.setElseClause(newIfStatement);
+					((ASTNode) newIfStatement).setLength(calculateEndOffset(newIfStatement) - start);
+				}
+				if (result == null && ifStatement != null)
+					result = ifStatement;
+				if (result == null)
+					result = newIfStatement;
+
+				ifStatement = newIfStatement;
+			}
+			break ifLoop;
+		}
+
+		reconcileLengths(result);
 		return result;
 	}
 

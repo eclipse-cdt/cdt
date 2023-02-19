@@ -26,6 +26,7 @@ public class CPPSourceParser extends AbstractSourceCodeParser {
 			ICPPParserExtensionConfiguration config, IIndex index) {
 		super(scanner, parserMode, logService, CPPNodeFactory.getDefault(), config.getBuiltinBindingsProvider());
 		this.index = index;
+		lvalueCanBeCall = true;
 	}
 
 	@Override

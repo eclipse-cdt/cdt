@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.text.BadLocationException;
@@ -147,6 +148,10 @@ public class SourceFileInfo {
 			}
 			return fSource.get(startOffset, endOffset - startOffset);
 		} catch (BadLocationException e) {
+			// Log error to indicate what is the cause of the issue
+			String warningMessage = "Line(s) " + Integer.toString(first) + "-" + Integer.toString(last) //$NON-NLS-1$
+					+ " cannot be found in file: " + fFileKey + ".\nSkipping lines!"; //$NON-NLS-1$
+			DsfUIPlugin.log(Status.warning(warningMessage, e));
 			return null;
 		}
 	}

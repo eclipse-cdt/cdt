@@ -1229,36 +1229,40 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 	public SourcePosition insertSource(SourcePosition pos, String source, int line, boolean endOfSource) {
 		//		System.out.println("insertSource at "+getAddressText(pos.fAddressOffset));
 		//		System.out.println(source);
-		String sourceLines = source;
-		if (!source.isEmpty() && sourceLines.charAt(source.length() - 1) != '\n') {
-			sourceLines += "\n"; //$NON-NLS-1$
-		}
-		try {
-			assert !pos.fValid;
-			int oldLength = pos.length;
-			pos.length = sourceLines.length();
-			pos.fLine = line;
-			pos.fValid = true;
-			removeInvalidSourcePosition(pos);
-			replace(pos, oldLength, sourceLines);
-			if (!endOfSource) {
-				if (pos.length > 0) {
-					SourcePosition oldPos = getSourcePosition(pos.offset + pos.length);
-					if (oldPos == null || oldPos.fAddressOffset.compareTo(pos.fAddressOffset) != 0) {
-						pos = new SourcePosition(pos.offset + pos.length, 0, pos.fAddressOffset, pos.fFileInfo, line,
-								pos.fLast, false);
-						addSourcePosition(pos);
-						addModelPosition(pos);
-						addInvalidSourcePositions(pos);
-					} else {
-						//TLETODO need more checks for correct source pos
-						pos = oldPos;
+		// Check if source is not null, so it won't trigger NullPointerException later
+		if (source != null) {
+			String sourceLines = source;
+			if (!source.isEmpty() && sourceLines.charAt(source.length() - 1) != '\n') {
+				sourceLines += "\n"; //$NON-NLS-1$
+			}
+			try {
+				assert !pos.fValid;
+				int oldLength = pos.length;
+				pos.length = sourceLines.length();
+				pos.fLine = line;
+				pos.fValid = true;
+				removeInvalidSourcePosition(pos);
+				replace(pos, oldLength, sourceLines);
+				if (!endOfSource) {
+					if (pos.length > 0) {
+						SourcePosition oldPos = getSourcePosition(pos.offset + pos.length);
+						if (oldPos == null || oldPos.fAddressOffset.compareTo(pos.fAddressOffset) != 0) {
+							pos = new SourcePosition(pos.offset + pos.length, 0, pos.fAddressOffset, pos.fFileInfo,
+									line, pos.fLast, false);
+							addSourcePosition(pos);
+							addModelPosition(pos);
+							addInvalidSourcePositions(pos);
+						} else {
+							//TLETODO need more checks for correct source pos
+							pos = oldPos;
+						}
 					}
 				}
+			} catch (BadLocationException e) {
+				internalError(e);
 			}
-		} catch (BadLocationException e) {
-			internalError(e);
 		}
+
 		return pos;
 	}
 

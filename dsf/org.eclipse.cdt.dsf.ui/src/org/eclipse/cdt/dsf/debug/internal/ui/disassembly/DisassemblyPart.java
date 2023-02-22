@@ -2778,7 +2778,12 @@ public abstract class DisassemblyPart extends WorkbenchPart
 				if (lineAddr == null) {
 					fi.fLine2Addr[lineNr] = pos.fAddressOffset;
 					String source = fi.getLines(lineNr, last);
-					fDocument.insertSource(pos, source, lineNr, true);
+					// Remove source position if the lines were not found
+					if (source == null) {
+						fDocument.removeSourcePosition(pos);
+					} else {
+						fDocument.insertSource(pos, source, lineNr, true);
+					}
 				} else {
 					final int comparison = lineAddr.compareTo(pos.fAddressOffset);
 					if (comparison > 0) {
@@ -2805,10 +2810,20 @@ public abstract class DisassemblyPart extends WorkbenchPart
 						}
 						fi.fLine2Addr[lineNr] = pos.fAddressOffset;
 						String source = fi.getLines(lineNr, last);
-						fDocument.insertSource(pos, source, lineNr, true);
+						// Remove source position if the lines were not found
+						if (source == null) {
+							fDocument.removeSourcePosition(pos);
+						} else {
+							fDocument.insertSource(pos, source, lineNr, true);
+						}
 					} else if (comparison == 0) {
 						String source = fi.getLines(lineNr, last);
-						fDocument.insertSource(pos, source, lineNr, true);
+						// Remove source position if the lines were not found
+						if (source == null) {
+							fDocument.removeSourcePosition(pos);
+						} else {
+							fDocument.insertSource(pos, source, lineNr, true);
+						}
 					} else {
 						// new source position is after old position
 						try {
@@ -2823,11 +2838,21 @@ public abstract class DisassemblyPart extends WorkbenchPart
 									fDocument.removeSourcePosition(pos);
 								} else {
 									String source = fi.getLines(lineNr, last);
-									fDocument.insertSource(pos, source, lineNr, true);
+									// Remove source position if the lines were not found
+									if (source == null) {
+										fDocument.removeSourcePosition(pos);
+									} else {
+										fDocument.insertSource(pos, source, lineNr, true);
+									}
 								}
 							} else {
 								String source = fi.getLines(lineNr, last);
-								fDocument.insertSource(pos, source, lineNr, true);
+								// Remove source position if the lines were not found
+								if (source == null) {
+									fDocument.removeSourcePosition(pos);
+								} else {
+									fDocument.insertSource(pos, source, lineNr, true);
+								}
 							}
 						} catch (BadPositionCategoryException e) {
 							internalError(e);

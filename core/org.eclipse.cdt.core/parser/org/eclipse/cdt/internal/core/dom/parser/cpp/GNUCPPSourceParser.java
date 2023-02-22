@@ -650,11 +650,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tLPAREN: // 'ft<int>(args)' or 'c<1 && 2 > (x+y)'
 			return AMBIGUOUS_TEMPLATE_ID;
 
-		// Start of unary expression
+		// Can be start of unary expression or binary expression with a template-id
 		case IToken.tMINUS:
 		case IToken.tPLUS:
 		case IToken.tAMPER:
 		case IToken.tSTAR:
+		case IToken.tAND:
+			return AMBIGUOUS_TEMPLATE_ID;
+
 		case IToken.tNOT:
 		case IToken.tBITCOMPLEMENT:
 		case IToken.tINCR:

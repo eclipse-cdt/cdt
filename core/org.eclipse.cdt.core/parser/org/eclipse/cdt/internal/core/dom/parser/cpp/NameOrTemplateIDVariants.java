@@ -150,8 +150,8 @@ public class NameOrTemplateIDVariants {
 
 	public Variant selectFallback() {
 		// Search for an open variant, with a small right offset and a large left offset
+		Variant best = null;
 		for (BranchPoint p = fFirst; p != null; p = p.getNext()) {
-			Variant best = null;
 			for (Variant v = p.getFirstVariant(); v != null; v = v.getNext()) {
 				if (v.getTargetOperator() == null) {
 					if (best == null || v.fRightOffset < best.fRightOffset) {
@@ -159,10 +159,10 @@ public class NameOrTemplateIDVariants {
 					}
 				}
 			}
-			if (best != null) {
-				remove(best);
-				return best;
-			}
+		}
+		if (best != null) {
+			remove(best);
+			return best;
 		}
 		return null;
 	}

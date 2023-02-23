@@ -6137,7 +6137,7 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		stmt = getStatement(fdef, 2);
 		assertTrue(stmt.getExpression() instanceof IASTFunctionCallExpression);
 
-		stmt = getStatement(fdef, 0);
+		stmt = getStatement(fdef, 3);
 		assertTrue(stmt.getExpression() instanceof IASTBinaryExpression);
 	}
 

@@ -11493,4 +11493,42 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testBinaryExpressionWithVariableTemplate_bug497931_comment8() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<typename T>
+	//	static T* return_self (T *self);
+	//
+	//	template<typename T>
+	//	struct boolean_option_def
+	//	{
+	//	  boolean_option_def (bool *(*callback) (T *));
+	//	};
+	//
+	//	template<typename T> struct S {
+	//		boolean_option_def<T> def;
+	//
+	//		S() : def(return_self) {}
+	//	};
+	//
+	//	S<bool> bool_s_test;
+	public void testResolveFunctionTemplateInDeferredClassArg() throws Exception {
+		parseAndCheckBindings();
+	}
+
+	//	template<typename T>
+	//	static T* return_self (T *self);
+	//
+	//	template<typename T>
+	//	struct boolean_option_def
+	//	{
+	//	  boolean_option_def (bool *(*callback) (T *));
+	//	};
+	//
+	//	template<typename T> struct S : public boolean_option_def<T> {
+	//		S() : boolean_option_def<T>(return_self) {}
+	//	};
+	//
+	//	S<bool> bool_s_test;
+	public void testResolveFunctionTemplateInDeferredBaseArg() throws Exception {
+		parseAndCheckBindings();
+	}
 }

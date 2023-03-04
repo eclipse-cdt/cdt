@@ -163,6 +163,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionInstance;
@@ -3344,6 +3345,15 @@ public class CPPSemantics {
 					}
 				}
 			}
+
+			// Cannot resolve if target is deferred template instance or deferred constructor
+			if (targetType instanceof ICPPUnknownBinding || (prop == ICPPASTConstructorInitializer.ARGUMENT
+					&& parent instanceof ICPPASTConstructorInitializer init
+					&& init.getParent() instanceof ICPPASTConstructorChainInitializer memInit
+					&& memInit.getMemberInitializerId().resolveBinding() instanceof ICPPDeferredFunction)) {
+				return CPPDeferredFunction.createForCandidates(functionSet.getBindings());
+			}
+
 			if (targetType == null && parent instanceof ICPPASTExpression && parent instanceof IASTImplicitNameOwner) {
 				// Trigger resolution of overloaded operator, which may resolve the
 				// function set.

@@ -112,6 +112,12 @@ public abstract class AST2TestBase extends SemanticTestBase {
 				return true;
 			}
 		},
+		STDCPP17 {
+			@Override
+			public boolean isUseGNUExtensions() {
+				return false;
+			}
+		},
 		STDCPP20 {
 			@Override
 			public boolean isUseGNUExtensions() {
@@ -128,6 +134,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 
 	private static final ScannerInfo GNU_SCANNER_INFO = new ScannerInfo(getGnuMap());
 	private static final ScannerInfo SCANNER_INFO = new ScannerInfo(getStdMap());
+	private static final ScannerInfo STDCPP17_SCANNER_INFO = new ScannerInfo(getStdCpp17Map());
 	private static final ScannerInfo STDCPP20_SCANNER_INFO = new ScannerInfo(getStdCpp20Map());
 
 	private static Map<String, String> getGnuMap() {
@@ -154,10 +161,18 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		return map;
 	}
 
-	private static Map<String, String> getStdCpp20Map() {
+	private static Map<String, String> getStdCpp17Map() {
 		Map<String, String> map = getStdMap();
+		map.put("__cpp_deduction_guides", "201703L");
+		return map;
+	}
+
+	private static Map<String, String> getStdCpp20Map() {
+		Map<String, String> map = getStdCpp17Map();
 		map.put("__cpp_impl_three_way_comparison", "201907L");
 		map.put("__cpp_char8_t", "201811L");
+		// TODO: C++20 features
+		//map.put("__cpp_deduction_guides", "201907L");
 		return map;
 	}
 
@@ -241,6 +256,8 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		switch (scannerKind) {
 		case GNU:
 			return GNU_SCANNER_INFO;
+		case STDCPP17:
+			return STDCPP17_SCANNER_INFO;
 		case STDCPP20:
 			return STDCPP20_SCANNER_INFO;
 		case STD:

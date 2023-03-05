@@ -84,9 +84,6 @@ public class EvalFoldExpression extends CPPDependentEvaluation {
 
 	@Override
 	public boolean isTypeDependent() {
-		if (fType != null) {
-			return fType instanceof TypeOfDependentExpression;
-		}
 		return containsDependentType(fPackEvals) || (fInitEval != null && fInitEval.isTypeDependent());
 	}
 
@@ -122,7 +119,7 @@ public class EvalFoldExpression extends CPPDependentEvaluation {
 	@Override
 	public IType getType() {
 		if (fType == null) {
-			if (isTypeDependent()) {
+			if (isTypeDependent() || isValueDependent()) {
 				fType = new TypeOfDependentExpression(this);
 			} else {
 				fType = computeEvaluation().getType();

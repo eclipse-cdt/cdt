@@ -19,14 +19,17 @@ import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitDestructorName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFoldExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameterPackType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.DestructorCallCollector;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFoldExpression;
@@ -103,6 +106,7 @@ public class CPPASTFoldExpression extends ASTNode implements ICPPASTFoldExpressi
 		public UnexpandedParameterPackCounter() {
 			super(false);
 			shouldVisitExpressions = true;
+			shouldVisitTypeIds = true;
 			count = 0;
 		}
 
@@ -119,6 +123,21 @@ public class CPPASTFoldExpression extends ASTNode implements ICPPASTFoldExpressi
 			IType type = expression.getExpressionType();
 			if (type instanceof ICPPParameterPackType) {
 				++count;
+			}
+			return PROCESS_CONTINUE;
+		}
+
+		@Override
+		public int visit(IASTTypeId typeId) {
+			IType type = CPPVisitor.createType(typeId);
+			if (type instanceof ICPPTemplateParameter templateParameter) {
+				if (templateParameter.isParameterPack()) {
+					++count;
+				} else {
+					boolean notParameterPack = true;
+				}
+			} else {
+				boolean notTemplateParameter = true;
 			}
 			return PROCESS_CONTINUE;
 		}

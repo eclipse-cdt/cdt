@@ -186,4 +186,40 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 		IASTFunctionDefinition fdef = (IASTFunctionDefinition) tdef.getDeclaration();
 		IASTProblemExpression e1 = getExpressionOfStatement(fdef, 0);
 	}
+
+	//  template <typename T> struct predicate {
+	//    static constexpr bool evaluated = true;
+	//  };
+	//
+	//  template<bool arg> struct condition {
+	//    static constexpr bool value = arg;
+	//  };
+	//
+	//  template<typename... TP>
+	//  struct fold_condition {
+	//    static constexpr bool value = condition<(predicate<TP>::evaluated && ...)>::value;
+	//  };
+	//
+	//  constexpr bool result = fold_condition<int, double>::value;
+	public void testFoldExpressionInClassTemplateArguments() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("result", 1);
+	}
+
+	//  template<typename T1> constexpr bool predicate = true;
+	//
+	//  template<bool arg> struct condition {
+	//    static constexpr bool value = arg;
+	//  };
+	//
+	//  template<typename... TP>
+	//  struct fold_condition {
+	//    static constexpr bool value = condition<(predicate<TP> && ...)>::value;
+	//  };
+	//
+	//  constexpr bool result = fold_condition<int, double>::value;
+	public void testFoldExpressionInVariableTemplateArguments() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("result", 1);
+	}
 }

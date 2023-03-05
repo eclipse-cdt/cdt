@@ -1278,6 +1278,16 @@ public class CPPTemplates {
 				if (r < 0)
 					return r;
 			}
+		} else if (binding instanceof ICPPDeferredVariableInstance dvi) {
+			if (dvi.getTemplateDefinition() instanceof ICPPTemplateTemplateParameter) {
+				r = combinePackSize(r, determinePackSize((ICPPUnknownBinding) dvi.getTemplateDefinition(), tpMap));
+			}
+			ICPPTemplateArgument[] args = dvi.getTemplateArguments();
+			for (ICPPTemplateArgument arg : args) {
+				r = combinePackSize(r, determinePackSize(arg, tpMap));
+				if (r < 0)
+					return r;
+			}
 		}
 		IBinding ownerBinding = binding.getOwner();
 		if (ownerBinding instanceof IType)

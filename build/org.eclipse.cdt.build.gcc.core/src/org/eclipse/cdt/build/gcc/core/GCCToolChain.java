@@ -20,10 +20,13 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,6 +49,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeManager;
 
 /**
  * The GCC toolchain. This is the base class for all GCC toolchains. It
@@ -68,6 +73,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	private String cCommand;
 	private String cppCommand;
 	private String[] commands;
+	private Set<String> resourcesFileExtensions = getResourcesFileExtensions();
 
 	@Deprecated
 	public GCCToolChain(IToolChainProvider provider, String id, String version) {
@@ -640,42 +646,71 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		}
 	}
 
+	private Set<String> getResourcesFileExtensions() {
+		IContentTypeManager manager = Platform.getContentTypeManager();
+
+		Set<String> fileExts = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+
+		IContentType contentTypeCpp = manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
+		fileExts.addAll(Arrays.asList(contentTypeCpp.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
+
+		IContentType contentTypeC = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
+		fileExts.addAll(Arrays.asList(contentTypeC.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
+
+		return fileExts;
+	}
+
+	private static String getFileExtension(String fileName) {
+		String ext = ""; //$NON-NLS-1$
+
+		int i = fileName.lastIndexOf('.');
+		if (i > 0) {
+			ext = fileName.substring(i + 1);
+		}
+		return ext;
+	}
+
 	@Override
 	public IResource[] getResourcesFromCommand(List<String> cmd, URI buildDirectoryURI) {
 		// Start at the back looking for arguments
 		List<IResource> resources = new ArrayList<>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+
 		for (int i = cmd.size() - 1; i >= 0; --i) {
 			String arg = cmd.get(i);
 			if (arg.startsWith("-")) { //$NON-NLS-1$
-				// ran into an option, we're done.
-				break;
+				// ran into an option, skip.
+				continue;
 			}
 			if (i > 1 && cmd.get(i - 1).equals("-o")) { //$NON-NLS-1$
 				// this is an output file
 				--i;
 				continue;
 			}
-			try {
-				Path srcPath = Paths.get(arg);
-				URI uri;
-				if (srcPath.isAbsolute()) {
-					uri = srcPath.toUri();
-				} else {
-					String mingwPath = fixMingwPath(arg);
-					if (mingwPath != arg) {
-						uri = Paths.get(mingwPath).toUri();
-					} else {
-						uri = Paths.get(buildDirectoryURI).resolve(srcPath).toUri().normalize();
-					}
-				}
 
-				for (IFile resource : root.findFilesForLocationURI(uri)) {
-					resources.add(resource);
+			String ext = getFileExtension(arg);
+			if (resourcesFileExtensions.contains(ext)) {
+				try {
+					Path srcPath = Paths.get(arg);
+					URI uri;
+					if (srcPath.isAbsolute()) {
+						uri = srcPath.toUri();
+					} else {
+						String mingwPath = fixMingwPath(arg);
+						if (mingwPath != arg) {
+							uri = Paths.get(mingwPath).toUri();
+						} else {
+							uri = Paths.get(buildDirectoryURI).resolve(srcPath).toUri().normalize();
+						}
+					}
+
+					for (IFile resource : root.findFilesForLocationURI(uri)) {
+						resources.add(resource);
+					}
+				} catch (IllegalArgumentException e) {
+					// Bad URI
+					continue;
 				}
-			} catch (IllegalArgumentException e) {
-				// Bad URI
-				continue;
 			}
 		}
 

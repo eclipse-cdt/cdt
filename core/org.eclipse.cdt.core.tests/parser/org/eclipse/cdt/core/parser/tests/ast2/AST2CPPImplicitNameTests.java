@@ -576,10 +576,12 @@ public class AST2CPPImplicitNameTests extends AST2TestBase {
 		ba.assertNoImplicitName("e;", 1);
 		IASTImplicitName s = ba.assertImplicitName("s =", 1, ICPPConstructor.class);
 		assertSame(ctor1, s.resolveBinding());
-		ba.assertNoImplicitName("t;", 1);
+		IASTImplicitName t_static = ba.assertImplicitName("t;", 1, ICPPConstructor.class);
+		assertSame(ctor0, t_static.resolveBinding());
 		IASTImplicitName t = ba.assertImplicitName("t =", 1, ICPPConstructor.class);
 		assertSame(ctor1, t.resolveBinding());
-		ba.assertNoImplicitName("u;", 1);
+		IASTImplicitName u_member = ba.assertImplicitName("u;", 1, ICPPConstructor.class);
+		assertSame(ctor0, u_member.resolveBinding());
 		IASTImplicitName u = ba.assertImplicitName("u()", 1, ICPPConstructor.class);
 		assertSame(ctor0, u.resolveBinding());
 		IASTImplicitName v = ba.assertImplicitName("v(p)", 1, ICPPConstructor.class);

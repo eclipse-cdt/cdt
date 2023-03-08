@@ -8848,7 +8848,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//		h({ "foo" }); // OK: h(C(std::string("foo")))
 	//		i({ { 1, 2 }, { "bar" } }); // OK: i(D(A(std::initializer_list<int>{1,2}),C(std::string("bar"))))
 	//      X x1;
-	//      x({x1});  // no matching constructor
+	//      x({x1});  // OK, lvalue reference to x1
 	//	}
 	public void testListInitialization_302412c() throws Exception {
 		String code = getAboveComment();
@@ -8859,7 +8859,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		bh.assertProblem("f({ 'a', 'b' })", 1);
 		bh.assertNonProblem("h({", 1);
 		bh.assertNonProblem("i({ { 1, 2 }, {", 1);
-		bh.assertProblem("x({x1})", 1);
+		bh.assertNonProblem("x({x1})", 1);
 	}
 
 	//	namespace std {
@@ -9071,6 +9071,76 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	}
 	public void testAggregateInitialization_487555() throws Exception {
 		parseAndCheckBindings();
+	}
+
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct str {
+	//		str();
+	//		str(const char*, int);            // #1
+	//		str(std::initializer_list<char>); // #2
+	//	};
+	//	struct subclass : public str {
+	//	};
+	//	void g1(str);
+	//	void g2(str);
+	//	void test() {
+	//		const str a{"test", 4}; // OK, #2 fails, uses #1 to initialize
+	//      const subclass s;
+	//		g1({a});
+	//		g2({s});
+	//	}
+	public void testListInitializationOfClass() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
+
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct str {
+	//		str();
+	//		explicit str(const char*, int);   // #1
+	//		str(std::initializer_list<char>); // #2
+	//	};
+	//
+	//	str test(char *p, int i) {
+	//		const str a{"test", 4}; // OK, #2 fails, uses #1 to initialize
+	//		const str b = {"test", 4}; // ERROR, #2 fails, #1 is skipped explicit conversion
+	//		return str{p, i}; // OK, uses #1 to initialize, explicit constructor is considered too
+	//	}
+	public void testListInitializationWithExplicitConstructor() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector collector = new NameCollector(true);
+		tu.accept(collector);
+
+		assertEquals(28, collector.size());
+		// 23th is implicit name for constructor for b
+		IASTImplicitName nameOfConstructorForB = (IASTImplicitName) collector.getName(23);
+		IProblemBinding problemConstructorForB = (IProblemBinding) nameOfConstructorForB.resolveBinding();
+		assertEquals(problemConstructorForB.getID(), IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
+
+		// 25th is implicit name for constructor of object in return statement
+		IASTImplicitName nameOfConstructorForReturn = (IASTImplicitName) collector.getName(25);
+		ICPPConstructor constructorOfReturn = (ICPPConstructor) nameOfConstructorForReturn.resolveBinding();
+	}
+
+	//	namespace std {
+	//		template<typename T> class initializer_list;
+	//	}
+	//	struct str {
+	//		str();
+	//		str(const char*, int);            // #1
+	//		str(std::initializer_list<char>); // #2
+	//	};
+	//
+	//	str test(char *p, int i) {
+	//		const str a{"test", 4}; // OK, #2 fails, uses #1 to initialize
+	//		const str b = {"test", 4}; // OK, #2 fails, uses #1 to initialize
+	//		return str{p, i}; // OK, uses #1 to initialize
+	//	}
+	public void testListInitializationOfClassTypeId() throws Exception {
+		parseAndCheckImplicitNameBindings();
 	}
 
 	//	namespace std {

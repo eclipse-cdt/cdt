@@ -7719,6 +7719,14 @@ public class AST2Tests extends AST2TestBase {
 		parseAndCheckBindings(ScannerKind.GNU);
 	}
 
+	//	const volatile int cv_var = 0;
+	//	int get() {
+	//		return __atomic_load_n(&cv_var, 0);
+	//	}
+	public void testAtomicLoadNOfConstVolatile() throws Exception {
+		parseAndCheckBindings(ScannerKind.GNU);
+	}
+
 	//	void waldo(...);
 	public void testVariadicCFunction_452416() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper(C);

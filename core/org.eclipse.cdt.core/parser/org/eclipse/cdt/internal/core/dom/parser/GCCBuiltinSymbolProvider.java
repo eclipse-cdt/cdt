@@ -160,14 +160,15 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		for (String type : types) {
 			// Manual does not mention volatile, however functions can be used for ptr to volatile
 			String typePtr = type + " volatile *";
-			function(type, "__atomic_load_n", typePtr, "int");
-			function("void", "__atomic_load", typePtr, typePtr, "int");
+			String typeConstPtr = type + " const volatile *";
+			function(type, "__atomic_load_n", typeConstPtr, "int");
+			function("void", "__atomic_load", typeConstPtr, typePtr, "int");
 			function("void", "__atomic_store_n", typePtr, type, "int");
 			function("void", "__atomic_store", typePtr, typePtr, "int");
 			function(type, "__atomic_exchange_n", typePtr, type, "int");
 			function("void", "__atomic_exchange", typePtr, typePtr, typePtr, "int");
-			function("bool", "__atomic_compare_exchange_n", typePtr, typePtr, type, "int", "int", "int");
-			function("bool", "__atomic_compare_exchange", typePtr, typePtr, typePtr, "int", "int", "int");
+			function("bool", "__atomic_compare_exchange_n", typePtr, typeConstPtr, type, "int", "int", "int");
+			function("bool", "__atomic_compare_exchange", typePtr, typeConstPtr, typePtr, "int", "int", "int");
 			function(type, "__atomic_add_fetch", typePtr, type, "int");
 			function(type, "__atomic_sub_fetch", typePtr, type, "int");
 			function(type, "__atomic_and_fetch", typePtr, type, "int");
@@ -608,22 +609,25 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 
 		boolean isConst = false;
 		boolean isVolatile = false;
-		if (tstr.startsWith("const ")) {
-			isConst = true;
-			tstr = tstr.substring(6);
+
+		while (true) {
+			if (tstr.startsWith("const ")) {
+				isConst = true;
+				tstr = tstr.substring(6);
+			} else if (tstr.endsWith("const")) {
+				isConst = true;
+				tstr = tstr.substring(0, tstr.length() - 5).trim();
+			} else if (tstr.startsWith("volatile ")) {
+				isVolatile = true;
+				tstr = tstr.substring(9);
+			} else if (tstr.endsWith("volatile")) {
+				isVolatile = true;
+				tstr = tstr.substring(0, tstr.length() - 8).trim();
+			} else {
+				break;
+			}
 		}
-		if (tstr.endsWith("const")) {
-			isConst = true;
-			tstr = tstr.substring(0, tstr.length() - 5).trim();
-		}
-		if (tstr.startsWith("volatile ")) {
-			isVolatile = true;
-			tstr = tstr.substring(9);
-		}
-		if (tstr.endsWith("volatile")) {
-			isVolatile = true;
-			tstr = tstr.substring(0, tstr.length() - 8).trim();
-		}
+
 		int q = 0;
 		if (tstr.startsWith("signed ")) {
 			q |= IBasicType.IS_SIGNED;

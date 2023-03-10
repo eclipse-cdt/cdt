@@ -80,6 +80,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	public StandardBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, String launchMode)
 			throws CoreException {
 		super(config, name, toolChain, launchMode);
+		applyProperties();
 		setupEnvVars();
 	}
 

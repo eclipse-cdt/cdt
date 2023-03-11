@@ -96,6 +96,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
+import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
@@ -147,6 +148,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
@@ -13844,5 +13846,30 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableValue("test_32", 1);
 		helper.assertVariableValue("test_64", 1);
+	}
+
+	//  constexpr auto shiftdouble = (1. << 1);
+	public void testArithmeticEvaluationWithDoubleShiftOp() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable shiftdouble = helper.assertNonProblem("shiftdouble = ", 11);
+		IValue value = shiftdouble.getInitialValue();
+		assertTrue(IntegralValue.ERROR.equals(value) || IntegralValue.UNKNOWN.equals(value));
+	}
+
+	//  constexpr auto shiftdouble = (1. <<= 1);
+	public void testArithmeticEvaluationWithDoubleShiftAssignOp() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		IVariable shiftdouble = helper.assertNonProblem("shiftdouble = ", 11);
+		IValue value = shiftdouble.getInitialValue();
+		assertTrue(IntegralValue.ERROR.equals(value) || IntegralValue.UNKNOWN.equals(value));
+	}
+
+	//  enum Shift { Horizontal, Vertical };
+	//  constexpr double zero = 0.;
+	//  constexpr double x = 1., y = 1.;
+	//  constexpr int shiftpack = ((x > zero) << Horizontal) | ((y > zero) << Vertical);
+	public void testArithmeticEvaluationOfRelationalOps() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("shiftpack", 3);
 	}
 }

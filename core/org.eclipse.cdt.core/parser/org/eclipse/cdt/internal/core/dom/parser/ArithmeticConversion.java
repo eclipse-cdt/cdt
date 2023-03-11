@@ -87,7 +87,12 @@ public abstract class ArithmeticConversion {
 			return convert(op1, op2);
 
 		case IASTBinaryExpression.op_shiftLeft:
+		case IASTBinaryExpression.op_shiftLeftAssign:
 		case IASTBinaryExpression.op_shiftRight:
+		case IASTBinaryExpression.op_shiftRightAssign:
+			if (!isIntegralOrUnscopedEnum(op1) || !isIntegralOrUnscopedEnum(op2)) {
+				return null;
+			}
 			return promote(op1, getDomain(op1));
 
 		default:

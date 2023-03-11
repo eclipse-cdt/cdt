@@ -41,6 +41,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_sizeof;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeid;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_typeof;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import java.util.Arrays;
@@ -74,6 +75,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPArithmeticConversion;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
@@ -190,7 +192,8 @@ public class ValueFactory {
 	}
 
 	private static IntegralValue applyBinaryOperator(final int op, final long v1, final long v2, final IType type) {
-		if ((v1 < 0 || v2 < 0) && type instanceof IBasicType basicType && basicType.isUnsigned()) {
+		if ((v1 < 0 || v2 < 0) && SemanticUtil.getNestedType(type, TDEF | REF | CVTYPE) instanceof IBasicType basicType
+				&& basicType.isUnsigned()) {
 			return applyBinaryOperator(op, v1, v2, (x, y) -> Long.compareUnsigned(x, y));
 		} else {
 			return applyBinaryOperator(op, v1, v2, (x, y) -> Long.compare(x, y));
@@ -621,8 +624,9 @@ public class ValueFactory {
 			return o2;
 		if (isDeferredValue(o1) || isDeferredValue(o2))
 			return null; // the value will be computed using the evaluation
-		IType exprType = exp.getExpressionType();
-		return evaluateBinaryExpression(op, o1, o2, exprType);
+		IType commonType = CPPArithmeticConversion.convertCppOperandTypes(op, exp.getOperand1().getExpressionType(),
+				exp.getOperand2().getExpressionType());
+		return evaluateBinaryExpression(op, o1, o2, commonType);
 	}
 
 	private static IValue applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator, IType type1,

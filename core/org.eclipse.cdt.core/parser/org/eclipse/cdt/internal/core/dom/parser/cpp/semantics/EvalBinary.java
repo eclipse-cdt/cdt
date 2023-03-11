@@ -101,6 +101,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 	private ICPPFunction fOverload = CPPFunction.UNINITIALIZED_FUNCTION;
 	private ICPPEvaluation fOverloadCall;
 	private IType fType;
+	private IType fCommonType;
 	private boolean fCheckedIsConstantExpression;
 	private boolean fIsConstantExpression;
 
@@ -158,6 +159,13 @@ public class EvalBinary extends CPPDependentEvaluation {
 		}
 
 		return fType;
+	}
+
+	private IType getCommonType() {
+		if (fCommonType == null) {
+			fCommonType = computeCommonType();
+		}
+		return fCommonType;
 	}
 
 	private ICPPEvaluation createOperatorOverloadEvaluation(ICPPFunction overload, ICPPEvaluation arg1,
@@ -240,7 +248,7 @@ public class EvalBinary extends CPPDependentEvaluation {
 
 			Number num2 = v2.numberValue();
 			if (num2 != null) {
-				return ValueFactory.evaluateBinaryExpression(fOperator, v1, v2, getType());
+				return ValueFactory.evaluateBinaryExpression(fOperator, v1, v2, getCommonType());
 			}
 		}
 		return DependentValue.create(this);
@@ -352,6 +360,26 @@ public class EvalBinary extends CPPDependentEvaluation {
 		if (o != null)
 			return typeFromFunctionCall(o);
 
+		switch (fOperator) {
+		case op_lessEqual:
+		case op_lessThan:
+		case op_greaterEqual:
+		case op_greaterThan:
+		case op_logicalAnd:
+		case op_logicalOr:
+		case op_equals:
+		case op_notequals:
+			return CPPBasicType.BOOLEAN;
+
+		case op_threewaycomparison:
+			// TODO: implement for <=>
+			return ProblemType.UNKNOWN_FOR_EXPRESSION;
+		}
+
+		return getCommonType();
+	}
+
+	private IType computeCommonType() {
 		final IType originalType1 = fArg1.getType();
 		final IType type1 = prvalueTypeWithResolvedTypedefs(originalType1);
 		if (type1 instanceof ISemanticProblem) {
@@ -377,20 +405,6 @@ public class EvalBinary extends CPPDependentEvaluation {
 			if (type2 instanceof IPointerType) {
 				return glvalueType(((IPointerType) type2).getType());
 			}
-			return ProblemType.UNKNOWN_FOR_EXPRESSION;
-
-		case op_lessEqual:
-		case op_lessThan:
-		case op_greaterEqual:
-		case op_greaterThan:
-		case op_logicalAnd:
-		case op_logicalOr:
-		case op_equals:
-		case op_notequals:
-			return CPPBasicType.BOOLEAN;
-
-		case op_threewaycomparison:
-			// TODO: implement for <=>
 			return ProblemType.UNKNOWN_FOR_EXPRESSION;
 
 		case op_plus:

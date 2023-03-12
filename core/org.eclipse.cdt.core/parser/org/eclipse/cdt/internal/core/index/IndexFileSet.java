@@ -100,6 +100,11 @@ public class IndexFileSet implements IIndexFileSet {
 					Set<Long> visited = null;
 					long nameRecord;
 					while ((nameRecord = nameIterator.next()) != 0) {
+						if (++iterationCount >= 1000 && visited == null) {
+							// Iteration count is suspiciously high. Start keeping track of visited names
+							// to be able to detect a cycle.
+							visited = new HashSet<>();
+						}
 						if (visited != null && !visited.add(nameRecord)) {
 							// Cycle detected!
 							logInvalidNameChain(pdom, binding);
@@ -113,12 +118,6 @@ public class IndexFileSet implements IIndexFileSet {
 										binding.getClass().getSimpleName(), iterationCount));
 							}
 							return true;
-						}
-						if (iterationCount >= 1000 && visited == null) {
-							// Iteration count is suspiciously high. Start keeping track of visited names
-							// to be able to detect a cycle.
-							visited = new HashSet<>();
-							visited.add(nameRecord);
 						}
 					}
 				}

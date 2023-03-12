@@ -164,13 +164,14 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//      (... + 1 * vals);
 	//      (vals + ... + 1 * 2);
 	//      (1 * 2 + ... + vals);
+	//      (...);
 	//  }
 	public void testFoldExpressionErrors() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
 		ICPPASTTemplateDeclaration tdef = getDeclaration(tu, 0);
 		IASTFunctionDefinition fdef = (IASTFunctionDefinition) tdef.getDeclaration();
-		for (int i = 0; i < 13; ++i) {
+		for (int i = 0; i < 14; ++i) {
 			IASTProblemExpression e = getExpressionOfStatement(fdef, i);
 		}
 	}

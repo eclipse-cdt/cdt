@@ -1287,7 +1287,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	@Override
 	public final IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) {
-		if (supportFoldExpression && leftChain != null && expr != null) {
+		if (supportFoldExpression && expr != null) {
 			int foldCount = 0;
 			int foldOpToken = 0;
 
@@ -1321,7 +1321,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 			// Valid fold-expression has single ellipsis.
 
-			if (foldCount == 1) {
+			if (foldCount == 1 && leftChain != null) {
 				BinaryOperator rightChain;
 				if (foldOp == null) {
 					// unary right fold, remove expression and use left chain as is

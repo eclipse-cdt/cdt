@@ -176,7 +176,7 @@ public final class CompositeValue implements IValue {
 	 * determined by the default member initializers only. Constructors are not considered
 	 * when determining the values of the fields.
 	 */
-	public static CompositeValue create(ICPPClassType classType) {
+	public static IValue create(ICPPClassType classType) {
 		return create(classType, 0);
 	}
 
@@ -185,10 +185,10 @@ public final class CompositeValue implements IValue {
 	 * determined by the default member initializers only. Constructors are not considered
 	 * when determining the values of the fields.
 	 */
-	public static CompositeValue create(ICPPClassType classType, int nestingLevel) {
+	public static IValue create(ICPPClassType classType, int nestingLevel) {
 		Set<ICPPClassType> recursionProtectionSet = fCreateInProgress.get();
 		if (!recursionProtectionSet.add(classType)) {
-			return new CompositeValue(null, ICPPEvaluation.EMPTY_ARRAY);
+			return IntegralValue.UNKNOWN;
 		}
 		try {
 			if (sDEBUG && nestingLevel > 0) {

@@ -21,10 +21,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Setup Maven
-      uses: stCarolas/setup-maven@v.4.5
-      with:
-        maven-version: 3.8.7
     - name: Install dependencies
       run: |
         sudo apt-get update && sudo apt-get install -y --no-install-recommends \

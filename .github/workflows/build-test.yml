@@ -31,10 +31,6 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Setup Maven
-      uses: stCarolas/setup-maven@v.4.5
-      with:
-        maven-version: 3.8.7
     - name: Install GCC & GDB & other build essentials
       run: |
         sudo apt-get -y install build-essential gcc g++ gdb gdbserver

@@ -59,7 +59,13 @@
 						<artifactId>tycho-eclipserun-plugin</artifactId>
 						<version>${tycho-version}</version>
 						<configuration>
-							<appArgLine>-application org.eclipse.ant.core.antRunner -buildfile customBuildCallbacks.xml build.index</appArgLine>
+							<applicationArgs>
+								<arg>-application</arg>
+								<arg>org.eclipse.ant.core.antRunner</arg>
+								<arg>-buildfile</arg>
+								<arg>customBuildCallbacks.xml</arg>
+								<arg>build.index</arg>
+							</applicationArgs>
 							<dependencies>
 								<dependency>
 									<artifactId>org.apache.ant</artifactId>

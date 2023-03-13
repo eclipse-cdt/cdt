@@ -49,12 +49,6 @@
 						<goals>
 							<goal>archive-products</goal>
 						</goals>
-						<configuration>
-							<formats>
-								<linux>tar.gz</linux>
-								<macosx>tar.gz</macosx>
-							</formats>
-						</configuration>
 					</execution>
 				</executions>
 				<configuration>
@@ -129,12 +123,6 @@
 								<goals>
 									<goal>archive-products</goal>
 								</goals>
-								<configuration>
-									<formats>
-										<linux>tar.gz</linux>
-										<macosx>tar.gz</macosx>
-									</formats>
-								</configuration>
 							</execution>
 						</executions>
 						<configuration>

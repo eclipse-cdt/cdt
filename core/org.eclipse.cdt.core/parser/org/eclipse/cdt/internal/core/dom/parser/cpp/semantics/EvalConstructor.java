@@ -160,10 +160,14 @@ public final class EvalConstructor extends CPPDependentEvaluation {
 			return this;
 		}
 		final ICPPClassType classType = (ICPPClassType) unwrappedType;
-		final CompositeValue compositeValue = CompositeValue.create(classType);
+		final IValue classObject = CompositeValue.create(classType);
 		ICPPEvaluation[] argList = evaluateArguments(fArguments, callSiteRecord, context);
-		EvalFixed constructedObject = new EvalFixed(fType, ValueCategory.PRVALUE, compositeValue);
+		EvalFixed constructedObject = new EvalFixed(fType, ValueCategory.PRVALUE, classObject);
 		CPPVariable binding = new CPPVariable(TEMP_NAME);
+
+		if (!(classObject instanceof CompositeValue compositeValue)) {
+			return constructedObject;
+		}
 
 		ActivationRecord localRecord = EvalFunctionCall.createActivationRecord(fConstructor.getParameters(), argList,
 				constructedObject);

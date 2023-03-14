@@ -37,7 +37,7 @@ public class ExecBuiltin implements ICPPExecution {
 			BUILTIN_CTZLL = 5, BUILTIN_POPCOUNT = 6, BUILTIN_POPCOUNTL = 7, BUILTIN_POPCOUNTLL = 8, BUILTIN_PARITY = 9,
 			BUILTIN_PARITYL = 10, BUILTIN_PARITYLL = 11, BUILTIN_ABS = 12, BUILTIN_LABS = 13, BUILTIN_LLABS = 14,
 			BUILTIN_CLRSB = 15, BUILTIN_CLRSBL = 16, BUILTIN_CLRSBLL = 17, BUILTIN_CLZ = 18, BUILTIN_CLZL = 19,
-			BUILTIN_CLZLL = 20;
+			BUILTIN_CLZLL = 20, BUILTIN_IS_CONSTANT_EVALUATED = 21;
 
 	private static IType intType = new CPPBasicType(Kind.eInt, 0);
 	private static IType longType = new CPPBasicType(Kind.eInt, CPPBasicType.IS_LONG);
@@ -100,6 +100,8 @@ public class ExecBuiltin implements ICPPExecution {
 			return executeBuiltinClz(record, context, longType);
 		case BUILTIN_CLZLL:
 			return executeBuiltinClz(record, context, longlongType);
+		case BUILTIN_IS_CONSTANT_EVALUATED:
+			return executeBuiltinIsConstantEvaluated(record, context, null);
 		}
 		return null;
 	}
@@ -262,6 +264,12 @@ public class ExecBuiltin implements ICPPExecution {
 		}
 
 		return new ExecReturn(new EvalFixed(intType, ValueCategory.PRVALUE, IntegralValue.create(result)));
+	}
+
+	private ICPPExecution executeBuiltinIsConstantEvaluated(ActivationRecord record, ConstexprEvaluationContext context,
+			IType argType) {
+		// Since this is only evaluated in constexpr evaluation context, return true
+		return new ExecReturn(new EvalFixed(intType, ValueCategory.PRVALUE, IntegralValue.create(1)));
 	}
 
 	@Override

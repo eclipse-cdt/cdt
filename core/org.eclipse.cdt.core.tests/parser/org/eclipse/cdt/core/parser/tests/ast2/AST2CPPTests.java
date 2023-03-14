@@ -13872,4 +13872,10 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableValue("shiftpack", 3);
 	}
+
+	// constexpr auto true_value = __builtin_is_constant_evaluated();
+	public void testBuiltinIsConstantEvaluated() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("true_value", 1);
+	}
 }

@@ -226,6 +226,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		ICPPExecution builtinClz = new ExecBuiltin(ExecBuiltin.BUILTIN_CLZ);
 		ICPPExecution builtinClzl = new ExecBuiltin(ExecBuiltin.BUILTIN_CLZL);
 		ICPPExecution builtinClzll = new ExecBuiltin(ExecBuiltin.BUILTIN_CLZLL);
+		ICPPExecution builtinIsConstantEvaluated = new ExecBuiltin(ExecBuiltin.BUILTIN_IS_CONSTANT_EVALUATED);
 
 		// Other Builtins (https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html) [incomplete]
 		function("void", "__builtin_abort");
@@ -358,6 +359,9 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 		function("_Decimal128", "__builtin_infd128");
 		function("float", "__builtin_inff");
 		function("long double", "__builtin_infl");
+		if (fCpp) {
+			function("bool", "__builtin_is_constant_evaluated", builtinIsConstantEvaluated);
+		}
 		function("int", "__builtin_isinf_sign", "...");
 		function("bool", "__builtin_isfinite", "double");
 		function("bool", "__builtin_isgreater", "float", "float");

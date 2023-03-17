@@ -84,7 +84,7 @@ public class MakefileProjectGenerator extends FMProjectGenerator {
 			}
 		}
 
-		entries.add(CoreModel.newOutputEntry(buildFolder.getFullPath()));
+		entries.add(CoreModel.newOutputEntry(project.getFullPath()));
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 	}

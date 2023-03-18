@@ -84,17 +84,23 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 	private ICPPEvaluation fEvaluation;
 	private IBinding fUserDefinedLiteralOperator;
 	private IASTImplicitName[] fImplicitNames;
+	private final boolean fUseChar8Type;
 
 	public CPPASTLiteralExpression(int kind, char[] value) {
-		this(kind, value, CharArrayUtils.EMPTY);
+		this(kind, value, CharArrayUtils.EMPTY, false);
 	}
 
-	public CPPASTLiteralExpression(int kind, char[] value, char[] numericCompilerSuffixes) {
+	public CPPASTLiteralExpression(int kind, char[] value, boolean useChar8Type) {
+		this(kind, value, CharArrayUtils.EMPTY, useChar8Type);
+	}
+
+	public CPPASTLiteralExpression(int kind, char[] value, char[] numericCompilerSuffixes, boolean useChar8Type) {
 		fKind = kind;
 		fSuffix = getSuffix(kind, value, CharArrayUtils.EMPTY);
 		fLiteral = getLiteral(value, fSuffix);
 		fNumericCompilerSuffixes = (numericCompilerSuffixes == null) ? CharArrayUtils.EMPTY : numericCompilerSuffixes;
 		fStringLiteralSize = -1;
+		fUseChar8Type = useChar8Type;
 	}
 
 	private CPPASTLiteralExpression(CPPASTLiteralExpression other) {
@@ -106,6 +112,7 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		fEvaluation = other.fEvaluation;
 		fUserDefinedLiteralOperator = other.fUserDefinedLiteralOperator;
 		fImplicitNames = other.fImplicitNames;
+		fUseChar8Type = other.fUseChar8Type;
 	}
 
 	@Override
@@ -436,11 +443,15 @@ public class CPPASTLiteralExpression extends ASTNode implements ICPPASTLiteralEx
 		case 'U':
 			return Kind.eChar32;
 		case 'u':
-			// Bug 526724 u8 should result in Kind.eChar
-			if (fLiteral[1] != '8') {
+			if (fLiteral[1] == '8') {
+				if (fUseChar8Type) {
+					return Kind.eChar8;
+				} else {
+					return Kind.eChar;
+				}
+			} else {
 				return Kind.eChar16;
 			}
-			//$FALL-THROUGH$
 		default:
 			return Kind.eChar;
 		}

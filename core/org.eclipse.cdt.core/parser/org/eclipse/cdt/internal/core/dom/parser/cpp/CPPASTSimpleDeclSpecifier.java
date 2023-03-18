@@ -85,6 +85,8 @@ public class CPPASTSimpleDeclSpecifier extends CPPASTBaseDeclSpecifier implement
 			return t_char;
 		case eWChar:
 			return t_wchar_t;
+		case eChar8:
+			return t_char8_t;
 		case eChar16:
 			return t_char16_t;
 		case eChar32:

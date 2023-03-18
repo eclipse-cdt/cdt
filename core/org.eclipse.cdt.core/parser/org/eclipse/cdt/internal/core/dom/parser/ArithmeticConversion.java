@@ -136,6 +136,7 @@ public abstract class ArithmeticConversion {
 			switch (kind) {
 			case eBoolean:
 			case eChar:
+			case eChar8:
 			case eChar16:
 			case eChar32:
 			case eInt:
@@ -240,6 +241,7 @@ public abstract class ArithmeticConversion {
 			switch (kind) {
 			case eBoolean:
 			case eChar:
+			case eChar8:
 			case eWChar:
 			case eChar16:
 				return createBasicType(Kind.eInt, domain.getModifier());
@@ -384,6 +386,7 @@ public abstract class ArithmeticConversion {
 			return n < (Integer.MAX_VALUE + 1L) * 2;
 
 		case eChar:
+		case eChar8:
 			return 0 <= n && n <= 0xFF;
 
 		case eChar16:
@@ -415,6 +418,7 @@ public abstract class ArithmeticConversion {
 	private static long getApproximateSize(IBasicType type) {
 		switch (type.getKind()) {
 		case eChar:
+		case eChar8:
 			return 1;
 		case eWChar:
 			return 2;

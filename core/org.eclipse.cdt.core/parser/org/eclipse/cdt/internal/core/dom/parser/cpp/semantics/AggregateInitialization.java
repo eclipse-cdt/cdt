@@ -261,7 +261,7 @@ class AggregateInitialization {
 		ICPPBasicType t = getBasicTypeFromArray(target);
 		if (t != null) {
 			Kind k = t.getKind();
-			return k == Kind.eChar || k == Kind.eChar16 || k == Kind.eChar32 || k == Kind.eWChar;
+			return k == Kind.eChar || k == Kind.eChar8 || k == Kind.eChar16 || k == Kind.eChar32 || k == Kind.eWChar;
 		}
 		return false;
 	}

@@ -119,6 +119,8 @@ public interface IToken {
 	int t_case = 62;
 	int t_catch = 63;
 	int t_char = 64;
+	/** @since 8.1 */
+	int t_char8_t = 8102;
 	/** @since 5.2 */
 	int t_char16_t = 5202;
 	/** @since 5.2 */

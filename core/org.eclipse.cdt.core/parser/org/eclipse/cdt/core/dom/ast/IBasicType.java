@@ -37,7 +37,9 @@ public interface IBasicType extends IType {
 		/** @since 5.10  */
 		eDecimal64,
 		/** @since 5.10  */
-		eDecimal128;
+		eDecimal128,
+		/** @since 8.1 */
+		eChar8;
 	}
 
 	/** @since 5.2 */

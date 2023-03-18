@@ -230,6 +230,7 @@ public class SizeofCalculator {
 		case eBoolean:
 			return sizeof_bool;
 		case eChar:
+		case eChar8:
 			return SIZE_1;
 		case eInt:
 			return type.isShort() ? sizeof_short

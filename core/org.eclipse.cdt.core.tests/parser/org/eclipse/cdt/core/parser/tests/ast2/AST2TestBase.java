@@ -157,6 +157,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 	private static Map<String, String> getStdCpp20Map() {
 		Map<String, String> map = getStdMap();
 		map.put("__cpp_impl_three_way_comparison", "201907L");
+		map.put("__cpp_char8_t", "201811L");
 		return map;
 	}
 

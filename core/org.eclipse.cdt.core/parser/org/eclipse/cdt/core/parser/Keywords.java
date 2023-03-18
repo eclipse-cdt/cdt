@@ -49,6 +49,8 @@ public class Keywords {
 	public static final String CASE = "case";
 	public static final String CATCH = "catch";
 	public static final String CHAR = "char";
+	/** @since 8.1 */
+	public static final String CHAR8_T = "char8_t";
 	/** @since 5.2 */
 	public static final String CHAR16_T = "char16_t";
 	/** @since 5.2 */
@@ -157,6 +159,8 @@ public class Keywords {
 	public static final char[] cCASE = "case".toCharArray();
 	public static final char[] cCATCH = "catch".toCharArray();
 	public static final char[] cCHAR = "char".toCharArray();
+	/** @since 8.1 */
+	public static final char[] cCHAR8_T = CHAR8_T.toCharArray();
 	/** @since 5.2 */
 	public static final char[] cCHAR16_T = CHAR16_T.toCharArray();
 	/** @since 5.2 */
@@ -393,6 +397,10 @@ public class Keywords {
 		ckeywords.put(Keywords.c_BOOL, IToken.t__Bool);
 		ckeywords.put(Keywords.c_COMPLEX, IToken.t__Complex);
 		ckeywords.put(Keywords.c_IMAGINARY, IToken.t__Imaginary);
+	}
+
+	private static void addCpp20(CharArrayIntMap cppkeywords) {
+		cppkeywords.put(Keywords.cCHAR8_T, IToken.t_char8_t);
 	}
 
 	private static void addCpp(CharArrayIntMap cppkeywords) {

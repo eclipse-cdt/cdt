@@ -247,6 +247,7 @@ public class TemplateArgumentDeduction {
 		case eInt128:
 		case eBoolean:
 		case eChar:
+		case eChar8:
 		case eChar16:
 		case eChar32:
 		case eWChar:

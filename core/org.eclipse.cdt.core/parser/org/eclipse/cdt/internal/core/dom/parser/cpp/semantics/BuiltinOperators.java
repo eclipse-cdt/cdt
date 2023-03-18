@@ -617,6 +617,7 @@ class BuiltinOperators {
 				return true;
 			case eBoolean:
 			case eChar:
+			case eChar8:
 			case eChar16:
 			case eChar32:
 			case eInt:
@@ -637,6 +638,7 @@ class BuiltinOperators {
 			switch (kind) {
 			case eBoolean:
 			case eChar:
+			case eChar8:
 			case eChar16:
 			case eChar32:
 			case eDouble:
@@ -664,6 +666,7 @@ class BuiltinOperators {
 			switch (kind) {
 			case eBoolean:
 			case eChar:
+			case eChar8:
 			case eChar16:
 			case eChar32:
 			case eInt:

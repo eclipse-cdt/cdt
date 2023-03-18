@@ -26,15 +26,27 @@ public abstract class AST2CPPTestBase extends AST2TestBase {
 	}
 
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
-		return parseAndCheckBindings(code, CPP);
+		return parseAndCheckBindings(code, ScannerKind.STD);
+	}
+
+	protected IASTTranslationUnit parseAndCheckBindings(String code, ScannerKind scannerKind) throws Exception {
+		return parseAndCheckBindings(code, CPP, scannerKind);
 	}
 
 	protected IASTTranslationUnit parseAndCheckBindings() throws Exception {
+		return parseAndCheckBindings(ScannerKind.STD);
+	}
+
+	protected IASTTranslationUnit parseAndCheckBindings(ScannerKind scannerKind) throws Exception {
 		String code = getAboveComment();
-		return parseAndCheckBindings(code);
+		return parseAndCheckBindings(code, scannerKind);
 	}
 
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
-		return getAssertionHelper(CPP);
+		return getAssertionHelper(ScannerKind.GNU);
+	}
+
+	protected BindingAssertionHelper getAssertionHelper(ScannerKind scannerKind) throws ParserException, IOException {
+		return getAssertionHelper(CPP, scannerKind);
 	}
 }

@@ -141,6 +141,12 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	public static final int t_decltype_auto = 18;
 
 	/**
+	 * <code>char8_t c;</code>
+	 * @since 8.1
+	 */
+	public static final int t_char8_t = 19;
+
+	/**
 	 * @since 5.1
 	 */
 	@Override

@@ -688,6 +688,9 @@ public class ASTStringUtil {
 			case IASTSimpleDeclSpecifier.t_wchar_t:
 				buffer.append(Keywords.WCHAR_T).append(' ');
 				break;
+			case IASTSimpleDeclSpecifier.t_char8_t:
+				buffer.append(Keywords.CHAR8_T).append(' ');
+				break;
 			case IASTSimpleDeclSpecifier.t_char16_t:
 				buffer.append(Keywords.CHAR16_T).append(' ');
 				break;

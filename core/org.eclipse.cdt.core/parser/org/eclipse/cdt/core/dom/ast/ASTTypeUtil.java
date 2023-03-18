@@ -451,6 +451,11 @@ public class ASTTypeUtil {
 					result.append(SPACE);
 				result.append(Keywords.WCHAR_T);
 				break;
+			case eChar8:
+				if (needSpace)
+					result.append(SPACE);
+				result.append(Keywords.CHAR8_T);
+				break;
 			case eChar16:
 				if (needSpace)
 					result.append(SPACE);

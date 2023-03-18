@@ -100,6 +100,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
 	private static final char[] CPP_IMPL_THREE_WAY_COMPARISON = "__cpp_impl_three_way_comparison".toCharArray(); //$NON-NLS-1$
+	private static final char[] CPP_CHAR8_T = "__cpp_char8_t".toCharArray(); //$NON-NLS-1$
 
 	// Standard built-ins
 	private static final ObjectStyleMacro __CDT_PARSER__ = new ObjectStyleMacro("__CDT_PARSER__".toCharArray(), //$NON-NLS-1$
@@ -353,6 +354,9 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		fIncludeSearchPath = configureIncludeSearchPath(new File(contextPath).getParentFile(), info);
 		setupMacroDictionary(configuration, info, language);
 
+		if (fMacroDictionary.containsKey(CPP_CHAR8_T)) {
+			fKeywords.put(Keywords.cCHAR8_T, IToken.t_char8_t);
+		}
 		if (fMacroDictionary.containsKey(CPP_IMPL_THREE_WAY_COMPARISON)) {
 			fLexOptions.fSupportThreeWayComparisonOperator = true;
 		}

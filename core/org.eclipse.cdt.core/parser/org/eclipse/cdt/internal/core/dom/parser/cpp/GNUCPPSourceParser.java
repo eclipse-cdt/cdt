@@ -209,6 +209,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private final boolean supportUserDefinedLiterals;
 	private final boolean supportGCCStyleDesignators;
 	private final boolean supportFoldExpression;
+	private final boolean supportChar8TypeLiterals;
 
 	private final IIndex index;
 	protected ICPPASTTranslationUnit translationUnit;
@@ -247,6 +248,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		fContextSensitiveTokens = createContextSensitiveTokenMap(config);
 		additionalNumericalSuffixes = scanner.getAdditionalNumericLiteralSuffixes();
 		supportFoldExpression = true;
+		supportChar8TypeLiterals = scanner.getMacroDefinitions().containsKey("__cpp_char8_t"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -672,6 +674,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		// Start of a postfix expression
 		case IToken.t_typename:
 		case IToken.t_char:
+		case IToken.t_char8_t:
 		case IToken.t_char16_t:
 		case IToken.t_char32_t:
 		case IToken.t_wchar_t:
@@ -2060,6 +2063,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		// simple-type-specifier braced-init-list
 		case IToken.t_typename:
 		case IToken.t_char:
+		case IToken.t_char8_t:
 		case IToken.t_char16_t:
 		case IToken.t_char32_t:
 		case IToken.t_wchar_t:
@@ -2253,7 +2257,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tUTF32CHAR:
 		case IToken.tUSER_DEFINED_CHAR_LITERAL:
 			t = consume();
-			literalExpr = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_char_constant, t.getImage());
+			literalExpr = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_char_constant, t.getImage(),
+					supportChar8TypeLiterals);
 			literalExprWithRange = setRange(literalExpr, t.getOffset(), t.getEndOffset());
 			break;
 		case IToken.t_false:
@@ -2349,7 +2354,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 		IToken t = consume();
 		ICPPASTLiteralExpression r = getNodeFactory().newLiteralExpression(IASTLiteralExpression.lk_string_literal,
-				t.getImage());
+				t.getImage(), supportChar8TypeLiterals);
 		return setRange(r, t.getOffset(), t.getEndOffset());
 	}
 
@@ -3723,6 +3728,13 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					if (encounteredTypename)
 						break declSpecifiers;
 					simpleType = IASTSimpleDeclSpecifier.t_wchar_t;
+					encounteredRawType = true;
+					endOffset = consume().getEndOffset();
+					break;
+				case IToken.t_char8_t:
+					if (encounteredTypename)
+						break declSpecifiers;
+					simpleType = IASTSimpleDeclSpecifier.t_char8_t;
 					encounteredRawType = true;
 					endOffset = consume().getEndOffset();
 					break;

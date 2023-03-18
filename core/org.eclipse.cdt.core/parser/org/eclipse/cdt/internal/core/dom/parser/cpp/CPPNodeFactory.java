@@ -584,12 +584,17 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 
 	@Override
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep) {
-		return new CPPASTLiteralExpression(kind, rep.toCharArray());
+		return new CPPASTLiteralExpression(kind, rep.toCharArray(), false);
+	}
+
+	@Override
+	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep, boolean useChar8Type) {
+		return new CPPASTLiteralExpression(kind, rep.toCharArray(), useChar8Type);
 	}
 
 	@Override
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep, char[] numericCompilerSuffixes) {
-		return new CPPASTLiteralExpression(kind, rep.toCharArray(), numericCompilerSuffixes);
+		return new CPPASTLiteralExpression(kind, rep.toCharArray(), numericCompilerSuffixes, false);
 	}
 
 	@Override

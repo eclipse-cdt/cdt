@@ -178,6 +178,7 @@ public class EvalTypeId extends CPPDependentEvaluation {
 				case eFloat128:
 				case eNullPtr:
 				case eChar:
+				case eChar8:
 				case eChar16:
 				case eChar32:
 				case eWChar:

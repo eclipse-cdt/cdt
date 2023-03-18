@@ -259,6 +259,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep);
 
 	/**
+	 * @since 8.1
+	 */
+	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep, boolean useChar8Type);
+
+	/**
 	 * @since 6.5
 	 */
 	public ICPPASTLiteralExpression newLiteralExpression(int kind, String rep, char[] numericCompilerSuffixes);

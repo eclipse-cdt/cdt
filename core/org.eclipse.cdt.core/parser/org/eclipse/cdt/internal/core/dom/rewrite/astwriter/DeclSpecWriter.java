@@ -117,6 +117,10 @@ public class DeclSpecWriter extends NodeWriter {
 			if (isCpp)
 				return Keywords.WCHAR_T;
 			break;
+		case IASTSimpleDeclSpecifier.t_char8_t:
+			if (isCpp)
+				return Keywords.CHAR8_T;
+			break;
 		case IASTSimpleDeclSpecifier.t_char16_t:
 			if (isCpp)
 				return Keywords.CHAR16_T;

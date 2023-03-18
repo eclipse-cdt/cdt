@@ -1014,6 +1014,7 @@ public class Conversions {
 						case eChar:
 						case eBoolean:
 						case eWChar:
+						case eChar8:
 						case eChar16:
 						case eUnspecified: // treat unspecified as int
 							if (!basicTgt.isUnsigned()) {
@@ -1405,6 +1406,13 @@ public class Conversions {
 				if (num instanceof Byte)
 					return num;
 				return Byte.valueOf(num.byteValue());
+			case eChar8: {
+				int intVal = num.intValue();
+				int maskedVal = intVal & 0xFF;
+				if (maskedVal == intVal && num instanceof Integer)
+					return num;
+				return Integer.valueOf(maskedVal);
+			}
 			case eChar16:
 				int intVal = num.intValue();
 				int maskedVal = intVal & 0xFFFF;

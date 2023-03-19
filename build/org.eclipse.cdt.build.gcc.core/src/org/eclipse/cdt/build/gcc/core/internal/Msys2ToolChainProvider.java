@@ -48,6 +48,9 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
 				String compKey = uninstallKey + '\\' + subkey;
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
+				if (displayName == null) {
+					continue;
+				}
 				if (on64bit) {
 					if (MSYS2_64BIT_NAMES.contains(displayName)) {
 						if (addToolChain64(manager, registry, compKey)) {

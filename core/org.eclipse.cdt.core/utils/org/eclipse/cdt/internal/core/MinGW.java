@@ -95,6 +95,9 @@ public class MinGW {
 			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
 				String compKey = uninstallKey + '\\' + subkey;
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
+				if (displayName == null) {
+					continue;
+				}
 				if (on64bit) {
 					if (MSYS2_64BIT_NAMES.contains(displayName)) {
 						String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
@@ -230,6 +233,9 @@ public class MinGW {
 			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
 				String compKey = uninstallKey + '\\' + subkey;
 				String displayName = registry.getCurrentUserValue(compKey, "DisplayName"); //$NON-NLS-1$
+				if (displayName == null) {
+					continue;
+				}
 				if (on64bit) {
 					if (MSYS2_64BIT_NAMES.contains(displayName)) {
 						String home = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$

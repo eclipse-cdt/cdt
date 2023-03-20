@@ -1,10 +1,6 @@
 name: Build and Test
 
-on:
-  push:
-    branches: [ "main", "cdt_11_0", "cdt_11_1" ]
-  pull_request:
-    branches: [ "main", "cdt_11_0", "cdt_11_1" ]
+on: [push, pull_request]
 
 jobs:
   build:

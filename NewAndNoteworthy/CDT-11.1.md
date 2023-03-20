@@ -24,4 +24,4 @@ See [Noteworthy issues and PRs](https://github.com/eclipse-cdt/cdt/issues?q=is%3
 
 # Bugs Fixed in this Release
 
-See [GitHub milestones](https://github.com/eclipse-cdt/cdt/milestone/3?closed=1)
+See GitHub milestones [11.1.0](https://github.com/eclipse-cdt/cdt/milestone/3?closed=1) [11.1.1](https://github.com/eclipse-cdt/cdt/milestone/6?closed=1)

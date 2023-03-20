@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.remote.proxy"
       label="%featureName"
-      version="11.1.0.qualifier"
+      version="11.1.1.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.remote.proxy.ui"
       license-feature="org.eclipse.license"

@@ -21,8 +21,6 @@ fi
 # just list out what needs to be copied where
 $ECHO $SSH mkdir -p "${DOWNLOAD}/releases/latest/"
 $ECHO $SCP ./releng/download/releases/latest/* "${SSHUSER}:${DOWNLOAD}/releases/latest/"
-$ECHO $SCP ./releng/download/releases/10.6/* "${SSHUSER}:${DOWNLOAD}/releases/10.6/"
-$ECHO $SCP ./releng/download/releases/10.7/* "${SSHUSER}:${DOWNLOAD}/releases/10.7/"
 $ECHO $SCP ./releng/download/releases/11.0/* "${SSHUSER}:${DOWNLOAD}/releases/11.0/"
 $ECHO $SCP ./releng/download/releases/11.1/* "${SSHUSER}:${DOWNLOAD}/releases/11.1/"
 
@@ -35,3 +33,5 @@ $ECHO $SCP ./releng/download/releases/9.5/* "${SSHUSER}:${ARCHIVE}/releases/9.5/
 $ECHO $SCP ./releng/download/releases/9.6/* "${SSHUSER}:${ARCHIVE}/releases/9.6/"
 $ECHO $SCP ./releng/download/releases/9.7/* "${SSHUSER}:${ARCHIVE}/releases/9.7/"
 $ECHO $SCP ./releng/download/releases/9.8/* "${SSHUSER}:${ARCHIVE}/releases/9.8/"
+$ECHO $SCP ./releng/download/releases/10.6/* "${SSHUSER}:${ARCHIVE}/releases/10.6/"
+$ECHO $SCP ./releng/download/releases/10.7/* "${SSHUSER}:${ARCHIVE}/releases/10.7/"

@@ -596,3 +596,11 @@ The class BuiltinDetctionArgsGeneric will be removed. Use the correctly
 spelled BuiltinDetectionArgsGeneric instead.
 
 - org.eclipse.cdt.jsoncdb.core.participant.Arglets.BuiltinDetctionArgsGeneric
+
+## API Removals after June 2025
+
+### <span id="FinalLaunchSequence">FinalLaunchSequence.stepRemoteConnection() and FinalLaunchSequence.stepAttachRemoteToDebugger() will be removed</span>
+
+These APIs will be removed and remote connection for attach launch will be moved in the implementation of `IGDBProcesses.attachDebuggerToProcess()`.
+
+See https://github.com/eclipse-cdt/cdt/pull/336

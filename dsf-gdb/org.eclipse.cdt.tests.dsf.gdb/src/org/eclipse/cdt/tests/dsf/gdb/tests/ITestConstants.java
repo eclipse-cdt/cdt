@@ -64,4 +64,9 @@ public class ITestConstants {
 
 	// Attribute that allows a test to request not to start gdbserver even if the session is a remote one
 	public static final String LAUNCH_GDB_SERVER = TestsPlugin.PLUGIN_ID + ".launchGdbServer";
+	// Attribute that tells whether gdbserver should be launched without program
+	public static final String LAUNCH_GDB_SERVER_WITHOUT_PROGRAM = TestsPlugin.PLUGIN_ID
+			+ ".launchGdbServerWithoutProgram";
+	// Attribute that tells whether gdbserver should be launched with --multi argument
+	public static final String LAUNCH_GDB_SERVER_MULTI = TestsPlugin.PLUGIN_ID + ".launchGdbServerMulti";
 }

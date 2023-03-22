@@ -1112,6 +1112,43 @@ public class SyncUtil {
 	}
 
 	/**
+	 * Utility method to return all the container DM contexts.
+	 *
+	 * <p>
+	 * This must NOT be called from the DSF executor.
+	 *
+	 * @return the process context
+	 * @throws InterruptedException
+	 * @throws TimeoutException
+	 * @throws ExecutionException
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IContainerDMContext[] getAllContainerContexts()
+			throws InterruptedException, ExecutionException, TimeoutException {
+		assert !fProcessesService.getExecutor().isInExecutorThread();
+
+		Query<IContainerDMContext[]> query = new Query<>() {
+			@Override
+			protected void execute(final DataRequestMonitor<IContainerDMContext[]> rm) {
+				fProcessesService.getProcessesBeingDebugged(fGdbControl.getContext(),
+						new ImmediateDataRequestMonitor<IDMContext[]>() {
+							@Override
+							protected void handleCompleted() {
+								if (isSuccess()) {
+									rm.done((IContainerDMContext[]) getData());
+								} else {
+									rm.done(getStatus());
+								}
+							}
+						});
+			}
+		};
+
+		fGdbControl.getExecutor().execute(query);
+		return query.get(TestsPlugin.massageTimeout(2000), TimeUnit.MILLISECONDS);
+	}
+
+	/**
 	 * Utility method to return all threads
 	 *
 	 * @return
@@ -1125,6 +1162,22 @@ public class SyncUtil {
 		assert !fProcessesService.getExecutor().isInExecutorThread();
 
 		final IContainerDMContext containerDmc = SyncUtil.getContainerContext();
+
+		return getExecutionContexts(containerDmc);
+	}
+
+	/**
+	 * Utility method to return all threads for given containerDmc
+	 * @param containerDmc
+	 * @return
+	 * @throws InterruptedException
+	 * @throws ExecutionException
+	 * @throws TimeoutException
+	 */
+	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
+	public static IMIExecutionDMContext[] getExecutionContexts(IContainerDMContext containerDmc)
+			throws InterruptedException, ExecutionException, TimeoutException {
+		assert !fProcessesService.getExecutor().isInExecutorThread();
 
 		Query<IMIExecutionDMContext[]> query = new Query<>() {
 			@Override

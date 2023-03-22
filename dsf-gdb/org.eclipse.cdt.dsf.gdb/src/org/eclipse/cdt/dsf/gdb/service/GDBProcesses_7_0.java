@@ -39,6 +39,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IProcessInfo;
 import org.eclipse.cdt.core.IProcessList;
+import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
@@ -75,6 +76,7 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.launching.GDBRemoteTCPLaunchTargetProvider;
 import org.eclipse.cdt.dsf.gdb.launching.InferiorRuntimeProcess;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -113,6 +115,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -126,6 +130,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 	 * Each one is shown in the debug view.
 	 */
 	private final static int MAX_NUMBER_EXITED_PROCESS = 5;
+	private final static String INVALID = "invalid"; //$NON-NLS-1$
 
 	// Below is the context hierarchy that is implemented between the
 	// MIProcesses service and the MIRunControl service for the MI
@@ -1216,13 +1221,6 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 						new Step() {
 							@Override
 							public void execute(RequestMonitor rm) {
-
-								if (isInitialProcess()) {
-									// To be proper, set the initialProcess variable to false
-									// it may be necessary for a class that extends this class
-									setIsInitialProcess(false);
-								}
-
 								// There is no groupId until we attach, so we can use the default groupId
 								fContainerDmc = createContainerContext(procCtx, MIProcesses.UNIQUE_GROUP_ID);
 
@@ -1240,6 +1238,12 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 						new Step() {
 							@Override
 							public void execute(RequestMonitor rm) {
+								if (fBackend.getSessionType() == SessionType.REMOTE && isInitialProcess()) {
+									// Uncomment following and remove rm.done() once FinalLaunchSequence.stepRemoteConnection() is removed
+									//									connectToTarget(procCtx, rm);
+									rm.done();
+									return;
+								}
 								// For non-stop mode, we do a non-interrupting attach
 								// Bug 333284
 								boolean shouldInterrupt = true;
@@ -1262,6 +1266,7 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 
 								// Store the fully formed container context so it can be returned to the caller.
 								dataRm.setData(fContainerDmc);
+								setIsInitialProcess(false);
 
 								// Initialize memory data for this process.
 								IGDBMemory memory = getServicesTracker().getService(IGDBMemory.class);
@@ -1299,6 +1304,61 @@ public class GDBProcesses_7_0 extends AbstractDsfService implements IGDBProcesse
 			dataRm.setStatus(
 					new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Invalid process context.", null)); //$NON-NLS-1$
 			dataRm.done();
+		}
+	}
+
+	/**
+	 * @since 7.1
+	 */
+	protected void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
+		ILaunch launch = procCtx.getAdapter(ILaunch.class);
+		assert launch != null;
+		if (launch != null) {
+			Map<String, Object> attributes = new HashMap<>();
+			try {
+				attributes.putAll(launch.getLaunchConfiguration().getAttributes());
+			} catch (CoreException e) {
+				rm.done(e.getStatus());
+				return;
+			}
+
+			if (launch instanceof ITargetedLaunch) {
+				ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
+				if (target != null) {
+					attributes.putAll(target.getAttributes());
+					String tcp = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, ""); //$NON-NLS-1$
+					if (!tcp.isEmpty()) {
+						attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, Boolean.parseBoolean(tcp));
+					} else {
+						attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+								target.getTypeId().equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID));
+					}
+				}
+			}
+
+			boolean isTcpConnection = CDebugUtils.getAttribute(attributes,
+					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, false);
+
+			if (isTcpConnection) {
+				String remoteTcpHost = CDebugUtils.getAttribute(attributes, IGDBLaunchConfigurationConstants.ATTR_HOST,
+						INVALID);
+				String remoteTcpPort = CDebugUtils.getAttribute(attributes, IGDBLaunchConfigurationConstants.ATTR_PORT,
+						INVALID);
+
+				fCommandControl.queueCommand(fCommandFactory.createMITargetSelect(fCommandControl.getContext(),
+						remoteTcpHost, remoteTcpPort, true), new ImmediateDataRequestMonitor<MIInfo>(rm));
+			} else {
+				String serialDevice = CDebugUtils.getAttribute(attributes, IGDBLaunchConfigurationConstants.ATTR_DEV,
+						INVALID);
+
+				fCommandControl.queueCommand(
+						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), serialDevice, true),
+						new ImmediateDataRequestMonitor<MIInfo>(rm));
+			}
+		} else {
+			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Cannot reconnect to target.", //$NON-NLS-1$
+					null));
+			rm.done();
 		}
 	}
 

@@ -19,7 +19,6 @@
  *     Anton Gorenkov - A preference to use RTTI for variable types determination (Bug 377536)
  *     Xavier Raynaud (Kalray) - Avoid duplicating fields in sub-classes (add protected accessors)
  *     Marc Khouzam (Ericsson) - Output the version of GDB at startup (Bug 455408)
- *     Jonathan Tousignant (NordiaSoft) - Remote session breakpoint (Bug 528145)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
@@ -39,7 +38,6 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.datamodel.DataModelInitializedEvent;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.debug.service.IProcesses.IProcessDMContext;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
@@ -52,7 +50,6 @@ import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIProcesses;
-import org.eclipse.cdt.dsf.mi.service.MIProcesses;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBVersionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
@@ -142,8 +139,6 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					"stepNewProcess", //$NON-NLS-1$
 					// For local attach launch only
 					"stepAttachToProcess", //$NON-NLS-1$
-					// For remote attach launch only
-					"stepAttachRemoteToDebugger", //$NON-NLS-1$
 					// Global
 					"stepDataModelInitializationComplete", //$NON-NLS-1$
 					"stepCleanup", //$NON-NLS-1$
@@ -647,23 +642,6 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					requestMonitor.done();
 				}
 			}
-		} else {
-			requestMonitor.done();
-		}
-	}
-
-	/**
-	 * If we are dealing with an remote attach session, perform the attach to debugger.
-	 * Bug 528145
-	 * @since 6.6
-	 */
-	@Execute
-	public void stepAttachRemoteToDebugger(final RequestMonitor requestMonitor) {
-		if (fGDBBackend.getIsAttachSession() && fGDBBackend.getSessionType() == SessionType.REMOTE) {
-			IProcessDMContext processContext = fProcService.createProcessContext(fCommandControl.getContext(),
-					MIProcesses.UNKNOWN_PROCESS_ID);
-			fProcService.attachDebuggerToProcess(processContext,
-					new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
 		} else {
 			requestMonitor.done();
 		}

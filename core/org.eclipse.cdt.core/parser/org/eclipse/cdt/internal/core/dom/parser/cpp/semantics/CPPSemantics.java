@@ -4099,9 +4099,10 @@ public class CPPSemantics {
 							ICPPFunctionType ft = func.getType();
 							IType[] pts = ft.getParameterTypes();
 							if ((enum1 != null && pts.length > 0
-									&& enum1.isSameType(getUltimateTypeUptoPointers(pts[0])))
-									|| (enum2 != null && pts.length > 1
-											&& enum2.isSameType(getUltimateTypeUptoPointers(pts[1])))) {
+									&& (CPPTemplates.isDependentType(pts[0])
+											|| enum1.isSameType(getUltimateTypeUptoPointers(pts[0]))))
+									|| (enum2 != null && pts.length > 1 && (CPPTemplates.isDependentType(pts[1])
+											|| enum2.isSameType(getUltimateTypeUptoPointers(pts[1]))))) {
 								items[j++] = object;
 							}
 						}

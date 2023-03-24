@@ -4221,6 +4221,22 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		helper.assertVariableValue("greater10", 1);
 	}
 
+	// template<typename T1, typename T2>
+	// constexpr int operator |(T1 t1, T2 t2) {
+	//    return t1 + t2;
+	// }
+	//
+	// enum X {
+	//    V1 = 17,
+	//    V2 = 25,
+	// };
+	//
+	// constexpr auto value = V1 | V2;
+	public void testBinaryOperatorOverloadTemplate() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper(CPP);
+		helper.assertVariableValue("value", 42);
+	}
+
 	// typedef int I;
 	// typedef int I;
 	// typedef I I;

@@ -8052,6 +8052,34 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 
+	//	namespace std {
+	//	template<typename _Tp, typename _Up = _Tp&&> _Up __declval(int);
+	//	template<typename _Tp> _Tp __declval(long);
+	//	template<typename _Tp> auto declval() noexcept -> decltype(__declval<_Tp>(0));
+	//	}
+	//
+	//	template <typename T>
+	//	using is_augmented_t = decltype (is_augmented (std::declval<T *> ()));
+	//
+	//	template <typename T, typename = is_augmented_t<T>>
+	//	constexpr T f(T x) { return x; }
+	//
+	//	template <typename T, typename = is_augmented_t<T>>
+	//	constexpr T g(T x) { return x; }
+	//
+	//	enum E { E1 = 42 };
+	//	void is_augmented(E *);
+	//
+	//	void is_augmented(int *);
+	//
+	//	constexpr int value_via_adl = f(E1);     // ADL via enumeration argument finds is_augmented(E*)
+	//	constexpr int value_no_adl = g(int(E1)); // Error: no ADL performed, is_augmented(int*) is not found
+	public void testSfinaeInDependentContext() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertVariableValue("value_via_adl", 42);
+		bh.assertProblem("g(int(E1))", 1);
+	}
+
 	//	typedef char (&no_tag)[1];
 	//	typedef char (&yes_tag)[2];
 	//

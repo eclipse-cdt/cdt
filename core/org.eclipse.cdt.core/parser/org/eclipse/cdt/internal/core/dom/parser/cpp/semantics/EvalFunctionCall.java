@@ -25,12 +25,14 @@ import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunctionType;
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -39,6 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
@@ -242,8 +245,20 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 			EvalFunctionSet functionSet = (EvalFunctionSet) args[0];
 			args[0] = functionSet.resolveFunction(Arrays.copyOfRange(args, 1, args.length));
 
-			// Propagate instantiation errors for SFINAE purposes.
 			if (args[0] == EvalFixed.INCOMPLETE) {
+				// Do not error if instantiation context is still a dependent template-id,
+				// as function set can still be resolved later via ADL.
+				if (CPPSemantics.getCurrentLookupPoint() instanceof ICPPASTTemplateId templateId) {
+					for (IASTNode argument : templateId.getTemplateArguments()) {
+						if (argument instanceof IASTTypeId typeId) {
+							if (CPPVisitor.createType(typeId) instanceof ICPPTemplateParameter) {
+								return this;
+							}
+						}
+					}
+				}
+
+				// Propagate instantiation errors for SFINAE purposes.
 				return args[0];
 			}
 

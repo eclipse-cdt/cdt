@@ -94,6 +94,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignator;
@@ -2443,7 +2444,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		if (LT(1) == IToken.tLPAREN) {
-			ICPPASTFunctionDeclarator dtor = functionDeclarator(true);
+			ICPPASTFunctionDeclarator dtor = functionDeclarator((IASTName) null, (IASTDeclSpecifier) null, true);
 			lambdaExpr.setDeclarator(dtor);
 			if (LT(1) == IToken.tEOC)
 				return setRange(lambdaExpr, offset, calculateEndOffset(dtor));
@@ -4292,7 +4293,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private void verifyDtor(IASTDeclSpecifier declspec, IASTDeclarator dtor, DeclarationOptions opt)
 			throws BacktrackException {
 		if (CPPVisitor.doesNotSpecifyType(declspec)) {
-			if (ASTQueries.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator) {
+			if (ASTQueries.findTypeRelevantDeclarator(dtor) instanceof IASTFunctionDeclarator typeRelevantDtor) {
+				if (typeRelevantDtor instanceof ICPPASTDeductionGuide) {
+					return;
+				}
 				boolean isQualified = false;
 				IASTName name = ASTQueries.findInnermostDeclarator(dtor).getName();
 				if (name instanceof ICPPASTQualifiedName) {
@@ -4373,7 +4377,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 */
 	private IASTDeclarator initDeclarator(DtorStrategy strategy, IASTDeclSpecifier declspec, DeclarationOptions option)
 			throws EndOfFileException, BacktrackException, FoundAggregateInitializer {
-		final IASTDeclarator dtor = declarator(strategy, option);
+		final IASTDeclarator dtor = declarator(strategy, declspec, option);
 		if (option.fAllowInitializer) {
 			final IASTDeclarator typeRelevantDtor = ASTQueries.findTypeRelevantDeclarator(dtor);
 			if (option != DeclarationOptions.PARAMETER && typeRelevantDtor instanceof IASTFunctionDeclarator) {
@@ -4767,7 +4771,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 * @throws BacktrackException
 	 *			 request a backtrack
 	 */
-	protected IASTDeclarator declarator(DtorStrategy strategy, DeclarationOptions option)
+	protected IASTDeclarator declarator(DtorStrategy strategy, IASTDeclSpecifier declspec, DeclarationOptions option)
 			throws EndOfFileException, BacktrackException {
 		final int startingOffset = LA(1).getOffset();
 		int endOffset = startingOffset;
@@ -4810,7 +4814,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			final IASTName declaratorName = !option.fRequireSimpleName ? qualifiedName() : identifier();
 			endOffset = calculateEndOffset(declaratorName);
 			return declarator(pointerOps, hasEllipsis, declaratorName, null, startingOffset, endOffset, strategy,
-					option, attributes);
+					declspec, option, attributes);
 		}
 
 		if (lt1 == IToken.tLPAREN) {
@@ -4821,7 +4825,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				final IToken mark = mark();
 				try {
 					cand1 = declarator(pointerOps, hasEllipsis, getNodeFactory().newName(), null, startingOffset,
-							endOffset, strategy, option, attributes);
+							endOffset, strategy, declspec, option, attributes);
 					if (option.fRequireAbstract || !option.fAllowNested || hasEllipsis)
 						return cand1;
 
@@ -4835,7 +4839,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			if (!option.fAllowNested || hasEllipsis) {
 				if (option.fAllowAbstract) {
 					return declarator(pointerOps, hasEllipsis, getNodeFactory().newName(), null, startingOffset,
-							endOffset, strategy, option, attributes);
+							endOffset, strategy, declspec, option, attributes);
 				}
 				throwBacktrack(LA(1));
 			}
@@ -4846,10 +4850,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				if (LT(1) == IToken.tRPAREN)
 					throwBacktrack(LA(1));
 
-				final IASTDeclarator nested = declarator(DtorStrategy.PREFER_FUNCTION, option);
+				final IASTDeclarator nested = declarator(DtorStrategy.PREFER_FUNCTION, declspec, option);
 				endOffset = consume(IToken.tRPAREN).getEndOffset();
 				final IASTDeclarator cand2 = declarator(pointerOps, hasEllipsis, getNodeFactory().newName(), nested,
-						startingOffset, endOffset, strategy, option, attributes);
+						startingOffset, endOffset, strategy, declspec, option, attributes);
 				if (cand1 == null || cand1End == null)
 					return cand2;
 				final IToken cand2End = LA(1);
@@ -4877,7 +4881,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				throwBacktrack(LA(1));
 		}
 		return declarator(pointerOps, hasEllipsis, getNodeFactory().newName(), null, startingOffset, endOffset,
-				strategy, option, attributes);
+				strategy, declspec, option, attributes);
 	}
 
 	/**
@@ -5000,15 +5004,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private IASTDeclarator declarator(List<? extends IASTPointerOperator> pointerOps, boolean hasEllipsis,
 			IASTName declaratorName, IASTDeclarator nestedDeclarator, int startingOffset, int endOffset,
-			DtorStrategy strategy, DeclarationOptions option, List<IASTAttributeSpecifier> attributes)
-			throws EndOfFileException, BacktrackException {
+			DtorStrategy strategy, IASTDeclSpecifier declspec, DeclarationOptions option,
+			List<IASTAttributeSpecifier> attributes) throws EndOfFileException, BacktrackException {
 		ICPPASTDeclarator result = null;
 		loop: while (true) {
 			final int lt1 = LTcatchEOF(1);
 			switch (lt1) {
 			case IToken.tLPAREN:
 				if (option.fAllowFunctions && strategy == DtorStrategy.PREFER_FUNCTION) {
-					result = functionDeclarator(false);
+					result = functionDeclarator(declaratorName, declspec, false);
 					setDeclaratorID(result, hasEllipsis, declaratorName, nestedDeclarator);
 				}
 				break loop;
@@ -5087,15 +5091,46 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 	/**
+	 * Parse a function declarator or a deduction guide, starting with the left parenthesis.
+	 */
+	private ICPPASTFunctionDeclarator functionDeclarator(IASTName declaratorName, IASTDeclSpecifier declspec,
+			boolean isLambdaDeclarator) throws EndOfFileException, BacktrackException {
+		final IToken mark = mark();
+
+		ICPPASTFunctionDeclarator fc = getNodeFactory().newFunctionDeclarator(null);
+		functionDeclarator(fc, isLambdaDeclarator);
+
+		// Test if this is a deduction guide and retry with correct object type
+		final IASTTypeId typeId = fc.getTrailingReturnType();
+		if (!isLambdaDeclarator && typeId != null && CPPVisitor.doesNotSpecifyType(declspec) && declaratorName != null
+				&& typeId.getDeclSpecifier() instanceof IASTNamedTypeSpecifier namedTypeSpec
+				&& namedTypeSpec.getName() instanceof ICPPASTTemplateId templateId) {
+
+			if (CharArrayUtils.equals(templateId.getTemplateName().getLookupKey(), declaratorName.getLookupKey())) {
+				if (declspec instanceof ICPPASTSimpleDeclSpecifier simpleDeclSpecifier) {
+					// TODO: This enables auto type resolution from return type, validate implementation in CreateType()
+					simpleDeclSpecifier.setType(IASTSimpleDeclSpecifier.t_auto);
+				}
+
+				backup(mark);
+
+				fc = getNodeFactory().newDeductionGuide();
+				functionDeclarator(fc, isLambdaDeclarator);
+			}
+		}
+
+		return fc;
+	}
+
+	/**
 	 * Parse a function declarator starting with the left parenthesis.
 	 */
-	private ICPPASTFunctionDeclarator functionDeclarator(boolean isLambdaDeclarator)
+	private void functionDeclarator(final ICPPASTFunctionDeclarator fc, boolean isLambdaDeclarator)
 			throws EndOfFileException, BacktrackException {
 		IToken last = consume(IToken.tLPAREN);
 		final int startOffset = last.getOffset();
 		int endOffset = last.getEndOffset();
 
-		final ICPPASTFunctionDeclarator fc = getNodeFactory().newFunctionDeclarator(null);
 		ICPPASTParameterDeclaration pd = null;
 		paramLoop: while (true) {
 			switch (LT(1)) {
@@ -5245,7 +5280,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			endOffset = calculateEndOffset(typeId);
 		}
 
-		return setRange(fc, startOffset, endOffset);
+		setRange(fc, startOffset, endOffset);
 	}
 
 	/**

@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
@@ -544,7 +545,10 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			return createTypeDef(parent, declSpecifier, declarator);
 		}
 		IASTDeclarator typeRelevant = ASTQueries.findTypeRelevantDeclarator(declarator);
-		if (typeRelevant instanceof IASTFunctionDeclarator) {
+		if (typeRelevant instanceof ICPPASTDeductionGuide) {
+			// TODO [cmodel] deduction guide
+			return null;
+		} else if (typeRelevant instanceof IASTFunctionDeclarator) {
 			return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator) typeRelevant, isTemplate);
 		}
 		return createVariable(parent, declSpecifier, declarator, isTemplate);

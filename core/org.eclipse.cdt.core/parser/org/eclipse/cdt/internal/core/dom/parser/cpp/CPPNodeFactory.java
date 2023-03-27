@@ -77,6 +77,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDecltypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeleteExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDesignatedInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -575,6 +576,11 @@ public class CPPNodeFactory extends NodeFactory implements ICPPNodeFactory {
 	public ICPPASTFoldExpression newFoldExpression(int operator, boolean fIsComma, IASTExpression lhs,
 			IASTExpression rhs) {
 		return new CPPASTFoldExpression(operator, fIsComma, lhs, rhs);
+	}
+
+	@Override
+	public ICPPASTDeductionGuide newDeductionGuide() {
+		return new CPPASTDeductionGuide();
 	}
 
 	@Override

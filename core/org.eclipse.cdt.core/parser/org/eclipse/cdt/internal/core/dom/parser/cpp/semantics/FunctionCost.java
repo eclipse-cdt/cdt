@@ -28,12 +28,16 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassConstructorDeductionGuide;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassConstructorTemplateDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPCopyDeductionCandidate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUserDefinedDeductionGuide;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.TypeSelection;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost.DeferredUDC;
@@ -195,6 +199,10 @@ class FunctionCost {
 			if (cmp != 0)
 				return cmp;
 
+			cmp = compareAsDeductionGuides(f1, f2);
+			if (cmp != 0)
+				return cmp;
+
 			// At this point prefer non-index bindings
 			return -CPPSemantics.compareByRelevance(tu, f1, f2);
 		}
@@ -203,6 +211,43 @@ class FunctionCost {
 			return -1;
 
 		return 1;
+	}
+
+	private int compareAsDeductionGuides(ICPPFunction f1, ICPPFunction f2) {
+		ICPPFunction deductionCandidate = asTemplate(f1);
+		if (deductionCandidate == null) {
+			deductionCandidate = f1;
+		}
+		ICPPFunction otherDeductionCandidate = asTemplate(f2);
+		if (otherDeductionCandidate == null) {
+			otherDeductionCandidate = f2;
+		}
+
+		// 16.3.3-1.12 F1 is generated from a deduction-guide and F2 is not
+		final boolean isUserDefinedDeductionGuide = deductionCandidate instanceof ICPPUserDefinedDeductionGuide;
+		final boolean otherUserDefinedDeductionGuide = otherDeductionCandidate instanceof ICPPUserDefinedDeductionGuide;
+
+		if (isUserDefinedDeductionGuide != otherUserDefinedDeductionGuide) {
+			return isUserDefinedDeductionGuide ? -1 : 1;
+		}
+
+		// 16.3.3-1.13 F1 is the copy deduction candidate and F2 is not
+		final boolean isCopyDeductionCandidate = deductionCandidate instanceof ICPPCopyDeductionCandidate;
+		final boolean otherCopyDeductionCandidate = otherDeductionCandidate instanceof ICPPCopyDeductionCandidate;
+
+		if (isCopyDeductionCandidate != otherCopyDeductionCandidate) {
+			return isCopyDeductionCandidate ? -1 : 1;
+		}
+
+		// 16.3.3-1.14 F1 is generated from a non-template constructor and F2 is generated from a constructor template
+		final boolean isFromNonTemplateConstructor = deductionCandidate instanceof ICPPClassConstructorDeductionGuide;
+		final boolean otherFromTemplateConstructor = otherDeductionCandidate instanceof ICPPClassConstructorTemplateDeductionGuide;
+
+		if (isFromNonTemplateConstructor && otherFromTemplateConstructor) {
+			return -1;
+		}
+
+		return 0;
 	}
 
 	private int overridesUsingDeclaration(ICPPFunction f1, ICPPFunction f2) {

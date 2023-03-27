@@ -118,6 +118,7 @@ public interface IScope {
 		private boolean fPrefixLookup;
 		private boolean fIgnorePointOfDeclaration;
 		private boolean fArgumentDependent;
+		private boolean fDeductionGuidesOnly = false;
 
 		public ScopeLookupData(IASTName name, boolean resolve, boolean prefixLookup) {
 			if (name == null)
@@ -172,6 +173,11 @@ public interface IScope {
 			fArgumentDependent = argumentDependent;
 		}
 
+		/** @since 8.1 */
+		public final void setDeductionGuidesOnly(boolean deductionGuidesOnly) {
+			fDeductionGuidesOnly = deductionGuidesOnly;
+		}
+
 		public final void setLookupKey(char[] key) {
 			fLookupKey = key;
 		}
@@ -199,6 +205,11 @@ public interface IScope {
 		/** @since 6.3 */
 		public final boolean isArgumentDependent() {
 			return fArgumentDependent;
+		}
+
+		/** @since 8.1 */
+		public final boolean isDeductionGuidesOnly() {
+			return fDeductionGuidesOnly;
 		}
 
 		public final IIndexFileSet getIncludedFiles() {

@@ -73,13 +73,17 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 	@Override
 	public CPPASTFunctionDeclarator copy(CopyStyle style) {
 		CPPASTFunctionDeclarator copy = new CPPASTFunctionDeclarator();
-		copy.varArgs = varArgs;
-		copy.pureVirtual = pureVirtual;
-		copy.isVolatile = isVolatile;
-		copy.isConst = isConst;
-		copy.isMutable = isMutable;
-		copy.refQualifier = refQualifier;
-		copy.isConstexpr = isConstexpr;
+		return copy(copy, style);
+	}
+
+	protected <T extends CPPASTFunctionDeclarator> T copy(T copy, CopyStyle style) {
+		copy.setVarArgs(varArgs);
+		copy.setPureVirtual(pureVirtual);
+		copy.setVolatile(isVolatile);
+		copy.setConst(isConst);
+		copy.setMutable(isMutable);
+		copy.setRefQualifier(refQualifier);
+		copy.setConstexpr(isConstexpr);
 
 		for (IASTParameterDeclaration param : getParameters()) {
 			copy.addParameterDeclaration(param == null ? null : param.copy(style));
@@ -97,7 +101,7 @@ public class CPPASTFunctionDeclarator extends CPPASTDeclarator implements ICPPAS
 		for (ICPPASTVirtSpecifier virtSpecifier : getVirtSpecifiers()) {
 			copy.addVirtSpecifier(virtSpecifier.copy(style));
 		}
-		return copy(copy, style);
+		return super.copy(copy, style);
 	}
 
 	@Override

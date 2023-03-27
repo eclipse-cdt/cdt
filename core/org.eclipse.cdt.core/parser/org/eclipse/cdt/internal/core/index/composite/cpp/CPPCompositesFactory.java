@@ -36,6 +36,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -753,6 +754,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 					return new CompositeCPPConstructorTemplate(this, (ICPPConstructor) binding);
 				} else if (binding instanceof ICPPMethod) {
 					return new CompositeCPPMethodTemplate(this, (ICPPMethod) binding);
+				} else if (binding instanceof ICPPDeductionGuide guide) {
+					return new CompositeCPPDeductionGuideTemplate(this, guide);
 				} else if (binding instanceof ICPPFunctionTemplate) {
 					return new CompositeCPPFunctionTemplate(this, (ICPPFunction) binding);
 				} else if (binding instanceof ICPPAliasTemplate) {
@@ -810,6 +813,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			} else if (binding instanceof ICPPEnumeration) {
 				ICPPEnumeration def = (ICPPEnumeration) findOneBinding(binding);
 				result = def == null ? null : new CompositeCPPEnumeration(this, def);
+			} else if (binding instanceof ICPPDeductionGuide guide) {
+				result = new CompositeCPPDeductionGuide(this, guide);
 			} else if (binding instanceof ICPPFunction) {
 				result = new CompositeCPPFunction(this, (ICPPFunction) binding);
 			} else if (binding instanceof ICPPInternalEnumerator) {

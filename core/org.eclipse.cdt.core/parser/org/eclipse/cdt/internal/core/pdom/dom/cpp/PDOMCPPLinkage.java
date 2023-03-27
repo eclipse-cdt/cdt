@@ -60,6 +60,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
@@ -851,6 +852,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			if (parent instanceof PDOMCPPClassType || parent instanceof PDOMCPPClassSpecialization) {
 				pdomBinding = new PDOMCPPMethod(this, parent, (ICPPMethod) binding);
 			}
+		} else if (binding instanceof ICPPDeductionGuide guide) {
+			if (guide.getFunctionBinding() instanceof ICPPFunctionTemplate) {
+				pdomBinding = new PDOMCPPDeductionGuideTemplate(this, parent, guide);
+			} else {
+				pdomBinding = new PDOMCPPDeductionGuide(this, parent, guide);
+			}
 		} else if (binding instanceof ICPPFunction) {
 			pdomBinding = new PDOMCPPFunction(this, parent, (ICPPFunction) binding, true);
 		} else if (binding instanceof ICPPNamespaceAlias) {
@@ -1137,6 +1144,12 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		} else if (binding instanceof ICPPMethod) {
 			// this must be before functions
 			return CPPMETHOD;
+		} else if (binding instanceof ICPPDeductionGuide guide) {
+			if (guide.getFunctionBinding() instanceof ICPPFunctionTemplate) {
+				return CPP_DEDUCTION_GUIDE_TEMPLATE;
+			} else {
+				return CPP_DEDUCTION_GUIDE;
+			}
 		} else if (binding instanceof ICPPFunction) {
 			return CPPFUNCTION;
 		} else if (binding instanceof ICPPUnknownBinding) {
@@ -1403,6 +1416,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPFieldTemplatePartialSpecialization(this, record);
 		case CPP_ALIAS_TEMPLATE_SPECIALIZATION:
 			return new PDOMCPPAliasTemplateSpecialization(this, record);
+		case CPP_DEDUCTION_GUIDE:
+			return new PDOMCPPDeductionGuide(this, record);
+		case CPP_DEDUCTION_GUIDE_TEMPLATE:
+			return new PDOMCPPDeductionGuideTemplate(this, record);
 		}
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;

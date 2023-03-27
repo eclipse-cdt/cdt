@@ -253,6 +253,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	public ICPPASTFoldExpression newFoldExpression(int opToken, boolean isComma, IASTExpression lhs,
 			IASTExpression rhs);
 
+	/**
+	 * @since 8.1
+	 */
+	public ICPPASTDeductionGuide newDeductionGuide();
+
 	public ICPPASTLinkageSpecification newLinkageSpecification(String literal);
 
 	@Override

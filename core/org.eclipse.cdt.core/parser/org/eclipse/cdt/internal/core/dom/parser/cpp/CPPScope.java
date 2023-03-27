@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceScope;
@@ -226,6 +227,12 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 						CCorePlugin.log(e);
 					}
 				}
+
+				// Deduction guides are not visible to ordinary name lookup
+				if (result.length > 0) {
+					result = ArrayUtil.filter(result, lookup.isDeductionGuidesOnly() ? CPPSemantics.opIsDeductionGuide
+							: CPPSemantics.opIsNotDeductionGuide);
+				}
 			}
 		}
 
@@ -311,6 +318,11 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 			}
 		} else {
 			binding = (IBinding) candidate;
+		}
+
+		// Deduction guides are not visible to ordinary name lookup
+		if (lookup.isDeductionGuidesOnly() ^ binding instanceof ICPPDeductionGuide) {
+			return result;
 		}
 
 		if (binding != null)

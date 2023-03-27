@@ -117,6 +117,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTEnumerationSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
@@ -212,6 +213,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplate;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeductionGuide;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
@@ -883,6 +885,7 @@ public class CPPVisitor extends ASTQueries {
 			binding = scope.getBinding(name, forceResolve);
 		}
 
+		boolean isDeductionGuide = false;
 		boolean isFunction = false;
 		if (parent instanceof ICPPASTFunctionDefinition) {
 			isFunction = true;
@@ -908,6 +911,9 @@ public class CPPVisitor extends ASTQueries {
 				binding = td;
 			} else if (typeRelevantDtor instanceof IASTFunctionDeclarator) {
 				// Function declaration via function declarator.
+				if (typeRelevantDtor instanceof ICPPASTDeductionGuide) {
+					isDeductionGuide = true;
+				}
 				isFunction = true;
 			} else {
 				// Looks like a variable declaration.
@@ -991,9 +997,15 @@ public class CPPVisitor extends ASTQueries {
 			} else {
 				binding = template ? (ICPPFunction) new CPPFunctionTemplate(name) : new CPPFunction(typeRelevantDtor);
 			}
-			binding = CPPSemantics.checkDeclSpecifier(binding, name, parent);
-			if (isFriendDecl && scope instanceof IASTInternalScope) {
-				((IASTInternalScope) scope).addBinding(binding);
+
+			if (isDeductionGuide) {
+				binding = new CPPDeductionGuide(typeRelevantDtor, (ICPPFunction) binding);
+			} else {
+				binding = CPPSemantics.checkDeclSpecifier(binding, name, parent);
+
+				if (isFriendDecl && scope instanceof IASTInternalScope) {
+					((IASTInternalScope) scope).addBinding(binding);
+				}
 			}
 		}
 
@@ -2473,7 +2485,7 @@ public class CPPVisitor extends ASTQueries {
 		return autoInitClause;
 	}
 
-	private static ICPPASTInitializerClause getAutoInitClauseForDeclarator(IASTDeclarator declarator) {
+	protected static ICPPASTInitializerClause getAutoInitClauseForDeclarator(IASTDeclarator declarator) {
 		IASTInitializer initClause = declarator.getInitializer();
 		return getInitClauseForInitializer(initClause);
 	}

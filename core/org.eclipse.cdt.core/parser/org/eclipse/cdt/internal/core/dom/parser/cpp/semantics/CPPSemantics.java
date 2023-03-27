@@ -157,12 +157,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassConstructorDeductionGuide;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassConstructorTemplateDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPCopyDeductionCandidate;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
@@ -188,6 +192,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateTypeParameter;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPUserDefinedDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
@@ -224,10 +229,14 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBuiltinParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPCompositeBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeferredFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespace;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNamespaceScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPParameter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope;
@@ -273,6 +282,13 @@ public class CPPSemantics {
 
 	private static final char[] CALL_FUNCTION = "call-function".toCharArray(); //$NON-NLS-1$
 	private static final ICPPEvaluation[] NO_INITCLAUSE_EVALUATION = {};
+
+	public static final IUnaryPredicate<IBinding> opIsDeductionGuide = (argument) -> {
+		return argument instanceof ICPPDeductionGuide;
+	};
+	public static final IUnaryPredicate<IBinding> opIsNotDeductionGuide = (argument) -> {
+		return !(argument instanceof ICPPDeductionGuide);
+	};
 
 	// Set to true for debugging.
 	public static boolean traceBindingResolution = false;
@@ -399,6 +415,289 @@ public class CPPSemantics {
 		return postResolution(binding, data);
 	}
 
+	private static IBinding doClassTemplateArgumentDeduction(ICPPClassTemplate classTemplate, LookupData data) {
+		// Implementation common to all candidate function non-templates
+		class CTADDeductionCandidateProbeFunction extends CPPFunction {
+			ICPPFunction method;
+			ICPPFunctionType functionType;
+
+			public CTADDeductionCandidateProbeFunction(ICPPFunction method) {
+				super(null);
+				this.method = method;
+			}
+
+			@Override
+			public char[] getNameCharArray() {
+				return method.getNameCharArray();
+			}
+
+			@Override
+			public ICPPFunctionType getType() {
+				if (functionType == null) {
+					ICPPFunctionType ft = method.getType();
+					functionType = new CPPFunctionType(ft.getReturnType(), ft.getParameterTypes(),
+							ft.getNoexceptSpecifier(), ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(),
+							ft.isRValueReference(), ft.takesVarArgs());
+				}
+
+				return functionType;
+			}
+
+			@Override
+			public IType[] getExceptionSpecification() {
+				return method.getExceptionSpecification();
+			}
+
+			@Override
+			public ICPPParameter[] getParameters() {
+				return method.getParameters();
+			}
+
+			@Override
+			public boolean takesVarArgs() {
+				return method.takesVarArgs();
+			}
+
+			@Override
+			public boolean hasParameterPack() {
+				return method.hasParameterPack();
+			}
+		}
+
+		// Implementation common to all candidate function templates
+		class CTADDeductionCandidateProbeFunctionTemplate extends CPPFunctionTemplate {
+			ICPPClassTemplate classTemplate;
+			ICPPFunction method;
+			boolean isClassConstructor;
+			private ICPPTemplateParameter[] deductionTemplateParameters;
+			ICPPFunctionType functionType;
+
+			private final void resetCachedValues() {
+				deductionTemplateParameters = null;
+				functionType = null;
+			}
+
+			public CTADDeductionCandidateProbeFunctionTemplate(ICPPClassTemplate classTemplate) {
+				super(null);
+				this.classTemplate = classTemplate;
+			}
+
+			public CTADDeductionCandidateProbeFunctionTemplate(ICPPClassTemplate classTemplate, ICPPFunction method,
+					boolean isClassConstructor) {
+				this(classTemplate);
+				setMethod(method);
+				setIsClassConstructor(isClassConstructor);
+			}
+
+			protected void setMethod(ICPPFunction method) {
+				this.method = method;
+				resetCachedValues(); // Force recalculation of type and template args
+			}
+
+			protected void setIsClassConstructor(boolean isClassConstructor) {
+				this.isClassConstructor = isClassConstructor;
+				resetCachedValues(); // Force recalculation of type and template args
+			}
+
+			@Override
+			public char[] getNameCharArray() {
+				return method.getNameCharArray();
+			}
+
+			@Override
+			public ICPPFunctionType getType() {
+				if (functionType == null) {
+					ICPPFunctionType ft = method.getType();
+					IType returnType;
+					if (isClassConstructor) {
+						returnType = (ICPPClassType) classTemplate.asDeferredInstance();
+					} else {
+						returnType = ft.getReturnType();
+					}
+					functionType = new CPPFunctionType(returnType, ft.getParameterTypes(), ft.getNoexceptSpecifier(),
+							ft.isConst(), ft.isVolatile(), ft.hasRefQualifier(), ft.isRValueReference(),
+							ft.takesVarArgs());
+				}
+
+				return functionType;
+			}
+
+			@Override
+			public IType[] getExceptionSpecification() {
+				//return method.getExceptionSpecification();
+				// TODO: this requires class owner; see if exception specification is required to implement CTAD
+				return IType.EMPTY_TYPE_ARRAY;
+			}
+
+			@Override
+			public ICPPParameter[] getParameters() {
+				return method.getParameters();
+			}
+
+			@Override
+			public boolean takesVarArgs() {
+				return method.takesVarArgs();
+			}
+
+			@Override
+			public boolean hasParameterPack() {
+				return method.hasParameterPack();
+			}
+
+			@Override
+			public ICPPTemplateParameter[] getTemplateParameters() {
+				// TODO: make sure template parameter identifiers are consistent with where parameters are coming from
+				// Maybe need to re-instantiate all of them?
+				if (deductionTemplateParameters == null) {
+					ICPPTemplateParameter[] candParams = ICPPTemplateParameter.EMPTY_TEMPLATE_PARAMETER_ARRAY;
+					if (isClassConstructor) {
+						candParams = ArrayUtil.addAll(candParams, classTemplate.getTemplateParameters());
+					}
+					if (method instanceof ICPPTemplateDefinition ctorTemplate) {
+						candParams = ArrayUtil.addAll(candParams, ctorTemplate.getTemplateParameters());
+					}
+					deductionTemplateParameters = ArrayUtil.trim(candParams);
+				}
+				return deductionTemplateParameters;
+			}
+		}
+
+		// Implementation for candidate function synthesized from constructor non-template
+		class CTADGuideFromConstructor extends CTADDeductionCandidateProbeFunctionTemplate
+				implements ICPPClassConstructorDeductionGuide {
+
+			public CTADGuideFromConstructor(ICPPClassTemplate classTemplate, ICPPFunction method) {
+				super(classTemplate, method, true);
+			}
+		}
+
+		// Implementation for candidate function synthesized from constructor template
+		class CTADGuideFromConstructorTemplate extends CTADDeductionCandidateProbeFunctionTemplate
+				implements ICPPClassConstructorTemplateDeductionGuide {
+
+			public CTADGuideFromConstructorTemplate(ICPPClassTemplate classTemplate, ICPPFunction method) {
+				super(classTemplate, method, true);
+			}
+		}
+
+		// Implementation for candidate function from user-defined template deduction guide
+		class CTADUserDefinedGuideTemplate extends CTADDeductionCandidateProbeFunctionTemplate
+				implements ICPPUserDefinedDeductionGuide {
+
+			public CTADUserDefinedGuideTemplate(ICPPClassTemplate classTemplate, ICPPTemplateDefinition method) {
+				super(classTemplate, (ICPPFunction) method, false);
+			}
+		}
+
+		// Implementation for candidate function from user-defined non-template deduction guide
+		class CTADUserDefinedGuide extends CTADDeductionCandidateProbeFunction
+				implements ICPPUserDefinedDeductionGuide {
+
+			public CTADUserDefinedGuide(ICPPFunction method) {
+				super(method);
+			}
+		}
+
+		// Implementation for "copy deduction candidate" synthesized from hypothetical constructor C(C)
+		class CTADCopyDeductionCandidate extends CTADDeductionCandidateProbeFunctionTemplate
+				implements ICPPCopyDeductionCandidate {
+
+			public CTADCopyDeductionCandidate(ICPPClassTemplate classTemplate) {
+				super(classTemplate);
+
+				char[] className = classTemplate.getNameCharArray();
+
+				ICPPParameter[] copyDeductionCandidateParams = new ICPPParameter[] {
+						new CPPParameter((ICPPClassType) classTemplate.asDeferredInstance(), 0) };
+				ICPPMethod copyDeductionCandidate = new CPPImplicitConstructor(
+						(ICPPClassScope) classTemplate.getCompositeScope(), className, copyDeductionCandidateParams,
+						null);
+
+				setMethod(copyDeductionCandidate);
+				setIsClassConstructor(true);
+			}
+		}
+
+		final IASTName lookupName = data.getLookupName();
+		if (lookupName == null)
+			return classTemplate;
+
+		char[] className = lookupName.getLookupKey();
+
+		ICPPConstructor[] ctors = classTemplate.getConstructors();
+
+		ICPPFunction[] deductionGuideCandidateFunctions = new ICPPFunction[ctors.length + 1];
+
+		if (ctors.length > 0) {
+			// Add template probe functions synthesized from class constructors
+			for (ICPPConstructor ctor : ctors) {
+				if (ctor instanceof ICPPTemplateDefinition ctorTemplate) {
+					deductionGuideCandidateFunctions = ArrayUtil.append(deductionGuideCandidateFunctions,
+							new CTADGuideFromConstructorTemplate(classTemplate, ctor));
+				} else {
+					deductionGuideCandidateFunctions = ArrayUtil.append(deductionGuideCandidateFunctions,
+							new CTADGuideFromConstructor(classTemplate, ctor));
+				}
+			}
+		} else {
+			// If class is not defined or does not declare any constructors, add hypothetical constructor C()
+			ICPPMethod defaultConstructor = new CPPImplicitConstructor(
+					(ICPPClassScope) classTemplate.getCompositeScope(), className,
+					ICPPParameter.EMPTY_CPPPARAMETER_ARRAY, null);
+
+			deductionGuideCandidateFunctions = ArrayUtil.append(deductionGuideCandidateFunctions,
+					new CTADDeductionCandidateProbeFunctionTemplate(classTemplate, defaultConstructor, true));
+		}
+
+		deductionGuideCandidateFunctions = ArrayUtil.append(deductionGuideCandidateFunctions,
+				new CTADCopyDeductionCandidate(classTemplate));
+
+		// Add user-defined deduction guides
+		try {
+			// TODO: add support for lookup in containing class scope of classTemplate
+			IScope lookupScope = getContainingNamespaceScope(classTemplate, data.getTranslationUnit());
+
+			if (lookupScope instanceof ICPPASTInternalScope internalScope) {
+
+				LookupData guideLookupData = new LookupData(className, null, lookupName);
+				guideLookupData.setDeductionGuidesOnly(true);
+
+				IBinding[] bindings = getBindingsFromScope(internalScope, guideLookupData);
+
+				for (IBinding binding : bindings) {
+					if (binding instanceof ICPPDeductionGuide guide) {
+						IBinding guideBinding = guide.getFunctionBinding();
+
+						if (guideBinding instanceof ICPPTemplateDefinition guideFunctionTemplate) {
+							deductionGuideCandidateFunctions = ArrayUtil.append(deductionGuideCandidateFunctions,
+									new CTADUserDefinedGuideTemplate(classTemplate, guideFunctionTemplate));
+						} else if (guideBinding instanceof ICPPFunction guideFunction) {
+							deductionGuideCandidateFunctions = ArrayUtil.append(deductionGuideCandidateFunctions,
+									new CTADUserDefinedGuide(guideFunction));
+						}
+					}
+				}
+			}
+		} catch (DOMException e) {
+		}
+
+		// Perform overload resolution for initializer clause.
+		// Deduced class type is the return type of the function selected by overload resolution.
+		try {
+			IBinding resolved = resolveFunction(data, deductionGuideCandidateFunctions, true, false);
+
+			if (resolved instanceof ICPPFunction selected) {
+				if (selected.getType().getReturnType() instanceof IBinding binding) {
+					return binding;
+				}
+			}
+		} catch (DOMException e) {
+		}
+
+		// Not deduced
+		return null;
+	}
+
 	private static IBinding postResolution(IBinding binding, LookupData data) {
 		final IASTName lookupName = data.getLookupName();
 		if (lookupName == null)
@@ -468,40 +767,119 @@ public class CPPSemantics {
 		 */
 		if (binding instanceof ICPPClassTemplate && !(binding instanceof ICPPClassSpecialization)
 				&& !(binding instanceof ICPPTemplateParameter) && !(lookupName instanceof ICPPASTTemplateId)) {
+
 			ASTNodeProperty prop = lookupName.getPropertyInParent();
-			if (prop != ICPPASTTemplateId.TEMPLATE_NAME && !lookupName.isQualified()) {
-				// You cannot use a class template name outside of the class template scope,
-				// mark it as a problem.
-				IBinding user = CPPTemplates.isUsedInClassTemplateScope((ICPPClassTemplate) binding, lookupName);
-				if (user instanceof ICPPClassTemplate) {
-					binding = ((ICPPClassTemplate) user).asDeferredInstance();
-				} else if (user != null) {
-					binding = user;
-				} else {
-					boolean ok = false;
-					IASTNode node = lookupName.getParent();
-					while (node != null && !ok) {
-						if (node instanceof ICPPASTTemplateId
-								|| node instanceof ICPPASTTemplatedTypeTemplateParameter) {
-							ok = true; // Can be argument or default-value for template template parameter
-							break;
-						} else if (node instanceof IASTElaboratedTypeSpecifier) {
-							IASTNode parent = node.getParent();
-							if (parent instanceof IASTSimpleDeclaration) {
-								IASTDeclSpecifier declspec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
-								if (declspec instanceof ICPPASTDeclSpecifier) {
-									if (((ICPPASTDeclSpecifier) declspec).isFriend()) {
-										ok = true; // A friend class template declarations uses resolution.
-										break;
+			if (prop != ICPPASTTemplateId.TEMPLATE_NAME) {
+				if (!lookupName.isQualified()) {
+					// You cannot use a class template name outside of the class template scope,
+					// mark it as a problem - unless Class Template Argument Deduction needs to be done
+					IBinding user = CPPTemplates.isUsedInClassTemplateScope((ICPPClassTemplate) binding, lookupName);
+					if (user instanceof ICPPClassTemplate) {
+						binding = ((ICPPClassTemplate) user).asDeferredInstance();
+					} else if (user != null) {
+						binding = user;
+					} else {
+						// Attempt class template argument deduction if appropriate
+						if (data.getTranslationUnit().getEnableClassTemplateArgumentDeduction()) {
+							if (lookupName.getParent() instanceof IASTIdExpression idExpression
+									&& idExpression.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
+
+								// Class name for class type argument deduction is a type
+								return doClassTemplateArgumentDeduction((ICPPClassTemplate) binding, data);
+							}
+						}
+						boolean ok = false;
+						// Attempt class template argument deduction if appropriate
+						if (data.getTranslationUnit().getEnableClassTemplateArgumentDeduction()
+								&& lookupName.getParent() instanceof IASTNamedTypeSpecifier namedTypeSpecifier
+								&& namedTypeSpecifier.getPropertyInParent() == IASTSimpleDeclaration.DECL_SPECIFIER
+								&& namedTypeSpecifier.getParent() instanceof IASTSimpleDeclaration declaration) {
+
+							IASTDeclarator[] declarators = declaration.getDeclarators();
+							if (declarators != null && declarators.length > 0) {
+								IASTDeclarator declarator = declarators[0];
+
+								// Cannot deduce pointer or reference class template argument
+								if (declarator.getPointerOperators().length == 0) {
+									// Class name for class type argument deduction is a type
+									ICPPASTInitializerClause initializerClause = CPPVisitor
+											.getAutoInitClauseForDeclarator(declarator);
+									if (initializerClause != null) {
+										data.setFunctionArguments(false,
+												new ICPPASTInitializerClause[] { initializerClause });
+									} else {
+										data.setFunctionArguments(false, NO_INITCLAUSE_EVALUATION);
+									}
+									IBinding b = doClassTemplateArgumentDeduction((ICPPClassTemplate) binding, data);
+
+									if (b != null) {
+										// Deduced class template arguments
+										binding = b;
+										// No need to check other cases
+										ok = true;
 									}
 								}
 							}
 						}
-						node = node.getParent();
+
+						IASTNode node = lookupName.getParent();
+						while (node != null && !ok) {
+							if (node instanceof ICPPASTTemplateId
+									|| node instanceof ICPPASTTemplatedTypeTemplateParameter) {
+								ok = true; // Can be argument or default-value for template template parameter
+								break;
+							} else if (node instanceof IASTElaboratedTypeSpecifier) {
+								IASTNode parent = node.getParent();
+								if (parent instanceof IASTSimpleDeclaration) {
+									IASTDeclSpecifier declspec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
+									if (declspec instanceof ICPPASTDeclSpecifier) {
+										if (((ICPPASTDeclSpecifier) declspec).isFriend()) {
+											ok = true; // A friend class template declarations uses resolution.
+											break;
+										}
+									}
+								}
+							}
+							node = node.getParent();
+						}
+						if (!ok) {
+							binding = new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_INVALID_TYPE,
+									data.getFoundBindings());
+						}
 					}
-					if (!ok) {
-						binding = new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_INVALID_TYPE,
-								data.getFoundBindings());
+
+				} else {
+					// Name is qualified-name
+					// Attempt class template argument deduction if appropriate
+					if (data.getTranslationUnit().getEnableClassTemplateArgumentDeduction()
+							&& lookupName.getParent() instanceof ICPPASTQualifiedName qualifiedName
+							&& qualifiedName.getParent() instanceof IASTNamedTypeSpecifier namedTypeSpecifier
+							&& namedTypeSpecifier.getPropertyInParent() == IASTSimpleDeclaration.DECL_SPECIFIER
+							&& namedTypeSpecifier.getParent() instanceof IASTSimpleDeclaration declaration) {
+
+						IASTDeclarator[] declarators = declaration.getDeclarators();
+						if (declarators != null && declarators.length > 0) {
+							IASTDeclarator declarator = declarators[0];
+
+							// Cannot deduce pointer or reference class template argument
+							if (declarator.getPointerOperators().length == 0) {
+								// Class name for class type argument deduction is a type
+								ICPPASTInitializerClause initializerClause = CPPVisitor
+										.getAutoInitClauseForDeclarator(declarator);
+								if (initializerClause != null) {
+									data.setFunctionArguments(false,
+											new ICPPASTInitializerClause[] { initializerClause });
+								} else {
+									data.setFunctionArguments(false, NO_INITCLAUSE_EVALUATION);
+								}
+								IBinding b = doClassTemplateArgumentDeduction((ICPPClassTemplate) binding, data);
+
+								if (b != null) {
+									// Deduced class template arguments
+									binding = b;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1442,6 +1820,12 @@ public class CPPSemantics {
 			});
 		}
 
+		// Deduction guides are not visible to ordinary name lookup
+		if (bindings.length > 0) {
+			bindings = ArrayUtil.filter(bindings,
+					data.isDeductionGuidesOnly() ? opIsDeductionGuide : opIsNotDeductionGuide);
+		}
+
 		return expandUsingDeclarationsAndRemoveObjects(bindings, data);
 	}
 
@@ -1863,8 +2247,9 @@ public class CPPSemantics {
 						declarator = declarator.getNestedDeclarator();
 					}
 					if (innermost != null) {
-						IASTName declaratorName = innermost.getName();
-						ASTInternal.addName(scope, declaratorName);
+						// NOTE This now may include deduction guides which are filtered later during lookup
+						IASTName declaratorOrDeductionGuideName = innermost.getName();
+						ASTInternal.addName(scope, declaratorOrDeductionGuideName);
 					}
 				}
 			}

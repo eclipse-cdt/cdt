@@ -210,6 +210,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private final boolean supportGCCStyleDesignators;
 	private final boolean supportFoldExpression;
 	private final boolean supportChar8TypeLiterals;
+	private final boolean supportClassTemplateArgumentDeduction;
 
 	private final IIndex index;
 	protected ICPPASTTranslationUnit translationUnit;
@@ -249,6 +250,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		additionalNumericalSuffixes = scanner.getAdditionalNumericLiteralSuffixes();
 		supportFoldExpression = true;
 		supportChar8TypeLiterals = scanner.getMacroDefinitions().containsKey("__cpp_char8_t"); //$NON-NLS-1$
+		supportClassTemplateArgumentDeduction = scanner.getMacroDefinitions().containsKey("__cpp_deduction_guides"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -5572,6 +5574,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				((ASTTranslationUnit) translationUnit).setupBuiltinBindings(builtinBindingsProvider);
 			}
 		}
+
+		translationUnit.setEnableClassTemplateArgumentDeduction(supportClassTemplateArgumentDeduction);
 	}
 
 	private void consumeArrayModifiers(DeclarationOptions option, List<IASTArrayModifier> collection)

@@ -46,4 +46,18 @@ public interface ICPPASTTranslationUnit extends IASTTranslationUnit {
 	 */
 	@Override
 	public ICPPASTTranslationUnit copy(CopyStyle style);
+
+	/**
+	 * Sets whether this AST should enable class template argument deduction.
+	 *
+	 * @since 8.1
+	 */
+	public void setEnableClassTemplateArgumentDeduction(boolean flag);
+
+	/**
+	 * Returns whether this AST should enable class template argument deduction.
+	 *
+	 * @since 8.1
+	 */
+	public boolean getEnableClassTemplateArgumentDeduction();
 }

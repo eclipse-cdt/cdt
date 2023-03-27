@@ -56,6 +56,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	private ICPPNamespace fBinding;
 	private final CPPScopeMapper fScopeMapper;
 	private CPPASTAmbiguityResolver fAmbiguityResolver;
+	private boolean fEnableClassTemplateArgumentDeduction;
 
 	// Caches.
 	private final Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
@@ -78,6 +79,7 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	@Override
 	public CPPASTTranslationUnit copy(CopyStyle style) {
 		CPPASTTranslationUnit copy = new CPPASTTranslationUnit();
+		copy.setEnableClassTemplateArgumentDeduction(getEnableClassTemplateArgumentDeduction());
 		return copy(copy, style);
 	}
 
@@ -277,5 +279,15 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 
 	public ICPPClassTemplatePartialSpecialization mapToAST(ICPPClassTemplatePartialSpecialization indexSpec) {
 		return fScopeMapper.mapToAST(indexSpec);
+	}
+
+	@Override
+	public void setEnableClassTemplateArgumentDeduction(boolean flag) {
+		fEnableClassTemplateArgumentDeduction = flag;
+	}
+
+	@Override
+	public boolean getEnableClassTemplateArgumentDeduction() {
+		return fEnableClassTemplateArgumentDeduction;
 	}
 }

@@ -853,7 +853,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				pdomBinding = new PDOMCPPMethod(this, parent, (ICPPMethod) binding);
 			}
 		} else if (binding instanceof ICPPDeductionGuide guide) {
-			if (guide.getFunctionBinding() instanceof ICPPFunctionTemplate) {
+			if (guide instanceof ICPPTemplateDefinition) {
 				pdomBinding = new PDOMCPPDeductionGuideTemplate(this, parent, guide);
 			} else {
 				pdomBinding = new PDOMCPPDeductionGuide(this, parent, guide);
@@ -1145,7 +1145,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			// this must be before functions
 			return CPPMETHOD;
 		} else if (binding instanceof ICPPDeductionGuide guide) {
-			if (guide.getFunctionBinding() instanceof ICPPFunctionTemplate) {
+			if (guide instanceof ICPPTemplateDefinition) {
 				return CPP_DEDUCTION_GUIDE_TEMPLATE;
 			} else {
 				return CPP_DEDUCTION_GUIDE;

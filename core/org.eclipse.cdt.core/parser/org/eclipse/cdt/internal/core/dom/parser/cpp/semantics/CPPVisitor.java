@@ -214,6 +214,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPConstructorTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeductionGuide;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPDeductionGuideTemplate;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumeration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPEnumerator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPField;
@@ -999,7 +1000,8 @@ public class CPPVisitor extends ASTQueries {
 			}
 
 			if (isDeductionGuide) {
-				binding = new CPPDeductionGuide(typeRelevantDtor, (ICPPFunction) binding);
+				binding = template ? new CPPDeductionGuideTemplate(typeRelevantDtor, (ICPPFunction) binding)
+						: new CPPDeductionGuide(typeRelevantDtor, (ICPPFunction) binding);
 			} else {
 				binding = CPPSemantics.checkDeclSpecifier(binding, name, parent);
 

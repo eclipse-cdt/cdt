@@ -2224,4 +2224,10 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			IASTAlignmentSpecifier typeId) {
 		return new CASTAmbiguousAlignmentSpecifier(expression, typeId);
 	}
+
+	@Override
+	protected boolean maybeDeclaresNonStaticMemberOfSameClass(final DeclarationOptions option,
+			final IASTDeclSpecifier declSpec, final IASTDeclarator dtor) {
+		return false;
+	}
 }

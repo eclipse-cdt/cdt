@@ -1702,6 +1702,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 				&& LTcatchEOF(expectedBracketOffset + 1) == IToken.tIDENTIFIER;
 	}
 
+	protected abstract boolean maybeDeclaresNonStaticMemberOfSameClass(final DeclarationOptions option,
+			final IASTDeclSpecifier declSpec, final IASTDeclarator dtor);
+
 	/**
 	 * Parses for two alternatives of a declspec sequence followed by a initDeclarator.
 	 * A second alternative is accepted only, if it ends at the same point of the first alternative. Otherwise the
@@ -1770,10 +1773,16 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			return result.set(declspec1, dtor1, dtorMark1);
 		}
 
+		// [class.mem] "... In particluar, a class C shall not contain a non-static member of class C"
+		// If type name in first variant matches current class name, disambiguate it later too;
+		// this allows to handle the following case where constructor declaration is shorter
+		// than variable declaration with initializer list
+		//     template<typename T> class S { S(T){}; }
 		final IToken end2 = mark();
-		if (end1 == end2) {
+		if (end1 == end2 || maybeDeclaresNonStaticMemberOfSameClass(option, declspec1, dtor1)) {
 			return result.set(declspec1, dtor1, declspec2, dtor2);
 		}
+
 		if (end1.getEndOffset() > end2.getEndOffset()) {
 			backup(end1);
 			return result.set(declspec1, dtor1, dtorMark1);

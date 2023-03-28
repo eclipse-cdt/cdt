@@ -75,6 +75,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
@@ -617,6 +618,11 @@ public class EditorUtility {
 		if (input instanceof IFileEditorInput) {
 			IFileEditorInput editorInput = (IFileEditorInput) input;
 			IFile file = editorInput.getFile();
+			try {
+				return IDE.getEditorDescriptor(file, true, false).getId();
+			} catch (PartInitException | OperationCanceledException e) {
+				// do nothing
+			}
 			// Try file specific editor.
 			try {
 				String editorID = file.getPersistentProperty(IDE.EDITOR_KEY);

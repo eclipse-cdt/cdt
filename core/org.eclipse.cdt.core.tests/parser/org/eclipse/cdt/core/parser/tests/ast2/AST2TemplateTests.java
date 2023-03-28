@@ -11559,4 +11559,14 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testResolveFunctionTemplateInDeferredBaseArg() throws Exception {
 		parseAndCheckBindings();
 	}
+
+	//	template<typename T>
+	//	struct S {
+	//		S(T) {};
+	//	};
+	//
+	//	S<int> s(1);
+	public void testRecognizeConstructorWithSemicolonAfterBody() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 }

@@ -4256,6 +4256,22 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return dtor;
 	}
 
+	@Override
+	protected boolean maybeDeclaresNonStaticMemberOfSameClass(final DeclarationOptions option,
+			final IASTDeclSpecifier declSpec, final IASTDeclarator dtor) {
+		if (option == DeclarationOptions.CPP_MEMBER && currentClassName != null
+				&& declSpec.getStorageClass() != IASTDeclSpecifier.sc_static && dtor != null
+				&& dtor.getPointerOperators().length == 0
+				&& declSpec instanceof ICPPASTNamedTypeSpecifier namedTypeSpec) {
+			IASTName name = namedTypeSpec.getName();
+			if (CharArrayUtils.equals(name.getLookupKey(), currentClassName)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * Tries to detect illegal versions of declarations
 	 */

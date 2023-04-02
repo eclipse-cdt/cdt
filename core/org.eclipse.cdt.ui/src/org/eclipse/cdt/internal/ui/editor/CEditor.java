@@ -1568,10 +1568,8 @@ public class CEditor extends TextEditor
 		} else if (adapterClass.isAssignableFrom(IShowInTargetList.class)) {
 			return (T) new IShowInTargetList() {
 				@Override
-				@SuppressWarnings("deprecation")
 				public String[] getShowInTargetIds() {
-					return new String[] { IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.ID_OUTLINE,
-							IPageLayout.ID_RES_NAV };
+					return new String[] { IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.ID_OUTLINE };
 				}
 			};
 		} else if (adapterClass.isAssignableFrom(IShowInSource.class)) {

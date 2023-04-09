@@ -97,7 +97,7 @@ public class ProcessHelper {
 		int start = 0;
 		int end = 0;
 		while ((start = str.indexOf(startPattern, start)) >= 0) {
-			end = str.indexOf(endPattern, start);
+			end = str.indexOf(endPattern, start + startPattern.length());
 			if (end != -1) {
 				replaceStrings.add(str.substring(start + startPattern.length(), end));
 				start = end + endPattern.length();

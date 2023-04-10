@@ -24,9 +24,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -192,7 +194,9 @@ public class BaseTestCase {
 	 */
 	public boolean isRemoteSession() {
 		return launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
-				.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
+				.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE)
+				|| launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
+						.equals(IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE_ATTACH);
 	}
 
 	/**
@@ -553,9 +557,6 @@ public class BaseTestCase {
 	protected GdbLaunch doLaunchInner() throws Exception {
 		assertNotNull("The launch configuration has not been created. Call doLaunch first.", fLaunchConfiguration);
 
-		boolean postMortemLaunch = launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
-				.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
-
 		SessionEventListener sessionEventListener = new SessionEventListener(fLaunchConfiguration);
 		SessionStartedListener sessionStartedListener = new SessionStartedListener() {
 			@Override
@@ -586,12 +587,10 @@ public class BaseTestCase {
 			// proceeding. All tests assume that stable initial state. Two
 			// seconds is plenty; we typically get to that state in a few
 			// hundred milliseconds with the tiny test programs we use.
-			if (!postMortemLaunch) {
+			if (isTargetExpectedToStopAfterLaunch()) {
 				sessionEventListener.waitUntilTargetSuspended();
-			}
 
-			// This should be a given if the above check passes
-			if (!postMortemLaunch) {
+				// This should be a given if the above check passes
 				synchronized (this) {
 					MIStoppedEvent initialStoppedEvent = sessionEventListener.getInitialStoppedEvent();
 					Assert.assertNotNull(initialStoppedEvent);
@@ -615,6 +614,11 @@ public class BaseTestCase {
 		}
 
 		return launch;
+	}
+
+	protected boolean isTargetExpectedToStopAfterLaunch() {
+		return !launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE)
+				.equals(ICDTLaunchConfigurationConstants.DEBUGGER_MODE_CORE);
 	}
 
 	/**
@@ -680,7 +684,19 @@ public class BaseTestCase {
 				String server = (String) launchAttributes.get(ATTR_DEBUG_SERVER_NAME);
 				String port = (String) launchAttributes.get(IGDBLaunchConfigurationConstants.ATTR_PORT);
 				String program = (String) launchAttributes.get(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME);
-				String[] commandLine = { server, ":" + port, program };
+				boolean multi = Boolean.valueOf((String) launchAttributes.get(ITestConstants.LAUNCH_GDB_SERVER_MULTI));
+				boolean noprogram = Boolean
+						.valueOf((String) launchAttributes.get(ITestConstants.LAUNCH_GDB_SERVER_WITHOUT_PROGRAM));
+				List<String> commandArgs = new ArrayList<>();
+				commandArgs.add(server);
+				if (multi) {
+					commandArgs.add("--multi");
+				}
+				commandArgs.add(":" + port);
+				if (!noprogram) {
+					commandArgs.add(program);
+				}
+				String[] commandLine = commandArgs.toArray(new String[0]);
 				try {
 					if (GdbDebugOptions.DEBUG)
 						GdbDebugOptions

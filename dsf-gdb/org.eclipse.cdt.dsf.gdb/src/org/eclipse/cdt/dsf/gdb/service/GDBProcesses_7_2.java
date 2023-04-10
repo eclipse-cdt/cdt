@@ -13,20 +13,17 @@
  *     Marc Khouzam (Ericsson) - Workaround for Bug 352998
  *     Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
  *     Alvaro Sanchez-Leon (Ericsson) - Breakpoint Enable does not work after restarting the application (Bug 456959)
- *     Jonathan Tousignant (NordiaSoft) - Remote session breakpoint (Bug 528145)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.cdt.debug.core.CDebugUtils;
 import org.eclipse.cdt.dsf.concurrent.CountingRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -48,9 +45,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExitedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommand;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
-import org.eclipse.cdt.dsf.gdb.launching.GDBRemoteTCPLaunchTargetProvider;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordSelectedChangedDMEvent;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
@@ -67,12 +62,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.ILaunch;
-import org.eclipse.launchbar.core.target.ILaunchTarget;
-import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 
 /**
  * Adding support for multi-process with GDB 7.2
@@ -176,8 +167,6 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	private IGDBControl fCommandControl;
 	private IGDBBackend fBackend;
 
-	private final static String INVALID = "invalid"; //$NON-NLS-1$
-
 	/**
 	 * Keep track if we need to reconnect to the target
 	 * due to a workaround because of a GDB 7.2 bug.
@@ -266,15 +255,13 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 
 	@Override
 	protected boolean doIsDebuggerAttachSupported() {
-		SessionType sessionType = fBackend.getSessionType();
-
 		// Multi-process is not applicable to post-mortem sessions (core)
 		// or to non-attach remote sessions.
-		if (sessionType == SessionType.CORE) {
+		if (fBackend.getSessionType() == SessionType.CORE) {
 			return false;
 		}
 
-		if (sessionType == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
+		if (fBackend.getSessionType() == SessionType.REMOTE && !fBackend.getIsAttachSession()) {
 			return false;
 		}
 
@@ -282,16 +269,9 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
 		if (runControl != null && runControl.getRunMode() == MIRunMode.ALL_STOP) {
 			// Only one process is allowed in all-stop (for now)
+			return getNumConnected() == 0;
 			// NOTE: when we support multi-process in all-stop mode,
 			// we will need to interrupt the target to when doing the attach.
-			int numConnected = getNumConnected();
-
-			if (numConnected == 1 && sessionType == SessionType.REMOTE) {
-				// Bug 528145: Special case for remote sessions with an existing connection.
-				return true;
-			}
-
-			return numConnected == 0;
 		}
 
 		return true;
@@ -325,10 +305,8 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 						new Step() {
 							@Override
 							public void execute(final RequestMonitor rm) {
-								// The remote session is already connected to the process
-								// Bug 528145
-								if (fBackend.getSessionType() == SessionType.REMOTE
-										&& doCanDetachDebuggerFromProcess()) {
+								if (procCtx instanceof IMIProcessDMContext ctx
+										&& MIProcesses.UNKNOWN_PROCESS_ID.equals(ctx.getProcId())) {
 									rm.done();
 									return;
 								}
@@ -469,14 +447,12 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 						new Step() {
 							@Override
 							public void execute(RequestMonitor rm) {
-								// This call end the current attach to the gdbserver in remote session
-								// Bug 528145
-								if (fBackend.getSessionType() == SessionType.REMOTE
-										&& doCanDetachDebuggerFromProcess()) {
+								if (fBackend.getSessionType() == SessionType.REMOTE && isInitialProcess()) {
+									// Uncomment following and remove rm.done() once FinalLaunchSequence.stepRemoteConnection() is removed
+									//									connectToTarget(procCtx, rm);
 									rm.done();
 									return;
 								}
-
 								// For non-stop mode, we do a non-interrupting attach
 								// Bug 333284
 								boolean shouldInterrupt = true;
@@ -558,58 +534,6 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 */
 	protected boolean targetAttachRequiresTrailingNewline() {
 		return false;
-	}
-
-	private void connectToTarget(IProcessDMContext procCtx, RequestMonitor rm) {
-		ILaunch launch = procCtx.getAdapter(ILaunch.class);
-		assert launch != null;
-		if (launch != null) {
-			Map<String, Object> attributes = new HashMap<>();
-			try {
-				attributes.putAll(launch.getLaunchConfiguration().getAttributes());
-			} catch (CoreException e) {
-				rm.done(e.getStatus());
-				return;
-			}
-
-			if (launch instanceof ITargetedLaunch) {
-				ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
-				if (target != null) {
-					attributes.putAll(target.getAttributes());
-					String tcp = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, ""); //$NON-NLS-1$
-					if (!tcp.isEmpty()) {
-						attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, Boolean.parseBoolean(tcp));
-					} else {
-						attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
-								target.getTypeId().equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID));
-					}
-				}
-			}
-
-			boolean isTcpConnection = CDebugUtils.getAttribute(attributes,
-					IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, false);
-
-			if (isTcpConnection) {
-				String remoteTcpHost = CDebugUtils.getAttribute(attributes, IGDBLaunchConfigurationConstants.ATTR_HOST,
-						INVALID);
-				String remoteTcpPort = CDebugUtils.getAttribute(attributes, IGDBLaunchConfigurationConstants.ATTR_PORT,
-						INVALID);
-
-				fCommandControl.queueCommand(fCommandFactory.createMITargetSelect(fCommandControl.getContext(),
-						remoteTcpHost, remoteTcpPort, true), new ImmediateDataRequestMonitor<MIInfo>(rm));
-			} else {
-				String serialDevice = CDebugUtils.getAttribute(attributes, IGDBLaunchConfigurationConstants.ATTR_DEV,
-						INVALID);
-
-				fCommandControl.queueCommand(
-						fCommandFactory.createMITargetSelect(fCommandControl.getContext(), serialDevice, true),
-						new ImmediateDataRequestMonitor<MIInfo>(rm));
-			}
-		} else {
-			rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INTERNAL_ERROR, "Cannot reconnect to target.", //$NON-NLS-1$
-					null));
-			rm.done();
-		}
 	}
 
 	@Override

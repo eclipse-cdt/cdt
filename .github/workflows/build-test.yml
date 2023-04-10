@@ -37,6 +37,7 @@ jobs:
       run: |
         export DISPLAY=:99
         sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+        echo 0| sudo tee /proc/sys/kernel/yama/ptrace_scope
         mvn \
           clean verify -B -V \
           -Dmaven.test.failure.ignore=true \

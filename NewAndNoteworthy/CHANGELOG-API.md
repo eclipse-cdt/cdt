@@ -599,7 +599,7 @@ spelled BuiltinDetectionArgsGeneric instead.
 
 ## API Removals after June 2025
 
-### <span id="FinalLaunchSequence">FinalLaunchSequence.stepRemoteConnection() and FinalLaunchSequence.stepAttachRemoteToDebugger() will be removed</span>
+### FinalLaunchSequence.stepRemoteConnection() and FinalLaunchSequence.stepAttachRemoteToDebugger() will be removed
 
 These APIs will be removed and remote connection for attach launch will be moved in the implementation of `IGDBProcesses.attachDebuggerToProcess()`.
 

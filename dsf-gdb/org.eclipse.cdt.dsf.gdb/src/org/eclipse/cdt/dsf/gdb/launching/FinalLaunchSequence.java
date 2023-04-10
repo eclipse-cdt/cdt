@@ -134,12 +134,14 @@ public class FinalLaunchSequence extends ReflectionSequence {
 					//
 					// "stepSetSourceLookupPath",   //$NON-NLS-1$
 
-					// For remote-attach launch only (deprecated)
+					// For remote-attach launch only (deprecated, see javadocs)
 					"stepRemoteConnection", //$NON-NLS-1$
 					// For all launches except attach ones
 					"stepNewProcess", //$NON-NLS-1$
 					// For all attach launch only
 					"stepAttachToProcess", //$NON-NLS-1$
+					// For remote attach launch only (deprecated, see javadocs)
+					"stepAttachRemoteToDebugger", //$NON-NLS-1$
 					// Global
 					"stepDataModelInitializationComplete", //$NON-NLS-1$
 					"stepCleanup", //$NON-NLS-1$
@@ -644,7 +646,9 @@ public class FinalLaunchSequence extends ReflectionSequence {
 						fProcService.createProcessContext(fCommandControl.getContext(), Integer.toString(pid)),
 						new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
 			} else if (fGDBBackend.getSessionType() == SessionType.REMOTE) {
-				stepAttachRemoteToDebugger(requestMonitor);
+				// Inline following and remove requestMonitor.done() once FinalLaunchSequence.stepAttachRemoteToDebugger() is removed
+				// stepAttachRemoteToDebugger(requestMonitor);
+				requestMonitor.done();
 			} else {
 				IConnectHandler connectCommand = (IConnectHandler) fSession.getModelAdapter(IConnectHandler.class);
 				if (connectCommand instanceof IConnect) {
@@ -663,13 +667,18 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 * Bug 528145
 	 * @since 6.6
 	 *
-	 * When removing this method, do inline method refactoring
+	 * When removing, revive/uncomment code in implementations in FinalLaunchSequence.stepAttachToProcess(RequestMonitor)
 	 */
 	@Deprecated(forRemoval = true)
+	@Execute
 	public void stepAttachRemoteToDebugger(final RequestMonitor requestMonitor) {
-		fProcService.attachDebuggerToProcess(
-				fProcService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNKNOWN_PROCESS_ID),
-				getBinary(), new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
+		if (fGDBBackend.getIsAttachSession() && fGDBBackend.getSessionType() == SessionType.REMOTE) {
+			fProcService.attachDebuggerToProcess(
+					fProcService.createProcessContext(fCommandControl.getContext(), MIProcesses.UNKNOWN_PROCESS_ID),
+					getBinary(), new DataRequestMonitor<IDMContext>(getExecutor(), requestMonitor));
+		} else {
+			requestMonitor.done();
+		}
 	}
 
 	/**

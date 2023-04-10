@@ -6,87 +6,11 @@ This section describes API removals that occurred in past releases, and upcoming
 
 # API Changes
 
-## API Changes in CDT 11.0
-
-- [org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields](#newUIAbstractPage)
-- [org.eclipse.cdt.dsf.gdb.breakpoints.Messages is no longer API](#org.eclipse.cdt.dsf.gdb.breakpoints.Messages)
-- [Removal of deprecated CommandLauncher.execute() method](#executeCommandLauncher)
-- [Removal of deprecated CBuildConfiguration.watchProcess() methods](#watchProcessCBuildConfig)
-- [Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb](#gdbBackendDebuggerCommandLine)
-- [Removal of Qt plug-ins and features](#qt-plugins)
-- [Removal of constructor org.eclipse.cdt.utils.coff.CodeViewReader(RandomAccessFile, int, boolean)](#CodeViewReader-constructor-removal)
-- [Removal of 32-bit Binary parsers with 64-bit replacements](#32bitbinaryparsers)
-- [Removal of single entry binary parser ID methods](#getBinaryParserId)
-
-## API Changes in CDT 10.5.0
-
-- [Package org.eclipse.cdt.cmake.is.core.participant has been renamed to org.eclipse.cdt.jsoncdb.core.participant.](#jsoncdb)
-
-## API Changes in CDT 10.0.
-
-- [Eclipse CDT requires Java 11 as a minimum to build and run.](#java11)
-- [Some deprecated methods and classes have been removed.](#deprecatedRemovals)
-- [Previously exported packages that were not API are now correctly marked as such.](#internals)
-- [Activators removed for all bundles where possible.](#activators)
-- [NewClassCreationWizardPage breaking changes.](#NewClassCreationWizardPage)
-- [Arduino plug-ins and features removed.](#arduino)
-- [Remove LRParser, XLC and UPC.](#oldparsers)
-- [Remove org.eclipse.cdt.utils.Platform.](#cdtutilsPlatform)
-- [DSF and DSF-GDB API Changes.](#dsf)
-- [Partial removal of CDT 3.X project support.](#oldStyleProjects)
-- [Removal of CDT Core Options API.](#optionsAPI)
-- [TM Terminal has major changes to support new color and preference functionality.](#terminal)
-- [Environment Variables are always case sensitive in CDT.](#casesensitive)
-- [Environment variables no longer support \\${ to avoid expanding.](#escaping)
-- [The binary parsers are now implement Autocloseable](#autocloseable)
-- [ICPPASTDeductionGuide and ICPPASTParameterListOwner removed in CDT 10.0.1](#deductionremovedin10.0.0)
-
-# Planned API Changes
-
-The items below can be removed after the given date or on a major release, whichever is sooner.
-The details and discussion on the removal happens in the GitHub issue (or Bugzilla) associated with the entry below.
-See the [policy](../POLICY.md) for the details.
-
-## Planned Removals after June 2022 or on a major version of Eclipe CDT.
-
-- [32-bit Binary parsers with 64-bit replacements](#binaryparsers)
-- [BaudRate enum in org.eclipse.cdt.serial](#baudrate)
-
-## Planned Removals after June 2023 or on a major version of Eclipe CDT.
-
-- [Add ITool parameter to ManagedCommandLineGenerator.toManagedCommandLineInfo](#ManagedCommandLineGenerator.toManagedCommandLineInfo)
-- [Removed unneded boolean from function](#GnuMakefileGenerator.addRuleForTool)
-- [Changed methods from static to non-static](#GnuMakefileGenerator.addDefaultHeader)
-
-## Planned Removals after December 2023 or on a major version of Eclipe CDT.
-
-- [GnuMakefileGenerator is no longer part of API](#GnuMakefileGeneratorAPI)
-- [The Spawner signal constants are nolonger API](#Spawner.signals)
-
-## Planned Removals after March 2024 or on a major version of Eclipe CDT.
-
-- [java.util.regex.Matcher use in JSONCDB API will be removed](#ArgletsMatcher)
-
-## Planned Removals after June 2024 or on a major version of Eclipe CDT.
-
-- [java.util.regex.Matcher use in JSONCDB API will be removed](#ArgletsMatcher2)
-- [Misnamed class BuiltinDetctionArgsGeneric will be removed](#BuiltinDetctionArgsGeneric)
-
-## API Changes prior to CDT 10.0 / 2020-09.
-
-Prior to CDT 10 release API changes were published as part of the [New and Noteworthy](README.md) entries for
-that release.
-From CDT 10 forward breaking API changes are included in this document.
-
----
-
-# Details
-
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
 
 ## API Changes in CDT 11.0.
 
-### <span id="newUIAbstractPage">org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields</span>
+### org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields
 
 The following fields have been be removed from the API of
 org.eclipse.cdt.ui.newui.AbstractPage as they were never intended to be
@@ -109,13 +33,13 @@ In addition, the following inner class has been removed from the API.
 
 See [Bug 579666](https://bugs.eclipse.org/bugs/show_bug.cgi?id=579666).
 
-### <span id="org.eclipse.cdt.dsf.gdb.breakpoints.Messages">org.eclipse.cdt.dsf.gdb.breakpoints.Messages is no longer API</span>
+### org.eclipse.cdt.dsf.gdb.breakpoints.Messages is no longer API
 
 org.eclipse.cdt.dsf.gdb.breakpoints.Messages should never have been API, Messages classes generally should not be.
 
 See https://github.com/eclipse-cdt/cdt/pull/90
 
-### <span id="executeCommandLauncher">Removal of deprecated CommandLauncher.execute() method</span>
+### Removal of deprecated CommandLauncher.execute() method
 
 The following method is removed because it does not implement the ICommandLauncher
 interface. It has been deprecated since 2009:
@@ -125,7 +49,7 @@ interface. It has been deprecated since 2009:
 Clients should instead use the equivilent method from the ICommandLauncher interface.
 See [Bug 268615](https://bugs.eclipse.org/bugs/show_bug.cgi?id=268615).
 
-### <span id="watchProcessCBuildConfig">Removal of deprecated CBuildConfiguration.watchProcess() methods</span>
+### Removal of deprecated CBuildConfiguration.watchProcess() methods
 
 The following methods are removed because their use prevents cancellation of
 in-progress builds of core-build projects:
@@ -137,7 +61,7 @@ in-progress builds of core-build projects:
 Clients should instead use the methods of the same name that take a progress monitor object.
 See [Bug 580314](https://bugs.eclipse.org/bugs/show_bug.cgi?id=580314).
 
-### <span id="gdbBackendDebuggerCommandLine">Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb</span>
+### Rework of API to determine GDB command line in org.eclipse.cdt.dsf.gdb
 
 To support presentation of the GDB command line within the process
 property page, a public method getDebuggerCommandLineArray() has been
@@ -154,7 +78,7 @@ instead.
 See [Bug 572944](https://bugs.eclipse.org/bugs/show_bug.cgi?id=572944)
 and https://github.com/eclipse-cdt/cdt/pull/112.
 
-### <span id="qt-plugins">Removal of Qt plug-ins and features</span>
+### Removal of Qt plug-ins and features
 
 For a while now the Qt plug-ins have had at least some issues.
 They rely on the Nashorn script engine which was removed in Java 15.
@@ -166,7 +90,7 @@ The following bundles and all their related API has been removed:
 
 See https://github.com/eclipse-cdt/cdt/issues/123
 
-### <span id="CodeViewReader-constructor-removal">Removal of constructor org.eclipse.cdt.utils.coff.CodeViewReader(RandomAccessFile, int, boolean)</span>
+### Removal of constructor org.eclipse.cdt.utils.coff.CodeViewReader(RandomAccessFile, int, boolean)
 
 Same instance of RandomAccessFile was shared between multiple objects which
 causes problems in closing it properly. A new constructor is introduced which
@@ -174,7 +98,7 @@ accepts filename and opens a RandomAccessFile.
 
 See https://github.com/eclipse-cdt/cdt/pull/132
 
-### <span id="32bitbinaryparsers">Removal of 32-bit Binary parsers with 64-bit replacements</span>
+### Removal of 32-bit Binary parsers with 64-bit replacements
 
 The following binary parser classes have been removed, mostly due to these versions not supporting 64-bit variants of the binary files.
 The new 64-bit parsers support both 32 and 64 bit files and can be identified by the same name class followed by `64`.
@@ -211,7 +135,7 @@ In addition the following methods have been removed due to there existing a 64-b
 
 See https://github.com/eclipse-cdt/cdt/pull/135
 
-### <span id="getBinaryParserId">Removal of single entry binary parser ID methods</span>
+### Removal of single entry binary parser ID methods
 
 To support tool chains having multiple binary parsers the singular return value methods have been replaced with versions returning lists. The following methods have been removed
 
@@ -222,9 +146,9 @@ See https://github.com/eclipse-cdt/cdt/pull/75
 
 ---
 
-## API Changes in CDT 10.5.0.
+## API Changes in CDT 10.5.
 
-### <span id="jsoncdb">Package org.eclipse.cdt.cmake.is.core.participant has been renamed to org.eclipse.cdt.jsoncdb.core.participant.</span>
+### Package org.eclipse.cdt.cmake.is.core.participant has been renamed to org.eclipse.cdt.jsoncdb.core.participant.
 
 Affects CMake build, indexer support.
 Package org.eclipse.cdt.cmake.is.core.participant was inadvertently not marked as experimental.
@@ -235,7 +159,7 @@ See [Bug 564349](https://bugs.eclipse.org/bugs/show_bug.cgi?id=564349).
 
 ## API Changes in CDT 10.0.
 
-### <span id="java11">Eclipse CDT requires Java 11 as a minimum to build and run.</span>
+### Eclipse CDT requires Java 11 as a minimum to build and run.
 
 Java 11 or greater is required for CDT. This means that the BREE for all
 CDT bundles is now Java 11. See
@@ -246,7 +170,15 @@ removed. This means the org.eclipse.tools.templates.freemarker.java11
 bundle fragment has been removed. See
 [Bug 563494](https://bugs.eclipse.org/bugs/show_bug.cgi?id=563494).
 
-### <span id="deprecatedRemovals">Some deprecated methods and classes have been removed.</span>
+---
+
+## API Changes prior to CDT 10.0 / 2020-09.
+
+Prior to CDT 10 release API changes were published as part of the [New and Noteworthy](README.md) entries for
+that release.
+From CDT 10 forward breaking API changes are included in this document.
+
+### Some deprecated methods and classes have been removed.
 
 Across the CDT code base some previously deprecated code has been
 removed.
@@ -293,7 +225,7 @@ removed.
   part of the long since removed CDI and has no use. See
   [Bug 566530](https://bugs.eclipse.org/bugs/show_bug.cgi?id=566530).
 
-### <span id="internals">Previously exported packages that were not API are now correctly marked as such.</span>
+### Previously exported packages that were not API are now correctly marked as such.
 
 A review of the previously exported API of CDT was performed. A lot of
 what was previously marked as public API has now been marked as
@@ -321,7 +253,7 @@ packages as internal:
 
 <!-- end list -->
 
-### <span id="activators">Activators removed for all bundles where possible.</span>
+### Activators removed for all bundles where possible.
 
 Where possible bundles have had their Activators removed. Some of these
 activators were API and are no longer available. See
@@ -333,7 +265,7 @@ The following Activators that were API have been removed.
 
 - org.eclipse.tools.templates.ui
 
-### <span id="NewClassCreationWizardPage">NewClassCreationWizardPage breaking changes.</span>
+### NewClassCreationWizardPage breaking changes.
 
 The NewClassCreationWizardPage has some API breaking changes due to how
 some protected fields, especially `ALL_FIELDS` was used. While this
@@ -342,7 +274,7 @@ extenders, just compiling against the new version. See
 [Bug 510789](https://bugs.eclipse.org/bugs/show_bug.cgi?id=510789) and
 [Bug 561770](https://bugs.eclipse.org/bugs/show_bug.cgi?id=561770).
 
-### <span id="arduino">Arduino plug-ins and features removed.</span>
+### Arduino plug-ins and features removed.
 
 The CDT Arduino plug-ins and features have been removed. Arduino can
 still be used with CDT with manual maintenance of packages, etc. Or a
@@ -358,7 +290,7 @@ The bundles and features that have been removed are:
 
 See [Bug 562498](https://bugs.eclipse.org/bugs/show_bug.cgi?id=562498).
 
-### <span id="oldparsers">Remove LRParser, XLC and UPC.</span>
+### Remove LRParser, XLC and UPC.
 
 The LR, UPC and XLC support have been removed from CDT. The bundles have
 not been maintained for a while and were not functional anymore.
@@ -391,14 +323,14 @@ The bundles and features that have been removed are:
 
 See [Bug 562498](https://bugs.eclipse.org/bugs/show_bug.cgi?id=562498).
 
-### <span id="cdtutilsPlatform">Remove org.eclipse.cdt.utils.Platform.</span>
+### Remove org.eclipse.cdt.utils.Platform.
 
 Class org.eclipse.cdt.utils.Platform has been removed. Use
 org.eclipse.core.runtime.Platform instead.
 
 See [Bug 564123](https://bugs.eclipse.org/bugs/show_bug.cgi?id=564123).
 
-### <span id="dsf">DSF and DSF-GDB API Changes</span>
+### DSF and DSF-GDB API Changes
 
 DSF and DSF-GDB have had some small API changes, but they are still
 breaking changes and are listed here:
@@ -409,7 +341,7 @@ breaking changes and are listed here:
   ILaunchConfiguration, String) instead. See
   [Bug 564553](https://bugs.eclipse.org/bugs/show_bug.cgi?id=564553).
 
-### <span id="oldStyleProjects">Partial removal of CDT 3.X project support</span>
+### Partial removal of CDT 3.X project support
 
 CDT 3.X projects have been deprecated since CDT 4.0. Some classes
 supporting this old version have been removed:
@@ -423,7 +355,7 @@ supporting this old version have been removed:
 
 See [Bug 564949](https://bugs.eclipse.org/bugs/show_bug.cgi?id=564949).
 
-### <span id="optionsAPI">Removal of CDT Core Options API</span>
+### Removal of CDT Core Options API
 
 The CDT Core Options API and implementation has been removed as now it
 is a part of Eclipse Equinox 4.16 Preferences API, the removed packages
@@ -434,7 +366,7 @@ are:
 
 See [Bug 565154](https://bugs.eclipse.org/bugs/show_bug.cgi?id=565154).
 
-### <span id="terminal">TM Terminal has major changes to support new color and preference functionality.</span>
+### TM Terminal has major changes to support new color and preference functionality.
 
 The TM Terminal's control (org.eclipse.tm.terminal.control) bundle has a
 major new version to support numerous API changes to support features
@@ -462,7 +394,7 @@ such as new colors, preference sharing and some other code clean-up.
   Style now use TerminalStyle. See
   [Bug 562495](https://bugs.eclipse.org/bugs/show_bug.cgi?id=549697).
 
-### <span id="casesensitive">Environment Variables are always case sensitive in CDT.</span>
+### Environment Variables are always case sensitive in CDT.
 
 The handling of environment and build variables in CDT has changed to
 being case sensitive. This means some API changes to remove methods such
@@ -478,7 +410,7 @@ as Path. See
 - org.eclipse.cdt.core.envvar.IEnvironmentVariableManager.isVariableCaseSensitive()
   removed.
 
-### <span id="escaping">Environment variables no longer support \\${ to avoid expanding.</span>
+### Environment variables no longer support \\${ to avoid expanding.
 
 This change is not literally an api change but will impact your code if
 you used \\${ to not expand environment variables. It may impact your
@@ -493,7 +425,7 @@ path\\${childPath} resolving to path${childPath}. See
 - org.eclipse.cdt.core.envvar.IEnvironmentVariableManager.isVariableCaseSensitive()
   removed.
 
-### <span id="autocloseable">The binary parsers are now implement AutoCloseable</span>
+### The binary parsers are now implement AutoCloseable
 
 The binary parsers part of CDT core now implement the AutoCloseable
 interface and can be used in try-with-resources blocks. See list below
@@ -512,7 +444,7 @@ for all the classes that are now AutoCloseable. See
 - org.eclipse.cdt.utils.xcoff.AR
 - org.eclipse.cdt.utils.macho.AR
 
-### <span id="deductionremovedin10.0.0">ICPPASTDeductionGuide and ICPPASTParameterListOwner removed in CDT 10.0.1</span>
+### ICPPASTDeductionGuide and ICPPASTParameterListOwner removed in CDT 10.0.1
 
 Classes org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide and
 org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterListOwner which were
@@ -520,8 +452,7 @@ added for CDT 10.0.0 have been removed in CDT 10.0.1. See
 [Bug 567261](https://bugs.eclipse.org/bugs/show_bug.cgi?id=567261).
 
 ---
-
-# Future Deletions
+# Planned API Changes and deletions
 
 The items below can be removed after the given date or on a major release, whichever is sooner.
 The details and discussion on the removal happens in the GitHub issue (or Bugzilla) associated with the entry below.
@@ -529,7 +460,7 @@ See the [policy](../POLICY.md) for the details.
 
 ## API Removals after June 2022
 
-### <span id="baudrate">BaudRate enum in org.eclipse.cdt.serial</span>
+### BaudRate enum in org.eclipse.cdt.serial
 
 The BaudRate enum in org.eclipse.cdt.serial package will be removed. The
 following APIs will be removed, listed with their replacement.
@@ -554,7 +485,7 @@ See [Bug 563108](https://bugs.eclipse.org/bugs/show_bug.cgi?id=563108).
 
 ## API Removals after June 2023
 
-### <span id="ManagedCommandLineGenerator.toManagedCommandLineInfo">Add ITool parameter to ManagedCommandLineGenerator.toManagedCommandLineInfo</span>
+### Add ITool parameter to ManagedCommandLineGenerator.toManagedCommandLineInfo
 
 To allow extenders to know the context of a generated command line, the
 ITool instance was added to
@@ -571,7 +502,7 @@ instead.
 
 See [Bug 573254](https://bugs.eclipse.org/bugs/show_bug.cgi?id=573254).
 
-### <span id="GnuMakefileGenerator.addRuleForTool">Removed unneded boolean from function</span>
+### Removed unneded boolean from function
 
 The implementation for how post-build steps are generated was changed.
 The "bEmitPostBuildStepCall"-parameter is thus no longer needed.
@@ -587,7 +518,7 @@ instead.
 
 See [Bug 573502](https://bugs.eclipse.org/bugs/show_bug.cgi?id=573502).
 
-### <span id="GnuMakefileGenerator.addDefaultHeader">Changed methods from static to non-static</span>
+### Changed methods from static to non-static
 
 The implementation for generating the header in the make resources was
 changed. The following APIs will be removed, listed with their
@@ -610,7 +541,7 @@ See [Bug 573722](https://bugs.eclipse.org/bugs/show_bug.cgi?id=573722).
 
 ## API Removals after December 2023
 
-### <span id="GnuMakefileGeneratorAPI">GnuMakefileGenerator is no longer part of API</span>
+### GnuMakefileGenerator is no longer part of API
 
 The following classes will be removed from the API.
 
@@ -620,7 +551,7 @@ The following classes will be removed from the API.
 
 See [Bug 505882](https://bugs.eclipse.org/bugs/show_bug.cgi?id=505882).
 
-### <span id="Spawner.signals">The Spawner signal constants are nolonger API</span>
+### The Spawner signal constants are nolonger API
 
 The following constants will be removed from the Spawner API.
 
@@ -633,7 +564,7 @@ The following constants will be removed from the Spawner API.
 
 ## API Removals after March 2024
 
-### <span id="ArgletsMatcher">java.util.regex.Matcher use in JSONCDB API will be removed</span>
+### java.util.regex.Matcher use in JSONCDB API will be removed
 
 The following fields will be removed from the API as it is not thread
 safe. Use the patten instead and call matcher(input) to obtain a
@@ -647,7 +578,7 @@ See [Bug 578683](https://bugs.eclipse.org/bugs/show_bug.cgi?id=578683).
 
 ## API Removals after June 2024
 
-### <span id="ArgletsMatcher2">java.util.regex.Matcher use in JSONCDB API will be removed</span>
+### java.util.regex.Matcher use in JSONCDB API will be removed
 
 The following method will be removed from the API as it encourages
 non-safe constructs of reusing Matchers instead of Patterns.
@@ -659,7 +590,7 @@ non-safe constructs of reusing Matchers instead of Patterns.
 
 See [Bug 579982](https://bugs.eclipse.org/bugs/show_bug.cgi?id=579982).
 
-### <span id="BuiltinDetctionArgsGeneric">Misnamed class BuiltinDetctionArgsGeneric will be removed</span>
+### Misnamed class BuiltinDetctionArgsGeneric will be removed
 
 The class BuiltinDetctionArgsGeneric will be removed. Use the correctly
 spelled BuiltinDetectionArgsGeneric instead.

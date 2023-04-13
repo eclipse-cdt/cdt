@@ -36,6 +36,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -397,8 +398,9 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 			// deleteHostButton.setText(Messages.AbstractConfigurationPanel_delete);
 
 			ISharedImages workbenchImages = PlatformUI.getWorkbench().getSharedImages();
-			deleteHostButton.setImage(workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE).createImage());
-
+			Image deleteHostButtonImage = workbenchImages.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE)
+					.createImage();
+			deleteHostButton.setImage(deleteHostButtonImage);
 			deleteHostButton.setToolTipText(Messages.AbstractConfigurationPanel_deleteButtonTooltip);
 			deleteHostButton.addSelectionListener(new SelectionListener() {
 
@@ -422,6 +424,9 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 					widgetSelected(e);
 				}
 			});
+			if (deleteHostButtonImage != null) {
+				deleteHostButton.addListener(SWT.Dispose, (e) -> deleteHostButtonImage.dispose());
+			}
 
 			if (separator) {
 				Label sep = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,18 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
+ *     John Dallaway - set environment for spawning GNU tool processes (#361)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICExtension;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -30,10 +35,11 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	@Override
 	public Addr2line getAddr2line(IPath path) {
 		IPath addr2LinePath = getAddr2linePath();
+		String[] environment = getEnvironment();
 		Addr2line addr2line = null;
 		if (addr2LinePath != null && !addr2LinePath.isEmpty()) {
 			try {
-				addr2line = new Addr2line(addr2LinePath.toOSString(), path.toOSString());
+				addr2line = new Addr2line(addr2LinePath.toOSString(), new String[0], path.toOSString(), environment);
 			} catch (IOException e1) {
 			}
 		}
@@ -43,10 +49,11 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	@Override
 	public CPPFilt getCPPFilt() {
 		IPath cppFiltPath = getCPPFiltPath();
+		String[] environment = getEnvironment();
 		CPPFilt cppfilt = null;
 		if (cppFiltPath != null && !cppFiltPath.isEmpty()) {
 			try {
-				cppfilt = new CPPFilt(cppFiltPath.toOSString());
+				cppfilt = new CPPFilt(cppFiltPath.toOSString(), new String[0], environment);
 			} catch (IOException e2) {
 			}
 		}
@@ -57,10 +64,11 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	public Objdump getObjdump(IPath path) {
 		IPath objdumpPath = getObjdumpPath();
 		String objdumpArgs = getObjdumpArgs();
+		String[] environment = getEnvironment();
 		Objdump objdump = null;
 		if (objdumpPath != null && !objdumpPath.isEmpty()) {
 			try {
-				objdump = new Objdump(objdumpPath.toOSString(), objdumpArgs, path.toOSString());
+				objdump = new Objdump(objdumpPath.toOSString(), objdumpArgs, path.toOSString(), environment);
 			} catch (IOException e1) {
 			}
 		}
@@ -71,10 +79,11 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 	public NM getNM(IPath path) {
 		IPath nmPath = getNMPath();
 		String nmArgs = getNMArgs();
+		String[] environment = getEnvironment();
 		NM nm = null;
 		if (nmPath != null && !nmPath.isEmpty()) {
 			try {
-				nm = new NM(nmPath.toOSString(), nmArgs, path.toOSString());
+				nm = new NM(nmPath.toOSString(), nmArgs, path.toOSString(), environment);
 			} catch (IOException e1) {
 			}
 		}
@@ -142,5 +151,14 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 			value = ""; //$NON-NLS-1$
 		}
 		return value;
+	}
+
+	/** @since 8.2 */
+	protected String[] getEnvironment() {
+		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
+		ICConfigurationDescription cfg = ref.getConfiguration();
+		IEnvironmentVariable[] vars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg, true);
+		return Arrays.stream(vars).map(v -> String.format("%s=%s", v.getName(), v.getValue())) //$NON-NLS-1$
+				.toArray(String[]::new);
 	}
 }

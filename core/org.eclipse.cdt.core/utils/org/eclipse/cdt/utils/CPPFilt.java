@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     John Dallaway - Add constructor with environment (#361)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -26,10 +27,17 @@ import org.eclipse.cdt.utils.spawner.ProcessFactory;
  */
 public class CPPFilt {
 	private String[] args;
+	private String[] envp;
 	private Process cppfilt;
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
 	//private boolean isDisposed = false;
+
+	/** @since 8.2 */
+	public CPPFilt(String command, String[] params, String[] envp) throws IOException {
+		this.envp = envp;
+		init(command, params);
+	}
 
 	public CPPFilt(String command, String[] params) throws IOException {
 		init(command, params);
@@ -51,7 +59,7 @@ public class CPPFilt {
 			args[0] = command;
 			System.arraycopy(params, 0, args, 1, params.length);
 		}
-		cppfilt = ProcessFactory.getFactory().exec(args);
+		cppfilt = ProcessFactory.getFactory().exec(args, envp);
 		stdin = new BufferedWriter(new OutputStreamWriter(cppfilt.getOutputStream()));
 		stdout = new BufferedReader(new InputStreamReader(cppfilt.getInputStream()));
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     John Dallaway - Add constructor with environment (#361)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -26,12 +27,19 @@ import org.eclipse.cdt.utils.spawner.ProcessFactory;
 
 public class Addr2line {
 	private String[] args;
+	private String[] envp;
 	private Process addr2line;
 	private BufferedReader stdout;
 	private BufferedWriter stdin;
 	private String lastaddr, lastsymbol, lastline;
 	private static final Pattern OUTPUT_PATTERN = Pattern.compile("(.*)( \\(discriminator.*\\))"); //$NON-NLS-1$
 	//private boolean isDisposed = false;
+
+	/** @since 8.2 */
+	public Addr2line(String command, String[] params, String file, String[] envp) throws IOException {
+		this.envp = envp;
+		init(command, params, file);
+	}
 
 	public Addr2line(String command, String[] params, String file) throws IOException {
 		init(command, params, file);
@@ -53,7 +61,7 @@ public class Addr2line {
 			args[0] = command;
 			System.arraycopy(params, 0, args, 1, params.length);
 		}
-		addr2line = ProcessFactory.getFactory().exec(args);
+		addr2line = ProcessFactory.getFactory().exec(args, envp);
 		stdin = new BufferedWriter(new OutputStreamWriter(addr2line.getOutputStream()));
 		stdout = new BufferedReader(new InputStreamReader(addr2line.getInputStream()));
 	}

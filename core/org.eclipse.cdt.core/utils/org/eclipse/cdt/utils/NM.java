@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     John Dallaway - Add constructor with environment (#361)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils;
@@ -65,6 +66,8 @@ public class NM {
 	 * @since 5.1
 	 */
 	protected List<AddressNamePair> data_symbols;
+
+	private String[] envp;
 
 	private void parseOutput(InputStream stream) throws IOException {
 
@@ -124,7 +127,9 @@ public class NM {
 		this(command, (dynamic_only) ? new String[] { "-C", "-D" } : null, file); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	public NM(String command, String param, String file) throws IOException {
+	/** @since 8.2 */
+	public NM(String command, String param, String file, String[] envp) throws IOException {
+		this.envp = envp;
 		String[] params;
 		if (param == null || param.length() == 0) {
 			params = new String[0];
@@ -133,6 +138,10 @@ public class NM {
 			params = param.split("\\s"); //$NON-NLS-1$
 		}
 		init(command, params, file);
+	}
+
+	public NM(String command, String param, String file) throws IOException {
+		this(command, param, file, null);
 	}
 
 	public NM(String command, String[] params, String file) throws IOException {
@@ -154,7 +163,7 @@ public class NM {
 		text_symbols = new ArrayList<>();
 		data_symbols = new ArrayList<>();
 		bss_symbols = new ArrayList<>();
-		Process process = ProcessFactory.getFactory().exec(args);
+		Process process = ProcessFactory.getFactory().exec(args, envp);
 		parseOutput(process.getInputStream());
 		process.destroy();
 	}

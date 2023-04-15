@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <!--
-# Copyright (c) 2009, 2011 Wind River Systems, Inc. and others.
+# Copyright (c) 2009, 2023 Wind River Systems, Inc. and others.
 #
 # This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
 # Contributors:
 # Doug Schaefer   (Wind River)     - initial API and implementation 
 # Anna Dushistova (Mentor Graphics)- [329531][crossgcc] crossgcc fails to build a project
+# John Dallaway - enable GNU tool prefix lookup (#361)
 -->
 <plugin>
 
@@ -24,6 +25,7 @@
       <toolChain
             archList="all"
             configurationEnvironmentSupplier="org.eclipse.cdt.internal.build.crossgcc.CrossEnvironmentVariableSupplier"
+            configurationMacroSupplier="org.eclipse.cdt.internal.build.crossgcc.CrossBuildMacroSupplier"
             id="cdt.managedbuild.toolchain.gnu.cross.base"
             isAbstract="false"
             languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.build.crossgcc.CrossGCCBuiltinSpecsDetector"
@@ -32,7 +34,7 @@
             targetTool="cdt.managedbuild.tool.gnu.cross.c.linker;cdt.managedbuild.tool.gnu.cross.cpp.linker;cdt.managedbuild.tool.gnu.archiver">
          <targetPlatform
                archList="all"
-               binaryParser="org.eclipse.cdt.core.ELF"
+               binaryParser="org.eclipse.cdt.core.GNU_ELF"
                id="cdt.managedbuild.targetPlatform.gnu.cross"
                isAbstract="false"
                osList="all">

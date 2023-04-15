@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - initial API and implementation
- *     John Dallaway - set environment for spawning GNU tool processes (#361)
+ *     John Dallaway - set environment and tool prefix (#361)
  *******************************************************************************/
 package org.eclipse.cdt.utils;
 
@@ -19,11 +19,15 @@ import java.util.Arrays;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICExtension;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 public class DefaultGnuToolFactory implements IGnuToolFactory {
 	protected ICExtension fExtension;
@@ -94,7 +98,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
 		String value = ref.getExtensionData("addr2line"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "addr2line"; //$NON-NLS-1$
+			value = getToolPrefix() + "addr2line"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}
@@ -103,7 +107,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
 		String value = ref.getExtensionData("objdump"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "objdump"; //$NON-NLS-1$
+			value = getToolPrefix() + "objdump"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}
@@ -121,7 +125,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
 		String value = ref.getExtensionData("c++filt"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "c++filt"; //$NON-NLS-1$
+			value = getToolPrefix() + "c++filt"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}
@@ -130,7 +134,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
 		String value = ref.getExtensionData("strip"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "strip"; //$NON-NLS-1$
+			value = getToolPrefix() + "strip"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}
@@ -139,7 +143,7 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
 		String value = ref.getExtensionData("nm"); //$NON-NLS-1$
 		if (value == null || value.length() == 0) {
-			value = "nm"; //$NON-NLS-1$
+			value = getToolPrefix() + "nm"; //$NON-NLS-1$
 		}
 		return new Path(value);
 	}
@@ -160,5 +164,29 @@ public class DefaultGnuToolFactory implements IGnuToolFactory {
 		IEnvironmentVariable[] vars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg, true);
 		return Arrays.stream(vars).map(v -> String.format("%s=%s", v.getName(), v.getValue())) //$NON-NLS-1$
 				.toArray(String[]::new);
+	}
+
+	/** @since 8.2 */
+	protected String getToolPrefix() {
+		ICConfigExtensionReference ref = fExtension.getConfigExtensionReference();
+		ICConfigurationDescription cfg = ref.getConfiguration();
+		ICdtVariable[] userVars = CCorePlugin.getUserVarSupplier().getMacros(cfg);
+		ICdtVariable var = Arrays.stream(userVars).filter(v -> v.getName().equals(GNU_TOOL_PREFIX_VARIABLE)).findFirst()
+				.orElse(null);
+
+		// if user-defined variable not found, look for system variable provided by toolchain integration
+		if (var == null) {
+			var = CCorePlugin.getDefault().getCdtVariableManager().getVariable(GNU_TOOL_PREFIX_VARIABLE, cfg);
+		}
+
+		if (var != null) {
+			try {
+				return var.getStringValue();
+			} catch (CdtVariableException e) {
+				Platform.getLog(getClass())
+						.log(Status.error("Error getting CDT variable string value: " + GNU_TOOL_PREFIX_VARIABLE, e)); //$NON-NLS-1$
+			}
+		}
+		return ""; //$NON-NLS-1$
 	}
 }

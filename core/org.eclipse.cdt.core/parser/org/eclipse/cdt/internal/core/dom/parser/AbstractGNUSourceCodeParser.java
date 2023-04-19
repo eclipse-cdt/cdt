@@ -106,10 +106,6 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
  * Base class for the GNU C and C++ Parser.
  */
 public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
-	// See TemplateIdStrategy for an explanation of what this does.
-	public interface ITemplateIdStrategy {
-		boolean shallParseAsTemplateID(IASTName name);
-	}
 
 	protected static class FoundAggregateInitializer extends Exception {
 		public final IASTDeclarator fDeclarator;
@@ -969,7 +965,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	 * Models a cast expression followed by an operator. Can be linked into a chain.
 	 * This is done right to left, such that a tree of variants can be built.
 	 */
-	public static class BinaryOperator {
+	public static class BinaryOperator implements IBinaryOperator {
 		final int fOperatorToken;
 		final int fLeftPrecedence;
 		final int fRightPrecedence;
@@ -993,24 +989,29 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			}
 		}
 
+		@Override
 		public IASTInitializerClause exchange(IASTInitializerClause expr) {
-			IASTInitializerClause e = fExpression;
+			IASTInitializerClause expression = fExpression;
 			fExpression = expr;
-			return e;
+			return expression;
 		}
 
+		@Override
 		public IASTInitializerClause getExpression() {
 			return fExpression;
 		}
 
+		@Override
 		public BinaryOperator getNext() {
 			return fNext;
 		}
 
-		public void setNext(BinaryOperator next) {
-			fNext = next;
+		@Override
+		public void setNext(IBinaryOperator next) {
+			fNext = (BinaryOperator) next;
 		}
 
+		@Override
 		public int getOperatorToken() {
 			return fOperatorToken;
 		}

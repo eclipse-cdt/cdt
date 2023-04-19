@@ -33,12 +33,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
+import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser.BinaryOperator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
+import org.eclipse.cdt.internal.core.dom.parser.IBinaryOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.BranchPoint;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Variant;
 
@@ -46,13 +46,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Var
  * Models expression variants for the ambiguity of a template id.
  */
 public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTAmbiguousExpression, ICPPASTExpression {
-	private final BinaryOperator fEndOperator;
+	private final IBinaryOperator fEndOperator;
 	private final BranchPoint fVariants;
 	private IASTNode[] fNodes;
-	private final AbstractGNUSourceCodeParser fParser;
+	private final ISourceCodeParser fParser;
 
-	public CPPASTTemplateIDAmbiguity(AbstractGNUSourceCodeParser parser, BinaryOperator endOperator,
-			BranchPoint variants) {
+	public CPPASTTemplateIDAmbiguity(ISourceCodeParser parser, IBinaryOperator endOperator, BranchPoint variants) {
 		fParser = parser;
 		fEndOperator = endOperator;
 		fVariants = variants;
@@ -92,7 +91,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 			// Adjust the operator sequence.
 			if (selected != null) {
 				minOffset = selected.getRightOffset();
-				BinaryOperator targetOp = selected.getTargetOperator();
+				IBinaryOperator targetOp = selected.getTargetOperator();
 				if (targetOp != null) {
 					targetOp.exchange(selected.getExpression());
 					targetOp.setNext(v.getLeftOperator());

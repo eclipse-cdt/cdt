@@ -16,12 +16,13 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser.BinaryOperator;
+import org.eclipse.cdt.internal.core.dom.parser.IBinaryOperator;
 
 /**
  * Tracks variants of expressions due to the ambiguity between template-id and '<' operator.
  */
 public class NameOrTemplateIDVariants {
+
 	/**
 	 * A point where a '<' can be interpreted as less-than or as the angle-bracket of a template-id.
 	 */
@@ -30,9 +31,9 @@ public class NameOrTemplateIDVariants {
 		private Variant fFirstVariant;
 		private final boolean fAllowAssignment;
 		private final int fConditionCount;
-		private final BinaryOperator fLeftOperator;
+		private final IBinaryOperator fLeftOperator;
 
-		BranchPoint(BranchPoint next, Variant variant, BinaryOperator left, boolean allowAssignment,
+		BranchPoint(BranchPoint next, Variant variant, IBinaryOperator left, boolean allowAssignment,
 				int conditionCount) {
 			fNext = next;
 			fFirstVariant = variant;
@@ -54,7 +55,7 @@ public class NameOrTemplateIDVariants {
 			return fConditionCount;
 		}
 
-		public BinaryOperator getLeftOperator() {
+		public IBinaryOperator getLeftOperator() {
 			return fLeftOperator;
 		}
 
@@ -86,7 +87,7 @@ public class NameOrTemplateIDVariants {
 		private BranchPoint fOwner;
 		private Variant fNext;
 		private final IASTExpression fExpression;
-		private BinaryOperator fTargetOperator;
+		private IBinaryOperator fTargetOperator;
 		private final int fRightOffset;
 		private final IASTName[] fTemplateNames;
 
@@ -117,11 +118,11 @@ public class NameOrTemplateIDVariants {
 			return fExpression;
 		}
 
-		public BinaryOperator getTargetOperator() {
+		public IBinaryOperator getTargetOperator() {
 			return fTargetOperator;
 		}
 
-		public void setTargetOperator(BinaryOperator lastOperator) {
+		public void setTargetOperator(IBinaryOperator lastOperator) {
 			fTargetOperator = lastOperator;
 		}
 	}
@@ -132,11 +133,11 @@ public class NameOrTemplateIDVariants {
 		return fFirst == null;
 	}
 
-	public void addBranchPoint(Variant variants, BinaryOperator left, boolean allowAssignment, int conditionCount) {
+	public void addBranchPoint(Variant variants, IBinaryOperator left, boolean allowAssignment, int conditionCount) {
 		fFirst = new BranchPoint(fFirst, variants, left, allowAssignment, conditionCount);
 	}
 
-	public void closeVariants(int offset, BinaryOperator lastOperator) {
+	public void closeVariants(int offset, IBinaryOperator lastOperator) {
 		for (BranchPoint p = fFirst; p != null; p = p.getNext()) {
 			for (Variant v = p.getFirstVariant(); v != null; v = v.getNext()) {
 				if (v.getTargetOperator() == null) {
@@ -230,7 +231,7 @@ public class NameOrTemplateIDVariants {
 		return true;
 	}
 
-	public void removeInvalid(BinaryOperator lastOperator) {
+	public void removeInvalid(IBinaryOperator lastOperator) {
 		for (BranchPoint p = fFirst; p != null; p = p.getNext()) {
 			if (!isReachable(p, lastOperator)) {
 				remove(p);
@@ -244,8 +245,8 @@ public class NameOrTemplateIDVariants {
 		}
 	}
 
-	private boolean isReachable(BranchPoint bp, BinaryOperator endOperator) {
-		BinaryOperator op = bp.getLeftOperator();
+	private boolean isReachable(BranchPoint bp, IBinaryOperator endOperator) {
+		IBinaryOperator op = bp.getLeftOperator();
 		if (op == null)
 			return true;
 

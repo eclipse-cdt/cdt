@@ -82,6 +82,7 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTPointer;
 import org.eclipse.cdt.core.dom.ast.c.ICASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICASTTypedefNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.c.ICNodeFactory;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.c.ICASTKnRFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
@@ -105,6 +106,7 @@ import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.ITemplateIdStrategy;
 
 /**
  * Source Parser for the GNU C Syntax.
@@ -604,7 +606,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tAMPER:
 			return unaryExpression(IASTUnaryExpression.op_amper, ctx, strat);
 		case IToken.tAND:
-			return unaryExpression(IASTUnaryExpression.op_labelReference, ctx, strat);
+			return unaryExpression(IGNUASTUnaryExpression.op_labelReference, ctx, strat);
 		case IToken.tPLUS:
 			return unaryExpression(IASTUnaryExpression.op_plus, ctx, strat);
 		case IToken.tMINUS:

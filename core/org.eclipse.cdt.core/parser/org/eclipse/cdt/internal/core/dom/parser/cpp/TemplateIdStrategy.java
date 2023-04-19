@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractGNUSourceCodeParser.ITemplateIdStrategy;
+import org.eclipse.cdt.internal.core.dom.parser.ITemplateIdStrategy;
 
 /**
  * This class is used to track alternatives for parsing segments of code that involve '<' tokens.

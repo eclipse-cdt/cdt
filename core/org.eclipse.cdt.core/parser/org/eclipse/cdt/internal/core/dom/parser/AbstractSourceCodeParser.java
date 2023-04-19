@@ -7,6 +7,7 @@ import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTAlignmentSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTAttribute;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeOwner;
 import org.eclipse.cdt.core.dom.ast.IASTAttributeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -46,6 +47,8 @@ import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
 import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTToken;
+import org.eclipse.cdt.core.dom.ast.IASTTokenList;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
@@ -89,7 +92,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 	protected int backtrackCount = 0;
 	protected BacktrackException backtrack = new BacktrackException();
 
-	private boolean activeCode = true;
+	protected boolean activeCode = true;
 
 	public AbstractSourceCodeParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
 			INodeFactory factory, IBuiltinBindingsProvider provider) {
@@ -143,7 +146,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 				expr = buildExpression((IASTExpression) expr, rightChain);
 				rightChain = rightChain.fNext;
-			} else if (rightChain != null && leftChain.fRightPrecedence < rightChain.fLeftPrecedence) {
+			} else if (rightChain != null && leftChain.rightPrecedence < rightChain.leftPrecedence) {
 				expr = buildExpression((IASTExpression) expr, rightChain);
 				rightChain = rightChain.fNext;
 			} else {
@@ -215,11 +218,11 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 	 * Parses for two alternatives of a declspec sequence. If there is a second alternative the token after the second alternative
 	 * is returned, such that the parser can continue after both variants.
 	 */
-	protected abstract Decl declSpecifierSeq(DeclarationOptions option, ITemplateIdStrategy strat)
+	protected abstract Declaration declarationSpecifierSequence(DeclarationOptions option, ITemplateIdStrategy strat)
 			throws BacktrackException, EndOfFileException;
 
-	protected Decl declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException {
-		return declSpecifierSeq(option, null);
+	protected Declaration declSpecifierSeq(DeclarationOptions option) throws BacktrackException, EndOfFileException {
+		return declarationSpecifierSequence(option, null);
 	}
 
 	/**
@@ -231,6 +234,89 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 	protected abstract IASTAlignmentSpecifier createAmbiguousAlignmentSpecifier(IASTAlignmentSpecifier expression,
 			IASTAlignmentSpecifier typeId);
+
+	protected boolean isIdentifierOrKeyword(IToken token) {
+		char[] image = token.getCharImage();
+		if (image.length == 0) {
+			return false;
+		}
+		char firstChar = image[0];
+		return Character.isLetter(firstChar) || firstChar == '_';
+	}
+
+	protected IToken identifierOrKeyword() throws EndOfFileException, BacktrackException {
+		IToken token = lookahead(1);
+		if (!isIdentifierOrKeyword(token)) {
+			throw backtrack;
+		}
+		consume();
+		return token;
+	}
+
+	/**
+	 * Parses sequence of tokens until encountering a token of a given type
+	 * @param offset the offset for the returned token node.
+	 * @param endType the type of the token to stop before
+	 * @return a token sequence, possibly empty but never {@code null}
+	 */
+	protected IASTTokenList balancedTokenSequence(int offset, int endType)
+			throws EndOfFileException, BacktrackException {
+		IASTTokenList result = nodeFactory.newTokenList();
+		IToken itoken;
+		while ((itoken = lookahead(1)).getType() != endType) {
+			itoken = consume();
+
+			if (itoken.getType() == IToken.tCOMPLETION || itoken.getType() == IToken.tEOC) {
+				break;
+			}
+
+			result.addToken(createASTToken(itoken));
+
+			IASTToken token;
+			switch (itoken.getType()) {
+			case IToken.tLPAREN:
+				token = balancedTokenSequence(itoken.getOffset(), IToken.tRPAREN);
+				break;
+
+			case IToken.tLBRACKET:
+				token = balancedTokenSequence(itoken.getOffset(), IToken.tRBRACKET);
+				break;
+
+			case IToken.tLBRACE:
+				token = balancedTokenSequence(itoken.getOffset(), IToken.tRBRACE);
+				break;
+
+			default:
+				continue;
+			}
+			result.addToken(token);
+			itoken = consume();
+			token = createASTToken(itoken);
+			result.addToken(token);
+		}
+
+		setRange(result, offset, itoken.getEndOffset());
+		return result;
+	}
+
+	protected IASTAttribute singleAttribute() throws EndOfFileException, BacktrackException {
+		// Get an identifier including keywords
+		IToken nameToken = identifierOrKeyword();
+		IASTToken argumentClause = null;
+		int endOffset = nameToken.getEndOffset();
+
+		// Check for arguments
+		if (lookaheadType(1) == IToken.tLPAREN) {
+			int argumentOffset = consume().getEndOffset();
+			argumentClause = balancedTokenSequence(argumentOffset, IToken.tRPAREN);
+			endOffset = consumeOrEndOfCompletion(IToken.tRPAREN).getEndOffset();
+		}
+		char[] attributeName = nameToken.getCharImage();
+
+		IASTAttribute result = nodeFactory.newAttribute(attributeName, argumentClause);
+		setRange(result, nameToken.getOffset(), endOffset);
+		return result;
+	}
 
 	protected boolean canBeTypeSpecifier() throws EndOfFileException {
 		final int type = lookaheadType(1);
@@ -878,7 +964,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 	protected IASTDeclarator addInitializer(FoundAggregateInitializer initializer, DeclarationOptions options)
 			throws EndOfFileException, BacktrackException {
-		final IASTDeclarator declarator = initializer.fDeclarator;
+		final IASTDeclarator declarator = initializer.declarator;
 		IASTInitializer i = optionalInitializer(declarator, options);
 		if (i != null) {
 			declarator.setInitializer(i);
@@ -1229,7 +1315,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 				&& lookaheadTypeWithEndOfFile(expectedBracketOffset + 1) == IToken.tIDENTIFIER;
 	}
 
-	protected Decl initDeclSpecifierSequenceDeclarator(final DeclarationOptions option,
+	protected Declaration initDeclSpecifierSequenceDeclarator(final DeclarationOptions option,
 			boolean acceptCompoundWithoutDtor)
 			throws EndOfFileException, FoundAggregateInitializer, BacktrackException {
 		return initDeclSpecifierSequenceDeclarator(option, acceptCompoundWithoutDtor, null);
@@ -1240,23 +1326,23 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 	 * A second alternative is accepted only, if it ends at the same point of the first alternative. Otherwise the
 	 * longer alternative is selected.
 	 */
-	protected Decl initDeclSpecifierSequenceDeclarator(final DeclarationOptions option,
+	protected Declaration initDeclSpecifierSequenceDeclarator(final DeclarationOptions option,
 			boolean acceptCompoundWithoutDtor, ITemplateIdStrategy strat)
 			throws EndOfFileException, FoundAggregateInitializer, BacktrackException {
-		Decl result = declSpecifierSeq(option, strat);
+		Declaration result = declarationSpecifierSequence(option, strat);
 
 		final int type = lookaheadTypeWithEndOfFile(1);
 		if (type == IToken.tEOC)
 			return result;
 
 		// support for structured bindings
-		if (isAtStartOfStructuredBinding(result.fDeclSpec1)) {
+		if (isAtStartOfStructuredBinding(result.leftSpecifier)) {
 			result.isAtStartOfStructuredBinding = true;
 			return result;
 		}
 
 		// support simple declarations without declarators
-		final boolean acceptEmpty = acceptCompoundWithoutDtor && isLegalWithoutDestructor(result.fDeclSpec1);
+		final boolean acceptEmpty = acceptCompoundWithoutDtor && isLegalWithoutDestructor(result.leftSpecifier);
 		if (acceptEmpty) {
 			switch (type) {
 			case 0:
@@ -1267,9 +1353,9 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 		}
 
 		final IToken dtorMark1 = mark();
-		final IToken dtorMark2 = result.fDtorToken1;
-		final IASTDeclSpecifier declspec1 = result.fDeclSpec1;
-		final IASTDeclSpecifier declspec2 = result.fDeclSpec2;
+		final IToken dtorMark2 = result.declaratorToken;
+		final IASTDeclSpecifier declspec1 = result.leftSpecifier;
+		final IASTDeclSpecifier declspec2 = result.rightSpecifier;
 		IASTDeclarator dtor1, dtor2;
 		try {
 			// declarator for first variant
@@ -1399,6 +1485,14 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 		} finally {
 			backup(m);
 		}
+	}
+
+	protected final int attributesStartOffset(int startOffset, List<IASTAttributeSpecifier> specifiers) {
+		if (specifiers == null || specifiers.isEmpty()) {
+			return startOffset;
+		}
+		ASTNode firstSpecifier = (ASTNode) specifiers.get(0);
+		return Math.min(startOffset, firstSpecifier.getOffset());
 	}
 
 	protected final boolean isOnSameLine(int offset, int secondaryOffset) {
@@ -1735,7 +1829,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 			if (typeId != null && lookaheadType(1) == IToken.tRPAREN) {
 				consume();
 				boolean unaryFailed = false;
-				if (ctx == CastExprCtx.eDirectlyInBExpr) {
+				if (ctx == CastExprCtx.DIRECTLY_IN_BINARY_EXPR) {
 					switch (lookaheadType(1)) {
 					// ambiguity with unary operator
 					case IToken.tPLUS:
@@ -1747,7 +1841,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 						IToken markEnd = mark();
 						backup(mark);
 						try {
-							IASTExpression unary = unaryExpression(CastExprCtx.eInBExpr, strat);
+							IASTExpression unary = unaryExpression(CastExprCtx.IN_BINARY_EXPR, strat);
 							return new CastAmbiguityMarker(unary, typeId, operatorOffset);
 						} catch (BacktrackException exception) {
 							backup(markEnd);
@@ -1796,15 +1890,15 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 	private IASTExpression buildExpression(IASTExpression left, BinaryOperator operator) {
 		int operation, unaryOperation = 0;
-		final IASTInitializerClause right = operator.fExpression;
-		switch (operator.fOperatorToken) {
+		final IASTInitializerClause right = operator.expression;
+		switch (operator.operatorToken) {
 		case IToken.tQUESTION:
 			final IASTInitializerClause negative;
-			if (operator.fNext == null || operator.fNext.fOperatorToken != IToken.tCOLON) {
+			if (operator.next == null || operator.next.operatorToken != IToken.tCOLON) {
 				negative = null;
 			} else {
-				negative = operator.fNext.fExpression;
-				operator.fNext = operator.fNext.fNext;
+				negative = operator.next.expression;
+				operator.next = operator.next.next;
 			}
 			IASTConditionalExpression conditionalEx = nodeFactory.newConditionalExpession(left, (IASTExpression) right,
 					(IASTExpression) negative);
@@ -1931,7 +2025,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 		}
 
 		IASTExpression result = buildBinaryExpression(operation, left, right, calculateEndOffset(right));
-		final CastAmbiguityMarker marker = operator.fAmbiguityMarker;
+		final CastAmbiguityMarker marker = operator.ambiguityMarker;
 		if (marker != null) {
 			if (unaryOperation != 0) {
 				result = createCastVsBinaryExpressionAmbiguity((IASTBinaryExpression) result, marker.getTypeIdForCast(),
@@ -2157,6 +2251,13 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 		return createProblem(IProblem.SYNTAX_ERROR, offset, endOffset - offset);
 	}
 
+	private IASTToken createASTToken(IToken original) {
+		IASTToken token;
+		token = nodeFactory.newToken(original.getType(), original.getCharImage());
+		setRange(token, original.getOffset(), original.getEndOffset());
+		return token;
+	}
+
 	protected static final class ASTMarkInactiveVisitor extends ASTGenericVisitor {
 		public ASTMarkInactiveVisitor() {
 			super(true);
@@ -2181,83 +2282,83 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 
-	protected static class Decl {
-		public IASTDeclSpecifier fDeclSpec1;
-		public IASTDeclSpecifier fDeclSpec2;
+	protected static class Declaration {
+		public IASTDeclSpecifier leftSpecifier;
+		public IASTDeclSpecifier rightSpecifier;
 
-		public IASTDeclarator fDtor1;
-		public IASTDeclarator fDtor2;
-		public IToken fDtorToken1;
+		public IASTDeclarator leftDeclarator;
+		public IASTDeclarator rightDeclarator;
+		public IToken declaratorToken;
 
 		public boolean isAtStartOfStructuredBinding = false;
 
-		public Decl() {
+		public Declaration() {
 		}
 
-		public Decl set(IASTDeclSpecifier declspec, IASTDeclarator dtor, IToken dtorToken) {
-			fDeclSpec1 = declspec;
-			fDtor1 = dtor;
-			fDtorToken1 = dtorToken;
-			fDeclSpec2 = null;
-			fDtor2 = null;
+		public Declaration set(IASTDeclSpecifier specifier, IASTDeclarator declarator, IToken declaratorToken) {
+			leftSpecifier = specifier;
+			leftDeclarator = declarator;
+			this.declaratorToken = declaratorToken;
+			rightSpecifier = null;
+			rightDeclarator = null;
 			return this;
 		}
 
-		public Decl set(IASTDeclSpecifier declspec1, IASTDeclarator dtor1, IASTDeclSpecifier declspec2,
+		public Declaration set(IASTDeclSpecifier declspec1, IASTDeclarator dtor1, IASTDeclSpecifier declspec2,
 				IASTDeclarator dtor2) {
-			fDeclSpec1 = declspec1;
-			fDtor1 = dtor1;
-			fDtorToken1 = null;
-			fDeclSpec2 = declspec2;
-			fDtor2 = dtor2;
+			leftSpecifier = declspec1;
+			leftDeclarator = dtor1;
+			declaratorToken = null;
+			rightSpecifier = declspec2;
+			rightDeclarator = dtor2;
 			return this;
 		}
 	}
 
 	protected static class FoundAggregateInitializer extends Exception {
-		public final IASTDeclarator fDeclarator;
-		public final IASTDeclSpecifier fDeclSpec;
+		public final IASTDeclarator declarator;
+		public final IASTDeclSpecifier specifier;
 
-		public FoundAggregateInitializer(IASTDeclSpecifier declSpec, IASTDeclarator d) {
-			fDeclSpec = declSpec;
-			fDeclarator = d;
+		public FoundAggregateInitializer(IASTDeclSpecifier specifier, IASTDeclarator declarator) {
+			this.specifier = specifier;
+			this.declarator = declarator;
 		}
 	}
 
 	protected static enum ExprKind {
-		eExpression, eAssignment, eConstant
+		EXPRESSION, ASSIGNMENT, CONSTANT
 	}
 
 	protected static enum CastExprCtx {
-		eDirectlyInBExpr, eInBExpr, eNotInBExpr
+		DIRECTLY_IN_BINARY_EXPR, IN_BINARY_EXPR, NOT_IN_BINARY_EXPR
 	}
 
 	private final static class CastAmbiguityMarker extends ASTNode implements IASTExpression {
-		private IASTExpression fExpression;
-		private final IASTTypeId fTypeIdForCast;
-		private final int fUnaryOperatorOffset;
+		private IASTExpression expression;
+		private final IASTTypeId typeIDForCast;
+		private final int unaryOperatorOffset;
 
 		CastAmbiguityMarker(IASTExpression unary, IASTTypeId typeIdForCast, int unaryOperatorOffset) {
-			fExpression = unary;
-			fTypeIdForCast = typeIdForCast;
-			fUnaryOperatorOffset = unaryOperatorOffset;
+			this.expression = unary;
+			this.typeIDForCast = typeIdForCast;
+			this.unaryOperatorOffset = unaryOperatorOffset;
 		}
 
 		public CastAmbiguityMarker updateExpression(IASTExpression expression) {
-			fExpression = expression;
+			this.expression = expression;
 			return this;
 		}
 
 		public IASTExpression getExpression() {
-			return fExpression;
+			return this.expression;
 		}
 
 		public IASTTypeId getTypeIdForCast() {
-			return fTypeIdForCast;
+			return typeIDForCast;
 		}
 
 		public int getUnaryOperatorOffset() {
-			return fUnaryOperatorOffset;
+			return unaryOperatorOffset;
 		}
 
 		@Override
@@ -2290,50 +2391,55 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 	 * Models a cast expression followed by an operator. Can be linked into a chain.
 	 * This is done right to left, such that a tree of variants can be built.
 	 */
-	protected static final class BinaryOperator {
-		final int fOperatorToken;
-		final int fLeftPrecedence;
-		final int fRightPrecedence;
-		BinaryOperator fNext;
-		IASTInitializerClause fExpression;
-		final CastAmbiguityMarker fAmbiguityMarker;
+	protected static final class BinaryOperator implements IBinaryOperator {
+		final int operatorToken;
+		final int leftPrecedence;
+		final int rightPrecedence;
+		BinaryOperator next;
+		IASTInitializerClause expression;
+		final CastAmbiguityMarker ambiguityMarker;
 
-		public BinaryOperator(BinaryOperator nextOp, IASTInitializerClause expression, int operatorToken,
+		public BinaryOperator(BinaryOperator nextOperator, IASTInitializerClause expression, int operatorToken,
 				int leftPrecedence, int rightPrecedence) {
-			fNext = nextOp;
-			fOperatorToken = operatorToken;
-			fLeftPrecedence = leftPrecedence;
-			fRightPrecedence = rightPrecedence;
+			next = nextOperator;
+			this.operatorToken = operatorToken;
+			this.leftPrecedence = leftPrecedence;
+			this.rightPrecedence = rightPrecedence;
 			if (expression instanceof CastAmbiguityMarker) {
-				fAmbiguityMarker = (CastAmbiguityMarker) expression;
-				fExpression = fAmbiguityMarker.fExpression;
-				fAmbiguityMarker.fExpression = null;
+				this.ambiguityMarker = (CastAmbiguityMarker) expression;
+				this.expression = ambiguityMarker.expression;
+				this.ambiguityMarker.expression = null;
 			} else {
-				fExpression = expression;
-				fAmbiguityMarker = null;
+				this.expression = expression;
+				this.ambiguityMarker = null;
 			}
 		}
 
+		@Override
 		public IASTInitializerClause exchange(IASTInitializerClause expr) {
-			IASTInitializerClause e = fExpression;
-			fExpression = expr;
-			return e;
+			IASTInitializerClause expression = this.expression;
+			this.expression = expr;
+			return expression;
 		}
 
+		@Override
 		public IASTInitializerClause getExpression() {
-			return fExpression;
+			return expression;
 		}
 
+		@Override
 		public BinaryOperator getNext() {
-			return fNext;
+			return next;
 		}
 
-		public void setNext(BinaryOperator next) {
-			fNext = next;
+		@Override
+		public void setNext(IBinaryOperator next) {
+			this.next = (BinaryOperator) next;
 		}
-	}
 
-	protected interface ITemplateIdStrategy {
-		boolean shallParseAsTemplateID(IASTName name);
+		@Override
+		public int getOperatorToken() {
+			return operatorToken;
+		}
 	}
 }

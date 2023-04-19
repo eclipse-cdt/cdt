@@ -157,6 +157,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier.SpecifierKind;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNodeFactory;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTArrayRangeDesignator;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.cpp.ICPPParserExtensionConfiguration;
@@ -183,6 +184,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.ITemplateIdStrategy;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.BranchPoint;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Variant;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
@@ -199,7 +201,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	// This is a parameter to the protected function {@link #declarator(DtorStrategy, DeclarationOptions)}
 	// so it needs to be protected too.
-	protected static enum DtorStrategy {
+	protected static enum DestructorStrategy {
 		PREFER_FUNCTION, PREFER_NESTED
 	}
 
@@ -1240,7 +1242,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				BranchPoint varPoint = variant.getOwner();
 				allowAssignment = varPoint.isAllowAssignment();
 				conditionCount = varPoint.getConditionCount();
-				lastOperator = varPoint.getLeftOperator();
+				lastOperator = (BinaryOperator) varPoint.getLeftOperator();
 				expr = variant.getExpression();
 
 				backup(variantMark);
@@ -1746,7 +1748,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tAMPER:
 			return unaryExpression(IASTUnaryExpression.op_amper, ctx, strat);
 		case IToken.tAND:
-			return unaryExpression(IASTUnaryExpression.op_labelReference, ctx, strat);
+			return unaryExpression(IGNUASTUnaryExpression.op_labelReference, ctx, strat);
 		case IToken.tPLUS:
 			return unaryExpression(IASTUnaryExpression.op_plus, ctx, strat);
 		case IToken.tMINUS:
@@ -1787,7 +1789,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			return parseTypeidInParenthesisOrUnaryExpression(false, consume().getOffset(),
 					IASTTypeIdExpression.op_alignof, IASTUnaryExpression.op_alignOf, ctx, strat);
 		case IGCCToken.tTT_integer_pack:
-			return unaryExpression(IASTUnaryExpression.op_integerPack, ctx, strat);
+			return unaryExpression(IGNUASTUnaryExpression.op_integerPack, ctx, strat);
 		case IGCCToken.tTT_has_nothrow_assign:
 		case IGCCToken.tTT_has_nothrow_constructor:
 		case IGCCToken.tTT_has_nothrow_copy:
@@ -4187,7 +4189,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		IASTDeclarator dtor2 = null;
 		BacktrackException bt = null;
 		try {
-			dtor1 = initDeclarator(DtorStrategy.PREFER_FUNCTION, declspec, option);
+			dtor1 = initDeclarator(DestructorStrategy.PREFER_FUNCTION, declspec, option);
 			verifyDtor(declspec, dtor1, option);
 
 			int lt1 = LTcatchEOF(1);
@@ -4239,7 +4241,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		backup(mark);
 		try {
-			dtor2 = initDeclarator(DtorStrategy.PREFER_NESTED, declspec, option);
+			dtor2 = initDeclarator(DestructorStrategy.PREFER_NESTED, declspec, option);
 			if (dtor1 == null) {
 				return dtor2;
 			}
@@ -4369,7 +4371,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 * @throws BacktrackException request a backtrack
 	 * @throws FoundAggregateInitializer
 	 */
-	private IASTDeclarator initDeclarator(DtorStrategy strategy, IASTDeclSpecifier declspec, DeclarationOptions option)
+	private IASTDeclarator initDeclarator(DestructorStrategy strategy, IASTDeclSpecifier declspec, DeclarationOptions option)
 			throws EndOfFileException, BacktrackException, FoundAggregateInitializer {
 		final IASTDeclarator dtor = declarator(strategy, option);
 		if (option.fAllowInitializer) {
@@ -4765,7 +4767,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	 * @throws BacktrackException
 	 *			 request a backtrack
 	 */
-	protected IASTDeclarator declarator(DtorStrategy strategy, DeclarationOptions option)
+	protected IASTDeclarator declarator(DestructorStrategy strategy, DeclarationOptions option)
 			throws EndOfFileException, BacktrackException {
 		final int startingOffset = LA(1).getOffset();
 		int endOffset = startingOffset;
@@ -4844,7 +4846,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				if (LT(1) == IToken.tRPAREN)
 					throwBacktrack(LA(1));
 
-				final IASTDeclarator nested = declarator(DtorStrategy.PREFER_FUNCTION, option);
+				final IASTDeclarator nested = declarator(DestructorStrategy.PREFER_FUNCTION, option);
 				endOffset = consume(IToken.tRPAREN).getEndOffset();
 				final IASTDeclarator cand2 = declarator(pointerOps, hasEllipsis, getNodeFactory().newName(), nested,
 						startingOffset, endOffset, strategy, option, attributes);
@@ -4998,14 +5000,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 	private IASTDeclarator declarator(List<? extends IASTPointerOperator> pointerOps, boolean hasEllipsis,
 			IASTName declaratorName, IASTDeclarator nestedDeclarator, int startingOffset, int endOffset,
-			DtorStrategy strategy, DeclarationOptions option, List<IASTAttributeSpecifier> attributes)
+			DestructorStrategy strategy, DeclarationOptions option, List<IASTAttributeSpecifier> attributes)
 			throws EndOfFileException, BacktrackException {
 		ICPPASTDeclarator result = null;
 		loop: while (true) {
 			final int lt1 = LTcatchEOF(1);
 			switch (lt1) {
 			case IToken.tLPAREN:
-				if (option.fAllowFunctions && strategy == DtorStrategy.PREFER_FUNCTION) {
+				if (option.fAllowFunctions && strategy == DestructorStrategy.PREFER_FUNCTION) {
 					result = functionDeclarator(false);
 					setDeclaratorID(result, hasEllipsis, declaratorName, nestedDeclarator);
 				}

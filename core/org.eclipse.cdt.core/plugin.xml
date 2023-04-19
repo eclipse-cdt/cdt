@@ -714,15 +714,11 @@
             class="org.eclipse.cdt.core.dom.ast.c.CLanguage"
             id="c"
             name="%language.name.c">
-         <contentType id="org.eclipse.cdt.core.cSource"/>
-         <contentType id="org.eclipse.cdt.core.cHeader"/>
       </language>
       <language
             class="org.eclipse.cdt.core.dom.ast.cpp.CPPLanguage"
             id="c++"
             name="%language.name.cpp">
-         <contentType id="org.eclipse.cdt.core.cxxSource"/>
-         <contentType id="org.eclipse.cdt.core.cxxHeader"/>
       </language>
       <language
             class="org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage"

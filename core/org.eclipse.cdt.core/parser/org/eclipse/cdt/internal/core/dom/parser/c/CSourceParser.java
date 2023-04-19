@@ -79,6 +79,7 @@ import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.ITemplateIdStrategy;
 
 /**
  * Source Parser for the C Language Syntax.
@@ -205,12 +206,12 @@ public class CSourceParser extends AbstractSourceCodeParser {
 
 	@Override
 	protected IASTExpression expression() throws BacktrackException, EndOfFileException {
-		return expression(ExprKind.eExpression);
+		return expression(ExprKind.EXPRESSION);
 	}
 
 	@Override
 	protected IASTExpression constantExpression() throws BacktrackException, EndOfFileException {
-		return expression(ExprKind.eConstant);
+		return expression(ExprKind.CONSTANT);
 	}
 
 	@Override
@@ -407,7 +408,7 @@ public class CSourceParser extends AbstractSourceCodeParser {
 			return literalExpression;
 		case IToken.tLPAREN:
 			token = consume();
-			IASTExpression left = expression(ExprKind.eExpression); // instead of expression(), to keep the stack smaller
+			IASTExpression left = expression(ExprKind.EXPRESSION); // instead of expression(), to keep the stack smaller
 			int finalOffset = 0;
 			switch (lookaheadType(1)) {
 			case IToken.tRPAREN:
@@ -520,12 +521,12 @@ public class CSourceParser extends AbstractSourceCodeParser {
 		IASTDeclarator declarator = null;
 
 		try {
-			Decl decl = initDeclSpecifierSequenceDeclarator(option, false);
-			declSpecifier = decl.fDeclSpec1;
-			declarator = decl.fDtor1;
+			Declaration decl = initDeclSpecifierSequenceDeclarator(option, false);
+			declSpecifier = decl.leftSpecifier;
+			declarator = decl.leftDeclarator;
 		} catch (FoundAggregateInitializer lie) {
 			// type-ids have not compound initializers
-			throwBacktrack(lie.fDeclarator);
+			throwBacktrack(lie.declarator);
 		}
 
 		IASTTypeId result = nodeFactory.newTypeId(declSpecifier, declarator);
@@ -534,7 +535,7 @@ public class CSourceParser extends AbstractSourceCodeParser {
 	}
 
 	@Override
-	protected Decl declSpecifierSeq(DeclarationOptions option, ITemplateIdStrategy strat)
+	protected Declaration declarationSpecifierSequence(DeclarationOptions option, ITemplateIdStrategy strat)
 			throws BacktrackException, EndOfFileException {
 		int storageClass = IASTDeclSpecifier.sc_unspecified;
 		int simpleType = IASTSimpleDeclSpecifier.t_unspecified;
@@ -789,10 +790,10 @@ public class CSourceParser extends AbstractSourceCodeParser {
 				throw exception;
 			}
 		}
-		Decl target = new Decl();
-		target.fDeclSpec1 = result;
-		target.fDeclSpec2 = altResult;
-		target.fDtorToken1 = returnToken;
+		Declaration target = new Declaration();
+		target.leftSpecifier = result;
+		target.rightSpecifier = altResult;
+		target.declaratorToken = returnToken;
 		return target;
 	}
 
@@ -1184,14 +1185,14 @@ public class CSourceParser extends AbstractSourceCodeParser {
 		IASTDeclarator altDtor = null;
 		IToken markBeforDtor = null;
 		try {
-			Decl decl = initDeclSpecifierSequenceDeclarator(declOption, true);
-			markBeforDtor = decl.fDtorToken1;
-			declSpec = decl.fDeclSpec1;
-			dtor = decl.fDtor1;
-			altDeclSpec = decl.fDeclSpec2;
-			altDtor = decl.fDtor2;
+			Declaration decl = initDeclSpecifierSequenceDeclarator(declOption, true);
+			markBeforDtor = decl.declaratorToken;
+			declSpec = decl.leftSpecifier;
+			dtor = decl.leftDeclarator;
+			altDeclSpec = decl.rightSpecifier;
+			altDtor = decl.rightDeclarator;
 		} catch (FoundAggregateInitializer lie) {
-			declSpec = lie.fDeclSpec;
+			declSpec = lie.specifier;
 			// scalability: don't keep references to tokens, initializer may be large
 			declarationMark = null;
 			dtor = addInitializer(lie, declOption);
@@ -1447,7 +1448,7 @@ public class CSourceParser extends AbstractSourceCodeParser {
 
 			if (lookaheadType(1) != IToken.tRBRACKET) {
 				if (!(isStatic || isRestrict || isConst || isVolatile))
-					exp = expression(ExprKind.eAssignment);
+					exp = expression(ExprKind.ASSIGNMENT);
 				else
 					exp = constantExpression();
 			}
@@ -1477,7 +1478,7 @@ public class CSourceParser extends AbstractSourceCodeParser {
 	private IASTInitializerClause initClause() throws EndOfFileException, BacktrackException {
 		final int offset = lookahead(1).getOffset();
 		if (lookaheadType(1) != IToken.tLBRACE)
-			return expression(ExprKind.eAssignment);
+			return expression(ExprKind.ASSIGNMENT);
 
 		// it's an aggregate initializer
 		consume(IToken.tLBRACE);
@@ -1604,12 +1605,12 @@ public class CSourceParser extends AbstractSourceCodeParser {
 	}
 
 	private IASTExpression expression(final ExprKind kind) throws EndOfFileException, BacktrackException {
-		final boolean allowComma = kind == ExprKind.eExpression;
-		boolean allowAssignment = kind != ExprKind.eConstant;
+		final boolean allowComma = kind == ExprKind.EXPRESSION;
+		boolean allowAssignment = kind != ExprKind.CONSTANT;
 		int type;
 		int conditionCount = 0;
 		BinaryOperator lastOperator = null;
-		IASTExpression lastExpression = castExpression(CastExprCtx.eDirectlyInBExpr, null);
+		IASTExpression lastExpression = castExpression(CastExprCtx.DIRECTLY_IN_BINARY_EXPR, null);
 		loop: while (true) {
 			type = lookaheadType(1);
 			switch (type) {
@@ -1698,7 +1699,7 @@ public class CSourceParser extends AbstractSourceCodeParser {
 			}
 
 			consume(); // consume operator
-			lastExpression = castExpression(CastExprCtx.eDirectlyInBExpr, null); // next cast expression
+			lastExpression = castExpression(CastExprCtx.DIRECTLY_IN_BINARY_EXPR, null); // next cast expression
 		}
 
 		// Check for incomplete conditional expression
@@ -1756,14 +1757,14 @@ public class CSourceParser extends AbstractSourceCodeParser {
 		IASTDeclarator altDeclarator = null;
 
 		try {
-			Decl decl = initDeclSpecifierSequenceDeclarator(option, false);
-			declSpec = decl.fDeclSpec1;
-			declarator = decl.fDtor1;
-			altDeclSpec = decl.fDeclSpec2;
-			altDeclarator = decl.fDtor2;
+			Declaration decl = initDeclSpecifierSequenceDeclarator(option, false);
+			declSpec = decl.leftSpecifier;
+			declarator = decl.leftDeclarator;
+			altDeclSpec = decl.rightSpecifier;
+			altDeclarator = decl.rightDeclarator;
 		} catch (FoundAggregateInitializer lie) {
-			declSpec = lie.fDeclSpec;
-			declarator = lie.fDeclarator;
+			declSpec = lie.specifier;
+			declarator = lie.declarator;
 		}
 
 		final int length = figureEndOffset(declSpec, declarator) - startingOffset;
@@ -1893,7 +1894,7 @@ public class CSourceParser extends AbstractSourceCodeParser {
 						consume(IToken.tCOMMA);
 					}
 
-					IASTExpression expr = expression(ExprKind.eAssignment);
+					IASTExpression expr = expression(ExprKind.ASSIGNMENT);
 					if (argList == null) {
 						argList = new ArrayList<>();
 					}

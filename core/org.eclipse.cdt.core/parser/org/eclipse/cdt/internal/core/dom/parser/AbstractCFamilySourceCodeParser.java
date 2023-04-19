@@ -137,7 +137,7 @@ public abstract class AbstractCFamilySourceCodeParser implements ISourceCodePars
 		return completionNode;
 	}
 
-	public final IASTExpression buildExpression(IBinaryOperator leftChain, IASTInitializerClause expr) {
+	public IASTExpression buildExpression(IBinaryOperator leftChain, IASTInitializerClause expr) {
 		BinaryOperator rightChain = null;
 		for (;;) {
 			if (leftChain == null) {

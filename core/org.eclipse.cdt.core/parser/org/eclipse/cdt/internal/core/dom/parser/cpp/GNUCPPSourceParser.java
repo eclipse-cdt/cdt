@@ -184,6 +184,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.IBinaryOperator;
 import org.eclipse.cdt.internal.core.dom.parser.ITemplateIdStrategy;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.BranchPoint;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Variant;
@@ -1273,7 +1274,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return (ICPPASTExpression) buildExpression(lastOperator, expr);
 	}
 
-	private int calculateFirstOffset(BinaryOperator leftChain, IASTInitializerClause expr) {
+	private int calculateFirstOffset(IBinaryOperator leftChain, IASTInitializerClause expr) {
 		int firstOffset = ((ASTNode) expr).getOffset();
 
 		while (leftChain != null) {
@@ -1291,7 +1292,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	}
 
 	@Override
-	public final IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) {
+	public final IASTExpression buildExpression(IBinaryOperator leftChain, IASTInitializerClause expr) {
 		if (supportFoldExpression && expr != null) {
 			int foldCount = 0;
 			int foldOpToken = 0;
@@ -1308,7 +1309,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			BinaryOperator foldOp = null;
 			BinaryOperator foldOpPrev = null;
 
-			scanFoldExpressions: for (BinaryOperator op = leftChain; op != null; op = op.getNext()) {
+			scanFoldExpressions: for (BinaryOperator op = (BinaryOperator) leftChain; op != null; op = op.getNext()) {
 				if (op.getExpression() instanceof CPPASTFoldExpressionToken) {
 					if (++foldCount == 1) {
 						foldOp = op;
@@ -1340,7 +1341,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 						// if fold token is not the rightmost one in original chain,
 						// break the chain and move front part to the right
 						foldOpPrev.setNext(null);
-						rightChain = leftChain;
+						rightChain = (BinaryOperator) leftChain;
 					} else {
 						rightChain = null;
 					}

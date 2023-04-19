@@ -152,6 +152,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
+import org.eclipse.cdt.internal.core.dom.parser.IBinaryOperator;
 import org.eclipse.cdt.internal.core.dom.parser.ITemplateIdStrategy;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.BranchPoint;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.NameOrTemplateIDVariants.Variant;
@@ -556,6 +557,96 @@ public class CPPSourceParser extends AbstractCFamilySourceCodeParser {
 			return constructorStyleInitializer(false);
 		}
 		return null;
+	}
+
+	@Override
+	public IASTExpression buildExpression(IBinaryOperator leftChain, IASTInitializerClause expr) {
+		if (expr != null) {
+			int foldCount = 0;
+			int foldOpToken = 0;
+
+			int firstOffset = calculateFirstOffset(leftChain, expr);
+			int endOffset = calculateEndOffset(expr);
+
+			if (expr instanceof CPPASTFoldExpressionToken) {
+				// unary right fold: (pack op ...)
+				foldCount++;
+			}
+
+			BinaryOperator prev = null;
+			BinaryOperator foldOp = null;
+			BinaryOperator foldOpPrev = null;
+
+			scanFoldExpressions: for (BinaryOperator operator = (BinaryOperator) leftChain; operator != null; operator = operator
+					.getNext()) {
+				if (operator.getExpression() instanceof CPPASTFoldExpressionToken) {
+					if (++foldCount == 1) {
+						foldOp = operator;
+						foldOpPrev = prev;
+					} else {
+						// only single fold token allowed
+						foldOp = null;
+						foldOpPrev = null;
+						break scanFoldExpressions;
+					}
+				} else {
+					prev = operator;
+				}
+			}
+
+			// Valid fold-expression has single ellipsis.
+
+			if (foldCount == 1 && leftChain != null) {
+				BinaryOperator rightChain;
+				if (foldOp == null) {
+					// unary right fold, remove expression and use left chain as is
+					foldOpToken = leftChain.getOperatorToken();
+					expr = null;
+					rightChain = null;
+				} else {
+					foldOpToken = foldOp.getOperatorToken();
+
+					if (foldOpPrev != null) {
+						// if fold token is not the rightmost one in original chain,
+						// break the chain and move front part to the right
+						foldOpPrev.setNext(null);
+						rightChain = (BinaryOperator) leftChain;
+					} else {
+						rightChain = null;
+					}
+					// move tail part to the left
+					leftChain = foldOp.getNext();
+				}
+
+				// Valid fold-expression has at most one cast-expression on each side of ellipsis.
+				// This is easy to check since each of BinaryOperator chain elements carry single
+				// cast-expression.
+
+				if (leftChain != null && foldOpToken != leftChain.getOperatorToken()) {
+					// Invalid, binary fold with different operator tokens
+				} else if (!allowedFoldExpressionOperator(foldOpToken)) {
+					// Invalid, fold with invalid operator token
+				} else if (leftChain != null && leftChain.getNext() != null) {
+					// Invalid, more than one cast-expression on the left side
+				} else if (rightChain != null) {
+					// Invalid, more than one cast-expression on the right side
+				} else {
+					IASTExpression left = leftChain == null ? null : (IASTExpression) leftChain.getExpression();
+					IASTExpression right = (IASTExpression) expr;
+					return buildFoldExpression(foldOpToken, left, right, firstOffset, endOffset);
+				}
+			}
+
+			if (foldCount >= 1) {
+				// Invalid fold-expression
+				IASTProblem problem = createProblem(IProblem.SYNTAX_ERROR, firstOffset, endOffset - firstOffset);
+				IASTProblemExpression pexpr = nodeFactory.newProblemExpression(problem);
+				((ASTNode) pexpr).setOffsetAndLength(((ASTNode) problem));
+				return pexpr;
+			}
+		}
+
+		return super.buildExpression(leftChain, expr);
 	}
 
 	@Override
@@ -5348,6 +5439,176 @@ public class CPPSourceParser extends AbstractCFamilySourceCodeParser {
 		}
 
 		return true;
+	}
+
+	private int calculateFirstOffset(IBinaryOperator leftChain, IASTInitializerClause expr) {
+		int firstOffset = ((ASTNode) expr).getOffset();
+
+		while (leftChain != null) {
+			expr = leftChain.getExpression();
+			if (expr != null) {
+				int exprOffset = ((ASTNode) expr).getOffset();
+				if (firstOffset > exprOffset) {
+					firstOffset = exprOffset;
+				}
+			}
+			leftChain = leftChain.getNext();
+		}
+
+		return firstOffset;
+	}
+
+	private ICPPASTFoldExpression buildFoldExpression(int opToken, IASTExpression expr, IASTExpression expression,
+			int firstOffset, int lastOffset) {
+		int op = 0;
+		boolean isComma = false;
+
+		switch (opToken) {
+		case IToken.tPLUS:
+			op = IASTBinaryExpression.op_plus;
+			break;
+		case IToken.tMINUS:
+			op = IASTBinaryExpression.op_minus;
+			break;
+		case IToken.tSTAR:
+			op = IASTBinaryExpression.op_multiply;
+			break;
+		case IToken.tDIV:
+			op = IASTBinaryExpression.op_divide;
+			break;
+		case IToken.tMOD:
+			op = IASTBinaryExpression.op_modulo;
+			break;
+		case IToken.tXOR:
+			op = IASTBinaryExpression.op_binaryXor;
+			break;
+		case IToken.tAMPER:
+			op = IASTBinaryExpression.op_binaryAnd;
+			break;
+		case IToken.tBITOR:
+			op = IASTBinaryExpression.op_binaryOr;
+			break;
+		case IToken.tASSIGN:
+			op = IASTBinaryExpression.op_assign;
+			break;
+		case IToken.tLT:
+			op = IASTBinaryExpression.op_lessThan;
+			break;
+		case IToken.tGT:
+			op = IASTBinaryExpression.op_greaterThan;
+			break;
+		case IToken.tSHIFTL:
+			op = IASTBinaryExpression.op_shiftLeft;
+			break;
+		case IToken.tSHIFTR:
+			op = IASTBinaryExpression.op_shiftRight;
+			break;
+		case IToken.tPLUSASSIGN:
+			op = IASTBinaryExpression.op_plusAssign;
+			break;
+		case IToken.tMINUSASSIGN:
+			op = IASTBinaryExpression.op_minusAssign;
+			break;
+		case IToken.tSTARASSIGN:
+			op = IASTBinaryExpression.op_multiplyAssign;
+			break;
+		case IToken.tDIVASSIGN:
+			op = IASTBinaryExpression.op_divideAssign;
+			break;
+		case IToken.tMODASSIGN:
+			op = IASTBinaryExpression.op_moduloAssign;
+			break;
+		case IToken.tXORASSIGN:
+			op = IASTBinaryExpression.op_binaryXorAssign;
+			break;
+		case IToken.tAMPERASSIGN:
+			op = IASTBinaryExpression.op_binaryAndAssign;
+			break;
+		case IToken.tBITORASSIGN:
+			op = IASTBinaryExpression.op_binaryOrAssign;
+			break;
+		case IToken.tSHIFTLASSIGN:
+			op = IASTBinaryExpression.op_shiftLeftAssign;
+			break;
+		case IToken.tSHIFTRASSIGN:
+			op = IASTBinaryExpression.op_shiftRightAssign;
+			break;
+		case IToken.tEQUAL:
+			op = IASTBinaryExpression.op_equals;
+			break;
+		case IToken.tNOTEQUAL:
+			op = IASTBinaryExpression.op_notequals;
+			break;
+		case IToken.tLTEQUAL:
+			op = IASTBinaryExpression.op_lessEqual;
+			break;
+		case IToken.tGTEQUAL:
+			op = IASTBinaryExpression.op_greaterEqual;
+			break;
+		case IToken.tAND:
+			op = IASTBinaryExpression.op_logicalAnd;
+			break;
+		case IToken.tOR:
+			op = IASTBinaryExpression.op_logicalOr;
+			break;
+		case IToken.tCOMMA:
+			isComma = true;
+			break;
+		case IToken.tDOTSTAR:
+			op = IASTBinaryExpression.op_pmdot;
+			break;
+		case IToken.tARROWSTAR:
+			op = IASTBinaryExpression.op_pmarrow;
+			break;
+
+		default:
+			return null;
+		}
+
+		ICPPASTFoldExpression result = ((ICPPNodeFactory) nodeFactory).newFoldExpression(op, isComma, expr, expression);
+		((ASTNode) result).setOffsetAndLength(firstOffset, lastOffset - firstOffset);
+		return result;
+	}
+
+	private boolean allowedFoldExpressionOperator(int operator) {
+		switch (operator) {
+		case IToken.tPLUS:
+		case IToken.tMINUS:
+		case IToken.tSTAR:
+		case IToken.tDIV:
+		case IToken.tMOD:
+		case IToken.tXOR:
+		case IToken.tAMPER:
+		case IToken.tBITOR:
+		case IToken.tASSIGN:
+		case IToken.tLT:
+		case IToken.tGT:
+		case IToken.tSHIFTL:
+		case IToken.tSHIFTR:
+		case IToken.tPLUSASSIGN:
+		case IToken.tMINUSASSIGN:
+		case IToken.tSTARASSIGN:
+		case IToken.tDIVASSIGN:
+		case IToken.tMODASSIGN:
+		case IToken.tXORASSIGN:
+		case IToken.tAMPERASSIGN:
+		case IToken.tBITORASSIGN:
+		case IToken.tSHIFTLASSIGN:
+		case IToken.tSHIFTRASSIGN:
+		case IToken.tEQUAL:
+		case IToken.tNOTEQUAL:
+		case IToken.tLTEQUAL:
+		case IToken.tGTEQUAL:
+		case IToken.tAND:
+		case IToken.tOR:
+		case IToken.tCOMMA:
+		case IToken.tDOTSTAR:
+		case IToken.tARROWSTAR:
+			return true;
+
+		default:
+			return false;
+		}
 	}
 
 	private boolean specifiesArray(IASTDeclarator declarator) {

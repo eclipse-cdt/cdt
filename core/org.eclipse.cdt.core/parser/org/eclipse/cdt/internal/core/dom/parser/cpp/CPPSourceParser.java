@@ -145,7 +145,7 @@ import org.eclipse.cdt.core.parser.util.CollectionUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractSourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.AbstractCFamilySourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -160,7 +160,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 /**
  * Source Parser for the C++ Language Syntax.
  */
-public class CPPSourceParser extends AbstractSourceCodeParser {
+public class CPPSourceParser extends AbstractCFamilySourceCodeParser {
 
 	private static final int DEFAULT_PARAM_LIST_SIZE = 4;
 	private static final int DEFAULT_CATCH_HANDLER_LIST_SIZE = 4;
@@ -3822,8 +3822,8 @@ public class CPPSourceParser extends AbstractSourceCodeParser {
 				// the argument.
 				if (idExpression == null)
 					backup(argStart);
-				IASTExpression expression = expression(ExprKind.ASSIGNMENT, BinaryExprCtx.EXPR_IN_TEMPLATE_ID, idExpression,
-						strategy);
+				IASTExpression expression = expression(ExprKind.ASSIGNMENT, BinaryExprCtx.EXPR_IN_TEMPLATE_ID,
+						idExpression, strategy);
 
 				// At this point we have a valid type-id and a valid expression.
 				// We prefer the longer one.
@@ -4167,31 +4167,31 @@ public class CPPSourceParser extends AbstractSourceCodeParser {
 	 */
 	private IASTDeclarator initDeclarator(DeclaratorStrategy strategy, IASTDeclSpecifier declspec,
 			DeclarationOptions option) throws EndOfFileException, BacktrackException, FoundAggregateInitializer {
-		final IASTDeclarator dtor = declarator(strategy, option);
+		final IASTDeclarator declarator = declarator(strategy, option);
 		if (option.fAllowInitializer) {
-			final IASTDeclarator typeRelevantDeclarator = ASTQueries.findTypeRelevantDeclarator(dtor);
+			final IASTDeclarator typeRelevantDeclarator = ASTQueries.findTypeRelevantDeclarator(declarator);
 			if (option != DeclarationOptions.PARAMETER && typeRelevantDeclarator instanceof IASTFunctionDeclarator) {
-				// Function declarations don't have initializers.
+				// Method declarations don't have initializers.
 				// For member functions we need to consider virtual specifiers and pure-virtual syntax.
 				if (option == DeclarationOptions.CPP_MEMBER) {
 					optionalVirtualSpecifierSequence((ICPPASTFunctionDeclarator) typeRelevantDeclarator);
 					int lt1 = lookaheadTypeWithEndOfFile(1);
 					if (lt1 == IToken.tASSIGN && lookaheadTypeWithEndOfFile(2) == IToken.tINTEGER) {
 						consume();
-						IToken t = consume();
-						char[] image = t.getCharImage();
+						IToken token = consume();
+						char[] image = token.getCharImage();
 						if (image.length != 1 || image[0] != '0') {
-							throwBacktrack(t);
+							throwBacktrack(token);
 						}
 						((ICPPASTFunctionDeclarator) typeRelevantDeclarator).setPureVirtual(true);
-						adjustEndOffset(dtor, t.getEndOffset()); // We can only adjust the offset of the outermost dtor.
+						adjustEndOffset(declarator, token.getEndOffset()); // We can only adjust the offset of the outermost dtor.
 					}
 				}
 			} else {
 				if (lookaheadTypeWithEndOfFile(1) == IToken.tASSIGN && lookaheadTypeWithEndOfFile(2) == IToken.tLBRACE)
-					throw new FoundAggregateInitializer(declspec, dtor);
+					throw new FoundAggregateInitializer(declspec, declarator);
 
-				IASTInitializer initializer = optionalInitializer(dtor, option);
+				IASTInitializer initializer = optionalInitializer(declarator, option);
 				if (initializer != null) {
 					if (initializer instanceof IASTInitializerList
 							&& ((IASTInitializerList) initializer).getSize() == 0) {
@@ -4207,12 +4207,12 @@ public class CPPSourceParser extends AbstractSourceCodeParser {
 							throwBacktrack(lookahead(1));
 						}
 					}
-					dtor.setInitializer(initializer);
-					adjustLength(dtor, initializer);
+					declarator.setInitializer(initializer);
+					adjustLength(declarator, initializer);
 				}
 			}
 		}
-		return dtor;
+		return declarator;
 	}
 
 	private ICPPASTExpression expression(final ExprKind kind, final BinaryExprCtx ctx, IASTInitializerClause expr,
@@ -4872,7 +4872,8 @@ public class CPPSourceParser extends AbstractSourceCodeParser {
 
 		// assignment expression
 		TemplateIdStrategy strategy = templateParameterListStrategy;
-		final BinaryExprCtx context = strategy != null ? BinaryExprCtx.EXPR_IN_TEMPLATE_ID : BinaryExprCtx.EXPR_NOT_IN_TEMPLATE_ID;
+		final BinaryExprCtx context = strategy != null ? BinaryExprCtx.EXPR_IN_TEMPLATE_ID
+				: BinaryExprCtx.EXPR_NOT_IN_TEMPLATE_ID;
 		return expression(ExprKind.ASSIGNMENT, context, null, strategy);
 	}
 

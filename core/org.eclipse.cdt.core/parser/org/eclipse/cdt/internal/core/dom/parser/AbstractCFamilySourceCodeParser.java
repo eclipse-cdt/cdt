@@ -75,7 +75,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 /**
  * Abstract class for the regular C and C++ Parser.
  */
-public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
+public abstract class AbstractCFamilySourceCodeParser implements ISourceCodeParser {
 
 	protected final AbstractParserLogService log;
 	protected final IScanner scanner;
@@ -94,7 +94,7 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 	protected boolean activeCode = true;
 
-	public AbstractSourceCodeParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
+	public AbstractCFamilySourceCodeParser(IScanner scanner, ParserMode parserMode, IParserLogService logService,
 			INodeFactory factory, IBuiltinBindingsProvider provider) {
 		this.scanner = scanner;
 		this.nodeFactory = factory;
@@ -145,16 +145,16 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 					return (IASTExpression) expr;
 
 				expr = buildExpression((IASTExpression) expr, rightChain);
-				rightChain = rightChain.fNext;
+				rightChain = rightChain.next;
 			} else if (rightChain != null && leftChain.rightPrecedence < rightChain.leftPrecedence) {
 				expr = buildExpression((IASTExpression) expr, rightChain);
-				rightChain = rightChain.fNext;
+				rightChain = rightChain.next;
 			} else {
-				BinaryOperator op = leftChain;
-				leftChain = leftChain.fNext;
-				expr = op.exchange(expr);
-				op.fNext = rightChain;
-				rightChain = op;
+				BinaryOperator operator = leftChain;
+				leftChain = leftChain.next;
+				expr = operator.exchange(expr);
+				operator.next = rightChain;
+				rightChain = operator;
 			}
 		}
 	}
@@ -1227,7 +1227,6 @@ public abstract class AbstractSourceCodeParser implements ISourceCodeParser {
 
 		try {
 			consume(IToken.tLPAREN);
-			int typeidOffset = lookahead(1).getOffset();
 			typeid = typeID(DeclarationOptions.TYPEID);
 			if (!isValidTypeIDForUnaryExpression(unaryExprKind, typeid)) {
 				typeid = null;

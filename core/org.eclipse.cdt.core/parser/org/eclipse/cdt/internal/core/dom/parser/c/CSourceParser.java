@@ -74,7 +74,7 @@ import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.AbstractSourceCodeParser;
+import org.eclipse.cdt.internal.core.dom.parser.AbstractCFamilySourceCodeParser;
 import org.eclipse.cdt.internal.core.dom.parser.BacktrackException;
 import org.eclipse.cdt.internal.core.dom.parser.DeclarationOptions;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousExpression;
@@ -84,7 +84,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITemplateIdStrategy;
 /**
  * Source Parser for the C Language Syntax.
  */
-public class CSourceParser extends AbstractSourceCodeParser {
+public class CSourceParser extends AbstractCFamilySourceCodeParser {
 
 	private IASTTranslationUnit compilationUnit;
 	private IIndex index;

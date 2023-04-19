@@ -20,7 +20,6 @@ import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacro;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.macros.IConfigurationBuildMacroSupplier;
-import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.core.runtime.Status;
 
 public class CrossBuildMacroSupplier implements IConfigurationBuildMacroSupplier {
@@ -47,7 +46,7 @@ public class CrossBuildMacroSupplier implements IConfigurationBuildMacroSupplier
 
 	@Override
 	public IBuildMacro getMacro(String macroName, IConfiguration configuration, IBuildMacroProvider provider) {
-		if (IGnuToolFactory.GNU_TOOL_PREFIX_VARIABLE.equals(macroName)) {
+		if (GnuToolPrefixMacro.MACRO_NAME.equals(macroName)) {
 			return new GnuToolPrefixMacro(configuration);
 		}
 		return null;
@@ -55,7 +54,7 @@ public class CrossBuildMacroSupplier implements IConfigurationBuildMacroSupplier
 
 	@Override
 	public IBuildMacro[] getMacros(IConfiguration configuration, IBuildMacroProvider provider) {
-		final IBuildMacro macro = getMacro(IGnuToolFactory.GNU_TOOL_PREFIX_VARIABLE, configuration, provider);
+		final IBuildMacro macro = getMacro(GnuToolPrefixMacro.MACRO_NAME, configuration, provider);
 		return (null == macro) ? new IBuildMacro[0] : new IBuildMacro[] { macro };
 	}
 

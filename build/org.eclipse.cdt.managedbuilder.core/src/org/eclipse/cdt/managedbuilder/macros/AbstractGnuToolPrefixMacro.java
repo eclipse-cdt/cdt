@@ -15,18 +15,20 @@ import org.eclipse.core.runtime.Status;
  */
 public abstract class AbstractGnuToolPrefixMacro implements IBuildMacro {
 
+	public static final String MACRO_NAME = IGnuToolFactory.GNU_TOOL_PREFIX_VARIABLE;
+
 	@Override
-	public String getName() {
-		return IGnuToolFactory.GNU_TOOL_PREFIX_VARIABLE;
+	public final String getName() {
+		return MACRO_NAME;
 	}
 
 	@Override
-	public int getValueType() {
+	public final int getValueType() {
 		return IBuildMacro.VALUE_TEXT;
 	}
 
 	@Override
-	public int getMacroValueType() {
+	public final int getMacroValueType() {
 		return getValueType();
 	}
 
@@ -34,16 +36,16 @@ public abstract class AbstractGnuToolPrefixMacro implements IBuildMacro {
 	public abstract String getStringValue() throws BuildMacroException;
 
 	@Override
-	public String[] getStringListValue() throws BuildMacroException {
+	public final String[] getStringListValue() throws BuildMacroException {
 		throw new BuildMacroException(
-				new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRINGLIST, getName(), null, getName()));
+				new CdtVariableException(ICdtVariableStatus.TYPE_MACRO_NOT_STRINGLIST, MACRO_NAME, null, MACRO_NAME));
 	}
 
 	protected String getStringValue(IOption option) throws BuildMacroException {
 		try {
 			return option.getStringValue();
 		} catch (BuildException e) {
-			throw new BuildMacroException(Status.error("Error getting macro value: " + getName(), e)); //$NON-NLS-1$
+			throw new BuildMacroException(Status.error("Error getting macro value: " + MACRO_NAME, e)); //$NON-NLS-1$
 		}
 	}
 

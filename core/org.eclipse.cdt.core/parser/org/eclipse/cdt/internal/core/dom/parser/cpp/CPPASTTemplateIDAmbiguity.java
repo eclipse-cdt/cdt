@@ -33,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
-import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
+import org.eclipse.cdt.core.dom.parser.IExpressionParser;
 import org.eclipse.cdt.internal.core.dom.parser.ASTAmbiguousNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
@@ -49,9 +49,9 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 	private final IBinaryOperator fEndOperator;
 	private final BranchPoint fVariants;
 	private IASTNode[] fNodes;
-	private final ISourceCodeParser fParser;
+	private final IExpressionParser fParser;
 
-	public CPPASTTemplateIDAmbiguity(ISourceCodeParser parser, IBinaryOperator endOperator, BranchPoint variants) {
+	public CPPASTTemplateIDAmbiguity(IExpressionParser parser, IBinaryOperator endOperator, BranchPoint variants) {
 		fParser = parser;
 		fEndOperator = endOperator;
 		fVariants = variants;

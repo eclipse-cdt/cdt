@@ -86,6 +86,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.dom.parser.IExpressionParser;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -106,7 +107,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 /**
  * Base class for the GNU C and C++ Parser.
  */
-public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
+public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser, IExpressionParser {
 
 	protected static class FoundAggregateInitializer extends Exception {
 		public final IASTDeclarator fDeclarator;
@@ -1018,6 +1019,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 
+	@Override
 	public IASTExpression buildExpression(IBinaryOperator leftChain, IASTInitializerClause expr) {
 		BinaryOperator rightChain = null;
 		for (;;) {

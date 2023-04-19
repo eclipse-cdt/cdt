@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
+import org.eclipse.cdt.core.dom.parser.IExpressionParser;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.AbstractParserLogService;
@@ -75,7 +76,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationResolver;
 /**
  * Abstract class for the regular C and C++ Parser.
  */
-public abstract class AbstractCFamilySourceCodeParser implements ISourceCodeParser {
+public abstract class AbstractCFamilySourceCodeParser implements ISourceCodeParser, IExpressionParser {
 
 	protected final AbstractParserLogService log;
 	protected final IScanner scanner;
@@ -137,6 +138,7 @@ public abstract class AbstractCFamilySourceCodeParser implements ISourceCodePars
 		return completionNode;
 	}
 
+	@Override
 	public IASTExpression buildExpression(IBinaryOperator leftChain, IASTInitializerClause expr) {
 		BinaryOperator rightChain = null;
 		for (;;) {

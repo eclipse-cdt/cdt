@@ -151,7 +151,7 @@ public class CPPASTTemplateIDAmbiguity extends ASTAmbiguousNode implements IASTA
 	public IASTNode[] getNodes() {
 		if (fNodes == null) {
 			List<IASTNode> nl = new ArrayList<>();
-			BinaryOperator op = fEndOperator;
+			IBinaryOperator op = fEndOperator;
 			while (op != null) {
 				nl.add(op.getExpression());
 				op = op.getNext();

@@ -84,6 +84,7 @@ import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
 import org.eclipse.cdt.core.dom.ast.INodeFactory;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.dom.parser.IExtensionToken;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -1017,7 +1018,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 	}
 
-	public IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) {
+	public IASTExpression buildExpression(IBinaryOperator leftChain, IASTInitializerClause expr) {
 		BinaryOperator rightChain = null;
 		for (;;) {
 			if (leftChain == null) {
@@ -1026,15 +1027,16 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 				expr = buildExpression((IASTExpression) expr, rightChain);
 				rightChain = rightChain.fNext;
-			} else if (rightChain != null && leftChain.fRightPrecedence < rightChain.fLeftPrecedence) {
+			} else if (rightChain != null
+					&& ((BinaryOperator) leftChain).fRightPrecedence < rightChain.fLeftPrecedence) {
 				expr = buildExpression((IASTExpression) expr, rightChain);
 				rightChain = rightChain.fNext;
 			} else {
-				BinaryOperator op = leftChain;
-				leftChain = leftChain.fNext;
-				expr = op.exchange(expr);
-				op.fNext = rightChain;
-				rightChain = op;
+				BinaryOperator operator = (BinaryOperator) leftChain;
+				leftChain = ((BinaryOperator) leftChain).fNext;
+				expr = operator.exchange(expr);
+				operator.fNext = rightChain;
+				rightChain = operator;
 			}
 		}
 	}
@@ -1110,7 +1112,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			break;
 		case IToken.tAND:
 			op = IASTBinaryExpression.op_logicalAnd;
-			unaryOp = IASTUnaryExpression.op_labelReference;
+			unaryOp = IGNUASTUnaryExpression.op_labelReference;
 			break;
 		case IToken.tBITOR:
 			op = IASTBinaryExpression.op_binaryOr;

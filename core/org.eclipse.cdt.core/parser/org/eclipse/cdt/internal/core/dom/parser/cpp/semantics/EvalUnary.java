@@ -19,7 +19,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_alignOf;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_amper;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_bracketedPrimary;
-import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_integerPack;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_minus;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_noexcept;
 import static org.eclipse.cdt.core.dom.ast.IASTUnaryExpression.op_not;
@@ -58,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMember;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
@@ -157,7 +157,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return fArgument.referencesTemplateParameter();
 		case op_throw:
 			return false;
-		case op_integerPack:
+		case IGNUASTUnaryExpression.op_integerPack:
 			return true;
 		default:
 			return fArgument.isValueDependent();
@@ -245,7 +245,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 			return CPPVisitor.get_type_info();
 		case op_throw:
 			return CPPSemantics.VOID_TYPE;
-		case op_integerPack:
+		case IGNUASTUnaryExpression.op_integerPack:
 			return fArgument.getType();
 		case op_amper:
 			if (fAddressOfQualifiedNameBinding instanceof ICPPMember) {
@@ -399,7 +399,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 	@Override
 	public ICPPEvaluation instantiate(InstantiationContext context, int maxDepth) {
-		if (fOperator == op_integerPack && context.getPackOffset() != -1) {
+		if (fOperator == IGNUASTUnaryExpression.op_integerPack && context.getPackOffset() != -1) {
 			return new EvalFixed(getType(), ValueCategory.PRVALUE, IntegralValue.create(context.getPackOffset()));
 		}
 
@@ -529,7 +529,7 @@ public class EvalUnary extends CPPDependentEvaluation {
 
 	@Override
 	public int determinePackSize(ICPPTemplateParameterMap tpMap) {
-		if (fOperator == op_integerPack) {
+		if (fOperator == IGNUASTUnaryExpression.op_integerPack) {
 			ICPPEvaluation instantiatedArg = fArgument.instantiate(new InstantiationContext(tpMap),
 					IntegralValue.MAX_RECURSION_DEPTH);
 			IValue value = instantiatedArg.getValue();

@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ILabel;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
@@ -224,7 +225,7 @@ public class ASTQueries {
 
 		if (parent instanceof IASTUnaryExpression) {
 			int operator = ((IASTUnaryExpression) parent).getOperator();
-			labelReference = operator == IASTUnaryExpression.op_labelReference;
+			labelReference = operator == IGNUASTUnaryExpression.op_labelReference;
 		}
 
 		return labelReference;

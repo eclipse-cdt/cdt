@@ -137,7 +137,7 @@ public abstract class AbstractCFamilySourceCodeParser implements ISourceCodePars
 		return completionNode;
 	}
 
-	public final IASTExpression buildExpression(BinaryOperator leftChain, IASTInitializerClause expr) {
+	public final IASTExpression buildExpression(IBinaryOperator leftChain, IASTInitializerClause expr) {
 		BinaryOperator rightChain = null;
 		for (;;) {
 			if (leftChain == null) {
@@ -146,12 +146,12 @@ public abstract class AbstractCFamilySourceCodeParser implements ISourceCodePars
 
 				expr = buildExpression((IASTExpression) expr, rightChain);
 				rightChain = rightChain.next;
-			} else if (rightChain != null && leftChain.rightPrecedence < rightChain.leftPrecedence) {
+			} else if (rightChain != null && ((BinaryOperator) leftChain).rightPrecedence < rightChain.leftPrecedence) {
 				expr = buildExpression((IASTExpression) expr, rightChain);
 				rightChain = rightChain.next;
 			} else {
-				BinaryOperator operator = leftChain;
-				leftChain = leftChain.next;
+				BinaryOperator operator = (BinaryOperator) leftChain;
+				leftChain = ((BinaryOperator) leftChain).next;
 				expr = operator.exchange(expr);
 				operator.next = rightChain;
 				rightChain = operator;

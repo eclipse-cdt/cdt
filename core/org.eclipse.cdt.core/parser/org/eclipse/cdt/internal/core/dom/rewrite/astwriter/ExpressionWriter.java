@@ -44,6 +44,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTPackExpansionExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
+import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.IGPPASTBinaryExpression;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
@@ -264,7 +265,7 @@ public class ExpressionWriter extends NodeWriter {
 		case ICPPASTUnaryExpression.op_typeid:
 		case ICPPASTUnaryExpression.op_noexcept:
 		case IASTUnaryExpression.op_alignOf:
-		case IASTUnaryExpression.op_labelReference:
+		case IGNUASTUnaryExpression.op_labelReference:
 			return true;
 
 		default:
@@ -322,7 +323,7 @@ public class ExpressionWriter extends NodeWriter {
 			return NOEXCEPT_OP;
 		case IASTUnaryExpression.op_alignOf:
 			return ALIGNOF_OP;
-		case IASTUnaryExpression.op_labelReference:
+		case IGNUASTUnaryExpression.op_labelReference:
 			return LABEL_REFERENCE_OP;
 		default:
 			System.err.println("Unkwown unaryExpressionType: " + unaryExpressionType); //$NON-NLS-1$

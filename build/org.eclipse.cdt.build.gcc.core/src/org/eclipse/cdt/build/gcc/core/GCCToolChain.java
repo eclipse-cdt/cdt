@@ -721,17 +721,24 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	public List<String> stripCommand(List<String> command, IResource[] resources) {
 		List<String> newCommand = new ArrayList<>();
 
-		for (int i = 0; i < command.size() - resources.length; ++i) {
+		for (int i = 0; i < command.size(); ++i) {
 			String arg = command.get(i);
-			if (arg.startsWith("-o")) { //$NON-NLS-1$
-				if (arg.equals("-o")) { //$NON-NLS-1$
-					i++;
-				}
+			if (arg.equals("-o")) { //$NON-NLS-1$
+				// this is an output file, skip.
+				i++;
 				continue;
 			}
-			newCommand.add(arg);
+			if (arg.startsWith("-")) { //$NON-NLS-1$
+				// ran into an option, add.
+				newCommand.add(arg);
+				continue;
+			}
+			String ext = getFileExtension(arg);
+			if (!resourcesFileExtensions.contains(ext)) {
+				// not a resource, add.
+				newCommand.add(arg);
+			}
 		}
-
 		return newCommand;
 	}
 

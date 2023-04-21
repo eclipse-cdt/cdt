@@ -49,7 +49,7 @@ public class Keywords {
 	public static final String CASE = "case";
 	public static final String CATCH = "catch";
 	public static final String CHAR = "char";
-	/** @since 8.1 */
+	/** @since 8.2*/
 	public static final String CHAR8_T = "char8_t";
 	/** @since 5.2 */
 	public static final String CHAR16_T = "char16_t";
@@ -159,7 +159,7 @@ public class Keywords {
 	public static final char[] cCASE = "case".toCharArray();
 	public static final char[] cCATCH = "catch".toCharArray();
 	public static final char[] cCHAR = "char".toCharArray();
-	/** @since 8.1 */
+	/** @since 8.2*/
 	public static final char[] cCHAR8_T = CHAR8_T.toCharArray();
 	/** @since 5.2 */
 	public static final char[] cCHAR16_T = CHAR16_T.toCharArray();

@@ -142,7 +142,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 
 	/**
 	 * <code>char8_t c;</code>
-	 * @since 8.1
+	 * @since 8.2
 	 */
 	public static final int t_char8_t = 19;
 

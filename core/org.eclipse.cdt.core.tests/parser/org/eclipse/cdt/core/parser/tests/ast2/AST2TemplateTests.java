@@ -3096,14 +3096,14 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//	B b1;
 	//	B<> b2; // error - no default args
 	//
-	//	C c1;
+	//	C c1;   // OK since C++17 via implicit deduction guide using default template argument
 	//	C<> c2; // ok - default args
 	public void testMissingTemplateArgumentLists() throws Exception {
 		BindingAssertionHelper ba = new AST2AssertionHelper(getAboveComment(), CPP);
 		ba.assertProblem("B b1", 1);
 		ba.assertNonProblem("B<> b2", 1, ICPPTemplateDefinition.class, ICPPClassType.class);
 		ba.assertProblem("B<> b2", 3);
-		ba.assertProblem("C c1", 1);
+		ba.assertNonProblem("C c1", 1); // OK since C++17
 		ba.assertNonProblem("C<> c2", 1, ICPPTemplateDefinition.class, ICPPClassType.class);
 		ba.assertNonProblem("C<> c2", 3, ICPPTemplateInstance.class, ICPPClassType.class);
 	}

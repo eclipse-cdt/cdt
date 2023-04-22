@@ -780,18 +780,15 @@ public class CPPSemantics {
 						binding = user;
 					} else {
 						// Attempt class template argument deduction if appropriate
-						if (data.getTranslationUnit().getEnableClassTemplateArgumentDeduction()) {
-							if (lookupName.getParent() instanceof IASTIdExpression idExpression
-									&& idExpression.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
+						if (lookupName.getParent() instanceof IASTIdExpression idExpression
+								&& idExpression.getPropertyInParent() == IASTFunctionCallExpression.FUNCTION_NAME) {
 
-								// Class name for class type argument deduction is a type
-								return doClassTemplateArgumentDeduction((ICPPClassTemplate) binding, data);
-							}
+							// Class name for class type argument deduction is a type
+							return doClassTemplateArgumentDeduction((ICPPClassTemplate) binding, data);
 						}
 						boolean ok = false;
 						// Attempt class template argument deduction if appropriate
-						if (data.getTranslationUnit().getEnableClassTemplateArgumentDeduction()
-								&& lookupName.getParent() instanceof IASTNamedTypeSpecifier namedTypeSpecifier
+						if (lookupName.getParent() instanceof IASTNamedTypeSpecifier namedTypeSpecifier
 								&& namedTypeSpecifier.getPropertyInParent() == IASTSimpleDeclaration.DECL_SPECIFIER
 								&& namedTypeSpecifier.getParent() instanceof IASTSimpleDeclaration declaration) {
 
@@ -851,8 +848,7 @@ public class CPPSemantics {
 				} else {
 					// Name is qualified-name
 					// Attempt class template argument deduction if appropriate
-					if (data.getTranslationUnit().getEnableClassTemplateArgumentDeduction()
-							&& lookupName.getParent() instanceof ICPPASTQualifiedName qualifiedName
+					if (lookupName.getParent() instanceof ICPPASTQualifiedName qualifiedName
 							&& qualifiedName.getParent() instanceof IASTNamedTypeSpecifier namedTypeSpecifier
 							&& namedTypeSpecifier.getPropertyInParent() == IASTSimpleDeclaration.DECL_SPECIFIER
 							&& namedTypeSpecifier.getParent() instanceof IASTSimpleDeclaration declaration) {

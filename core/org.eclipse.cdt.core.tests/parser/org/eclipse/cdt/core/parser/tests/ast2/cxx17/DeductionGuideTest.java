@@ -53,7 +53,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//    S convert(ddouble);
 	//  }
 	public void testDeductionGuideBasic() throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STDCPP17);
+		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		assertType(bh.assertNonProblem("dchar = S", 5), char_);
 		assertType(bh.assertNonProblem("dint = S", 4), double_);
 		assertType(bh.assertNonProblem("dv = S", 2), double_);
@@ -85,7 +85,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//    int iv = S(1).value;
 	//  }
 	public void testDeductionGuideWithDefaultTemplateArg() throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STDCPP17);
+		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		assertType(bh.assertNonProblem("dchar = S", 5), char_);
 		assertType(bh.assertNonProblem("dint = S", 4), double_);
 		assertType(bh.assertNonProblem("dv = S", 2), double_);
@@ -107,7 +107,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//    S convert(ddouble);
 	//  }
 	public void testDeductionGuideWithTemplateDeclaration() throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STDCPP17);
+		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 
 		IVariable varChar = bh.assertNonProblem("schar = S", 5);
 		assertType(bh.assertNonProblem("dchar = S", 5), varChar.getType());
@@ -131,7 +131,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//  UniquePtr dp{new auto(2.0)};
 	//  auto da = dp;
 	public void testMinimal() throws Exception {
-		parseAndCheckBindings(ScannerKind.STDCPP17);
+		parseAndCheckBindings(ScannerKind.STD);
 	}
 
 	//  template<class T> struct S {
@@ -146,7 +146,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//
 	//  S s2;
 	public void testDeduceFromEmptyInitializer() throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STDCPP17);
+		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		IVariable varSInt = bh.assertNonProblem("sInt", 4);
 		bh.assertProblem("S s1", 1);
 		bh.assertNonProblem("S s2", 1);
@@ -165,14 +165,14 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//
 	//  auto v = S(1);
 	public void testViaFunctionSetFromConstructors() throws Exception {
-		parseAndCheckBindings(ScannerKind.STDCPP17);
+		parseAndCheckBindings(ScannerKind.STD);
 	}
 
 	//  template<class T> struct S{};
 	//
 	//  S* pointer;
 	public void testNoDeductionForPointer() throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STDCPP17);
+		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		IType pointedType = ((IPointerType) ((IVariable) bh.assertNonProblem("pointer")).getType()).getType();
 		assertTrue(pointedType instanceof IProblemType);
 		bh.assertProblem("S*", 1);
@@ -182,7 +182,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//
 	//  S* pointer;
 	public void testNoDeductionForPointerNoDefinition() throws Exception {
-		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STDCPP17);
+		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		IType pointedType = ((IPointerType) ((IVariable) bh.assertNonProblem("pointer")).getType()).getType();
 		assertTrue(pointedType instanceof IProblemType);
 		bh.assertProblem("S*", 1);

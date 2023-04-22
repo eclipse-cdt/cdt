@@ -27,8 +27,7 @@ import junit.framework.TestSuite;
  */
 public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTestBase {
 	private static void cxx17SetUp() {
-		// Enable deduction guides via C++17 feature detection macro
-		TestScannerProvider.sDefinedSymbols.put("__cpp_deduction_guides", "201703L");
+		// Deduction guides are now enabled unconditionally
 	}
 
 	private static void cxx17TearDown() {

@@ -28,6 +28,7 @@ import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.editor.asm.AsmTextEditor;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.ui.editors.text.TextEditor;
 
 /**
  * Toggle breakpoint factor enablement tester for editors and IDeclaration.
@@ -117,6 +118,14 @@ public class ToggleCBreakpointTester extends PropertyTester {
 					}
 				}
 			}
+
+			// Test for LSP based C/C++ Editor
+		} else if ("isCEditorSupportsCBreakpoint".equals(property) && (receiver instanceof TextEditor)) { //$NON-NLS-1$
+			var editor = (TextEditor) receiver;
+			if (editor.getEditorSite() == null || !editor.getEditorSite().getId().equals("org.eclipse.cdt.lsp.CEditor")) //$NON-NLS-1$
+				return false;
+			if (!CDebugUtils.isCustomToggleBreakpointFactory())
+				return true;
 		}
 
 		return false;

@@ -113,17 +113,18 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 		/*
 		 * Core build projects do not work with the concept of active build
 		 * configurations, like managed build projects. Instead they rely
-		 * on the launch mode set in the launchBar. A core build launch
-		 * configuration looks at the launchBar mode to pick the build
-		 * configuration. Core build projects still have an active build
-		 * configuration, but it is hidden for the user and ignored for
+		 * on the launch mode and launch target set in the launchBar. A core
+		 * build launch configuration looks at the launchBar launch mode
+		 * and then the set of toolchains associated with the launch target
+		 * to pick the build configuration. Core build projects still have an
+		 * active build configuration, but it is hidden for the user and ignored for
 		 * launching.
 		 *
 		 * Core build launch configurations have no options to set, so it is
-		 * likely that users will use non core build launch configurations to
+		 * possible that users will use non core build launch configurations to
 		 * launch a core build project binary. Non core build launch
 		 * configurations typically launch the active build configuration. The
-		 * active build configuration needs to match the launchBar mode.
+		 * active build configuration needs to match the launchBar launch mode.
 		 */
 
 		// Pick core build config based on launch mode and toolchain for target

@@ -100,6 +100,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 		}
 
 		if (project == null || !configManager.supports(project)) {
+			// The project is not a Core Build project.
 			return;
 		}
 
@@ -109,7 +110,24 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 		lastDescriptor = descriptor;
 		lastTarget = target;
 
-		// Pick build config based on toolchain for target
+		/*
+		 * Core build projects do not work with the concept of active build
+		 * configurations, like managed build projects. Instead they rely
+		 * on the launch mode and launch target set in the launchBar. A core
+		 * build launch configuration looks at the launchBar launch mode
+		 * and then the set of toolchains associated with the launch target
+		 * to pick the build configuration. Core build projects still have an
+		 * active build configuration, but it is hidden for the user and ignored for
+		 * launching.
+		 *
+		 * Core build launch configurations have no options to set, so it is
+		 * possible that users will use non core build launch configurations to
+		 * launch a core build project binary. Non core build launch
+		 * configurations typically launch the active build configuration. The
+		 * active build configuration needs to match the launchBar launch mode.
+		 */
+
+		// Pick core build config based on launch mode and toolchain for target
 		// Since this may create a new config, need to run it in a Job
 		Job job = new Job(InternalDebugCoreMessages.CoreBuildLaunchBarTracker_Job) {
 			@Override
@@ -120,11 +138,12 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 					Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
 					ICBuildConfiguration buildConfig = null;
 					if (!tcs.isEmpty()) {
-						// First, see if any existing non default build configs match the target properties
 						configs: for (IBuildConfiguration config : finalProject.getBuildConfigs()) {
-							if (!config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
-								ICBuildConfiguration testConfig = configManager.getBuildConfiguration(config);
-								if (testConfig != null && !(testConfig instanceof ErrorBuildConfiguration)) {
+							ICBuildConfiguration testConfig = configManager.getBuildConfiguration(config);
+							if (testConfig != null && !(testConfig instanceof ErrorBuildConfiguration)) {
+								// Match launch mode run/debug.
+								if (testConfig.getLaunchMode().equals(lastMode.getIdentifier())) {
+									// Match toolchain.
 									for (IToolChain tc : tcs) {
 										if (testConfig.getToolChain().equals(tc)) {
 											buildConfig = testConfig;

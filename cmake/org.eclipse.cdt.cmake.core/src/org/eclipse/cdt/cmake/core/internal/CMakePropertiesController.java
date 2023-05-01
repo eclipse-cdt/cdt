@@ -27,6 +27,7 @@ import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
@@ -66,8 +67,9 @@ class CMakePropertiesController implements ICMakePropertiesController {
 		CMakePropertiesBean props = null;
 		if (Files.exists(storageFile)) {
 			try (InputStream is = Files.newInputStream(storageFile)) {
-				props = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader())).loadAs(is,
-						CMakePropertiesBean.class);
+				var classLoader = this.getClass().getClassLoader();
+				var clConstructor = new CustomClassLoaderConstructor(classLoader, new LoaderOptions());
+				props = new Yaml(clConstructor).loadAs(is, CMakePropertiesBean.class);
 				// props is null here if if no document was available in the file
 			}
 		}

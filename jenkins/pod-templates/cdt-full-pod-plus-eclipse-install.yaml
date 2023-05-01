@@ -20,6 +20,11 @@ spec:
       readOnly: true
     - name: m2-repo
       mountPath: /home/jenkins/.m2/repository
+    - name: "jenkins-home"
+      mountPath: "/home/jenkins"
+      readOnly: false
+    - name: tools
+      mountPath: /jipp/tools
   - name: jnlp
     resources:
       requests:
@@ -37,3 +42,8 @@ spec:
         path: settings.xml
   - name: m2-repo
     emptyDir: {}
+  - name: "jenkins-home"
+    emptyDir: {}
+  - name: tools
+    persistentVolumeClaim:
+      claimName: tools-claim-jiro-cdt

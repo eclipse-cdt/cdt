@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="135">
+<target name="cdt" sequenceNumber="139">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/" />
@@ -51,23 +51,13 @@
 			<unit id="org.eclipse.wildwebdeveloper.embedder.node.feature.feature.group" version="0.0.0" />
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20230302014618/repository/" />
-			<unit id="com.google.gson" version="0.0.0" />
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/latest-R/" />
 			<unit id="com.sun.xml.bind" version="2.3.3.v20221203-1659" />
 			<unit id="javax.activation" version="1.2.2.v20221203-1659" />
 			<unit id="jakarta.xml.bind" version="2.3.3.v20221203-1659" />
-			<unit id="org.antlr.runtime" version="0.0.0" />
-			<unit id="org.apache.commons.compress" version="0.0.0" />
-			<unit id="org.assertj" version="0.0.0" />
-			<unit id="org.freemarker" version="0.0.0" />
-			<unit id="org.hamcrest" version="0.0.0" />
-			<unit id="org.hamcrest.core" version="0.0.0" />
-			<unit id="org.junit" version="0.0.0" />
-			<unit id="org.junit.jupiter.api" version="0.0.0" />
-			<unit id="org.mockito.mockito-core" version="0.0.0" />
-			<unit id="org.yaml.snakeyaml" version="0.0.0" />
-			<unit id="com.sun.jna" version="5.8.0.v20210503-0343" />
-			<unit id="com.sun.jna.platform" version="5.8.0.v20221112-0806" />
+			<unit id="org.hamcrest" version="2.2.0.v20210711-0821" />
+			<unit id="org.hamcrest.core" version="1.3.0.v20180420-1519" />
+			<unit id="org.junit" version="4.13.2.v20211018-1956" />
 			<unit id="javax.activation" version="2.0.0.v20221203-1659" />
 			<unit id="javax.xml" version="1.4.1.v20220503-2331" />
 		</location>
@@ -90,6 +80,66 @@
 					<groupId>org.slf4j</groupId>
 					<artifactId>slf4j-nop</artifactId>
 					<version>1.7.36</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+					<version>2.10.1</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-compress</artifactId>
+					<version>1.23.0</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.assertj</groupId>
+					<artifactId>assertj-core</artifactId>
+					<version>3.24.2</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.freemarker</groupId>
+					<artifactId>freemarker</artifactId>
+					<version>2.3.32</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.junit.jupiter</groupId>
+					<artifactId>junit-jupiter-api</artifactId>
+					<version>5.9.3</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.junit.jupiter</groupId>
+					<artifactId>junit-jupiter-engine</artifactId>
+					<version>5.9.3</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.mockito</groupId>
+					<artifactId>mockito-core</artifactId>
+					<version>5.3.1</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.yaml</groupId>
+					<artifactId>snakeyaml</artifactId>
+					<version>2.0</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>net.java.dev.jna</groupId>
+					<artifactId>jna-platform</artifactId>
+					<version>5.13.0</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>net.java.dev.jna</groupId>
+					<artifactId>jna</artifactId>
+					<version>5.13.0</version>
 					<type>jar</type>
 				</dependency>
 			</dependencies>

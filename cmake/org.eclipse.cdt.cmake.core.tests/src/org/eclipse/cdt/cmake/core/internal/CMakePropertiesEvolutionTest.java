@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.junit.Test;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
 
@@ -56,7 +57,7 @@ public class CMakePropertiesEvolutionTest {
 		extraArgs.add("arg2");
 		props.setExtraArguments(extraArgs);
 
-		Yaml yaml = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader()));
+		Yaml yaml = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader(), new LoaderOptions()));
 		String output = yaml.dump(props);
 
 		// try to load as evolved properties..

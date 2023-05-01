@@ -8,12 +8,22 @@ pipeline {
     timestamps()
   }
   stages {
+    stage('initialize PGP') {
+      steps {
+        container('cdt') {
+          withCredentials([file(credentialsId: 'secret-subkeys.asc', variable: 'KEYRING')]) {
+            sh 'gpg --batch --import "${KEYRING}"'
+            sh 'for fpr in $(gpg --list-keys --with-colons  | awk -F: \'/fpr:/ {print $10}\' | sort -u); do echo -e "5\ny\n" |  gpg --batch --command-fd 0 --expert --edit-key ${fpr} trust; done'
+          }
+        }
+      }
+    }
     stage('Code Formatting Checks') {
       steps {
         container('cdt') {
           timeout(activity: true, time: 30) {
             withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
-              sh 'MVN="/usr/share/maven/bin/mvn -Dmaven.repo.local=/home/jenkins/.m2/repository \
+              sh 'MVN="/jipp/tools/apache-maven/latest/bin/mvn -Dmaven.repo.local=/home/jenkins/.m2/repository \
                         --settings /home/jenkins/.m2/settings.xml" ./releng/scripts/check_code_cleanliness.sh'
             }
           }
@@ -25,8 +35,10 @@ pipeline {
         container('cdt') {
           timeout(activity: true, time: 20) {
             withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
-                sh "/usr/share/maven/bin/mvn \
+              withCredentials([string(credentialsId: 'gpg-passphrase', variable: 'KEYRING_PASSPHRASE')]) {
+                sh '''/jipp/tools/apache-maven/latest/bin/mvn \
                       clean verify -B -V \
+                      -Dgpg.passphrase="${KEYRING_PASSPHRASE}"  \
                       -Dmaven.test.failure.ignore=true \
                       -DexcludedGroups=flakyTest,slowTest \
                       -P baseline-compare-and-replace \
@@ -38,7 +50,8 @@ pipeline {
                       -Dcdt.tests.dsf.gdb.versions=gdb.10,gdbserver.10 \
                       -Dmaven.repo.local=/home/jenkins/.m2/repository \
                       --settings /home/jenkins/.m2/settings.xml \
-                      "
+                      '''
+              }
             }
           }
         }

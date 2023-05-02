@@ -209,6 +209,8 @@ public class HeadlessBuilder implements IApplication {
 	public static final Integer OK = IApplication.EXIT_OK;
 	/** Show usage return status */
 	public static final Integer SHOW_USAGE = 2;
+	/** Directory names which should not be considered as projects */
+	private static final Set<String> SPECIAL_DIRS = Set.of(".metadata", ".org.eclipse.egit.core.cmp"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/** Set of project URIs / paths to remove */
 	protected final Set<String> projectsToRemove = new HashSet<>();
@@ -343,6 +345,8 @@ public class HeadlessBuilder implements IApplication {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProgressMonitor monitor = new PrintingProgressMonitor(verboseProgressMonitor);
 		InputStream in = null;
+		// Recursive import failure will be recorded in recurseStatus and recurse will not stop
+		int recurseStatus = OK;
 		try {
 			URI project_uri = null;
 			try {
@@ -369,6 +373,10 @@ public class HeadlessBuilder implements IApplication {
 				}
 			}
 
+			// do not go into special directories
+			if (SPECIAL_DIRS.contains(EFS.getStore(project_uri).fetchInfo().getName()))
+				return OK;
+
 			if (recurse) {
 				if (!EFS.getStore(project_uri).fetchInfo().exists()) {
 					System.err.println(HeadlessBuildMessages.HeadlessBuilder_Directory + project_uri
@@ -380,7 +388,7 @@ public class HeadlessBuilder implements IApplication {
 						continue;
 					int status = importProject(info.toURI().toString(), recurse);
 					if (status != OK)
-						return status;
+						recurseStatus = status;
 				}
 			}
 
@@ -392,8 +400,8 @@ public class HeadlessBuilder implements IApplication {
 							+ HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
 					return ERROR;
 				}
-				// .project not found; OK if we're not recursing
-				return OK;
+				// .project not found; return resurseStatus
+				return recurseStatus;
 			}
 
 			in = fstore.openInputStream(EFS.NONE, monitor);
@@ -405,7 +413,7 @@ public class HeadlessBuilder implements IApplication {
 				// It's ok if the project we're importing is the same as one already in the workspace
 				if (URIUtil.equals(project.getLocationURI(), project_uri)) {
 					project.open(monitor);
-					return OK;
+					return recurseStatus;
 				}
 				System.err.println(HeadlessBuildMessages.HeadlessBuilder_project + desc.getName()
 						+ HeadlessBuildMessages.HeadlessBuilder_already_exists_in_workspace);
@@ -436,7 +444,7 @@ public class HeadlessBuilder implements IApplication {
 			} catch (IOException e2) {
 				/* don't care */ }
 		}
-		return OK;
+		return recurseStatus;
 	}
 
 	/**
@@ -449,6 +457,8 @@ public class HeadlessBuilder implements IApplication {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProgressMonitor monitor = new PrintingProgressMonitor(true);
 		InputStream in = null;
+		// Recursive remove failure will be recorded in recurseStatus and recurse will not stop
+		int recurseStatus = OK;
 		try {
 			URI project_uri = null;
 			try {
@@ -475,6 +485,10 @@ public class HeadlessBuilder implements IApplication {
 				}
 			}
 
+			// do not go into special directories
+			if (SPECIAL_DIRS.contains(EFS.getStore(project_uri).fetchInfo().getName()))
+				return OK;
+
 			if (recurse) {
 				if (!EFS.getStore(project_uri).fetchInfo().exists()) {
 					System.err.println(HeadlessBuildMessages.HeadlessBuilder_Directory + project_uri
@@ -486,7 +500,7 @@ public class HeadlessBuilder implements IApplication {
 						continue;
 					int status = removeProject(info.toURI().toString(), recurse);
 					if (status != OK)
-						return status;
+						recurseStatus = status;
 				}
 			}
 
@@ -498,8 +512,8 @@ public class HeadlessBuilder implements IApplication {
 							+ HeadlessBuildMessages.HeadlessBuilder_cant_be_found);
 					return ERROR;
 				}
-				// .project not found; OK if we're not recursing
-				return OK;
+				// .project not found; return recurseStatus
+				return recurseStatus;
 			}
 
 			in = fstore.openInputStream(EFS.NONE, monitor);
@@ -512,7 +526,7 @@ public class HeadlessBuilder implements IApplication {
 					project.close(monitor);
 				}
 				project.delete(false, true, monitor);
-				return OK;
+				return recurseStatus;
 			}
 		} finally {
 			try {
@@ -521,7 +535,7 @@ public class HeadlessBuilder implements IApplication {
 			} catch (IOException e2) {
 				/* don't care */ }
 		}
-		return OK;
+		return recurseStatus;
 	}
 
 	protected boolean isProjectSuccesfullyBuild(IProject project) {

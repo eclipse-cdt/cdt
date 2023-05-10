@@ -173,7 +173,7 @@ public interface IScope {
 			fArgumentDependent = argumentDependent;
 		}
 
-		/** @since 8.1 */
+		/** @since 8.2 */
 		public final void setDeductionGuidesOnly(boolean deductionGuidesOnly) {
 			fDeductionGuidesOnly = deductionGuidesOnly;
 		}
@@ -207,7 +207,7 @@ public interface IScope {
 			return fArgumentDependent;
 		}
 
-		/** @since 8.1 */
+		/** @since 8.2 */
 		public final boolean isDeductionGuidesOnly() {
 			return fDeductionGuidesOnly;
 		}

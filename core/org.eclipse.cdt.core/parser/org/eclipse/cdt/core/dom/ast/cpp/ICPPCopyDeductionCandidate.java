@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 /**
  * Marker for copy deduction candidate used with Class Template Argument Deduction, introduced in C++17.
  *
- * @since 8.1
+ * @since 8.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

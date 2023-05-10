@@ -254,7 +254,7 @@ public interface ICPPNodeFactory extends INodeFactory {
 			IASTExpression rhs);
 
 	/**
-	 * @since 8.1
+	 * @since 8.2
 	 */
 	public ICPPASTDeductionGuide newDeductionGuide();
 

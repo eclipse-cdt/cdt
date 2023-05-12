@@ -280,11 +280,11 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			}
 
 			List<String> commandLine = new ArrayList<>();
-			if (command.isAbsolute()) {
-				commandLine.add(command.toString());
-			} else {
-				commandLine.add(getCommandPath(command).toString());
+			Path commandPath = getCommandPath(command);
+			if (commandPath == null) {
+				throw new NullPointerException("Cannot obtain full command path for command " + command); //$NON-NLS-1$
 			}
+			commandLine.add(commandPath.toString());
 
 			if (baseScannerInfo != null) {
 				if (baseScannerInfo.getIncludePaths() != null) {
@@ -415,11 +415,11 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			// Pick the first one
 			Path command = Paths.get(commands[0]);
 			List<String> commandLine = new ArrayList<>();
-			if (command.isAbsolute()) {
-				commandLine.add(command.toString());
-			} else {
-				commandLine.add(getCommandPath(command).toString());
+			Path commandPath = getCommandPath(command);
+			if (commandPath == null) {
+				throw new NullPointerException("Cannot obtain full command path for command " + command); //$NON-NLS-1$
 			}
+			commandLine.add(commandPath.toString());
 
 			if (baseScannerInfo != null) {
 				if (baseScannerInfo.getIncludePaths() != null) {
@@ -535,7 +535,9 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		} catch (InterruptedException e) {
 			Activator.log(e);
 		}
-		Files.delete(tmpFile);
+		if (tmpFile != null) {
+			Files.delete(tmpFile);
+		}
 
 		return new ExtendedScannerInfo(symbols, includePath.toArray(new String[includePath.size()]));
 	}
@@ -649,7 +651,7 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 	private Set<String> getResourcesFileExtensions() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 
-		Set<String> fileExts = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		Set<String> fileExts = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 
 		IContentType contentTypeCpp = manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 		fileExts.addAll(Arrays.asList(contentTypeCpp.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));

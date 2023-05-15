@@ -239,7 +239,9 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 	 *         validated
 	 */
 	private String getExpressionTextFromAST(IDocument document, final IRegion hoverRegion) {
-		ICElement cElement = CDTUITools.getEditorInputCElement(getEditor().getEditorInput());
+		ICElement cElement = getEditor() == null ? null
+				: CDTUITools.getEditorInputCElement(getEditor().getEditorInput());
+
 		if (!(cElement instanceof ITranslationUnit)) {
 			return null;
 		}

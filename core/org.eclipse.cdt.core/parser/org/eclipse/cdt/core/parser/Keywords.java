@@ -325,6 +325,46 @@ public class Keywords {
 	// C23 and C++23
 	public static final char[] cWARNING = "warning".toCharArray();
 
+	// gcc extensions
+	/** @since 8.1 */
+	@Deprecated
+	public static final char[] cpMIN = "<?".toCharArray();
+
+	@Deprecated
+	public static final char[] cpMAX = ">?".toCharArray();
+
+	// clang macro
+	/** @since 5.11 */
+	@Deprecated
+	public static final char[] c__HAS_FEATURE = "__has_feature".toCharArray();
+
+	// gcc and clang
+	/**
+	 * @since 7.1
+	 */
+	@Deprecated
+	public static final char[] c__HAS_INCLUDE_NEXT = "__has_include_next".toCharArray();
+
+	// Preprocessor extensions (supported by GCC).
+	/** @since 5.2*/
+	@Deprecated
+	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray();
+
+	@Deprecated
+	public static final char[] cIMPORT = "import".toCharArray();
+
+	@Deprecated
+	public static final char[] cIDENT = "ident".toCharArray();
+
+	@Deprecated
+	public static final char[] cSCCS = "sccs".toCharArray();
+
+	@Deprecated
+	public static final char[] cASSERT = "assert".toCharArray();
+
+	@Deprecated
+	public static final char[] cUNASSERT = "unassert".toCharArray();
+
 	public static void addKeywordsC(CharArrayIntMap kw) {
 		addCommon(kw);
 		addC(kw);

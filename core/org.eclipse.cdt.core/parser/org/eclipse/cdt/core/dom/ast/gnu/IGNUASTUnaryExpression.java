@@ -22,13 +22,13 @@ public interface IGNUASTUnaryExpression extends IASTUnaryExpression {
 
 	/**
 	 * For GCC parsers, only. {@code op_labelReference} is used for &amp;&amp;label type expressions.
-	 * @since 5.8
+	 * @since 8.2
 	 */
 	public static final int op_labelReference = 18;
 
 	/**
 	 * For GCC parsers in C++ mode, only: '__integer_pack ( expression )'
-	 * @since 6.11
+	 * @since 8.2
 	 */
 	public static final int op_integerPack = 19;
 

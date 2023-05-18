@@ -129,6 +129,20 @@ public interface IASTUnaryExpression extends IASTExpression {
 	public static final int op_noexcept = 17;
 
 	/**
+	 * For GCC parsers, only. {@code op_labelReference} is used for &amp;&amp;label type expressions.
+	 * @since 5.8
+	 */
+	@Deprecated
+	public static final int op_labelReference = 18;
+
+	/**
+	 * For GCC parsers in C++ mode, only: '__integer_pack ( expression )'
+	 * @since 6.11
+	 */
+	@Deprecated
+	public static final int op_integerPack = 19;
+
+	/**
 	 * {@code OPERAND} represents the relationship between an {@code IASTUnaryExpression} and
 	 * it's nested {@code IASTExpression}.
 	 */

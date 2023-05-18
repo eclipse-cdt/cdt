@@ -1,3 +1,32 @@
+/*******************************************************************************
+ * Copyright (c) 2023 Julian Waters.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Adapted from GNUCPPSourceParser, without the GNU extensions
+ *
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
+ *
+ * Contributors:
+ *	   John Camelon (IBM Corporation) - initial API and implementation
+ *	   Markus Schorn (Wind River Systems)
+ *	   Bryan Wilkinson (QNX) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=151207
+ *	   Ed Swartz (Nokia)
+ *	   Mike Kucera (IBM)
+ *	   Andrew Ferguson (Symbian)
+ *	   Sergey Prigogin (Google)
+ *	   Thomas Corbat (IFS)
+ *	   Anders Dahlberg (Ericsson) - bug 84144
+ *	   Nathan Ridge
+ *	   Richard Eames
+ *	   Alexander Nyßen (itemis AG) - bug 475908
+ */
+
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import java.util.ArrayList;

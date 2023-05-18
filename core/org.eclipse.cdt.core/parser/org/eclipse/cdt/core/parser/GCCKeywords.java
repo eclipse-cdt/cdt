@@ -42,21 +42,23 @@ public class GCCKeywords {
 	public static final String _DECIMAL128 = "_Decimal128";
 
 	/**
-	 * @since 5.11
+	 * @since 8.2
 	 * This is actually a Clang extension, but I'll leave it here for now.
 	 */
 	public static final char[] c__HAS_FEATURE = "__has_feature".toCharArray();
 
 	/**
-	 * @since 7.1
+	 * @since 8.2
 	 */
 	public static final char[] c__HAS_INCLUDE_NEXT = "__has_include_next".toCharArray();
 
 	// gcc extensions
+	/** @since 8.2 */
 	public static final char[] cpMIN = "<?".toCharArray();
 	public static final char[] cpMAX = ">?".toCharArray();
 
 	// Preprocessor extensions (supported by GCC).
+	/** @since 8.2 */
 	public static final char[] cINCLUDE_NEXT = "include_next".toCharArray();
 	public static final char[] cIMPORT = "import".toCharArray();
 	public static final char[] cIDENT = "ident".toCharArray();

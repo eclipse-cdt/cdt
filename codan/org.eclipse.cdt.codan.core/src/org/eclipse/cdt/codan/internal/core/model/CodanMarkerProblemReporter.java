@@ -18,12 +18,9 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.eclipse.cdt.codan.core.CodanCorePlugin;
-import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.AbstractProblemReporter;
 import org.eclipse.cdt.codan.core.model.IChecker;
-import org.eclipse.cdt.codan.core.model.ICheckersRegistry;
 import org.eclipse.cdt.codan.core.model.ICodanProblemMarker;
-import org.eclipse.cdt.codan.core.model.IProblem;
 import org.eclipse.cdt.codan.core.model.IProblemLocation;
 import org.eclipse.cdt.codan.core.model.IProblemReporterPersistent;
 import org.eclipse.cdt.codan.core.model.IProblemReporterSessionPersistent;
@@ -139,17 +136,18 @@ public class CodanMarkerProblemReporter extends AbstractProblemReporter
 			// non resource markers attached to a project itself
 			markers = resource.getProject().findMarkers(GENERIC_CODE_ANALYSIS_MARKER_TYPE, true, IResource.DEPTH_ZERO);
 		}
-		ICheckersRegistry reg = CodanRuntime.getInstance().getCheckersRegistry();
-		Collection<IProblem> problems = reg.getRefProblems(checker);
-		for (IMarker m : markers) {
-			String id = m.getAttribute(ICodanProblemMarker.ID, ""); //$NON-NLS-1$
-			for (IProblem problem : problems) {
-				if (problem.getId().equals(id)) {
-					res.add(m);
-				}
-			}
-		}
-		return res;
+		return Arrays.asList(markers);
+		//		ICheckersRegistry reg = CodanRuntime.getInstance().getCheckersRegistry();
+		//		Collection<IProblem> problems = reg.getRefProblems(checker);
+		//		for (IMarker m : markers) {
+		//			String id = m.getAttribute(ICodanProblemMarker.ID, ""); //$NON-NLS-1$
+		//			for (IProblem problem : problems) {
+		//				if (problem.getId().equals(id)) {
+		//					res.add(m);
+		//				}
+		//			}
+		//		}
+		//		return res;
 	}
 
 	/**

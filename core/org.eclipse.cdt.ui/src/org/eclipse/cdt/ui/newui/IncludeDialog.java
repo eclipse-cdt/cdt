@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -210,6 +211,12 @@ public class IncludeDialog extends AbstractPropertyDialog {
 			else
 				s = AbstractCPropertyTab.getWorkspaceFileDialog(shell, text.getText());
 			if (s != null) {
+				IProject project = cfgd.getProjectDescription().getProject();
+				String start = "${workspace_loc:/"; //$NON-NLS-1$
+				String badStart = start + project.getName();
+				if (s.startsWith(badStart)) {
+					s = s.replace(badStart, start + "${ProjName}"); //$NON-NLS-1$
+				}
 				s = strip_wsp(s);
 				text.setText(s);
 				c_wsp.setSelection(true);

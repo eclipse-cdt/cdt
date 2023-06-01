@@ -496,28 +496,37 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 	}
 
 	public static String getWorkspaceDirDialog(Shell shell, String text) {
-		return getWorkspaceDialog(shell, text, true, null);
+		return getWorkspaceDialog(shell, text, true, true, null);
 	}
 
 	public static String getWorkspaceFileDialog(Shell shell, String text) {
-		return getWorkspaceDialog(shell, text, false, null);
+		return getWorkspaceDialog(shell, text, false, true, null);
+	}
+
+	public static String getWorkspaceDirDialog(Shell shell, String text, IProject prj) {
+		return getWorkspaceDialog(shell, text, true, true, prj);
+	}
+
+	public static String getWorkspaceFileDialog(Shell shell, String text, IProject prj) {
+		return getWorkspaceDialog(shell, text, false, true, prj);
 	}
 
 	/**
 	 * @since 5.4
 	 */
 	public static String getProjectDirDialog(Shell shell, String text, IProject prj) {
-		return getWorkspaceDialog(shell, text, true, prj);
+		return getWorkspaceDialog(shell, text, true, false, prj);
 	}
 
 	/**
 	 * @since 5.4
 	 */
 	public static String getProjectFileDialog(Shell shell, String text, IProject prj) {
-		return getWorkspaceDialog(shell, text, false, prj);
+		return getWorkspaceDialog(shell, text, false, false, prj);
 	}
 
-	private static String getWorkspaceDialog(Shell shell, String text, boolean dir, IProject prj) {
+	private static String getWorkspaceDialog(Shell shell, String text, boolean dir, boolean selectFromRoot,
+			IProject prj) {
 		String currentPathText;
 		IPath path;
 		currentPathText = text;
@@ -528,7 +537,7 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(shell, new WorkbenchLabelProvider(),
 				new WorkbenchContentProvider());
 
-		if (prj == null)
+		if (prj == null || selectFromRoot)
 			dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		else
 			dialog.setInput(prj);
@@ -576,8 +585,14 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		if (dialog.open() == Window.OK) {
 			IResource resource = (IResource) dialog.getFirstResult();
 			if (resource != null) {
+				if (resource.getProject() == prj) {
+					StringBuilder buf = new StringBuilder();
+					return buf.append("${").append("workspace_loc:${ProjName}/") //$NON-NLS-1$//$NON-NLS-2$
+							.append(resource.getProjectRelativePath()).append("}").toString(); //$NON-NLS-1$
+				}
 				StringBuilder buf = new StringBuilder();
 				return buf.append("${").append("workspace_loc:").append(resource.getFullPath()).append("}").toString(); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+
 			}
 		}
 		return null;

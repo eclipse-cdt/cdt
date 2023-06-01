@@ -206,17 +206,12 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		} else if (e.widget.equals(b_ko)) {
 			shell.dispose();
 		} else if (e.widget.equals(b_work)) {
+			IProject project = cfgd.getProjectDescription().getProject();
 			if ((mode & DIR_MASK) == DIR_MASK)
-				s = AbstractCPropertyTab.getWorkspaceDirDialog(shell, text.getText());
+				s = AbstractCPropertyTab.getWorkspaceDirDialog(shell, text.getText(), project);
 			else
-				s = AbstractCPropertyTab.getWorkspaceFileDialog(shell, text.getText());
+				s = AbstractCPropertyTab.getWorkspaceFileDialog(shell, text.getText(), project);
 			if (s != null) {
-				IProject project = cfgd.getProjectDescription().getProject();
-				String start = "${workspace_loc:/"; //$NON-NLS-1$
-				String badStart = start + project.getName();
-				if (s.startsWith(badStart)) {
-					s = s.replace(badStart, start + "${ProjName}"); //$NON-NLS-1$
-				}
 				s = strip_wsp(s);
 				text.setText(s);
 				c_wsp.setSelection(true);

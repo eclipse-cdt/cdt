@@ -585,9 +585,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		if (dialog.open() == Window.OK) {
 			IResource resource = (IResource) dialog.getFirstResult();
 			if (resource != null) {
-				if (resource.getProject() == prj) {
+				if (resource.getProject().equals(prj)) {
 					StringBuilder buf = new StringBuilder();
-					return buf.append("${").append("workspace_loc:${ProjName}/") //$NON-NLS-1$//$NON-NLS-2$
+					return buf.append("${").append("workspace_loc:/${ProjName}/") //$NON-NLS-1$//$NON-NLS-2$
 							.append(resource.getProjectRelativePath()).append("}").toString(); //$NON-NLS-1$
 				}
 				StringBuilder buf = new StringBuilder();

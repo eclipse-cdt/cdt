@@ -503,10 +503,16 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 		return getWorkspaceDialog(shell, text, false, true, null);
 	}
 
+	/**
+	 * @since 8.1
+	 */
 	public static String getWorkspaceDirDialog(Shell shell, String text, IProject prj) {
 		return getWorkspaceDialog(shell, text, true, true, prj);
 	}
 
+	/**
+	 * @since 8.1
+	 */
 	public static String getWorkspaceFileDialog(Shell shell, String text, IProject prj) {
 		return getWorkspaceDialog(shell, text, false, true, prj);
 	}
@@ -586,9 +592,9 @@ public abstract class AbstractCPropertyTab implements ICPropertyTab {
 			IResource resource = (IResource) dialog.getFirstResult();
 			if (resource != null) {
 				if (resource.getProject().equals(prj)) {
-					StringBuilder buf = new StringBuilder();
-					return buf.append("${").append("workspace_loc:/${ProjName}/") //$NON-NLS-1$//$NON-NLS-2$
-							.append(resource.getProjectRelativePath()).append("}").toString(); //$NON-NLS-1$
+					String projectPath = new Path("${ProjName}").append(resource.getProjectRelativePath()) //$NON-NLS-1$
+							.makeAbsolute().toString();
+					return "${workspace_loc:" + projectPath + "}"; //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				StringBuilder buf = new StringBuilder();
 				return buf.append("${").append("workspace_loc:").append(resource.getFullPath()).append("}").toString(); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$

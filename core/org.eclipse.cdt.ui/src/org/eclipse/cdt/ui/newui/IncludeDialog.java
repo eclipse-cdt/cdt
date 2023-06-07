@@ -18,6 +18,7 @@ import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -205,10 +206,11 @@ public class IncludeDialog extends AbstractPropertyDialog {
 		} else if (e.widget.equals(b_ko)) {
 			shell.dispose();
 		} else if (e.widget.equals(b_work)) {
+			IProject project = cfgd.getProjectDescription().getProject();
 			if ((mode & DIR_MASK) == DIR_MASK)
-				s = AbstractCPropertyTab.getWorkspaceDirDialog(shell, text.getText());
+				s = AbstractCPropertyTab.getWorkspaceDirDialog(shell, text.getText(), project);
 			else
-				s = AbstractCPropertyTab.getWorkspaceFileDialog(shell, text.getText());
+				s = AbstractCPropertyTab.getWorkspaceFileDialog(shell, text.getText(), project);
 			if (s != null) {
 				s = strip_wsp(s);
 				text.setText(s);

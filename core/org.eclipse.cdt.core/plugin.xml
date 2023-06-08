@@ -568,6 +568,30 @@
    </extension>
 
 <!-- =================================================================================== -->
+<!-- Binary file content types                                                           -->
+<!-- =================================================================================== -->
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            id="binaryFile"
+            name="%binaryFileName"
+            priority="high"/>
+      <content-type
+            base-type="org.eclipse.cdt.core.binaryFile"
+            id="elfFile"
+            name="%elfFileName"
+            priority="low">
+         <describer
+               class="org.eclipse.core.runtime.content.BinarySignatureDescriber"
+               plugin="org.eclipse.core.contenttype">
+            <parameter name="signature" value="7F 45 4C 46"/>
+         </describer>
+      </content-type>
+      <file-association
+            content-type="org.eclipse.cdt.core.elfFile"
+            file-patterns="[^.]+"/> <!-- no file extension -->
+   </extension>
+
+<!-- =================================================================================== -->
 <!-- .cproject Content Type                                                              -->
 <!-- =================================================================================== -->
    <extension point="org.eclipse.core.contenttype.contentTypes">
@@ -602,8 +626,6 @@
       <content-type id="asmSource" name="%asmSourceName" 
           base-type="org.eclipse.core.runtime.text"
           file-extensions="S,s,asm,ASM"
-          priority="high"/>
-      <content-type id="binaryFile" name="%binaryFileName"
           priority="high"/>
    </extension>
 

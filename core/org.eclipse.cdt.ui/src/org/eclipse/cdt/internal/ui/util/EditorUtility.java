@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Ed Swartz (Nokia)
  *     Alexander Fedorov (ArSysOp) - Bug 561993 - Remove dependency to com.ibm.icu from CDT UI
+ *     John Dallaway - Support both IArchive and IBinary storage requests (#413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.util;
 
@@ -36,6 +37,7 @@ import org.eclipse.cdt.core.model.IBuffer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.core.model.IOpenable;
 import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
@@ -751,15 +753,18 @@ public class EditorUtility {
 				new String[] { modifierString, newModifierString });
 	}
 
-	public static IStorage getStorage(IBinary bin) {
+	public static IStorage getStorage(ICElement element) {
 		IStorage store = null;
-		try {
-			IBuffer buffer = bin.getBuffer();
-			if (buffer != null) {
-				store = new FileStorage(new ByteArrayInputStream(buffer.getContents().getBytes()), bin.getPath());
+		if (element instanceof IOpenable openable) {
+			try {
+				IBuffer buffer = openable.getBuffer();
+				if (buffer != null) {
+					store = new FileStorage(new ByteArrayInputStream(buffer.getContents().getBytes()),
+							element.getPath());
+				}
+			} catch (CModelException e) {
+				// nothing;
 			}
-		} catch (CModelException e) {
-			// nothing;
 		}
 		return store;
 	}

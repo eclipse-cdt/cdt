@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
+ *     John Dallaway - support both IArchive and IBinary as input (#413)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -19,6 +20,7 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.resources.FileStorage;
@@ -60,7 +62,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 	 * A storage editor input for binary files.
 	 */
 	public static class BinaryFileEditorInput extends PlatformObject implements IStorageEditorInput {
-		private final IBinary fBinary;
+		private final ICElement fBinary;
 		private IStorage fStorage;
 
 		/**
@@ -68,7 +70,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 		 *
 		 * @param binary
 		 */
-		public BinaryFileEditorInput(IBinary binary) {
+		public BinaryFileEditorInput(ICElement binary) {
 			fBinary = binary;
 		}
 
@@ -120,11 +122,11 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 		@Override
 		public IStorage getStorage() throws CoreException {
 			if (fStorage == null) {
-				IBinaryParser.IBinaryObject object = fBinary.getAdapter(IBinaryParser.IBinaryObject.class);
-				if (object != null) {
-					IGnuToolFactory factory = object.getBinaryParser().getAdapter(IGnuToolFactory.class);
+				IBinaryParser.IBinaryFile file = fBinary.getAdapter(IBinaryParser.IBinaryFile.class);
+				if (file != null) {
+					IGnuToolFactory factory = file.getBinaryParser().getAdapter(IGnuToolFactory.class);
 					if (factory != null) {
-						Objdump objdump = factory.getObjdump(object.getPath());
+						Objdump objdump = factory.getObjdump(file.getPath());
 						if (objdump != null) {
 							try {
 								// limit editor to X MB, if more - users should use objdump in command
@@ -139,7 +141,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 									System.arraycopy(message.getBytes(), 0, output, limitBytes - message.length(),
 											message.length());
 								}
-								fStorage = new FileStorage(new ByteArrayInputStream(output), object.getPath());
+								fStorage = new FileStorage(new ByteArrayInputStream(output), file.getPath());
 							} catch (IOException exc) {
 								CUIPlugin.log(exc);
 							}
@@ -172,8 +174,8 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 			IFile file = ResourceUtil.getFile(element);
 			if (file != null) {
 				ICElement cElement = CoreModel.getDefault().create(file);
-				if (cElement instanceof IBinary) {
-					element = new BinaryFileEditorInput((IBinary) cElement);
+				if (cElement instanceof IArchive || cElement instanceof IBinary) {
+					element = new BinaryFileEditorInput(cElement);
 				}
 			}
 			return super.createDocument(element);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
+ *     John Dallaway - Adapt for IBinaryFile (#413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -88,7 +89,7 @@ public class Archive extends Openable implements IArchive {
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IBinaryArchive.class.equals(adapter)) {
+		if (adapter.isAssignableFrom(IBinaryArchive.class)) {
 			return adapter.cast(getBinaryArchive());
 		}
 		return super.getAdapter(adapter);

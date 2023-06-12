@@ -11,13 +11,21 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     John Dallaway - support both IArchive and IBinary as input (#413)
+ *     John Dallaway - provide hex dump when no GNU tool factory (#416)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 
+import org.apache.commons.io.HexDump;
 import org.eclipse.cdt.core.IBinaryParser;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
@@ -36,6 +44,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -54,7 +63,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * A readonly editor to view binary files. This default implementation displays the GNU objdump output of the
- * binary as plain text. If no objdump output can be obtained, the binary content is displayed.
+ * binary as plain text. If no objdump output can be obtained, a hex dump is displayed.
  */
 public class DefaultBinaryFileEditor extends AbstractTextEditor implements IResourceChangeListener {
 
@@ -124,9 +133,10 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 			if (fStorage == null) {
 				IBinaryParser.IBinaryFile file = fBinary.getAdapter(IBinaryParser.IBinaryFile.class);
 				if (file != null) {
+					IPath filePath = file.getPath();
 					IGnuToolFactory factory = file.getBinaryParser().getAdapter(IGnuToolFactory.class);
 					if (factory != null) {
-						Objdump objdump = factory.getObjdump(file.getPath());
+						Objdump objdump = factory.getObjdump(filePath);
 						if (objdump != null) {
 							try {
 								// limit editor to X MB, if more - users should use objdump in command
@@ -141,10 +151,16 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 									System.arraycopy(message.getBytes(), 0, output, limitBytes - message.length(),
 											message.length());
 								}
-								fStorage = new FileStorage(new ByteArrayInputStream(output), file.getPath());
+								fStorage = new FileStorage(new ByteArrayInputStream(output), filePath);
 							} catch (IOException exc) {
 								CUIPlugin.log(exc);
 							}
+						}
+					} else { // provide a hex dump of the binary file in the absence of a GNU tool factory
+						try {
+							fStorage = new FileStorage(getHexDumpInputStream(filePath), filePath);
+						} catch (IOException e) {
+							CUIPlugin.log(e);
 						}
 					}
 				}
@@ -159,6 +175,42 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 			}
 			return fStorage;
 		}
+
+		private InputStream getHexDumpInputStream(IPath filePath) throws IOException {
+			final PipedInputStream pipedInputStream = new PipedInputStream();
+			final OutputStream pipedOutputStream = new PipedOutputStream(pipedInputStream);
+			new Thread(() -> {
+				try {
+					writeHexDump(filePath, pipedOutputStream);
+				} catch (IOException e) {
+					CUIPlugin.log(e);
+				} finally {
+					try {
+						pipedOutputStream.close();
+					} catch (IOException e) {
+						CUIPlugin.log(e);
+					}
+				}
+			}).start();
+			return pipedInputStream;
+		}
+
+		private void writeHexDump(IPath filePath, OutputStream outputStream) throws IOException {
+			final int BYTES_PER_LINE = 16; // hard-coded in HexDump class - do not modify
+			try (InputStream fileStream = new BufferedInputStream(new FileInputStream(filePath.toFile()))) {
+				int offset = 0;
+				while (true) {
+					// read data for 64 complete lines of hex dump output (1 KiB buffer)
+					final byte[] buffer = fileStream.readNBytes(BYTES_PER_LINE * 64);
+					if (0 == buffer.length) { // end of file stream
+						break;
+					}
+					HexDump.dump(buffer, offset, outputStream, 0);
+					offset += buffer.length;
+				}
+			}
+		}
+
 	}
 
 	/**

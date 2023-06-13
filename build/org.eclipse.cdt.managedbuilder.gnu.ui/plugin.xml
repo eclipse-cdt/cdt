@@ -968,6 +968,9 @@
 	            <value id="org.eclipse.cdt.build.core.buildType.debug"/>
     	        <value id="org.eclipse.cdt.build.core.buildType.release"/>
             </property>
+            <property id="org.eclipse.cdt.build.core.buildArtefactType">
+    	        <value id="org.eclipse.cdt.build.core.buildArtefactType.objectFile"/>
+            </property>
             </supportedProperties>
          <envVarBuildPath 
          	pathType="buildpathInclude"
@@ -3017,6 +3020,50 @@
          </configuration>                  
       </projectType>
       
+      <projectType
+            isAbstract="false"
+            isTest="false"
+            buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.objectFile"
+            id="cdt.managedbuild.target.gnu.object">
+         <configuration
+               name="%ConfigName.Dbg"
+               id="cdt.managedbuild.config.gnu.object.debug"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug"
+               cleanCommand="rm -rf">
+               <toolChain
+                     superClass="cdt.managedbuild.toolchain.gnu.base"
+                     id="cdt.managedbuild.toolchain.gnu.object.debug">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.platform.object.debug"
+		              superClass="cdt.managedbuild.target.gnu.platform.base">
+		          </targetPlatform>
+				  <builder
+				      superClass="cdt.managedbuild.target.gnu.builder.base"
+				      id="cdt.managedbuild.target.gnu.builder.object.debug">
+				  </builder>
+               </toolChain>
+         </configuration>
+         <configuration
+               name="%ConfigName.Rel"
+               id="cdt.managedbuild.config.gnu.object.release"
+               buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release"
+               parent="cdt.managedbuild.config.gnu.base"
+               cleanCommand="rm -rf">
+               <toolChain
+                     superClass="cdt.managedbuild.toolchain.gnu.base"
+                     id="cdt.managedbuild.toolchain.gnu.object.release">
+		          <targetPlatform
+		              id="cdt.managedbuild.target.gnu.platform.object.release"
+		              superClass="cdt.managedbuild.target.gnu.platform.base">
+		          </targetPlatform>
+				  <builder
+				      superClass="cdt.managedbuild.target.gnu.builder.base"
+				      id="cdt.managedbuild.target.gnu.builder.object.release">
+				  </builder>
+               </toolChain>
+         </configuration>
+      </projectType>
+
       <configuration
             artifactExtension="exe"
             cleanCommand="rm -rf"

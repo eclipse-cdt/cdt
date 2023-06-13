@@ -190,6 +190,7 @@ public class ManagedBuildManager extends AbstractCExtension {
 	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_EXE = "org.eclipse.cdt.build.core.buildArtefactType.exe"; //$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_STATICLIB = "org.eclipse.cdt.build.core.buildArtefactType.staticLib"; //$NON-NLS-1$
 	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_SHAREDLIB = "org.eclipse.cdt.build.core.buildArtefactType.sharedLib"; //$NON-NLS-1$
+	public static final String BUILD_ARTEFACT_TYPE_PROPERTY_OBJECTFILE = "org.eclipse.cdt.build.core.buildArtefactType.objectFile"; //$NON-NLS-1$
 
 	public static final String CFG_DATA_PROVIDER_ID = ManagedBuilderCorePlugin.PLUGIN_ID + ".configurationDataProvider"; //$NON-NLS-1$
 

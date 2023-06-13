@@ -1739,6 +1739,12 @@ public class GnuMakefileGenerator implements IManagedBuilderMakefileGenerator2 {
 		} else {
 			getRuleList().add(buildRule);
 			buffer.append(buildRule).append(NEWLINE);
+
+			IBuildPropertyValue value = config.getBuildArtefactType();
+			if (value.getId().equals(ManagedBuildManager.BUILD_ARTEFACT_TYPE_PROPERTY_OBJECTFILE)) {
+				return true;
+			}
+
 			if (bTargetTool) {
 				buffer.append(TAB).append(AT).append(escapedEcho(MESSAGE_START_BUILD + WHITESPACE + OUT_MACRO));
 			}

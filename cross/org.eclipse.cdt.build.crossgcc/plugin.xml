@@ -14,6 +14,7 @@
 # Doug Schaefer   (Wind River)     - initial API and implementation 
 # Anna Dushistova (Mentor Graphics)- [329531][crossgcc] crossgcc fails to build a project
 # John Dallaway - enable GNU tool prefix lookup (#361)
+# Ruiqi Bao       (Eswin Computing)- Add object file build artifact (#394)
 -->
 <plugin>
 
@@ -221,6 +222,37 @@
 			</toolChain>                                                                                				                    
          </configuration>         
       </projectType>
+
+      <projectType
+	        buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.objectFile"
+	        id="cdt.managedbuild.target.gnu.cross.object"
+	        isAbstract="false"
+	        isTest="false"
+	        >
+	     <configuration
+	           name="Debug"
+	           cleanCommand="rm -rf"
+	           id="cdt.managedbuild.config.gnu.cross.object.debug"
+	           parent="cdt.managedbuild.config.gnu.base"
+	           buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug">
+	           <toolChain
+	           		 superClass="cdt.managedbuild.toolchain.gnu.cross.base"
+	                 id="cdt.managedbuild.toolchain.gnu.cross.object.debug">
+	           </toolChain>
+	     </configuration>
+	     <configuration
+	           name="Release"
+	           cleanCommand="rm -rf"
+	           id="cdt.managedbuild.config.gnu.cross.object.release"
+	           parent="cdt.managedbuild.config.gnu.base"
+	           buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release">
+	           <toolChain
+	                 superClass="cdt.managedbuild.toolchain.gnu.cross.base"
+	                 id="cdt.managedbuild.toolchain.gnu.cross.object.release">
+	           </toolChain>
+	     </configuration>
+	  </projectType>
+
    </extension>
    <extension
          point="org.eclipse.cdt.core.templateAssociations">
@@ -260,6 +292,12 @@
          </toolchain>
          <toolchain
                toolchainID="cdt.managedbuild.toolchain.gnu.cross.lib.release">
+         </toolchain>
+         <toolchain
+               toolchainID="cdt.managedbuild.toolchain.gnu.cross.object.debug">
+         </toolchain>
+         <toolchain
+               toolchainID="cdt.managedbuild.toolchain.gnu.cross.object.release">
          </toolchain>
       </wizardPage>
    </extension>

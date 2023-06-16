@@ -492,6 +492,9 @@ public class CompileCommandsJsonParser {
 		case "cp":
 		case "cxx":
 		case "c++":
+		case "ccm":
+		case "cxxm":
+		case "c++m":
 			// make sure we run built-ins detection only once for C++ files..
 			sourceFileExtension = "cpp";
 			break;

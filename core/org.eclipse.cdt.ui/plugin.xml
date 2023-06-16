@@ -1745,7 +1745,7 @@
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator"
-            extensions="c,cc,cxx,cpp,c++,h,hh,hxx,hpp,inc,c2"
+            extensions="c,cc,cxx,cpp,c++,ccm,cxxm,c++m,h,hh,hxx,hpp,inc,c2"
             id="org.eclipse.cdt.ui.compare.CContentViewerCreator">
       </viewer>
       <contentTypeBinding

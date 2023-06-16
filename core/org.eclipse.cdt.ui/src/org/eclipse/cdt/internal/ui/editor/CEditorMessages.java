@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Tomasz Wesolowski
  *     Alvaro Sanchez-Leon (Ericsson AB)
  *     Sergey Prigogin (Google)
+ *     John Dallaway
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
@@ -63,6 +64,7 @@ public final class CEditorMessages extends NLS {
 	public static String OverrideIndicatorManager_overrides;
 	public static String OverrideIndicatorManager_shadows;
 	public static String OverrideIndicatorManager_via;
+	public static String DefaultBinaryFileEditor_TruncateHexDumpMessage;
 	public static String DefaultBinaryFileEditor_TruncateMessage;
 	public static String DefaultCEditorTextHover_html_name;
 	public static String DefaultCEditorTextHover_html_prototype;

@@ -12,6 +12,7 @@
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     John Dallaway - support both IArchive and IBinary as input (#413)
  *     John Dallaway - provide hex dump when no GNU tool factory (#416)
+ *     John Dallaway - rework to use a FileDocumentProvider (#425)
  *******************************************************************************/
 
 package org.eclipse.cdt.internal.ui.editor;
@@ -24,156 +25,53 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.text.MessageFormat;
 
 import org.apache.commons.io.HexDump;
-import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPersistableElement;
-import org.eclipse.ui.IStorageEditorInput;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.StorageDocumentProvider;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.ResourceUtil;
-import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.editors.text.FileDocumentProvider;
+import org.eclipse.ui.editors.text.TextEditor;
 
 /**
  * A readonly editor to view binary files. This default implementation displays the GNU objdump output of the
  * binary as plain text. If no objdump output can be obtained, a hex dump is displayed.
  */
-public class DefaultBinaryFileEditor extends AbstractTextEditor implements IResourceChangeListener {
+public class DefaultBinaryFileEditor extends TextEditor {
 
 	/**
-	 * A storage editor input for binary files.
+	 * A file document provider for binary files.
 	 */
-	public static class BinaryFileEditorInput extends PlatformObject implements IStorageEditorInput {
-		private final ICElement fBinary;
-		private IStorage fStorage;
+	public static class BinaryFileDocumentProvider extends FileDocumentProvider {
 
-		/**
-		 * Create an editor input from the given binary.
-		 *
-		 * @param binary
-		 */
-		public BinaryFileEditorInput(ICElement binary) {
-			fBinary = binary;
-		}
+		private static final String CONTENT_TRUNCATED_MESSAGE_FORMAT = "\n--- {0} ---\n"; //$NON-NLS-1$
 
-		/*
-		 * @see org.eclipse.ui.IEditorInput#exists()
-		 */
-		@Override
-		public boolean exists() {
-			return fBinary.exists();
-		}
-
-		/*
-		 * @see org.eclipse.ui.IEditorInput#getImageDescriptor()
-		 */
-		@Override
-		public ImageDescriptor getImageDescriptor() {
-			IFile file = (IFile) fBinary.getResource();
-			IContentType contentType = IDE.getContentType(file);
-			return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(file.getName(), contentType);
-		}
-
-		/*
-		 * @see org.eclipse.ui.IEditorInput#getName()
-		 */
-		@Override
-		public String getName() {
-			return fBinary.getElementName();
-		}
-
-		/*
-		 * @see org.eclipse.ui.IEditorInput#getPersistable()
-		 */
-		@Override
-		public IPersistableElement getPersistable() {
-			return null;
-		}
-
-		/*
-		 * @see org.eclipse.ui.IEditorInput#getToolTipText()
-		 */
-		@Override
-		public String getToolTipText() {
-			return fBinary.getResource().getFullPath().toString();
-		}
-
-		/*
-		 * @see org.eclipse.ui.IStorageEditorInput#getStorage()
-		 */
-		@Override
-		public IStorage getStorage() throws CoreException {
-			if (fStorage == null) {
-				IBinaryParser.IBinaryFile file = fBinary.getAdapter(IBinaryParser.IBinaryFile.class);
-				if (file != null) {
-					IPath filePath = file.getPath();
-					IGnuToolFactory factory = file.getBinaryParser().getAdapter(IGnuToolFactory.class);
-					if (factory != null) {
-						Objdump objdump = factory.getObjdump(filePath);
-						if (objdump != null) {
-							try {
-								// limit editor to X MB, if more - users should use objdump in command
-								// this is UI blocking call, on 56M binary it takes more than 15 min
-								// and generates at least 2.5G of assembly
-								int limitBytes = 6 * 1024 * 1024; // this can run reasonably within seconds
-								byte[] output = objdump.getOutput(limitBytes);
-								if (output.length >= limitBytes) {
-									// add a message for user
-									String text = CEditorMessages.DefaultBinaryFileEditor_TruncateMessage;
-									String message = "\n\n--- " + text + " ---\n" + objdump.toString(); //$NON-NLS-1$ //$NON-NLS-2$
-									System.arraycopy(message.getBytes(), 0, output, limitBytes - message.length(),
-											message.length());
-								}
-								fStorage = new FileStorage(new ByteArrayInputStream(output), filePath);
-							} catch (IOException exc) {
-								CUIPlugin.log(exc);
-							}
-						}
-					} else { // provide a hex dump of the binary file in the absence of a GNU tool factory
-						try {
-							fStorage = new FileStorage(getHexDumpInputStream(filePath), filePath);
-						} catch (IOException e) {
-							CUIPlugin.log(e);
-						}
-					}
-				}
-				if (fStorage == null) {
-					// backwards compatibility
-					fStorage = EditorUtility.getStorage(fBinary);
-					if (fStorage == null) {
-						// fall back to binary content
-						fStorage = (IFile) fBinary.getResource();
-					}
-				}
+		private InputStream getObjdumpInputStream(Objdump objdump) throws IOException {
+			// limit editor to X MB, if more - users should use objdump in command
+			// this is UI blocking call, on 56M binary it takes more than 15 min
+			// and generates at least 2.5G of assembly
+			int limitBytes = 6 * 1024 * 1024; // this can run reasonably within seconds
+			byte[] output = objdump.getOutput(limitBytes);
+			if (output.length >= limitBytes) {
+				// append a message for user
+				String message = "\n" + MessageFormat.format(CONTENT_TRUNCATED_MESSAGE_FORMAT, //$NON-NLS-1$
+						CEditorMessages.DefaultBinaryFileEditor_TruncateMessage) + objdump.toString();
+				System.arraycopy(message.getBytes(), 0, output, limitBytes - message.length(), message.length());
 			}
-			return fStorage;
+			return new ByteArrayInputStream(output);
 		}
 
 		private InputStream getHexDumpInputStream(IPath filePath) throws IOException {
@@ -200,9 +98,17 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 			try (InputStream fileStream = new BufferedInputStream(new FileInputStream(filePath.toFile()))) {
 				int offset = 0;
 				while (true) {
-					// read data for 64 complete lines of hex dump output (1 KiB buffer)
-					final byte[] buffer = fileStream.readNBytes(BYTES_PER_LINE * 64);
+					// read data for 256 complete lines of hex dump output (4 KiB buffer)
+					final byte[] buffer = fileStream.readNBytes(BYTES_PER_LINE * 256);
 					if (0 == buffer.length) { // end of file stream
+						break;
+					}
+					// limit content to 16MiB data
+					if (offset >= 0x1000000) {
+						// append a message for user
+						String message = MessageFormat.format(CONTENT_TRUNCATED_MESSAGE_FORMAT,
+								CEditorMessages.DefaultBinaryFileEditor_TruncateHexDumpMessage);
+						outputStream.write(message.getBytes());
 						break;
 					}
 					HexDump.dump(buffer, offset, outputStream, 0);
@@ -211,34 +117,41 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 			}
 		}
 
-	}
-
-	/**
-	 * A storage document provider for binary files.
-	 */
-	public static class BinaryFileDocumentProvider extends StorageDocumentProvider {
-
-		/*
-		 * @see org.eclipse.ui.editors.text.StorageDocumentProvider#createDocument(java.lang.Object)
-		 */
-		@Override
-		protected IDocument createDocument(Object element) throws CoreException {
-			IFile file = ResourceUtil.getFile(element);
-			if (file != null) {
-				ICElement cElement = CoreModel.getDefault().create(file);
-				if (cElement instanceof IArchive || cElement instanceof IBinary) {
-					element = new BinaryFileEditorInput(cElement);
+		private InputStream getBinaryFileContent(IBinaryFile binaryFile) throws CoreException {
+			try {
+				IPath filePath = binaryFile.getPath();
+				IGnuToolFactory factory = binaryFile.getBinaryParser().getAdapter(IGnuToolFactory.class);
+				if (factory != null) {
+					Objdump objdump = factory.getObjdump(filePath);
+					if (objdump != null) {
+						// use output from objdump tool
+						return getObjdumpInputStream(objdump);
+					}
 				}
+				// fall back to a hex dump if objdump tool not available
+				return getHexDumpInputStream(binaryFile.getPath());
+			} catch (IOException e) {
+				String message = (e.getMessage() != null ? e.getMessage() : ""); //$NON-NLS-1$
+				throw new CoreException(Status.error(message, e));
 			}
-			return super.createDocument(element);
 		}
 
 		@Override
-		public long getModificationStamp(Object element) {
-			if (element instanceof FileEditorInput) {
-				return ((FileEditorInput) element).getFile().getModificationStamp();
+		protected boolean setDocumentContent(IDocument document, IEditorInput editorInput, String encoding)
+				throws CoreException {
+			if (editorInput instanceof IFileEditorInput fileEditorInput) {
+				IFile file = fileEditorInput.getFile();
+				ICElement cElement = CoreModel.getDefault().create(file);
+				if (cElement instanceof IArchive || cElement instanceof IBinary) {
+					IBinaryFile binaryFile = cElement.getAdapter(IBinaryFile.class);
+					if (binaryFile != null) {
+						setDocumentContent(document, getBinaryFileContent(binaryFile), encoding);
+						return true;
+					}
+					return false;
+				}
 			}
-			return 0;
+			return super.setDocumentContent(document, editorInput, encoding);
 		}
 
 		/*
@@ -262,53 +175,6 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 	public DefaultBinaryFileEditor() {
 		super();
 		setDocumentProvider(new BinaryFileDocumentProvider());
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
 	}
 
-	/*
-	 * @see
-	 * org.eclipse.ui.texteditor.AbstractDecoratedTextEditor#createSourceViewer(org.eclipse.swt.widgets.Composite
-	 * , org.eclipse.jface.text.source.IVerticalRuler, int)
-	 */
-	@Override
-	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
-		ISourceViewer sourceViewer = super.createSourceViewer(parent, ruler, styles);
-		sourceViewer.setEditable(false);
-		return sourceViewer;
-	}
-
-	@Override
-	public void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-	}
-
-	@Override
-	public void resourceChanged(final IResourceChangeEvent event) {
-		try {
-			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
-				event.getDelta().accept(new IResourceDeltaVisitor() {
-					@Override
-					public boolean visit(IResourceDelta delta) {
-						if (delta.getResource().getName().equals(getEditorInput().getName())) {
-							refresh();
-							return false;
-						}
-						return true;
-					}
-				});
-			}
-		} catch (CoreException e) {
-			CUIPlugin.log(e);
-		}
-	}
-
-	protected void refresh() {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
-			try {
-				doSetInput(getEditorInput());
-			} catch (CoreException e) {
-				CUIPlugin.log(e);
-			}
-		});
-	}
 }

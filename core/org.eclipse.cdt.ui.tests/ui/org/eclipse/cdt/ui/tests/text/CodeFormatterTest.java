@@ -4736,6 +4736,102 @@ public class CodeFormatterTest extends BaseUITestCase {
 	}
 
 	//int main() {
+	//	// @formatter:off
+	//	int x[] = {1,2,34,5,5,5,5,5};
+	//	// @formatter:on
+	//}
+
+	//int main() {
+	//	// @formatter:off
+	//	int x[] = {1,2,34,5,5,5,5,5};
+	//	// @formatter:on
+	//}
+	public void testFormatterOnOff_Issue428() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
+
+	//void f() {
+	//	//    @formatter:off
+	//	int a = 123;
+	//	//    @formatter:on
+	//}
+
+	//void f() {
+	//	//    @formatter:off
+	//	int a = 123;
+	//	//    @formatter:on
+	//}
+	public void testFormatterOnOff_Issue428_a() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
+
+	//int main() {
+	//	int y;
+	//// @formatter:off
+	//	int x[] = {1,2,34,5,5,5,5,5};
+	//// @formatter:on
+	//	int z;
+	//}
+
+	//int main() {
+	//	int y;
+	//// @formatter:off
+	//	int x[] = {1,2,34,5,5,5,5,5};
+	//// @formatter:on
+	//	int z;
+	//}
+	public void testFormatterOnOff_Issue428_b() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		assertFormatterResult();
+	}
+
+	//void f() {
+	//    //    @formatter:off
+	//    int a = 123;
+	//    //    @formatter:on
+	//}
+
+	//void f() {
+	//    //    @formatter:off
+	//    int a = 123;
+	//    //    @formatter:on
+	//}
+	public void testFormatterOnOff_Issue428_c() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//void f() {
+	////    @formatter:off
+	//	int a = 123;
+	//	//    @formatter:on
+	//}
+
+	//void f() {
+	////    @formatter:off
+	//	int a = 123;
+	//	//    @formatter:on
+	//}
+	public void testFormatterOnOff_Issue428_d() throws Exception {
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_USE_COMMENT_TAG, true);
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_ON_TAG, "@formatter:on");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_COMMENT_OFF_TAG, "@formatter:off");
+		fOptions.put(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, CCorePlugin.SPACE);
+		assertFormatterResult();
+	}
+
+	//int main() {
 	//	auto f = [&](){
 	//	};
 	//	return 0;

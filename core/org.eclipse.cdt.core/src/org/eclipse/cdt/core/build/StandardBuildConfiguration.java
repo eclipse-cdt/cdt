@@ -84,16 +84,20 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		setupEnvVars();
 	}
 
-	private void applyProperties() {
-		String container = getProperty(BUILD_CONTAINER);
-		if (container != null && !container.trim().isEmpty()) {
-			IPath containerLoc = new org.eclipse.core.runtime.Path(container);
+	private IContainer getContainer(String containerPath) {
+		if (containerPath != null && !containerPath.trim().isEmpty()) {
+			IPath containerLoc = new org.eclipse.core.runtime.Path(containerPath);
 			if (containerLoc.segmentCount() == 1) {
-				buildContainer = ResourcesPlugin.getWorkspace().getRoot().getProject(containerLoc.segment(0));
+				return ResourcesPlugin.getWorkspace().getRoot().getProject(containerLoc.segment(0));
 			} else {
-				buildContainer = ResourcesPlugin.getWorkspace().getRoot().getFolder(containerLoc);
+				return ResourcesPlugin.getWorkspace().getRoot().getFolder(containerLoc);
 			}
 		}
+		return null;
+	}
+
+	private void applyProperties() {
+		setBuildContainer(getProperty(BUILD_CONTAINER));
 
 		String buildCmd = getProperty(BUILD_COMMAND);
 		if (buildCmd != null && !buildCmd.trim().isEmpty()) {
@@ -137,9 +141,26 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		return envVars;
 	}
 
+	/**
+	 * Set the build container based on the full path starting from workspace root.
+	 *
+	 * @param containerPath Path from workspace root.
+	 */
+	private void setBuildContainer(String containerPath) {
+		IContainer container = null;
+		if (containerPath != null && !containerPath.trim().isEmpty()) {
+			container = getContainer(containerPath);
+		}
+		setBuildContainer(container);
+	}
+
 	public void setBuildContainer(IContainer buildContainer) {
 		this.buildContainer = buildContainer;
-		setProperty(BUILD_CONTAINER, buildContainer.getFullPath().toString());
+		if (buildContainer == null) {
+			setProperty(BUILD_CONTAINER, ""); // overwrite old property value.
+		} else {
+			setProperty(BUILD_CONTAINER, buildContainer.getFullPath().toString());
+		}
 	}
 
 	public void setBuildCommand(String[] buildCommand) {
@@ -162,27 +183,12 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	private void createBuildContainer(IContainer container, IProgressMonitor monitor) throws CoreException {
-		IContainer parent = container.getParent();
-		if (!(parent instanceof IProject) && !parent.exists()) {
-			createBuildContainer(parent, monitor);
-		}
-
-		if (container instanceof IFolder) {
-			((IFolder) container).create(IResource.FORCE | IResource.DERIVED, true, monitor);
-		}
-	}
-
 	@Override
 	public IContainer getBuildContainer() throws CoreException {
 		if (buildContainer == null) {
-			return super.getBuildContainer();
-		} else {
-			if (!(buildContainer instanceof IProject) && !buildContainer.exists()) {
-				createBuildContainer(buildContainer, new NullProgressMonitor());
-			}
+			setBuildContainer(getDefaultBuildContainer());
 		}
-		return buildContainer != null ? buildContainer : super.getBuildContainer();
+		return buildContainer;
 	}
 
 	/**

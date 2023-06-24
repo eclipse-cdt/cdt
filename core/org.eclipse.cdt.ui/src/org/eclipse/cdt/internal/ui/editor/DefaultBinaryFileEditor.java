@@ -18,22 +18,22 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.io.UncheckedIOException;
 import java.text.MessageFormat;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.apache.commons.io.HexDump;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.utils.IGnuToolFactory;
 import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.core.resources.IFile;
@@ -59,41 +59,62 @@ public class DefaultBinaryFileEditor extends TextEditor {
 
 		private static final String CONTENT_TRUNCATED_MESSAGE_FORMAT = "\n--- {0} ---\n"; //$NON-NLS-1$
 
-		private InputStream getObjdumpInputStream(Objdump objdump) throws IOException {
-			// limit editor to X MB, if more - users should use objdump in command
-			// this is UI blocking call, on 56M binary it takes more than 15 min
-			// and generates at least 2.5G of assembly
-			int limitBytes = 6 * 1024 * 1024; // this can run reasonably within seconds
-			byte[] output = objdump.getOutput(limitBytes);
-			if (output.length >= limitBytes) {
-				// append a message for user
-				String message = "\n" + MessageFormat.format(CONTENT_TRUNCATED_MESSAGE_FORMAT, //$NON-NLS-1$
-						CEditorMessages.DefaultBinaryFileEditor_TruncateMessage) + objdump.toString();
-				System.arraycopy(message.getBytes(), 0, output, limitBytes - message.length(), message.length());
-			}
-			return new ByteArrayInputStream(output);
-		}
-
-		private InputStream getHexDumpInputStream(IPath filePath) throws IOException {
+		private InputStream getInputStream(Consumer<OutputStream> writer) throws IOException {
+			final AtomicReference<IOException> writerException = new AtomicReference<>();
 			final PipedInputStream pipedInputStream = new PipedInputStream();
-			final OutputStream pipedOutputStream = new PipedOutputStream(pipedInputStream);
-			new Thread(() -> {
-				try {
-					writeHexDump(filePath, pipedOutputStream);
-				} catch (IOException e) {
-					CUIPlugin.log(e);
-				} finally {
+			final FilterInputStream filterInputStream = new FilterInputStream(pipedInputStream) {
+				@Override
+				public void close() throws IOException {
 					try {
-						pipedOutputStream.close();
-					} catch (IOException e) {
-						CUIPlugin.log(e);
+						final IOException exception = writerException.get();
+						if (exception != null) {
+							// propagate pipe writer exception to pipe reader
+							throw new IOException(exception.getMessage(), exception);
+						}
+					} finally {
+						super.close();
 					}
 				}
+			};
+			final OutputStream pipedOutputStream = new PipedOutputStream(pipedInputStream);
+			new Thread(() -> {
+				try (pipedOutputStream) {
+					writer.accept(pipedOutputStream);
+				} catch (UncheckedIOException e) {
+					writerException.set(e.getCause());
+				} catch (IOException e) {
+					writerException.set(e);
+				}
 			}).start();
-			return pipedInputStream;
+			return filterInputStream;
 		}
 
-		private void writeHexDump(IPath filePath, OutputStream outputStream) throws IOException {
+		private void writeObjdump(Objdump objdump, OutputStream outputStream) {
+			try (InputStream objdumpStream = objdump.getInputStream()) {
+				int offset = 0;
+				while (true) {
+					// read objdump content via 4 KiB buffer
+					final byte[] buffer = objdumpStream.readNBytes(4096);
+					if (0 == buffer.length) { // end of file stream
+						break;
+					}
+					// limit to 16 MiB objdump content
+					if (offset >= 0x1000000) {
+						// append a message for user
+						String message = "\n" + MessageFormat.format(CONTENT_TRUNCATED_MESSAGE_FORMAT, //$NON-NLS-1$
+								CEditorMessages.DefaultBinaryFileEditor_TruncateMessage) + objdump.toString();
+						outputStream.write(message.getBytes());
+						break;
+					}
+					outputStream.write(buffer);
+					offset += buffer.length;
+				}
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		}
+
+		private void writeHexDump(IPath filePath, OutputStream outputStream) {
 			final int BYTES_PER_LINE = 16; // hard-coded in HexDump class - do not modify
 			try (InputStream fileStream = new BufferedInputStream(new FileInputStream(filePath.toFile()))) {
 				int offset = 0;
@@ -103,7 +124,7 @@ public class DefaultBinaryFileEditor extends TextEditor {
 					if (0 == buffer.length) { // end of file stream
 						break;
 					}
-					// limit content to 16MiB data
+					// limit to 16 MiB binary file content
 					if (offset >= 0x1000000) {
 						// append a message for user
 						String message = MessageFormat.format(CONTENT_TRUNCATED_MESSAGE_FORMAT,
@@ -114,6 +135,8 @@ public class DefaultBinaryFileEditor extends TextEditor {
 					HexDump.dump(buffer, offset, outputStream, 0);
 					offset += buffer.length;
 				}
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
 			}
 		}
 
@@ -125,11 +148,11 @@ public class DefaultBinaryFileEditor extends TextEditor {
 					Objdump objdump = factory.getObjdump(filePath);
 					if (objdump != null) {
 						// use output from objdump tool
-						return getObjdumpInputStream(objdump);
+						return getInputStream(stream -> writeObjdump(objdump, stream));
 					}
 				}
 				// fall back to a hex dump if objdump tool not available
-				return getHexDumpInputStream(binaryFile.getPath());
+				return getInputStream(stream -> writeHexDump(filePath, stream));
 			} catch (IOException e) {
 				String message = (e.getMessage() != null ? e.getMessage() : ""); //$NON-NLS-1$
 				throw new CoreException(Status.error(message, e));
@@ -142,13 +165,12 @@ public class DefaultBinaryFileEditor extends TextEditor {
 			if (editorInput instanceof IFileEditorInput fileEditorInput) {
 				IFile file = fileEditorInput.getFile();
 				ICElement cElement = CoreModel.getDefault().create(file);
-				if (cElement instanceof IArchive || cElement instanceof IBinary) {
+				if (cElement != null) {
 					IBinaryFile binaryFile = cElement.getAdapter(IBinaryFile.class);
 					if (binaryFile != null) {
 						setDocumentContent(document, getBinaryFileContent(binaryFile), encoding);
 						return true;
 					}
-					return false;
 				}
 			}
 			return super.setDocumentContent(document, editorInput, encoding);

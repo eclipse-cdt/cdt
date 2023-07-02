@@ -11,6 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     John Dallaway - Add DW_FORM_line_strp (#198)
+ *     John Dallaway - Add DW_FORM_implicit_const (#443)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -216,6 +217,10 @@ public class DwarfConstants {
 	 * @since 5.7
 	 */
 	public final static int DW_FORM_ref_sig8 = 0x20;
+	/**
+	 * @since 8.3
+	 */
+	public final static int DW_FORM_implicit_const = 0x21;
 	/* Extensions for Fission. See http://gcc.gnu.org/wiki/DebugFission. */
 	/**
 	 * @since 5.7

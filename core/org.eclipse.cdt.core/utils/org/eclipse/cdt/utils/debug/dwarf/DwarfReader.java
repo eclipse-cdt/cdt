@@ -13,6 +13,7 @@
  *     Ling Wang (Nokia) bug 201000
  *     Serge Beauchamp (Freescale Semiconductor) - Bug 421070
  *     Red Hat Inc. - add debuginfo and macro section support
+ *     John Dallaway - support DWARF v5 content form data (#443)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -61,6 +62,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	private boolean m_macros_parsed = false;
 	private final ArrayList<Integer> m_parsedLineTableOffsets = new ArrayList<>();
 	private long m_parsedLineTableSize = 0;
+
+	private class ContentForm {
+		long lnct; // content type code DW_LNCT_*
+		long form; // content form code DW_FORM_*
+	}
 
 	public DwarfReader(String file) throws IOException {
 		super(file);
@@ -285,6 +291,137 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		return sb.toString();
 	}
 
+	private String getPathInLineStr(long offset) {
+		final ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE_STR);
+		if (null != data) {
+			data.position((int) offset);
+			return readString(data);
+		}
+		return ""; //$NON-NLS-1$
+	}
+
+	private long readOffset(ByteBuffer data, byte offsetSize) throws IOException {
+		switch (offsetSize) {
+		case 8:
+			return read_8_bytes(data);
+		case 4:
+			return read_4_bytes(data);
+		case 2:
+			return read_2_bytes(data);
+		default:
+			return -1L; // unsupported
+		}
+	}
+
+	private ContentForm readContentForm(ByteBuffer in) throws IOException {
+		ContentForm contentForm = new ContentForm();
+		contentForm.lnct = read_unsigned_leb128(in); // DW_LNCT_*
+		contentForm.form = read_unsigned_leb128(in); // DW_FORM_*
+		return contentForm;
+	}
+
+	/* read source file data (DWARF v4 and earlier) */
+	private void addSourceFilesDwarf(String cuCompDir, ByteBuffer data) throws IOException {
+		List<String> dirList = new ArrayList<>();
+
+		// add the compilation directory of the CU as the first directory
+		dirList.add(cuCompDir);
+
+		// read directories
+		while (true) {
+			String str = readString(data);
+			if (str.isEmpty()) { // if no more directories
+				break;
+			}
+			// if the directory is relative, append it to the CU directory
+			IPath dir = new Path(str);
+			if (!dir.isAbsolute()) {
+				dir = new Path(cuCompDir).append(str);
+			}
+			dirList.add(dir.toString());
+		}
+
+		// read file names
+		while (true) {
+			String fileName = readString(data);
+			if (fileName.isEmpty()) { // if no more file entries
+				break;
+			}
+
+			// read directory index
+			long leb128 = read_unsigned_leb128(data);
+
+			addSourceFile(dirList.get((int) leb128), fileName);
+
+			// skip modification time
+			leb128 = read_unsigned_leb128(data);
+
+			// skip file size in bytes
+			leb128 = read_unsigned_leb128(data);
+		}
+	}
+
+	/* read source file data (DWARF v5 and later) */
+	private void addSourceFilesDwarf5(String cuCompDir, ByteBuffer data, byte offsetSize) throws IOException {
+		// read directory content forms
+		byte dcf_count[] = new byte[1];
+		data.get(dcf_count);
+		List<ContentForm> directoryContentForms = new ArrayList<>();
+		for (int fmt = 0; fmt < dcf_count[0]; fmt++) {
+			ContentForm def = readContentForm(data);
+			directoryContentForms.add(def);
+		}
+
+		// read directories
+		long directories_count = read_unsigned_leb128(data);
+		List<String> directories = new ArrayList<>((int) directories_count);
+		for (int directory_index = 0; directory_index < directories_count; directory_index++) {
+			for (ContentForm contentForm : directoryContentForms) {
+				if ((DwarfConstants.DW_FORM_line_strp == contentForm.form)
+						&& (DwarfConstants.DW_LNCT_path == contentForm.lnct)) {
+					long offset = readOffset(data, offsetSize);
+					String path = getPathInLineStr(offset);
+					IPath dir = new Path(path);
+					if (!dir.isAbsolute()) {
+						dir = new Path(cuCompDir).append(path);
+					}
+					directories.add(dir.toString());
+				} // TODO: support other DW_LNCT_path forms
+			}
+		}
+
+		// read file name content forms
+		byte[] fncf_count = new byte[1];
+		data.get(fncf_count);
+		List<ContentForm> fileNameContentForms = new ArrayList<>();
+		for (int fmt = 0; fmt < fncf_count[0]; fmt++) {
+			ContentForm fnef = readContentForm(data);
+			fileNameContentForms.add(fnef);
+		}
+
+		// read file names
+		long file_names_count = read_unsigned_leb128(data);
+		for (int file_index = 0; file_index < file_names_count; file_index++) {
+			String filename = null;
+			String directory = null;
+			for (ContentForm contentForm : fileNameContentForms) {
+				if ((DwarfConstants.DW_FORM_line_strp == contentForm.form)
+						&& (DwarfConstants.DW_LNCT_path == contentForm.lnct)) {
+					long offset = readOffset(data, offsetSize);
+					filename = getPathInLineStr(offset);
+				} // TODO: support other DW_LNCT_path forms
+				if ((DwarfConstants.DW_FORM_udata == contentForm.form)
+						&& (DwarfConstants.DW_LNCT_directory_index == contentForm.lnct)) {
+					long directory_index = read_unsigned_leb128(data);
+					directory = directories.get((int) directory_index);
+				} // TODO: support other DW_LNCT_directory_index forms
+			}
+			if ((null != directory) && (null != filename)) {
+				addSourceFile(directory, filename);
+			}
+		}
+	}
+
 	/*
 	 * Parse line table data of a compilation unit to get names of all source files
 	 * that contribute to the compilation unit.
@@ -319,11 +456,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				Integer cuOffset = Integer.valueOf(cuStmtList);
 
 				boolean dwarf64Bit = false;
+				byte offsetSize = 0;
 				if (!m_parsedLineTableOffsets.contains(cuOffset)) {
 					m_parsedLineTableOffsets.add(cuOffset);
 
 					// Note the length does not including the "length" field(s) itself.
 					InitialLengthValue length = readInitialLengthField(data);
+					offsetSize = length.offsetSize;
 					dwarf64Bit = length.offsetSize == 8;
 					m_parsedLineTableSize += length.length + (dwarf64Bit ? 12 : 4);
 				} else {
@@ -346,46 +485,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				int opcode_base = data.get();
 				data.position(data.position() + opcode_base - 1);
 
-				// Read in directories.
-				//
-				ArrayList<String> dirList = new ArrayList<>();
-
-				// Put the compilation directory of the CU as the first dir
-				dirList.add(cuCompDir);
-
-				String str, fileName;
-
-				while (true) {
-					str = readString(data);
-					if (str.length() == 0)
-						break;
-					// If the directory is relative, append it to the CU dir
-					IPath dir = new Path(str);
-					if (!dir.isAbsolute())
-						dir = new Path(cuCompDir).append(str);
-					dirList.add(dir.toString());
-				}
-
-				// Read file names
-				//
-				long leb128;
-				while (true) {
-					fileName = readString(data);
-					if (fileName.length() == 0) // no more file entry
-						break;
-
-					// dir index
-					leb128 = read_unsigned_leb128(data);
-
-					addSourceFile(dirList.get((int) leb128), fileName);
-
-					// Skip the followings
-					//
-					// modification time
-					leb128 = read_unsigned_leb128(data);
-
-					// file size in bytes
-					leb128 = read_unsigned_leb128(data);
+				if (version >= 5) {
+					addSourceFilesDwarf5(cuCompDir, data, offsetSize);
+				} else {
+					addSourceFilesDwarf(cuCompDir, data);
 				}
 			} catch (IOException e) {
 				CCorePlugin.log("Failed to parse part of dwarf header", e); //$NON-NLS-1$

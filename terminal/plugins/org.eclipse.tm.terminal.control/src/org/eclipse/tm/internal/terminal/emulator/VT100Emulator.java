@@ -617,8 +617,7 @@ public class VT100Emulator implements ControlListener {
 
 		case 'X':
 			// Erase character.
-			// Emacs, vi, and GNU readline don't seem to use this command, so we ignore
-			// it for now.
+			processAnsiCommand_X();
 			break;
 
 		case 'Z':
@@ -1236,6 +1235,13 @@ public class VT100Emulator implements ControlListener {
 	 */
 	private void processAnsiCommand_T() {
 		text.scrollDown(getAnsiParameter(0));
+	}
+
+	/**
+	 * Erases n characters from cursor (default = 1 character)
+	 */
+	private void processAnsiCommand_X() {
+		text.eraseCharacters(getAnsiParameter(0));
 	}
 
 	private void processDecPrivateCommand_h() {

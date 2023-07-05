@@ -227,4 +227,11 @@ public interface IVT100EmulatorBackend {
 	 * scroll region.
 	 */
 	void processReverseLineFeed();
+
+	/**
+	 * Replaces characters from the cursor position with space characters.
+	 *
+	 * @param n  number of characters to replace
+	 */
+	void eraseCharacters(int n);
 }

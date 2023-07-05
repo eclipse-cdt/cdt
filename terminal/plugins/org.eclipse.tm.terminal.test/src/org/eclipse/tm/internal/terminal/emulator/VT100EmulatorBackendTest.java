@@ -926,4 +926,24 @@ public class VT100EmulatorBackendTest extends TestCase {
 		assertEquals("ghi", new String(term.getChars(5)));
 	}
 
+	public void testEraseCharacters() {
+		ITerminalTextData term = makeITerminalTextData();
+		IVT100EmulatorBackend vt100 = makeBakend(term);
+		vt100.setDimensions(4, 4);
+		String s = "aaaa\n" + "bcde\n" + "1234\n" + "5678";
+		fill(term, s);
+		vt100.setCursor(0, 0);
+		vt100.eraseCharacters(1);
+		assertEqualsTerm(" aaa\n" + "bcde\n" + "1234\n" + "5678", toMultiLineText(term));
+
+		fill(term, s);
+		vt100.setCursor(1, 0);
+		vt100.eraseCharacters(1);
+		assertEqualsTerm("aaaa\n" + " cde\n" + "1234\n" + "5678", toMultiLineText(term));
+
+		fill(term, s);
+		vt100.setCursor(2, 1);
+		vt100.eraseCharacters(2);
+		assertEqualsTerm("aaaa\n" + "bcde\n" + "1  4\n" + "5678", toMultiLineText(term));
+	}
 }

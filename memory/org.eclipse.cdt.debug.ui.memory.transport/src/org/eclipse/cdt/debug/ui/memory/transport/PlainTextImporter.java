@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2020 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -157,7 +157,7 @@ public class PlainTextImporter implements IMemoryImporter {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(parent.getShell(), SWT.SAVE);
+				FileDialog dialog = new FileDialog(parent.getShell(), SWT.OPEN);
 				dialog.setText(Messages.getString("PlainTextImporter.ChooseFile")); //$NON-NLS-1$
 				dialog.setFilterExtensions(new String[] { "*.*;*" }); //$NON-NLS-1$
 				dialog.setFilterNames(new String[] { Messages.getString("Importer.AllFiles") }); //$NON-NLS-1$

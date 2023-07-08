@@ -218,6 +218,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IRecursionResolvingBinding;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTLiteralExpression;
@@ -5067,6 +5068,8 @@ public class CPPSemantics {
 	 */
 	public static IType getDeclTypeForEvaluation(ICPPEvaluation eval) {
 		IType expressionType = eval.getType();
+		if (expressionType instanceof ProblemType)
+			return expressionType;
 		boolean namedEntity = eval instanceof EvalBinding || eval instanceof EvalMemberAccess;
 		if (!namedEntity && !(expressionType instanceof ICPPReferenceType)) {
 			switch (eval.getValueCategory()) {

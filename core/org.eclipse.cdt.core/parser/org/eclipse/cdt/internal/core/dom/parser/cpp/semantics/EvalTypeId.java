@@ -26,6 +26,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IValue;
@@ -42,6 +43,7 @@ import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.DependentValue;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeMarshalBuffer;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
@@ -415,6 +417,15 @@ public class EvalTypeId extends CPPDependentEvaluation {
 		IType type = CPPTemplates.instantiateType(fInputType, context);
 		if (args == fArguments && type == fInputType)
 			return this;
+
+		// If type or arguments failed to resolve, return INCOMPLETE for SFINAE purposes
+		if (type instanceof ProblemBinding)
+			return EvalFixed.INCOMPLETE;
+		for (ICPPEvaluation arg : args) {
+			if (arg.getType() instanceof IProblemType) {
+				return EvalFixed.INCOMPLETE;
+			}
+		}
 
 		EvalTypeId result = new EvalTypeId(type, getTemplateDefinition(), fRepresentsNewExpression, fUsesBracedInitList,
 				args);

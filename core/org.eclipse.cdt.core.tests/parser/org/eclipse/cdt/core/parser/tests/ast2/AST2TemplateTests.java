@@ -6865,6 +6865,44 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		parseAndCheckBindings();
 	}
 
+	// template <class, typename = void>
+	// struct A
+	// {
+	//     using type = int *;
+	// };
+	//
+	// template <class T>
+	// struct A<T, decltype(void(typename T::p()))>
+	// {
+	//     using type = typename T::p;
+	// };
+	//
+	// class d { };
+	//
+	// class B {
+	// public:
+	//     using p = typename A<d>::type;
+	//
+	// public:
+	//     explicit B(p) {}
+	// };
+	//
+	// int *ip = nullptr;
+	// B b1 { ip };
+	// B::p jp = nullptr;
+	public void testSfinae_c() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+
+		IVariable varB1 = bh.assertNonProblem("b1");
+		IType bcls = bh.assertNonProblem("B");
+		IVariable varJp = bh.assertNonProblem("jp");
+		IVariable varIp = bh.assertNonProblem("ip");
+
+		assertFalse(varB1.getInitialValue() instanceof IProblemBinding);
+		assertTrue(varB1.getType().isSameType(bcls));
+		assertTrue(varIp.getType().isSameType(varJp.getType()));
+	}
+
 	//	template<typename T>
 	//	struct is_pod {
 	//	  static const bool value = __is_pod(T);

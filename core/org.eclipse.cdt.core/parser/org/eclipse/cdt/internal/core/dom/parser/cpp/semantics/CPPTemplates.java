@@ -1614,19 +1614,23 @@ public class CPPTemplates {
 						}
 					}
 				} else if (type instanceof TypeOfUnknownMember) {
-					IBinding binding = resolveUnknown(((TypeOfUnknownMember) type).getUnknownMember(), context);
-					if (binding instanceof IType) {
-						return (IType) binding;
-					} else if (binding instanceof IVariable) {
-						return ((IVariable) binding).getType();
-					} else if (binding instanceof IFunction) {
-						return ((IFunction) binding).getType();
+					BindingOrType bindingType = resolveUnknownBindingOrType(
+							((TypeOfUnknownMember) type).getUnknownMember(), context);
+					if (bindingType.getType() != null) {
+						return bindingType.getType();
+					} else {
+						IBinding binding = bindingType.getBinding();
+						if (binding instanceof IVariable) {
+							return ((IVariable) binding).getType();
+						} else if (binding instanceof IFunction) {
+							return ((IFunction) binding).getType();
+						}
 					}
 					return type;
 				} else {
-					IBinding binding = resolveUnknown((ICPPUnknownBinding) type, context);
-					if (binding instanceof IType)
-						return (IType) binding;
+					BindingOrType bindingType = resolveUnknownBindingOrType((ICPPUnknownBinding) type, context);
+					if (bindingType.getType() != null)
+						return bindingType.getType();
 
 					return type;
 				}
@@ -3116,29 +3120,63 @@ public class CPPTemplates {
 
 	/**
 	 * Attempts to (partially) resolve an unknown binding with the given arguments.
+	 * Cannot resolved types that are not representable as a binding.
 	 */
 	public static IBinding resolveUnknown(ICPPUnknownBinding unknown, InstantiationContext context)
 			throws DOMException {
+		BindingOrType bindingType = resolveUnknownBindingOrType(unknown, context);
+		if (bindingType.getBinding() != null)
+			return bindingType.getBinding();
+		return unknown;
+	}
+
+	public static class BindingOrType {
+		Object bindingOrType;
+
+		BindingOrType(IBinding binding) {
+			bindingOrType = binding;
+		}
+
+		BindingOrType(IType type) {
+			bindingOrType = type;
+		}
+
+		IType getType() {
+			if (bindingOrType instanceof IType)
+				return (IType) bindingOrType;
+			return null;
+		}
+
+		IBinding getBinding() {
+			if (bindingOrType instanceof IBinding)
+				return (IBinding) bindingOrType;
+			return null;
+		}
+	}
+
+	/**
+	 * Attempts to (partially) resolve an unknown binding with the given arguments.
+	 */
+	public static BindingOrType resolveUnknownBindingOrType(ICPPUnknownBinding unknown, InstantiationContext context)
+			throws DOMException {
 		if (unknown instanceof ICPPDeferredClassInstance) {
-			return resolveDeferredClassInstance((ICPPDeferredClassInstance) unknown, context);
+			return new BindingOrType(resolveDeferredClassInstance((ICPPDeferredClassInstance) unknown, context));
 		}
 		if (unknown instanceof ICPPDeferredVariableInstance) {
-			return resolveDeferredVariableInstance((ICPPDeferredVariableInstance) unknown, context);
+			return new BindingOrType(resolveDeferredVariableInstance((ICPPDeferredVariableInstance) unknown, context));
 		}
 		if (unknown instanceof ICPPUnknownMember) {
-			return resolveUnknownMember((ICPPUnknownMember) unknown, context);
+			return new BindingOrType(resolveUnknownMember((ICPPUnknownMember) unknown, context));
 		}
 		if (unknown instanceof ICPPTemplateParameter && unknown instanceof IType) {
 			IType type = resolveTemplateTypeParameter((ICPPTemplateParameter) unknown, context);
-			if (type instanceof IBinding)
-				return (IBinding) type;
+			return new BindingOrType(type);
 		}
 		if (unknown instanceof TypeOfDependentExpression) {
 			IType type = instantiateType((IType) unknown, context);
-			if (type instanceof IBinding)
-				return (IBinding) type;
+			return new BindingOrType(type);
 		}
-		return unknown;
+		return new BindingOrType(unknown);
 	}
 
 	private static IBinding resolveUnknownMember(ICPPUnknownMember unknown, InstantiationContext context)

@@ -1044,11 +1044,13 @@ public class TemplateArgumentDeduction {
 
 				// Verify that the resolved binding matches the argument type.
 				InstantiationContext context = InstantiationContext.forDeduction(fDeducedArgs);
-				IBinding binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) p, context);
-				if (binding instanceof ICPPUnknownBinding)
+				CPPTemplates.BindingOrType bindingType = CPPTemplates
+						.resolveUnknownBindingOrType((ICPPUnknownBinding) p, context);
+				if (bindingType.getBinding() instanceof ICPPUnknownBinding)
 					return true; // An unknown type may match anything.
-
-				return binding instanceof IType && ((IType) binding).isSameType(a);
+				if (bindingType.getType() != null) {
+					return bindingType.getType().isSameType(a);
+				}
 			} else {
 				return p.isSameType(a);
 			}

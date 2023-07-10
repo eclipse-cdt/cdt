@@ -1399,6 +1399,23 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertTrue(ctor instanceof ICPPConstructor);
 	}
 
+	//	struct Foo { template <typename T> Foo() {} };
+	//	template <typename T, typename U>
+	//	struct Bar { constexpr static int val = 99; };
+	//	template <typename T>
+	//	struct Bar<T, decltype(T())> { };
+	//	constexpr int v = Bar<Foo,Foo>::val;
+	public void testImplicitConstructors_1265() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector collector = new NameCollector(true);
+		tu.accept(collector);
+
+		assertEquals(collector.size(), 19);
+
+		ICPPVariable v = (ICPPVariable) collector.getName(18).resolveBinding();
+		assertEquals(99, v.getInitialValue().numberValue().intValue());
+	}
+
 	//	struct A {
 	//	  A(int);
 	//	};
@@ -1618,6 +1635,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	class J {private: J(const J *, int j, int k=3);}; // J * rather than J &
 	//	class K {protected: K(volatile K *, int i=4, int l=2);}; // K * rather than K  &
 	//	class L {L(const volatile L &, int i=1, long k=2, int* x) {}}; // param int* x has no initializer
+	//	class M {public: template <typename T> M(){}}; // same signature as implicit
 	public void testNotExplicitCopyConstructor_183160() throws Exception {
 		BufferedReader br = new BufferedReader(new StringReader(getAboveComment()));
 		for (String line = br.readLine(); line != null; line = br.readLine()) {

@@ -23,16 +23,11 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Version Information (please complete the following information):**
+ - OS and OS Version/extra details: [e.g. Windows, Linux, macOS]
+ - Eclipse Version from Help -> About [e.g. 2023-09, 4.28]
+ - CDT Version from Help -> About -> Installation Details -> Features tab [e.g. 10.3.1, 11.2.0]
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
 
 **Additional context**
-Add any other context about the problem here.
+Add any other context about the problem here. For example the error log (in workspace/.metadata/.log) or for GDB interaction issues the [GDB traces](https://github.com/eclipse-cdt/cdt/tree/main/FAQ#ive-been-asked-for-gdb-traces-where-can-i-find-them)

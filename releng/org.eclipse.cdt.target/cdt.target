@@ -66,7 +66,7 @@
 			<unit id="javax.xml.stream" version="0.0.0" />
 			<unit id="net.sourceforge.lpg.lpgjavaruntime" version="0.0.0" />
 		</location>
-		<location includeDependencyDepth="direct" includeDependencyScopes="compile" includeSource="true" missingManifest="error" type="Maven">
+		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" label="DirectFromMaven" missingManifest="error" type="Maven">
 			<dependencies>
 				<dependency>
 					<groupId>org.slf4j</groupId>
@@ -144,6 +144,40 @@
 					<groupId>net.java.dev.jna</groupId>
 					<artifactId>jna</artifactId>
 					<version>5.13.0</version>
+					<type>jar</type>
+				</dependency>
+			</dependencies>
+		</location>
+		<location includeDependencyDepth="none" includeDependencyScopes="compile" includeSource="true" label="ASM" missingManifest="error" type="Maven">
+			<dependencies>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-commons</artifactId>
+					<version>9.5</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-util</artifactId>
+					<version>9.5</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm</artifactId>
+					<version>9.5</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-tree</artifactId>
+					<version>9.5</version>
+					<type>jar</type>
+				</dependency>
+				<dependency>
+					<groupId>org.ow2.asm</groupId>
+					<artifactId>asm-analysis</artifactId>
+					<version>9.5</version>
 					<type>jar</type>
 				</dependency>
 			</dependencies>

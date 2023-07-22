@@ -25,12 +25,8 @@
 	<name>CDT Parent</name>
 
 	<properties>
-		<!-- Maven 3.6.1 and 3.6.2 do not work with Tycho, see Bug 551674
-		     CDT enforces a minimum of 3.6.3 because that is what CDT's CI
-			 runs with. It may work with older versions, but this is not
-			 tested or supported. -->
-		<required-maven-version>3.6.3</required-maven-version>
-		<tycho-version>3.0.5</tycho-version>
+		<required-maven-version>3.9.1</required-maven-version>
+		<tycho-version>4.0.1</tycho-version>
 		<cbi-plugins.version>1.3.4</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
@@ -619,7 +615,7 @@
 								<version>${required-maven-version}</version>
 							</requireMavenVersion>
 							<requireJavaVersion>
-								<version>11</version>
+								<version>17</version>
 							</requireJavaVersion>
 						</rules>
 						<fail>true</fail>

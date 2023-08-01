@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Mentor Graphics and others.
+ * Copyright (c) 2011, 2023 Mentor Graphics and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Vladimir Prus (Mentor Graphics) - initial API and implementation
+ *     John Dallaway - eliminate GC resource leak (#482)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.internal.ui.osview;
@@ -147,6 +148,7 @@ public class ResourceClassContributionItem extends ContributionItem {
 			// in new GDB version, no problem -- the combo will be resized when it's populated.
 			width = gc.textExtent("Shared memory regions").x; //$NON-NLS-1$
 		}
+		gc.dispose();
 
 		// Because there's no way whatsoever to set the width
 		// of the combobox list, only complete length, we just add

@@ -16,7 +16,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -48,11 +50,15 @@ import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICFileImageDescriptor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -64,7 +70,11 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
  * Default strategy of the C plugin for the construction of C element icons.
  */
+
 public class CElementImageProvider {
+
+	private final ICFileImageDescriptor[] descriptors;
+	private final ICFileImageDescriptor defaultCFileImageDescriptor = new DefaultCFileImageDescriptor();
 
 	/**
 	 * Flags for the CElementImageProvider:
@@ -125,8 +135,52 @@ public class CElementImageProvider {
 	 * the Eclipse platform, see Bug 563454
 	 */
 	private final Map<CElementImageDescriptor, CElementImageDescriptor> allDescriptors = new HashMap<>();
+	private static final String EXTENSION_POINT_ID = "org.eclipse.cdt.ui.CFileImageProvider"; //$NON-NLS-1$
+	public static final String ELEMENT_NAME = "imageDescriptor"; //$NON-NLS-1$
+	public static final String CLASS_NAME = "class"; //$NON-NLS-1$
 
 	public CElementImageProvider() {
+		descriptors = getCFileImageDescriptors();
+	}
+
+	private static ICFileImageDescriptor[] getCFileImageDescriptors() {
+		List<ICFileImageDescriptor> list = new ArrayList<>();
+
+		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
+		if (extensionPoint == null) {
+			return list.toArray(new ICFileImageDescriptor[0]);
+		}
+
+		for (var extension : extensionPoint.getExtensions()) {
+			var elements = extension.getConfigurationElements();
+			for (var element : elements) {
+				if (element.getName().equals(ELEMENT_NAME)) {
+					ICFileImageDescriptor descriptor = null;
+					try {
+						descriptor = (ICFileImageDescriptor) element.createExecutableExtension(CLASS_NAME);
+					} catch (CoreException e) {
+					}
+					if (descriptor != null) {
+						list.add(descriptor);
+					}
+				}
+			}
+		}
+		return list.toArray(new ICFileImageDescriptor[list.size()]);
+	}
+
+	private ICFileImageDescriptor getDescriptor(ITranslationUnit unit) {
+		if (descriptors.length > 0 && unit.getCProject() != null) {
+			var project = unit.getCProject().getProject();
+			if (project != null) {
+				for (var descriptor : descriptors) {
+					if (descriptor.isEnabled(project)) {
+						return descriptor;
+					}
+				}
+			}
+		}
+		return defaultCFileImageDescriptor;
 	}
 
 	/**
@@ -383,13 +437,15 @@ public class CElementImageProvider {
 		case ICElement.C_UNIT: {
 			ITranslationUnit unit = (ITranslationUnit) celement;
 			if (unit.isHeaderUnit()) {
-				return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_HEADER);
+				return getDescriptor(unit).getHeaderImageDescriptor();
 			} else if (unit.isSourceUnit()) {
 				if (unit.isASMLanguage()) {
 					return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT_ASM);
+				} else if (unit.isCXXLanguage()) {
+					return getDescriptor(unit).getCXXImageDescriptor();
 				}
 			}
-			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_TUNIT);
+			return getDescriptor(unit).getCImageDescriptor();
 		}
 
 		case ICElement.C_CCONTAINER:

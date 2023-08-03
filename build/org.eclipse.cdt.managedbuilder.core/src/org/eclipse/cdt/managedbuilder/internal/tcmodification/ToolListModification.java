@@ -411,7 +411,8 @@ public abstract class ToolListModification implements IToolListModification {
 
 	public ToolListModification(ResourceInfo rcInfo, ToolListModification base) {
 		fRcInfo = rcInfo;
-		Tool[] initialTools = (Tool[]) rcInfo.getTools();
+		ITool[] itools = rcInfo.getTools();
+		Tool[] initialTools = Arrays.copyOf(itools, itools.length, Tool[].class);
 		@SuppressWarnings("unchecked")
 		Map<Tool, Tool> initRealToToolMap = (Map<Tool, Tool>) TcModificationUtil.getRealToObjectsMap(initialTools,
 				null);

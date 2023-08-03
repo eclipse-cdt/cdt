@@ -50,7 +50,7 @@ import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICFileImageDescriptor;
+import org.eclipse.cdt.ui.lsp.ICFileImageDescriptor;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -58,7 +58,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -146,16 +146,22 @@ public class CElementImageProvider {
 	private static ICFileImageDescriptor[] getCFileImageDescriptors() {
 		List<ICFileImageDescriptor> list = new ArrayList<>();
 
-		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
+		var registry = RegistryFactory.getRegistry();
+		if (registry == null) {
+			return list.toArray(new ICFileImageDescriptor[0]);
+		}
+
+		IExtensionPoint extensionPoint = registry.getExtensionPoint(EXTENSION_POINT_ID);
 		if (extensionPoint == null) {
 			return list.toArray(new ICFileImageDescriptor[0]);
 		}
 
+		ICFileImageDescriptor descriptor;
 		for (var extension : extensionPoint.getExtensions()) {
 			var elements = extension.getConfigurationElements();
 			for (var element : elements) {
 				if (element.getName().equals(ELEMENT_NAME)) {
-					ICFileImageDescriptor descriptor = null;
+					descriptor = null;
 					try {
 						descriptor = (ICFileImageDescriptor) element.createExecutableExtension(CLASS_NAME);
 					} catch (CoreException e) {

@@ -13,8 +13,8 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICFileImageDescriptor;
 import org.eclipse.cdt.ui.SharedImagesFactory;
+import org.eclipse.cdt.ui.lsp.ICFileImageDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
 

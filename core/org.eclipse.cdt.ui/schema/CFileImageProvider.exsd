@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.cdt.ui" id="CFileImageProvider" name="Image Provider for C/C++ Source Files"/>
       </appInfo>
       <documentation>
-         This extension point can be used to provide custom icons for C/C++ source files. 
+         This extension point is meant to be used by the LSP based editor to provide custom icons for C/C++ source files.
       </documentation>
    </annotation>
 
@@ -55,7 +55,7 @@
                   Class which implements ICFileImageDescriptor interface.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.ICFileImageDescriptor"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.ui.lsp.ICFileImageDescriptor"/>
                </appInfo>
             </annotation>
          </attribute>

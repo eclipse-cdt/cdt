@@ -9,7 +9,7 @@
  * Contributors:
  *   See git history
  *******************************************************************************/
-package org.eclipse.cdt.ui;
+package org.eclipse.cdt.ui.lsp;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;

@@ -33,6 +33,7 @@
    <extension-point id="semanticHighlighting" name="%semanticHighlightingExtensionPoint" schema="schema/semanticHighlighting.exsd"/>
    <extension-point id="newToolChainWizards" name="New ToolChain Wizards" schema="schema/newToolChainWizards.exsd"/>
    <extension-point id="CCallHierarchy" name="The Call Hierarchy Tree Extension" schema="schema/CCallHierarchy.exsd"/>
+   <extension-point id="CFileImageProvider" name="Image Provider for C/C++ Source Files" schema="schema/CFileImageProvider.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2023 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.ProcessClosure;
@@ -259,12 +260,14 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		final String connectionName;
 		final String imageName;
 		final String pathMapProperty;
+		final String seccomp;
 		if (buildCfg != null) {
 			IToolChain toolChain = buildCfg.getToolChain();
 			selectedVolumeString = toolChain.getProperty(SELECTED_VOLUMES_ID);
 			connectionName = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
 			imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
 			pathMapProperty = toolChain.getProperty(DOCKERD_PATH);
+			seccomp = toolChain.getProperty(IToolChainConstants.SECURITY_OPTS);
 		} else {
 			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(fProject)
 					.getActiveConfiguration();
@@ -277,6 +280,7 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			connectionName = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 			imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
 			pathMapProperty = props.getProperty(DOCKERD_PATH);
+			seccomp = props.getProperty(IToolChainConstants.SECURITY_OPTS);
 		}
 
 		// Add any specified volumes to additional dir list
@@ -315,7 +319,8 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		}
 
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
-				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);
+				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer,
+				seccomp == null ? null : List.of(seccomp));
 
 		return fProcess;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2022 QNX Software Systems and others.
+ * Copyright (c) 2015, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -80,7 +80,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -1050,6 +1049,14 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		} catch (CoreException e) {
 			// do nothing
 		}
+	}
+
+	/**
+	 * @since 8.4
+	 * @param launcher - launcher to set
+	 */
+	public void setLauncher(ICommandLauncher launcher) {
+		this.launcher = launcher;
 	}
 
 	/**

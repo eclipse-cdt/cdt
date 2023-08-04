@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2019 QNX Software Systems and others.
+ * Copyright (c) 2015, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,10 +33,12 @@ import java.util.regex.Pattern;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.build.CBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChain2;
+import org.eclipse.cdt.core.build.IToolChainConstants;
 import org.eclipse.cdt.core.build.IToolChainProvider;
 import org.eclipse.cdt.core.dom.ast.gnu.c.GCCLanguage;
 import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
@@ -94,6 +96,7 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 		this.id = id;
 
 		this.properties.putAll(properties);
+		setProperty(IToolChainConstants.SECURITY_OPTS, "seccomp=unconfined"); //$NON-NLS-1$
 		this.envVars = envVars;
 	}
 
@@ -356,6 +359,9 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 				return null;
 			}
 
+			if (!Files.exists(buildDirectory)) {
+				Files.createDirectories(buildDirectory);
+			}
 			Path tmpFile = Files.createTempFile(buildDirectory, ".sc", extension); //$NON-NLS-1$
 			commandLine.add(tmpFile.toString());
 
@@ -624,8 +630,6 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 		buf.deleteCharAt(buf.length() - 1); // remove last blank;
 		argList.add(buf.toString());
 
-		ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(config);
-
 		// Bug 536884 - following is a kludge to allow us to check if the
 		// Container headers have been deleted by the user in which case
 		// we need to re-perform scanner info collection and copy headers
@@ -633,16 +637,20 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 		// TODO: make this cleaner
 		CommandLauncherManager.getInstance().processIncludePaths(config, Collections.emptyList());
 
+		ICommandLauncher launcher = CommandLauncherManager.getInstance().getCommandLauncher(config);
 		launcher.setProject(config.getBuildConfiguration().getProject());
+		((CBuildConfiguration) config).setLauncher(launcher);
+
 		if (launcher instanceof ICBuildCommandLauncher) {
 			((ICBuildCommandLauncher) launcher).setBuildConfiguration(config);
-			console.getOutputStream().write(((ICBuildCommandLauncher) launcher).getConsoleHeader());
 		}
 
 		org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(buildDirectory);
+		Files.createDirectories(Path.of(buildDirectory));
 
 		Process p = launcher.execute(cmdPath, argList.toArray(new String[0]), new String[0], workingDir, monitor);
 
 		return p;
 	}
+
 }

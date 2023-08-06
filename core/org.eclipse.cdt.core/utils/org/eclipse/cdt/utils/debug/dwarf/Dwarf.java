@@ -13,6 +13,7 @@
  *     Salvatore Culcasi - Bug 322475
  *     Serge Beauchamp - Bug 409916
  *     John Dallaway - Support DW_FORM_line_strp (#198)
+ *     John Dallaway - Support DW_FORM_implicit_const (#443)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -64,7 +65,7 @@ public class Dwarf implements AutoCloseable {
 	final static String[] DWARF_SCNNAMES = { DWARF_DEBUG_INFO, DWARF_DEBUG_ABBREV, DWARF_DEBUG_ARANGES,
 			DWARF_DEBUG_LINE, DWARF_DEBUG_FRAME, DWARF_EH_FRAME, DWARF_DEBUG_LOC, DWARF_DEBUG_PUBNAMES, DWARF_DEBUG_STR,
 			DWARF_DEBUG_FUNCNAMES, DWARF_DEBUG_TYPENAMES, DWARF_DEBUG_VARNAMES, DWARF_DEBUG_WEAKNAMES,
-			DWARF_DEBUG_MACINFO };
+			DWARF_DEBUG_MACINFO, DWARF_DEBUG_LINE_STR };
 
 	final static String[] DWARF_ALT_SCNNAMES = { DWARF_DEBUG_INFO, DWARF_DEBUG_TYPES, DWARF_DEBUG_MACRO,
 			DWARF_DEBUG_STR, };
@@ -109,17 +110,21 @@ public class Dwarf implements AutoCloseable {
 		long name;
 		/* unsigned */
 		long form;
+		/* signed (for DW_FORM_implicit_const) */
+		long value;
 
-		Attribute(long n, long f) {
+		Attribute(long n, long f, long v) {
 			name = n;
 			form = f;
+			value = v;
 		}
 
 		@Override
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			sb.append("name: ").append(Long.toHexString(name)); //$NON-NLS-1$
-			sb.append(" value: ").append(Long.toHexString(form)); //$NON-NLS-1$
+			sb.append(" form: ").append(Long.toHexString(form)); //$NON-NLS-1$
+			sb.append(" value: ").append(Long.toHexString(value)); //$NON-NLS-1$
 			return sb.toString();
 		}
 	}
@@ -579,11 +584,17 @@ public class Dwarf implements AutoCloseable {
 					do {
 						name = read_unsigned_leb128(data);
 						form = read_unsigned_leb128(data);
+						long value = 0;
+						if (DwarfConstants.DW_FORM_implicit_const == form) {
+							value = read_signed_leb128(data);
+						}
 						if (name != 0) {
-							entry.attributes.add(new Attribute(name, form));
+							entry.attributes.add(new Attribute(name, form, value));
 						}
 						if (printEnabled)
-							System.out.println("\t\t " + Long.toHexString(name) + " " + Long.toHexString(form)); //$NON-NLS-1$ //$NON-NLS-2$
+							System.out.println("\t\t " + Long.toHexString(name) //$NON-NLS-1$
+									+ " " + Long.toHexString(form) //$NON-NLS-1$
+									+ " " + Long.toHexString(value)); //$NON-NLS-1$
 					} while (name != 0 && form != 0);
 					abbrevs.put(Long.valueOf(code), entry);
 				}
@@ -603,7 +614,12 @@ public class Dwarf implements AutoCloseable {
 				try {
 					for (int i = 0; i < len; i++) {
 						Attribute attr = entry.attributes.get(i);
-						Object obj = readAttribute((int) attr.form, in, header);
+						Object obj;
+						if (DwarfConstants.DW_FORM_implicit_const == attr.form) {
+							obj = Long.valueOf(attr.value);
+						} else {
+							obj = readAttribute((int) attr.form, in, header);
+						}
 						list.add(new AttributeValue(attr, obj));
 					}
 				} catch (IOException e) {

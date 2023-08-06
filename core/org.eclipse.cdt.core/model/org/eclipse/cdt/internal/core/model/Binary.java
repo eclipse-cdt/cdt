@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
+ *     John Dallaway - Adapt for IBinaryFile (#413)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -214,7 +215,7 @@ public class Binary extends Openable implements IBinary {
 
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
-		if (IBinaryObject.class.equals(adapter)) {
+		if (adapter.isAssignableFrom(IBinaryObject.class)) {
 			return adapter.cast(getBinaryObject());
 		}
 		return super.getAdapter(adapter);

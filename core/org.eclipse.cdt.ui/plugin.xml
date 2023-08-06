@@ -33,6 +33,7 @@
    <extension-point id="semanticHighlighting" name="%semanticHighlightingExtensionPoint" schema="schema/semanticHighlighting.exsd"/>
    <extension-point id="newToolChainWizards" name="New ToolChain Wizards" schema="schema/newToolChainWizards.exsd"/>
    <extension-point id="CCallHierarchy" name="The Call Hierarchy Tree Extension" schema="schema/CCallHierarchy.exsd"/>
+   <extension-point id="CFileImageProvider" name="Image Provider for C/C++ Source Files" schema="schema/CFileImageProvider.exsd"/>
 
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -1745,7 +1746,7 @@
          point="org.eclipse.compare.contentMergeViewers">
       <viewer
             class="org.eclipse.cdt.internal.ui.compare.CContentViewerCreator"
-            extensions="c,cc,cxx,cpp,c++,h,hh,hxx,hpp,inc,c2"
+            extensions="c,cc,cxx,cpp,c++,ccm,cxxm,c++m,h,hh,hxx,hpp,inc,c2"
             id="org.eclipse.cdt.ui.compare.CContentViewerCreator">
       </viewer>
       <contentTypeBinding

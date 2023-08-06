@@ -232,19 +232,48 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		return toolChain != null ? toolChain.getBinaryParserIds() : List.of(CCorePlugin.DEFAULT_BINARY_PARSER_UNIQ_ID);
 	}
 
+	/**
+	 * Create build container if it doesn't exist yet.
+	 *
+	 * For a {@link StandardBuildConfiguration} the container can be the project or
+	 * a folder. For all other Core Build configurations it is a folder.
+	 *
+	 * @param container Container where build is executed.
+	 * @param monitor
+	 * @throws CoreException
+	 */
+	/*
+	 * Container creation is done at the start of the build process. Folder creation
+	 * during the creation of a Core Build Configuration can lead to a loop back to
+	 * CBuildConfigurationManager.getBuildConfiguration() that makes Eclipse freeze.
+	 * This was seen with StandardBuildConfiguration when it created the build
+	 * container. Folder.create got triggered via applyProperties() and
+	 * getBuildContainer(). See https://github.com/eclipse-cdt/cdt/issues/424
+	 */
+	private void createBuildContainer(IContainer container, IProgressMonitor monitor) throws CoreException {
+		if (!(container instanceof IProject) && !container.exists()) {
+			IContainer parent = container.getParent();
+			if (!(parent instanceof IProject) && !parent.exists()) {
+				createBuildContainer(parent, monitor);
+			}
+
+			if (container instanceof IFolder) {
+				((IFolder) container).create(IResource.FORCE | IResource.DERIVED, true, monitor);
+			}
+		}
+	}
+
+	/*
+	 * Only the StandardBuildConfiguration has an option in the launch configuration
+	 * to change the build container to the project root. For as long as the
+	 * StandardBuildConfiguration is the only one there is no need to make the
+	 * folder name a project property for all types. StandardBuildConfiguration has
+	 * its own getBuildContainer() override.
+	 */
 	public IContainer getBuildContainer() throws CoreException {
-		// TODO make the name of this folder a project property
 		IProject project = getProject();
 		IFolder buildRootFolder = project.getFolder("build"); //$NON-NLS-1$
 		IFolder buildFolder = buildRootFolder.getFolder(name);
-
-		IProgressMonitor monitor = new NullProgressMonitor();
-		if (!buildRootFolder.exists()) {
-			buildRootFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
-		}
-		if (!buildFolder.exists()) {
-			buildFolder.create(IResource.FORCE | IResource.DERIVED, true, monitor);
-		}
 
 		return buildFolder;
 	}
@@ -521,6 +550,9 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 			IConsole console, IProgressMonitor monitor) throws IOException, CoreException {
 		Process process = null;
 		IToolChain tc = getToolChain();
+
+		createBuildContainer(getBuildContainer(), monitor);
+
 		if (tc instanceof IToolChain2) {
 			process = ((IToolChain2) tc).startBuildProcess(this, commands, buildDirectory.toString(), envVars, console,
 					monitor);

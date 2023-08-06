@@ -141,7 +141,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		fFileSystemButton = createPushButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_1, null);
 		fFileSystemButton.addSelectionListener(fListener);
 
-		fVariablesButton = createVariablesButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_17, null);
+		fVariablesButton = createVariablesButton(buttonComp, LaunchMessages.WorkingDirectoryBlock_17, fWorkingDirText);
 	}
 
 	@Override

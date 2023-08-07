@@ -54,6 +54,13 @@
             protocols="remote,extended-remote">
       </device>
       <device
+            class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.NXPLinkServer"
+            default_connection="localhost:3333"
+            id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.NXPLinkServer"
+            name="%NXPLinkServer.name"
+            protocols="remote">
+      </device>
+      <device
             class="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCDPipe"
             default_connection="| openocd --pipe"
             id="org.eclipse.cdt.debug.gdbjtag.core.jtagdevice.OpenOCD"

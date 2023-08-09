@@ -22,9 +22,13 @@ import java.util.List;
 import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.junit.Test;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
+import org.yaml.snakeyaml.inspector.TagInspector;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
 
 /**
  * @author Martin Weber
@@ -57,7 +61,14 @@ public class CMakePropertiesEvolutionTest {
 		extraArgs.add("arg2");
 		props.setExtraArguments(extraArgs);
 
-		Yaml yaml = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader(), new LoaderOptions()));
+		var loaderoptions = new LoaderOptions();
+		TagInspector taginspector = tag -> tag.getClassName().equals(CMakePropertiesBean.class.getName());
+		loaderoptions.setTagInspector(taginspector);
+		Representer customRepresenter = new Representer(new DumperOptions());
+		customRepresenter.addClassTag(CMakePropertiesBean.class, Tag.MAP);
+
+		Yaml yaml = new Yaml(new CustomClassLoaderConstructor(this.getClass().getClassLoader(), loaderoptions),
+				customRepresenter);
 		String output = yaml.dump(props);
 
 		// try to load as evolved properties..

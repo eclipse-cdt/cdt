@@ -22,6 +22,6 @@ package org.eclipse.cdt.core.build;
  */
 public interface IToolChainConstants {
 
-	public final static String SECURITY_OPTS = "security_opts"; //$NON-NLS-1$
+	public final static String SECCOMP_UNDEFINED = "seccomp_undefined"; //$NON-NLS-1$
 
 }

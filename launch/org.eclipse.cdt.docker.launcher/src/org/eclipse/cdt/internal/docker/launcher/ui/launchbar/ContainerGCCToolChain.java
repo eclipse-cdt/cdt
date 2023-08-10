@@ -96,7 +96,7 @@ public class ContainerGCCToolChain extends PlatformObject implements IToolChain,
 		this.id = id;
 
 		this.properties.putAll(properties);
-		setProperty(IToolChainConstants.SECURITY_OPTS, "seccomp=unconfined"); //$NON-NLS-1$
+		setProperty(IToolChainConstants.SECCOMP_UNDEFINED, "true"); //$NON-NLS-1$
 		this.envVars = envVars;
 	}
 

@@ -68,6 +68,8 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 
 	public final static String VOLUME_SEPARATOR_REGEX = "[|]"; //$NON-NLS-1$
 
+	public final static String SECCOMP_UNCONFINED_STR = "seccomp=unconfined"; //$NON-NLS-1$
+
 	private IProject fProject;
 	private Process fProcess;
 	private boolean fShowCommand;
@@ -260,14 +262,14 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		final String connectionName;
 		final String imageName;
 		final String pathMapProperty;
-		final String seccomp;
+		final String seccompUndefinedStr;
 		if (buildCfg != null) {
 			IToolChain toolChain = buildCfg.getToolChain();
 			selectedVolumeString = toolChain.getProperty(SELECTED_VOLUMES_ID);
 			connectionName = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
 			imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
 			pathMapProperty = toolChain.getProperty(DOCKERD_PATH);
-			seccomp = toolChain.getProperty(IToolChainConstants.SECURITY_OPTS);
+			seccompUndefinedStr = toolChain.getProperty(IToolChainConstants.SECCOMP_UNDEFINED);
 		} else {
 			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(fProject)
 					.getActiveConfiguration();
@@ -280,7 +282,7 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			connectionName = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 			imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
 			pathMapProperty = props.getProperty(DOCKERD_PATH);
-			seccomp = props.getProperty(IToolChainConstants.SECURITY_OPTS);
+			seccompUndefinedStr = props.getProperty(IToolChainConstants.SECCOMP_UNDEFINED);
 		}
 
 		// Add any specified volumes to additional dir list
@@ -318,9 +320,10 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			return null;
 		}
 
+		boolean seccompUndefined = Boolean.parseBoolean(seccompUndefinedStr);
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
 				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer,
-				seccomp == null ? null : List.of(seccomp));
+				seccompUndefined ? List.of(SECCOMP_UNCONFINED_STR) : null);
 
 		return fProcess;
 	}

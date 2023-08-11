@@ -21,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.cdt.internal.ui.util.Messages;
@@ -161,7 +162,12 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 
 			String contentType = entry.getKey();
 			String contentTypeName = contentTypeManager.getContentType(contentType).getName();
-			String languageName = LanguageManager.getInstance().getLanguage(entry.getValue()).getName();
+			String languageKey = entry.getValue();
+			String languageName = languageKey;
+			ILanguage language = LanguageManager.getInstance().getLanguage(languageKey);
+			if (language != null) {
+				languageName = language.getName();
+			}
 
 			if (fOverriddenContentTypes.contains(contentType)) {
 				item.setText(0, Messages.format(PreferencesMessages.ProjectLanguagesPropertyPage_overriddenContentType,

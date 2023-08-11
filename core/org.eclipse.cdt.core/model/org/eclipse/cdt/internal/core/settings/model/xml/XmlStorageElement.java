@@ -22,17 +22,16 @@ import java.util.List;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.w3c.dom.Document;
@@ -462,7 +461,7 @@ public class XmlStorageElement implements ICStorageElement {
 		try {
 			synchronized (fLock) {
 				Element newXmlEl = null;
-				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 				Document doc = builder.newDocument();
 				synchronized (doc) {
 					if (fElement.getParentNode().getNodeType() == Node.DOCUMENT_NODE) {
@@ -513,7 +512,8 @@ public class XmlStorageElement implements ICStorageElement {
 		synchronized (fLock) {
 			try {
 				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+						.newTransformer();
 				// Indentation is done with XmlUtil.prettyFormat(doc).
 				// For debugging, the prettyFormat may not have been run yet,
 				// so turning this to "yes" may be helpful on occasion.

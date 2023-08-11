@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -30,6 +29,7 @@ import org.eclipse.cdt.debug.core.breakpointactions.IReverseDebugEnabler;
 import org.eclipse.cdt.debug.internal.core.ICDebugInternalConstants;
 import org.eclipse.cdt.debug.internal.ui.IInternalCDebugUIConstants;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -123,10 +123,8 @@ public class ReverseDebugAction extends AbstractBreakpointAction {
 	public String getMemento() {
 		String reverseDebugData = ""; //$NON-NLS-1$
 
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = null;
 		try {
-			docBuilder = dfactory.newDocumentBuilder();
+			DocumentBuilder docBuilder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = docBuilder.newDocument();
 
 			Element rootElement = doc.createElement("reverseDebugData"); //$NON-NLS-1$
@@ -136,7 +134,7 @@ public class ReverseDebugAction extends AbstractBreakpointAction {
 
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 
-			TransformerFactory factory = TransformerFactory.newInstance();
+			TransformerFactory factory = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -159,7 +157,7 @@ public class ReverseDebugAction extends AbstractBreakpointAction {
 		Element root = null;
 		DocumentBuilder parser;
 		try {
-			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(new InputSource(new StringReader(data))).getDocumentElement();
 			String value = root.getAttribute("operation"); //$NON-NLS-1$

@@ -20,18 +20,17 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.internal.core.settings.model.xml.XmlStorageElement;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -148,7 +147,7 @@ public abstract class StorableEnvironmentLoader {
 		if (env == null)
 			return null;
 		try {
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			InputSource inputSource = new InputSource(new ByteArrayInputStream(env.getBytes()));
 			Document document = parser.parse(inputSource);
 			Element el = document.getDocumentElement();
@@ -170,8 +169,7 @@ public abstract class StorableEnvironmentLoader {
 
 	private ByteArrayOutputStream storeEnvironmentToStream(StorableEnvironment env) throws CoreException {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document document = builder.newDocument();
 
 			Element el = document.createElement(StorableEnvironment.ENVIRONMENT_ELEMENT_NAME);
@@ -179,7 +177,8 @@ public abstract class StorableEnvironmentLoader {
 			XmlStorageElement rootElement = new XmlStorageElement(el);
 			env.serialize(rootElement);
 
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$

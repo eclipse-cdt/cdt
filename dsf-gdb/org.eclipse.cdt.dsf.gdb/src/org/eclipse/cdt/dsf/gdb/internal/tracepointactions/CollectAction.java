@@ -18,7 +18,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -26,6 +25,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -124,10 +124,8 @@ public class CollectAction extends AbstractTracepointAction {
 	public String getMemento() {
 		String collectData = ""; //$NON-NLS-1$
 
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = null;
 		try {
-			docBuilder = dfactory.newDocumentBuilder();
+			DocumentBuilder docBuilder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = docBuilder.newDocument();
 
 			Element rootElement = doc.createElement(COLLECT_ACTION_ELEMENT_NAME);
@@ -142,7 +140,7 @@ public class CollectAction extends AbstractTracepointAction {
 
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 
-			TransformerFactory factory = TransformerFactory.newInstance();
+			TransformerFactory factory = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -189,7 +187,7 @@ public class CollectAction extends AbstractTracepointAction {
 		Element root = null;
 		DocumentBuilder parser;
 		try {
-			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(new InputSource(new StringReader(data))).getDocumentElement();
 

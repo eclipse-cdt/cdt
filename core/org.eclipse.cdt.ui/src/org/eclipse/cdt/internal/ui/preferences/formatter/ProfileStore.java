@@ -32,17 +32,15 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.internal.ui.CUIException;
 import org.eclipse.cdt.internal.ui.CUIStatus;
 import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
@@ -235,8 +233,7 @@ public class ProfileStore {
 	protected static List<Profile> readProfilesFromStream(InputSource inputSource) throws CoreException {
 		final ProfileDefaultHandler handler = new ProfileDefaultHandler();
 		try {
-			final SAXParserFactory factory = SAXParserFactory.newInstance();
-			final SAXParser parser = factory.newSAXParser();
+			final SAXParser parser = XmlProcessorFactoryCdt.createSAXParserWithErrorOnDOCTYPE();
 			parser.parse(inputSource, handler);
 		} catch (SAXException e) {
 			throw createException(e, FormatterMessages.CodingStyleConfigurationBlock_error_reading_xml_message);
@@ -282,8 +279,7 @@ public class ProfileStore {
 	private static void writeProfilesToStream(Collection<Profile> profiles, OutputStream stream, String encoding,
 			IProfileVersioner profileVersioner) throws CoreException {
 		try {
-			final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			final DocumentBuilder builder = factory.newDocumentBuilder();
+			final DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			final Document document = builder.newDocument();
 
 			final Element rootElement = document.createElement(XML_NODE_ROOT);
@@ -299,7 +295,8 @@ public class ProfileStore {
 				}
 			}
 
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, encoding);
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$

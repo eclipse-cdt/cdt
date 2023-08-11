@@ -26,14 +26,12 @@ import java.lang.ref.SoftReference;
 import java.net.URI;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -44,6 +42,7 @@ import org.eclipse.cdt.core.settings.model.ICSettingsStorage;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.extension.ICProjectConverter;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
@@ -543,7 +542,8 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		try {
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			// Indentation is done with XmlUtil.prettyFormat(doc)
@@ -632,7 +632,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	private ICStorageElement readOldCDTProjectFile(IProject project) throws CoreException {
 		ICStorageElement storage = null;
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = null;
 			InputStream stream = getSharedProperty(project, OLD_CDTPROJECT_FILE_NAME);
 			if (stream != null) {
@@ -669,7 +669,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	protected InternalXmlStorageElement createStorage(IContainer container, String fileName, boolean reCreate,
 			boolean createEmptyIfNotFound, boolean readOnly) throws CoreException {
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = null;
 			Element element = null;
 			InputStream stream = null;
@@ -851,7 +851,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 	 */
 	public Element createXmlElementCopy(InternalXmlStorageElement el) throws CoreException {
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = builder.newDocument();
 			Element newXmlEl = null;
 			synchronized (doc) {

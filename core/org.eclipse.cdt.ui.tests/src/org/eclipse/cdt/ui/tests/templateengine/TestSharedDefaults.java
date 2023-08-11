@@ -16,12 +16,11 @@ package org.eclipse.cdt.ui.tests.templateengine;
 import java.io.File;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.eclipse.cdt.core.templateengine.SharedDefaults;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -59,7 +58,7 @@ public class TestSharedDefaults extends BaseTestCase {
 	private String getValueFromBackEndStorate(String key) throws Exception {
 		File parsedXML = TemplateEngineHelper.getSharedDefaultLocation("shareddefaults.xml");
 
-		Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+		Document document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE()
 				.parse(parsedXML.toURI().toURL().openStream());
 
 		List<Element> sharedElementList = TemplateEngine.getChildrenOfElement(document.getDocumentElement());

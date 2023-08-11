@@ -18,7 +18,6 @@ import java.io.StringReader;
 import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -27,6 +26,7 @@ import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.SourceLookupFactory;
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -80,7 +80,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 			Document document = null;
 			Throwable ex = null;
 			try {
-				document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+				document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 				Element element = document.createElement(ELEMENT_NAME);
 				document.appendChild(element);
 				element.setAttribute(ATTR_PROJECT, getCSourceLocator().getProject().getName());
@@ -109,7 +109,7 @@ public class OldDefaultSourceLocator implements IPersistableSourceLocator, IAdap
 		Exception ex = null;
 		try {
 			Element root = null;
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();

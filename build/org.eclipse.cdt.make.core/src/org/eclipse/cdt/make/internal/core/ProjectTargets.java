@@ -24,12 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.core.settings.model.XmlStorageUtil;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.make.core.IMakeCommonBuildInfo;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
@@ -237,7 +236,7 @@ public class ProjectTargets {
 	 */
 	protected ICStorageElement translateInputStreamToDocument(InputStream input) {
 		try {
-			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
+			Document document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE().parse(input);
 			return XmlStorageUtil.createCStorageTree(document);
 		} catch (Exception e) {
 			MakeCorePlugin.log(e);

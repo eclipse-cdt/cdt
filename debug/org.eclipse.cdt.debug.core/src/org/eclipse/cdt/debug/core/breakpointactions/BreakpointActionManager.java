@@ -18,7 +18,6 @@ import java.io.StringReader;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -26,6 +25,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -192,7 +192,7 @@ public class BreakpointActionManager {
 		Element root = null;
 		DocumentBuilder parser;
 		try {
-			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(new InputSource(new StringReader(actionData))).getDocumentElement();
 
@@ -246,10 +246,8 @@ public class BreakpointActionManager {
 	public void saveActionData() {
 		String actionData = ""; //$NON-NLS-1$
 
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = null;
 		try {
-			docBuilder = dfactory.newDocumentBuilder();
+			DocumentBuilder docBuilder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = docBuilder.newDocument();
 
 			Element rootElement = doc.createElement("breakpointActionData"); //$NON-NLS-1$
@@ -265,7 +263,7 @@ public class BreakpointActionManager {
 
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 
-			TransformerFactory factory = TransformerFactory.newInstance();
+			TransformerFactory factory = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$

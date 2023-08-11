@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -230,7 +231,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 	 * will do its own validation programatically.
 	 */
 	private static Document parse(InputStream in) throws SettingsImportExportException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilderFactory factory = XmlProcessorFactoryCdt.createDocumentBuilderFactoryWithErrorOnDOCTYPE();
 		factory.setValidating(false);
 		factory.setNamespaceAware(false);
 		factory.setIgnoringComments(true);

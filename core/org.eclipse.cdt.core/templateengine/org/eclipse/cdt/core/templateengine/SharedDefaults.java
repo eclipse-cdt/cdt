@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
 import javax.xml.transform.TransformerConfigurationException;
@@ -29,6 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -126,7 +126,7 @@ public class SharedDefaults extends HashMap<String, String> {
 			if (length == 0) {
 				parsedXML = createDefaultXMLFormat(parsedXML);
 			}
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+			document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE()
 					.parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
@@ -198,7 +198,7 @@ public class SharedDefaults extends HashMap<String, String> {
 	 */
 	public void updateToBackEndStorage(String updateName, String updateValue) {
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+			document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE()
 					.parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
@@ -227,7 +227,7 @@ public class SharedDefaults extends HashMap<String, String> {
 	 */
 	public void deleteBackEndStorage(String[] deleteName) {
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+			document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE()
 					.parse(parsedXML.toURI().toURL().openStream());
 		} catch (Exception exp) {
 			TemplateEngineUtil.log(exp);
@@ -261,7 +261,7 @@ public class SharedDefaults extends HashMap<String, String> {
 	private File createDefaultXMLFormat(File xmlFile) {
 		Document d;
 		try {
-			d = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			d = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 		} catch (ParserConfigurationException e) {
 			TemplateEngineUtil.log(e);
 			return xmlFile;
@@ -272,7 +272,7 @@ public class SharedDefaults extends HashMap<String, String> {
 		element.setAttribute(TemplateEngineHelper.VALUE, ""); //$NON-NLS-1$
 
 		DOMSource domSource = new DOMSource(d);
-		TransformerFactory transFactory = TransformerFactory.newInstance();
+		TransformerFactory transFactory = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE();
 
 		try {
 			FileOutputStream fos = null;
@@ -303,7 +303,7 @@ public class SharedDefaults extends HashMap<String, String> {
 	private void generateSharedXML(File xmlFile) {
 		Document d;
 		try {
-			d = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			d = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 		} catch (ParserConfigurationException e) {
 			TemplateEngineUtil.log(e);
 			return;
@@ -317,7 +317,7 @@ public class SharedDefaults extends HashMap<String, String> {
 		}
 
 		DOMSource domSource = new DOMSource(d);
-		TransformerFactory transFactory = TransformerFactory.newInstance();
+		TransformerFactory transFactory = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE();
 		Result fileResult = new StreamResult(xmlFile);
 		try {
 			transFactory.newTransformer().transform(domSource, fileResult);

@@ -25,13 +25,11 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -39,6 +37,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationSpecSettings;
 import org.eclipse.cdt.internal.core.settings.model.ExceptionFactory;
 import org.eclipse.cdt.internal.core.settings.model.IInternalCCfgInfo;
@@ -94,7 +93,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 	}
 
 	private UserDefinedVariableSupplier() {
-		fListeners = Collections.synchronizedSet(new HashSet<ICdtVariableChangeListener>());
+		fListeners = Collections.synchronizedSet(new HashSet<>());
 	}
 
 	public static UserDefinedVariableSupplier getInstance() {
@@ -532,7 +531,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 
 	private StorableCdtVariables loadMacrosFromStream(InputStream stream, boolean readOnly) {
 		try {
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			InputSource inputSource = new InputSource(stream);
 			Document document = parser.parse(inputSource);
 			Element rootElement = document.getDocumentElement();
@@ -554,8 +553,7 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 
 	private ByteArrayOutputStream storeMacrosToStream(StorableCdtVariables macros) throws CoreException {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document document = builder.newDocument();
 
 			Element rootElement = document.createElement(StorableCdtVariables.MACROS_ELEMENT_NAME);
@@ -563,7 +561,8 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 			ICStorageElement storageElement = new XmlStorageElement(rootElement);
 			macros.serialize(storageElement);
 
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$

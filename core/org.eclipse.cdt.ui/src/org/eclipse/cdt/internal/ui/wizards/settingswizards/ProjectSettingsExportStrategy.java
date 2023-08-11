@@ -21,7 +21,6 @@ import java.util.List;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
@@ -29,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.cdt.core.resources.ResourcesUtil;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.IPath;
@@ -93,7 +93,8 @@ public class ProjectSettingsExportStrategy implements IProjectSettingsWizardPage
 	 */
 	@Override
 	public boolean finish(IProjectSettingsWizardPage page) {
-		SAXTransformerFactory factory = (SAXTransformerFactory) TransformerFactory.newInstance();
+		SAXTransformerFactory factory = (SAXTransformerFactory) XmlProcessorFactoryCdt
+				.createTransformerFactoryWithErrorOnDOCTYPE();
 		TransformerHandler handler = null;
 		try {
 			handler = factory.newTransformerHandler();

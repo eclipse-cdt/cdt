@@ -252,7 +252,9 @@ public class CProjectDescriptionStorageManager {
 							.getAttribute(ICProjectDescriptionStorageType.STORAGE_TYPE_ATTRIBUTE);
 			}
 		} catch (Exception e) {
-			// Catch all, if not found, we use the old-style defaults...
+			CCorePlugin.log(
+					"Failed to load " + ICProjectDescriptionStorageType.STORAGE_FILE_NAME + " for project " + project, //$NON-NLS-1$//$NON-NLS-2$
+					e);
 		} finally {
 			if (stream != null) {
 				try {

@@ -149,7 +149,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	 * @param level test message level
 	 */
 	private void addCurrentMessage(ITestMessage.Level level) {
-		modelUpdater.addTestMessage(fileName, lineNumber, level, elementDataStack.peek().toString());
+		modelUpdater.addTestMessage(fileName, lineNumber, level, elementDataStack.peek().toString().trim());
 		fileName = DEFAULT_LOCATION_FILE;
 		lineNumber = DEFAULT_LOCATION_LINE;
 		if (level == ITestMessage.Level.Error || level == ITestMessage.Level.FatalError) {
@@ -200,7 +200,11 @@ public class BoostXmlLogHandler extends DefaultHandler {
 
 		case XML_NODE_EXCEPTION:
 			if (fileName != DEFAULT_LOCATION_FILE && !fileName.isEmpty() && lineNumber >= 0) {
-				elementDataStack.peek().append(BoostTestsRunnerMessages.BoostXmlLogHandler_exception_suffix);
+				StringBuilder current = elementDataStack.peek();
+				String trimmed = current.toString().trim();
+				current.setLength(0);
+				current.append(trimmed);
+				current.append(BoostTestsRunnerMessages.BoostXmlLogHandler_exception_suffix);
 			}
 			addCurrentMessage(ITestMessage.Level.Exception);
 			break;

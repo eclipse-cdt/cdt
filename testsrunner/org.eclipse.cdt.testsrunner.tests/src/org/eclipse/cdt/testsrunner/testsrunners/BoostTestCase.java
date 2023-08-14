@@ -226,7 +226,8 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
 		mockModelUpdater.addTestMessage("file.cpp", 22, ITestMessage.Level.Info, "");
-		mockModelUpdater.addTestMessage("file2.cpp", 47, ITestMessage.Level.Exception, EXCEPTION_CHECKPOINT_SUFFIX);
+		mockModelUpdater.addTestMessage("file2.cpp", 47, ITestMessage.Level.Exception,
+				EXCEPTION_CHECKPOINT_SUFFIX.trim());
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
@@ -245,9 +246,9 @@ public class BoostTestCase extends BaseTestCase {
 
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
-		mockModelUpdater.addTestMessage("file", 42, ITestMessage.Level.Warning, "  Custom warning   ");
+		mockModelUpdater.addTestMessage("file", 42, ITestMessage.Level.Warning, "Custom warning");
 		mockModelUpdater.addTestMessage("file2", 47, ITestMessage.Level.Exception,
-				"  Exception message  end   " + EXCEPTION_CHECKPOINT_SUFFIX);
+				"Exception message  end" + EXCEPTION_CHECKPOINT_SUFFIX);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}

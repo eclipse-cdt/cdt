@@ -15,9 +15,6 @@
 package org.eclipse.cdt.testsrunner.internal.boost;
 
 import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import org.eclipse.cdt.testsrunner.model.ITestItem;
@@ -56,19 +53,6 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	private static final String XML_ATTR_MESSAGE_FILE = "file"; //$NON-NLS-1$
 	private static final String XML_ATTR_MESSAGE_LINE = "line"; //$NON-NLS-1$
 
-	/** Maps the string message level representation to the Tests Runner internal enum code. */
-	private static final Map<String, ITestMessage.Level> STRING_TO_MESSAGE_LEVEL;
-	static {
-		Map<String, ITestMessage.Level> aMap = new HashMap<>();
-		aMap.put(XML_NODE_INFO, ITestMessage.Level.Info);
-		aMap.put(XML_NODE_MESSAGE, ITestMessage.Level.Message);
-		aMap.put(XML_NODE_WARNING, ITestMessage.Level.Warning);
-		aMap.put(XML_NODE_ERROR, ITestMessage.Level.Error);
-		aMap.put(XML_NODE_FATAL_ERROR, ITestMessage.Level.FatalError);
-		// NOTE: Exception node is processed separately
-		STRING_TO_MESSAGE_LEVEL = Collections.unmodifiableMap(aMap);
-	}
-
 	/** The default file name for test message location. */
 	private static final String DEFAULT_LOCATION_FILE = null;
 
@@ -106,12 +90,18 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
 			throws SAXException {
 
+		if (qName == null) {
+			throw createAndLogExceptionForElement(qName);
+		}
+
 		elementDataStack.push(new StringBuilder());
-		if (qName == XML_NODE_TEST_SUITE) {
+		switch (qName) {
+		case XML_NODE_TEST_SUITE:
 			String testSuiteName = attrs.getValue(XML_ATTR_TEST_SUITE_NAME);
 			modelUpdater.enterTestSuite(testSuiteName);
+			break;
 
-		} else if (qName == XML_NODE_TEST_CASE) {
+		case XML_NODE_TEST_CASE:
 			String testCaseName = attrs.getValue(XML_ATTR_TEST_CASE_NAME);
 
 			if (lastTestCaseName.equals(testCaseName)) {
@@ -124,23 +114,31 @@ public class BoostXmlLogHandler extends DefaultHandler {
 
 			modelUpdater.enterTestCase(testCaseName);
 			testStatus = Status.Passed;
+			break;
 
-		} else if (STRING_TO_MESSAGE_LEVEL.containsKey(qName) || qName == XML_NODE_LAST_CHECKPOINT) {
+		case XML_NODE_INFO:
+		case XML_NODE_MESSAGE:
+		case XML_NODE_WARNING:
+		case XML_NODE_ERROR:
+		case XML_NODE_FATAL_ERROR:
+		case XML_NODE_LAST_CHECKPOINT:
 			fileName = attrs.getValue(XML_ATTR_MESSAGE_FILE);
 			String lineNumberStr = attrs.getValue(XML_ATTR_MESSAGE_LINE);
 			lineNumber = lineNumberStr != null ? Integer.parseInt(lineNumberStr.trim()) : DEFAULT_LOCATION_LINE;
+			break;
 
-		} else if (qName == XML_NODE_EXCEPTION) {
+		case XML_NODE_EXCEPTION:
 			fileName = DEFAULT_LOCATION_FILE;
 			lineNumber = DEFAULT_LOCATION_LINE;
+			break;
 
-		} else if (qName == XML_NODE_TESTING_TIME) {
-
-		} else if (qName == XML_NODE_TEST_LOG) {
+		case XML_NODE_TESTING_TIME:
+		case XML_NODE_TEST_LOG:
 			/* just skip, do nothing */
+			break;
 
-		} else {
-			logAndThrowErrorForElement(qName);
+		default:
+			throw createAndLogExceptionForElement(qName);
 		}
 	}
 
@@ -167,30 +165,53 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	@Override
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 
-		if (qName == XML_NODE_TEST_SUITE) {
+		if (qName == null) {
+			throw createAndLogExceptionForElement(qName);
+		}
+		switch (qName) {
+		case XML_NODE_TEST_SUITE:
 			modelUpdater.exitTestSuite();
+			break;
 
-		} else if (qName == XML_NODE_TEST_CASE) {
+		case XML_NODE_TEST_CASE:
 			modelUpdater.setTestStatus(testStatus);
 			modelUpdater.exitTestCase();
+			break;
 
-		} else if (qName == XML_NODE_TESTING_TIME) {
+		case XML_NODE_TESTING_TIME:
 			modelUpdater.setTestingTime(Integer.parseInt(elementDataStack.peek().toString().trim()) / 1000);
+			break;
 
-		} else if (STRING_TO_MESSAGE_LEVEL.containsKey(qName)) {
-			addCurrentMessage(STRING_TO_MESSAGE_LEVEL.get(qName));
+		case XML_NODE_INFO:
+			addCurrentMessage(ITestMessage.Level.Info);
+			break;
+		case XML_NODE_MESSAGE:
+			addCurrentMessage(ITestMessage.Level.Message);
+			break;
+		case XML_NODE_WARNING:
+			addCurrentMessage(ITestMessage.Level.Warning);
+			break;
+		case XML_NODE_ERROR:
+			addCurrentMessage(ITestMessage.Level.Error);
+			break;
+		case XML_NODE_FATAL_ERROR:
+			addCurrentMessage(ITestMessage.Level.FatalError);
+			break;
 
-		} else if (qName == XML_NODE_EXCEPTION) {
+		case XML_NODE_EXCEPTION:
 			if (fileName != DEFAULT_LOCATION_FILE && !fileName.isEmpty() && lineNumber >= 0) {
 				elementDataStack.peek().append(BoostTestsRunnerMessages.BoostXmlLogHandler_exception_suffix);
 			}
 			addCurrentMessage(ITestMessage.Level.Exception);
+			break;
 
-		} else if (qName == XML_NODE_TEST_LOG || qName == XML_NODE_LAST_CHECKPOINT) {
+		case XML_NODE_TEST_LOG:
+		case XML_NODE_LAST_CHECKPOINT:
 			/* just skip, do nothing */
+			break;
 
-		} else {
-			logAndThrowErrorForElement(qName);
+		default:
+			throw createAndLogExceptionForElement(qName);
 		}
 		elementDataStack.pop();
 	}
@@ -207,22 +228,13 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	 * Throws the testing exception for the specified XML tag.
 	 *
 	 * @param tagName XML tag name
-	 * @throws SAXException the exception that will be thrown
+	 * @return SAXException the exception that will be thrown
 	 */
-	private void logAndThrowErrorForElement(String tagName) throws SAXException {
-		logAndThrowError(MessageFormat.format(BoostTestsRunnerMessages.BoostXmlLogHandler_wrong_tag_name, tagName));
-	}
-
-	/**
-	 * Throws the testing exception with the specified message.
-	 *
-	 * @param message the reason
-	 * @throws SAXException the exception that will be thrown
-	 */
-	private void logAndThrowError(String message) throws SAXException {
-		SAXException e = new SAXException(message);
+	private SAXException createAndLogExceptionForElement(String tagName) {
+		SAXException e = new SAXException(
+				MessageFormat.format(BoostTestsRunnerMessages.BoostXmlLogHandler_wrong_tag_name, tagName));
 		BoostTestsRunnerPlugin.log(e);
-		throw e;
+		return e;
 	}
 
 	@Override

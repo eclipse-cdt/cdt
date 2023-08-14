@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Anton Gorenkov and others.
+ * Copyright (c) 2011, 2023 Anton Gorenkov and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,12 +46,21 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	private static final String XML_NODE_ERROR = "Error"; //$NON-NLS-1$
 	private static final String XML_NODE_FATAL_ERROR = "FatalError"; //$NON-NLS-1$
 	private static final String XML_NODE_EXCEPTION = "Exception"; //$NON-NLS-1$
+	private static final String XML_NODE_CONTEXT = "Context"; //$NON-NLS-1$
+	private static final String XML_NODE_FRAME = "Frame"; //$NON-NLS-1$
 
 	// Boost.Test XML log attributes
 	private static final String XML_ATTR_TEST_SUITE_NAME = "name"; //$NON-NLS-1$
 	private static final String XML_ATTR_TEST_CASE_NAME = "name"; //$NON-NLS-1$
 	private static final String XML_ATTR_MESSAGE_FILE = "file"; //$NON-NLS-1$
 	private static final String XML_ATTR_MESSAGE_LINE = "line"; //$NON-NLS-1$
+
+	/**
+	 * The context can be of arbitrary length, to prevent excessively long strings
+	 * in the tree limit the context to this length in the tree. The full context
+	 * is available in the details tab.
+	 */
+	private static final int MAX_CONTEXT_LENGTH_IN_TREE = 50;
 
 	/** The default file name for test message location. */
 	private static final String DEFAULT_LOCATION_FILE = null;
@@ -81,6 +90,10 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	private String lastTestCaseName = ""; //$NON-NLS-1$
 	private static final int SAME_TEST_CASE_NAME_COUNT_START = 2;
 	private int sameTestCaseNameCount = SAME_TEST_CASE_NAME_COUNT_START;
+	private StringBuilder context = new StringBuilder();
+
+	private boolean testCaseEnterDeferred = false;
+	private StringBuilder testCaseName = new StringBuilder();
 
 	BoostXmlLogHandler(ITestModelUpdater modelUpdater) {
 		this.modelUpdater = modelUpdater;
@@ -102,17 +115,18 @@ public class BoostXmlLogHandler extends DefaultHandler {
 			break;
 
 		case XML_NODE_TEST_CASE:
-			String testCaseName = attrs.getValue(XML_ATTR_TEST_CASE_NAME);
+			testCaseName.setLength(0);
+			testCaseName.append(attrs.getValue(XML_ATTR_TEST_CASE_NAME));
 
-			if (lastTestCaseName.equals(testCaseName)) {
-				testCaseName += " (" + sameTestCaseNameCount + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+			if (lastTestCaseName.equals(testCaseName.toString())) {
+				testCaseName.append(" (" + sameTestCaseNameCount + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 				++sameTestCaseNameCount;
 			} else {
-				lastTestCaseName = testCaseName;
+				lastTestCaseName = testCaseName.toString();
 				sameTestCaseNameCount = SAME_TEST_CASE_NAME_COUNT_START;
 			}
 
-			modelUpdater.enterTestCase(testCaseName);
+			testCaseEnterDeferred = true;
 			testStatus = Status.Passed;
 			break;
 
@@ -132,6 +146,11 @@ public class BoostXmlLogHandler extends DefaultHandler {
 			lineNumber = DEFAULT_LOCATION_LINE;
 			break;
 
+		case XML_NODE_CONTEXT:
+		case XML_NODE_FRAME:
+			/* handle in endElement */
+			break;
+
 		case XML_NODE_TESTING_TIME:
 		case XML_NODE_TEST_LOG:
 			/* just skip, do nothing */
@@ -149,7 +168,26 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	 * @param level test message level
 	 */
 	private void addCurrentMessage(ITestMessage.Level level) {
-		modelUpdater.addTestMessage(fileName, lineNumber, level, elementDataStack.peek().toString().trim());
+		String text = elementDataStack.peek().toString().trim();
+		if (testCaseEnterDeferred) {
+			if (!context.isEmpty()) {
+				testCaseName.append(BoostTestsRunnerMessages.BoostXmlLogHandler_ContextPrefix);
+				if (context.length() > MAX_CONTEXT_LENGTH_IN_TREE) {
+					testCaseName.append(context.subSequence(0, MAX_CONTEXT_LENGTH_IN_TREE));
+					testCaseName.append(BoostTestsRunnerMessages.BoostXmlLogHandler_ContextOverflow);
+				} else {
+					testCaseName.append(context);
+				}
+				testCaseName.append(BoostTestsRunnerMessages.BoostXmlLogHandler_ContextSuffix);
+			}
+			modelUpdater.enterTestCase(testCaseName.toString());
+			testCaseEnterDeferred = false;
+		}
+		if (!context.isEmpty()) {
+			text += BoostTestsRunnerMessages.BoostXmlLogHandler_ContextHeader + context.toString().trim();
+			context.setLength(0);
+		}
+		modelUpdater.addTestMessage(fileName, lineNumber, level, text.trim());
 		fileName = DEFAULT_LOCATION_FILE;
 		lineNumber = DEFAULT_LOCATION_LINE;
 		if (level == ITestMessage.Level.Error || level == ITestMessage.Level.FatalError) {
@@ -174,6 +212,10 @@ public class BoostXmlLogHandler extends DefaultHandler {
 			break;
 
 		case XML_NODE_TEST_CASE:
+			if (testCaseEnterDeferred) {
+				modelUpdater.enterTestCase(testCaseName.toString());
+				testCaseEnterDeferred = false;
+			}
 			modelUpdater.setTestStatus(testStatus);
 			modelUpdater.exitTestCase();
 			break;
@@ -207,6 +249,13 @@ public class BoostXmlLogHandler extends DefaultHandler {
 				current.append(BoostTestsRunnerMessages.BoostXmlLogHandler_exception_suffix);
 			}
 			addCurrentMessage(ITestMessage.Level.Exception);
+			break;
+
+		case XML_NODE_CONTEXT:
+			context.insert(0, elementDataStack.peek().toString().trim());
+			break;
+		case XML_NODE_FRAME:
+			context.append(elementDataStack.peek().toString().trim());
 			break;
 
 		case XML_NODE_TEST_LOG:

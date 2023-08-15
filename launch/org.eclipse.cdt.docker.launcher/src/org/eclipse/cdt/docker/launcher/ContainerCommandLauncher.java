@@ -68,6 +68,9 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 
 	public final static String VOLUME_SEPARATOR_REGEX = "[|]"; //$NON-NLS-1$
 
+	/**
+	 * @since 2.1
+	 */
 	public final static String SECCOMP_UNCONFINED_STR = "seccomp=unconfined"; //$NON-NLS-1$
 
 	private IProject fProject;

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.speedtest;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -114,7 +116,7 @@ public class SpeedTestConnection extends Thread {
 	}
 
 	private void setTitle(final String title) {
-		Display.getDefault().asyncExec(() -> fControl.setTerminalTitle(title));
+		Display.getDefault().asyncExec(() -> fControl.setTerminalTitle(title, TerminalTitleRequestor.OTHER));
 	}
 
 }

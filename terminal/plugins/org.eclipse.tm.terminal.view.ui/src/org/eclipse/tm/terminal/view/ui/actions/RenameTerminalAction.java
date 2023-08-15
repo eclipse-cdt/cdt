@@ -11,6 +11,8 @@
 
 package org.eclipse.tm.terminal.view.ui.actions;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -51,7 +53,7 @@ public class RenameTerminalAction extends AbstractTerminalAction {
 		if (inputDialog.open() == Window.OK) {
 			String value = inputDialog.getValue();
 			if (value != null) {
-				target.setTerminalTitle(value);
+				target.setTerminalTitle(value, TerminalTitleRequestor.MENU);
 			}
 		}
 

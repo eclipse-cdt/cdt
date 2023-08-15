@@ -72,6 +72,15 @@ public interface ITerminalsConnectorConstants {
 	public static final String PROP_TITLE = "title"; //$NON-NLS-1$
 
 	/**
+	 * Property: Flag to set terminal title either using terminal API only or
+	 * using terminal API and ANSI command.
+	 * <p>
+	 * Property Type: {@link String}
+	 * @since 4.10
+	 */
+	public static final String PROP_TITLE_UPDATE_API = "titleUpdateAPI"; //$NON-NLS-1$
+
+	/**
 	 * Property: The encoding of the terminal tab to open.
 	 * <p>
 	 * Property Type: {@link String}

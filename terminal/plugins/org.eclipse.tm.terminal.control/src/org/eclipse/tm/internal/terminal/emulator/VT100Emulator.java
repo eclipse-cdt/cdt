@@ -37,6 +37,7 @@ import static org.eclipse.tm.terminal.model.TerminalColor.MAGENTA;
 import static org.eclipse.tm.terminal.model.TerminalColor.RED;
 import static org.eclipse.tm.terminal.model.TerminalColor.WHITE;
 import static org.eclipse.tm.terminal.model.TerminalColor.YELLOW;
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -486,7 +487,7 @@ public class VT100Emulator implements ControlListener {
 			Logger.log("Ignoring unsupported ANSI OSC sequence: '" + ansiOsCommand + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		terminal.setTerminalTitle(ansiOsCommand.substring(2));
+		terminal.setTerminalTitle(ansiOsCommand.substring(2), TerminalTitleRequestor.ANSI);
 	}
 
 	/**

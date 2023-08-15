@@ -45,6 +45,8 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -98,6 +100,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener2;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3;
 import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
@@ -1261,7 +1264,17 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 
 	@Override
 	public void setTerminalTitle(String title) {
-		fTerminalListener.setTerminalTitle(title);
+		setTerminalTitle(title, TerminalTitleRequestor.OTHER);
+	}
+
+	@Override
+	public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
+		if (fTerminalListener instanceof ITerminalListener3 listener3) {
+			listener3.setTerminalTitle(title, requestor);
+		} else {
+			fTerminalListener.setTerminalTitle(title);
+		}
+
 	}
 
 	@Override

@@ -11,19 +11,24 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.tabs;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
+import java.util.Map;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.tm.internal.terminal.control.ITerminalListener2;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;
 
 /**
  * Terminal tab default terminal listener implementation.
  */
-public class TabTerminalListener implements ITerminalListener2 {
+public class TabTerminalListener implements ITerminalListener3 {
 	private static final String TAB_TERMINAL_LISTENER = "TabTerminalListener"; //$NON-NLS-1$
 	/* default */ final TabFolderManager tabFolderManager;
 	private CTabItem tabItem;
@@ -79,7 +84,7 @@ public class TabTerminalListener implements ITerminalListener2 {
 	@Override
 	public void setState(final TerminalState state) {
 		this.state = state;
-		updateTitle();
+		updateTitle(null, TerminalTitleRequestor.OTHER);
 
 		// The tab item must have been not yet disposed
 		final CTabItem item = getTabItem();
@@ -104,7 +109,7 @@ public class TabTerminalListener implements ITerminalListener2 {
 		});
 	}
 
-	private void updateTitle() {
+	private void updateTitle(final String title, final TerminalTitleRequestor requestor) {
 		if (state == null) {
 			// first setState hasn't happened yet, it will
 			// soon and the title will be update then.
@@ -114,11 +119,27 @@ public class TabTerminalListener implements ITerminalListener2 {
 		if (item == null || item.isDisposed()) {
 			return;
 		}
-
 		// Run asynchronously in the display thread
 		item.getDisplay().asyncExec(() -> {
+			Boolean flag = false;
+			// Get the original terminal properties associated with the tab item
+			final Map<String, Object> properties = (Map<String, Object>) item.getData("properties"); //$NON-NLS-1$
+			if (properties.containsKey(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API)) {
+				flag = (Boolean) properties.get(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API);
+			}
+			// Check if terminal should be updated either using API only (flag == true)
+			// or using API and ANSI command (flag == false).
+			if (flag == true && requestor != null && requestor == TerminalTitleRequestor.ANSI) {
+				return;
+			}
+
+			// New title must have value.
+			if (title != null) {
+				tabItemTitle = title;
+			}
+
 			// Update the tab item title
-			String newTitle = getTerminalConsoleTabTitle(state);
+			final String newTitle = getTerminalConsoleTabTitle(state);
 			if (newTitle != null)
 				item.setText(newTitle);
 		});
@@ -162,9 +183,20 @@ public class TabTerminalListener implements ITerminalListener2 {
 	}
 
 	@Override
-	public void setTerminalTitle(String title) {
-		tabItemTitle = title;
-		updateTitle();
+	public void setTerminalTitle(final String title) {
+		throw new UnsupportedOperationException("Should not be called as this class implements ITerminalListener3"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Sets Terminal tilte and checks if originator is ANSI command.
+	 * If originator is ANSI command in terminal and user does not want to use
+	 * ANSI command to upate terminal then return else update title.
+	 * @param title Title to update.
+	 * @param requestor Item that requests terminal title update.
+	 */
+	@Override
+	public void setTerminalTitle(final String title, final TerminalTitleRequestor requestor) {
+		updateTitle(title, requestor);
 	}
 
 	/**

@@ -12,6 +12,8 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.impl;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.OutputStream;
 
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
@@ -28,7 +30,13 @@ public interface ITerminalControlForText {
 
 	void setState(TerminalState state);
 
-	void setTerminalTitle(String title);
+	/**
+	 * Set the title of the terminal.
+	 *
+	 * @param title Termianl title.
+	 * @param requestor Item that requests terminal title update.
+	 */
+	void setTerminalTitle(String title, TerminalTitleRequestor requestor);
 
 	ITerminalConnector getTerminalConnector();
 

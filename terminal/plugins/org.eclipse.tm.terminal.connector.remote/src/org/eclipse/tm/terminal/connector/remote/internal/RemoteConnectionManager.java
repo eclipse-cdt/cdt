@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.remote.internal;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -126,7 +128,7 @@ public class RemoteConnectionManager extends Job {
 			control.setVT100LineWrapping(true);
 			connector.setInputStream(remoteProcess.getInputStream());
 			control.setState(TerminalState.CONNECTED);
-			control.setTerminalTitle(remoteConnection.getName());
+			control.setTerminalTitle(remoteConnection.getName(), TerminalTitleRequestor.OTHER);
 			connector.setOutputStream(remoteProcess.getOutputStream());
 			// Initialize terminal size
 			VT100Emulator text = ((VT100TerminalControl) control).getTerminalText();

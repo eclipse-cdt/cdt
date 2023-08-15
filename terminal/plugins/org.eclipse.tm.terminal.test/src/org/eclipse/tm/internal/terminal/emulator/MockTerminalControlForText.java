@@ -9,6 +9,8 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,8 +34,10 @@ public class MockTerminalControlForText implements ITerminalControlForText {
 	}
 
 	@Override
-	public void setTerminalTitle(String title) {
-		allTitles.add(title);
+	public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
+		if (requestor == TerminalTitleRequestor.ANSI) {
+			allTitles.add(title);
+		}
 	}
 
 	public List<String> getAllTitles() {

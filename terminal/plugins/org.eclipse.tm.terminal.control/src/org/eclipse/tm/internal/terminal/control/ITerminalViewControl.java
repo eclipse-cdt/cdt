@@ -16,6 +16,8 @@
  ******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
@@ -191,9 +193,18 @@ public interface ITerminalViewControl {
 	void removeMouseListener(ITerminalMouseListener listener);
 
 	/**
-	 * @since 5.1
+	 * @deprecated call {@link #setTerminalTitle(String, String)} instead
 	 */
+	@Deprecated(forRemoval = true)
 	void setTerminalTitle(String newTitle);
+
+	/**
+	 * Set the title of the terminal.
+	 * @param newTitle
+	 * @param requestor Item that requests terminal title update.
+	 * @since 5.5
+	 */
+	void setTerminalTitle(String newTitle, TerminalTitleRequestor requestor);
 
 	/**
 	 * @since 5.2

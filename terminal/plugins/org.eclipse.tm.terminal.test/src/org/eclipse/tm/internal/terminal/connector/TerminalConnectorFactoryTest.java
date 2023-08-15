@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.connector;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
@@ -97,6 +99,10 @@ public class TerminalConnectorFactoryTest extends TestCase {
 
 		@Override
 		public void setTerminalTitle(String title) {
+		}
+
+		@Override
+		public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
 		}
 
 		@Override

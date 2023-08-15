@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.speedtest;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,7 +50,7 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 			return;
 		}
 		fOutputStream = System.out;
-		fControl.setTerminalTitle(fSettings.getInputFile());
+		fControl.setTerminalTitle(fSettings.getInputFile(), TerminalTitleRequestor.OTHER);
 		fConnection = new SpeedTestConnection(fInputStream, fSettings, fControl);
 		fConnection.start();
 	}

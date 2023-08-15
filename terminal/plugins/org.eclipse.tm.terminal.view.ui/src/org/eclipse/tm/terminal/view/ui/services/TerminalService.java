@@ -293,6 +293,12 @@ public class TerminalService implements ITerminalService {
 					flags.put(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT,
 							(Boolean) properties.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT));
 				}
+				if (properties.get(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API) instanceof Boolean) {
+					flags.put(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API,
+							(Boolean) properties.get(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API));
+				} else {
+					flags.put(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API, false);
+				}
 				// Open the new console
 				CTabItem item;
 				item = ConsoleManager.getInstance().openConsole(id, secondaryId, title, encoding, connector, data,

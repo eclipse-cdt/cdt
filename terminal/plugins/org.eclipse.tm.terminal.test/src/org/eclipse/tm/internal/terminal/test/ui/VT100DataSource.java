@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.test.ui;
 
+import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -212,7 +214,7 @@ final class VT100DataSource implements IDataSource {
 			}
 
 			@Override
-			public void setTerminalTitle(String title) {
+			public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
 			}
 
 			@Override

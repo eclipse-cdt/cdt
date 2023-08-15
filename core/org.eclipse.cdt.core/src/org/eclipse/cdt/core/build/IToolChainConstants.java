@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.build;
 /**
  * Tool chain constants
  *
- * @since 8.4
+ * @since 8.3
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

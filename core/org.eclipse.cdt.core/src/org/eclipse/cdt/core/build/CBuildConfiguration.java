@@ -1052,7 +1052,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	}
 
 	/**
-	 * @since 8.4
+	 * @since 8.3
 	 * @param launcher - launcher to set
 	 */
 	public void setLauncher(ICommandLauncher launcher) {

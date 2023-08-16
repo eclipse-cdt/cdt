@@ -24,15 +24,15 @@ fi
 logfile=baseline-compare-and-replace.log
 echo "Running 'mvn verify -P baseline-compare-and-replace' to make sure all versions"
 echo "have been appropriately incremented."
-${MVN:-mvn} \
+
+
+if ${MVN:-mvn} \
         clean verify -B -V --fail-at-end \
         -DskipDoc=true \
         -DskipTests=true \
         -P baseline-compare-and-replace \
         -P api-baseline-check \
-         2>&1 | tee ${logfile}
-
-if [ $? -eq 0 ]; then
+         2>&1 | tee ${logfile}; then
     echo "SUCCESS - Maven check all versions have been bumped appropriately appears to have completed successfully"
     echo "SUCCESS - Maven check all versions have been bumped appropriately appears to have completed successfully" >> ${logfile}
 else

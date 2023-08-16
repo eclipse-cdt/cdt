@@ -61,3 +61,10 @@ jobs:
         path: |
           */*/target/surefire-reports/*.xml
           terminal/plugins/org.eclipse.tm.terminal.test/target/surefire-reports/*.xml
+    - name: Upload Repo Results
+      uses: actions/upload-artifact@v3
+      if: success() || failure()
+      with:
+        name: repo-results
+        path: releng/org.eclipse.cdt.repo/target/repository
+

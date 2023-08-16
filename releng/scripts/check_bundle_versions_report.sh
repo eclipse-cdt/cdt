@@ -23,6 +23,7 @@ fi
 logfile=baseline-compare-and-replace.log
 bundles_only_qualifier_changed=$(grep "Only qualifier changed" ${logfile} | sed -e 's/^.*Only qualifier changed for .//' -e 's@/.*@@' | sort)
 if [ -n "$bundles_only_qualifier_changed" ]; then
+    echo
     echo "The following bundles are missing a service segment version bump:"
     for bundle in $bundles_only_qualifier_changed; do
         echo "  - $bundle"
@@ -35,6 +36,7 @@ fi
 
 bundles_same_version_different_content=$(grep "baseline and build artifacts have same version but different contents" ${logfile} | sed -e 's/^.* on project //' -e 's@: baseline.*@@' | sort)
 if [ -n "$bundles_same_version_different_content" ]; then
+    echo
     echo "The following bundles have same version as baseline, but different contents:"
     for bundle in $bundles_same_version_different_content; do
         echo "  - $bundle"
@@ -47,6 +49,21 @@ if [ -n "$bundles_same_version_different_content" ]; then
     echo "Please bump service segment by 100 if on main branch"
     echo "See: https://wiki.eclipse.org/Version_Numbering#When_to_change_the_service_segment"
     echo
+fi
+
+api_errors=$(grep "API ERROR" ${logfile} | grep -v "0 API ERRORS" || true)
+if [ -n "$api_errors" ]; then
+    echo
+    echo "API Errors were detected when running the build:"
+    grep "API ERROR" ${logfile} | grep -v "0 API ERRORS" || true
+    major_version=$(grep "The major version should be incremented" ${logfile})
+    if [ -n "$major_version" ]; then
+        echo "WARNING: some of the API errors report as 'major version should be incremented'. Incrementing the"
+        echo "major version is only allowed on major new versions of CDT. This error indicates that API has been"
+        echo "broken in some incompatible way. An project committer can help explain what to do if the (lengthy)"
+        echo "documentation below needs interpreting for this use case.".
+    fi
+    echo "See https://github.com/eclipse-cdt/cdt/blob/main/POLICY.md#api for details"
 fi
 
 success=$(grep "SUCCESS - Maven check all versions have been bumped appropriately appears to have completed successfully" ${logfile})

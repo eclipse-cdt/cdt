@@ -29,6 +29,7 @@ ${MVN:-mvn} \
         -DskipDoc=true \
         -DskipTests=true \
         -P baseline-compare-and-replace \
+        -P api-baseline-check \
          2>&1 | tee ${logfile}
 
 if [ $? -eq 0 ]; then

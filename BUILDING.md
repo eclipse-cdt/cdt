@@ -57,6 +57,10 @@ replace. To do that run with the `baseline-compare-and-replace` profile.
 
 Requires verify phase of maven to run, i.e. will not run with `mvn package` even if profile is specified.
 
+#### api-baseline-check
+
+`api-baseline-check` checks the API of CDT matches the [API policy](https://github.com/eclipse-cdt/cdt/blob/main/POLICY.md#api)
+
 #### production
 
 Runs the production steps of the build. This profile can only be run on the CDT CI machines

@@ -42,6 +42,7 @@ pipeline {
                       -Dmaven.test.failure.ignore=true \
                       -DexcludedGroups=flakyTest,slowTest \
                       -P baseline-compare-and-replace \
+                      -P api-baseline-check \
                       -Ddsf.gdb.tests.timeout.multiplier=50 \
                       -Dindexer.timeout=300 \
                       -P production \

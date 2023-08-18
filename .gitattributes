@@ -1,3 +1,8 @@
+# to allow github to index the build directory
+# we need to override the defaults of github here
+# see https://docs.github.com/en/search-github/searching-on-github/finding-files-on-github
+build/** linguist-generated=false
+
 * text=auto
 
 # Generic files

@@ -293,11 +293,11 @@ public class TerminalService implements ITerminalService {
 					flags.put(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT,
 							(Boolean) properties.get(ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT));
 				}
-				if (properties.get(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API) instanceof Boolean) {
-					flags.put(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API,
-							(Boolean) properties.get(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API));
+				if (properties.get(ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE) instanceof Boolean) {
+					flags.put(ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE,
+							(Boolean) properties.get(ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE));
 				} else {
-					flags.put(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API, false);
+					flags.put(ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE, false);
 				}
 				// Open the new console
 				CTabItem item;

@@ -37,7 +37,6 @@ import static org.eclipse.tm.terminal.model.TerminalColor.MAGENTA;
 import static org.eclipse.tm.terminal.model.TerminalColor.RED;
 import static org.eclipse.tm.terminal.model.TerminalColor.WHITE;
 import static org.eclipse.tm.terminal.model.TerminalColor.YELLOW;
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -46,6 +45,7 @@ import java.util.Arrays;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;

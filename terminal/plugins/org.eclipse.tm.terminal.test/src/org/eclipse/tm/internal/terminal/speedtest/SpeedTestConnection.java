@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.speedtest;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;

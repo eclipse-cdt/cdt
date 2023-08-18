@@ -9,13 +9,12 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;

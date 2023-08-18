@@ -9,8 +9,6 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.remote.internal;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,6 +33,7 @@ import org.eclipse.remote.core.IRemoteProcessService;
 import org.eclipse.remote.core.IRemoteProcessTerminalService;
 import org.eclipse.remote.core.IRemoteServicesManager;
 import org.eclipse.remote.core.exception.RemoteConnectionException;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.emulator.VT100Emulator;
 import org.eclipse.tm.internal.terminal.emulator.VT100TerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;

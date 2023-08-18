@@ -45,8 +45,6 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.emulator;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -101,6 +99,7 @@ import org.eclipse.tm.internal.terminal.control.ICommandInputField;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener2;
 import org.eclipse.tm.internal.terminal.control.ITerminalListener3;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.control.ITerminalMouseListener;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;

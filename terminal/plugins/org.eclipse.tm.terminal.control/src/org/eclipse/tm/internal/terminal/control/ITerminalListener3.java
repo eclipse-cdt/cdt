@@ -33,7 +33,7 @@ public interface ITerminalListener3 extends ITerminalListener2 {
 	/**
 	 * Set the title of the terminal.
 	 *
-	 * @param title Termianl title.
+	 * @param title Terminal title.
 	 * @param requestor Item that requests terminal title update.
 	 */
 	void setTerminalTitle(String title, TerminalTitleRequestor requestor);

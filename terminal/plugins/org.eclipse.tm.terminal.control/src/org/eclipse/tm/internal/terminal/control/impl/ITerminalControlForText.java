@@ -12,10 +12,9 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.control.impl;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import java.io.OutputStream;
 
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
 

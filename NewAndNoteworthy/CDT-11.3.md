@@ -18,6 +18,13 @@ In cases where the configured binary parser does not support the launching of GN
 
 # API Changes, current and planned
 
+## New API to create terminal that blocks updating title from ANSI escape sequence
+
+When calling `ITerminalService.openConsole(Map<String, Object> properties, Done done)` the `properties` understands a new key that allows the option to disable updating titles from ASNI Escape Sequences.
+By setting `ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE` to `true` the title of the tab terminal will not be affected by ANSI escape sequences.
+
+## Breaking API changes
+
 Please see [CHANGELOG-API](CHANGELOG-API.md) for details on the breaking API changes in this release as well as future planned API changes.
 
 # Noteworthy Issues and Pull Requests

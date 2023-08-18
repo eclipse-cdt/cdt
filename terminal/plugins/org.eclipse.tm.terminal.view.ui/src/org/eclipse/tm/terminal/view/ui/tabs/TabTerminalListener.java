@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.ui.tabs;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
@@ -121,16 +119,22 @@ public class TabTerminalListener implements ITerminalListener3 {
 		}
 		// Run asynchronously in the display thread
 		item.getDisplay().asyncExec(() -> {
-			Boolean flag = false;
-			// Get the original terminal properties associated with the tab item
-			final Map<String, Object> properties = (Map<String, Object>) item.getData("properties"); //$NON-NLS-1$
-			if (properties.containsKey(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API)) {
-				flag = (Boolean) properties.get(ITerminalsConnectorConstants.PROP_TITLE_UPDATE_API);
-			}
-			// Check if terminal should be updated either using API only (flag == true)
-			// or using API and ANSI command (flag == false).
-			if (flag == true && requestor != null && requestor == TerminalTitleRequestor.ANSI) {
+			if (item.isDisposed()) {
+				// tab has been closed
 				return;
+			}
+
+			// Get the original terminal properties associated with the tab item
+			@SuppressWarnings({ "unchecked" })
+			final Map<String, Object> properties = (Map<String, Object>) item.getData("properties"); //$NON-NLS-1$
+			if (properties.containsKey(ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE)) {
+				if (properties.get(
+						ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE) instanceof Boolean disableAnsi) {
+					// Check if terminal title can be updated from ANSI escape sequence
+					if (disableAnsi && requestor == TerminalTitleRequestor.ANSI) {
+						return;
+					}
+				}
 			}
 
 			// New title must have value.
@@ -188,9 +192,9 @@ public class TabTerminalListener implements ITerminalListener3 {
 	}
 
 	/**
-	 * Sets Terminal tilte and checks if originator is ANSI command.
+	 * Sets Terminal title and checks if originator is ANSI command.
 	 * If originator is ANSI command in terminal and user does not want to use
-	 * ANSI command to upate terminal then return else update title.
+	 * ANSI command to update terminal then return else update title.
 	 * @param title Title to update.
 	 * @param requestor Item that requests terminal title update.
 	 */

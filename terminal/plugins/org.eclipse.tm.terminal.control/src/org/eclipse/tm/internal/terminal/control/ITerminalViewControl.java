@@ -16,14 +16,13 @@
  ******************************************************************************/
 package org.eclipse.tm.internal.terminal.control;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -193,6 +192,7 @@ public interface ITerminalViewControl {
 	void removeMouseListener(ITerminalMouseListener listener);
 
 	/**
+	 * @since 5.1
 	 * @deprecated call {@link #setTerminalTitle(String, String)} instead
 	 */
 	@Deprecated(forRemoval = true)

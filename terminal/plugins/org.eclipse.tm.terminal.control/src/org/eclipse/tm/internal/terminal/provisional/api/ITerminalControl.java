@@ -16,14 +16,13 @@
  *******************************************************************************/
 package org.eclipse.tm.internal.terminal.provisional.api;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 
 /**
  * Represents the terminal view as seen by a terminal connection.

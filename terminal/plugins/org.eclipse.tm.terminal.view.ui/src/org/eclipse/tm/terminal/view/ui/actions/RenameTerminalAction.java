@@ -11,12 +11,11 @@
 
 package org.eclipse.tm.terminal.view.ui.actions;
 
-import static org.eclipse.tm.internal.terminal.control.ITerminalListener3.*;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
 import org.eclipse.tm.internal.terminal.control.actions.AbstractTerminalAction;
 import org.eclipse.tm.terminal.view.ui.nls.Messages;

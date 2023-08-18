@@ -110,8 +110,8 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 
 	@Override
 	public void setInput(ISearchResult search, Object uiState) {
-		if (search instanceof MemorySearchResult) {
-			((MemorySearchResult) search).addListener(new ISearchResultListener() {
+		if (search instanceof MemorySearchResult result) {
+			result.addListener(new ISearchResultListener() {
 				@Override
 				public void searchResultChanged(SearchResultEvent e) {
 					Display.getDefault().asyncExec(() -> fTreeViewer.refresh());
@@ -176,34 +176,41 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 
 			@Override
 			public void selectionChanged(final SelectionChangedEvent event) {
-				if (event.getSelection() instanceof StructuredSelection) {
-					IMemoryRenderingContainer containers[] = ((IMemorySearchQuery) fQuery).getMemoryView()
-							.getMemoryRenderingContainers();
-					MemoryMatch match = (MemoryMatch) ((StructuredSelection) event.getSelection()).getFirstElement();
-					if (match != null) {
-						for (int i = 0; i < containers.length; i++) {
-							IMemoryRendering rendering = containers[i].getActiveRendering();
-							if (rendering instanceof IRepositionableMemoryRendering) {
-								try {
-									((IRepositionableMemoryRendering) rendering).goToAddress(match.getStartAddress());
-								} catch (DebugException e) {
-									MemorySearchPlugin.logError(
-											Messages.getString("MemorySearchResultsPage.RepositioningMemoryViewFailed"), //$NON-NLS-1$
-											e);
-								}
-							}
+				IMemoryRenderingContainer containers[] = ((IMemorySearchQuery) fQuery).getMemoryView()
+						.getMemoryRenderingContainers();
+				if (containers == null || containers.length == 0)
+					return;
 
-							if (rendering != null) {
-								// Temporary, until platform accepts/adds new interface for setting the selection
-								try {
-									Method m = rendering.getClass().getMethod("setSelection", //$NON-NLS-1$
-											new Class[] { BigInteger.class, BigInteger.class });
-									if (m != null)
-										m.invoke(rendering, match.getStartAddress(), match.getEndAddress());
-								} catch (Exception e) {
-									// do nothing
-								}
-							}
+				if (event.getSelection() instanceof StructuredSelection sel
+						&& sel.getFirstElement() instanceof MemoryMatch match) {
+
+					for (int i = 0; i < containers.length; i++) {
+						IMemoryRendering rendering = containers[i].getActiveRendering();
+						if (!(rendering instanceof IRepositionableMemoryRendering repositionable))
+							continue;
+
+						try {
+							repositionable.goToAddress(match.getStartAddress());
+						} catch (DebugException e) {
+							MemorySearchPlugin.logError(
+									Messages.getString("MemorySearchResultsPage.RepositioningMemoryViewFailed"), //$NON-NLS-1$
+									e);
+						}
+
+						// Temporary, until platform accepts/adds new interface for setting the selection
+						try {
+							Method m = rendering.getClass().getMethod("setSelection", //$NON-NLS-1$
+									new Class[] { BigInteger.class, BigInteger.class });
+							if (m != null)
+								m.invoke(rendering, match.getStartAddress(), match.getEndAddress());
+						} catch (NoSuchMethodException e) {
+							// Not all renderings have a compatible setSelection
+							// ideally this would be an interface we can check instead
+							// of using reflection!
+						} catch (Exception e) {
+							MemorySearchPlugin.logError(
+									"Exception while invoking the setSelection method for the current rendering", //$NON-NLS-1$
+									e);
 						}
 					}
 				}
@@ -214,8 +221,8 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 			@Override
 			public void doubleClick(DoubleClickEvent event) {
 				// Open the memory view to emphasize the effect of the memory address selection in the search
-				if (event.getSelection() instanceof StructuredSelection
-						&& ((StructuredSelection) event.getSelection()).getFirstElement() instanceof MemoryMatch) {
+				if (event.getSelection() instanceof StructuredSelection sel
+						&& sel.getFirstElement() instanceof MemoryMatch) {
 					IWorkbenchPart wb = ((IMemorySearchQuery) fQuery).getMemoryView().getSite().getPart();
 					if (wb == null)
 						return;
@@ -229,8 +236,8 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 
 			@Override
 			public String getText(Object element) {
-				if (element instanceof MemoryMatch)
-					return "0x" + ((MemoryMatch) element).getStartAddress().toString(16); //$NON-NLS-1$
+				if (element instanceof MemoryMatch match)
+					return "0x" + match.getStartAddress().toString(16); //$NON-NLS-1$
 
 				return element.toString();
 			}

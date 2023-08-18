@@ -22,6 +22,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IRepositionableMemoryRendering;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -47,6 +49,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.Page;
 
 public class MemorySearchResultsPage extends Page implements ISearchResultPage, IQueryListener {
@@ -205,6 +208,21 @@ public class MemorySearchResultsPage extends Page implements ISearchResultPage, 
 					}
 				}
 			}
+		});
+		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
+				// Open the memory view to emphasize the effect of the memory address selection in the search
+				if (event.getSelection() instanceof StructuredSelection
+						&& ((StructuredSelection) event.getSelection()).getFirstElement() instanceof MemoryMatch) {
+					IWorkbenchPart wb = ((IMemorySearchQuery) fQuery).getMemoryView().getSite().getPart();
+					if (wb == null)
+						return;
+					getSite().getPage().activate(wb);
+				}
+			}
+
 		});
 
 		fTreeViewer.setLabelProvider(new ILabelProvider() {

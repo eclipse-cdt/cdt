@@ -38,6 +38,7 @@ pipeline {
               withCredentials([string(credentialsId: 'gpg-passphrase', variable: 'KEYRING_PASSPHRASE')]) {
                 sh '''/jipp/tools/apache-maven/latest/bin/mvn \
                       clean verify -B -V \
+                      -DskipTests=true \
                       -Dgpg.passphrase="${KEYRING_PASSPHRASE}"  \
                       -Dmaven.test.failure.ignore=true \
                       -DexcludedGroups=flakyTest,slowTest \

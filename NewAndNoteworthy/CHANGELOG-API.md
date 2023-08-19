@@ -604,3 +604,15 @@ spelled BuiltinDetectionArgsGeneric instead.
 These APIs will be removed and remote connection for attach launch will be moved in the implementation of `IGDBProcesses.attachDebuggerToProcess()`.
 
 See https://github.com/eclipse-cdt/cdt/pull/336
+
+## API Removals after September 2025
+
+### Terminal Control API for setting title without `requestor` will be removed
+
+These APIs will be removed and are replaced by versions with `requestor` parameter.
+
+- org.eclipse.tm.internal.terminal.control.ITerminalListener.setTerminalTitle(String)
+- org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl.setTerminalTitle(String)
+- org.eclipse.tm.internal.terminal.control.ITerminalViewControl.setTerminalTitle(String)
+
+See https://github.com/eclipse-cdt/cdt/issues/494

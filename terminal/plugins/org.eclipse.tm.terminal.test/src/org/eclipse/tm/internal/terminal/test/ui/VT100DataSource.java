@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.emulator.VT100Emulator;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
@@ -212,7 +213,7 @@ final class VT100DataSource implements IDataSource {
 			}
 
 			@Override
-			public void setTerminalTitle(String title) {
+			public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
 			}
 
 			@Override

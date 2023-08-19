@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -114,7 +115,7 @@ public class SpeedTestConnection extends Thread {
 	}
 
 	private void setTitle(final String title) {
-		Display.getDefault().asyncExec(() -> fControl.setTerminalTitle(title));
+		Display.getDefault().asyncExec(() -> fControl.setTerminalTitle(title, TerminalTitleRequestor.OTHER));
 	}
 
 }

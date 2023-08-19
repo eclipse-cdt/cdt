@@ -28,8 +28,10 @@ public interface ITerminalListener {
 	void setState(TerminalState state);
 
 	/**
-	 * Set the title of the terminal.
+	 * @deprecated Migrate to implementing {@link ITerminalListener3} and
+	 * override {@link ITerminalListener3#setTerminalTitle(String, String)
 	 * @param title
 	 */
+	@Deprecated(forRemoval = true)
 	void setTerminalTitle(String title);
 }

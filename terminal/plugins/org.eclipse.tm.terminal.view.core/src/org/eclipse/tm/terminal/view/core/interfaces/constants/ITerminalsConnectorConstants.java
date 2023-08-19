@@ -72,6 +72,14 @@ public interface ITerminalsConnectorConstants {
 	public static final String PROP_TITLE = "title"; //$NON-NLS-1$
 
 	/**
+	 * Property: Flag to disable updating the terminal title from ANSI escape sequences.
+	 * <p>
+	 * Property Type: {@link Boolean}
+	 * @since 4.10
+	 */
+	public static final String PROP_TITLE_DISABLE_ANSI_TITLE = "titleDisableAnsiTitle"; //$NON-NLS-1$
+
+	/**
 	 * Property: The encoding of the terminal tab to open.
 	 * <p>
 	 * Property Type: {@link String}

@@ -452,18 +452,19 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 
 		IProject[] projects = null;
 		if (needAllConfigBuild()) {
+			
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 			IConfiguration[] cfgs = info.getManagedProject().getConfigurations();
 			IConfiguration defCfg = info.getDefaultConfiguration();
 			for (IConfiguration cfg : cfgs) {
 				info.setDefaultConfiguration(cfg);
 				IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(project, args);
-				projects = build(kind, project, builders, true, monitor, new MyBoolean(false));
+				projects = build(kind, project, builders, false, monitor, new MyBoolean(false));
 			}
 			info.setDefaultConfiguration(defCfg);
 		} else {
 			IBuilder builders[] = ManagedBuilderCorePlugin.createBuilders(project, args);
-			projects = build(kind, project, builders, true, monitor, new MyBoolean(false));
+			projects = build(kind, project, builders, false, monitor, new MyBoolean(false));
 		}
 
 		if (VERBOSE)

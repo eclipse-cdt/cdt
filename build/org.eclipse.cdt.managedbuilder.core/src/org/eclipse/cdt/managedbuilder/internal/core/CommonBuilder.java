@@ -452,6 +452,7 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 
 		IProject[] projects = null;
 		if (needAllConfigBuild()) {
+			
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(project);
 			IConfiguration[] cfgs = info.getManagedProject().getConfigurations();
 			IConfiguration defCfg = info.getDefaultConfiguration();

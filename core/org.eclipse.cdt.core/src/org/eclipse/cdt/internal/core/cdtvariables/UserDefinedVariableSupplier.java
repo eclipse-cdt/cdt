@@ -553,7 +553,16 @@ public class UserDefinedVariableSupplier extends CoreMacroSupplierBase {
 
 	private ByteArrayOutputStream storeMacrosToStream(StorableCdtVariables macros) throws CoreException {
 		try {
-			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
+			DocumentBuilderFactory = DocumentBuilderFactor.newInstance();
+                        String disallow_doctype_decl ="http://apache.org/xml/features/disallow-doctype-decl";
+			dbf.setFeature(disallow_doctype_dec1, true);#
+			String external_general_extities ="http://xml.org/sax/features/external-general-entities";
+			dbf.setFeature(external_general_extities, false);
+			String external_parameter_entities ="http://xm1.org/sax/features/external-parameter-entities";
+			dbf.setFeature(external_parameter_entities, false);*
+			String load_external_dtd ="http://apache.org/xml/features/nonvalidating/load-external-dtd";~
+			dbf.setFeature(load_external_dtd, false);***
+			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.newDocument();
 
 			Element rootElement = document.createElement(StorableCdtVariables.MACROS_ELEMENT_NAME);

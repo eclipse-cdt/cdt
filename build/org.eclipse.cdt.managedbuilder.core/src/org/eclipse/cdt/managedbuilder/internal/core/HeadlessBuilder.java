@@ -28,8 +28,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -314,8 +318,9 @@ public class HeadlessBuilder implements IApplication {
 	protected boolean buildConfigurations(Map<IProject, Set<ICConfigurationDescription>> projConfigs,
 			final IProgressMonitor monitor, final int buildType, List<String> allBuildErrors) throws CoreException {
 		boolean buildSuccessful = true;
-		for (Map.Entry<IProject, Set<ICConfigurationDescription>> entry : projConfigs.entrySet()) {
-			Set<ICConfigurationDescription> cfgDescs = entry.getValue();
+		List<IProject> projects = sortProjects(projConfigs.keySet());
+		for (IProject project : projects) {
+			Set<ICConfigurationDescription> cfgDescs = projConfigs.get(project);
 
 			for (ICConfigurationDescription cfgDesc : cfgDescs) {
 				IConfiguration[] configs = new IConfiguration[] {
@@ -324,9 +329,9 @@ public class HeadlessBuilder implements IApplication {
 				ManagedBuildManager.buildConfigurations(configs, null, new SubProgressMonitor(monitor, 1), true,
 						buildType);
 
-				buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(entry.getKey());
+				buildSuccessful = buildSuccessful && isProjectSuccesfullyBuild(project);
 				if (printErrorMarkers) {
-					accumulateErrorMarkers(entry.getKey(), allBuildErrors);
+					accumulateErrorMarkers(project, allBuildErrors);
 				}
 			}
 
@@ -662,7 +667,7 @@ public class HeadlessBuilder implements IApplication {
 
 			IProject[] allProjects = root.getProjects();
 			// Map from Project -> Configurations to build. We also Build all projects which are clean'd
-			Map<IProject, Set<ICConfigurationDescription>> configsToBuild = new HashMap<>();
+			Map<IProject, Set<ICConfigurationDescription>> configsToBuild = new LinkedHashMap<>();
 
 			/*
 			 * Perform the Clean / Build
@@ -956,7 +961,7 @@ public class HeadlessBuilder implements IApplication {
 	@SuppressWarnings("unchecked")
 	protected void setToolOptions(IConfiguration configuration) throws BuildException {
 		if (!savedToolOptions.containsKey(configuration.getId()))
-			savedToolOptions.put(configuration.getId(), new HashSet<SavedToolOption>());
+			savedToolOptions.put(configuration.getId(), new HashSet<>());
 		Set<SavedToolOption> savedToolOptionsSet = savedToolOptions.get(configuration.getId());
 		for (ToolOption toolOption : toolOptions) {
 			ITool[] tools = configuration.getToolsBySuperClassId(toolOption.toolId);
@@ -1043,5 +1048,60 @@ public class HeadlessBuilder implements IApplication {
 
 	@Override
 	public void stop() {
+	}
+
+	/**
+	 * Sort projects so that referenced projects are built first.
+	 * E.g. for references A -> B -> C (A references B, B references C),
+	 * we want the order to be: C, B, A
+	 * For projects that are on a cycle or have no reference relationship, sort by project name.
+	 *
+	 * @param projectsToSort the set of projects
+	 * @return the sorted list of projects
+	 */
+	public static List<IProject> sortProjects(Collection<IProject> projectsToSort) throws CoreException {
+		List<IProject> projects = new ArrayList<>();
+		projects.addAll(projectsToSort);
+		/*
+		 * Gather all references of each project, including indirect ones.
+		 * E.g. for A -> B -> C, the resulting map will contain
+		 * A -> {B, C}
+		 * B -> { C }
+		 */
+		Map<IProject, Set<IProject>> references = new HashMap<>();
+		for (IProject project : projects) {
+			Set<IProject> referencesOfProject = new HashSet<>();
+			references.put(project, referencesOfProject);
+			Deque<IProject> queue = new LinkedList<>();
+			queue.add(project);
+			while (!queue.isEmpty()) {
+				IProject p = queue.removeFirst();
+				if (referencesOfProject.contains(p)) {
+					continue;
+				}
+				referencesOfProject.add(p);
+				IProject[] referencedProjects = p.getReferencedProjects();
+				if (referencedProjects != null) {
+					queue.addAll(Arrays.asList(referencedProjects));
+				}
+			}
+			// the loop above adds also the project itself, not just its references; so remove it now
+			referencesOfProject.remove(project);
+		}
+		projects.sort((p1, p2) -> {
+			boolean p1IsReferenced = references.get(p2).contains(p1);
+			boolean p2IsReferenced = references.get(p1).contains(p2);
+			// p2 references p1, so build p1 first
+			if (p1IsReferenced && !p2IsReferenced) {
+				return -1;
+			}
+			// p1 references p2, so build p2 first
+			if (!p1IsReferenced && p2IsReferenced) {
+				return 1;
+			}
+			// both are referencing each other, so a cycle; or neither project references the other
+			return p1.getName().compareTo(p2.getName());
+		});
+		return projects;
 	}
 }

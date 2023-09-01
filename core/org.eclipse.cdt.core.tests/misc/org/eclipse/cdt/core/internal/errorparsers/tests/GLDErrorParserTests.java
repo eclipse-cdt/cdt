@@ -122,12 +122,46 @@ public class GLDErrorParserTests extends GenericErrorParserTests {
 					"make: *** [makefile:47: parser] Error 1",
 					"\"make all\" terminated with exit code 2. Build might be incomplete.", },
 				// @formatter:on
-				2, // errors
+				1, // errors
 				0, // warnings
 				0, // Infos
-				new String[] { "a.cpp", "project" },
-				new String[] { "./src/a.o: in function `TLS wrapper function for A::max_compatdb_time':",
-						"undefined reference to `A::max_compatdb_time'" },
+				new String[] { "a.cpp" }, new String[] { "undefined reference to `A::max_compatdb_time'" },
 				new String[] { GLD_ERROR_PARSER_ID });
+	}
+
+	@Test
+	public void testLinkerMessages_stubbed_function() throws IOException {
+		runParserTest(new String[] { "make all ",
+				// @formatter:off
+				"Building target: f4.elf",
+				"Invoking: Cross GCC Linker",
+				"arm-none-eabi-gcc -mthumb -mcpu=cortex-m4 --specs=nosys.specs -o \"f4.elf\"  ./Src/main.o",
+				"c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v7e-m/nofp/libc.a(libc_a-closer.o): in function `_close_r':",
+				"/data/jenkins/workspace/GNU-toolchain/arm-11/src/newlib-cygwin/newlib/libc/reent/closer.c:47: warning: _close is not implemented and will always fail",
+				"c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v7e-m/nofp/libc.a(libc_a-fstatr.o): in function `_fstat_r':",
+				"/data/jenkins/workspace/GNU-toolchain/arm-11/src/newlib-cygwin/newlib/libc/reent/fstatr.c:55: warning: _fstat is not implemented and will always fail",
+				"c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v7e-m/nofp/libc.a(libc_a-signalr.o): in function `_getpid_r':",
+				"/data/jenkins/workspace/GNU-toolchain/arm-11/src/newlib-cygwin/newlib/libc/reent/signalr.c:83: warning: _getpid is not implemented and will always fail",
+				"c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v7e-m/nofp/libc.a(libc_a-isattyr.o): in function `_isatty_r':",
+				"/data/jenkins/workspace/GNU-toolchain/arm-11/src/newlib-cygwin/newlib/libc/reent/isattyr.c:52: warning: _isatty is not implemented and will always fail",
+				"c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v7e-m/nofp/libc.a(libc_a-signalr.o): in function `_kill_r':",
+				"/data/jenkins/workspace/GNU-toolchain/arm-11/src/newlib-cygwin/newlib/libc/reent/signalr.c:53: warning: _kill is not implemented and will always fail",
+				"c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v7e-m/nofp/libc.a(libc_a-lseekr.o): in function `_lseek_r':",
+				"/data/jenkins/workspace/GNU-toolchain/arm-11/src/newlib-cygwin/newlib/libc/reent/lseekr.c:49: warning: _lseek is not implemented and will always fail",
+				"c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v7e-m/nofp/libc.a(libc_a-readr.o): in function `_read_r':",
+				"/data/jenkins/workspace/GNU-toolchain/arm-11/src/newlib-cygwin/newlib/libc/reent/readr.c:49: warning: _read is not implemented and will always fail",
+				"c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/../../../../arm-none-eabi/bin/ld.exe: c:/arm-11.3.rel1/bin/../lib/gcc/arm-none-eabi/11.3.1/thumb/v7e-m/nofp/libc.a(libc_a-writer.o): in function `_write_r':",
+				"/data/jenkins/workspace/GNU-toolchain/arm-11/src/newlib-cygwin/newlib/libc/reent/writer.c:49: warning: _write is not implemented and will always fail",
+				"Finished building target: f4.elf",
+				" ",
+				"",
+				"14:37:57 Build Failed. 8 errors, 8 warnings. (took 1s.244ms)"},
+				// @formatter:on
+				0, // errors
+				8, // warnings
+				0, // Infos
+				null, new String[] { /* Don't really know what to add here */ },
+				new String[] { GLD_ERROR_PARSER_ID, GCC_ERROR_PARSER_ID });
+
 	}
 }

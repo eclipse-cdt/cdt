@@ -8,8 +8,17 @@ SSHUSER="genie.cdt@projects-storage.eclipse.org"
 SSH="ssh ${SSHUSER}"
 SCP="scp"
 DOWNLOAD=/home/data/httpd/download.eclipse.org/tools/cdt/$RELEASE_OR_BUILD/$MINOR_VERSION/$MILESTONE
-ARTIFACTS=https://ci.eclipse.org/cdt/job/$CDT_JOB_NAME/$CDT_BUILD_NUMBER/artifact
-ARTIFACTS_REPO_TARGET=$ARTIFACTS/releng/org.eclipse.cdt.repo/target
+ARTIFACTS=https://ci.eclipse.org/cdt/job/$CDT_REPO/job/$CDT_BRANCH/$CDT_BUILD_NUMBER/artifact
+if [ "$CDT_REPO" == "cdt" ]; then
+    ARTIFACTS_REPO_TARGET=$ARTIFACTS/releng/org.eclipse.cdt.repo/target
+    ZIP_NAME=org.eclipse.cdt.repo.zip
+elif [ "$CDT_REPO" == "cdt-lsp" ]; then
+    ARTIFACTS_REPO_TARGET=$ARTIFACTS/releng/org.eclipse.cdt.lsp.repository/target
+    ZIP_NAME=org.eclipse.cdt.lsp.repository.zip
+else
+    echo "unexpected value for CDT_REPO: ${CDT_REPO}"
+    exit 1
+fi
 
 echo Using download location root of $DOWNLOAD
 echo Using artifacts location root of $ARTIFACTS
@@ -35,6 +44,6 @@ $ECHO $SSH "cd $DOWNLOAD && \
     rm -r repository repository.zip"
 
 $ECHO $SSH "cd $DOWNLOAD && \
-    wget -q $ARTIFACTS_REPO_TARGET/org.eclipse.cdt.repo.zip && \
-    mv org.eclipse.cdt.repo.zip $MILESTONE.zip"
+    wget -q $ARTIFACTS_REPO_TARGET/$ZIP_NAME && \
+    mv $ZIP_NAME $MILESTONE.zip"
 

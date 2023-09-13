@@ -9,6 +9,9 @@ This is the New & Noteworthy page for CDT 11.4 which is part of Eclipse 2023-12 
 
 # API Changes, current and planned
 
+## Changes to org.eclipse.tools.templates APIs
+
+Re-exports from org.eclipse.tools.templates.freemarker & org.eclipse.tools.templates.ui have been removed. Please see for full details [CHANGELOG-API](CHANGELOG-API.md)
 
 ## Breaking API changes
 

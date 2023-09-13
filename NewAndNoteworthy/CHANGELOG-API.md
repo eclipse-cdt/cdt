@@ -7,6 +7,20 @@ This section describes API removals that occurred in past releases, and upcoming
 # API Changes
 
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
+## API Changes in CDT 11.4.
+
+### org.eclipse.tools.templates.freemarker no longer re-exports org.freemarker
+
+The bundle of Freemarker has changed from org.freemarker to org.freemarker.freemarker. As part of
+this the re-exports of freemarker have been removed from org.eclipse.tools.templates.freemarker. 
+
+Consumers of org.eclipse.tools.templates.freemarker now need to add dependencies on freemarker to
+their own plugins. Must likely this will at least be a package import for "freemarker.template"
+
+### org.eclipse.tools.templates.ui no longer re-exports org.eclipse.tools.templates.core
+
+org.eclipse.tools.templates.ui no longer re-exports org.eclipse.tools.templates.core. Consumers
+may now need to add that dependency to their own plugins
 
 ## API Changes in CDT 11.0.
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2023 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -302,7 +302,7 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 			return includePaths;
 		}
 
-		if (!getPaths(imgCnn, includePaths)) {
+		if (!getPaths(imgCnn, fetchPaths)) {
 			// There should be sufficient log messages by the root cause
 			return includePaths;
 		}
@@ -313,13 +313,20 @@ public class ContainerCommandLauncherFactory implements ICommandLauncherFactory,
 		Set<IPath> copiedVolumes = ContainerLauncher.getCopiedVolumes(tpath);
 		List<String> newEntries = new ArrayList<>();
 
-		for (String path : includePaths) {
-			if (copiedVolumes.contains(new Path(path))) {
-				IPath newPath = tpath.append(path);
-				String newEntry = newPath.toOSString();
-				newEntries.add(newEntry);
-			} else {
-				newEntries.add(path);
+		for (String includePath : includePaths) {
+			IPath path = new Path(includePath).makeAbsolute();
+			boolean found = false;
+			for (IPath copiedVolume : copiedVolumes) {
+				if (copiedVolume.isPrefixOf(path)) {
+					IPath newPath = tpath.append(path);
+					String newEntry = newPath.toOSString();
+					newEntries.add(newEntry);
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				newEntries.add(path.toPortableString());
 			}
 		}
 		return newEntries;

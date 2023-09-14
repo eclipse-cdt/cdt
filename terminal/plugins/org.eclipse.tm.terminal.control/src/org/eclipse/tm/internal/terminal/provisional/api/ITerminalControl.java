@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 
 /**
  * Represents the terminal view as seen by a terminal connection.
@@ -155,10 +156,18 @@ public interface ITerminalControl {
 	OutputStream getRemoteToTerminalOutputStream();
 
 	/**
-	 * Set the title of the terminal view.
-	 * @param title
+	 * @deprecated call {@link #setTerminalTitle(String, String)} instead
 	 */
+	@Deprecated(forRemoval = true)
 	void setTerminalTitle(String title);
+
+	/**
+	 * Set the title of the terminal view.
+	 * @param title Termianl title.
+	 * @param requestor Item that requests terminal title update.
+	 * @since 5.5
+	 */
+	void setTerminalTitle(String title, TerminalTitleRequestor requestor);
 
 	/**
 	 * Show an error message during connect.

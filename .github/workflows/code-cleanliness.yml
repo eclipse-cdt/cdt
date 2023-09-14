@@ -17,6 +17,10 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@07fbbe97d97ef44336b7382563d66743297e442f # v4.5
+      with:
+        maven-version: 3.9.2
     - name: Install dependencies
       run: |
         sudo apt-get update && sudo apt-get install -y --no-install-recommends \
@@ -25,7 +29,11 @@ jobs:
       run: |
         curl -sL https://download.eclipse.org/eclipse/downloads/drops4/R-4.23-202203080310/eclipse-SDK-4.23-linux-gtk-x86_64.tar.gz | tar xz
     - name: Run Check Code Cleanliness
-      run: ECLIPSE=$PWD/eclipse/eclipse ./releng/scripts/check_code_cleanliness.sh
+      run: ECLIPSE=$PWD/eclipse/eclipse ./releng/scripts/check_code_cleanliness_only.sh
+    - name: Run Bundle Versions Bumped
+      run: ./releng/scripts/check_bundle_versions.sh
+    - name: Report on Bundle Versions Bumped
+      run: ./releng/scripts/check_bundle_versions_report.sh
     - name: Upload Logs
       uses: actions/upload-artifact@v3
       if: success() || failure()

@@ -3,9 +3,12 @@
 ################################################################################
 
 ASM_SRCS := 
+C++M_SRCS := 
 C++_SRCS := 
+CCM_SRCS := 
 CC_SRCS := 
 CPP_SRCS := 
+CXXM_SRCS := 
 CXX_SRCS := 
 C_UPPER_SRCS := 
 LOG_SRCS := 

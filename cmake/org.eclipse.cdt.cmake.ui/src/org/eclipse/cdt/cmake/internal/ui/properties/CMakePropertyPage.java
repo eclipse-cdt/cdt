@@ -134,7 +134,7 @@ public class CMakePropertyPage extends PropertyPage {
 						String sourceDir = project.getLocation().toOSString();
 						String buildDir = project.getLocation().append("build").append(configName).toOSString(); //$NON-NLS-1$
 
-						Runtime.getRuntime().exec(new String[] { "cmake-gui", "-H" + sourceDir, "-B" + buildDir }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						Runtime.getRuntime().exec(new String[] { "cmake-gui", "-S" + sourceDir, "-B" + buildDir }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					} catch (CoreException | IOException e1) {
 						MessageDialog.openError(parent.getShell(),
 								Messages.CMakePropertyPage_FailedToStartCMakeGui_Title,

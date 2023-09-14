@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -32,8 +33,10 @@ public class MockTerminalControlForText implements ITerminalControlForText {
 	}
 
 	@Override
-	public void setTerminalTitle(String title) {
-		allTitles.add(title);
+	public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
+		if (requestor == TerminalTitleRequestor.ANSI) {
+			allTitles.add(title);
+		}
 	}
 
 	public List<String> getAllTitles() {

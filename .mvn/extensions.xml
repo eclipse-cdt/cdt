@@ -3,6 +3,6 @@
   <extension>
     <groupId>org.eclipse.tycho</groupId>
     <artifactId>tycho-build</artifactId>
-    <version>3.0.3</version>
+    <version>4.0.1</version>
   </extension>
 </extensions>

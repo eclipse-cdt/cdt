@@ -23,12 +23,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -41,6 +39,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICStorageElement;
 import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.DefaultScope;
@@ -194,7 +193,7 @@ public class LanguageMappingStore {
 	public void storeMappings(WorkspaceLanguageConfiguration config) throws CoreException {
 		try {
 			// Encode mappings as XML and serialize as a String.
-			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			Document doc = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 			Element rootElement = doc.createElement(WORKSPACE_MAPPINGS);
 			doc.appendChild(rootElement);
 			addContentTypeMappings(config.getWorkspaceMappings(), rootElement);
@@ -233,7 +232,7 @@ public class LanguageMappingStore {
 		// The mappings are encoded as XML in a String so we need to parse it.
 		InputSource input = new InputSource(new StringReader(encodedMappings));
 		try {
-			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(input);
+			Document document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE().parse(input);
 			config.setWorkspaceMappings(decodeContentTypeMappings(document.getDocumentElement()));
 			return config;
 		} catch (SAXException e) {
@@ -247,7 +246,7 @@ public class LanguageMappingStore {
 
 	private Transformer createSerializer() throws CoreException {
 		try {
-			return TransformerFactory.newInstance().newTransformer();
+			return XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE().newTransformer();
 		} catch (TransformerConfigurationException e) {
 			throw new CoreException(Util.createStatus(e));
 		} catch (TransformerFactoryConfigurationError e) {

@@ -25,12 +25,8 @@
 	<name>CDT Parent</name>
 
 	<properties>
-		<!-- Maven 3.6.1 and 3.6.2 do not work with Tycho, see Bug 551674
-		     CDT enforces a minimum of 3.6.3 because that is what CDT's CI
-			 runs with. It may work with older versions, but this is not
-			 tested or supported. -->
-		<required-maven-version>3.6.3</required-maven-version>
-		<tycho-version>3.0.5</tycho-version>
+		<required-maven-version>3.9.1</required-maven-version>
+		<tycho-version>4.0.1</tycho-version>
 		<cbi-plugins.version>1.3.4</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
@@ -49,6 +45,8 @@
 		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->
 		<base.test.vmargs>-Xms256m -Xmx512m -ea --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED</base.test.vmargs>
 		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/11.2/cdt-11.2.0/</comparator.repo>
+		<api-baseline.repo>https://download.eclipse.org/tools/cdt/releases/latest/</api-baseline.repo>
+		<api-baseline.repo.simrel>https://download.eclipse.org/releases/latest/</api-baseline.repo.simrel>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want
 		     to avoid baseline replace and compare, especially if you have different versions of Java than
 			 the baseline was built with. This is the default.
@@ -554,6 +552,41 @@
 			</properties>
 		</profile>
 		<profile>
+			<id>api-baseline-check</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.eclipse.tycho</groupId>
+						<artifactId>tycho-apitools-plugin</artifactId>
+						<version>${tycho-version}</version>
+						<configuration>
+							<skipIfReplaced>false</skipIfReplaced>
+							<baselines>
+								<repository>
+									<url>${api-baseline.repo}</url>
+									<url>${api-baseline.repo.simrel}</url>
+								</repository>
+							</baselines>
+						</configuration>
+						<executions>
+							<execution>
+								<id>generate</id>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>verify</id>
+								<goals>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
 			<id>production</id>
 			<build>
 				<plugins>
@@ -619,7 +652,7 @@
 								<version>${required-maven-version}</version>
 							</requireMavenVersion>
 							<requireJavaVersion>
-								<version>11</version>
+								<version>17</version>
 							</requireJavaVersion>
 						</rules>
 						<fail>true</fail>

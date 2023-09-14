@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %bundleName
 Bundle-SymbolicName: org.eclipse.cdt.autotools.ui.tests
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.1.100.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.swtbot.go,
  org.eclipse.core.resources,
- org.eclipse.cdt.core
+ org.eclipse.cdt.core;bundle-version="8.3.0"
 Bundle-ActivationPolicy: lazy
 Fragment-Host: org.eclipse.cdt.autotools.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-17

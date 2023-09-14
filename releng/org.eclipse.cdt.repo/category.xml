@@ -185,16 +185,12 @@
    <bundle id="org.eclipse.cdt.remote.core" version="0.0.0"/>
    <bundle id="org.eclipse.cdt.remote.core.source" version="0.0.0"/>
    <bundle id="com.sun.xml.bind" version="0.0.0"/>
-   <bundle id="javax.activation" version="0.0.0"/>
-   <bundle id="javax.xml" version="0.0.0"/>
-   <bundle id="jakarta.xml.bind" version="0.0.0"/>
-   <bundle id="javax.xml.stream" version="0.0.0"/>
    <bundle id="com.google.gson" version="0.0.0"/>
    <bundle id="org.freemarker" version="0.0.0"/>
    <bundle id="org.yaml.snakeyaml" version="0.0.0"/>
    <bundle id="com.sun.jna" version="0.0.0"/>
    <bundle id="com.sun.jna.platform" version="0.0.0"/>
-   <bundle id="org.apache.commons.io" version="0.0.0"/>
+   <bundle id="org.apache.commons.commons-io" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.core" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.core.source" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>

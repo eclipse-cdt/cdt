@@ -23,9 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpProvider;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
@@ -42,7 +42,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class CHelpProvider implements ICHelpProvider {
 
@@ -175,7 +174,7 @@ public class CHelpProvider implements ICHelpProvider {
 			InputStream stream = new FileInputStream(fname);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
 			InputSource src = new InputSource(reader);
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			doc = builder.parse(src);
 			Element e = doc.getDocumentElement();
 			if (NODE_HEAD.equals(e.getNodeName())) {
@@ -189,9 +188,8 @@ public class CHelpProvider implements ICHelpProvider {
 					}
 				}
 			}
-		} catch (ParserConfigurationException e) {
-		} catch (SAXException e) {
-		} catch (IOException e) {
+		} catch (Exception e) {
+			CUIPlugin.log("Failed to load helpbook in " + pluginId, e); //$NON-NLS-1$
 		}
 	}
 }

@@ -27,7 +27,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.cdt.autotools.core.AutotoolsNewProjectNature;
@@ -38,6 +37,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfiguration.Option;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IHoldsOptions;
@@ -55,6 +55,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -203,8 +204,7 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 				IPath fileLocation = project.getLocation().append(CFG_FILE_NAME);
 				File dirFile = fileLocation.toFile();
 				Map<String, IAConfiguration> cfgList = new HashMap<>();
-				DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-				DocumentBuilder db = dbf.newDocumentBuilder();
+				DocumentBuilder db = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 				if (dirFile.exists()) {
 					Document d = db.parse(dirFile);
 					Element e = d.getDocumentElement();
@@ -269,7 +269,8 @@ public class AutotoolsConfigurationManager implements IResourceChangeListener {
 					}
 				}
 			} catch (ParserConfigurationException | SAXException | IOException e) {
-				e.printStackTrace();
+				Platform.getLog(AutotoolsConfigurationManager.class)
+						.error("Error while parsing .autotools file in project", e); //$NON-NLS-1$
 			}
 		}
 		return list;

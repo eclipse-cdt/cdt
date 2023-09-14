@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2022 Red Hat Inc. and others.
+ * Copyright (c) 2017, 2023 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildCommandLauncher;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainConstants;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.core.ProcessClosure;
@@ -66,6 +67,11 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 	public final static String DOCKERD_PATH = DockerLaunchUIPlugin.PLUGIN_ID + ".containerbuild.property.dockerdpath"; //$NON-NLS-1$
 
 	public final static String VOLUME_SEPARATOR_REGEX = "[|]"; //$NON-NLS-1$
+
+	/**
+	 * @since 2.1
+	 */
+	public final static String SECCOMP_UNCONFINED_STR = "seccomp=unconfined"; //$NON-NLS-1$
 
 	private IProject fProject;
 	private Process fProcess;
@@ -259,12 +265,14 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 		final String connectionName;
 		final String imageName;
 		final String pathMapProperty;
+		final String seccompUndefinedStr;
 		if (buildCfg != null) {
 			IToolChain toolChain = buildCfg.getToolChain();
 			selectedVolumeString = toolChain.getProperty(SELECTED_VOLUMES_ID);
 			connectionName = toolChain.getProperty(IContainerLaunchTarget.ATTR_CONNECTION_URI);
 			imageName = toolChain.getProperty(IContainerLaunchTarget.ATTR_IMAGE_ID);
 			pathMapProperty = toolChain.getProperty(DOCKERD_PATH);
+			seccompUndefinedStr = toolChain.getProperty(IToolChainConstants.SECCOMP_UNDEFINED);
 		} else {
 			ICConfigurationDescription cfgd = CoreModel.getDefault().getProjectDescription(fProject)
 					.getActiveConfiguration();
@@ -277,6 +285,7 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			connectionName = props.getProperty(ContainerCommandLauncher.CONNECTION_ID);
 			imageName = props.getProperty(ContainerCommandLauncher.IMAGE_ID);
 			pathMapProperty = props.getProperty(DOCKERD_PATH);
+			seccompUndefinedStr = props.getProperty(IToolChainConstants.SECCOMP_UNDEFINED);
 		}
 
 		// Add any specified volumes to additional dir list
@@ -314,8 +323,10 @@ public class ContainerCommandLauncher implements ICommandLauncher, ICBuildComman
 			return null;
 		}
 
+		boolean seccompUndefined = Boolean.parseBoolean(seccompUndefinedStr);
 		fProcess = launcher.runCommand(connectionName, imageName, fProject, this, cmdList, workingDir, additionalDirs,
-				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer);
+				origEnv, fEnvironment, supportStdin, privilegedMode, labels, keepContainer,
+				seccompUndefined ? List.of(SECCOMP_UNCONFINED_STR) : null);
 
 		return fProcess;
 	}

@@ -211,4 +211,9 @@ public class VT100BackendTraceDecorator implements IVT100EmulatorBackend {
 		fBackend.processReverseLineFeed();
 	}
 
+	@Override
+	public void eraseCharacters(int n) {
+		fWriter.println("eraseCharacters(" + n + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		fBackend.eraseCharacters(n);
+	}
 }

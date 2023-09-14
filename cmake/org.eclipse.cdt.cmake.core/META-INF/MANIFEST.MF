@@ -22,4 +22,7 @@ Automatic-Module-Name: org.eclipse.cdt.cmake.core
 Bundle-Localization: plugin
 Import-Package: org.eclipse.core.variables,
  org.yaml.snakeyaml;version="[2.0.0,3.0.0)",
- org.yaml.snakeyaml.constructor;version="[2.0.0,3.0.0)"
+ org.yaml.snakeyaml.constructor;version="[2.0.0,3.0.0)",
+ org.yaml.snakeyaml.inspector;version="[2.0.0,3.0.0)",
+ org.yaml.snakeyaml.nodes;version="[2.0.0,3.0.0)",
+ org.yaml.snakeyaml.representer;version="[2.0.0,3.0.0)"

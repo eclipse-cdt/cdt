@@ -27,13 +27,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -41,6 +39,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.internal.core.CConfigBasedDescriptorManager;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.settings.model.ICProjectDescriptionStorageType.CProjectDescriptionStorageTypeProxy;
 import org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage;
@@ -67,6 +66,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
+import org.xml.sax.SAXException;
 
 /**
  * Class that marshals creation of AbstractCProjectDescriptionStorages
@@ -163,7 +163,7 @@ public class CProjectDescriptionStorageManager {
 			throws CoreException {
 		Document doc;
 		try {
-			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			doc = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 			// Set the version
 			ProcessingInstruction instruction = doc.createProcessingInstruction(
 					ICProjectDescriptionStorageType.STORAGE_VERSION_NAME, type.version.toString());
@@ -175,7 +175,8 @@ public class CProjectDescriptionStorageManager {
 			XmlUtil.prettyFormat(doc);
 
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			// Indentation is done with XmlUtil.prettyFormat(doc)
@@ -222,7 +223,7 @@ public class CProjectDescriptionStorageManager {
 
 		InputStream stream = null;
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			stream = getInputStreamForIFile(project, ICProjectDescriptionStorageType.STORAGE_FILE_NAME);
 			if (stream != null) {
 				Document doc = builder.parse(stream);
@@ -352,7 +353,7 @@ public class CProjectDescriptionStorageManager {
 					CProjectDescriptionStorageTypeProxy type = initStorageType(configEl);
 					if (type != null) {
 						if (!m.containsKey(type.id))
-							m.put(type.id, new LinkedList<CProjectDescriptionStorageTypeProxy>());
+							m.put(type.id, new LinkedList<>());
 						m.get(type.id).add(type);
 					}
 				}

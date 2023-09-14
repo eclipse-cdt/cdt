@@ -24,8 +24,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -108,8 +108,7 @@ public class SetConfigurationParameterTest extends AbstractTest {
 		File f = new File(path.toOSString());
 		assertTrue(f.exists());
 
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
+		DocumentBuilder db = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 		Document d = db.parse(f);
 		Element e = d.getDocumentElement();
 		// Get the stored configuration data
@@ -320,8 +319,7 @@ public class SetConfigurationParameterTest extends AbstractTest {
 		path = project.getLocation().append(".autotools");
 		f = new File(path.toOSString());
 		assertTrue(f.exists());
-		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-		DocumentBuilder db = dbf.newDocumentBuilder();
+		DocumentBuilder db = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 		Document d = db.parse(f);
 		Element e = d.getDocumentElement();
 		// Get the stored configuration data

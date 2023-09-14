@@ -25,12 +25,10 @@ import java.net.URI;
 import java.util.Arrays;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -63,7 +61,7 @@ public class XmlUtil {
 	 * @throws ParserConfigurationException in case of a problem retrieving {@link DocumentBuilder}.
 	 */
 	public static Document newDocument() throws ParserConfigurationException {
-		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 		return builder.newDocument();
 	}
 
@@ -227,7 +225,7 @@ public class XmlUtil {
 	 */
 	private static Document loadXml(InputStream xmlStream) throws CoreException {
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			return builder.parse(xmlStream);
 		} catch (Exception e) {
 			throw new CoreException(CCorePlugin.createStatus(Messages.XmlUtil_InternalErrorLoading, e));
@@ -370,7 +368,8 @@ public class XmlUtil {
 	private static byte[] toByteArray(Document doc) throws CoreException {
 		try {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, ENCODING_UTF_8);
 			// Indentation is done with XmlUtil.prettyFormat(doc).

@@ -490,4 +490,15 @@ public class VT100EmulatorBackend implements IVT100EmulatorBackend {
 			fTerminal.scroll(line, nLines, n);
 		}
 	}
+
+	@Override
+	public void eraseCharacters(int n) {
+		synchronized (fTerminal) {
+			int line = toAbsoluteLine(fCursorLine);
+			int end = Math.min(fCursorColumn + n, fColumns);
+			for (int col = fCursorColumn; col < end; col++) {
+				fTerminal.setChar(line, col, '\000', null);
+			}
+		}
+	}
 }

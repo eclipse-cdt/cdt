@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -192,8 +193,18 @@ public interface ITerminalViewControl {
 
 	/**
 	 * @since 5.1
+	 * @deprecated call {@link #setTerminalTitle(String, String)} instead
 	 */
+	@Deprecated(forRemoval = true)
 	void setTerminalTitle(String newTitle);
+
+	/**
+	 * Set the title of the terminal.
+	 * @param newTitle
+	 * @param requestor Item that requests terminal title update.
+	 * @since 5.5
+	 */
+	void setTerminalTitle(String newTitle, TerminalTitleRequestor requestor);
 
 	/**
 	 * @since 5.2

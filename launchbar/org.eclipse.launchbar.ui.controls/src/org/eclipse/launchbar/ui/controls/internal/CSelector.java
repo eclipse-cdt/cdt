@@ -313,6 +313,7 @@ public abstract class CSelector extends Composite {
 		popup.setLocation(popupLocation.x, popupLocation.y + 5);
 		restoreShellSize();
 		popup.setVisible(true);
+		popup.setActive();
 		popup.setFocus();
 		getDisplay().addFilter(SWT.FocusIn, focusOutListener);
 		getDisplay().addFilter(SWT.FocusOut, focusOutListener);

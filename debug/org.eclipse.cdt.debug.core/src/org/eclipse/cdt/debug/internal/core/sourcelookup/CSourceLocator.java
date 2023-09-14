@@ -24,7 +24,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
@@ -35,6 +34,7 @@ import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator;
 import org.eclipse.cdt.debug.core.sourcelookup.IProjectSourceLocation;
 import org.eclipse.cdt.debug.core.sourcelookup.SourceLookupFactory;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -239,7 +239,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		Document document = null;
 		Throwable ex = null;
 		try {
-			document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE().newDocument();
 			Element node = document.createElement(SOURCE_LOCATOR_NAME);
 			document.appendChild(node);
 			ICSourceLocation[] locations = getSourceLocations();
@@ -269,7 +269,7 @@ public class CSourceLocator implements ICSourceLocator, IPersistableSourceLocato
 		Exception ex = null;
 		try {
 			Element root = null;
-			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
 			root = parser.parse(source).getDocumentElement();

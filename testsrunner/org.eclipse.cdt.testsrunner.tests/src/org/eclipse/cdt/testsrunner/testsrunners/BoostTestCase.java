@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2013 Anton Gorenkov and others.
+ * Copyright (c) 2011, 2023 Anton Gorenkov and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -226,7 +226,8 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
 		mockModelUpdater.addTestMessage("file.cpp", 22, ITestMessage.Level.Info, "");
-		mockModelUpdater.addTestMessage("file2.cpp", 47, ITestMessage.Level.Exception, EXCEPTION_CHECKPOINT_SUFFIX);
+		mockModelUpdater.addTestMessage("file2.cpp", 47, ITestMessage.Level.Exception,
+				EXCEPTION_CHECKPOINT_SUFFIX.trim());
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
@@ -245,9 +246,9 @@ public class BoostTestCase extends BaseTestCase {
 
 		mockModelUpdater.enterTestSuite("MainTS");
 		mockModelUpdater.enterTestCase("test");
-		mockModelUpdater.addTestMessage("file", 42, ITestMessage.Level.Warning, "  Custom warning   ");
+		mockModelUpdater.addTestMessage("file", 42, ITestMessage.Level.Warning, "Custom warning");
 		mockModelUpdater.addTestMessage("file2", 47, ITestMessage.Level.Exception,
-				"  Exception message  end   " + EXCEPTION_CHECKPOINT_SUFFIX);
+				"Exception message  end" + EXCEPTION_CHECKPOINT_SUFFIX);
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.exitTestSuite();
 	}
@@ -504,6 +505,138 @@ public class BoostTestCase extends BaseTestCase {
 		mockModelUpdater.exitTestCase();
 		mockModelUpdater.enterTestCase("another_test_function (2)");
 		mockModelUpdater.exitTestCase();
+		mockModelUpdater.exitTestSuite();
+	}
+
+	//<TestLog>
+	//    <TestSuite name="MainTS">
+	//        <TestCase name="single-context">
+	//            <Info file="file1.cpp" line="1">
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[context 1 message here]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Info>
+	//        </TestCase>
+	//        <TestCase name="single-context-and-info-message">
+	//            <Info file="file2.cpp" line="2">
+	//                <![CDATA[info 2 message here]]>
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[context 2 message here]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Info>
+	//        </TestCase>
+	//        <TestCase name="multi-context">
+	//            <Info file="file3.cpp" line="1">
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[context 3a message here]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Info>
+	//            <Info file="file3.cpp" line="2">
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[context 3b message here]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Info>
+	//        </TestCase>
+	//        <TestCase name="error-message">
+	//            <Error file="file4.cpp" line="1">
+	//                <![CDATA[error 4 message here]]>
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[context 4 message here]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Error>
+	//        </TestCase>
+	//        <TestCase name="off-by-one-check-a">
+	//            <Error file="off-by-one.cpp" line="1">
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[very very very long context off-by-one-check 01234567890]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Error>
+	//        </TestCase>
+	//        <TestCase name="off-by-one-check-b">
+	//            <Error file="off-by-one.cpp" line="1">
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[very very very long context off-by-one-check 012345]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Error>
+	//        </TestCase>
+	//        <TestCase name="off-by-one-check-c">
+	//            <Error file="off-by-one.cpp" line="1">
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[very very very long context off-by-one-check 01234]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Error>
+	//        </TestCase>
+	//        <TestCase name="off-by-one-check-d">
+	//            <Error file="off-by-one.cpp" line="1">
+	//                <Context>
+	//                    <Frame>
+	//                        <![CDATA[very very very long context off-by-one-check 0123]]>
+	//                    </Frame>
+	//                </Context>
+	//            </Error>
+	//        </TestCase>
+	//    </TestSuite>
+	//</TestLog>
+	public void testWithContextTests() {
+		mockModelUpdater.skipCalls("setTestStatus");
+
+		mockModelUpdater.enterTestSuite("MainTS");
+		mockModelUpdater.enterTestCase("single-context [context 1 message here]");
+		mockModelUpdater.addTestMessage("file1.cpp", 1, ITestMessage.Level.Info, "Context: context 1 message here");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("single-context-and-info-message [context 2 message here]");
+		mockModelUpdater.addTestMessage("file2.cpp", 2, ITestMessage.Level.Info,
+				"info 2 message here\nContext: context 2 message here");
+		mockModelUpdater.exitTestCase();
+
+		// I am not convinced the handling of this is correct, there is an assumption in the code that the first
+		// context seen in an info (or error/warning/etc) message is the one to display next to the test case
+		// name. This works if all the info messages have the same context, but is that an oversimplification?
+		// See https://github.com/eclipse-cdt/cdt/issues/459#issuecomment-1677589998
+		mockModelUpdater.enterTestCase("multi-context [context 3a message here]");
+		mockModelUpdater.addTestMessage("file3.cpp", 1, ITestMessage.Level.Info, "Context: context 3a message here");
+		mockModelUpdater.addTestMessage("file3.cpp", 2, ITestMessage.Level.Info, "Context: context 3b message here");
+		mockModelUpdater.exitTestCase();
+
+		mockModelUpdater.enterTestCase("error-message [context 4 message here]");
+		mockModelUpdater.addTestMessage("file4.cpp", 1, ITestMessage.Level.Error,
+				"error 4 message here\nContext: context 4 message here");
+		mockModelUpdater.exitTestCase();
+
+		// These tests make sure there is no off-by-one error when shortening context strings
+		mockModelUpdater.enterTestCase("off-by-one-check-a [very very very long context off-by-one-check 01234...]");
+		mockModelUpdater.addTestMessage("off-by-one.cpp", 1, ITestMessage.Level.Error,
+				"Context: very very very long context off-by-one-check 01234567890");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("off-by-one-check-b [very very very long context off-by-one-check 01234...]");
+		mockModelUpdater.addTestMessage("off-by-one.cpp", 1, ITestMessage.Level.Error,
+				"Context: very very very long context off-by-one-check 012345");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("off-by-one-check-c [very very very long context off-by-one-check 01234]");
+		mockModelUpdater.addTestMessage("off-by-one.cpp", 1, ITestMessage.Level.Error,
+				"Context: very very very long context off-by-one-check 01234");
+		mockModelUpdater.exitTestCase();
+		mockModelUpdater.enterTestCase("off-by-one-check-d [very very very long context off-by-one-check 0123]");
+		mockModelUpdater.addTestMessage("off-by-one.cpp", 1, ITestMessage.Level.Error,
+				"Context: very very very long context off-by-one-check 0123");
+		mockModelUpdater.exitTestCase();
+
 		mockModelUpdater.exitTestSuite();
 	}
 }

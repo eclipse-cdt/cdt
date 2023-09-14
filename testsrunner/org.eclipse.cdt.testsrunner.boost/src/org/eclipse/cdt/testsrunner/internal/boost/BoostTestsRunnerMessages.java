@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov.
+ * Copyright (c) 2011, 2023 Anton Gorenkov and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,6 +21,10 @@ public class BoostTestsRunnerMessages extends NLS {
 	public static String BoostTestsRunner_io_error_prefix;
 	public static String BoostTestsRunner_wrong_tests_paths_count;
 	public static String BoostTestsRunner_xml_error_prefix;
+	public static String BoostXmlLogHandler_ContextHeader;
+	public static String BoostXmlLogHandler_ContextOverflow;
+	public static String BoostXmlLogHandler_ContextPrefix;
+	public static String BoostXmlLogHandler_ContextSuffix;
 	public static String BoostXmlLogHandler_exception_suffix;
 	public static String BoostXmlLogHandler_wrong_tag_name;
 	static {

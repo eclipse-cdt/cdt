@@ -42,6 +42,7 @@ import org.eclipse.cdt.internal.autotools.ui.CWordFinder;
 import org.eclipse.cdt.internal.autotools.ui.HTMLPrinter;
 import org.eclipse.cdt.internal.autotools.ui.HTMLTextPresenter;
 import org.eclipse.cdt.internal.autotools.ui.preferences.AutotoolsEditorPreferenceConstants;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -168,12 +169,14 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 							docStream = new FileInputStream(p.toFile());
 						}
 					}
-					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+					DocumentBuilderFactory factory = XmlProcessorFactoryCdt
+							.createDocumentBuilderFactoryIgnoringDOCTYPE();
 					factory.setValidating(false);
 					try {
 						DocumentBuilder builder = factory.newDocumentBuilder();
 						doc = builder.parse(docStream);
 					} catch (SAXException | ParserConfigurationException | IOException saxEx) {
+						AutotoolsPlugin.log(saxEx);
 						doc = null;
 					} finally {
 						if (docStream != null)
@@ -218,7 +221,8 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 							docStream = new FileInputStream(p.toFile());
 						}
 					}
-					DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+					DocumentBuilderFactory factory = XmlProcessorFactoryCdt
+							.createDocumentBuilderFactoryIgnoringDOCTYPE();
 					factory.setValidating(false);
 					try {
 						DocumentBuilder builder = factory.newDocumentBuilder();

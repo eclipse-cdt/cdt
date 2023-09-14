@@ -45,6 +45,7 @@ import java.util.Arrays;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.control.impl.ITerminalControlForText;
 import org.eclipse.tm.internal.terminal.control.impl.TerminalPlugin;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
@@ -486,7 +487,7 @@ public class VT100Emulator implements ControlListener {
 			Logger.log("Ignoring unsupported ANSI OSC sequence: '" + ansiOsCommand + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		terminal.setTerminalTitle(ansiOsCommand.substring(2));
+		terminal.setTerminalTitle(ansiOsCommand.substring(2), TerminalTitleRequestor.ANSI);
 	}
 
 	/**
@@ -616,8 +617,7 @@ public class VT100Emulator implements ControlListener {
 
 		case 'X':
 			// Erase character.
-			// Emacs, vi, and GNU readline don't seem to use this command, so we ignore
-			// it for now.
+			processAnsiCommand_X();
 			break;
 
 		case 'Z':
@@ -1235,6 +1235,13 @@ public class VT100Emulator implements ControlListener {
 	 */
 	private void processAnsiCommand_T() {
 		text.scrollDown(getAnsiParameter(0));
+	}
+
+	/**
+	 * Erases n characters from cursor (default = 1 character)
+	 */
+	private void processAnsiCommand_X() {
+		text.eraseCharacters(getAnsiParameter(0));
 	}
 
 	private void processDecPrivateCommand_h() {

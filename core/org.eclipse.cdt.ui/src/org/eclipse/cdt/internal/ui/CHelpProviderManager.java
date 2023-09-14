@@ -19,17 +19,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.text.CHelpSettings;
 import org.eclipse.cdt.ui.CUIPlugin;
@@ -104,7 +103,7 @@ public class CHelpProviderManager {
 
 		if (file.isFile()) {
 			try {
-				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 				Document doc = builder.parse(file);
 				NodeList nodes = doc.getElementsByTagName(ELEMENT_ROOT);
 
@@ -187,7 +186,7 @@ public class CHelpProviderManager {
 		File file = getSettingsFile();
 
 		try {
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc;
 			Element rootElement = null;
 
@@ -210,7 +209,8 @@ public class CHelpProviderManager {
 
 			FileWriter writer = new FileWriter(file);
 
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$

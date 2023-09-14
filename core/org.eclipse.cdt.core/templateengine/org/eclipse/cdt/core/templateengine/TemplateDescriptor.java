@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.osgi.util.NLS;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -54,7 +54,8 @@ public class TemplateDescriptor {
 	public TemplateDescriptor(URL descriptorURL, String pluginId) throws TemplateInitializationException {
 		String msg = NLS.bind(Messages.TemplateCore_init_failed, descriptorURL.toString());
 		try {
-			this.document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(descriptorURL.openStream());
+			this.document = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE()
+					.parse(descriptorURL.openStream());
 		} catch (ParserConfigurationException pce) {
 			throw new TemplateInitializationException(msg, pce);
 		} catch (IOException ioe) {

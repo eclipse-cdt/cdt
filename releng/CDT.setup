@@ -244,9 +244,7 @@
         <repository
             url="https://download.eclipse.org/tools/cdt/releases/latest"/>
         <repository
-            url="https://download.eclipse.org/tools/orbit/downloads/drops/R20201118194144/repository"/>
-        <repository
-            url="https://download.eclipse.org/oomph/simrel-orbit/milestone/latest/"/>
+            url="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/2023-09"/>
         <repository
             url="https://download.eclipse.org/technology/swtbot/releases/latest"/>
         <repository

@@ -22,13 +22,13 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -61,10 +61,8 @@ public class MementoUtils {
 	public static String encodeMapIntoMemento(Map<String, String> keyPairValues) {
 		String returnValue = null;
 
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = null;
 		try {
-			docBuilder = dfactory.newDocumentBuilder();
+			DocumentBuilder docBuilder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = docBuilder.newDocument();
 
 			Element rootElement = doc.createElement(ROOT_ELEMENT_TAGNAME);
@@ -80,7 +78,7 @@ public class MementoUtils {
 
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 
-			TransformerFactory factory = TransformerFactory.newInstance();
+			TransformerFactory factory = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -103,7 +101,7 @@ public class MementoUtils {
 		Element root = null;
 		DocumentBuilder parser;
 		try {
-			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(new InputSource(new StringReader(memento))).getDocumentElement();
 			NodeList nodeList = root.getChildNodes();
@@ -142,10 +140,8 @@ public class MementoUtils {
 	public static String encodeListIntoMemento(List<String> labels) {
 		String returnValue = null;
 
-		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = null;
 		try {
-			docBuilder = dfactory.newDocumentBuilder();
+			DocumentBuilder docBuilder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			Document doc = docBuilder.newDocument();
 
 			Element rootElement = doc.createElement(ROOT_ELEMENT_TAGNAME);
@@ -159,7 +155,7 @@ public class MementoUtils {
 
 			ByteArrayOutputStream s = new ByteArrayOutputStream();
 
-			TransformerFactory factory = TransformerFactory.newInstance();
+			TransformerFactory factory = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE();
 			Transformer transformer = factory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$
@@ -182,7 +178,7 @@ public class MementoUtils {
 		Element root = null;
 		DocumentBuilder parser;
 		try {
-			parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			parser = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(new InputSource(new StringReader(memento))).getDocumentElement();
 			NodeList nodeList = root.getChildNodes();

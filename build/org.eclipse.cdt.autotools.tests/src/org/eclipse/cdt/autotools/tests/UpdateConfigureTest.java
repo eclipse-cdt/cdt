@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.cdt.autotools.core.AutotoolsOptionConstants;
@@ -33,6 +32,7 @@ import org.eclipse.cdt.autotools.core.IAutotoolsOption;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.internal.autotools.core.configure.AutotoolsConfigurationManager;
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedCProjectNature;
@@ -535,8 +535,7 @@ public class UpdateConfigureTest {
 		try {
 			IPath fileLocation = testProject.getLocation().append(".autotools"); //$NON-NLS-1$
 			File dirFile = fileLocation.toFile();
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
+			DocumentBuilder db = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 			assertTrue(dirFile.exists());
 			Document d = db.parse(dirFile);
 			Element e = d.getDocumentElement();

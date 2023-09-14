@@ -19,8 +19,8 @@ import java.text.MessageFormat;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.testsrunner.launcher.ITestsRunnerProvider;
 import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.TestingException;
@@ -111,8 +111,7 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 	@Override
 	public void run(ITestModelUpdater modelUpdater, InputStream inputStream) throws TestingException {
 		try {
-			SAXParserFactory spf = SAXParserFactory.newInstance();
-			SAXParser sp = spf.newSAXParser();
+			SAXParser sp = XmlProcessorFactoryCdt.createSAXParserWithErrorOnDOCTYPE();
 			sp.parse(inputStream, new QtXmlLogHandler(modelUpdater));
 
 		} catch (IOException e) {

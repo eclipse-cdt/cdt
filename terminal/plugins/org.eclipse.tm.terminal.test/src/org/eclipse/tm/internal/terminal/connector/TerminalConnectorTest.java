@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.tm.internal.terminal.connector.TerminalConnector.Factory;
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
@@ -97,6 +98,10 @@ public class TerminalConnectorTest extends TestCase {
 
 		@Override
 		public void setTerminalTitle(String title) {
+		}
+
+		@Override
+		public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
 		}
 
 		@Override

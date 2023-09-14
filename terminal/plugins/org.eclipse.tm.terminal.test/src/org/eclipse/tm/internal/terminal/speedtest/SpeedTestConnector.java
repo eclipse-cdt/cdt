@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.eclipse.tm.internal.terminal.control.ITerminalListener3.TerminalTitleRequestor;
 import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
 import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
 import org.eclipse.tm.internal.terminal.provisional.api.Logger;
@@ -48,7 +49,7 @@ public class SpeedTestConnector extends TerminalConnectorImpl {
 			return;
 		}
 		fOutputStream = System.out;
-		fControl.setTerminalTitle(fSettings.getInputFile());
+		fControl.setTerminalTitle(fSettings.getInputFile(), TerminalTitleRequestor.OTHER);
 		fConnection = new SpeedTestConnection(fInputStream, fSettings, fControl);
 		fConnection.start();
 	}

@@ -22,9 +22,9 @@ pipeline {
       steps {
         container('cdt') {
           timeout(activity: true, time: 30) {
-            withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
+            withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=50.0 -XX:+PrintFlagsFinal']) {
               sh 'MVN="/jipp/tools/apache-maven/latest/bin/mvn -Dmaven.repo.local=/home/jenkins/.m2/repository \
-                        --settings /home/jenkins/.m2/settings.xml" ./releng/scripts/check_code_cleanliness.sh'
+                        --settings /home/jenkins/.m2/settings.xml" ./releng/scripts/check_code_cleanliness_only.sh'
             }
           }
         }
@@ -34,7 +34,7 @@ pipeline {
       steps {
         container('cdt') {
           timeout(activity: true, time: 20) {
-            withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=60.0']) {
+            withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=50.0 -XX:+PrintFlagsFinal']) {
               withCredentials([string(credentialsId: 'gpg-passphrase', variable: 'KEYRING_PASSPHRASE')]) {
                 sh '''/jipp/tools/apache-maven/latest/bin/mvn \
                       clean verify -B -V \
@@ -42,6 +42,7 @@ pipeline {
                       -Dmaven.test.failure.ignore=true \
                       -DexcludedGroups=flakyTest,slowTest \
                       -P baseline-compare-and-replace \
+                      -P api-baseline-check \
                       -Ddsf.gdb.tests.timeout.multiplier=50 \
                       -Dindexer.timeout=300 \
                       -P production \

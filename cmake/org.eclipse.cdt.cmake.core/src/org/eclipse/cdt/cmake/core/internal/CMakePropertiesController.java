@@ -27,9 +27,14 @@ import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
+import org.yaml.snakeyaml.inspector.TagInspector;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.representer.Representer;
 
 /**
  * A {@code ICMakePropertiesController} that monitors modifications to the project properties that force
@@ -68,7 +73,13 @@ class CMakePropertiesController implements ICMakePropertiesController {
 		if (Files.exists(storageFile)) {
 			try (InputStream is = Files.newInputStream(storageFile)) {
 				var classLoader = this.getClass().getClassLoader();
-				var clConstructor = new CustomClassLoaderConstructor(classLoader, new LoaderOptions());
+
+				var loaderoptions = new LoaderOptions();
+				TagInspector taginspector = tag -> tag.getClassName().equals(CMakePropertiesBean.class.getName());
+				loaderoptions.setTagInspector(taginspector);
+
+				var clConstructor = new CustomClassLoaderConstructor(classLoader, loaderoptions);
+
 				props = new Yaml(clConstructor).loadAs(is, CMakePropertiesBean.class);
 				// props is null here if if no document was available in the file
 			}
@@ -95,7 +106,10 @@ class CMakePropertiesController implements ICMakePropertiesController {
 			}
 		}
 		try (Writer wr = new OutputStreamWriter(Files.newOutputStream(storageFile))) {
-			new Yaml().dump(properties, wr);
+			Representer customRepresenter = new Representer(new DumperOptions());
+			customRepresenter.addClassTag(CMakePropertiesBean.class, Tag.MAP);
+			new Yaml(new Constructor(CMakePropertiesBean.class, new LoaderOptions()), customRepresenter)
+					.dump(properties, wr);
 		}
 
 		setupModifyDetection(properties);

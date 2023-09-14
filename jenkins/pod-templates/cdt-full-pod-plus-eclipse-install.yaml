@@ -8,10 +8,10 @@ spec:
     args: ["/bin/sh", "-c", "/home/vnc/.vnc/xstartup.sh && cat"]
     resources:
       requests:
-        memory: "2662Mi"
+        memory: "10000Mi"
         cpu: "1"
       limits:
-        memory: "2662Mi"
+        memory: "10000Mi"
         cpu: "1"
     volumeMounts:
     - name: settings-xml

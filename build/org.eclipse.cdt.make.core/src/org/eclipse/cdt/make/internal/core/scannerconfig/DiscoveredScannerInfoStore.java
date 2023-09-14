@@ -25,15 +25,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IDiscoveredPathManager.IDiscoveredScannerInfoSerializable;
 import org.eclipse.cdt.make.core.scannerconfig.InfoContext;
@@ -159,7 +158,7 @@ public final class DiscoveredScannerInfoStore {
 		Document document = ref != null ? ref.get() : null;
 		if (document == null) {
 			try {
-				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+				DocumentBuilder builder = XmlProcessorFactoryCdt.createDocumentBuilderWithErrorOnDOCTYPE();
 				IPath path = getDiscoveredScannerConfigStore(project);
 				if (path.toFile().exists()) {
 					// read form file
@@ -292,7 +291,8 @@ public final class DiscoveredScannerInfoStore {
 
 			// Transform the document to something we can save in a file
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
-			Transformer transformer = TransformerFactory.newInstance().newTransformer();
+			Transformer transformer = XmlProcessorFactoryCdt.createTransformerFactoryWithErrorOnDOCTYPE()
+					.newTransformer();
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8"); //$NON-NLS-1$
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes"); //$NON-NLS-1$

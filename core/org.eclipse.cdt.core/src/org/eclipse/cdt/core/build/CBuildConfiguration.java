@@ -706,7 +706,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		for (int i = 0; i < macroFiles.length; ++i) {
 			macroFiles[i] = macroFileEntries[i].getFullMacroFilePath().toOSString();
 		}
-		return new ExtendedScannerInfo(symbolMap, includes, includeFiles, macroFiles);
+		return new ExtendedScannerInfo(symbolMap, includes, macroFiles, includeFiles);
 	}
 
 	@Override

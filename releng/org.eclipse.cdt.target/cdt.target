@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="149">
+<target name="cdt" sequenceNumber="150">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/" />
@@ -195,7 +195,7 @@
 			</dependencies>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/2023-09"/>
+			<repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release"/>
 			<!-- failureaccess is needed because the Linuxtools depends on it but doesn't republish it - https://github.com/eclipse-linuxtools/org.eclipse.linuxtools/issues/232
 			This dep can't be added to maven section because of https://github.com/eclipse-pde/eclipse.pde/issues/675 -->
 			<unit id="com.google.guava.failureaccess" version="0.0.0" />

@@ -20,7 +20,7 @@
 
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>cdt-parent</artifactId>
-	<version>11.3.0-SNAPSHOT</version>
+	<version>11.4.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>CDT Parent</name>
 
@@ -39,12 +39,12 @@
 
 		<!-- When changing this value, consider also bumping the version numbers of all the docs plug-ins (those with build-doc profile in pom.xml)
 		     so that compare&replace does not replace the the newly built docs because the only change is in the filtered out index/* resources. -->
-		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.28/R-4.28-202306050440/</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.29/R-4.29-202309031000/</help-docs-eclipserun-repo>
 
 		<tycho.scmUrl>scm:git:https://github.com/eclipse-cdt/cdt</tycho.scmUrl>
 		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->
 		<base.test.vmargs>-Xms256m -Xmx512m -ea --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/11.2/cdt-11.2.0/</comparator.repo>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/latest/</comparator.repo>
 		<api-baseline.repo>https://download.eclipse.org/tools/cdt/releases/latest/</api-baseline.repo>
 		<api-baseline.repo.simrel>https://download.eclipse.org/releases/latest/</api-baseline.repo.simrel>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want

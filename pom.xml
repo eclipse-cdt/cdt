@@ -843,6 +843,7 @@
 					<version>${tycho-version}</version>
 					<configuration>
 						<deriveHeaderFromProject>false</deriveHeaderFromProject>
+						<deriveHeaderFromSource>false</deriveHeaderFromSource>
 						<format>${qualifier.format}</format>
 						<timestampProvider>jgit</timestampProvider>
 						<jgit.ignore>

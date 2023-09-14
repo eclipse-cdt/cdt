@@ -44,7 +44,7 @@
 		<tycho.scmUrl>scm:git:https://github.com/eclipse-cdt/cdt</tycho.scmUrl>
 		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->
 		<base.test.vmargs>-Xms256m -Xmx512m -ea --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/11.2/cdt-11.2.0/</comparator.repo>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/11.3/cdt-11.3.0/</comparator.repo>
 		<api-baseline.repo>https://download.eclipse.org/tools/cdt/releases/latest/</api-baseline.repo>
 		<api-baseline.repo.simrel>https://download.eclipse.org/releases/latest/</api-baseline.repo.simrel>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want

@@ -564,6 +564,8 @@
 							<baselines>
 								<repository>
 									<url>${api-baseline.repo}</url>
+								</repository>
+								<repository>
 									<url>${api-baseline.repo.simrel}</url>
 								</repository>
 							</baselines>

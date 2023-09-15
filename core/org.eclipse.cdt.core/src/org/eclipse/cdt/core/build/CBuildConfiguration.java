@@ -678,7 +678,9 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 * @since 6.1
 	 */
 	protected ScannerInfoCache getScannerInfoCache() {
-		return scannerInfoCache;
+		synchronized (scannerInfoLock) {
+			return scannerInfoCache;
+		}
 	}
 
 	private IExtendedScannerInfo getBaseScannerInfo(IResource resource) throws CoreException {

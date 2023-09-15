@@ -616,3 +616,13 @@ These APIs will be removed and are replaced by versions with `requestor` paramet
 - org.eclipse.tm.internal.terminal.control.ITerminalViewControl.setTerminalTitle(String)
 
 See https://github.com/eclipse-cdt/cdt/issues/494
+
+## API Removals after December 2025
+
+### Remove unreferenced methods in CDT
+
+These APIs will be removed as they aren't used in CDT and have no known use case outside CDT either.
+
+- org.eclipse.cdt.core.build.CBuildConfiguration.getScannerInfoCache()
+
+See https://github.com/eclipse-cdt/cdt/issues/558

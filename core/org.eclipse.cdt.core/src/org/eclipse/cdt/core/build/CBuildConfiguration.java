@@ -676,7 +676,9 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	/**
 	 * @since 6.1
+	 * @deprecated This method was never used in CDT.
 	 */
+	@Deprecated(forRemoval = true)
 	protected ScannerInfoCache getScannerInfoCache() {
 		return scannerInfoCache;
 	}

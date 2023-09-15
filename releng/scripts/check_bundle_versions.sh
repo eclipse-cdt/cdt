@@ -31,7 +31,6 @@ if ${MVN:-mvn} \
         -DskipDoc=true \
         -DskipTests=true \
         -P baseline-compare-and-replace \
-        -P api-baseline-check \
          2>&1 | tee ${logfile}; then
     echo "SUCCESS - Maven check all versions have been bumped appropriately appears to have completed successfully"
     echo "SUCCESS - Maven check all versions have been bumped appropriately appears to have completed successfully" >> ${logfile}

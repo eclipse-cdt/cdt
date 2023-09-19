@@ -127,7 +127,8 @@ Require-Bundle: org.eclipse.cdt.core;bundle-version="[8.3.0,9.0.0)",
  org.eclipse.ui.views;bundle-version="[3.11.300,4.0.0)",
  org.eclipse.ui.workbench.texteditor;bundle-version="[3.16.600,4.0.0)",
  org.eclipse.e4.ui.css.swt.theme,
- org.eclipse.tools.templates.ui;bundle-version="[1.4.0,2.0.0)"
+ org.eclipse.tools.templates.core;bundle-version="2.0.0",
+ org.eclipse.tools.templates.ui;bundle-version="2.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.ui

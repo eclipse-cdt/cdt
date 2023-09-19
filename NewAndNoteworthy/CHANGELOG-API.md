@@ -7,7 +7,12 @@ This section describes API removals that occurred in past releases, and upcoming
 # API Changes
 
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
+
 ## API Changes in CDT 11.4.
+
+### org.eclipse.tools.templates.freemarker, org.eclipse.tools.templates.freemarker.ui and org.eclipse.tools.templates.freemarker.core major version bumped
+
+The major version numbers of the org.eclipse.tools.templates set of bundles has been bumped to 2.0.0 because of the changes outlined below.
 
 ### org.eclipse.tools.templates.freemarker no longer re-exports org.freemarker
 

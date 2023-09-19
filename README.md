@@ -40,6 +40,11 @@ Did you get your version of Eclipse CDT from a vendor (such as a chip maker)? If
 
 We encourage all vendors who are extending and redistributing Eclipse CDT to engage with the project and contribute fixes and improvements back to the Eclipse CDT project.
 
+## CDT LSP (LSP based C/C++ Editor)
+
+The Eclipse CDT project also provides an LSP based C/C++ Editor.
+Please see the [CDT LSP repo](https://github.com/eclipse-cdt/cdt-lsp#readme) for more details on that project and the future plans for language server protocol and clangd support in Eclipse CDT.
+
 ## Contributing
 
 [Contributions are always welcome!](./CONTRIBUTING.md)
@@ -50,6 +55,7 @@ Please bear in mind that this project is almost entirely developed by volunteers
 
 There are many third-party addons for CDT to make it more productive.
 
+* [CDT LSP](https://github.com/eclipse-cdt/cdt-lsp#readme): LSP based C/C++ Editor provided by the Eclipse CDT project
 * [cmake4eclipse](https://github.com/15knots/cmake4eclipse#abstract): This Eclipse plug-in automatically generates build-scripts for the Eclipse CDT managed build system from CMake scripts.
 * [Sloeber](http://eclipse.baeyens.it/): Eclipse Plugins based on Arduino toolchains or a enhanced Arduino IDE.
 * [CUTE](https://cute-test.com/): C++ unit testing plug-in

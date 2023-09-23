@@ -11,11 +11,13 @@
  * Contributors:
  *     Andrew Gvozdev - Initial API and implementation
  *     John Dallaway - Support multiple MSYS2 64-bit registry names (#237)
+ *     John Dallaway - Detect MSYS2 UCRT64 toolchains (#568)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,6 +41,7 @@ public class MinGW {
 	public static final String ENV_MSYS_HOME = "MSYS_HOME"; //$NON-NLS-1$
 	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 	private static final Set<String> MSYS2_64BIT_NAMES = Set.of("MSYS2", "MSYS2 64bit"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final List<String> MSYS2_MINGW_SUBSYSTEMS = List.of("mingw64", "mingw32", "ucrt64"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private static final boolean isWindowsPlatform = Platform.getOS().equals(Platform.OS_WIN32);
 
@@ -52,7 +55,7 @@ public class MinGW {
 	private static boolean isMSysLocationCached = false;
 
 	private final static Map<String/* envPath */, String/* mingwLocation */> mingwLocationCache = Collections
-			.synchronizedMap(new WeakHashMap<String, String>(1));
+			.synchronizedMap(new WeakHashMap<>(1));
 
 	/**
 	 * @return The absolute path to MinGW root folder or {@code null} if not
@@ -101,18 +104,16 @@ public class MinGW {
 				if (on64bit) {
 					if (MSYS2_64BIT_NAMES.contains(displayName)) {
 						String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
-						String mingwLocation = installLocation + "\\mingw64"; //$NON-NLS-1$
-						File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
-						if (gccFile.canExecute()) {
-							rootValue = mingwLocation;
-							break;
-						} else {
-							mingwLocation = installLocation + "\\mingw32"; //$NON-NLS-1$
-							gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
+						for (String subsys : MSYS2_MINGW_SUBSYSTEMS) {
+							String mingwLocation = installLocation + "\\" + subsys; //$NON-NLS-1$
+							File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
 							if (gccFile.canExecute()) {
 								rootValue = mingwLocation;
 								break;
 							}
+						}
+						if (null != rootValue) {
+							break;
 						}
 					} else if ("MSYS2 32bit".equals(displayName)) { //$NON-NLS-1$
 						key32bit = compKey;

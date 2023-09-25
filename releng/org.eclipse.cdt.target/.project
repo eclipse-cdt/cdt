@@ -17,7 +17,7 @@
 		<link>
 			<name>CDTConfiguration.setup</name>
 			<type>1</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/CDTConfiguration.setup</locationURI>
+			<locationURI>PARENT-1-PARENT_LOC/CDTConfiguration.setup</locationURI>
 		</link>
 		<link>
 			<name>parent-pom.xml</name>

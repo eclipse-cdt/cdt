@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IErrorParserNamed;
 import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
+import org.eclipse.cdt.core.settings.model.ICBuildSetting;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
@@ -257,7 +258,12 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 				String[][] ss = ((ICMultiConfigDescription) srcCfgDesc).getErrorParserIDs();
 				ids = CDTPrefUtil.getStrListForDisplay(ss);
 			} else {
-				ids = srcCfgDesc.getBuildSetting().getErrorParserIDs();
+				ICBuildSetting buildSettings = srcCfgDesc.getBuildSetting();
+				if (buildSettings != null) {
+					ids = buildSettings.getErrorParserIDs();
+				} else {
+					ids = new String[0];
+				}
 			}
 			Set<String> setIds = new LinkedHashSet<>(Arrays.asList(ids));
 			setIds.addAll(fAvailableErrorParsers.keySet());

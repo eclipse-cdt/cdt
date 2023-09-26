@@ -74,7 +74,7 @@ public class CProjectDescriptionDelta implements ICDescriptionDelta {
 
 	@Override
 	public int getSettingType() {
-		return fSetting.getType();
+		return fSetting == null ? 0 : fSetting.getType();
 	}
 
 	@Override

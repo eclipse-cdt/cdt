@@ -62,6 +62,9 @@ public class ProxyProvider implements IProxyProvider {
 
 		CDataObject datas[] = fScope.getChildren();
 		for (CDataObject data : datas) {
+			if (data == null) {
+				continue;
+			}
 			CDataProxy proxy = fCache.getCachedProxy(data.getId());
 			if (proxy == null || proxy.getType() != data.getType()) {
 				proxy = fFactory.createProxy(data);

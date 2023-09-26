@@ -14,10 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariablesContributor;
@@ -299,7 +300,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 			@Override
 			public CDataObject[] getChildren() {
 				CConfigurationData data = getConfigurationData(false);
-				List<CDataObject> list = new ArrayList<>();
+				Set<CDataObject> list = new HashSet<>();
 				CResourceData rcDatas[] = data.getResourceDatas();
 				for (int i = 0; i < rcDatas.length; i++) {
 					list.add(rcDatas[i]);
@@ -309,6 +310,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 				CBuildData buildData = data.getBuildData();
 				list.add(buildData);
 				// TODO add other data types
+				list.remove(null);
 				return list.toArray(new CDataObject[list.size()]);
 			}
 
@@ -541,6 +543,9 @@ public class CConfigurationDescription extends CDataProxyContainer
 	@Override
 	public ICTargetPlatformSetting getTargetPlatformSetting() {
 		CConfigurationData data = getConfigurationData(false);
+		if (data.getTargetPlatformData() == null) {
+			return null;
+		}
 		return (ICTargetPlatformSetting) getChildrenProxyProvider().getProxy(data.getTargetPlatformData());
 	}
 
@@ -660,6 +665,9 @@ public class CConfigurationDescription extends CDataProxyContainer
 	@Override
 	public ICBuildSetting getBuildSetting() {
 		CConfigurationData data = getConfigurationData(false);
+		if (data.getBuildData() == null) {
+			return null;
+		}
 		return (ICBuildSetting) getChildrenProxyProvider().getProxy(data.getBuildData());
 	}
 

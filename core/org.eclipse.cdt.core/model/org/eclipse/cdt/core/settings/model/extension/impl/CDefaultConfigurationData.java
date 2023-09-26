@@ -105,9 +105,17 @@ public class CDefaultConfigurationData extends CConfigurationData {
 			return;
 		fDescription = base.getDescription();
 
-		fTargetPlatformData = copyTargetPlatformData(base.getTargetPlatformData(), clone);
+		if (base.getTargetPlatformData() != null) {
+			fTargetPlatformData = copyTargetPlatformData(base.getTargetPlatformData(), clone);
+		} else {
+			fTargetPlatformData = null;
+		}
 		fSourceEntries = base.getSourceEntries();
-		fBuildData = copyBuildData(base.getBuildData(), clone);
+		if (base.getBuildData() != null) {
+			fBuildData = copyBuildData(base.getBuildData(), clone);
+		} else {
+			fBuildData = null;
+		}
 
 		fStatus = base.getStatus();
 		if (fStatus == null)

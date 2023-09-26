@@ -154,7 +154,9 @@ public class CConfigurationDescriptionCache extends CDefaultConfigurationData
 		copySettingsFrom(fData, true);
 
 		fSpecSettings.reconcileExtensionSettings(true);
-		((CBuildSettingCache) fBuildData).initEnvironmentCache();
+		if (fBuildData != null) {
+			((CBuildSettingCache) fBuildData).initEnvironmentCache();
+		}
 		ICdtVariable vars[] = CdtVariableManager.getDefault().getVariables(this);
 		fMacros = new StorableCdtVariables(vars, true);
 		//		fInitializing = false;

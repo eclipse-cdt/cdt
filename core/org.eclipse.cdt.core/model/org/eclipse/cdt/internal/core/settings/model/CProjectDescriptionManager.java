@@ -1919,16 +1919,30 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	private CProjectDescriptionDelta createDelta(ICBuildSetting newBuildSetting, ICBuildSetting oldBuildSetting) {
 		CProjectDescriptionDelta delta = new CProjectDescriptionDelta(newBuildSetting, oldBuildSetting);
-		if (!Arrays.equals(newBuildSetting.getErrorParserIDs(), oldBuildSetting.getErrorParserIDs()))
-			delta.addChangeFlags(ICDescriptionDelta.ERROR_PARSER_IDS);
+		if (newBuildSetting != null && oldBuildSetting != null) {
+			if (!Arrays.equals(newBuildSetting.getErrorParserIDs(), oldBuildSetting.getErrorParserIDs())) {
+				delta.addChangeFlags(ICDescriptionDelta.ERROR_PARSER_IDS);
+			}
+		} else {
+			if (newBuildSetting != oldBuildSetting) {
+				delta.addChangeFlags(ICDescriptionDelta.ERROR_PARSER_IDS);
+			}
+		}
 
 		return delta.isEmpty() ? null : delta;
 	}
 
 	private CProjectDescriptionDelta createDelta(ICTargetPlatformSetting newTPS, ICTargetPlatformSetting oldTPS) {
 		CProjectDescriptionDelta delta = new CProjectDescriptionDelta(newTPS, oldTPS);
-		if (!Arrays.equals(newTPS.getBinaryParserIds(), oldTPS.getBinaryParserIds()))
-			delta.addChangeFlags(ICDescriptionDelta.BINARY_PARSER_IDS);
+		if (newTPS != null && oldTPS != null) {
+			if (!Arrays.equals(newTPS.getBinaryParserIds(), oldTPS.getBinaryParserIds())) {
+				delta.addChangeFlags(ICDescriptionDelta.BINARY_PARSER_IDS);
+			}
+		} else {
+			if (newTPS != oldTPS) {
+				delta.addChangeFlags(ICDescriptionDelta.ERROR_PARSER_IDS);
+			}
+		}
 
 		return delta.isEmpty() ? null : delta;
 	}

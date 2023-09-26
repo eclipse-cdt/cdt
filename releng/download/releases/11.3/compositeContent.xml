@@ -8,5 +8,6 @@
   </properties>
   <children size='1'>
     <child location='cdt-11.3.0'/>
+    <!-- CDT 11.3.1 is not included as it exists only for releng reasons, see details in https://github.com/eclipse-cdt/cdt/issues/551 -->
   </children>
 </repository>

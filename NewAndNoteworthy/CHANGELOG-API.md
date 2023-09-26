@@ -8,6 +8,25 @@ This section describes API removals that occurred in past releases, and upcoming
 
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
 
+## API Changes in CDT 11.4.
+
+### org.eclipse.tools.templates.freemarker, org.eclipse.tools.templates.freemarker.ui and org.eclipse.tools.templates.freemarker.core major version bumped
+
+The major version numbers of the org.eclipse.tools.templates set of bundles has been bumped to 2.0.0 because of the changes outlined below.
+
+### org.eclipse.tools.templates.freemarker no longer re-exports org.freemarker
+
+The bundle of Freemarker has changed from org.freemarker to org.freemarker.freemarker. As part of
+this the re-exports of freemarker have been removed from org.eclipse.tools.templates.freemarker. 
+
+Consumers of org.eclipse.tools.templates.freemarker now need to add dependencies on freemarker to
+their own plugins. Must likely this will at least be a package import for "freemarker.template"
+
+### org.eclipse.tools.templates.ui no longer re-exports org.eclipse.tools.templates.core
+
+org.eclipse.tools.templates.ui no longer re-exports org.eclipse.tools.templates.core. Consumers
+may now need to add that dependency to their own plugins
+
 ## API Changes in CDT 11.0.
 
 ### org.eclipse.cdt.ui.newui.AbstractPage reduced visibility of many fields
@@ -616,3 +635,13 @@ These APIs will be removed and are replaced by versions with `requestor` paramet
 - org.eclipse.tm.internal.terminal.control.ITerminalViewControl.setTerminalTitle(String)
 
 See https://github.com/eclipse-cdt/cdt/issues/494
+
+## API Removals after December 2025
+
+### Remove unreferenced methods in CDT
+
+These APIs will be removed as they aren't used in CDT and have no known use case outside CDT either.
+
+- org.eclipse.cdt.core.build.CBuildConfiguration.getScannerInfoCache()
+
+See https://github.com/eclipse-cdt/cdt/issues/558

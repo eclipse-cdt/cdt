@@ -11,7 +11,7 @@
 
    SPDX-License-Identifier: EPL-2.0
 -->
-<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="11.3.0.qualifier" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
+<product name="Stand-alone C/C++ GDB Debugger" uid="org.eclipse.cdt.debug.application.product" id="org.eclipse.cdt.debug.application.product" application="org.eclipse.cdt.debug.application.app" version="11.4.0.qualifier" useFeatures="false" includeLaunchers="true" autoIncludeRequirements="true">
 
    <aboutInfo>
       <image path="/org.eclipse.cdt.debug.application/icons/about.png"/>
@@ -406,7 +406,7 @@ Java and all Java-based trademarks are trademarks of Oracle Corporation in the U
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.eclipse.ui.workbench.texteditor"/>
       <plugin id="org.eclipse.urischeme"/>
-      <plugin id="org.freemarker"/>
+      <plugin id="org.freemarker.freemarker"/>
       <plugin id="org.jdom"/>
       <plugin id="org.objectweb.asm"/>
       <plugin id="org.objectweb.asm.commons"/>

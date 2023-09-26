@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt-baseline" sequenceNumber="34">
+<target name="cdt-baseline" sequenceNumber="35">
   <locations>
     <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-      <repository location="https://download.eclipse.org/tools/cdt/releases/latest"/>
+      <repository location="https://download.eclipse.org/tools/cdt/releases/11.3/cdt-11.3.1/"/>
       <unit id="org.eclipse.cdt.autotools.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.cdt.build.crossgcc.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.cdt.cmake.feature.group" version="0.0.0"/>

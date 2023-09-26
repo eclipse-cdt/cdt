@@ -676,7 +676,9 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	/**
 	 * @since 6.1
+	 * @deprecated This method was never used in CDT.
 	 */
+	@Deprecated(forRemoval = true)
 	protected ScannerInfoCache getScannerInfoCache() {
 		return scannerInfoCache;
 	}
@@ -706,7 +708,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		for (int i = 0; i < macroFiles.length; ++i) {
 			macroFiles[i] = macroFileEntries[i].getFullMacroFilePath().toOSString();
 		}
-		return new ExtendedScannerInfo(symbolMap, includes, includeFiles, macroFiles);
+		return new ExtendedScannerInfo(symbolMap, includes, macroFiles, includeFiles);
 	}
 
 	@Override

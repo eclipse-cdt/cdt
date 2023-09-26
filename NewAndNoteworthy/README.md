@@ -2,6 +2,7 @@
 
 What's new and noteworthy in:
 
+- [CDT 11.4/2023-12](CDT-11.4.md)
 - [CDT 11.3/2023-09](CDT-11.3.md)
 - [CDT 11.2/2023-06](CDT-11.2.md)
 - [CDT 11.1/2023-03](CDT-11.1.md)
@@ -14,6 +15,12 @@ What's new and noteworthy in:
 - [CDT 10.2/2021-03](CDT-10.2.md)
 - [CDT 10.1/2020-12](CDT-10.1.md)
 - [CDT 10.0/2020-09](CDT-10.0.md)
+
+## CDT LSP
+
+The [CDT LSP (LSP based C/C++ Editor)](https://github.com/eclipse-cdt/cdt-lsp#readme) provides its own [changelog](https://github.com/eclipse-cdt/cdt-lsp/blob/master/CHANGELOG.md) highlighting its release notes and new and noteworthy entries.
+
+## Older Versions
 
 <details>
 <summary>Older Versions</summary>

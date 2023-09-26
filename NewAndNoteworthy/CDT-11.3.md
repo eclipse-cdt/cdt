@@ -6,6 +6,12 @@ This is the New & Noteworthy page for CDT 11.3 which is part of Eclipse 2023-09 
 
 # Release Notes
 
+## CDT LSP support
+
+Alongside CDT 11.3 the first version of CDT LSP is being released.
+CDT LSP provides Language Server Protocol integration for C/C++.
+Please see the [CDT LSP repo](https://github.com/eclipse-cdt/cdt-lsp#readme) for more details and to track its development.
+
 # Build
 
 ## Default Binary File Viewer

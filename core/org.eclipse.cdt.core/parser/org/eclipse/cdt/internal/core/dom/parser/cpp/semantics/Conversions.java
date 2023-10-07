@@ -99,7 +99,7 @@ public class Conversions {
 	 * @throws DOMException
 	 */
 	public static Cost checkImplicitConversionSequence(IType target, IType exprType, ValueCategory valueCat,
-			UDCMode udc, Context ctx) throws DOMException {
+			UDCMode udc, Context ctx, boolean noNarrowing) throws DOMException {
 		final boolean isImpliedObject = ctx == Context.IMPLICIT_OBJECT_FOR_METHOD_WITHOUT_REF_QUALIFIER
 				|| ctx == Context.IMPLICIT_OBJECT_FOR_METHOD_WITH_REF_QUALIFIER;
 		if (isImpliedObject)
@@ -211,7 +211,7 @@ public class Conversions {
 
 			// 13.3.3.1.7 no temporary object when converting the implicit object parameter
 			if (!isImpliedObject && ctx != Context.REQUIRE_DIRECT_BINDING) {
-				Cost cost = nonReferenceConversion(valueCat, cv2T2, T1, udc);
+				Cost cost = nonReferenceConversion(valueCat, cv2T2, T1, udc, noNarrowing);
 				if (cost.converts()) {
 					cost.setReferenceBinding(refBindingType);
 				}
@@ -232,7 +232,7 @@ public class Conversions {
 		}
 
 		// Non-reference binding
-		return nonReferenceConversion(valueCat, exprType, T1, udc);
+		return nonReferenceConversion(valueCat, exprType, T1, udc, noNarrowing);
 	}
 
 	/**
@@ -297,8 +297,8 @@ public class Conversions {
 	/**
 	 * 8.5-16
 	 */
-	private static Cost nonReferenceConversion(ValueCategory valueCat, IType source, IType target, UDCMode udc)
-			throws DOMException {
+	private static Cost nonReferenceConversion(ValueCategory valueCat, IType source, IType target, UDCMode udc,
+			boolean noNarrowing) throws DOMException {
 		if (source instanceof InitializerListType) {
 			return listInitializationSequence(((InitializerListType) source).getEvaluation(), target, udc, false);
 		}
@@ -321,7 +321,8 @@ public class Conversions {
 			if (udc == UDCMode.FORBIDDEN)
 				return Cost.NO_CONVERSION;
 
-			return copyInitializationOfClass(valueCat, source, (ICPPClassType) uqTarget, udc == UDCMode.DEFER);
+			return copyInitializationOfClass(valueCat, source, (ICPPClassType) uqTarget, udc == UDCMode.DEFER,
+					noNarrowing);
 		}
 
 		if (uqSource instanceof ICPPClassType) {
@@ -329,7 +330,7 @@ public class Conversions {
 				return Cost.NO_CONVERSION;
 
 			return initializationByConversion(valueCat, source, (ICPPClassType) uqSource, target, udc == UDCMode.DEFER,
-					false);
+					false, noNarrowing);
 		}
 
 		return checkStandardConversionSequence(uqSource, target);
@@ -352,7 +353,7 @@ public class Conversions {
 			Cost worstCost = new Cost(arg.getType(), target, Rank.IDENTITY);
 			for (ICPPEvaluation clause : arg.getClauses()) {
 				Cost cost = checkImplicitConversionSequence(listType, clause.getType(), clause.getValueCategory(),
-						UDCMode.ALLOWED, Context.ORDINARY);
+						UDCMode.ALLOWED, Context.ORDINARY, false);
 				if (!cost.converts())
 					return cost;
 				if (cost.isNarrowingConversion()) {
@@ -389,7 +390,7 @@ public class Conversions {
 			final ICPPEvaluation firstArg = args[0];
 			if (!firstArg.isInitializerList()) {
 				Cost cost = checkImplicitConversionSequence(target, firstArg.getType(), firstArg.getValueCategory(),
-						udc, Context.ORDINARY);
+						udc, Context.ORDINARY, false);
 				if (cost.isNarrowingConversion()) {
 					return Cost.NO_CONVERSION;
 				}
@@ -614,24 +615,7 @@ public class Conversions {
 		data.fNoNarrowing = true;
 
 		// 13.3.3.1.4
-		ICPPConstructor[] filteredConstructors = constructors;
-		if (expandedArgs.length == 1) {
-			filteredConstructors = new ICPPConstructor[constructors.length];
-			int j = 0;
-			for (ICPPConstructor ctor : constructors) {
-				if (ctor.getRequiredArgumentCount() < 2) {
-					IType[] ptypes = ctor.getType().getParameterTypes();
-					if (ptypes.length > 0) {
-						IType ptype = getNestedType(ptypes[0], TDEF | REF | CVTYPE);
-						if (!t.isSameType(ptype)) {
-							filteredConstructors[j++] = ctor;
-						}
-					}
-				}
-			}
-		}
-
-		final IBinding result = CPPSemantics.resolveFunction(data, filteredConstructors, true, false);
+		final IBinding result = CPPSemantics.resolveFunction(data, constructors, true, false);
 		final Cost c;
 		if (result instanceof ICPPMethod) {
 			if (!isDirect && ((ICPPMethod) result).isExplicit()) {
@@ -658,8 +642,8 @@ public class Conversions {
 	/**
 	 * 13.3.1.4 Copy-initialization of class by user-defined conversion [over.match.copy]
 	 */
-	static final Cost copyInitializationOfClass(ValueCategory valueCat, IType source, ICPPClassType t, boolean deferUDC)
-			throws DOMException {
+	static final Cost copyInitializationOfClass(ValueCategory valueCat, IType source, ICPPClassType t, boolean deferUDC,
+			boolean noNarrowing) throws DOMException {
 		if (deferUDC) {
 			Cost c = new Cost(source, t, Rank.USER_DEFINED_CONVERSION);
 			c.setDeferredUDC(DeferredUDC.COPY_INIT_OF_CLASS);
@@ -698,8 +682,14 @@ public class Conversions {
 					if (ctor.getRequiredArgumentCount() > 1)
 						continue;
 
-					c1 = new FunctionCost(ctor, checkImplicitConversionSequence(ptype, source, valueCat,
-							UDCMode.FORBIDDEN, Context.ORDINARY));
+					Cost cost = checkImplicitConversionSequence(ptype, source, valueCat, UDCMode.FORBIDDEN,
+							Context.ORDINARY, noNarrowing);
+
+					if (noNarrowing && cost.isNarrowingConversion()) {
+						cost = Cost.NO_CONVERSION;
+					}
+
+					c1 = new FunctionCost(ctor, cost);
 				}
 				int cmp = c1.compareTo(null, cost1, 1);
 				if (cmp <= 0) {
@@ -761,7 +751,7 @@ public class Conversions {
 	 * 13.3.1.5 Initialization by conversion function [over.match.conv]
 	 */
 	static Cost initializationByConversion(ValueCategory valueCat, IType source, ICPPClassType uqSource, IType target,
-			boolean deferUDC, boolean allowExplicitConversion) throws DOMException {
+			boolean deferUDC, boolean allowExplicitConversion, boolean noNarrowing) throws DOMException {
 		if (deferUDC) {
 			Cost c = new Cost(source, target, Rank.USER_DEFINED_CONVERSION);
 			c.setDeferredUDC(DeferredUDC.INIT_BY_CONVERSION);
@@ -783,7 +773,7 @@ public class Conversions {
 				final IType returnType = functionType.getReturnType();
 				IType uqReturnType = getNestedType(returnType, TDEF | ALLCVQ);
 				Cost c2 = checkImplicitConversionSequence(target, uqReturnType,
-						valueCategoryFromReturnType(uqReturnType), UDCMode.FORBIDDEN, Context.ORDINARY);
+						valueCategoryFromReturnType(uqReturnType), UDCMode.FORBIDDEN, Context.ORDINARY, noNarrowing);
 				if (c2.converts()) {
 					if (isExplicitConversion && c2.getRank() != Rank.IDENTITY)
 						continue;

@@ -2983,7 +2983,8 @@ public class CPPTemplates {
 			}
 		}
 
-		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN, Context.ORDINARY);
+		Cost cost = Conversions.checkImplicitConversionSequence(p, a, LVALUE, UDCMode.FORBIDDEN, Context.ORDINARY,
+				false);
 		if (cost == null || !cost.converts()) {
 			ICPPEvaluation eval = arg.getNonTypeEvaluation();
 			ICPPEvaluation newEval = CPPEvaluation.maybeApplyConversion(eval, p, false, true);

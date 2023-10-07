@@ -99,7 +99,7 @@ class AggregateInitialization {
 		}
 
 		Cost costWithoutElision = Conversions.checkImplicitConversionSequence(nestedType, initializer.getType(),
-				initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY);
+				initializer.getValueCategory(), UDCMode.ALLOWED, Context.ORDINARY, false);
 		if (costWithoutElision.converts()) {
 			// p3: The elements of the initializer list are taken as initializers for the elements
 			//     of the aggregate, in order.

@@ -3169,7 +3169,14 @@ public class CPPSemantics {
 
 		if (potentialCosts != null) {
 			for (FunctionCost fnCost : potentialCosts) {
-				if (!fnCost.mustBeWorse(bestFnCost) && fnCost.performUDC()) {
+				if (!fnCost.mustBeWorse(bestFnCost) && fnCost.performUDC(data.fNoNarrowing)) {
+					if (data.fNoNarrowing) {
+						for (int i = 0; i < fnCost.getLength(); ++i) {
+							if (fnCost.getCost(i).isNarrowingConversion()) {
+								continue;
+							}
+						}
+					}
 					int cmp = fnCost.compareTo(tu, bestFnCost, data.getFunctionArgumentCount());
 					if (cmp < 0) {
 						bestFnCost = fnCost;
@@ -3473,7 +3480,7 @@ public class CPPSemantics {
 				Context context = ftype.hasRefQualifier() ? Context.IMPLICIT_OBJECT_FOR_METHOD_WITH_REF_QUALIFIER
 						: Context.IMPLICIT_OBJECT_FOR_METHOD_WITHOUT_REF_QUALIFIER;
 				cost = Conversions.checkImplicitConversionSequence(implicitParameterType, impliedObjectType,
-						impliedObjectValueCategory, UDCMode.FORBIDDEN, context);
+						impliedObjectValueCategory, UDCMode.FORBIDDEN, context, data.fNoNarrowing);
 				if (cost.converts()) {
 					cost.setImpliedObject();
 				} else {
@@ -3530,7 +3537,9 @@ public class CPPSemantics {
 						}
 					}
 				}
-				cost = Conversions.checkImplicitConversionSequence(paramType, argType, argValueCategory, udc, ctx);
+				cost = Conversions.checkImplicitConversionSequence(paramType, argType, argValueCategory, udc, ctx,
+						data.fNoNarrowing);
+				// TODO: see if isNarrowingConversion() is re-checked while performing UDC again later
 				if (data.fNoNarrowing && cost.isNarrowingConversion()) {
 					cost = Cost.NO_CONVERSION;
 				}
@@ -4118,10 +4127,16 @@ public class CPPSemantics {
 				if (initializer == null) {
 					IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) parent).getDeclSpecifier();
 					parent = parent.getParent();
-					if (parent instanceof IASTCompositeTypeSpecifier
+					// (c++11:class.base.init 12.6.2-8) [..no initializer..]
+					//  if the entity is an anonymous union or a variant member, no initialization is performed
+					//  otherwise the entity is default-initialized
+					// (c++11:dcl.init 8.5-7)
+					// if T is a (possibly cv-qualified) class type .. the default constructor for T is called
+					if ((parent instanceof IASTCompositeTypeSpecifier compositeType
+							&& compositeType.getKey() == ICompositeType.k_union)
 							|| declSpec.getStorageClass() == IASTDeclSpecifier.sc_extern) {
-						// No initialization is performed for class members and extern declarations
-						// without an initializer.
+						// No initialization is performed for class members which are of union type,
+						// and for extern declarations without an initializer.
 						return null;
 					}
 				}
@@ -4182,6 +4197,20 @@ public class CPPSemantics {
 		return null;
 	}
 
+	public static IBinding findConstructorForDirectListInitialization(ICPPClassType type, EvalInitList eval,
+			IASTNode typeId) throws DOMException {
+		Cost c = Conversions.listInitializationSequence(eval, type, UDCMode.ALLOWED, true);
+		if (c.converts()) {
+			ICPPFunction f = c.getUserDefinedConversion();
+			if (f instanceof ICPPConstructor) {
+				return f;
+			}
+		} else {
+			return new ProblemBinding(null, typeId, ISemanticProblem.BINDING_NOT_FOUND, type.getConstructors());
+		}
+		return null;
+	}
+
 	private static IBinding findImplicitlyCalledConstructor(ICPPClassType type, IASTInitializer initializer,
 			IASTNode typeId) {
 		pushLookupPoint(typeId);
@@ -4207,10 +4236,10 @@ public class CPPSemantics {
 					}
 					Cost c;
 					if (calculateInheritanceDepth(sourceType, type) >= 0) {
-						c = Conversions.copyInitializationOfClass(isLValue, sourceType, type, false);
+						c = Conversions.copyInitializationOfClass(isLValue, sourceType, type, false, false);
 					} else {
 						c = Conversions.checkImplicitConversionSequence(type, sourceType, isLValue, UDCMode.ALLOWED,
-								Context.ORDINARY);
+								Context.ORDINARY, false);
 					}
 					if (c.converts()) {
 						ICPPFunction f = c.getUserDefinedConversion();
@@ -4225,7 +4254,7 @@ public class CPPSemantics {
 			} else if (initializer instanceof ICPPASTInitializerList) {
 				// List initialization.
 				ICPPEvaluation eval = ((ICPPASTInitializerClause) initializer).getEvaluation();
-				if (eval instanceof EvalInitList) {
+				if (eval instanceof EvalInitList evalInitList) {
 					if (CPPTemplates.isDependentType(eval.getType())) {
 						ICPPEvaluation[] clauses = ((EvalInitList) eval).getClauses();
 						IType[] tmp = new IType[clauses.length];
@@ -4235,14 +4264,9 @@ public class CPPSemantics {
 						setTargetedFunctionsToUnknown(tmp);
 						return CPPDeferredFunction.createForCandidates(type.getConstructors());
 					}
-					Cost c = Conversions.listInitializationSequence((EvalInitList) eval, type, UDCMode.ALLOWED, true);
-					if (c.converts()) {
-						ICPPFunction f = c.getUserDefinedConversion();
-						if (f instanceof ICPPConstructor)
-							return f;
-					} else {
-						return new ProblemBinding(null, typeId, ISemanticProblem.BINDING_NOT_FOUND,
-								type.getConstructors());
+					IBinding b = findConstructorForDirectListInitialization(type, evalInitList, typeId);
+					if (b != null) {
+						return b;
 					}
 				}
 			} else if (initializer instanceof ICPPASTConstructorInitializer) {

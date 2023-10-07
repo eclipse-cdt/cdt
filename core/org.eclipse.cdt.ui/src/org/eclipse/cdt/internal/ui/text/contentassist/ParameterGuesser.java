@@ -180,7 +180,7 @@ public class ParameterGuesser {
 	private boolean isImplicitlyConvertible(IType orginType, IType candidateType) {
 		try {
 			Cost cost = Conversions.checkImplicitConversionSequence(orginType, candidateType, ValueCategory.LVALUE,
-					UDCMode.ALLOWED, Context.ORDINARY);
+					UDCMode.ALLOWED, Context.ORDINARY, false);
 			if (cost.converts())
 				return true;
 		} catch (DOMException e) {

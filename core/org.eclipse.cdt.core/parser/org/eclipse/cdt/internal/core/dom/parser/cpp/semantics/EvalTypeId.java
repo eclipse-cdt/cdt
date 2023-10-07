@@ -35,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameterMap;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
@@ -234,7 +233,9 @@ public class EvalTypeId extends CPPDependentEvaluation {
 	}
 
 	private boolean computeIsConstantExpression() {
-		if (getConstructor() == null && fArguments.length == 1) {
+		ICPPFunction constructor = getConstructor();
+
+		if (constructor == null && fArguments.length == 1) {
 			// maybe EvalTypeID represents a conversion
 			ICPPEvaluation conversionEval = maybeApplyConversion(fArguments[0], fInputType, false, false);
 			if (isEquivalentTo(conversionEval)) {
@@ -244,9 +245,13 @@ public class EvalTypeId extends CPPDependentEvaluation {
 
 			if (!conversionEval.isConstantExpression())
 				return false;
+		} else if (constructor == AGGREGATE_INITIALIZATION) {
+			// A literal type is one for which it might be possible to create an object within a constant expression.
+			// See also CPPImplicitConstructor.isConstExpr()
+			return getInputType() instanceof ICPPClassType classType && TypeTraits.isLiteralClass(classType);
 		}
-		return !fRepresentsNewExpression && areAllConstantExpressions(fArguments)
-				&& isNullOrConstexprFunc(getConstructor());
+
+		return !fRepresentsNewExpression && areAllConstantExpressions(fArguments) && isNullOrConstexprFunc(constructor);
 	}
 
 	@Override
@@ -285,38 +290,35 @@ public class EvalTypeId extends CPPDependentEvaluation {
 			return null;
 
 		IType simplifiedType = SemanticUtil.getNestedType(fInputType, TDEF | CVTYPE);
-		if (simplifiedType instanceof ICPPClassType) {
-			ICPPClassType classType = (ICPPClassType) simplifiedType;
-			ICPPEvaluation[] arguments = fArguments;
-			ICPPConstructor[] constructors = classType.getConstructors();
-			if (fUsesBracedInitList && arguments.length > 0) {
-				// List-initialization of a class (dcl.init.list-3).
-				// e.g. A{1,2}
-				ICPPConstructor[] ctors = getInitializerListConstructors(constructors);
-				if (ctors.length != 0) {
-					constructors = ctors;
-					arguments = new EvalInitList[] { new EvalInitList(arguments, getTemplateDefinition()) };
+		if (simplifiedType instanceof ICPPClassType classType) {
+			if (fUsesBracedInitList) {
+				// (dcl.init.list)
+				EvalInitList evalInitList = new EvalInitList(fArguments, getTemplateDefinition());
+
+				try {
+					// List-initialization of a class (dcl.init.list-3).
+					// e.g. A{1,2}
+					IBinding binding = CPPSemantics.findConstructorForDirectListInitialization(classType, evalInitList,
+							null);
+					if (binding instanceof ICPPConstructor constructor) {
+						return constructor;
+					} else if (binding instanceof IProblemBinding) {
+						return new CPPFunction.CPPFunctionProblem(null, ISemanticProblem.BINDING_NOT_FOUND,
+								classType.getNameCharArray());
+					} else if (TypeTraits.isAggregateClass(classType)) {
+						// If Conversions.listInitializationSequence() did not returned problem binding,
+						// this is a list-initialization of aggregate class, and there is no constructor.
+						return AGGREGATE_INITIALIZATION;
+					}
+				} catch (DOMException e) {
+					CCorePlugin.log(e);
 				}
-			} else if (arguments.length == 1 && arguments[0] instanceof EvalInitList && !fUsesBracedInitList) {
-				// List-initialization of a class (dcl.init.list-3).
-				// e.g. A({1,2})
-				if (TypeTraits.isAggregateClass(classType)) {
-					// Pretend that aggregate initialization is calling the default constructor.
-					return findDefaultConstructor(classType, constructors);
-				}
-				if (((EvalInitList) arguments[0]).getClauses().length == 0) {
-					ICPPMethod ctor = findDefaultConstructor(classType, constructors);
-					if (ctor != null)
-						return ctor;
-				}
-				ICPPConstructor[] ctors = getInitializerListConstructors(constructors);
-				if (ctors.length != 0) {
-					constructors = ctors;
-				} else {
-					arguments = ((EvalInitList) arguments[0]).getClauses();
-				}
+
+				return null;
 			}
 
+			ICPPEvaluation[] arguments = fArguments;
+			ICPPConstructor[] constructors = classType.getConstructors();
 			LookupData data = new LookupData(classType.getNameCharArray(), null, CPPSemantics.getCurrentLookupPoint());
 			data.foundItems = constructors;
 			data.setFunctionArguments(false, arguments);

@@ -306,7 +306,7 @@ public class EvalConditional extends CPPDependentEvaluation {
 			if (vcat2.isGLValue()) {
 				IType target = new CPPReferenceType(t2, vcat2 == XVALUE);
 				Cost c = Conversions.checkImplicitConversionSequence(target, t1, vcat1, UDCMode.ALLOWED,
-						Context.REQUIRE_DIRECT_BINDING);
+						Context.REQUIRE_DIRECT_BINDING, false);
 				if (c.converts()) {
 					fType = t2;
 					fValueCategory = vcat2;
@@ -333,7 +333,8 @@ public class EvalConditional extends CPPDependentEvaluation {
 			if (vcat2 != PRVALUE) {
 				t2 = Conversions.lvalue_to_rvalue(t2, false);
 			}
-			Cost c = Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY);
+			Cost c = Conversions.checkImplicitConversionSequence(t2, t1, vcat1, UDCMode.ALLOWED, Context.ORDINARY,
+					false);
 			if (c.converts()) {
 				fType = t2;
 				fValueCategory = PRVALUE;

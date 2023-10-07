@@ -98,7 +98,7 @@ class FunctionCost {
 		return false;
 	}
 
-	public boolean performUDC() throws DOMException {
+	public boolean performUDC(boolean noNarrowing) throws DOMException {
 		for (int i = 0; i < fCosts.length; i++) {
 			Cost cost = fCosts[i];
 			Cost udcCost = null;
@@ -107,12 +107,12 @@ class FunctionCost {
 				continue;
 			case COPY_INIT_OF_CLASS:
 				udcCost = Conversions.copyInitializationOfClass(fValueCategories[i], cost.source,
-						(ICPPClassType) cost.target, false);
+						(ICPPClassType) cost.target, false, noNarrowing);
 				break;
 			case INIT_BY_CONVERSION:
 				IType uqSource = getNestedType(cost.source, TDEF | REF | CVTYPE);
 				udcCost = Conversions.initializationByConversion(fValueCategories[i], cost.source,
-						(ICPPClassType) uqSource, cost.target, false, allowsContextualBooleanConversion());
+						(ICPPClassType) uqSource, cost.target, false, allowsContextualBooleanConversion(), noNarrowing);
 				break;
 			case LIST_INIT_OF_CLASS:
 				udcCost = Conversions.listInitializationOfClass(((InitializerListType) cost.source).getEvaluation(),
@@ -126,6 +126,7 @@ class FunctionCost {
 				return false;
 			}
 			fCosts[i] = udcCost;
+
 			if (!udcCost.converts()) {
 				return false;
 			}

@@ -16,6 +16,7 @@ import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
@@ -147,13 +148,24 @@ public final class CompositeValue implements IValue {
 		ICPPEvaluation[] values = new ICPPEvaluation[fields.length];
 		ICPPEvaluation[] clauses = initList.getClauses();
 		for (int i = 0; i < fields.length; i++) {
-			if (i == clauses.length)
-				break;
 			IField field = fields[i];
-			ICPPEvaluation eval = clauses[i];
 			IType fieldType = field.getType();
-			IValue value = getValue(fieldType, eval);
-			values[i] = new EvalFixed(fieldType, eval.getValueCategory(), value);
+			IValue value;
+			ValueCategory valueCategory;
+			if (i < clauses.length) {
+				ICPPEvaluation eval = clauses[i];
+				value = getValue(fieldType, eval);
+				valueCategory = eval.getValueCategory();
+			} else {
+				// (dcl.init.aggr-7) from brace-or-equal-initializer or from {}
+				value = field.getInitialValue();
+				// Writing IntegralValue.UNKNOWN to PDOM stores null, convert it back
+				if (value == null || value == IntegralValue.UNKNOWN) {
+					value = IntegralValue.create(0);
+				}
+				valueCategory = ValueCategory.PRVALUE;
+			}
+			values[i] = new EvalFixed(fieldType, valueCategory, value);
 		}
 		return new CompositeValue(initList, values);
 	}

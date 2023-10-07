@@ -195,7 +195,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			ValueCategory valueCategory = argument.getValueCategory();
 			if (uqType instanceof ICPPClassType) {
 				Cost cost = Conversions.initializationByConversion(valueCategory, type, (ICPPClassType) uqType,
-						targetType, false, allowContextualConversion);
+						targetType, false, allowContextualConversion, false);
 				ICPPFunction conversion = cost.getUserDefinedConversion();
 				if (conversion != null) {
 					if (onlyConstexprConversion && !conversion.isConstexpr()) {
@@ -210,7 +210,7 @@ public abstract class CPPEvaluation implements ICPPEvaluation {
 			// Source type is not a class type, or is but a conversion operator wasn't used.
 			// Check for standard conversions.
 			Cost cost = Conversions.checkImplicitConversionSequence(targetType, type, valueCategory, UDCMode.FORBIDDEN,
-					Context.ORDINARY);
+					Context.ORDINARY, false);
 			if (!cost.converts()) {
 				return EvalFixed.INCOMPLETE;
 			} else if (cost.getRank() == Rank.CONVERSION) {

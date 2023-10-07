@@ -18,7 +18,6 @@ import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.double_;
 import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.int_;
 
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 
 import junit.framework.TestSuite;
 
@@ -26,53 +25,9 @@ import junit.framework.TestSuite;
  * AST tests for C++17 deduction guides via PDOM.
  */
 public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTestBase {
-	private static void cxx17SetUp() {
-		// Deduction guides are now enabled unconditionally
-	}
-
-	private static void cxx17TearDown() {
-		TestScannerProvider.clear();
-	}
-
-	public class Cxx17ReferencedProject extends ReferencedProject {
-		public Cxx17ReferencedProject() {
-			super(true /* cpp */);
-		}
-
-		@Override
-		public void setUp() throws Exception {
-			cxx17SetUp();
-			super.setUp();
-		}
-
-		@Override
-		public void tearDown() throws Exception {
-			super.tearDown();
-			cxx17TearDown();
-		}
-	}
-
-	public class Cxx17SinglePDOMTestStrategy extends SinglePDOMTestStrategy {
-		public Cxx17SinglePDOMTestStrategy() {
-			super(true /* cpp */);
-		}
-
-		@Override
-		public void setUp() throws Exception {
-			cxx17SetUp();
-			super.setUp();
-		}
-
-		@Override
-		public void tearDown() throws Exception {
-			super.tearDown();
-			cxx17TearDown();
-		}
-	}
-
 	public static class IndexDeductionGuideTestSingleProject extends IndexDeductionGuideTest {
 		public IndexDeductionGuideTestSingleProject() {
-			setStrategy(new Cxx17SinglePDOMTestStrategy());
+			setStrategy(new SinglePDOMTestStrategy(true /* cpp */));
 		}
 
 		public static TestSuite suite() {
@@ -80,9 +35,19 @@ public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTest
 		}
 	}
 
+	public static class IndexDeductionGuideTestSingleProjectReindexed extends IndexDeductionGuideTest {
+		public IndexDeductionGuideTestSingleProjectReindexed() {
+			setStrategy(new SinglePDOMReindexedTestStrategy(true /* cpp */));
+		}
+
+		public static TestSuite suite() {
+			return suite(IndexDeductionGuideTestSingleProjectReindexed.class);
+		}
+	}
+
 	public static class IndexDeductionGuideTestProjectWithDepProj extends IndexDeductionGuideTest {
 		public IndexDeductionGuideTestProjectWithDepProj() {
-			setStrategy(new Cxx17ReferencedProject());
+			setStrategy(new ReferencedProject(true /* cpp */));
 		}
 
 		public static TestSuite suite() {
@@ -92,6 +57,7 @@ public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTest
 
 	public static void addTests(TestSuite suite) {
 		suite.addTest(IndexDeductionGuideTestSingleProject.suite());
+		suite.addTest(IndexDeductionGuideTestSingleProjectReindexed.suite());
 		suite.addTest(IndexDeductionGuideTestProjectWithDepProj.suite());
 	}
 
@@ -134,5 +100,42 @@ public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTest
 		assertType(getBindingFromASTName("init{", 4), varDouble.getType());
 
 		assertType(getBindingFromASTName("convert(", 7), varDouble.getType());
+	}
+
+	//	#pragma once
+	//
+	//	namespace test
+	//	{
+	//	typedef double result_t;
+	//	template<typename _Tp = void> struct Dependent;
+	//	}
+	//
+	//	template<typename _Key, typename _Equal> struct Intermediate
+	//	{
+	//	public:
+	//	    typedef test::result_t result_type;
+	//	};
+	//
+	//	template<typename _Key, typename _Dependent = test::Dependent<_Key>>
+	//	class Base {
+	//	    typedef Intermediate<_Key, _Dependent> _Intermediate;
+	//
+	//	public:
+	//	    typedef typename _Intermediate::result_type result_type;
+	//	};
+
+	//	using BaseType = Base<int>::result_type; // test marker
+	//
+	//	namespace test_std_alternative {
+	//	template<typename A, typename B>
+	//	class Unrelated;
+	//
+	//	  using namespace test;
+	//	  template<typename _KeyInUnrelated>
+	//	  Unrelated(_KeyInUnrelated)
+	//	    -> Unrelated<_KeyInUnrelated, Dependent<_KeyInUnrelated>>;
+	//	}
+	public void testDeductionGuideTemplateIssue438() throws Exception {
+		getBindingFromASTName("Base<int>::result_type; // test marker", 22);
 	}
 }

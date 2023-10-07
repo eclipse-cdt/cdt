@@ -631,13 +631,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 
 			setTestSpecificFlags(sourceContents);
 
-			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), headerContents);
-			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
-			waitForIndexer(cproject);
-
-			IFile cppfile = TestSourceReader.createFile(cproject.getProject(),
-					new Path("references.c" + (cpp ? "pp" : "")), sourceContents);
-			waitForIndexer(cproject);
+			IFile cppfile = createSourceFilesAndIndex(headerContents, sourceContents);
 
 			if (DEBUG) {
 				System.out.println("Project PDOM: " + getName());
@@ -648,6 +642,18 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 
 			index.acquireReadLock();
 			ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
+		}
+
+		IFile createSourceFilesAndIndex(String headerContents, String sourceContents) throws Exception {
+			IFile file = TestSourceReader.createFile(cproject.getProject(), new Path("header.h"), headerContents);
+			CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
+			waitForIndexer(cproject);
+
+			IFile cppfile = TestSourceReader.createFile(cproject.getProject(),
+					new Path("references.c" + (cpp ? "pp" : "")), sourceContents);
+			waitForIndexer(cproject);
+
+			return cppfile;
 		}
 
 		@Override
@@ -669,6 +675,35 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		@Override
 		public boolean isCompositeIndex() {
 			return false;
+		}
+
+		protected boolean getIsCPP() {
+			return cpp;
+		}
+	}
+
+	/**
+	 * This strategy is similar to SinglePDOMTestStrategy but it does reindex project after adding all files.
+	 */
+	protected class SinglePDOMReindexedTestStrategy extends SinglePDOMTestStrategy {
+
+		public SinglePDOMReindexedTestStrategy(boolean cpp) {
+			super(cpp);
+		}
+
+		@Override
+		IFile createSourceFilesAndIndex(String headerContents, String sourceContents) throws Exception {
+			CCorePlugin.getIndexManager().setIndexerId(getCProject(), IPDOMManager.ID_FAST_INDEXER);
+			waitForIndexer(getCProject());
+
+			TestSourceReader.createFile(getCProject().getProject(), new Path("header.h"), headerContents);
+			IFile cppfile = TestSourceReader.createFile(getCProject().getProject(),
+					new Path("references.c" + (getIsCPP() ? "pp" : "")), sourceContents);
+
+			CCorePlugin.getIndexManager().reindex(getCProject());
+			waitForIndexer(getCProject());
+
+			return cppfile;
 		}
 	}
 

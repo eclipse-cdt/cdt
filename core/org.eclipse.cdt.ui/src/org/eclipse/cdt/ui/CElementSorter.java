@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
+ *     John Dallaway - sort external translation units by name (#563)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -28,6 +29,7 @@ import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.IMethodDeclaration;
 import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
@@ -316,7 +318,11 @@ public class CElementSorter extends ViewerSorter {
 		String name1;
 		String name2;
 
-		if (e1 instanceof ICElement) {
+		if ((e1 instanceof ITranslationUnit tu) && (null == tu.getResource())) {
+			// an external translation unit - sort by filename only (not path)
+			IPath location = tu.getLocation();
+			name1 = (null == location) ? tu.getElementName() : location.lastSegment();
+		} else if (e1 instanceof ICElement) {
 			name1 = ((ICElement) e1).getElementName();
 			int idx = name1.lastIndexOf("::"); //$NON-NLS-1$
 			if (idx >= 0) {
@@ -331,7 +337,11 @@ public class CElementSorter extends ViewerSorter {
 		} else {
 			name1 = e1.toString();
 		}
-		if (e2 instanceof ICElement) {
+		if ((e2 instanceof ITranslationUnit tu) && (null == tu.getResource())) {
+			// an external translation unit - sort by filename only (not path)
+			IPath location = tu.getLocation();
+			name2 = (null == location) ? tu.getElementName() : location.lastSegment();
+		} else if (e2 instanceof ICElement) {
 			name2 = ((ICElement) e2).getElementName();
 			int idx = name2.lastIndexOf("::"); //$NON-NLS-1$
 			if (idx >= 0) {

@@ -11607,4 +11607,14 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testRecognizeConstructorWithSemicolonAfterBody() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}
+
+	//	template<typename T>
+	//	void f() {
+	//		struct S {
+	//			T t;
+	//		} s {};
+	//	};
+	public void testAllowAggregateInitializationInTemplateBody() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 }

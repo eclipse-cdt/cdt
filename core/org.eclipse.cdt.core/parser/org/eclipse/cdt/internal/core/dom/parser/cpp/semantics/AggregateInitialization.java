@@ -64,7 +64,11 @@ class AggregateInitialization {
 	 * else recurses into the subaggregate.
 	 */
 	private Cost checkElement(IType type, IValue initialValue, Cost worstCost) throws DOMException {
-		assert !CPPTemplates.isDependentType(type);
+		if (CPPTemplates.isDependentType(type)) {
+			// We can only get here looking for initialization constructor while scanning for implicit names.
+			// Return trivial conversion cost and no constructor because type is unknown at this point.
+			return new Cost(type, type, Rank.IDENTITY);
+		}
 		IType nestedType = SemanticUtil.getNestedType(type, SemanticUtil.TDEF);
 		if (fIndex >= fInitializers.length)
 			// TODO for arrays we could short-circuit default init instead of trying to init each element

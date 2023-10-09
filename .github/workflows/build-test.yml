@@ -33,6 +33,7 @@ jobs:
         maven-version: 3.9.2
     - name: Install GCC & GDB & other build essentials
       run: |
+        sudo apt-get update
         sudo apt-get -y install build-essential gcc g++ gdb gdbserver
         gdb --version
         gcc --version

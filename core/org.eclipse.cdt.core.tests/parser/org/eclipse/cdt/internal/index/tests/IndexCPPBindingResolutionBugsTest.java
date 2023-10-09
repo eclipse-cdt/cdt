@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1412,6 +1412,39 @@ public abstract class IndexCPPBindingResolutionBugsTest extends IndexBindingReso
 	// 	new MyInnerClass(true, true);
 	// }
 	public void testIssue_254() throws Exception {
+		checkBindings();
+	}
+
+	// // no header needed
+
+	//	void introducing_in_global_ns(struct struct_in_global_ns *arg) {}
+	//
+	//	class UsingStructFromGlobalNamespace {
+	//		struct_in_global_ns *p;
+	//	};
+	//
+	//	UsingStructFromGlobalNamespace usingStructFromGlobalNs;
+	//
+	//	namespace named {
+	//	void introducing_in_named_ns(struct struct_in_named_ns *arg) {}
+	//	}
+	//
+	//	class UsingStructFromNamespaceNs {
+	//		named::struct_in_named_ns *p;
+	//	};
+	//
+	//	UsingStructFromNamespaceNs usingStructFromNamespaceNs;
+	//
+	//	namespace {
+	//	void introducing_in_anonymous_ns(struct struct_in_anonymous_ns *arg) {}
+	//	}
+	//
+	//	class UsingStructFromAnonymousNs {
+	//		struct_in_anonymous_ns *p;
+	//	};
+	//
+	//	UsingStructFromAnonymousNs usingStructFromAnonymousNs;
+	public void testStructNameIntroducedInNamespace() throws Exception {
 		checkBindings();
 	}
 }

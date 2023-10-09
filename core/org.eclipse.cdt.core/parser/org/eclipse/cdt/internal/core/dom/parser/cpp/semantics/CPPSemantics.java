@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2023 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2513,7 +2513,7 @@ public class CPPSemantics {
 				IIndexFileSet indexFileSet = tu.getIndexFileSet();
 				if (indexFileSet != null && indexFileSet.containsDeclaration(indexBinding)) {
 					return true;
-				} else if (indexBinding instanceof ICPPConstructor) {
+				} else if (indexBinding instanceof ICPPConstructor || indexBinding instanceof ICPPClassType) {
 					IIndexFileSet astFileSet = tu.getASTFileSet();
 					return astFileSet != null && astFileSet.containsDeclaration(indexBinding);
 				} else {

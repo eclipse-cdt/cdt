@@ -4429,6 +4429,17 @@
          </enablement>
       </decorator>
       <decorator
+            class="org.eclipse.cdt.internal.ui.viewsupport.TranslationUnitDecorator"
+            id="org.eclipse.cdt.ui.translationUnit"
+            label="%translationUnitDecorator.label"
+            lightweight="true"
+            state="true">
+         <description>%translationUnitDecorator.description</description>
+         <enablement>
+            <objectClass name="org.eclipse.cdt.core.model.ITranslationUnit"/>
+         </enablement>
+      </decorator>
+      <decorator
             adaptable="true"
             class="org.eclipse.cdt.internal.ui.viewsupport.ExcludedFileDecorator"
             id="org.eclipse.cdt.managedbuilder.ui.excludedFile"

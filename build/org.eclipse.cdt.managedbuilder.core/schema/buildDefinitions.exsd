@@ -145,9 +145,6 @@
                <documentation>
                   The identifier of a projectType, that project types loaded using this definition should be converted to. MBS will invoke a proper converter.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/projectType/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="buildProperties" type="string">
@@ -199,9 +196,6 @@ Specifying this attribute is fully equivalent to specifying the &quot;org.eclips
                <documentation>
                   The id of the projectType that this project is an instance of.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/projectType/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -387,9 +381,6 @@ Specifying this attribute is fully equivalent to specifying the &quot;org.eclips
                <documentation>
                   The id of a toolChain that this toolChain is derived from.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/toolChain/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isAbstract" type="boolean" use="default" value="false">
@@ -497,9 +488,6 @@ Specifying this attribute is fully equivalent to specifying the &quot;org.eclips
                <documentation>
                   The identifier of a tool-chain, that tool-chains loaded using this definition should be converted to. MBS will invoke a proper converter.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/toolChain/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="optionPathConverter" type="string">
@@ -629,9 +617,6 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                <documentation>
                   The id of a tool that this tool is derived from.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/tool/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isAbstract" type="boolean" use="default" value="false">
@@ -799,9 +784,6 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                <documentation>
                   The identifier of a tool, that tools loaded using this definition should be converted to. MBS will invoke a proper converter.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/tool/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="optionPathConverter" type="string">
@@ -872,9 +854,6 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                <documentation>
                   The id of an input-type that this input-type is derived from.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/tool/inputType/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="sourceContentType" type="string">
@@ -882,9 +861,6 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                <documentation>
                   The id of an Eclipse content type that describes this type of input.  Either this attribute or the sources attribute must be specified by this element or a superclass.  If both are specified, and the content type specified here is defined by Eclipse, the sources attribute is not used.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="sources" type="string">
@@ -913,9 +889,6 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                <documentation>
                   The id of an Option element that is used on the command line to identify inputs of this type.  If specified, the name(s) of the input files for this input type are taken from the value specified for the option.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/toolChain/option/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="assignToOption" type="string">
@@ -923,9 +896,6 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
                <documentation>
                   The id of an Option element whose value is to be assigned to the file(s) calculated for this input type.  The default is not to assign the input file(s) to a command line option but to assign the files to the ${Inputs} part of the command line.  Note that the option value is only updated during build file generation and therefore could be out of sync with the project until build file generation occurs.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/toolChain/option/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="multipleOfType" type="boolean">
@@ -973,9 +943,6 @@ The pathConverter of a toolchain applies for all tools of the toolchain except i
 
 The value of this attribute is used only in case languageInfoCalculator is not specified
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.core.language/language/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="languageInfoCalculator" type="string">
@@ -1089,9 +1056,6 @@ Overrides language id specified with the languageId attribute.
                <documentation>
                   The id of an output-type that this output-type is derived from.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/tool/outputType/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="outputContentType" type="string">
@@ -1099,9 +1063,6 @@ Overrides language id specified with the languageId attribute.
                <documentation>
                   The id of an Eclipse content type that describes this type of output.  Either this attribute or the outputs attribute must be specified by this element or a superclass.  If both are specified, and the content type specified here is defined by Eclipse, the outputs attribute is not used.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="outputs" type="string">
@@ -1116,9 +1077,6 @@ Overrides language id specified with the languageId attribute.
                <documentation>
                   The id of an Option element that is used on the command line to specify this output. The default is to use the Tool outputFlag attribute if primaryOutput is True. If option is not specified, and primaryOutput is False, then the output file(s) of this outputType are not added to the command line.  If specified, the nameProvider, namePattern and outputNames are ignored.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/toolChain/option/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="multipleOfType" type="boolean">
@@ -1133,9 +1091,6 @@ Overrides language id specified with the languageId attribute.
                <documentation>
                   The id of the input type that is used in determining the build &quot;rules&quot; for the output type and for the default name of the output file.  The default is the input type with primaryInput == true.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/tool/inputType/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="primaryOutput" type="boolean">
@@ -1282,9 +1237,6 @@ Options can also be associated with a toolchain. However in such a case the opti
                <documentation>
                   The id of an option that this option is derived from.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/toolChain/option/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isAbstract" type="boolean" use="default" value="false">
@@ -1306,9 +1258,6 @@ Options can also be associated with a toolchain. However in such a case the opti
                <documentation>
                   The id of the option category for this option. The id can be the id of the tool which is also a category.  The default category is the parent tool.  Note that an optionCategory id must be supplied as the value for an option that is a child of a toolChain.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/toolChain/optionCategory/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="resourceFilter" use="default" value="all">
@@ -1468,7 +1417,7 @@ Additional special types exist to flag options of special relevance to the build
          <attribute name="excludeFromScannerDiscovery" type="boolean">
             <annotation>
                <documentation>
-                  An optional field to allow the option to be excluded from scanner discovery&apos;s ${ALL_FLAGS} variable. The default is false.
+                  An optional field to allow the option to be excluded from scanner discovery's ${ALL_FLAGS} variable. The default is false.
                </documentation>
             </annotation>
          </attribute>
@@ -1767,9 +1716,6 @@ Default is true (leaf nodes only).
                <documentation>
                   The id of a builder that this builder is derived from.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/builder/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isAbstract" type="boolean" use="default" value="false">
@@ -1943,9 +1889,6 @@ If this attribute is not specified, MBS will assume that there are no reserved m
                <documentation>
                   The identifier of a builder, that builders loaded using this definition should be converted to. MBS will invoke a proper converter.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/builder/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="supportsManagedBuild" type="boolean">
@@ -2069,9 +2012,6 @@ A positive number or value &quot;optimal&quot; or &quot;unlimited&quot; are reco
                <documentation>
                   The id of a target platform that this target platform is derived from.
                </documentation>
-               <appInfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.cdt.managedbuilder.core.buildDefinitions/targetPlatform/@id"/>
-               </appInfo>
             </annotation>
          </attribute>
          <attribute name="isAbstract" type="boolean" use="default" value="false">

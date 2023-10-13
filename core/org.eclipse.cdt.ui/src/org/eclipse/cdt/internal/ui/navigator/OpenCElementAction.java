@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2023 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Ed Swartz (Nokia)
+ *     John Dallaway - do not handle absent external translation units (#563)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.navigator;
 
@@ -76,7 +77,10 @@ public class OpenCElementAction extends OpenFileAction {
 				element = ((IAdaptable) element).getAdapter(ICElement.class);
 			}
 			if (element instanceof ICElement && (element instanceof ISourceReference || element instanceof IBinary)) {
-				fOpenElement = (ICElement) element;
+				// do not handle absent external translation units
+				if (!(element instanceof ITranslationUnit tu) || (null != tu.getResource()) || tu.exists()) {
+					fOpenElement = (ICElement) element;
+				}
 			}
 		}
 		return fOpenElement != null || super.updateSelection(selection);

@@ -4205,6 +4205,12 @@
           name="%HideNonCElements.label"/>
     <commonFilter
           activeByDefault="true"
+          class="org.eclipse.cdt.internal.ui.filters.AbsentTranslationUnitFilter"
+          description="%HideAbsentTranslationUnit.description"
+          id="org.eclipse.cdt.ui.navigator.filters.AbsentTranslationUnitFilter"
+          name="%HideAbsentTranslationUnit.label"/>
+    <commonFilter
+          activeByDefault="true"
           class="org.eclipse.cdt.internal.ui.filters.AnonymousStructFilter"
           description="%HideAnonymousStruct.description"
           id="org.eclipse.cdt.ui.navigator.filters.AnonymousStructFilter"

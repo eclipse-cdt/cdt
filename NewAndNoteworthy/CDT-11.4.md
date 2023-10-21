@@ -6,6 +6,17 @@ This is the New & Noteworthy page for CDT 11.4 which is part of Eclipse 2023-12 
 
 # Release Notes
 
+# Build
+
+## Source and header file presentation
+
+The presentation of translation unit file information under an executable file within the _Project Explorer_ view has been improved. This information is obtained from debug records within the executable file. The file names are now sorted correctly. The icons for _external_ translation unit files (those residing outside the current Eclipse workspace) are now decorated with a folder image. Source and header files that are not present in the local file system are now shown with gray text:
+
+<p align="center"><img src="images/CDT-11.4-tu-decoration.png" width="25%"></p>
+
+Users can opt to show or hide absent translation unit files using a new _Absent C/C++ translation unit files_ viewer filter:
+
+<p align="center"><img src="images/CDT-11.4-absent-tu-filter.png" width="40%"></p>
 
 # API Changes, current and planned
 

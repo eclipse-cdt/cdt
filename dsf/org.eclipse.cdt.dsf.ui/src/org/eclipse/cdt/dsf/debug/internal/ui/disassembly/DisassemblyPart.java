@@ -2126,8 +2126,10 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		fPCHistory.clear();
 		fPendingPCUpdates.clear();
 		fFile2Storage.clear();
-		fDocument.clear();
+		var oldDocument = fDocument;
+		fDocument = createDocument();
 		fViewer.setDocument(fDocument, new AnnotationModel());
+		oldDocument.dispose();
 		if (fDebugSessionId != null) {
 			attachBreakpointsAnnotationModel();
 			attachExtendedPCAnnotationModel();

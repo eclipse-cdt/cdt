@@ -33,14 +33,12 @@ import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyDocument;
 import org.eclipse.cdt.debug.internal.ui.disassembly.dsf.LabelPosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.SourcePosition;
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.REDDocument;
-import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.text.REDTextStore;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
-import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentRewriteSession;
 import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
@@ -127,16 +125,6 @@ public class DisassemblyDocument extends REDDocument implements IDisassemblyDocu
 		fFileInfoMap.clear();
 		fInvalidAddressRanges.clear();
 		fInvalidSource.clear();
-	}
-
-	/**
-	 * Clears all content and state.
-	 */
-	public void clear() {
-		dispose();
-		setTextStore(new REDTextStore());
-		setLineTracker(new DefaultLineTracker());
-		completeInitialization();
 	}
 
 	public AddressRangePosition[] getInvalidAddressRanges() {

@@ -344,7 +344,7 @@ public class DisassemblyViewer extends SourceViewer implements IPropertyChangeLi
 				}
 			}
 		} catch (BadLocationException ble) {
-			throw new IllegalArgumentException(ble.getLocalizedMessage());
+			throw new IllegalArgumentException(ble.getLocalizedMessage(), ble);
 		}
 	}
 

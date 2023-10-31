@@ -37,8 +37,7 @@ public class RulerToggleBreakpointActionDelegate extends AbstractDisassemblyRule
 		if (fDelegate != null) {
 			fDelegate.dispose();
 		}
-		return fDelegate = new ToggleBreakpointAction(disassemblyPart, disassemblyPart.getTextViewer().getDocument(),
-				rulerInfo);
+		return fDelegate = new ToggleBreakpointAction(disassemblyPart, null, rulerInfo);
 	}
 
 	/*

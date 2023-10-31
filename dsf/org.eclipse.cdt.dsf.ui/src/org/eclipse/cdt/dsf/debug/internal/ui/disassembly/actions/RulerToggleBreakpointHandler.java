@@ -18,7 +18,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.ui.actions.ToggleBreakpointAction;
-import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IWorkbenchPart;
@@ -36,11 +35,9 @@ public class RulerToggleBreakpointHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart part = HandlerUtil.getActivePartChecked(event);
 		if (part instanceof IDisassemblyPart) {
-			IDisassemblyPart disassemblyPart = (IDisassemblyPart) part;
-			IDocument document = disassemblyPart.getTextViewer().getDocument();
 			final IVerticalRulerInfo rulerInfo = part.getAdapter(IVerticalRulerInfo.class);
 			if (rulerInfo != null) {
-				final ToggleBreakpointAction toggleBpAction = new ToggleBreakpointAction(part, document, rulerInfo);
+				final ToggleBreakpointAction toggleBpAction = new ToggleBreakpointAction(part, null, rulerInfo);
 				try {
 					toggleBpAction.update();
 					if (toggleBpAction.isEnabled()) {

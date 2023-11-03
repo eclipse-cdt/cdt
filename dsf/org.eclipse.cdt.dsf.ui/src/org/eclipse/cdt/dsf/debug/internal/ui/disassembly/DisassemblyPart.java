@@ -109,6 +109,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -580,8 +581,9 @@ public abstract class DisassemblyPart extends WorkbenchPart
 			if (fColumnSupport == null)
 				fColumnSupport = createColumnSupport();
 			return (T) fColumnSupport;
+		} else if (IDocument.class.equals(required)) {
+			return (T) getDocument();
 		}
-
 		return super.getAdapter(required);
 	}
 

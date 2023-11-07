@@ -83,6 +83,7 @@
                name="%Option.Posix.Libs"
                category="gnu.c.link.category.libs"
                command="-l"
+               commandGenerator="org.eclipse.cdt.managedbuilder.gnu.ui.LibrariesCommandGenerator"
                id="gnu.c.link.option.libs"
                browseType="none"
                valueType="libs">
@@ -94,6 +95,13 @@
                id="gnu.c.link.option.paths"
                browseType="directory"
                valueType="libPaths">
+         </option>
+         <option
+               defaultValue="false"
+               name="%Option.Posix.Linker.GroupLibs"
+               category="gnu.c.link.category.libs"
+               id="gnu.c.link.option.group"
+               valueType="boolean">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"

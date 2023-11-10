@@ -83,7 +83,7 @@
                name="%Option.Posix.Libs"
                category="gnu.c.link.category.libs"
                command="-l"
-               commandGenerator="org.eclipse.cdt.managedbuilder.gnu.ui.LibrariesCommandGenerator"
+               commandGenerator="org.eclipse.cdt.managedbuilder.gnu.ui.GnuCLibrariesCommandGenerator"
                id="gnu.c.link.option.libs"
                browseType="none"
                valueType="libs">
@@ -300,6 +300,7 @@
                name="%Option.Posix.Libs"
                category="gnu.cpp.link.category.libs"
                command="-l"
+               commandGenerator="org.eclipse.cdt.managedbuilder.gnu.ui.GnuCppLibrariesCommandGenerator"
                id="gnu.cpp.link.option.libs"
                browseType="none"
                valueType="libs">
@@ -311,6 +312,13 @@
                id="gnu.cpp.link.option.paths"
                browseType="directory"
                valueType="libPaths">
+         </option>
+         <option
+               defaultValue="false"
+               name="%Option.Posix.Linker.GroupLibs"
+               category="gnu.cpp.link.category.libs"
+               id="gnu.cpp.link.option.group"
+               valueType="boolean">
          </option>
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"

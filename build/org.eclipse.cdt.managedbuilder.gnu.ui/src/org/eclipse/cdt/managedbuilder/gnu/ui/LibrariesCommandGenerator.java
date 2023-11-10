@@ -27,18 +27,25 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * An option command generator to group libraries on the GNU linker command line
- * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 8.6
  */
 public class LibrariesCommandGenerator implements IOptionCommandGenerator {
 
 	private static final String GROUP_LIBRARIES_COMMAND_FORMAT = "-Wl,--start-group %s -Wl,--end-group"; //$NON-NLS-1$
-	private static final String GROUP_LIBRARIES_OPTION_ID = "gnu.c.link.option.group"; //$NON-NLS-1$
+
+	private final String fGroupLibrariesOptionId;
+
+	/**
+	 * @param groupLibrariesOptionId the ID of the IOption controlling library grouping
+	 */
+	protected LibrariesCommandGenerator(String groupLibrariesOptionId) {
+		fGroupLibrariesOptionId = groupLibrariesOptionId;
+	}
 
 	@Override
 	public String generateCommand(IOption option, IVariableSubstitutor macroSubstitutor) {
-		IOption groupOption = option.getOptionHolder().getOptionBySuperClassId(GROUP_LIBRARIES_OPTION_ID);
+		IOption groupOption = option.getOptionHolder().getOptionBySuperClassId(fGroupLibrariesOptionId);
 		try {
 			if ((groupOption != null) && groupOption.getBooleanValue()) { // if library grouping enabled
 				String command = option.getCommand();

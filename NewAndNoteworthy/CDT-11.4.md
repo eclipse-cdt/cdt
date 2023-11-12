@@ -18,6 +18,14 @@ Users can opt to show or hide absent translation unit files using a new _Absent 
 
 <p align="center"><img src="images/CDT-11.4-absent-tu-filter.png" width="40%"></p>
 
+## Managed build library grouping option
+
+The managed build GNU linker tool description now provides an option for grouping libraries on the linker command line:
+
+<p align="center"><img src="images/CDT-11.4-group-libraries.png" width="80%"></p>
+
+The new option is available within managed build configurations using a _Cross GCC_, _Cygwin GCC_, _Linux GCC_ or _MinGW GCC_ toolchain.
+
 # API Changes, current and planned
 
 ## Changes to org.eclipse.tools.templates APIs

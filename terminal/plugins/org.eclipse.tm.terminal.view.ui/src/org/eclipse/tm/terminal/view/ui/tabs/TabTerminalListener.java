@@ -127,13 +127,11 @@ public class TabTerminalListener implements ITerminalListener3 {
 			// Get the original terminal properties associated with the tab item
 			@SuppressWarnings({ "unchecked" })
 			final Map<String, Object> properties = (Map<String, Object>) item.getData("properties"); //$NON-NLS-1$
-			if (properties.containsKey(ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE)) {
-				if (properties.get(
-						ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE) instanceof Boolean disableAnsi) {
-					// Check if terminal title can be updated from ANSI escape sequence
-					if (disableAnsi && requestor == TerminalTitleRequestor.ANSI) {
-						return;
-					}
+			if (properties != null && properties
+					.get(ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE) instanceof Boolean disableAnsi) {
+				// Check if terminal title can be updated from ANSI escape sequence
+				if (disableAnsi && requestor == TerminalTitleRequestor.ANSI) {
+					return;
 				}
 			}
 

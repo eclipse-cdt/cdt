@@ -74,7 +74,7 @@
   <setupTask
       xsi:type="setup:VariableTask"
       name="eclipse.target.platform"
-      value="${eclipse.target.platform.latest.released}"
+      value="${eclipse.target.platform.latest}"
       defaultValue=""
       storageURI="scope://Workspace"/>
   <setupTask

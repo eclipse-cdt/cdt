@@ -26,6 +26,14 @@ The managed build GNU linker tool description now provides an option for groupin
 
 The new option is available within managed build configurations using a _Cross GCC_, _Cygwin GCC_, _Linux GCC_ or _MinGW GCC_ toolchain.
 
+# Terminal
+
+## Backspace now sends `0x7f` instead of `0x08` (`\b`, `^H`)
+
+Introduced to [fix an incompatibility on Windows](https://github.com/eclipse-cdt/cdt/issues/392) the terminal converts `^H` to ascii `0x7f` to ensure a single character is deleted rather than a whole word.
+
+The java property `org.eclipse.tm.terminal.control.convertBackspace` can be set to `false` to disable this behavior in case it interferes with the expected behavior of the terminal.
+
 # API Changes, current and planned
 
 ## Changes to org.eclipse.tools.templates APIs

@@ -185,6 +185,19 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 	private PollingTextCanvasModel fPollingTextCanvasModel;
 
 	/**
+	 * In some circumstances (e.g PowerShell on Windows) the backspace
+	 * character received from the keypress needs modifying. This
+	 * system property allows disabling this new feature in case there
+	 * are users who are negatively affected by this conversion.
+	 *
+	 * \b is ^H which is interpreted by the console as Ctrl + Backspace
+	 * which deletes a word. \b on its own should just delete a character
+	 * so we send 0x7f to do that.
+	 */
+	private boolean convertBackspace = Boolean
+			.parseBoolean(System.getProperty("org.eclipse.tm.terminal.control.convertBackspace", "true")); //$NON-NLS-1$ //$NON-NLS-2$
+
+	/**
 	 * Instantiate a Terminal widget.
 	 * @param target Callback for notifying the owner of Terminal state changes.
 	 * @param wndParent The Window parent to embed the Terminal in.
@@ -1173,6 +1186,11 @@ public class VT100TerminalControl implements ITerminalControlForText, ITerminalC
 					character = '\u001f';
 					break;
 				}
+			}
+
+			// see javadoc on convertBackspace for details
+			if (convertBackspace && !ctrlKeyPressed && character == '\b') {
+				character = 0x7f;
 			}
 
 			//TODO: At this point, Ctrl+M sends the same as Ctrl+Shift+M .

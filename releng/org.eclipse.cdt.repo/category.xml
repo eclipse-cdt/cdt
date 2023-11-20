@@ -185,6 +185,9 @@
    <bundle id="org.eclipse.cdt.remote.core" version="0.0.0"/>
    <bundle id="org.eclipse.cdt.remote.core.source" version="0.0.0"/>
    <bundle id="com.sun.xml.bind" version="0.0.0"/>
+   <bundle id="org.eclipse.orbit.xml-apis-ext" version="0.0.0"/>
+   <bundle id="jakarta.activation-api" version="1.2.2"/>
+   <bundle id="jakarta.xml.bind-api" version="2.3.3"/>
    <bundle id="com.google.gson" version="0.0.0"/>
    <bundle id="org.freemarker.freemarker" version="2.3.32.stable"/>
    <bundle id="org.yaml.snakeyaml" version="0.0.0"/>

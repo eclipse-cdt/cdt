@@ -22,8 +22,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.cdt.debug.core,
  org.eclipse.ui.workbench,
  org.eclipse.orbit.xml-apis-ext,
- jakarta.activation-api,
- jakarta.xml.bind-api
+ jakarta.activation-api;bundle-version="[1.2.2,2.0.0)",
+ jakarta.xml.bind-api;bundle-version="[2.3.3,3.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy

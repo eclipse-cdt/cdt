@@ -439,16 +439,19 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		}
 
 		// And optionally the target
-		if (launch instanceof ITargetedLaunch) {
-			ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
+		if (launch instanceof ITargetedLaunch targettedLaunch) {
+			ILaunchTarget target = targettedLaunch.getLaunchTarget();
 			if (target != null) {
 				attributes.putAll(target.getAttributes());
 				String tcp = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, ""); //$NON-NLS-1$
 				if (!tcp.isEmpty()) {
 					attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, Boolean.parseBoolean(tcp));
 				} else {
-					attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
-							target.getTypeId().equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID));
+					// If the launch config attrs don't contain a REMOTE_TCP value then check the launch target attrs
+					if (!attributes.containsKey(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP)) {
+						attributes.put(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP,
+								target.getTypeId().equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID));
+					}
 				}
 			}
 		}
@@ -689,7 +692,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		getSession().addServiceEventListener(GDBControl.this, null);
 		register(new String[] { ICommandControl.class.getName(), ICommandControlService.class.getName(),
 				IMICommandControl.class.getName(), AbstractMIControl.class.getName(), IGDBControl.class.getName() },
-				new Hashtable<String, String>());
+				new Hashtable<>());
 		getSession().dispatchEvent(new GDBControlInitializedDMEvent(getContext()), getProperties());
 		requestMonitor.done();
 	}

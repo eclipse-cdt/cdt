@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="152">
+<target name="cdt" sequenceNumber="153">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/" />
@@ -204,6 +204,13 @@
 			<unit id="org.hamcrest.library" version="1.3.0.v20230809-1000" />
 			<unit id="org.junit" version="4.13.2.v20230809-1000" />
 			<unit id="org.eclipse.orbit.xml-apis-ext" version="1.0.0.v20230923-0644"/>
+			<unit id="bcpg" version="0.0.0"/>
+			<unit id="bcprov" version="0.0.0"/>
+			<unit id="org.apache.commons.logging" version="0.0.0"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/drops/R20230531010532/repository/"/>
+			<unit id="javax.activation" version="1.2.2.v20221203-1659"/>
 		</location>
 	</locations>
 	<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17" />

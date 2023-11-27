@@ -7,7 +7,7 @@
 			<unit id="org.eclipse.license.feature.group" version="0.0.0" />
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/eclipse/updates/4.30-I-builds/I20231115-1800/" />
+			<repository location="https://download.eclipse.org/eclipse/updates/4.30-I-builds/I20231123-1700/" />
 			<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0" />
 			<unit id="org.eclipse.jdt.annotation" version="0.0.0" />
 			<unit id="org.eclipse.sdk.feature.group" version="0.0.0" />
@@ -195,7 +195,7 @@
 			</dependencies>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/milestone/S202311141131"/>
+			<repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/2023-12"/>
 			<!-- failureaccess is needed because the Linuxtools depends on it but doesn't republish it - https://github.com/eclipse-linuxtools/org.eclipse.linuxtools/issues/232
 			This dep can't be added to maven section because of https://github.com/eclipse-pde/eclipse.pde/issues/675 -->
 			<unit id="com.google.guava.failureaccess" version="0.0.0" />

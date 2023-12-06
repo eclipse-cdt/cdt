@@ -25,6 +25,7 @@ $ECHO $SCP ./releng/download/releases/11.0/* "${SSHUSER}:${DOWNLOAD}/releases/11
 $ECHO $SCP ./releng/download/releases/11.1/* "${SSHUSER}:${DOWNLOAD}/releases/11.1/"
 $ECHO $SCP ./releng/download/releases/11.2/* "${SSHUSER}:${DOWNLOAD}/releases/11.2/"
 $ECHO $SCP ./releng/download/releases/11.3/* "${SSHUSER}:${DOWNLOAD}/releases/11.3/"
+$ECHO $SCP ./releng/download/releases/11.4/* "${SSHUSER}:${DOWNLOAD}/releases/11.4/"
 
 $ECHO $SSH mkdir -p "${DOWNLOAD}/releases/cdt-lsp-latest/"
 $ECHO $SCP ./releng/download/releases/cdt-lsp-latest/* "${SSHUSER}:${DOWNLOAD}/releases/cdt-lsp-latest/"

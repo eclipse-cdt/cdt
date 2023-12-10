@@ -12,24 +12,39 @@
  *     QNX Software Systems - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  *     John Dallaway - Adapt for IBinaryFile (#413)
+ *     John Dallaway - Fix object path processing (#630)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.Map;
+import java.util.Optional;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryArchive;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryObject;
+import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
+import org.eclipse.cdt.core.cdtvariables.ICdtVariableManager;
 import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchive;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICOutputEntry;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.extension.CBuildData;
+import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 
 public class Archive extends Openable implements IArchive {
 
@@ -75,16 +90,30 @@ public class Archive extends Openable implements IArchive {
 
 	public boolean computeChildren(OpenableInfo info, IResource res) {
 		IBinaryArchive ar = getBinaryArchive();
-		if (ar != null) {
-			IBinaryObject[] objects = ar.getObjects();
-			for (final IBinaryObject obj : objects) {
-				Binary binary = new Binary(this, ar.getPath().append(obj.getName()), obj);
+		IPath location = res.getLocation();
+		if (ar != null && location != null) {
+			// find the build CWD for the archive file
+			IPath buildCWD = Optional.ofNullable(findBuildConfiguration(res)).map(Archive::getBuildCWD)
+					.orElse(location.removeLastSegments(1));
+			for (IBinaryObject obj : ar.getObjects()) {
+				// assume object names are paths as specified on the archiver command line ("ar -P")
+				IPath objPath = new Path(obj.getName());
+				if (!objPath.isAbsolute()) {
+					// assume path is relative to the build CWD
+					objPath = buildCWD.append(objPath);
+				}
+				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(objPath);
+				if (file == null) { // if object path is external to the workspace
+					// fallback to legacy behaviour
+					// TODO: support external paths in Binary class as we do in TranslationUnit
+					objPath = ar.getPath().append(objPath.lastSegment());
+				}
+				Binary binary = new Binary(this, objPath, obj);
 				info.addChild(binary);
 			}
-		} else {
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -131,6 +160,52 @@ public class Archive extends Openable implements IArchive {
 	protected char getHandleMementoDelimiter() {
 		Assert.isTrue(false, "Should not be called"); //$NON-NLS-1$
 		return 0;
+	}
+
+	private static ICConfigurationDescription findBuildConfiguration(IResource resource) {
+		IPath location = resource.getLocation();
+		IProject project = resource.getProject();
+		ICProjectDescription projectDesc = CoreModel.getDefault().getProjectDescription(project, false);
+		if (projectDesc == null) {
+			return null; // not a CDT project
+		}
+		// for each build configuration of the project
+		for (ICConfigurationDescription configDesc : projectDesc.getConfigurations()) {
+			CConfigurationData configData = configDesc.getConfigurationData();
+			if (configData == null) {
+				continue; // no configuration data
+			}
+			CBuildData buildData = configData.getBuildData();
+			if (buildData == null) {
+				continue; // no build data
+			}
+			// for each build output directory of the build configuration
+			for (ICOutputEntry dir : buildData.getOutputDirectories()) {
+				IPath dirLocation = CDataUtil.makeAbsolute(project, dir).getLocation();
+				// if the build output directory is an ancestor of the resource
+				if ((dirLocation != null) && dirLocation.isPrefixOf(location)) {
+					return configDesc; // build configuration found
+				}
+			}
+		}
+		return null;
+	}
+
+	private static IPath getBuildCWD(ICConfigurationDescription configDesc) {
+		IPath builderCWD = configDesc.getBuildSetting().getBuilderCWD();
+		if (builderCWD != null) {
+			ICdtVariableManager manager = CCorePlugin.getDefault().getCdtVariableManager();
+			try {
+				String cwd = builderCWD.toString();
+				cwd = manager.resolveValue(cwd, "", null, configDesc); //$NON-NLS-1$
+				if (!cwd.isEmpty()) {
+					return new Path(cwd);
+				}
+			} catch (CdtVariableException e) {
+				CCorePlugin.log(e);
+			}
+		}
+		return null;
 	}
 
 }

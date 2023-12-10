@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2023 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,13 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     John Dallaway - Use file path when testing for equality (#630)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.Objects;
 
 import org.eclipse.cdt.core.model.BufferChangedEvent;
 import org.eclipse.cdt.core.model.CModelException;
@@ -102,6 +104,16 @@ public abstract class Openable extends Parent implements IOpenable {
 	@Override
 	protected void closing(Object info) throws CModelException {
 		closeBuffer();
+	}
+
+	/**
+	 * Tests if an element has the same name, type, parent and path.
+	 * Path comparison is required for multiple object files with the
+	 * same filename under an ArchiveContainer or BinaryContainer.
+	 */
+	@Override
+	public boolean equals(Object o) {
+		return super.equals(o) && (o instanceof Openable openable) && Objects.equals(getPath(), openable.getPath());
 	}
 
 	/**

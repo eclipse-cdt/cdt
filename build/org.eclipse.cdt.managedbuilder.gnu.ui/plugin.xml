@@ -471,7 +471,7 @@
                id="gnu.lib.category.general">
          </optionCategory>
          <option
-               defaultValue="-r"
+               defaultValue="-r -P"
                name="%Option.Posix.Archiver.Flags"
                category="gnu.lib.category.general"
                valueType="string"

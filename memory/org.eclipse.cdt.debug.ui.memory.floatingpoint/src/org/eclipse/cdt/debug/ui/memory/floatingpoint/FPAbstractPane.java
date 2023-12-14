@@ -774,7 +774,7 @@ public abstract class FPAbstractPane extends Canvas {
 		if (fCharacterWidth == -1) {
 			GC gc = new GC(this);
 			gc.setFont(fRendering.getFont());
-			fCharacterWidth = gc.getAdvanceWidth('F');
+			fCharacterWidth = gc.textExtent("F").x; //$NON-NLS-1$
 			gc.dispose();
 		}
 

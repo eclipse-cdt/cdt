@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -183,19 +184,33 @@ public class CompilerBuiltinsDetector {
 	 *         return {@code null}.
 	 */
 	private String[] getEnvp() {
+		var map = new HashMap<String, String>();
+		// The cc.exe from mingw64 (part of Msys2) on Windows needs the bin folder to be on the PATH to be executed.
+		// e.g. 'C:\msys64\mingw64\bin' must be part of the PATH environment variable. That's why we need PATH here:
+		// Fixes CDT #407
+		map.put("PATH", System.getenv("PATH")); //$NON-NLS-1$//$NON-NLS-2$
+
 		// On POSIX (Linux, UNIX) systems reset language variables to default (English)
 		// with UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
 		// Include paths with locale characters will be handled properly regardless
 		// of the language as long as the encoding is set to UTF-8.
 		// English language is set for parser because it relies on English messages
 		// in the output of the 'gcc -v'.
-		String[] strings = {
-				// override for GNU gettext
-				"LANGUAGE" + "=en", //$NON-NLS-1$//$NON-NLS-2$
-				// for other parts of the system libraries
-				"LC_ALL" + "=C.UTF-8" }; //$NON-NLS-1$ //$NON-NLS-2$
 
-		return strings;
+		// override for GNU gettext
+		map.put("LANGUAGE", "en"); //$NON-NLS-1$ //$NON-NLS-2$
+		// for other parts of the system libraries
+		map.put("LC_ALL", "C.UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
+
+		var envArray = map.entrySet().stream().map(entry -> {
+			var result = entry.getKey() + '=';
+			if (entry.getValue() != null) {
+				result = result + entry.getValue();
+			}
+			return result;
+		}).toArray(String[]::new);
+
+		return envArray;
 	}
 
 	/**

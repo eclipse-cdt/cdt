@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICommandLauncher;
 import org.eclipse.cdt.core.resources.IConsole;
@@ -105,8 +106,8 @@ public class CompilerBuiltinsDetector {
 
 		launcher.setProject(project);
 		launcher.showCommand(console != null);
-		final Process proc = launcher.execute(new Path(command), argList.toArray(new String[argList.size()]), getEnvp(),
-				new Path(this.buildDirectory.toString()), monitor);
+		final Process proc = launcher.execute(new Path(command), argList.toArray(new String[argList.size()]),
+				getEnvp(project), new Path(this.buildDirectory.toString()), monitor);
 		if (proc != null) {
 			try {
 				// Close the input of the process since we will never write to it
@@ -183,13 +184,26 @@ public class CompilerBuiltinsDetector {
 	 * @return String array of environment variables in format "var=value". Does not
 	 *         return {@code null}.
 	 */
-	private String[] getEnvp() {
+	private String[] getEnvp(IProject project) {
 		var map = new HashMap<String, String>();
 		// The cc.exe from mingw64 (part of Msys2) on Windows needs the bin folder to be on the PATH to be executed.
 		// e.g. 'C:\msys64\mingw64\bin' must be part of the PATH environment variable. That's why we need PATH here:
 		// Fixes CDT #407
-		map.put("PATH", System.getenv("PATH")); //$NON-NLS-1$//$NON-NLS-2$
-
+		try {
+			final String path = "PATH"; //$NON-NLS-1$
+			var variables = CCorePlugin.getDefault().getBuildEnvironmentManager()
+					.getVariables(project.getActiveBuildConfig(), true);
+			for (var variable : variables) {
+				if (path.equalsIgnoreCase(variable.getName())) {
+					map.put(path, variable.getValue());
+					break;
+				}
+			}
+		} catch (CoreException e) {
+			Plugin.getDefault().getLog().error(
+					String.format(Messages.CompilerBuiltinsDetector_errmsg_determine_PATH_failed, project.getName()),
+					e);
+		}
 		// On POSIX (Linux, UNIX) systems reset language variables to default (English)
 		// with UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
 		// Include paths with locale characters will be handled properly regardless

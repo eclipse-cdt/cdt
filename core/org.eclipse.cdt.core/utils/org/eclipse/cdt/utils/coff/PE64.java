@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 Space Codesign Systems and others.
+ * Copyright (c) 2000, 2023 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Space Codesign Systems - Initial API and implementation
  *     QNX Software Systems - Initial PE class
+.*     John Dallaway - Support offset into archive file (#630)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.coff;
@@ -83,6 +84,7 @@ public class PE64 implements AutoCloseable {
 	SectionHeader[] scnhdrs;
 	Symbol[] symbolTable;
 	byte[] stringTable;
+	private final long peOffset; // the offset of this PE within the file (eg archive file)
 
 	public static class Attribute {
 		public static final int PE_TYPE_EXE = 1;
@@ -456,6 +458,7 @@ public class PE64 implements AutoCloseable {
 	}
 
 	public PE64(String filename, long pos, boolean filter) throws IOException {
+		peOffset = pos;
 		try {
 			rfile = new RandomAccessFile(filename, "r"); //$NON-NLS-1$
 			this.filename = filename;
@@ -466,7 +469,7 @@ public class PE64 implements AutoCloseable {
 				exeHeader = new ExeHeader(rfile);
 				dosHeader = new DOSHeader(rfile);
 				// Jump the Coff header, and Check the sig.
-				rfile.seek(dosHeader.e_lfanew);
+				rfile.seek(dosHeader.e_lfanew + peOffset);
 				byte[] sig = new byte[4];
 				rfile.readFully(sig);
 				if (!((sig[0] == 'P') && (sig[1] == 'E') && (sig[2] == '\0') && (sig[3] == '\0'))) {
@@ -735,7 +738,7 @@ public class PE64 implements AutoCloseable {
 				ntHeaderSize = NTOptionalHeader32.NTHDRSZ;
 
 			offset += FileHeader.FILHSZ + getOptionalHeader().getSize() + ntHeaderSize;
-			accessFile.seek(offset);
+			accessFile.seek(offset + peOffset);
 			dataDirectories = new ImageDataDirectory[PEConstants.IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 			byte[] data = new byte[dataDirectories.length * (4 + 4)];
 			accessFile.readFully(data);
@@ -759,7 +762,7 @@ public class PE64 implements AutoCloseable {
 			}
 			offset += FileHeader.FILHSZ + fileHeader.f_opthdr;
 			for (int i = 0; i < scnhdrs.length; i++, offset += SectionHeader.SCNHSZ) {
-				scnhdrs[i] = new SectionHeader(accessFile, offset);
+				scnhdrs[i] = new SectionHeader(accessFile, offset + peOffset);
 			}
 		}
 		return scnhdrs;
@@ -775,7 +778,8 @@ public class PE64 implements AutoCloseable {
 			long offset = fileHeader.f_symptr;
 			symbolTable = new Symbol[fileHeader.f_nsyms];
 			for (int i = 0; i < symbolTable.length; i++, offset += Symbol.SYMSZ) {
-				Symbol newSym = new Symbol(accessFile, offset, (fileHeader.f_flags & FileHeader.F_AR32WR) == 0);
+				Symbol newSym = new Symbol(accessFile, offset + peOffset,
+						(fileHeader.f_flags & FileHeader.F_AR32WR) == 0);
 
 				// Now convert section offset of the symbol to image offset.
 				if (newSym.n_scnum >= 1 && newSym.n_scnum <= secHeaders.length) // valid section #
@@ -799,14 +803,14 @@ public class PE64 implements AutoCloseable {
 				RandomAccessFile accessFile = getRandomAccessFile();
 				long symbolsize = Symbol.SYMSZ * fileHeader.f_nsyms;
 				long offset = fileHeader.f_symptr + symbolsize;
-				accessFile.seek(offset);
+				accessFile.seek(offset + peOffset);
 				byte[] bytes = new byte[4];
 				accessFile.readFully(bytes);
 				int str_len = ReadMemoryAccess.getIntLE(bytes);
 				if (str_len > 4 && str_len < accessFile.length()) {
 					str_len -= 4;
 					stringTable = new byte[str_len];
-					accessFile.seek(offset + 4);
+					accessFile.seek(offset + 4 + peOffset);
 					accessFile.readFully(stringTable);
 				} else {
 					stringTable = new byte[0];
@@ -932,12 +936,13 @@ public class PE64 implements AutoCloseable {
 
 					// loop through the debug directories looking for CodeView (type 2)
 					for (int j = 0; j < debugFormats; j++) {
-						PE64.IMAGE_DEBUG_DIRECTORY dir = new PE64.IMAGE_DEBUG_DIRECTORY(accessFile, fileOffset);
+						PE64.IMAGE_DEBUG_DIRECTORY dir = new PE64.IMAGE_DEBUG_DIRECTORY(accessFile,
+								fileOffset + peOffset);
 
 						if ((2 == dir.Type) && (dir.SizeOfData > 0)) {
 							// CodeView found, seek to actual data
 							int debugBase = dir.PointerToRawData;
-							accessFile.seek(debugBase);
+							accessFile.seek(debugBase + peOffset);
 
 							// sanity check.  the first four bytes of the CodeView
 							// data should be "NB11"

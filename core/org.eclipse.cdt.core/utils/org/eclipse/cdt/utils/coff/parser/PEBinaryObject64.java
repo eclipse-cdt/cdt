@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 Space Codesign Systems and others.
+ * Copyright (c) 2000, 2023 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Space Codesign Systems - Initial API and implementation
  *     QNX Software Systems - Initial PEBinaryObject class
+ *     John Dallaway - Fix archive header processing (#630)
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -47,6 +48,7 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 
 	public PEBinaryObject64(IBinaryParser parser, IPath path, AR.ARHeader header) {
 		super(parser, path, IBinaryFile.OBJECT);
+		this.header = header;
 	}
 
 	public PEBinaryObject64(IBinaryParser parser, IPath p, int type) {

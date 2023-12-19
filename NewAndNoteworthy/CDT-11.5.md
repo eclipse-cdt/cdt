@@ -32,6 +32,18 @@ The original locations of object files within a GNU archive are now calculated u
 
 Managed build _Static Library_ projects using a _Cross GCC_, _Cygwin GCC_, _Linux GCC_ or _MinGW GCC_ toolchain now use the `-P` archiver flag by default to generate the necessary path information.
 
+# CMake
+The Launch Bar Launch Configuration Build Settings tab has been updated so it can now correctly control the CMake Generator setting. The "Additional CMake arguments" field can also be used to inject CMake defines into the CMakeCache.txt file to populate it with customizable settings for the project. Use the new "Use these settings" checkbox to control whether to use either the operating system defaults or settings from the UI.
+
+When "Use these settings" checkbox is unchecked, the operating system defaults are used during the CMake build.
+
+<p align="center"><img src="images/CDT-11.5-Build_Settings_Use_these_settings_unchecked.PNG" width="50%"></p>
+
+When the "Use these settings" checkbox is checked, the UI settings are used during the CMake build.
+
+<p align="center"><img src="images/CDT-11.5-Build_Settings_Use_these_settings_checked.PNG" width="50%"></p>
+
+
 # API Changes, current and planned
 
 ## Breaking API changes

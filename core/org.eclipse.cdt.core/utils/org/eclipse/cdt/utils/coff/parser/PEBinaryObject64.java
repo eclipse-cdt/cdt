@@ -12,6 +12,7 @@
  *     Space Codesign Systems - Initial API and implementation
  *     QNX Software Systems - Initial PEBinaryObject class
  *     John Dallaway - Fix archive header processing (#630)
+ *     John Dallaway - Support sections sizes in binary info (#652)
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -34,6 +35,8 @@ import org.eclipse.cdt.utils.BinaryObjectAdapter;
 import org.eclipse.cdt.utils.Symbol;
 import org.eclipse.cdt.utils.coff.Coff64;
 import org.eclipse.cdt.utils.coff.PE64;
+import org.eclipse.cdt.utils.coff.PEHelper64;
+import org.eclipse.cdt.utils.coff.PEHelper64.Sizes;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -146,6 +149,10 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 		info.isLittleEndian = attribute.isLittleEndian();
 		info.hasDebug = attribute.hasDebug();
 		info.cpu = attribute.getCPU();
+		Sizes sizes = new PEHelper64(pe).getSizes();
+		info.bss = sizes.bss();
+		info.data = sizes.data();
+		info.text = sizes.text();
 	}
 
 	protected void loadSymbols(PE64 pe) throws IOException {

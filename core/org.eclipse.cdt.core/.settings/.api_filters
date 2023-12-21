@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.core" version="2">
+    <resource path="utils/org/eclipse/cdt/utils/coff/Coff64.java" type="org.eclipse.cdt.utils.coff.Coff64$SectionHeader">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.coff.Coff64.SectionHeader"/>
+                <message_argument value="STYP_MEM_DISCARDABLE"/>
+            </message_arguments>
+        </filter>
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.coff.Coff64.SectionHeader"/>
+                <message_argument value="STYP_MEM_WRITE"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

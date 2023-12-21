@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2020 Space Codesign Systems and others.
+ * Copyright (c) 2000, 2023 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     Space Codesign Systems - Initial API and implementation
  *     QNX Software Systems - Initial Coff class
  *     Alexander Fedorov (ArSysOp) - Bug 561992
+ *     John Dallaway - Provide additional section header flags (#652)
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff;
 
@@ -310,6 +311,10 @@ public class Coff64 {
 															word boundary. */
 
 		public final static int STYP_LIT = 0x8020; /* Literal data (like STYP_TEXT) */
+		/** @since 8.4 */
+		public static final int STYP_MEM_DISCARDABLE = 0x02000000; /* section is discardable */
+		/** @since 8.4 */
+		public static final int STYP_MEM_WRITE = 0x80000000; /* section can be written to */
 
 		public byte[] s_name = new byte[8]; // 8 bytes: section name
 		public int s_paddr; // 4 bytes: physical address, aliased s_nlib

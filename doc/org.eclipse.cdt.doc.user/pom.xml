@@ -29,7 +29,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho-version}</version>
 				<executions>
 					<execution>
 						<id>plugin-source</id>
@@ -43,7 +42,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>build-doc</id>
@@ -57,7 +56,6 @@
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-eclipserun-plugin</artifactId>
-						<version>${tycho-version}</version>
 						<configuration>
 							<applicationArgs>
 								<arg>-application</arg>

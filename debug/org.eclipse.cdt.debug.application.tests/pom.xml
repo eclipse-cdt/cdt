@@ -6,7 +6,7 @@
    are made available under the terms of the Eclipse Public License 2.0
    which accompanies this distribution, and is available at
    https://www.eclipse.org/legal/epl-2.0/
-   
+
    SPDX-License-Identifier: EPL-2.0
 -->
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
@@ -29,7 +29,6 @@
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
         <artifactId>tycho-surefire-plugin</artifactId>
-        <version>${tycho-version}</version>
         <configuration>
           <useUIHarness>true</useUIHarness>
           <useUIThread>false</useUIThread>

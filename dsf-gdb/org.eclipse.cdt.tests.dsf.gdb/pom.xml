@@ -63,7 +63,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-surefire-plugin</artifactId>
-				<version>${tycho-version}</version>
 				<configuration>
 					<useUIHarness>false</useUIHarness>
 					<argLine>${tycho.testArgLine} ${base.ui.test.vmargs} -ea -Xms256m -Xmx512m -Dcdt.tests.dsf.gdb.path=${dsf.gdb.tests.gdbPath} -Ddsf.gdb.tests.timeout.multiplier=${dsf.gdb.tests.timeout.multiplier} -Dcdt.tests.dsf.gdb.versions=${cdt.tests.dsf.gdb.versions}</argLine>

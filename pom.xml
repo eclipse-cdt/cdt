@@ -14,10 +14,6 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
-	<prerequisites>
-		<maven>${required-maven-version}</maven>
-	</prerequisites>
-
 	<groupId>org.eclipse.cdt</groupId>
 	<artifactId>cdt-parent</artifactId>
 	<version>11.5.0-SNAPSHOT</version>
@@ -26,7 +22,7 @@
 
 	<properties>
 		<required-maven-version>3.9.1</required-maven-version>
-		<tycho-version>4.0.1</tycho-version>
+		<tycho-version>4.0.4</tycho-version>
 		<cbi-plugins.version>1.3.4</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
@@ -82,13 +78,13 @@
 		<license>
 			<name>Eclipse Public License 2.0</name>
 			<comments>
-       
+
 
        This program and the accompanying materials are made
        available under the terms of the Eclipse Public License 2.0
        which accompanies this distribution, and is available at
        https://www.eclipse.org/legal/epl-2.0/
-       
+
        SPDX-License-Identifier: EPL-2.0
       </comments>
 		</license>
@@ -138,7 +134,7 @@
 		<module>core/org.eclipse.cdt.core.macosx</module>
 		<module>core/org.eclipse.cdt.core</module>
 		<module>core/org.eclipse.cdt.ui</module>
-		
+
 		<module>cross/org.eclipse.cdt.build.crossgcc</module>
 		<module>cross/org.eclipse.cdt.build.crossgcc-feature</module>
 		<module>cross/org.eclipse.cdt.launch.remote</module>
@@ -161,7 +157,7 @@
 
 		<module>doc/org.eclipse.cdt.doc.user</module>
 		<module>doc/org.eclipse.cdt.doc.isv</module>
-		
+
 		<module>dsf/org.eclipse.cdt.dsf</module>
 		<module>dsf/org.eclipse.cdt.dsf.ui</module>
 		<module>dsf/org.eclipse.cdt.examples.dsf</module>
@@ -284,7 +280,6 @@
 		<module>releng/org.eclipse.cdt-feature</module>
 		<module>releng/org.eclipse.cdt.sdk</module>
 		<module>releng/org.eclipse.cdt.sdk-feature</module>
-		<module>releng/org.eclipse.cdt.target</module>
 		<module>releng/org.eclipse.cdt.repo</module>
 
 		<module>build/org.eclipse.cdt.managedbuilder.core.tests</module>
@@ -382,12 +377,7 @@
 						<version>${tycho-version}</version>
 						<configuration>
 							<target>
-								<artifact>
-									<groupId>org.eclipse.cdt</groupId>
-									<artifactId>org.eclipse.cdt.target</artifactId>
-									<classifier>${target-platform}</classifier>
-									<version>1.0.0</version>
-								</artifact>
+								<file>${maven.multiModuleProjectDirectory}/releng/org.eclipse.cdt.target/cdt.target</file>
 							</target>
 						</configuration>
 					</plugin>
@@ -679,7 +669,6 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<resolver>p2</resolver>
 					<pomDependencies>consider</pomDependencies>
 					<environments>
 						<environment>
@@ -727,9 +716,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-source-plugin</artifactId>
-				<configuration>
-					<encoding>UTF-8</encoding>
-				</configuration>
 				<executions>
 					<execution>
 						<id>attach-source</id>
@@ -877,6 +863,13 @@
 							<version>${tycho-version}</version>
 						</dependency>
 					</dependencies>
+					<executions>
+						<execution>
+							<!-- disable default consumer pom. not needed here, and it shows a warning for each module -->
+							<id>default-update-consumer-pom</id>
+							<phase>none</phase>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>
@@ -965,7 +958,7 @@
 					<artifactId>maven-pmd-plugin</artifactId>
 					<version>3.20.0</version>
 					<configuration>
-						<sourceEncoding>utf-8</sourceEncoding>
+						<inputEncoding>utf-8</inputEncoding>
 						<minimumTokens>100</minimumTokens>
 						<targetJdk>11</targetJdk>
 						<format>xml</format>
@@ -980,70 +973,94 @@
 					</executions>
 				</plugin>
 				<plugin>
-				<groupId>org.eclipse.tycho.extras</groupId>
-				<artifactId>tycho-eclipserun-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<configuration>
-					<applicationArgs>
-						<arg>-application</arg>
-						<arg>org.eclipse.ant.core.antRunner</arg>
-						<arg>-buildfile</arg>
-						<arg>customBuildCallbacks.xml</arg>
-						<arg>build.index</arg>
-					</applicationArgs>
-					<dependencies>
-						<dependency>
-							<artifactId>org.apache.ant</artifactId>
-							<type>eclipse-plugin</type>
-						</dependency>
-						<dependency>
-							<artifactId>org.eclipse.help.base</artifactId>
-							<type>eclipse-plugin</type>
-						</dependency>
-						<dependency>
-							<artifactId>org.eclipse.ant.core</artifactId>
-							<type>eclipse-plugin</type>
-						</dependency>
-					</dependencies>
-					<!-- This needs to be explicitely set now, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395281 -->
-					<repositories>
-						<repository>
-							<id>platform</id>
-							<layout>p2</layout>
-							<url>${help-docs-eclipserun-repo}</url>
-						</repository>
-					</repositories>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>eclipse-run</goal>
-						</goals>
-						<phase>compile</phase>
-						<configuration>
-							<executionEnvironment>JavaSE-17</executionEnvironment>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-gpg-plugin</artifactId>
-				<version>${tycho-version}</version>
-				<executions>
-					<execution>
-						<id>pgpsigner</id>
-						<goals>
-						<goal>sign-p2-artifacts</goal>
-						</goals>
-						<configuration>
-							<keyname>4F23165B6AC51B15</keyname>
-							<skipIfJarsigned>false</skipIfJarsigned>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
+					<groupId>org.eclipse.tycho.extras</groupId>
+					<artifactId>tycho-eclipserun-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<applicationArgs>
+							<arg>-application</arg>
+							<arg>org.eclipse.ant.core.antRunner</arg>
+							<arg>-buildfile</arg>
+							<arg>customBuildCallbacks.xml</arg>
+							<arg>build.index</arg>
+						</applicationArgs>
+						<dependencies>
+							<dependency>
+								<artifactId>org.apache.ant</artifactId>
+								<type>eclipse-plugin</type>
+							</dependency>
+							<dependency>
+								<artifactId>org.eclipse.help.base</artifactId>
+								<type>eclipse-plugin</type>
+							</dependency>
+							<dependency>
+								<artifactId>org.eclipse.ant.core</artifactId>
+								<type>eclipse-plugin</type>
+							</dependency>
+						</dependencies>
+						<!-- This needs to be explicitely set now, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395281 -->
+						<repositories>
+							<repository>
+								<id>platform</id>
+								<layout>p2</layout>
+								<url>${help-docs-eclipserun-repo}</url>
+							</repository>
+						</repositories>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>eclipse-run</goal>
+							</goals>
+							<phase>compile</phase>
+							<configuration>
+								<executionEnvironment>JavaSE-17</executionEnvironment>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-gpg-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<executions>
+						<execution>
+							<id>pgpsigner</id>
+							<goals>
+							<goal>sign-p2-artifacts</goal>
+							</goals>
+							<configuration>
+								<keyname>4F23165B6AC51B15</keyname>
+								<skipIfJarsigned>false</skipIfJarsigned>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho.extras</groupId>
+					<artifactId>tycho-document-bundle-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<javadocOptions>
+							<encoding>UTF-8</encoding>
+						</javadocOptions>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-director-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-repository-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>3.4.0</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

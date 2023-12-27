@@ -1819,6 +1819,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IGCCToken.tTT_is_assignable:
 		case IGCCToken.tTT_is_nothrow_assignable:
 		case IGCCToken.tTT_is_nothrow_constructible:
+		case IGCCToken.tTT_is_function:
 			return parseTypeTrait();
 
 		default:
@@ -1966,6 +1967,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			return IASTTypeIdExpression.op_is_union;
 		case IGCCToken.tTT_is_trivially_copyable:
 			return IASTTypeIdExpression.op_is_trivially_copyable;
+		case IGCCToken.tTT_is_function:
+			return IASTTypeIdExpression.op_is_function;
 		}
 		assert false;
 		return 0;

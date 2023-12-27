@@ -180,6 +180,12 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_is_aggregate = 26;
 
 	/**
+	 * Built-in type trait of Clang.
+	 * @since 8.4
+	 */
+	public static final int op_is_function = 27;
+
+	/**
 	 * Returns the operator for the expression.
 	 *
 	 * @return int

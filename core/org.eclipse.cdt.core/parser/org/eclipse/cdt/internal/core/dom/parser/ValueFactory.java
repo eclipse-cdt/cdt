@@ -30,6 +30,7 @@ import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_class;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_empty;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_enum;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_final;
+import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_function;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_literal_type;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_pod;
 import static org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression.op_is_polymorphic;
@@ -488,6 +489,8 @@ public class ValueFactory {
 			return IntegralValue.create(
 					type instanceof ICompositeType && ((ICompositeType) type).getKey() == ICompositeType.k_union ? 1
 							: 0);
+		case op_is_function:
+			return IntegralValue.create(TypeTraits.isFunction(type) ? 1 : 0);
 		case op_typeof:
 			break;
 		}

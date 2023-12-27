@@ -37,7 +37,7 @@ if test -e check_code_cleanliness_workspace; then
     echo check_code_cleanliness_workspace needs to be deleted
     exit 1
 fi
-${ECLIPSE} \
+"${ECLIPSE}" \
     -consolelog -nosplash -application org.eclipse.jdt.core.JavaCodeFormatter \
     -config $CDTDIR/$COREPROJECT/.settings/org.eclipse.jdt.core.prefs \
     $PWD -data check_code_cleanliness_workspace

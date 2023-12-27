@@ -60,7 +60,7 @@ if [ -n "$api_errors" ]; then
     if [ -n "$major_version" ]; then
         echo "WARNING: some of the API errors report as 'major version should be incremented'. Incrementing the"
         echo "major version is only allowed on major new versions of CDT. This error indicates that API has been"
-        echo "broken in some incompatible way. An project committer can help explain what to do if the (lengthy)"
+        echo "broken in some incompatible way. A project committer can help explain what to do if the (lengthy)"
         echo "documentation below needs interpreting for this use case.".
     fi
     echo "See https://github.com/eclipse-cdt/cdt/blob/main/POLICY.md#api for details"
@@ -71,6 +71,6 @@ if [ -n "$success" ]; then
     echo "Maven check all versions have been bumped appropriately appears to have completed successfully"
 elif [ -z "$bundles_only_qualifier_changed" ] && [ -z "$bundles_same_version_different_content" ]; then
     echo "Maven 'check all versions have been bumped appropriately' failed! Please see the"
-    echo "log of the failed maven run above"
+    echo "log of the failed Maven run above"
     exit 1
 fi

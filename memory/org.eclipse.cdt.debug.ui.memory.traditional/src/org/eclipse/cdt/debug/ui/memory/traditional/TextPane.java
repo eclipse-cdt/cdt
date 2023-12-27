@@ -79,7 +79,7 @@ public class TextPane extends AbstractPane {
 	protected int getCellWidth() {
 		GC gc = new GC(this);
 		gc.setFont(fRendering.getFont());
-		int width = gc.getAdvanceWidth('F');
+		int width = gc.textExtent("F").x; //$NON-NLS-1$
 		gc.dispose();
 
 		return fRendering.getBytesPerColumn() / fRendering.getBytesPerCharacter() * width;

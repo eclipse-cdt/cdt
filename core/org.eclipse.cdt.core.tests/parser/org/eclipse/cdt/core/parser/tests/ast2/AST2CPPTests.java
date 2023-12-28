@@ -13894,4 +13894,22 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableValue("true_value", 1);
 	}
+
+	//	typedef void (function_type_t)(char *, int, double);
+	//
+	//	void decl_function(char *, int, double) {
+	//	}
+	//
+	//	extern function_type_t decl_simple;
+	//
+	//	void decl_simple(char *, int, double) {
+	//	}
+	//
+	//	function_type_t* array[] = {
+	//			decl_function, // reference site marker
+	//			decl_simple, // reference site marker
+	//	};
+	public void testSimpleDeclarationOfFunction() throws Exception {
+		parseAndCheckImplicitNameBindings();
+	}
 }

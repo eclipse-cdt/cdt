@@ -5,7 +5,7 @@
     are made available under the terms of the Eclipse Public License 2.0
     which accompanies this distribution, and is available at
     https://www.eclipse.org/legal/epl-2.0/
-   
+
     SPDX-License-Identifier: EPL-2.0
  -->
 
@@ -34,7 +34,6 @@
 			<id>only-terminal</id>
 			<modules>
 				<module>repo</module>
-				<module>../releng/org.eclipse.cdt.target</module>
 				<module>../core/org.eclipse.cdt.core.linux</module>
 				<module>../core/org.eclipse.cdt.core.linux.aarch64</module>
 				<module>../core/org.eclipse.cdt.core.linux.ppc64le</module>

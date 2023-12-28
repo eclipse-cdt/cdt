@@ -24,13 +24,12 @@
 	<artifactId>org.eclipse.cdt.meson.ui.tests</artifactId>
 	<version>1.0.1-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
-	
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>target-platform-configuration</artifactId>
-				<version>${tycho-version}</version>
 				<configuration>
 					<dependency-resolution>
 						<extraRequirements>

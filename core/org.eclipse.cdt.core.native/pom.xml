@@ -23,7 +23,7 @@
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
-  <version>6.3.200-SNAPSHOT</version>
+  <version>6.3.300-SNAPSHOT</version>
   <artifactId>org.eclipse.cdt.core.native</artifactId>
   <packaging>eclipse-plugin</packaging>
 

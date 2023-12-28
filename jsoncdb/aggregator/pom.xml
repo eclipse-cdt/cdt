@@ -27,7 +27,6 @@
      -->
 
 	<modules>
-		<module>../../releng/org.eclipse.cdt.target</module>
         <module>..</module>
 	</modules>
 </project>

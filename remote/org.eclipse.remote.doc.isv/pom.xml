@@ -19,7 +19,6 @@
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-source-plugin</artifactId>
-				<version>${tycho-version}</version>
 				<executions>
 					<execution>
 						<id>plugin-source</id>
@@ -47,7 +46,6 @@
 					<plugin>
 						<groupId>org.eclipse.tycho.extras</groupId>
 						<artifactId>tycho-document-bundle-plugin</artifactId>
-						<version>${tycho-version}</version>
 						<executions>
 							<execution>
 								<id>eclipse-javadoc</id>
@@ -58,7 +56,7 @@
 								<configuration>
 									<outputDirectory>${project.basedir}/html/reference/api
 									</outputDirectory>
-									<javadocOptions>
+									<javadocOptions combine.children="append">
 										<includes>
 											<include>org.eclipse.cdt.remote.*</include>
 											<include>org.eclipse.remote.*</include>

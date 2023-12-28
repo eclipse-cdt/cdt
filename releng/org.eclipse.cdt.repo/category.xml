@@ -206,6 +206,9 @@
    <bundle id="org.eclipse.cdt.jsoncdb.arm.source">
       <category name="extra-jsoncdb"/>
    </bundle>
+   <bundle id="org.eclipse.cdt.jsoncdb.freescale">
+      <category name="extra-jsoncdb"/>
+   </bundle>
    <bundle id="org.eclipse.cdt.jsoncdb.hpenonstop">
       <category name="extra-jsoncdb"/>
    </bundle>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.jsoncdb.freescale" version="2">
+    <resource path="src/org/eclipse/cdt/jsoncdb/freescale/FreescaleBuiltinDetectionBehavior.java" type="org.eclipse.cdt.jsoncdb.freescale.FreescaleBuiltinDetectionBehavior">
+        <filter comment="This is an incorrect warning from the API tools. This class is not actually API because it is in a x-interal package" id="576725006">
+            <message_arguments>
+                <message_argument value="IBuiltinsDetectionBehaviorFilebased"/>
+                <message_argument value="FreescaleBuiltinDetectionBehavior"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

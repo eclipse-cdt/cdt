@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %Bundle-Name
+Bundle-SymbolicName: org.eclipse.cdt.jsoncdb.freescale.tests
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: %Bundle-Vendor
+Fragment-Host: org.eclipse.cdt.jsoncdb.freescale
+Import-Package: org.eclipse.cdt.core.settings.model,
+ org.junit
+Automatic-Module-Name: org.eclipse.cdt.jsoncdb.freescale.tests
+Bundle-RequiredExecutionEnvironment: JavaSE-17

@@ -6903,6 +6903,37 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		assertTrue(varIp.getType().isSameType(varJp.getType()));
 	}
 
+	// template <typename A, typename B = typename A::t1>
+	// struct C {
+	// };
+	//
+	// template <typename A>
+	// struct C<A, decltype(typename A::t1())> {
+	//     int ccc1;
+	//     using t = int;
+	// };
+	//
+	// template <typename A>
+	// struct C<A, decltype(typename A::t2())> {
+	// 	int ccc2;
+	// };
+	//
+	// struct marker {
+	//     using t1 = int;
+	//     using t2 = long;
+	// };
+	//
+	// int b1 = C<marker>().ccc1;
+	// C<marker>::t b2;
+	public void testSfinae_d() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+
+		IVariable varB1 = bh.assertNonProblem("b1");
+		IVariable varB2 = bh.assertNonProblem("b2");
+		assertFalse(varB1.getInitialValue() instanceof IProblemBinding);
+		assertTrue(varB1.getType().isSameType(varB2.getType()));
+	}
+
 	//	template<typename T>
 	//	struct is_pod {
 	//	  static const bool value = __is_pod(T);

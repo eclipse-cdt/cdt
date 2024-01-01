@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     QNX Software Systems - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     John Dallaway - Support offset into archive file (#630)
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf;
 
@@ -333,12 +334,23 @@ public class Elf implements AutoCloseable {
 		public long sh_addralign;
 		public long sh_entsize;
 
+		private final long objOffset; // the offset of this binary object within the file (eg archive file)
+
+		public Section() {
+			this(0);
+		}
+
+		/** @since 8.4 */
+		public Section(long objOffset) {
+			this.objOffset = objOffset;
+		}
+
 		/**
 		 * @since 5.1
 		 */
 		public ByteBuffer mapSectionData() throws IOException {
 			makeSureNotCompressed();
-			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset, sh_size).load().asReadOnlyBuffer();
+			return efile.getChannel().map(MapMode.READ_ONLY, sh_offset + objOffset, sh_size).load().asReadOnlyBuffer();
 		}
 
 		public byte[] loadSectionData() throws IOException {
@@ -1037,7 +1049,7 @@ public class Elf implements AutoCloseable {
 			sections = new Section[length];
 			for (int i = 0; i < length; i++) {
 				efile.seek(ehdr.e_shoff + i * (ehdr.e_shentsize & 0xffff)); // unsigned short
-				sections[i] = new Section();
+				sections[i] = new Section(elfOffset);
 				sections[i].sh_name = efile.readIntE();
 				sections[i].sh_type = efile.readIntE();
 				switch (ehdr.e_ident[ELFhdr.EI_CLASS]) {

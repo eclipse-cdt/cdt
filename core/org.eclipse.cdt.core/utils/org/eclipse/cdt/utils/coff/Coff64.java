@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 Space Codesign Systems and others.
+ * Copyright (c) 2000, 2024 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     QNX Software Systems - Initial Coff class
  *     Alexander Fedorov (ArSysOp) - Bug 561992
  *     John Dallaway - Provide additional section header flags (#652)
+ *     John Dallaway - Support offset into archive file (#630)
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff;
 
@@ -329,9 +330,17 @@ public class Coff64 {
 
 		RandomAccessFile sfile;
 
-		public SectionHeader(RandomAccessFile file, long offset) throws IOException {
+		private final long objOffset; // the offset of this binary object within the file (eg archive file)
+
+		public SectionHeader(RandomAccessFile file, long hdrOffset) throws IOException {
+			this(file, 0, hdrOffset);
+		}
+
+		/** @since 8.4 */
+		public SectionHeader(RandomAccessFile file, long objOffset, long hdrOffset) throws IOException {
 			sfile = file;
-			file.seek(offset);
+			this.objOffset = objOffset;
+			file.seek(hdrOffset + objOffset);
 			byte[] hdr = new byte[SCNHSZ];
 			file.readFully(hdr);
 			ReadMemoryAccess memory = new ReadMemoryAccess(hdr, true);
@@ -409,7 +418,8 @@ public class Coff64 {
 		 * @since 5.1
 		 */
 		public ByteBuffer mapSectionData() throws IOException {
-			return sfile.getChannel().map(MapMode.READ_ONLY, s_scnptr, s_paddr).load().asReadOnlyBuffer();
+			long size = s_paddr == 0 ? s_size : s_paddr;
+			return sfile.getChannel().map(MapMode.READ_ONLY, s_scnptr + objOffset, size).load().asReadOnlyBuffer();
 		}
 	}
 
@@ -524,6 +534,9 @@ public class Coff64 {
 		public final static int T_ULONG = 0x15; /* -- 1111 	unsigned long                          */
 		/** @since 5.3 */
 		public final static int T_LNGDBL = 0x16; /* -1 0000 	long double (special case bit pattern) */
+
+		/** @since 8.4 */
+		public static final int SC_EXTERNAL = 2; /* external symbol storage class */
 
 		public byte[] _n_name = new byte[SYMNMLEN]; /* Symbol name, or pointer into
 													string table if symbol name

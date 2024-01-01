@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 Space Codesign Systems and others.
+ * Copyright (c) 2000, 2024 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -762,7 +762,7 @@ public class PE64 implements AutoCloseable {
 			}
 			offset += FileHeader.FILHSZ + fileHeader.f_opthdr;
 			for (int i = 0; i < scnhdrs.length; i++, offset += SectionHeader.SCNHSZ) {
-				scnhdrs[i] = new SectionHeader(accessFile, offset + peOffset);
+				scnhdrs[i] = new SectionHeader(accessFile, peOffset, offset);
 			}
 		}
 		return scnhdrs;

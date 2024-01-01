@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 QNX Software Systems and others.
+ * Copyright (c) 2000, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     John Dallaway - Fix archive header processing (#630)
  *******************************************************************************/
 package org.eclipse.cdt.utils.elf.parser;
 
@@ -182,6 +183,9 @@ public class ElfBinaryObject extends BinaryObjectAdapter {
 	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter.equals(Elf.class)) {
 			try {
+				if (header != null) {
+					return (T) new Elf(getPath().toOSString(), header.getObjectDataOffset());
+				}
 				return (T) new Elf(getPath().toOSString());
 			} catch (IOException e) {
 			}

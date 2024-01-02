@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 Space Codesign Systems and others.
+ * Copyright (c) 2000, 2024 Space Codesign Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,7 @@
  *     Space Codesign Systems - Initial API and implementation
  *     QNX Software Systems - Initial PEBinaryObject class
  *     John Dallaway - Fix archive header processing (#630)
- *     John Dallaway - Support sections sizes in binary info (#652)
+ *     John Dallaway - Support sections sizes and all external symbols (#652)
  *******************************************************************************/
 package org.eclipse.cdt.utils.coff.parser;
 
@@ -170,8 +170,8 @@ public class PEBinaryObject64 extends BinaryObjectAdapter {
 	}
 
 	protected void addSymbols(Coff64.Symbol[] peSyms, byte[] table, List<Symbol> list) {
-		for (org.eclipse.cdt.utils.coff.Coff64.Symbol peSym : peSyms) {
-			if (peSym.isFunction() || peSym.isPointer() || peSym.isArray()) {
+		for (Coff64.Symbol peSym : peSyms) {
+			if ((peSym.n_sclass == Coff64.Symbol.SC_EXTERNAL) && (peSym.n_scnum > 0)) {
 				String name = peSym.getName(table);
 				if (name == null || name.trim().length() == 0 || !Character.isJavaIdentifierStart(name.charAt(0))) {
 					continue;

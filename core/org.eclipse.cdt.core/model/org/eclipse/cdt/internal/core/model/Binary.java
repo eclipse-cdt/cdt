@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 QNX Software Systems and others.
+ * Copyright (c) 2000, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
  *     John Dallaway - Adapt for IBinaryFile (#413)
+ *     John Dallaway - Support source file lookup from relative path (#652)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CCorePreferenceConstants;
@@ -282,7 +284,7 @@ public class Binary extends Openable implements IBinary {
 				// information.  If not, fall back on information from the binary parser.
 				boolean showSourceFiles = Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
 						CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, false, null);
-				if (!showSourceFiles || !addSourceFiles(info, obj, hash)) {
+				if (!showSourceFiles || !addSourceFiles(info, res, obj, hash)) {
 					ISymbol[] symbols = obj.getSymbols();
 					for (ISymbol symbol : symbols) {
 						switch (symbol.getType()) {
@@ -302,7 +304,7 @@ public class Binary extends Openable implements IBinary {
 		return ok;
 	}
 
-	private boolean addSourceFiles(OpenableInfo info, IBinaryObject obj, Map<IPath, BinaryModule> hash)
+	private boolean addSourceFiles(OpenableInfo info, IResource res, IBinaryObject obj, Map<IPath, BinaryModule> hash)
 			throws CModelException {
 		// Try to get the list of source files used to build the binary from the
 		// symbol information.
@@ -315,7 +317,12 @@ public class Binary extends Openable implements IBinary {
 			sourceFiles = symbolreader.getSourceFiles();
 		}
 
-		if (sourceFiles != null && sourceFiles.length > 0) {
+		final IPath location = res.getLocation();
+		if (location != null && sourceFiles != null && sourceFiles.length > 0) {
+			// find the build CWD for the archive file
+			IPath buildCWD = Optional.ofNullable(InternalCoreModelUtil.findBuildConfiguration(res))
+					.map(InternalCoreModelUtil::getBuildCWD).orElse(location.removeLastSegments(1));
+
 			ISourceFinder srcFinder = getAdapter(ISourceFinder.class);
 			try {
 				for (String filename : sourceFiles) {
@@ -328,11 +335,17 @@ public class Binary extends Openable implements IBinary {
 						}
 					}
 
+					IPath path = new Path(filename);
+					if (!path.isAbsolute()) {
+						// assume path is relative to the build CWD
+						path = buildCWD.append(path);
+					}
+
 					// Be careful how you use this File object. If filename is a relative path, the resulting File
 					// object will apply the relative path to the working directory, which is not what we want.
 					// Stay away from methods that return or use the absolute path of the object. Note that
 					// File.isAbsolute() returns false when the object was constructed with a relative path.
-					File file = new File(filename);
+					File file = path.toFile();
 
 					// Create a translation unit for this file and add it as a child of the binary
 					String id = CoreModel.getRegistedContentTypeId(getCProject().getProject(), file.getName());
@@ -345,7 +358,7 @@ public class Binary extends Openable implements IBinary {
 					// We check this to determine if we should create a TranslationUnit or ExternalTranslationUnit
 					IFile wkspFile = null;
 					if (file.isAbsolute()) {
-						IFile[] filesInWP = ResourceLookup.findFilesForLocation(new Path(filename));
+						IFile[] filesInWP = ResourceLookup.findFilesForLocation(path);
 
 						for (IFile element : filesInWP) {
 							if (element.isAccessible()) {

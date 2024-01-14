@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 Intel Corporation and others.
+ * Copyright (c) 2006, 2024 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
+ * John Dallaway - Provide getter for IConfiguration (#666)
  *******************************************************************************/
 
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
@@ -34,6 +35,10 @@ public class FileMacroExplicitSubstitutor extends SupplierBasedCdtVariableSubsti
 		super(contextInfo, inexistentMacroValue, listDelimiter);
 		fCfg = cfg;
 		fBuilder = builder;
+	}
+
+	public IConfiguration getConfiguration() {
+		return fCfg;
 	}
 
 	/* (non-Javadoc)

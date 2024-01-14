@@ -625,7 +625,7 @@
 	  <!-- declares a content type for ASM Source files -->
       <content-type id="asmSource" name="%asmSourceName" 
           base-type="org.eclipse.core.runtime.text"
-          file-extensions="S,s,asm,ASM"
+          file-extensions="S,s,sx,asm,ASM"
           priority="high"/>
    </extension>
 

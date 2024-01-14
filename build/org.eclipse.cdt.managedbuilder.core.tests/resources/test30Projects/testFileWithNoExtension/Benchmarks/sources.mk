@@ -6,6 +6,7 @@ ASM_SRCS :=
 C_SRCS := 
 OBJ_SRCS := 
 O_SRCS := 
+SX_SRCS := 
 S_UPPER_SRCS := 
 C_DEPS := 
 EXECUTABLES := 

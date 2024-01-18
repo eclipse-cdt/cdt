@@ -31,7 +31,7 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
  * Models macros used by the preprocessor
  * @since 5.0
  */
-abstract class PreprocessorMacro implements IMacroBinding {
+public abstract class PreprocessorMacro implements IMacroBinding {
 	final private char[] fName;
 
 	public PreprocessorMacro(char[] name) {
@@ -112,7 +112,7 @@ abstract class PreprocessorMacro implements IMacroBinding {
 	public abstract TokenList getTokens(MacroDefinitionParser parser, LexerOptions lexOptions, MacroExpander expander);
 }
 
-class ObjectStyleMacro extends PreprocessorMacro {
+public class ObjectStyleMacro extends PreprocessorMacro {
 	private final AbstractCharArray fExpansion;
 	final int fExpansionOffset;
 	final int fEndOffset;
@@ -185,7 +185,7 @@ class ObjectStyleMacro extends PreprocessorMacro {
 	}
 }
 
-class FunctionStyleMacro extends ObjectStyleMacro {
+public class FunctionStyleMacro extends ObjectStyleMacro {
 	public static final int NO_VAARGS = 0; // M(a)
 	public static final int VAARGS = 1; // M(...)
 	public static final int NAMED_VAARGS = 2; // M(a...)
@@ -287,7 +287,7 @@ class FunctionStyleMacro extends ObjectStyleMacro {
 	}
 }
 
-final class UndefinedMacro extends PreprocessorMacro {
+public final class UndefinedMacro extends PreprocessorMacro {
 	public UndefinedMacro(char[] name) {
 		super(name);
 	}
@@ -313,7 +313,7 @@ final class UndefinedMacro extends PreprocessorMacro {
 	}
 }
 
-abstract class DynamicMacro extends PreprocessorMacro {
+public abstract class DynamicMacro extends PreprocessorMacro {
 
 	public DynamicMacro(char[] name) {
 		super(name);
@@ -345,7 +345,7 @@ abstract class DynamicMacro extends PreprocessorMacro {
 	}
 }
 
-final class DateMacro extends DynamicMacro {
+public final class DateMacro extends DynamicMacro {
 	DateMacro(char[] name) {
 		super(name);
 	}
@@ -376,7 +376,7 @@ final class DateMacro extends DynamicMacro {
 	}
 }
 
-final class FileMacro extends DynamicMacro {
+public final class FileMacro extends DynamicMacro {
 	FileMacro(char[] name) {
 		super(name);
 	}
@@ -395,7 +395,7 @@ final class FileMacro extends DynamicMacro {
 	}
 }
 
-final class LineMacro extends DynamicMacro {
+public final class LineMacro extends DynamicMacro {
 	LineMacro(char[] name) {
 		super(name);
 	}
@@ -412,7 +412,7 @@ final class LineMacro extends DynamicMacro {
 	}
 }
 
-final class TimeMacro extends DynamicMacro {
+public final class TimeMacro extends DynamicMacro {
 	TimeMacro(char[] name) {
 		super(name);
 	}
@@ -440,7 +440,7 @@ final class TimeMacro extends DynamicMacro {
 	}
 }
 
-final class CounterMacro extends DynamicMacro {
+public final class CounterMacro extends DynamicMacro {
 	private static final char[] ZERO = { '0' };
 
 	private long fValue;

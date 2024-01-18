@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-class TokenList {
+public class TokenList {
 	private Token fFirst;
 	private Token fLast;
 

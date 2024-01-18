@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser.scanner;
 
-class TokenList {
+public class TokenList {
 	private Token fFirst;
 	private Token fLast;
 
@@ -125,7 +125,7 @@ class TokenList {
 		}
 	}
 
-	void cutAfter(Token l) {
+	public void cutAfter(Token l) {
 		if (l == null) {
 			fFirst = null;
 			fLast = null;

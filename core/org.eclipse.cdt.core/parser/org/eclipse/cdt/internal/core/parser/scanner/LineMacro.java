@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import org.eclipse.cdt.core.parser.IToken;
 
 public final class LineMacro extends DynamicMacro {
-	LineMacro(char[] name) {
+	public LineMacro(char[] name) {
 		super(name);
 	}
 

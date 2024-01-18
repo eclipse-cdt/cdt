@@ -108,7 +108,7 @@ public class FunctionStyleMacro extends ObjectStyleMacro {
 	 * Returns one of {@link FunctionStyleMacro#NO_VAARGS}, {@link #VAARGS} or {@link #NAMED_VAARGS}.
 	 */
 	@Override
-	int hasVarArgs() {
+	public int hasVarArgs() {
 		return fHasVarArgs;
 	}
 

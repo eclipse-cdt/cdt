@@ -80,7 +80,7 @@ public abstract class PreprocessorMacro implements IMacroBinding {
 	/**
 	 * Returns {@link FunctionStyleMacro#NO_VAARGS}
 	 */
-	int hasVarArgs() {
+	public int hasVarArgs() {
 		return FunctionStyleMacro.NO_VAARGS;
 	}
 

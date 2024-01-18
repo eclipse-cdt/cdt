@@ -19,8 +19,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 
 public class ObjectStyleMacro extends PreprocessorMacro {
 	private final AbstractCharArray fExpansion;
-	final int fExpansionOffset;
-	final int fEndOffset;
+	private final int fExpansionOffset;
+	private final int fEndOffset;
 	private TokenList fExpansionTokens;
 
 	public ObjectStyleMacro(char[] name, char[] expansion) {

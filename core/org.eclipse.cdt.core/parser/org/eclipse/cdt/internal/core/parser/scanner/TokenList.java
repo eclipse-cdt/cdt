@@ -125,7 +125,7 @@ public class TokenList {
 		}
 	}
 
-	void cutAfter(Token l) {
+	public void cutAfter(Token l) {
 		if (l == null) {
 			fFirst = null;
 			fLast = null;

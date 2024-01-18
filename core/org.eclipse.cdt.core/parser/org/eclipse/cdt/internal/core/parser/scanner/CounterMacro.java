@@ -21,7 +21,7 @@ public final class CounterMacro extends DynamicMacro {
 
 	private long fValue;
 
-	CounterMacro(char[] name) {
+	public CounterMacro(char[] name) {
 		super(name);
 	}
 

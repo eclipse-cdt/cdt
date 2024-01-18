@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 import org.eclipse.cdt.core.parser.IToken;
 
 public final class FileMacro extends DynamicMacro {
-	FileMacro(char[] name) {
+	public FileMacro(char[] name) {
 		super(name);
 	}
 

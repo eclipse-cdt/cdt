@@ -20,7 +20,7 @@ import java.util.Calendar;
 import org.eclipse.cdt.core.parser.IToken;
 
 public final class DateMacro extends DynamicMacro {
-	DateMacro(char[] name) {
+	public DateMacro(char[] name) {
 		super(name);
 	}
 

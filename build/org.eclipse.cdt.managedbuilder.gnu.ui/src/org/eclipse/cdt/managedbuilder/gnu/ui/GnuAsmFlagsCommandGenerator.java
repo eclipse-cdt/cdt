@@ -41,7 +41,7 @@ public class GnuAsmFlagsCommandGenerator implements IOptionCommandGenerator {
 
 	private static final String DO_NOT_LINK_FLAG = "-c"; //$NON-NLS-1$
 	private static final Pattern DO_NOT_LINK_PATTERN = Pattern.compile("(^|\\s)-c($|\\s)"); //$NON-NLS-1$
-	private static final Pattern ASM_FLAG_PATTERN = Pattern.compile("-[aDKLR]\\S*"); //$NON-NLS-1$
+	private static final Pattern ASM_FLAG_PATTERN = Pattern.compile("(?<=^|\\s)-[aDKLR]\\S*"); //$NON-NLS-1$
 
 	@Override
 	public String generateCommand(IOption option, IVariableSubstitutor macroSubstitutor) {

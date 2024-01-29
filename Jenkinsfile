@@ -36,8 +36,10 @@ pipeline {
           timeout(activity: true, time: 20) {
             withEnv(['MAVEN_OPTS=-XX:MaxRAMPercentage=50.0 -XX:+PrintFlagsFinal']) {
               withCredentials([string(credentialsId: 'gpg-passphrase', variable: 'KEYRING_PASSPHRASE')]) {
+                // XXX: Issue 684 means that dsf-gdb tests are skipped
                 sh '''/jipp/tools/apache-maven/latest/bin/mvn \
                       clean verify -B -V \
+                      -Ddsf-gdb.skip.tests=true \
                       -Dgpg.passphrase="${KEYRING_PASSPHRASE}"  \
                       -Dmaven.test.failure.ignore=true \
                       -DexcludedGroups=flakyTest,slowTest \

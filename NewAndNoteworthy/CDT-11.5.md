@@ -16,6 +16,14 @@ The managed build system now invokes `gcc -c` to build GNU assembly language sou
 
 The new behaviour applies to managed build configurations using a _Cross GCC_, _Cygwin GCC_, _Linux GCC_ or _MinGW GCC_ toolchain.
 
+## COFF symbol presentation
+
+A complete set of external symbols is now presented under COFF binary object files within the _Project Explorer_ view:
+
+<p align="center"><img src="images/CDT-11.5-coff-object.png" width="25%"></p>
+
+The revised presentation matches that observed for ELF binary object files.
+
 # API Changes, current and planned
 
 ## Breaking API changes

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2011 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     QNX Software System
  *     Anton Leherbauer (Wind River Systems)
  *     Sergey Prigogin (Google)
+ *     John Dallaway - process external binaries as C elements (#630)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
@@ -76,11 +77,13 @@ public class CElementAdapterFactory implements IAdapterFactory {
 	}
 
 	private IPropertySource getPropertySource(ICElement celement) {
-		if (celement instanceof IBinary) {
-			return new BinaryPropertySource((IBinary) celement);
-		}
 		IResource res = celement.getResource();
 		if (res != null) {
+			if (celement instanceof IBinary) {
+				// IBinary objects must have an IResource at present
+				// TODO: support external binaries as for external translation units
+				return new BinaryPropertySource((IBinary) celement);
+			}
 			if (res instanceof IFile) {
 				return new FilePropertySource((IFile) res);
 			}

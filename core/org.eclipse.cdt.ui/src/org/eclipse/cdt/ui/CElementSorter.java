@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2023 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     Markus Schorn (Wind River Systems)
  *     John Dallaway - sort external translation units by name (#563)
+ *     John Dallaway - sort external binary files by name (#630)
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
@@ -22,6 +23,7 @@ import java.util.Comparator;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.IBinaryContainer;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IIncludeReference;
@@ -322,6 +324,10 @@ public class CElementSorter extends ViewerSorter {
 			// an external translation unit - sort by filename only (not path)
 			IPath location = tu.getLocation();
 			name1 = (null == location) ? tu.getElementName() : location.lastSegment();
+		} else if ((e1 instanceof IBinary binary) && (null == binary.getResource())) {
+			// an external binary - sort by filename only (not path)
+			IPath location = binary.getLocation();
+			name1 = (null == location) ? binary.getElementName() : location.lastSegment();
 		} else if (e1 instanceof ICElement) {
 			name1 = ((ICElement) e1).getElementName();
 			int idx = name1.lastIndexOf("::"); //$NON-NLS-1$
@@ -341,6 +347,10 @@ public class CElementSorter extends ViewerSorter {
 			// an external translation unit - sort by filename only (not path)
 			IPath location = tu.getLocation();
 			name2 = (null == location) ? tu.getElementName() : location.lastSegment();
+		} else if ((e2 instanceof IBinary binary) && (null == binary.getResource())) {
+			// an external binary - sort by filename only (not path)
+			IPath location = binary.getLocation();
+			name2 = (null == location) ? binary.getElementName() : location.lastSegment();
 		} else if (e2 instanceof ICElement) {
 			name2 = ((ICElement) e2).getElementName();
 			int idx = name2.lastIndexOf("::"); //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2014 IBM Corporation and others.
+ * Copyright (c) 2003, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Markus Schorn (Wind River Systems)
  *     Gerhard Schaber (Wind River Systems)
  *     Patrick Hofer [bug 325799]
+ *     John Dallaway - handle external binary files (#630)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -267,6 +268,9 @@ public class CElementLabelComposer {
 			break;
 		case ICElement.C_UNIT:
 			appendTranslationUnitLabel((ITranslationUnit) element, flags);
+			break;
+		case ICElement.C_BINARY:
+			appendBinaryLabel((IBinary) element, flags);
 			break;
 		case ICElement.C_CCONTAINER:
 			ICContainer container = (ICContainer) element;
@@ -826,6 +830,22 @@ public class CElementLabelComposer {
 	 */
 	public void getSourceRootLabel(ISourceRoot root, long flags) {
 		appendFolderLabel(root, flags);
+	}
+
+	/**
+	 * Appends the label for a binary to a StringBuilder.
+	 * @param container a container
+	 * @param flags any of the ROOT_* flags, and PROJECT_POST_QUALIFIED
+	 */
+	public void appendBinaryLabel(IBinary binary, long flags) {
+		IResource r = binary.getResource();
+		IPath path;
+		if (r != null) {
+			path = r.getFullPath().makeRelative();
+		} else {
+			path = binary.getPath();
+		}
+		fBuffer.append(path.lastSegment());
 	}
 
 	/**

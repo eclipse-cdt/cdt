@@ -4446,6 +4446,17 @@
          </enablement>
       </decorator>
       <decorator
+            class="org.eclipse.cdt.internal.ui.viewsupport.BinaryFileDecorator"
+            id="org.eclipse.cdt.ui.binaryFile"
+            label="%binaryFileDecorator.label"
+            lightweight="true"
+            state="true">
+         <description>%binaryFileDecorator.description</description>
+         <enablement>
+            <objectClass name="org.eclipse.cdt.core.model.IBinary"/>
+         </enablement>
+      </decorator>
+      <decorator
             adaptable="true"
             class="org.eclipse.cdt.internal.ui.viewsupport.ExcludedFileDecorator"
             id="org.eclipse.cdt.managedbuilder.ui.excludedFile"

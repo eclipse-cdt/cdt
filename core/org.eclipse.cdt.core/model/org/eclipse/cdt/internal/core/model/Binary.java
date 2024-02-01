@@ -14,6 +14,7 @@
  *     Anton Leherbauer (Wind River Systems)
  *     John Dallaway - Adapt for IBinaryFile (#413)
  *     John Dallaway - Support source file lookup from relative path (#652)
+ *     John Dallaway - Add initial support for external paths (#630)
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -21,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,10 +45,15 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
+import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -66,11 +73,19 @@ public class Binary extends Openable implements IBinary {
 
 	private long fLastModification;
 
+	private URI location;
 	private IBinaryObject binaryObject;
 	private boolean showInBinaryContainer;
 
 	public Binary(ICElement parent, IFile file, IBinaryObject bin) {
 		super(parent, file, ICElement.C_BINARY);
+		binaryObject = bin;
+		showInBinaryContainer = determineShowInBinaryContainer(bin);
+	}
+
+	public Binary(ICElement parent, URI uri, IBinaryObject bin) {
+		super(parent, (IResource) null, uri.toString(), ICElement.C_BINARY);
+		location = uri;
 		binaryObject = bin;
 		showInBinaryContainer = determineShowInBinaryContainer(bin);
 	}
@@ -284,7 +299,7 @@ public class Binary extends Openable implements IBinary {
 				// information.  If not, fall back on information from the binary parser.
 				boolean showSourceFiles = Platform.getPreferencesService().getBoolean(CCorePlugin.PLUGIN_ID,
 						CCorePreferenceConstants.SHOW_SOURCE_FILES_IN_BINARIES, false, null);
-				if (!showSourceFiles || !addSourceFiles(info, res, obj, hash)) {
+				if (!showSourceFiles || (res == null) || !addSourceFiles(info, res, obj, hash)) {
 					ISymbol[] symbols = obj.getSymbols();
 					for (ISymbol symbol : symbols) {
 						switch (symbol.getType()) {
@@ -528,7 +543,63 @@ public class Binary extends Openable implements IBinary {
 		IResource res = getResource();
 		if (res != null)
 			return res.exists();
-		return super.exists();
+		if (location != null) {
+			try {
+				IFileStore fileStore = EFS.getStore(location);
+				IFileInfo info = fileStore.fetchInfo();
+				return info.exists();
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+			}
+
+		}
+		return false;
+	}
+
+	@Override
+	public IPath getLocation() {
+		if (location == null) {
+			IFile file = getFile();
+			if (file != null) {
+				return file.getLocation();
+			} else {
+				return null;
+			}
+		}
+		return UNCPathConverter.toPath(location);
+	}
+
+	@Override
+	public URI getLocationURI() {
+		if (location == null) {
+			IFile file = getFile();
+			if (file != null) {
+				location = file.getLocationURI();
+			} else {
+				return null;
+			}
+		}
+		return location;
+	}
+
+	@Override
+	public IPath getPath() {
+		if (getFile() != null) {
+			return super.getPath();
+		}
+		IPath path = getLocation();
+		if (path != null) {
+			return path;
+		}
+		return super.getPath();
+	}
+
+	public IFile getFile() {
+		IResource res = super.getResource();
+		if (res instanceof IFile) {
+			return (IFile) res;
+		}
+		return null;
 	}
 
 	@Override

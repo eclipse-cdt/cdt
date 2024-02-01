@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.util.MementoTokenizer;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -94,12 +95,12 @@ public class Archive extends Openable implements IArchive {
 				}
 				IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(objPath);
 				if (file == null) { // if object path is external to the workspace
-					// fallback to legacy behaviour
-					// TODO: support external paths in Binary class as we do in TranslationUnit
-					objPath = ar.getPath().append(objPath.lastSegment());
+					Binary binary = new Binary(this, URIUtil.toURI(objPath), obj);
+					info.addChild(binary);
+				} else {
+					Binary binary = new Binary(this, objPath, obj);
+					info.addChild(binary);
 				}
-				Binary binary = new Binary(this, objPath, obj);
-				info.addChild(binary);
 			}
 			return true;
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2023 IBM Corporation and others.
+ * Copyright (c) 2005, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *     QNX Software System
  *     Markus Schorn (Wind River Systems)
  *     Anton Leherbauer (Wind River Systems)
- *     John Dallaway - use external file adornment (#563)
+ *     John Dallaway - use external file adornment (#563, #630)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
@@ -601,6 +601,9 @@ public class CElementImageProvider {
 							flags |= CElementImageDescriptor.EXTERNAL_FILE;
 						}
 					}
+				}
+				if ((element instanceof IBinary) && (null == element.getResource())) {
+					flags |= CElementImageDescriptor.EXTERNAL_FILE;
 				}
 			} catch (CModelException e) {
 			}

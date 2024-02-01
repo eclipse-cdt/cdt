@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,8 +11,11 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     John Dallaway - Support external binary files (#630)
  *******************************************************************************/
 package org.eclipse.cdt.core.model;
+
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Represents a Binary file, for example an ELF executable.
@@ -57,4 +60,11 @@ public interface IBinary extends ICElement, IParent, IOpenable {
 	public boolean showInBinaryContainer();
 	//public IAddressFactory getAddressFactory();
 
+	/**
+	 * Returns the absolute path of the location of this binary. May be {@code null},
+	 * in case the location does not exist.
+	 * @return an absolute path to the location, or {@code null}
+	 * @since 8.4
+	 */
+	public IPath getLocation();
 }

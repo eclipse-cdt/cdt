@@ -39,6 +39,8 @@ public interface ISemanticProblem {
 	int BINDING_NO_CLASS = 16;
 	/** @since 8.1 */
 	int BINDING_INVALID_STRUCTURED_BINDING_INITIALIZER = 17;
+	/** @since 8.4 */
+	int BINDING_INVALID_TEMPLATE_INSTANTIATION = 18;
 
 	int TYPE_NO_NAME = 10000;
 	int TYPE_UNRESOLVED_NAME = 10001;

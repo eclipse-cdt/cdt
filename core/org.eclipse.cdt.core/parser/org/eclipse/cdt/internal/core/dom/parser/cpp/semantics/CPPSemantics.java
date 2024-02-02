@@ -3103,10 +3103,17 @@ public class CPPSemantics {
 		ICPPFunction[] tmp = selectByArgumentCount(data, fns);
 		if (tmp.length == 0 || tmp[0] == null)
 			return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
+		int nbBeforeInstantiate = tmp.length;
 		tmp = CPPTemplates.instantiateForFunctionCall(tmp, data.getTemplateArguments(), Arrays.asList(argTypes),
 				Arrays.asList(data.getFunctionArgumentValueCategories()), data.argsContainImpliedObject);
-		if (tmp.length == 0 || tmp[0] == null)
-			return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
+		if (tmp.length == 0 || tmp[0] == null) {
+			// All candidates were failed template instantiations
+			if (nbBeforeInstantiate == fns.length)
+				return new ProblemBinding(lookupName, lookupPoint,
+						IProblemBinding.SEMANTIC_INVALID_TEMPLATE_INSTANTIATION, fns);
+			else
+				return new ProblemBinding(lookupName, lookupPoint, IProblemBinding.SEMANTIC_NAME_NOT_FOUND, fns);
+		}
 
 		int viableCount = 0;
 		for (IFunction f : tmp) {

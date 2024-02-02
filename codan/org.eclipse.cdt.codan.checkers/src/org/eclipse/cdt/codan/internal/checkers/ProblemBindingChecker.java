@@ -66,6 +66,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 	public static String ERR_ID_VariableResolutionProblem = "org.eclipse.cdt.codan.internal.checkers.VariableResolutionProblem"; //$NON-NLS-1$
 	public static String ERR_ID_Candidates = "org.eclipse.cdt.codan.internal.checkers.Candidates"; //$NON-NLS-1$
 	public static String ERR_ID_StructuredBindingDeclarationProblem = "org.eclipse.cdt.codan.internal.checkers.StructuredBindingDeclarationProblem"; //$NON-NLS-1$
+	public static String ERR_ID_TemplateInstantiationProblem = "org.eclipse.cdt.codan.internal.checkers.TemplateInstantiationProblem"; //$NON-NLS-1$
 
 	@Override
 	public boolean runInEditor() {
@@ -175,6 +176,14 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 										contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
+							if (id == IProblemBinding.SEMANTIC_INVALID_TEMPLATE_INSTANTIATION) {
+								if (isFunctionCall(name, parentNode)) {
+									reportProblem(ERR_ID_TemplateInstantiationProblem, name.getLastName(),
+											getCandidatesString(problemBinding), contextFlagsString);
+								}
+								return PROCESS_CONTINUE;
+							}
+
 							// From this point, we'll deal only with NAME_NOT_FOUND problems.
 							// If it's something else continue because we don't want to give bad messages.
 							if (id != IProblemBinding.SEMANTIC_NAME_NOT_FOUND) {

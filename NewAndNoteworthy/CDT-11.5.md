@@ -24,6 +24,14 @@ A complete set of external symbols is now presented under COFF binary object fil
 
 The revised presentation matches that observed for ELF binary object files.
 
+## GNU archive content presentation
+
+The original locations of object files within a GNU archive are now calculated using path information where available. This enables presentation of source file names and symbols under archive files within the _Project Explorer_ view:
+
+<p align="center"><img src="images/CDT-11.5-archive-content.png" width="25%"></p>
+
+Managed build _Static Library_ projects using a _Cross GCC_, _Cygwin GCC_, _Linux GCC_ or _MinGW GCC_ toolchain now use the `-P` archiver flag by default to generate the necessary path information.
+
 # API Changes, current and planned
 
 ## Breaking API changes

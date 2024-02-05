@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.managedbuilder.ui; singleton:=true
-Bundle-Version: 9.4.100.qualifier
+Bundle-Version: 9.4.200.qualifier
 Bundle-Activator: org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -27,3 +27,6 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.managedbuilder.ui
+Service-Component: OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.BuiltinPreferedOptionsDefaults.xml,
+ OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.PreferenceConfigurationAccess.xml,
+ OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.PreferenceMetadataDefaults.xml

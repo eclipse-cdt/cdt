@@ -7,6 +7,8 @@
    <extension-point id="projectConverter" name="%extension-point.name.1" schema="schema/Converter.exsd"/>
    <extension-point id="buildProperties" name="%extension-point.name.2" schema="schema/buildProperties.exsd"/>
    <extension-point id="tcModificationInfo" name="%extension-point.name.3" schema="schema/tcModificationInfo.exsd"/>
+   <extension-point id="compilationDatabaseContributor" name="%extension-point.name.4" schema="schema/compilationDatabaseContributor.exsd"/>
+
    
 
 <!-- =================================================================================== -->

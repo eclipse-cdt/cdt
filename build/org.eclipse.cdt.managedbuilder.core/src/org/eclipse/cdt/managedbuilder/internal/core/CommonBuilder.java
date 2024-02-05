@@ -51,6 +51,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
+import org.eclipse.cdt.managedbuilder.core.jsoncdb.generator.CompilationDatabaseGenerator;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildDescription;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildStateManager;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
@@ -505,6 +506,8 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 			}
 
 			for (int i = 0; i < num; i++) {
+				CompilationDatabaseGenerator generator = new CompilationDatabaseGenerator(getProject(), activeCfg);
+				generator.generate();
 				//bug 219337
 				if (kind == INCREMENTAL_BUILD || kind == AUTO_BUILD) {
 					if (buildConfigResourceChanges()) { //only build projects with project resource changes

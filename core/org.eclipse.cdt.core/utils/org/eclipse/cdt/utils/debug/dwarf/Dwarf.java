@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 QNX Software Systems and others.
+ * Copyright (c) 2000, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Serge Beauchamp - Bug 409916
  *     John Dallaway - Support DW_FORM_line_strp (#198)
  *     John Dallaway - Support DW_FORM_implicit_const (#443)
+ *     Alexander Fedorov (ArSysOp) - fix resource leak (#693)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -1065,12 +1066,10 @@ public class Dwarf implements AutoCloseable {
 	}
 
 	public static void main(String[] args) {
-		try {
-			DebugSymsRequestor symreq = new DebugSymsRequestor();
-			Dwarf dwarf = new Dwarf(args[0]);
+		DebugSymsRequestor symreq = new DebugSymsRequestor();
+		try (Dwarf dwarf = new Dwarf(args[0])) {
 			dwarf.parse(symreq);
-			DebugSym[] entries = symreq.getEntries();
-			for (DebugSym entry : entries) {
+			for (DebugSym entry : symreq.getEntries()) {
 				System.out.println(entry);
 			}
 		} catch (IOException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Alexander Fedorov (ArSysOp) - fix resource leak (#693)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.tools;
@@ -58,8 +59,9 @@ public class DebugDump implements IDebugEntryRequestor {
 			Stabs stabs = new Stabs(elf);
 			stabs.parse(this);
 		} else if (type == Elf.Attribute.DEBUG_TYPE_DWARF) {
-			Dwarf dwarf = new Dwarf(elf);
-			dwarf.parse(this);
+			try (Dwarf dwarf = new Dwarf(elf)) {
+				dwarf.parse(this);
+			}
 		} else {
 			throw new IOException(CCorePlugin.getResourceString("Util.unknownFormat")); //$NON-NLS-1$
 		}

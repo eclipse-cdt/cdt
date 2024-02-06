@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 QNX Software Systems and others.
+ * Copyright (c) 2000, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Craig Watson.
  *     Apple Computer - work on performance optimizations
+ *     Alexander Fedorov (ArSysOp) - fix resource leak (#693)
  *******************************************************************************/
 package org.eclipse.cdt.utils.macho;
 
@@ -1157,20 +1158,17 @@ public class MachO64 implements AutoCloseable {
 	}
 
 	public static Attribute getAttributes(String file) throws IOException {
-		MachO64 macho = new MachO64(file);
-		Attribute attrib = macho.getAttributes();
-		macho.dispose();
-		return attrib;
+		try (MachO64 macho = new MachO64(file)) {
+			return macho.getAttributes();
+		}
 	}
 
 	public static Attribute getAttributes(byte[] array) throws IOException {
-		MachO64 emptyMachO = new MachO64();
-		emptyMachO.mhdr = emptyMachO.new MachOhdr(array);
-		//emptyMachO.sections = new MachO64.Section[0];
-		Attribute attrib = emptyMachO.getAttributes();
-		emptyMachO.dispose();
-
-		return attrib;
+		try (MachO64 emptyMachO = new MachO64()) {
+			emptyMachO.mhdr = emptyMachO.new MachOhdr(array);
+			//emptyMachO.sections = new MachO64.Section[0];
+			return emptyMachO.getAttributes();
+		}
 	}
 
 	public static boolean isMachOHeader(byte[] bytes) {

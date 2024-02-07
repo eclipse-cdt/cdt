@@ -38,7 +38,7 @@ public class TemplateExtension {
 				"templates"); //$NON-NLS-1$
 
 		// tags
-		Tag allTag = new Tag(Tag.ALL_ID, "All");
+		Tag allTag = new Tag(Tag.ALL_ID, Messages.TemplateExtension_tag_all);
 		tags.put(allTag.getId(), allTag);
 
 		for (IConfigurationElement element : point.getConfigurationElements()) {

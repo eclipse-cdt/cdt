@@ -56,7 +56,7 @@ class CommandDescriptorBuilder {
 		List<String> env = new ArrayList<>();
 
 		// defaults for all OSes...
-		args.add("cmake"); //$NON-NLS-1$
+		args.add(CMakeBuildConfiguration.BUILD_COMMAND_DEFAULT);
 		/* add general settings */
 		if (cmakeProperties.isWarnNoDev())
 			args.add("-Wno-dev"); //$NON-NLS-1$
@@ -111,7 +111,7 @@ class CommandDescriptorBuilder {
 
 		IOsOverrides osOverrides = overridesSelector.getOsOverrides(cmakeProperties);
 		if (osOverrides.getUseDefaultCommand()) {
-			args.add("cmake"); //$NON-NLS-1$
+			args.add(CMakeBuildConfiguration.BUILD_COMMAND_DEFAULT);
 		} else {
 			IStringVariableManager varManager = VariablesPlugin.getDefault().getStringVariableManager();
 			String cmd = varManager.performStringSubstitution(osOverrides.getCommand());

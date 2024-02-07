@@ -117,3 +117,11 @@ DISPLAY=:99 mvn verify
 or specify the `DISPLAY` in the Eclipse JUnit launch configuration:
 
 ![junit_env_display.png](images/junit_env_display.png "screenshot of how to set custom DISPLAY")
+
+## Manual Testing
+### CMake Build Settings tab
+A set of manual tests that check it is possible to control the CMake build using the Launch Bar Launch Configuration > Build Settings tab.
+
+[CMake Build Settings tests](./cmake/org.eclipse.cdt.cmake.ui.tests/manualTests/Bug579242_manual_tests.md)
+
+

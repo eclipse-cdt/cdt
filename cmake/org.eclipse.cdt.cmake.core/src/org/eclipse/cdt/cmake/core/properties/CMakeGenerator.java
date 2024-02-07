@@ -81,4 +81,16 @@ public enum CMakeGenerator {
 	public String getIgnoreErrOption() {
 		return ignoreErrOption;
 	}
+
+	/**
+	 * @since 1.5
+	 */
+	public static CMakeGenerator getGenerator(String generatorName) {
+		for (CMakeGenerator gen : values()) {
+			if (gen.getCMakeName().equals(generatorName)) {
+				return gen;
+			}
+		}
+		return null;
+	}
 }

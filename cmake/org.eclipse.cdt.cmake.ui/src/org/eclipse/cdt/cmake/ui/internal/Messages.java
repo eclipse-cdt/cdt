@@ -24,6 +24,8 @@ public class Messages extends NLS {
 	public static String CMakeBuildTab_Settings;
 	public static String CMakeBuildTab_Toolchain;
 	public static String CMakeBuildTab_UnixMakefiles;
+	public static String CMakeBuildTab_useUICmakeSettings;
+	public static String CMakeBuildTab_useUICmakeSettingsTip;
 	public static String CMakePreferencePage_Add;
 	public static String CMakePreferencePage_ConfirmRemoveDesc;
 	public static String CMakePreferencePage_ConfirmRemoveTitle;

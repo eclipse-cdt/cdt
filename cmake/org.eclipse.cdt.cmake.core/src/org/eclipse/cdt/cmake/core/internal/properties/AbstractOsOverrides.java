@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.cdt.cmake.core.internal.CMakeBuildConfiguration;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
 
@@ -42,7 +43,7 @@ public abstract class AbstractOsOverrides implements IOsOverrides {
 	 * Sets each value to its default.
 	 */
 	public void reset() {
-		setCommand("cmake"); //$NON-NLS-1$
+		setCommand(CMakeBuildConfiguration.BUILD_COMMAND_DEFAULT);
 		useDefaultCommand = true;
 		setGenerator(CMakeGenerator.UnixMakefiles);
 		extraArguments.clear();

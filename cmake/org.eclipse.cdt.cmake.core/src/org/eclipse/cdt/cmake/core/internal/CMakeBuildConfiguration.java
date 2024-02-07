@@ -18,11 +18,13 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.cmake.core.CMakeErrorParser;
 import org.eclipse.cdt.cmake.core.CMakeExecutionMarkerFactory;
@@ -66,14 +68,19 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.osgi.service.prefs.Preferences;
 
 public class CMakeBuildConfiguration extends CBuildConfiguration {
 
+	public static final String CMAKE_USE_UI_OVERRIDES = "cmake.use.ui.overrides"; //$NON-NLS-1$
+	public static final boolean CMAKE_USE_UI_OVERRIDES_DEFAULT = false;
 	public static final String CMAKE_GENERATOR = "cmake.generator"; //$NON-NLS-1$
 	public static final String CMAKE_ARGUMENTS = "cmake.arguments"; //$NON-NLS-1$
 	public static final String CMAKE_ENV = "cmake.environment"; //$NON-NLS-1$
 	public static final String BUILD_COMMAND = "cmake.command.build"; //$NON-NLS-1$
+	public static final String BUILD_COMMAND_DEFAULT = "cmake"; //$NON-NLS-1$
 	public static final String CLEAN_COMMAND = "cmake.command.clean"; //$NON-NLS-1$
+	public static final String CLEAN_COMMAND_DEFAULT = "clean"; //$NON-NLS-1$
 
 	private ICMakeToolChainFile toolChainFile;
 
@@ -261,6 +268,23 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	/**
+	 * When UI overrides are in force, gets the user specified clean target (if not blank), otherwise the default clean target.
+	 * @return Always a non-null String indicating the clean target.
+	 */
+	private String getCleanCommand() {
+		String retVal = CLEAN_COMMAND_DEFAULT;
+		Preferences settings = this.getSettings();
+		boolean useUiOverrides = settings.getBoolean(CMAKE_USE_UI_OVERRIDES, CMAKE_USE_UI_OVERRIDES_DEFAULT);
+		if (useUiOverrides) {
+			String cleanCommand = settings.get(CLEAN_COMMAND, CLEAN_COMMAND_DEFAULT);
+			if (!cleanCommand.isBlank()) {
+				retVal = cleanCommand;
+			}
+		}
+		return retVal;
+	}
+
 	@Override
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
@@ -271,7 +295,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties,
 					new SimpleOsOverridesSelector());
-			CommandDescriptor command = cmdBuilder.makeCMakeBuildCommandline("clean"); //$NON-NLS-1$
+			CommandDescriptor command = cmdBuilder.makeCMakeBuildCommandline(getCleanCommand());
 			ConsoleOutputStream outStream = console.getOutputStream();
 
 			Path buildDir = getBuildDirectory();
@@ -547,7 +571,12 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	} // CMakeIndexerInfoConsumer
 
-	private static class SimpleOsOverridesSelector implements IOsOverridesSelector {
+	/**
+	 * Supports OS overrides and also User Interface (UI) overrides, provided in the CMakeBuildTab. The UI
+	 * overrides are stored in the intermediary CBuildConfiguration Preferences (CBuildConfiguration.getSettings())
+	 * and used only when CMAKE_USE_UI_OVERRIDES is true.
+	 */
+	private class SimpleOsOverridesSelector implements IOsOverridesSelector {
 
 		@Override
 		public IOsOverrides getOsOverrides(ICMakeProperties cmakeProperties) {
@@ -561,7 +590,31 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				// fall back to linux, if OS is unknown
 				overrides = cmakeProperties.getLinuxOverrides();
 			}
-			return overrides;
+			return getUiOrOsOverrides(overrides);
+		}
+
+		private IOsOverrides getUiOrOsOverrides(IOsOverrides osOverrides) {
+			IOsOverrides retVal = Objects.requireNonNull(osOverrides, "osOverrides must not be null"); //$NON-NLS-1$
+			Preferences settings = getSettings();
+			boolean useUiOverrides = settings.getBoolean(CMAKE_USE_UI_OVERRIDES, CMAKE_USE_UI_OVERRIDES_DEFAULT);
+			if (useUiOverrides) {
+				// Set UI override for generator
+				String gen = settings.get(CMAKE_GENERATOR, ""); //$NON-NLS-1$
+				retVal.setGenerator(CMakeGenerator.getGenerator(gen));
+				// Set UI override for Extra Arguments
+				String extraArgsStr = settings.get(CMAKE_ARGUMENTS, ""); //$NON-NLS-1$
+				// Convert String of args, separated by 1 or more spaces, into list of Strings
+				List<String> extraArgs = Arrays.stream(extraArgsStr.split("\\s+")).map(entry -> entry.trim()) //$NON-NLS-1$
+						.collect(Collectors.toList());
+				retVal.setExtraArguments(extraArgs);
+				// Set UI override for cmake build command, unless it's the default
+				String buildCommand = settings.get(BUILD_COMMAND, BUILD_COMMAND_DEFAULT);
+				if (!buildCommand.isBlank() && !BUILD_COMMAND_DEFAULT.equals(buildCommand)) {
+					retVal.setUseDefaultCommand(false);
+					retVal.setCommand(buildCommand);
+				}
+			}
+			return retVal;
 		}
 	} // SimpleOsOverridesSelector
 }

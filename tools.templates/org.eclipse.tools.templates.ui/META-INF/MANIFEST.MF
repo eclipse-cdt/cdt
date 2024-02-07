@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.tools.templates.ui
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.tools.templates.ui;singleton:=true
 Bundle-Version: 2.0.100.qualifier
 Bundle-Activator: org.eclipse.tools.templates.ui.internal.Activator
@@ -14,5 +14,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tools.templates.ui,
  org.eclipse.tools.templates.ui.internal;x-internal:=true
-Bundle-Vendor: %providerName
-Bundle-Localization: plugin
+Bundle-Vendor: %Bundle-Vendor

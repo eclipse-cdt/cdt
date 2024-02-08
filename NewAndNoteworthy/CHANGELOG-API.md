@@ -8,6 +8,14 @@ This section describes API removals that occurred in past releases, and upcoming
 
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
 
+## API Changes in CDT 11.5.
+
+### org.eclipse.cdt.make.ui.dialogs.DiscoveredPathContainerPage removed
+
+The class DiscoveredPathContainerPage used a number of APIs in the Eclipse Platform [removed](https://github.com/eclipse-platform/eclipse.platform.ui/pull/1563) in [Eclipse 4.31 release](https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/blob/81e406456ffae2f82fe0bb244adfdc4121c9e463/eclipse.platform.common/bundles/org.eclipse.platform.doc.isv/porting/removals.html#L595).
+This class, while API, has not be used, nor usable since the CDT 4 release as it was only for CDT 3.x style projects.
+The class had been deprecated since 2010.
+
 ## API Changes in CDT 11.4.
 
 ### org.eclipse.tools.templates.freemarker, org.eclipse.tools.templates.freemarker.ui and org.eclipse.tools.templates.freemarker.core major version bumped

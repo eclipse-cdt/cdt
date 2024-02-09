@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.build;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -145,8 +146,8 @@ public class ErrorBuildConfiguration extends PlatformObject implements ICBuildCo
 
 	@Override
 	public List<String> getBinaryParserIds() throws CoreException {
-		// TODO Auto-generated method stub
-		return null;
+		// Return empty list to prevent possible NPE
+		return Collections.emptyList();
 	}
 
 }

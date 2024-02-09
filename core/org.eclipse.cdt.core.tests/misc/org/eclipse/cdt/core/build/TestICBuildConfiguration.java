@@ -13,7 +13,6 @@ package org.eclipse.cdt.core.build;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.List;
 
@@ -62,10 +61,12 @@ public class TestICBuildConfiguration {
 		/*
 		 * It's difficult to create a functional BuildConfiguration without a toolchain, so just use
 		 * this Error Build Configuration. It is adequate for simply testing the API.
+		 *
+		 * Edit: getBinaryParserIds() must not return null to prevent possible NPE
 		 */
 		ErrorBuildConfiguration errorBuildConfiguration = new ErrorBuildConfiguration(buildConfig, "errorBuildConfig");
 		List<String> binaryParserIds = errorBuildConfiguration.getBinaryParserIds();
-		assertNull(binaryParserIds, "Must be null");
+		assertNotNull(binaryParserIds, "Must not be null");
 	}
 
 	private IProject getProject() throws Exception {

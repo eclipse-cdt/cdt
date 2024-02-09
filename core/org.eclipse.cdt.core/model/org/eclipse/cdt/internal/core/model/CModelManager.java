@@ -617,7 +617,7 @@ public class CModelManager implements IResourceChangeListener, IContentTypeChang
 				Set<String> parserIds = new HashSet<>();
 				for (IBuildConfiguration config : project.getBuildConfigs()) {
 					ICBuildConfiguration cconfig = config.getAdapter(ICBuildConfiguration.class);
-					if (cconfig != null) {
+					if (cconfig != null && cconfig.getBinaryParserIds() != null) {
 						parserIds.addAll(cconfig.getBinaryParserIds());
 					}
 				}

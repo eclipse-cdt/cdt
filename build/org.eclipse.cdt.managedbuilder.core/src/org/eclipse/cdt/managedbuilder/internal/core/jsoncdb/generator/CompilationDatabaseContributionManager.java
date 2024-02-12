@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ********************************************************************************/
-package org.eclipse.cdt.managedbuilder.core.jsoncdb.generator;
+package org.eclipse.cdt.managedbuilder.internal.core.jsoncdb.generator;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,9 +32,17 @@ import org.eclipse.jdt.annotation.NonNull;
 	private static final String ATTRIB_TOOLCHAIN_ID = "toolchainID"; //$NON-NLS-1$
 	private static final String ID_COMPILATIONDATABASE = "compilationDatabase"; //$NON-NLS-1$
 	private static final String EXTENSION_ID = "compilationDatabaseContributor"; //$NON-NLS-1$
+	/**
+	 * Map of tool chain IDs (see {@link IToolChain#getId()} to
+	 * loaded instances of {@link ICompilationDatabaseContributor}
+	 */
 	@NonNull
-	private final Map<String, ICompilationDatabaseContributor> loadedInstances;
-	private final Map<String, IConfigurationElement> factoryExtensions;
+	private final Map<String, ICompilationDatabaseContributor> loadedInstances = new HashMap<>();
+	/**
+	 * Map of tool chain IDs (see {@link IToolChain#getId()} to
+	 * extension point information for the compilationDatabaseContributor extension.
+	 */
+	private final Map<String, IConfigurationElement> factoryExtensions = new HashMap<>();
 
 	private class EmptyCompilationDatabaseContributor implements ICompilationDatabaseContributor {
 
@@ -47,8 +55,6 @@ import org.eclipse.jdt.annotation.NonNull;
 	private static CompilationDatabaseContributionManager instance;
 
 	private CompilationDatabaseContributionManager() {
-		this.factoryExtensions = new HashMap<>();
-		this.loadedInstances = new HashMap<>();
 		initalise();
 	}
 
@@ -60,8 +66,6 @@ import org.eclipse.jdt.annotation.NonNull;
 	}
 
 	private void initalise() {
-		Map<String, IConfigurationElement> loadedExtension = new HashMap<>();
-
 		IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(
 				"org.eclipse.cdt.managedbuilder.core", CompilationDatabaseContributionManager.EXTENSION_ID); //$NON-NLS-1$
 		if (extension != null) {
@@ -75,14 +79,12 @@ import org.eclipse.jdt.annotation.NonNull;
 						String className = configElement
 								.getAttribute(CompilationDatabaseContributionManager.ATTRIB_RUNNER);
 						if (toolchainId != null && className != null) {
-							loadedExtension.put(toolchainId, configElement);
+							factoryExtensions.put(toolchainId, configElement);
 						}
 					}
 				}
 			}
 		}
-
-		this.factoryExtensions.putAll(loadedExtension);
 	}
 
 	/**

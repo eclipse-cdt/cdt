@@ -7,7 +7,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  ********************************************************************************/
-package org.eclipse.cdt.managedbuilder.core.jsoncdb.generator;
+package org.eclipse.cdt.managedbuilder.internal.core.jsoncdb.generator;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

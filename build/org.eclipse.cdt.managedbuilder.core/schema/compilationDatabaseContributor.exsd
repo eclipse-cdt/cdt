@@ -69,7 +69,7 @@
                   
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.jsoncdb.generator.api.ICompilationDatabaseContributor"/>
+                  <meta.attribute kind="java" basedOn=":org.eclipse.cdt.managedbuilder.core.jsoncdb.ICompilationDatabaseContributor"/>
                </appInfo>
             </annotation>
          </attribute>

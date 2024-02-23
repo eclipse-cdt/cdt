@@ -22,7 +22,7 @@
 
 	<properties>
 		<required-maven-version>3.9.1</required-maven-version>
-		<tycho-version>4.0.1</tycho-version>
+		<tycho-version>4.0.6</tycho-version>
 		<cbi-plugins.version>1.4.3</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>http://ci.eclipse.org/cdt/job/cdt-master/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>

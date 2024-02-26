@@ -311,7 +311,12 @@ public class CElementSorter extends ViewerSorter {
 
 		// non - c resources are sorted using the label from the viewers label provider
 		if (cat1 == RESOURCES || cat1 == RESOURCEFOLDERS || cat1 == STORAGE || cat1 == OTHERS) {
-			return compareWithLabelProvider(viewer, e1, e2);
+			String name1 = getNonCElementLabel(viewer, e1);
+			String name2 = getNonCElementLabel(viewer, e2);
+			if (name1 != null && name2 != null) {
+				return getComparator().compare(name1, name2);
+			}
+			return 0; // can't compare
 		}
 
 		String ns1 = ""; //$NON-NLS-1$
@@ -427,20 +432,28 @@ public class CElementSorter extends ViewerSorter {
 		return (ISourceRoot) celement;
 	}
 
-	private int compareWithLabelProvider(Viewer viewer, Object e1, Object e2) {
+	// implementation taken from org.eclipse.jdt.ui.JavaElementComparator
+	private String getNonCElementLabel(Viewer viewer, Object element) {
+		// try to use the workbench adapter for non - C++ resources or if not available, use the viewers label provider
+		if (element instanceof IResource) {
+			return ((IResource) element).getName();
+		}
+		if (element instanceof IStorage) {
+			return ((IStorage) element).getName();
+		}
+		if (element instanceof IAdaptable) {
+			IWorkbenchAdapter adapter = ((IAdaptable) element).getAdapter(IWorkbenchAdapter.class);
+			if (adapter != null) {
+				return adapter.getLabel(element);
+			}
+		}
 		if (viewer instanceof ContentViewer) {
 			IBaseLabelProvider prov = ((ContentViewer) viewer).getLabelProvider();
 			if (prov instanceof ILabelProvider) {
-				ILabelProvider lprov = (ILabelProvider) prov;
-				String name1 = lprov.getText(e1);
-				String name2 = lprov.getText(e2);
-				if (name1 != null && name2 != null) {
-					final Comparator<? super String> comparator = getComparator();
-					return comparator.compare(name1, name2);
-				}
+				return ((ILabelProvider) prov).getText(element);
 			}
 		}
-		return 0; // can't compare
+		return null;
 	}
 
 	private int getPathEntryIndex(ISourceRoot root) {

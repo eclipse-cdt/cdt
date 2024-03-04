@@ -2461,7 +2461,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	@Override
 	public boolean isNewStyleProject(IProject project) {
-		return isNewStyleProject(getProjectDescription(project, false));
+		System.out.println("calling isNewStyleProject for project " + project.getName());
+		return isNewStyleProject(getProjectDescription(project, false, false));
 	}
 
 	@Override

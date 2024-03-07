@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
+<!--
+Copyright (c) 2005, 2024 Intel Corporation and others
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+
+Contributors:
+    Intel Corporation - initial API and implementation
+    John Dallaway - add assembler debug level option (#727)
+-->
 <plugin>
 
     
@@ -576,6 +589,39 @@
                name="%OptionCategory.General"
                id="gnu.asm.category.general">
          </optionCategory>
+         <option
+               category="gnu.asm.category.general"
+               id="gnu.asm.option.debugging.level"
+               name="%Option.Posix.DebugLevel"
+               valueType="enumerated">
+            <enumeratedOptionValue
+                  name="%Option.Posix.Debug.None"
+                  id="gnu.asm.debugging.level.none"
+                  isDefault="true"/>
+            <enumeratedOptionValue
+                  command="-g"
+                  name="%Option.Posix.Debug.Def"
+                  id="gnu.asm.debugging.level.default"
+                  isDefault="false"/>
+            <enablement 
+                  attribute="defaultValue"
+                  extensionAdjustment="false"
+                  type="CONTAINER_ATTRIBUTE"
+                  value="gnu.asm.debugging.level.none">
+               <checkBuildProperty
+                     property="org.eclipse.cdt.build.core.buildType"
+                     value="org.eclipse.cdt.build.core.buildType.release"/>
+            </enablement>
+            <enablement 
+                  attribute="defaultValue"
+                  extensionAdjustment="false"
+                  type="CONTAINER_ATTRIBUTE"
+                  value="gnu.asm.debugging.level.default">
+               <checkBuildProperty
+                     property="org.eclipse.cdt.build.core.buildType"
+                     value="org.eclipse.cdt.build.core.buildType.debug"/>
+            </enablement>
+         </option>
          <option
                name="%Option.Gnu.Assembler.Flags"
                category="gnu.asm.category.general"

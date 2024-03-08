@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2024 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.Iterator;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -27,7 +32,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.DisplayHelper;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.tests.BaseUITestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -53,17 +58,16 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.texteditor.AnnotationPreference;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the C/C++ Editor's occurrence marking feature.
  *
  * @since 5.0
  */
-public class MarkOccurrenceTest extends BaseUITestCase {
+public class MarkOccurrenceTest extends BaseUITestCase5 {
 	private static final String PROJECT = "MarkOccurrenceTest";
 
 	private static final String OCCURRENCE_ANNOTATION = "org.eclipse.cdt.ui.occurrences";
@@ -82,44 +86,11 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 	private IRegion fMatch;
 	private StyledText fTextWidget;
 
-	private MarkOccurrenceTestSetup fProjectSetup;
+	private ICProject fCProject;
 
-	protected static class MarkOccurrenceTestSetup extends TestSetup {
-		private ICProject fCProject;
-
-		public MarkOccurrenceTestSetup(Test test) {
-			super(test);
-		}
-
-		@Override
-		protected void setUp() throws Exception {
-			super.setUp();
-			fCProject = EditorTestHelper.createCProject(PROJECT, "resources/ceditor", false, true);
-		}
-
-		@Override
-		protected void tearDown() throws Exception {
-			if (fCProject != null)
-				CProjectHelper.delete(fCProject);
-
-			super.tearDown();
-		}
-	}
-
-	public static Test setUpTest(Test someTest) {
-		return new MarkOccurrenceTestSetup(someTest);
-	}
-
-	public static Test suite() {
-		return setUpTest(new TestSuite(MarkOccurrenceTest.class));
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		if (!ResourcesPlugin.getWorkspace().getRoot().exists(new Path(PROJECT))) {
-			fProjectSetup = new MarkOccurrenceTestSetup(this);
-			fProjectSetup.setUp();
-		}
+	@BeforeEach
+	protected void setUpMarkOccurenceTest() throws Exception {
+		fCProject = EditorTestHelper.createCProject(PROJECT, "resources/ceditor", false, true);
 		assertNotNull(fgHighlightRGB);
 		assertNotNull(fgWriteHighlightRGB);
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
@@ -161,8 +132,8 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		SelectionListenerWithASTManager.getDefault().addListener(fEditor, fSelWASTListener);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDownMarkOccurenceTest() throws Exception {
 		final IPreferenceStore store = CUIPlugin.getDefault().getPreferenceStore();
 		store.setToDefault(PreferenceConstants.EDITOR_MARK_OCCURRENCES);
 		// TLETODO temporary fix for bug 314635
@@ -171,9 +142,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 						+ PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED_SUFFIX);
 		SelectionListenerWithASTManager.getDefault().removeListener(fEditor, fSelWASTListener);
 		EditorTestHelper.closeAllEditors();
-		if (fProjectSetup != null) {
-			fProjectSetup.tearDown();
-		}
+		CProjectHelper.delete(fCProject);
 	}
 
 	private CEditor openCEditor(IPath path) {
@@ -187,6 +156,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		}
 	}
 
+	@Test
 	public void testMarkTypeOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "ClassContainer", true, true, true, false);
@@ -201,6 +171,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkTypeOccurrences2() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "Base1", true, true, true, false);
@@ -215,6 +186,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkTypeOccurrences3() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "Base2", true, true, true, false);
@@ -229,6 +201,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkTypedefOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "size_t", true, true, true, false);
@@ -243,6 +216,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkClassTemplateOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "TemplateClass", true, true, true, false);
@@ -257,6 +231,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkTemplateParameterOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "T1", true, true, true, false);
@@ -271,6 +246,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkTemplateIdOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "ConstantTemplate", true, true, true, false);
@@ -285,6 +261,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkOccurrencesAfterEditorReuse() {
 		IPreferenceStore store = PlatformUI.getWorkbench().getPreferenceStore();
 		store.setValue("REUSE_OPEN_EDITORS_BOOLEAN", true);
@@ -317,6 +294,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		store.setValue("REUSE_OPEN_EDITORS", reuseOpenEditors);
 	}
 
+	@Test
 	public void testMarkMethodOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "pubMethod", true, true, true, false);
@@ -331,6 +309,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkMethodOccurrences2() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "getNumber", true, true, true, false);
@@ -345,6 +324,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkFieldOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "pubField", true, true, true, false);
@@ -359,6 +339,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkFieldOccurrences2() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "tArg1", true, true, true, false);
@@ -373,6 +354,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkConstructorOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "Base1(", true, true, false, false);
@@ -388,6 +370,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkDestructorOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "~Base1", true, true, false, false);
@@ -403,6 +386,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkLocalOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "localVar", true, true, true, false);
@@ -417,6 +401,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkMacroOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "INT", true, true, true, false);
@@ -431,6 +416,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkEmptyMacroOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "EMPTY_MACRO", true, true, true, false);
@@ -445,6 +431,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkEnumeratorOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "ONE", true, true, true, false);
@@ -459,6 +446,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkNamespaceOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "ns", true, true, true, false);
@@ -473,6 +461,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkNamespaceVariableOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "namespaceVar", true, true, true, false);
@@ -487,6 +476,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkLabelOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "label", true, true, true, false);
@@ -501,6 +491,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkOperatorOccurrences() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "operator+", true, true, false, false);
@@ -515,6 +506,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testNoOccurrencesIfDisabled() {
 		CUIPlugin.getDefault().getPreferenceStore().setValue(PreferenceConstants.EDITOR_MARK_OCCURRENCES, false);
 		fOccurrences = Integer.MAX_VALUE;
@@ -531,6 +523,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkLabelReference() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "labelPointer", true, true, true, false);
@@ -544,6 +537,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkReferencedLabel() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "referencedLabel", true, true, true, false);
@@ -557,6 +551,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkReferencedStructuredBindingDefinition() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "decomposedF", true, true, true, false);
@@ -570,6 +565,7 @@ public class MarkOccurrenceTest extends BaseUITestCase {
 		assertOccurrencesInWidget();
 	}
 
+	@Test
 	public void testMarkReferencedStructuredBindingInitializer() {
 		try {
 			fMatch = fFindReplaceDocumentAdapter.find(0, "decompArr", true, true, true, false);

@@ -27,3 +27,10 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.managedbuilder.ui
+Service-Component: OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.BuiltinEditorOptionsDefault.xml,
+ OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.DefaultConfigurationVisibility.xml,
+ OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.EditorConfigurationAccess.xml,
+ OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.EditorMetadataDefaults.xml,
+ OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.BuiltinPreferedOptionsDefaults.xml,
+ OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.PreferenceConfigurationAccess.xml,
+ OSGI-INF/org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.PreferenceMetadataDefaults.xml

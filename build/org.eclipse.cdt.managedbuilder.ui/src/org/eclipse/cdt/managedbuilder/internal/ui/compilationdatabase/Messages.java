@@ -16,6 +16,8 @@ class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.messages"; //$NON-NLS-1$
 	public static String JsonCdbGeneratorPreferencePage_description;
 	public static String JsonCdbGeneratorPreferencePage_generateCompilationdatabase;
+	public static String JsonCdbGeneratorPropertyPage_configureWorkspace;
+	public static String JsonCdbGeneratorPropertyPage_enableProjectSpecific;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

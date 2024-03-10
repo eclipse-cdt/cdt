@@ -9,12 +9,8 @@
  ********************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase;
 
-import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -34,7 +30,6 @@ public class JsonCdbGeneratorPreferencePage extends PreferencePage
 
 	public JsonCdbGeneratorPreferencePage() {
 		fOptionBlock = new CompilationDatabaseGeneratorBlock();
-		fOptionBlock.setContainer(this);
 	}
 
 	@Override
@@ -71,11 +66,6 @@ public class JsonCdbGeneratorPreferencePage extends PreferencePage
 
 	@Override
 	public boolean performOk() {
-		try {
-			fOptionBlock.performApply(new NullProgressMonitor());
-		} catch (CoreException e) {
-			ManagedBuilderUIPlugin.log(Status.error("Failed to save JSON Compilation Database Generator settings", e)); //$NON-NLS-1$
-		}
 		return true;
 	}
 

@@ -9,6 +9,7 @@
  ********************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase;
 
+import org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder;
 import org.eclipse.cdt.managedbuilder.ui.properties.ManagedBuilderUIPlugin;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
 import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
@@ -33,15 +34,14 @@ import org.eclipse.swt.widgets.Group;
  */
 public class CompilationDatabaseGeneratorBlock extends AbstractCOptionPage {
 
-	private static final String PREF_PAGE_ID = "org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.JsonCdbGeneratorPreferencePage"; //$NON-NLS-1$
-	private final String ENABLE_FILE_GENERATION = "generateFile"; //$NON-NLS-1$
+	private static final String PREF_PAGE_ID = "org.eclipse.cdt.managedbuilder.ui.compilationdatabase.JsonCdbPreferencePage"; //$NON-NLS-1$
+	private final String ENABLE_FILE_GENERATION = CommonBuilder.COMPILATION_DATABASE_ENABLEMENT;
 	private Button generateFileCheckbox;
 	private IPreferenceStore preferenceStore;
 	private PreferenceScopeBlock fPrefScopeBlock;
 
-	protected CompilationDatabaseGeneratorBlock() {
+	public CompilationDatabaseGeneratorBlock() {
 		preferenceStore = ManagedBuilderUIPlugin.getDefault().getPreferenceStore();
-		performDefaults();
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class CompilationDatabaseGeneratorBlock extends AbstractCOptionPage {
 			fPrefScopeBlock = new PreferenceScopeBlock(PREF_PAGE_ID) {
 				@Override
 				protected void onPreferenceScopeChange() {
-					generateFileCheckbox.setEnabled(preferenceStore.getBoolean(ENABLE_FILE_GENERATION));
+					generateFileCheckbox.setSelection(preferenceStore.getBoolean(ENABLE_FILE_GENERATION));
 				}
 			};
 			fPrefScopeBlock.createControl(composite);
@@ -66,21 +66,16 @@ public class CompilationDatabaseGeneratorBlock extends AbstractCOptionPage {
 		generateFileCheckbox = new Button(cdbGeneratorOptions, SWT.CHECK);
 		generateFileCheckbox.setSelection(preferenceStore.getBoolean(ENABLE_FILE_GENERATION));
 		generateFileCheckbox.setText(Messages.JsonCdbGeneratorPreferencePage_generateCompilationdatabase);
-		generateFileCheckbox.addListener(SWT.Selection, e -> {
-			boolean newValue = generateFileCheckbox.getSelection();
-			preferenceStore.setValue(ENABLE_FILE_GENERATION, newValue);
-		});
-
 	}
 
 	@Override
 	public void performDefaults() {
-		preferenceStore.setDefault(ENABLE_FILE_GENERATION, false);
+		preferenceStore.setToDefault(ENABLE_FILE_GENERATION);
 	}
 
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
-		this.performApply(monitor);
+		preferenceStore.setValue(ENABLE_FILE_GENERATION, generateFileCheckbox.getSelection());
 	}
 
 	private IProject getProject() {

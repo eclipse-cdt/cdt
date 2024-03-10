@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -54,7 +55,7 @@ public class JsonCdbGeneratorPropertyPage extends PropertyPage implements ICOpti
 		try {
 			optionPage.performApply(new NullProgressMonitor());
 		} catch (CoreException e) {
-			ManagedBuilderUIPlugin.log(e);
+			ManagedBuilderUIPlugin.log(Status.error("Failed to save JSON Compilation Database Generator settings", e)); //$NON-NLS-1$
 		}
 		return true;
 	}

@@ -97,7 +97,7 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 	private static final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
 	private static final String TRACE_FOOTER = "]: "; //$NON-NLS-1$
 	private static final String TRACE_HEADER = "GeneratedmakefileBuilder trace ["; //$NON-NLS-1$
-	private static final String COMPILATION_DATABASE_ENABLEMENT = "generateFile"; //$NON-NLS-1$
+	public static final String COMPILATION_DATABASE_ENABLEMENT = "generateCBDFile"; //$NON-NLS-1$
 	public static boolean VERBOSE = false;
 
 	private static final int PROGRESS_MONITOR_SCALE = 100;

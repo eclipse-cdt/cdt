@@ -15,38 +15,34 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileReader;
-import java.io.IOException;
 
-import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.cdt.managedbuilder.core.jsoncdb.CompilationDatabaseInformation;
+import org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder;
 import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
 
 public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests generation of compile_commands.json in "build" folder
-	 * @throws CoreException
 	 */
 	@Test
-	public void testCompilationDatabaseGeneration() throws CoreException {
+	public void testCompilationDatabaseGeneration() throws Exception {
 		setWorkspace("regressions");
 		final IProject app = loadProject("helloworldC");
-		isGenerateFileOptionEnabled(true);
+		setGenerateFileOptionEnabled(true);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		IFile compilationDatabase = app.getFile("build/compile_commands.json");
 		assertTrue(compilationDatabase.exists());
@@ -54,14 +50,12 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests format for compile_commands.json. JSON array is expected, containing an element for the c file
-	 * @throws JsonIOException
-	 * @throws CoreException
 	 */
 	@Test
-	public void testJsonFormat() throws JsonIOException, CoreException {
+	public void testJsonFormat() throws Exception {
 		setWorkspace("regressions");
 		final IProject app = loadProject("helloworldC");
-		isGenerateFileOptionEnabled(true);
+		setGenerateFileOptionEnabled(true);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		IFile commandsFile = app.getFile("build/compile_commands.json");
 		if (commandsFile.exists()) {
@@ -69,7 +63,6 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 			try (FileReader reader = new FileReader(commandsFile.getLocation().toFile())) {
 				Gson gson = new Gson();
 				JsonArray jsonArray = gson.fromJson(reader, JsonArray.class);
-				System.out.println(jsonArray);
 				for (JsonElement element : jsonArray) {
 					CompilationDatabaseInformation compileCommand = gson.fromJson(element,
 							CompilationDatabaseInformation.class);
@@ -80,8 +73,6 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 					assertTrue(compileCommand.file().endsWith("src/helloworldC.c"));
 				}
 
-			} catch (IOException e) {
-				assertTrue(false);
 			}
 
 		}
@@ -89,14 +80,13 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 
 	/**
 	 * Test that compile_commands.json is correctly generated when more than one .c file is present as a source file
-	 * @throws CoreException
 	 */
 	@Test
-	public void testMultipleFiles() throws CoreException {
+	public void testMultipleFiles() throws Exception {
 		setWorkspace("regressions");
 		final IProject app = loadProject("helloworldC");
 		IFile aFile = ManagedBuildTestHelper.createFile(app, "src/newFile.c");
-		isGenerateFileOptionEnabled(true);
+		setGenerateFileOptionEnabled(true);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		IFile commandsFile = app.getFile("build/compile_commands.json");
 		int numberOfElementsFound = 0;
@@ -120,31 +110,24 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 			assertEquals(2, numberOfElementsFound);
 			assertTrue(helloworldCIsPresent);
 			assertTrue(newFileIsPresent);
-		} catch (IOException e) {
-			assertTrue(false);
 		}
-
 	}
 
 	/**
 	 * Tests that cpp files are handled by compile_commands.json file generator
-	 * @throws CoreException
 	 */
 	@Test
-	@Ignore("This will be temporary skipped due to builder error")
-	public void isCPPFileAllowed() throws CoreException {
+	public void isCPPFileAllowed() throws Exception {
 		setWorkspace("regressions");
 		final IProject app = loadProject("helloworldCPP");
-		isGenerateFileOptionEnabled(true);
+		setGenerateFileOptionEnabled(true);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
-		System.out.println(app.getLocation());
 		IFile commandsFile = app.getFile("build/compile_commands.json");
 		if (commandsFile.exists()) {
 
 			try (FileReader reader = new FileReader(commandsFile.getLocation().toFile())) {
 				Gson gson = new Gson();
 				JsonArray jsonArray = gson.fromJson(reader, JsonArray.class);
-				System.out.println(jsonArray);
 				for (JsonElement element : jsonArray) {
 					CompilationDatabaseInformation compileCommand = gson.fromJson(element,
 							CompilationDatabaseInformation.class);
@@ -155,35 +138,33 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 					assertTrue(compileCommand.file().endsWith("src/helloworldCPP.cpp"));
 				}
 
-			} catch (IOException e) {
-				assertTrue(false);
 			}
 		}
 	}
 
 	/**
 	 * Tests that compilation database is not generated when feature is disabled
-	 * @throws CoreException
 	 */
 	@Test
-	public void testCompilationDatabaseGenerationNotEnabled() throws CoreException {
+	public void testCompilationDatabaseGenerationNotEnabled() throws Exception {
 		setWorkspace("regressions");
 		final IProject app = loadProject("helloworldC");
-		isGenerateFileOptionEnabled(false);
+		setGenerateFileOptionEnabled(false);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		IFile compilationDatabase = app.getFile("build/compile_commands.json");
 		assertFalse(compilationDatabase.exists());
 	}
 
-	public static boolean isGenerateFileOptionEnabled(boolean value) {
-		try {
-			IPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
-					"org.eclipse.cdt.managedbuilder.ui"); //$NON-NLS-1$
-			preferenceStore.setDefault("generateFile", value);
-			return preferenceStore.getBoolean("generateFile");
-		} catch (Exception e) {
-			ManagedBuilderCorePlugin.log(e);
-		}
-		return false;
+	private static void setGenerateFileOptionEnabled(boolean value) {
+		IPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
+				"org.eclipse.cdt.managedbuilder.ui");
+		preferenceStore.setValue(CommonBuilder.COMPILATION_DATABASE_ENABLEMENT, value);
+	}
+
+	@AfterEach
+	public void restoreDefaultForGenerateFile() {
+		IPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
+				"org.eclipse.cdt.managedbuilder.ui");
+		preferenceStore.setToDefault(CommonBuilder.COMPILATION_DATABASE_ENABLEMENT);
 	}
 }

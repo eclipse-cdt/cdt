@@ -57,6 +57,7 @@ import org.eclipse.cdt.managedbuilder.internal.buildmodel.IBuildModelBuilder;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IConfigurationBuildState;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.IProjectBuildState;
 import org.eclipse.cdt.managedbuilder.internal.buildmodel.StepBuilder;
+import org.eclipse.cdt.managedbuilder.internal.core.jsoncdb.generator.CompilationDatabaseGenerator;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedBuilderMakefileGenerator;
@@ -85,6 +86,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
 public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuilder2 {
 
@@ -93,6 +97,7 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 	private static final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
 	private static final String TRACE_FOOTER = "]: "; //$NON-NLS-1$
 	private static final String TRACE_HEADER = "GeneratedmakefileBuilder trace ["; //$NON-NLS-1$
+	public static final String COMPILATION_DATABASE_ENABLEMENT = "generateCBDFile"; //$NON-NLS-1$
 	public static boolean VERBOSE = false;
 
 	private static final int PROGRESS_MONITOR_SCALE = 100;
@@ -505,6 +510,10 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 			}
 
 			for (int i = 0; i < num; i++) {
+				if (isGenerateFileOptionEnabled()) {
+					CompilationDatabaseGenerator generator = new CompilationDatabaseGenerator(getProject(), activeCfg);
+					generator.generate();
+				}
 				//bug 219337
 				if (kind == INCREMENTAL_BUILD || kind == AUTO_BUILD) {
 					if (buildConfigResourceChanges()) { //only build projects with project resource changes
@@ -1374,5 +1383,16 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 
 		// Success!
 		return null;
+	}
+
+	public static boolean isGenerateFileOptionEnabled() {
+		try {
+			IPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
+					"org.eclipse.cdt.managedbuilder.ui"); //$NON-NLS-1$
+			return preferenceStore.getBoolean(COMPILATION_DATABASE_ENABLEMENT);
+		} catch (Exception e) {
+			ManagedBuilderCorePlugin.log(e);
+		}
+		return false;
 	}
 }

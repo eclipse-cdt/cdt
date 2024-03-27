@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.BuiltinPreferedOptionsDefaults">
+   <service>
+      <provide interface="org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.PreferenceOptionsDefaults"/>
+   </service>
+   <implementation class="org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.BuiltinPreferedOptionsDefaults"/>
+</scr:component>

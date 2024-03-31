@@ -2,6 +2,7 @@
 
 What's new and noteworthy in:
 
+- [CDT 11.6/2024-06](CDT-11.6.md)
 - [CDT 11.5/2024-03](CDT-11.5.md)
 - [CDT 11.4/2023-12](CDT-11.4.md)
 - [CDT 11.3/2023-09](CDT-11.3.md)

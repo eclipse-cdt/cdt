@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
+ * Copyright (c) 2008, 2024 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
  * This program and the accompanying materials
@@ -14,6 +14,7 @@
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
  *     Thomas Corbat (IFS)
+ *     Taiming Wang - Name recommendation improvement
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractlocalvariable;
 
@@ -591,6 +592,38 @@ public class ExtractLocalVariableRefactoringTest extends RefactoringTestBase {
 	//	t0;
 	//}
 	public void testTemplateWithFunctionArgument_487186() throws Exception {
+		assertRefactoringSuccess();
+	}
+
+	//A.cpp
+	//using namespace std;
+	//String getProgramResolveLink(String program){
+	//return program;
+	//}
+	//void useProgram(String program)
+	//{
+	//cout << getProgramResolveLink(program);
+	//}
+	//====================
+	//using namespace std;
+	//String getProgramResolveLink(String program){
+	//return program;
+	//}
+	//void useProgram(String program)
+	//{
+	//	void programResolveLink = getProgramResolveLink(program);
+	//	cout << programResolveLink;
+	//}
+
+	//refScript.xml
+	//<?xml version="1.0" encoding="UTF-8"?>
+	//<session version="1.0">
+	//<refactoring comment="Extract getProgramResolveLink(program)" description="Extract Local Variable Refactoring"
+	// fileName="file:${projectPath}/A.cpp" flags="4"
+	// id="org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable.ExtractLocalVariableRefactoring"
+	// name="programResolveLink" project="RegressionTestProject" selection="120,39"/>
+	//</session>
+	public void testIfRecommend() throws Exception {
 		assertRefactoringSuccess();
 	}
 }

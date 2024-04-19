@@ -425,9 +425,9 @@ public class Spawner extends Process {
 
 	private void exec(String[] cmdarray, String[] envp, String dirpath) throws IOException {
 		String command = cmdarray[0];
-		SecurityManager s = System.getSecurityManager();
-		if (s != null)
-			s.checkExec(command);
+		//		SecurityManager s = System.getSecurityManager();
+		//		if (s != null)
+		//			s.checkExec(command);
 		if (envp == null)
 			envp = new String[0];
 
@@ -453,9 +453,9 @@ public class Spawner extends Process {
 
 	private void exec_pty(String[] cmdarray, String[] envp, String dirpath, final PTY pty) throws IOException {
 		String command = cmdarray[0];
-		SecurityManager s = System.getSecurityManager();
-		if (s != null)
-			s.checkExec(command);
+		//		SecurityManager s = System.getSecurityManager();
+		//		if (s != null)
+		//			s.checkExec(command);
 		if (envp == null)
 			envp = new String[0];
 
@@ -491,9 +491,9 @@ public class Spawner extends Process {
 
 	public void exec_detached(String[] cmdarray, String[] envp, String dirpath) throws IOException {
 		String command = cmdarray[0];
-		SecurityManager s = System.getSecurityManager();
-		if (s != null)
-			s.checkExec(command);
+		//		SecurityManager s = System.getSecurityManager();
+		//		if (s != null)
+		//			s.checkExec(command);
 
 		if (envp == null)
 			envp = new String[0];

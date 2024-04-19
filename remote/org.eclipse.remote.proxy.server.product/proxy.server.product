@@ -49,7 +49,6 @@
       <plugin id="org.eclipse.equinox.security.macosx" fragment="true"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.compatibility.state" fragment="true"/>
-      <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.remote.core"/>
       <plugin id="org.eclipse.remote.proxy.protocol.core"/>
       <plugin id="org.eclipse.remote.proxy.server.core"/>

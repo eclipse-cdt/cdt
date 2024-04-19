@@ -644,7 +644,7 @@
 								<version>${required-maven-version}</version>
 							</requireMavenVersion>
 							<requireJavaVersion>
-								<version>17</version>
+								<version>21</version>
 							</requireJavaVersion>
 						</rules>
 						<fail>true</fail>
@@ -1019,7 +1019,7 @@
 							</goals>
 							<phase>compile</phase>
 							<configuration>
-								<executionEnvironment>JavaSE-17</executionEnvironment>
+								<executionEnvironment>JavaSE-21</executionEnvironment>
 							</configuration>
 						</execution>
 					</executions>

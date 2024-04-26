@@ -37,7 +37,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip3 install meson
 
 # GDB pre-built in a different image
-COPY --from=cdt-infra-all-gdbs:ubuntu-18.04 /shared/common/gdb/gdb-all /shared/common/gdb/gdb-all
+COPY --from=cdt-infra-all-gdbs:ubuntu-18.04 /shared/common/gdb/gdb-all/bin /shared/common/gdb/gdb-all/bin
+COPY --from=cdt-infra-all-gdbs:ubuntu-18.04 /shared/common/gdb/gdb-all/install /shared/common/gdb/gdb-all/install
 ENV PATH="/shared/common/gdb/gdb-all/bin:${PATH}"
 
 # Get pre-built MacOSX toolchain from other image (this also

@@ -1,6 +1,6 @@
 ## Code Formatting
 
-These are the coding style recommendations that are in place with project setting. They are enforced by the [build process](https://github.com/eclipse-cdt/cdt-infra/tree/master/jenkins/pipelines/cdt/verify#cdt-verify-code-cleanliness) and auto-save actions in Eclipse.
+These are the coding style recommendations that are in place with project setting. They are enforced by the build process (as defined in [Jenkinsfile](https://github.com/eclipse-cdt/cdt/blob/main/Jenkinsfile) and GitHub actions [workflows](https://github.com/eclipse-cdt/cdt/tree/main/.github/workflows)) and auto-save actions in Eclipse.
 
 * Preserve formatting and style of old code when making patches
 * Use default "Eclipse" code formatting for Java for new code
@@ -13,7 +13,7 @@ Externalize strings (excluding exception arguments, tests and special identifier
 
 ## Eclipse Java Errors/Warnings
 
-All CDT plugins override default compiler error/warning and use project specific errors/warnings. This enforced by the [build process](https://github.com/eclipse-cdt/cdt-infra/tree/master/jenkins/pipelines/cdt/verify#cdt-verify-code-cleanliness). 
+All CDT plugins override default compiler error/warning and use project specific errors/warnings. This enforced by the build process (as defined in [Jenkinsfile](https://github.com/eclipse-cdt/cdt/blob/main/Jenkinsfile) and GitHub actions [workflows](https://github.com/eclipse-cdt/cdt/tree/main/.github/workflows)). 
 
 All committers and contributors submitting patches should enable [API tooling](http://wiki.eclipse.org/PDE/API_Tools/User_Guide#API_Tooling_Setup) by setting target baseline platform. Do not commit code with API errors.
 

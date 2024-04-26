@@ -117,7 +117,6 @@ RUN export JVERSION=${JDK17_VERSION} \
     && find $JHOME/include \
     && rm -rf /tmp/x
 
-
 # Default to JAVA21 being in use
 ENV PATH="${JAVA21_HOME}/bin:${PATH}"
 ENV JAVA_HOME ${JAVA21_HOME}
@@ -129,6 +128,8 @@ RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/bina
   && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 ENV MAVEN_HOME /usr/share/maven
 
+RUN mkdir -p ${HOME}/.m2
+COPY toolchains.xml ${HOME}/.m2
 
 #Fix permissions for OpenShift & standard k8s
 RUN chown -R 1000:0 ${HOME} \

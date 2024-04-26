@@ -16,9 +16,17 @@ mvn package
 
 and the resulting p2 repository will be in `releng/org.eclipse.cdt.repo/target/repository`
 
-The current set of options to Maven used for building on the CI can be seen in the Jenkinsfiles on [cdt-infra](https://github.com/eclipse-cdt/cdt-infra/tree/master/jenkins/pipelines/cdt)
+The current set of options to Maven used for building on the CI can be seen in the [Jenkinsfile](https://github.com/eclipse-cdt/cdt/blob/main/Jenkinsfile) and GitHub actions [workflows](https://github.com/eclipse-cdt/cdt/tree/main/.github/workflows)
 
-To build CDT plug-ins you need a standard Maven & Java developement environment. The Dockerfiles used for CDT's images are published in [cdt-infra](https://github.com/eclipse-cdt/cdt-infra/tree/master/docker). The requirements for running all tests successfully and for rebuilding non-Java parts of CDT are much more extensive than standard Maven & Java and include items such as GCC, GDB, yarn, Node, etc. Refer to the Dockerfiles for the current versions of those dependencies.
+To build CDT plug-ins you need a standard Maven & Java development environment. The Dockerfiles used for CDT's images are published in [docker](https://github.com/eclipse-cdt/cdt/tree/main/docker). The requirements for running all tests successfully and for rebuilding non-Java parts of CDT are much more extensive than standard Maven & Java and include items such as GCC, GDB, yarn, Node, etc. Refer to the Dockerfiles for the current versions of those dependencies.
+
+### Checking code cleanliness
+
+The CI build automatically run code cleanliness checks. To run them on your computer it is recommended to use the Docker image, for example like this from the root of the checked out CDT repo:
+
+```sh
+docker run --rm -it -v $(git rev-parse --show-toplevel):/work -w /work/$(git rev-parse --show-prefix) --cap-add=SYS_PTRACE --security-opt seccomp=unconfined quay.io/eclipse-cdt/cdt-infra-plus-eclipse-install:latest releng/scripts/check_code_cleanliness.sh
+```
 
 ### Profiles
 
@@ -123,7 +131,7 @@ There are a few special values that can be specified (see BaseParametrizedTestCa
 The default, defined in the root pom.xml, it is blank, which uses `gdb` and `gdbserver`.
 See BaseParametrizedTestCase for more info.
 
-To build all gdb versions for testing CDT see [download-build-gdb.sh](https://github.com/eclipse-cdt/cdt-infra/blob/master/docker/scripts/download-build-gdb.sh)
+To build all gdb versions for testing CDT see [download-build-gdb.sh](https://github.com/eclipse-cdt/cdt/blob/main/docker/scripts/download-build-gdb.sh)
 
 #### native
 

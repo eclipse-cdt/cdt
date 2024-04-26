@@ -44,8 +44,11 @@ Makefile text
 # Build files
 *.Jenkinsfile text
 Jenkinsfile text
+Dockerfile text
 *.yaml text
 *.yml text
+.dockerignore text
+uid_entrypoint text
 
 # Qt
 *.pro text

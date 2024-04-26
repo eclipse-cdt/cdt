@@ -27,10 +27,10 @@ SPDX-License-Identifier: EPL-2.0
 
 The project maintains the following source code repositories:
 
-* https://github.com/eclipse-cdt/.github
 * https://github.com/eclipse-cdt/cdt
-* https://github.com/eclipse-cdt/cdt-infra
 * https://github.com/eclipse-cdt/cdt-lsp
+* https://github.com/eclipse-cdt/.eclipsefdn
+* https://github.com/eclipse-cdt/.github
 
 ## Cryptography
 

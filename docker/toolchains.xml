@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF8"?>
+<toolchains>
+   <toolchain>
+      <type>jdk</type>
+      <provides>
+         <id>JavaSE-21</id>
+         <version>21</version>
+         <vendor>default</vendor>
+      </provides>
+      <configuration>
+         <jdkHome>/usr/lib/jvm/jdk-21.0.3+9</jdkHome>
+      </configuration>
+   </toolchain>
+   <toolchain>
+      <type>jdk</type>
+      <provides>
+         <id>JavaSE-17</id>
+         <version>17</version>
+         <vendor>default</vendor>
+      </provides>
+      <configuration>
+         <jdkHome>/usr/lib/jvm/jdk-17.0.11+9</jdkHome>
+      </configuration>
+   </toolchain>
+</toolchains>

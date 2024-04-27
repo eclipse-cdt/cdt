@@ -609,18 +609,18 @@
          </problem>
       </checker>
       <checker
-            class="org.eclipse.cdt.codan.internal.checkers.BlacklistChecker"
-            id="org.eclipse.cdt.codan.internal.checkers.BlacklistChecker"
-            name="%checker.name.BlacklistChecker">
+            class="org.eclipse.cdt.codan.internal.checkers.ForbiddenlistChecker"
+            id="org.eclipse.cdt.codan.internal.checkers.ForbiddenlistChecker"
+            name="%checker.name.ForbiddenlistChecker">
          <problem
                category="org.eclipse.cdt.codan.core.categories.CodeStyle"
                defaultEnabled="false"
                defaultSeverity="Warning"
-               description="%problem.description.BlacklistProblem"
-               id="org.eclipse.cdt.codan.internal.checkers.BlacklistProblem"
+               description="%problem.description.ForbiddenlistProblem"
+               id="org.eclipse.cdt.codan.internal.checkers.ForbiddenlistProblem"
                markerType="org.eclipse.cdt.codan.core.codanProblem"
-               messagePattern="%problem.messagePattern.BlacklistProblem"
-               name="%problem.name.BlacklistProblem">
+               messagePattern="%problem.messagePattern.ForbiddenlistProblem"
+               name="%problem.name.ForbiddenlistProblem">
           </problem>
       </checker>
       <checker

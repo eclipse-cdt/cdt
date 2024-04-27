@@ -24,13 +24,13 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 
-public class BlacklistChecker extends AbstractIndexAstChecker {
-	public static final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.BlacklistProblem"; //$NON-NLS-1$
-	public static final String PARAM_BLACKLIST = "blacklist"; //$NON-NLS-1$
+public class ForbiddenlistChecker extends AbstractIndexAstChecker {
+	public static final String ERR_ID = "org.eclipse.cdt.codan.internal.checkers.ForbiddenlistProblem"; //$NON-NLS-1$
+	public static final String PARAM_FORBIDDENLIST = "forbiddenlist"; //$NON-NLS-1$
 
 	@Override
 	public void processAst(IASTTranslationUnit ast) {
-		Object[] list = (Object[]) getPreference(getProblemById(ERR_ID, getFile()), PARAM_BLACKLIST);
+		Object[] list = (Object[]) getPreference(getProblemById(ERR_ID, getFile()), PARAM_FORBIDDENLIST);
 		if (list == null || list.length == 0)
 			return;
 		Arrays.sort(list);
@@ -67,7 +67,7 @@ public class BlacklistChecker extends AbstractIndexAstChecker {
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
-		addListPreference(problem, PARAM_BLACKLIST, CheckersMessages.BlacklistChecker_list,
-				CheckersMessages.BlacklistChecker_list_item);
+		addListPreference(problem, PARAM_FORBIDDENLIST, CheckersMessages.ForbiddenlistChecker_list,
+				CheckersMessages.ForbiddenlistChecker_list_item);
 	}
 }

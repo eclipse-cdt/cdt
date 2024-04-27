@@ -11,14 +11,14 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.tests.CheckerTestCase;
-import org.eclipse.cdt.codan.internal.checkers.BlacklistChecker;
+import org.eclipse.cdt.codan.internal.checkers.ForbiddenlistlistChecker;
 
 /**
- * Test for {@link BlacklistChecker} class
+ * Test for {@link ForbiddenlistlistChecker} class
  */
-public class BlacklistCheckerTest extends CheckerTestCase {
+public class ForbiddenlistlistCheckerTest extends CheckerTestCase {
 
-	public static final String ERR_ID = BlacklistChecker.ERR_ID;
+	public static final String ERR_ID = ForbiddenlistlistChecker.ERR_ID;
 
 	@Override
 	public void setUp() throws Exception {
@@ -38,7 +38,7 @@ public class BlacklistCheckerTest extends CheckerTestCase {
 	//   int * p = (int*)dontcall());
 	//}
 	public void testWithFunctionCall() throws Exception {
-		setPreferenceValue(BlacklistChecker.ERR_ID, BlacklistChecker.PARAM_BLACKLIST, new String[] { "dontcall" });
+		setPreferenceValue(ForbiddenlistlistChecker.ERR_ID, ForbiddenlistlistChecker.PARAM_BLACKLIST, new String[] { "dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1, ERR_ID);
 		checkErrorLine(5, ERR_ID);
@@ -51,7 +51,7 @@ public class BlacklistCheckerTest extends CheckerTestCase {
 	//   void* (*ptr)() = dontcall;
 	//}
 	public void testWithFunctionPtr() throws Exception {
-		setPreferenceValue(BlacklistChecker.ERR_ID, BlacklistChecker.PARAM_BLACKLIST, new String[] { "dontcall" });
+		setPreferenceValue(ForbiddenlistlistChecker.ERR_ID, ForbiddenlistlistChecker.PARAM_BLACKLIST, new String[] { "dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1, ERR_ID);
 		checkErrorLine(5, ERR_ID);
@@ -68,7 +68,7 @@ public class BlacklistCheckerTest extends CheckerTestCase {
 	//	 f.dontcall();
 	//}
 	public void testWithMethod() throws Exception {
-		setPreferenceValue(BlacklistChecker.ERR_ID, BlacklistChecker.PARAM_BLACKLIST, new String[] { "Foo::dontcall" });
+		setPreferenceValue(ForbiddenlistlistChecker.ERR_ID, ForbiddenlistlistChecker.PARAM_BLACKLIST, new String[] { "Foo::dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ERR_ID);
 		checkErrorLine(9, ERR_ID);

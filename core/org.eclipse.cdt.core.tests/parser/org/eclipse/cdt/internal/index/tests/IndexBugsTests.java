@@ -1372,11 +1372,7 @@ public class IndexBugsTests extends BaseTestCase {
 			th.join(5000);
 			assertFalse(th.isAlive());
 		} finally {
-			try {
-				th.stop();
-			} finally {
-				fIndex.releaseReadLock();
-			}
+			fIndex.releaseReadLock();
 		}
 	}
 

@@ -2529,7 +2529,10 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 			consume();
 			consume(IToken.tLPAREN);
 
-			addAttributesOrDeclspecs(result);
+			// Allow empty __attribute__(())
+			if (LT(1) != IToken.tRPAREN) {
+				addAttributesOrDeclspecs(result);
+			}
 
 			consumeOrEOC(IToken.tRPAREN);
 			endOffset = consumeOrEOC(IToken.tRPAREN).getEndOffset();

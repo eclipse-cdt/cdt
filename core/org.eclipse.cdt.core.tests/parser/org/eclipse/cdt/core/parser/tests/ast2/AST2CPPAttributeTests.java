@@ -525,6 +525,12 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTDeclarator.class);
 	}
 
+	//	int a __attribute__ (());
+	public void testEmptyGCCAttribute() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
+		checkAttributeRelations(getAttributeSpecifiers(tu), IASTDeclarator.class);
+	}
+
 	//	struct S {
 	//	  void foo() override __attribute__((attr));
 	//	};

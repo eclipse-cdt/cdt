@@ -11,14 +11,14 @@
 package org.eclipse.cdt.codan.core.internal.checkers;
 
 import org.eclipse.cdt.codan.core.tests.CheckerTestCase;
-import org.eclipse.cdt.codan.internal.checkers.ForbiddenlistlistChecker;
+import org.eclipse.cdt.codan.internal.checkers.ForbiddenlistChecker;
 
 /**
- * Test for {@link ForbiddenlistlistChecker} class
+ * Test for {@link ForbiddenlistChecker} class
  */
-public class ForbiddenlistlistCheckerTest extends CheckerTestCase {
+public class ForbiddenlistCheckerTest extends CheckerTestCase {
 
-	public static final String ERR_ID = ForbiddenlistlistChecker.ERR_ID;
+	public static final String ERR_ID = ForbiddenlistChecker.ERR_ID;
 
 	@Override
 	public void setUp() throws Exception {
@@ -38,7 +38,7 @@ public class ForbiddenlistlistCheckerTest extends CheckerTestCase {
 	//   int * p = (int*)dontcall());
 	//}
 	public void testWithFunctionCall() throws Exception {
-		setPreferenceValue(ForbiddenlistlistChecker.ERR_ID, ForbiddenlistlistChecker.PARAM_BLACKLIST, new String[] { "dontcall" });
+		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST, new String[] { "dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1, ERR_ID);
 		checkErrorLine(5, ERR_ID);
@@ -51,7 +51,7 @@ public class ForbiddenlistlistCheckerTest extends CheckerTestCase {
 	//   void* (*ptr)() = dontcall;
 	//}
 	public void testWithFunctionPtr() throws Exception {
-		setPreferenceValue(ForbiddenlistlistChecker.ERR_ID, ForbiddenlistlistChecker.PARAM_BLACKLIST, new String[] { "dontcall" });
+		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST, new String[] { "dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1, ERR_ID);
 		checkErrorLine(5, ERR_ID);
@@ -68,7 +68,7 @@ public class ForbiddenlistlistCheckerTest extends CheckerTestCase {
 	//	 f.dontcall();
 	//}
 	public void testWithMethod() throws Exception {
-		setPreferenceValue(ForbiddenlistlistChecker.ERR_ID, ForbiddenlistlistChecker.PARAM_BLACKLIST, new String[] { "Foo::dontcall" });
+		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST, new String[] { "Foo::dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ERR_ID);
 		checkErrorLine(9, ERR_ID);

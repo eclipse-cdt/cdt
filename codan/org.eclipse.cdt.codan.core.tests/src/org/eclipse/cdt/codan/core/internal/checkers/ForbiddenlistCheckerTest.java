@@ -38,7 +38,8 @@ public class ForbiddenlistCheckerTest extends CheckerTestCase {
 	//   int * p = (int*)dontcall());
 	//}
 	public void testWithFunctionCall() throws Exception {
-		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST, new String[] { "dontcall" });
+		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST,
+				new String[] { "dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1, ERR_ID);
 		checkErrorLine(5, ERR_ID);
@@ -51,7 +52,8 @@ public class ForbiddenlistCheckerTest extends CheckerTestCase {
 	//   void* (*ptr)() = dontcall;
 	//}
 	public void testWithFunctionPtr() throws Exception {
-		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST, new String[] { "dontcall" });
+		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST,
+				new String[] { "dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(1, ERR_ID);
 		checkErrorLine(5, ERR_ID);
@@ -68,7 +70,8 @@ public class ForbiddenlistCheckerTest extends CheckerTestCase {
 	//	 f.dontcall();
 	//}
 	public void testWithMethod() throws Exception {
-		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST, new String[] { "Foo::dontcall" });
+		setPreferenceValue(ForbiddenlistChecker.ERR_ID, ForbiddenlistChecker.PARAM_FORBIDDENLIST,
+				new String[] { "Foo::dontcall" });
 		loadCodeAndRun(getAboveComment());
 		checkErrorLine(3, ERR_ID);
 		checkErrorLine(9, ERR_ID);

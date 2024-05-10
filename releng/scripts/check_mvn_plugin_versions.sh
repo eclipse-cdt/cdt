@@ -23,7 +23,7 @@ set -x # echo all commands used for debugging purposes
 # Point ourselves to the script's directory (so it can be run "out-of-tree")
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 output="$(mktemp /tmp/check_mvn_plugin_versions.output.XXXXXX)"
-${MVN:-mvn} versions:display-plugin-updates -P build-standalone-debugger-rcp -U -B -f $DIR/../../pom.xml | tee $output
+${MVN:-mvn} versions:display-plugin-updates -U -B -f $DIR/../../pom.xml | tee $output
 
 #filter only updates and show unique
 # XXX: Jonah added the exclusion for sonar-maven-plugin as Eclipse's SonarQube installation is not new enough

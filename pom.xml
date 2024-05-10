@@ -152,7 +152,6 @@
 		<module>debug/org.eclipse.cdt.gnu.debug-feature</module>
 
 		<module>debug/org.eclipse.cdt.debug.application</module>
-		<module>debug/org.eclipse.cdt.debug.application.doc</module>
 		<module>debug/org.eclipse.cdt.debug.standalone-feature</module>
 		<module>debug/org.eclipse.cdt.debug.application.product</module>
 
@@ -406,12 +405,6 @@
 			<properties>
 				<base.ui.test.vmargs>${base.test.vmargs}</base.ui.test.vmargs>
 			</properties>
-		</profile>
-		<!-- FIXME: AF remove this profile after updating Jenkins job(s)-->
-		<profile>
-			<id>build-standalone-debugger-rcp</id>
-			<modules>
-			</modules>
 		</profile>
 		<!-- Automatic profile for features that shouldn't generate sources -->
 		<profile>
@@ -739,7 +732,6 @@
 								<plugin id="org.eclipse.cdt.core.linux.x86_64"/>
 								<plugin id="org.eclipse.cdt.core.linux.aarch64"/>
 								<plugin id="org.eclipse.cdt.core.win32.x86_64"/>
-								<plugin id="org.eclipse.cdt.debug.application.doc"/>
 								<plugin id="org.eclipse.cdt.doc.user"/>
 								<plugin id="org.eclipse.cdt.debug.gdbjtag"/>
 								<plugin id="org.eclipse.cdt"/>

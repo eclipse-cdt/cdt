@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################
-# Copyright (c) 2014 Red Hat, Inc. and others
+# Copyright (c) 2014, 2024 Red Hat, Inc. and others
 #
 # This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License 2.0
@@ -41,8 +41,6 @@ fi
 if [ ! -d "$HOME/cdtdebugger" ]; then
   mkdir -p "$HOME/cdtdebugger"
 fi
-cp "$SCRIPT_DIR/config.ini" "$HOME/cdtdebugger"
-cp "$SCRIPT_DIR/dev.properties" "$HOME/cdtdebugger"
 cp "$SCRIPT_DIR/cdtdebug.sh" "$HOME/cdtdebugger"
 chmod +x "$HOME/cdtdebugger/cdtdebug.sh"
 

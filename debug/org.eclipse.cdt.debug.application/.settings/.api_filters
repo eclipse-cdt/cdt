@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.debug.application" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.cdt.debug.application.ConfigGenerator">
+        <filter comment="ConfigGenerator has been removed - it was never supposed to be API as it was a command line utility used to build CDT itself. See #782" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.debug.application.ConfigGenerator"/>
+                <message_argument value="org.eclipse.cdt.debug.application_11.6.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

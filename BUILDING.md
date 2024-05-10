@@ -38,11 +38,6 @@ Individual p2 repos can be turned on and off to allow building CDT, or parts of 
 - test CDT against a pre-built CDT by using the cdtRepo profile.
 - build the standalone rcp debugger against the latest simrel `mvn verify -DuseSimrelRepo -f debug/org.eclipse.cdt.debug.application.product`
 
-#### build-standalone-debugger-rcp
-
-Using the `build-standalone-debugger-rcp` profile will include the standalone debugger, located
-in `debug/org.eclipse.cdt.debug.application.product`
-
 #### skip-all-tests, skip-tests-except-cdt-ui, skip-tests-except-dsf-gdb, skip-tests-except-cdt-other
 
 Using any of the above profiles can skip large sets of tests. The CI build uses this to parallelize tests. See https://ci.eclipse.org/cdt/view/Gerrit/

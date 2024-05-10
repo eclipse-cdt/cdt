@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################
-# Copyright (c) 2014, 2015 Red Hat, Inc. and others
+# Copyright (c) 2014, 2024 Red Hat, Inc. and others
 #
 # This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License 2.0
@@ -97,12 +97,8 @@ case $ECLIPSE_HOME in
   *MacOS) ECLIPSE_HOME="$ECLIPSE_HOME/../Eclipse" ;;
 esac
 
-PLUGIN_DIR="$ECLIPSE_HOME/plugins"
-OSGI_JAR=`find "$PLUGIN_DIR" -maxdepth 1 -name 'org.eclipse.osgi_*.jar' -not -name '*source*' -exec basename {} \; | tail -1`
-
 # Run eclipse with the Stand-alone Debugger product specified
-"$ECLIPSE_EXEC" -clean -product org.eclipse.cdt.debug.application.product \
-                        -data "$HOME/workspace-cdtdebug" -configuration file\:"$HOME/cdtdebugger" \
-                        -dev file\:"$HOME/cdtdebugger/dev.properties" "${options[@]}" \
-                        -vmargs -Dosgi.jar=$OSGI_JAR -Declipse.home="$ECLIPSE_HOME"
-
+"$ECLIPSE_EXEC" -clean \
+  -product org.eclipse.cdt.debug.application.product \
+  -data "$HOME/workspace-cdtdebug" \
+  "${options[@]}"

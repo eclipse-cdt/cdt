@@ -6,7 +6,6 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %bundleVendor
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.cdt.debug.application,
- org.eclipse.cdt.debug.application.doc,
  org.eclipse.swtbot.eclipse.finder,
  org.eclipse.swtbot.go,
  org.eclipse.swtbot.junit4_x,

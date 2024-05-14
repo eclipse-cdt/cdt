@@ -67,8 +67,8 @@
   </setupTask>
   <setupTask
       xsi:type="jdt:JRETask"
-      version="JavaSE-17"
-      location="${jre.location-17}">
+      version="JavaSE-21"
+      location="${jre.location-21}">
     <description>Define the JRE needed to compile and run the Java projects of ${scope.project.label}</description>
   </setupTask>
   <setupTask
@@ -186,14 +186,48 @@
       </detail>
       <detail
           key="label">
-        <value>CDT Github Repository</value>
+        <value>CDT GitHub Repository</value>
       </detail>
       <detail
           key="target">
         <value>remoteURI</value>
       </detail>
     </annotation>
+    <configSections
+        name="branch">
+      <properties
+          key="autoSetupRebase"
+          value="always"/>
+    </configSections>
     <description>CDT</description>
+  </setupTask>
+  <setupTask
+      xsi:type="git:GitCloneTask"
+      id="github.clone.cdt-lsp"
+      remoteURI="eclipse-cdt/cdt-lsp"
+      checkoutBranch="master">
+    <annotation
+        source="http://www.eclipse.org/oomph/setup/InducedChoices">
+      <detail
+          key="inherit">
+        <value>github.remoteURIs</value>
+      </detail>
+      <detail
+          key="label">
+        <value>CDT LSP GitHub Repository</value>
+      </detail>
+      <detail
+          key="target">
+        <value>remoteURI</value>
+      </detail>
+    </annotation>
+    <configSections
+        name="branch">
+      <properties
+          key="autoSetupRebase"
+          value="always"/>
+    </configSections>
+    <description>CDT LSP</description>
   </setupTask>
   <setupTask
       xsi:type="setup.targlets:TargletTask"
@@ -228,6 +262,9 @@
           name="*"/>
       <sourceLocator
           rootFolder="${github.clone.cdt.location}"
+          locateNestedProjects="true"/>
+      <sourceLocator
+          rootFolder="${github.clone.cdt-lsp.location}"
           locateNestedProjects="true"/>
       <repositoryList>
         <repository
@@ -367,6 +404,12 @@
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
           relativePathPattern="llvm/.*"/>
+    </workingSet>
+    <workingSet
+        name="CDT LSP">
+      <predicate
+          xsi:type="predicates:RepositoryPredicate"
+          project="org.eclipse.cdt.lsp"/>
     </workingSet>
     <workingSet
         name="CDT Memory">

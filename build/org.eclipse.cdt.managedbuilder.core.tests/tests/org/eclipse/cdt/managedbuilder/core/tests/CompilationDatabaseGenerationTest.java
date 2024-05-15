@@ -44,7 +44,7 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 		final IProject app = loadProject("helloworldC");
 		setGenerateFileOptionEnabled(true);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
-		IFile compilationDatabase = app.getFile("build/compile_commands.json");
+		IFile compilationDatabase = app.getFile("Debug/compile_commands.json");
 		assertTrue(compilationDatabase.exists());
 	}
 
@@ -57,7 +57,7 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 		final IProject app = loadProject("helloworldC");
 		setGenerateFileOptionEnabled(true);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
-		IFile commandsFile = app.getFile("build/compile_commands.json");
+		IFile commandsFile = app.getFile("Debug/compile_commands.json");
 		if (commandsFile.exists()) {
 
 			try (FileReader reader = new FileReader(commandsFile.getLocation().toFile())) {
@@ -88,7 +88,7 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 		IFile aFile = ManagedBuildTestHelper.createFile(app, "src/newFile.c");
 		setGenerateFileOptionEnabled(true);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
-		IFile commandsFile = app.getFile("build/compile_commands.json");
+		IFile commandsFile = app.getFile("Debug/compile_commands.json");
 		int numberOfElementsFound = 0;
 		boolean helloworldCIsPresent = false;
 		boolean newFileIsPresent = false;
@@ -122,7 +122,7 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 		final IProject app = loadProject("helloworldCPP");
 		setGenerateFileOptionEnabled(true);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
-		IFile commandsFile = app.getFile("build/compile_commands.json");
+		IFile commandsFile = app.getFile("Debug/compile_commands.json");
 		if (commandsFile.exists()) {
 
 			try (FileReader reader = new FileReader(commandsFile.getLocation().toFile())) {
@@ -151,7 +151,7 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 		final IProject app = loadProject("helloworldC");
 		setGenerateFileOptionEnabled(false);
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
-		IFile compilationDatabase = app.getFile("build/compile_commands.json");
+		IFile compilationDatabase = app.getFile("Debug/compile_commands.json");
 		assertFalse(compilationDatabase.exists());
 	}
 

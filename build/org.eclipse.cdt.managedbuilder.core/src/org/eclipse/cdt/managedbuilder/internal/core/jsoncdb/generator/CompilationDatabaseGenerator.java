@@ -57,7 +57,6 @@ import com.google.gson.GsonBuilder;
 public final class CompilationDatabaseGenerator {
 
 	private static final String CDB_FILENAME = "compile_commands.json"; //$NON-NLS-1$
-	private static final String BUILD_FOLDER = "build"; //$NON-NLS-1$
 	private static final String ERROR_MESSAGE = "Can not set contents to compile_commands.json file"; //$NON-NLS-1$
 
 	private IProject project;
@@ -77,14 +76,13 @@ public final class CompilationDatabaseGenerator {
 	 * @param config
 	 */
 	public void generate() {
-
-		IPath buildDirectory = project.getFullPath()
-				.append(IPath.SEPARATOR + CompilationDatabaseGenerator.BUILD_FOLDER);
+		IPath buildDirectory = ManagedBuildManager.getBuildFullPath(configuration, configuration.getBuilder());
 		IPath compilationDatabasePath = buildDirectory
 				.append(IPath.SEPARATOR + CompilationDatabaseGenerator.CDB_FILENAME);
 		try {
-			if (!buildDirectory.toFile().exists()) {
-				createDirectory(CompilationDatabaseGenerator.BUILD_FOLDER);
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+			if (!workspace.getRoot().exists(buildDirectory)) {
+				createDirectory(workspace.getRoot().getFolder(buildDirectory).getProjectRelativePath().toString());
 			}
 			IFile compileCommandsFile = createFile(compilationDatabasePath);
 			addToCompilationdatabase(project, compileCommandsFile, configuration);

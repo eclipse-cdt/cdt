@@ -59,7 +59,10 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
         feature_start_year=$(git log --reverse --format='%ad' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
         ;;
     esac
-    feature_end_year=$(git log --format='%ad' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
+    # Choose latest of commit date and author date for the end of copyright
+    feature_end_year_author=$(git log --format='%ad' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
+    feature_end_year_commit=$(git log --format='%cd' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
+    feature_end_year=$((echo $feature_end_year_author ; echo $feature_end_year_commit) | sort -n | tail -1)
     feature_name=$(grep featureName= $feature_dir/feature.properties | sed '-es,featureName=,,')
     if [ "$feature_start_year" = "$feature_end_year" ]; then
         feature_years="${feature_start_year}"

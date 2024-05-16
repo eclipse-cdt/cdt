@@ -1,0 +1,7 @@
+dsVersion=V1_3
+eclipse.preferences.version=1
+enabled=true
+generateBundleActivationPolicyLazy=true
+path=OSGI-INF
+validationErrorLevel=error
+validationErrorLevel.missingImplicitUnbindMethod=error

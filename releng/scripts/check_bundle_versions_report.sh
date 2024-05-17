@@ -28,9 +28,10 @@ if [ -n "$bundles_only_qualifier_changed" ]; then
     for bundle in $bundles_only_qualifier_changed; do
         echo "  - $bundle"
     done
-    echo "Please bump service segment by 100 if on main branch"
-    echo "The log of this build is above"
-    echo "See: https://wiki.eclipse.org/Version_Numbering#When_to_change_the_service_segment"
+    echo "Please bump service segment by 100 if this change is intended for the main"
+    echo "branch by updating the Bundle-Version: in the MANIFEST.MF of the failing bundles."
+    echo "See: https://github.com/eclipse-platform/eclipse.platform/blob/master/docs/VersionNumbering.md#when-to-change-the-service-segment"
+    echo "The full log of this build is above"
     echo
 fi
 
@@ -45,9 +46,10 @@ if [ -n "$bundles_same_version_different_content" ]; then
     echo "  - The comparison filters in the root pom.xml are not working"
     echo "  - Different versions of Java are being used to compile compared to the baseline"
     echo "  - A dependency has changed causing the generated classes to be different"
-    echo "The log of this build is above"
-    echo "Please bump service segment by 100 if on main branch"
-    echo "See: https://wiki.eclipse.org/Version_Numbering#When_to_change_the_service_segment"
+    echo "Please bump service segment by 100 if this change is intended for the main"
+    echo "branch by updating the Bundle-Version: in the MANIFEST.MF of the failing bundles."
+    echo "See: https://github.com/eclipse-platform/eclipse.platform/blob/master/docs/VersionNumbering.md#when-to-change-the-service-segment"
+    echo "The full log of this build is above"
     echo
 fi
 

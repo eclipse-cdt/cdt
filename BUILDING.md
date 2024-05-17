@@ -8,7 +8,7 @@ Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for contributing information, in
 
 ## Command-line Build instructions with Maven
 
-Eclipse CDT uses the standard Maven and Tycho workflow for building CDT using Maven 3.8 and Java 17. Therefore to package CDT do:
+Eclipse CDT uses the standard Maven and Tycho workflow for building CDT using Maven 3.9 and Java 21. Therefore to package CDT do:
 
 ```
 mvn package

@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -75,43 +75,45 @@ public class CodanRunner {
 			}
 		}
 		int numChildren = children == null ? 0 : children.length;
-		int childWeight = 10;
 		// System.err.println("processing " + resource);
-		monitor.beginTask(NLS.bind(Messages.CodanRunner_Code_analysis_on, resource.getFullPath().toString()),
-				checkers * (1 + numChildren * childWeight));
+		int work = children == null ? checkers : numChildren;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, work);
+		subMonitor.subTask(NLS.bind(Messages.CodanRunner_Code_analysis_on, resource.getFullPath().toString()));
 		try {
 			CheckersTimeStats.getInstance().checkerStart(CheckersTimeStats.ALL);
 			ICheckerInvocationContext context = new CheckerInvocationContext(resource);
-			try {
-				for (IChecker checker : chegistry) {
-					if (monitor.isCanceled())
-						return;
-					if (chegistry.isCheckerEnabled(checker, resource, checkerLaunchMode)) {
-						synchronized (checker) {
-							try {
-								checker.before(resource);
-								CheckersTimeStats.getInstance().checkerStart(checker.getClass().getName());
-								if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
-									((IRunnableInEditorChecker) checker).processModel(model, context);
-								} else {
-									checker.processResource(resource, context);
+			if (children == null) {
+				try {
+					for (IChecker checker : chegistry) {
+						if (subMonitor.isCanceled())
+							return;
+						if (chegistry.isCheckerEnabled(checker, resource, checkerLaunchMode)) {
+							synchronized (checker) {
+								try {
+									checker.before(resource);
+									CheckersTimeStats.getInstance().checkerStart(checker.getClass().getName());
+									if (checkerLaunchMode == CheckerLaunchMode.RUN_AS_YOU_TYPE) {
+										((IRunnableInEditorChecker) checker).processModel(model, context);
+									} else {
+										checker.processResource(resource, context);
+									}
+								} catch (OperationCanceledException e) {
+									return;
+								} catch (Throwable e) {
+									CodanCorePlugin.log(e);
+								} finally {
+									CheckersTimeStats.getInstance().checkerStop(checker.getClass().getName());
+									checker.after(resource);
 								}
-							} catch (OperationCanceledException e) {
-								return;
-							} catch (Throwable e) {
-								CodanCorePlugin.log(e);
-							} finally {
-								CheckersTimeStats.getInstance().checkerStop(checker.getClass().getName());
-								checker.after(resource);
 							}
 						}
+						subMonitor.worked(1);
 					}
-					monitor.worked(1);
+				} finally {
+					context.dispose();
+					CheckersTimeStats.getInstance().checkerStop(CheckersTimeStats.ALL);
+					//CheckersTimeStats.getInstance().printStats();
 				}
-			} finally {
-				context.dispose();
-				CheckersTimeStats.getInstance().checkerStop(CheckersTimeStats.ALL);
-				//CheckersTimeStats.getInstance().printStats();
 			}
 
 			if (children != null && (checkerLaunchMode == CheckerLaunchMode.RUN_ON_FULL_BUILD
@@ -119,7 +121,7 @@ public class CodanRunner {
 				for (IResource child : children) {
 					if (monitor.isCanceled())
 						return;
-					processResource(child, null, checkerLaunchMode, new SubProgressMonitor(monitor, childWeight));
+					processResource(child, null, checkerLaunchMode, subMonitor.split(1));
 				}
 			}
 		} finally {

@@ -242,7 +242,7 @@
                severity="Error"
                variable-expr="$3"/>
          <pattern description-expr="$7" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericWarning" severity="Warning"/>
-         <pattern description-expr="$9" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericInfo" severity="Info"/>
+         <pattern description-expr="$10" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.GenericInfo" severity="Info"/>
          <pattern description-expr="$4" eat-processed-line="true" file-expr="$1" line-expr="$2" regex="%CDTGNUCErrorParser.regex.OtherError" severity="Error"/>
       </errorparser>
    </extension>

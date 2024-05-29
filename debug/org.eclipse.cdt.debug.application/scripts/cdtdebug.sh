@@ -100,5 +100,6 @@ esac
 # Run eclipse with the Stand-alone Debugger product specified
 "$ECLIPSE_EXEC" -clean \
   -product org.eclipse.cdt.debug.application.product \
+  -application org.eclipse.cdt.debug.application.app \
   -data "$HOME/workspace-cdtdebug" \
   "${options[@]}"

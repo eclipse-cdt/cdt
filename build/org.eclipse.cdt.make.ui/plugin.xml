@@ -629,7 +629,7 @@
           label="Makefile Project"
           wizard="org.eclipse.cdt.make.internal.ui.wizards.NewMakefileProjectWizard">
        <description>
-          (Experimental) Create a new project that builds with the&apos;make&apos; build tool using CDT&apos;s new Core Build System.
+          Create a Makefile project using CDT&apos;s new Core Build System. Over existing content or a new project with optional Hello World example.
        </description>
        <tagReference
              id="org.eclipse.cdt.ui.cdtTag">

@@ -27,7 +27,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 public class NewMakefileProjectWizard extends TemplateWizard {
 
 	private WizardNewProjectCreationPage mainPage;
-	private boolean generateSource = true;
+	private boolean generateSource = false;
 
 	@Override
 	public void setContainer(IWizardContainer wizardContainer) {
@@ -50,7 +50,7 @@ public class NewMakefileProjectWizard extends TemplateWizard {
 
 				Button genSourceButton = new Button(buttonComp, SWT.CHECK);
 				genSourceButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-				genSourceButton.setText("Generate Source and Makefile");
+				genSourceButton.setText("Create Hello World Source and Makefile example");
 				genSourceButton.setSelection(generateSource);
 				genSourceButton.addSelectionListener(new SelectionAdapter() {
 					@Override

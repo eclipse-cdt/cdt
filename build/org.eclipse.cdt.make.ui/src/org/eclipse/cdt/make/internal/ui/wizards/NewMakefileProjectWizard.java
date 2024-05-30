@@ -50,7 +50,7 @@ public class NewMakefileProjectWizard extends TemplateWizard {
 
 				Button genSourceButton = new Button(buttonComp, SWT.CHECK);
 				genSourceButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-				genSourceButton.setText("Create Hello World Source and Makefile example"); //$NON-NLS-1$
+				genSourceButton.setText("Create Hello World Source and Makefile example");
 				genSourceButton.setSelection(generateSource);
 				genSourceButton.addSelectionListener(new SelectionAdapter() {
 					@Override

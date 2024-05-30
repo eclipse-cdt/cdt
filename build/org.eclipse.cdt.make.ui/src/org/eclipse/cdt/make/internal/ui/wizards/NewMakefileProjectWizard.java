@@ -27,7 +27,7 @@ import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 public class NewMakefileProjectWizard extends TemplateWizard {
 
 	private WizardNewProjectCreationPage mainPage;
-	private boolean generateSource = true;
+	private boolean generateSource = false;
 
 	@Override
 	public void setContainer(IWizardContainer wizardContainer) {

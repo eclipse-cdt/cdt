@@ -97,6 +97,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -677,9 +678,9 @@ public class EditorUtility {
 			}
 		}
 		IEditorDescriptor desc = null;
-		if (input instanceof ExternalEditorInput externalInput) {
+		if (input instanceof IURIEditorInput uriEditorInput) {
 			try {
-				IFileStore fileStore = EFS.getFileSystem("file").getStore(externalInput.getPath()); //$NON-NLS-1$
+				IFileStore fileStore = EFS.getStore(uriEditorInput.getURI());
 				// get editor by considering overridden default editor association via IEditorAssociationOverride:
 				desc = IDE.getEditorDescriptorForFileStore(fileStore, false);
 			} catch (CoreException e) {

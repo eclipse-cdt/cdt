@@ -97,6 +97,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -676,8 +677,20 @@ public class EditorUtility {
 				contentType = Platform.getContentTypeManager().getContentType(CCorePlugin.CONTENT_TYPE_BINARYFILE);
 			}
 		}
-		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
-		IEditorDescriptor desc = registry.getDefaultEditor(input.getName(), contentType);
+		IEditorDescriptor desc = null;
+		if (input instanceof IURIEditorInput uriEditorInput) {
+			try {
+				IFileStore fileStore = EFS.getStore(uriEditorInput.getURI());
+				// get editor by considering overridden default editor association via IEditorAssociationOverride:
+				desc = IDE.getEditorDescriptorForFileStore(fileStore, false);
+			} catch (CoreException e) {
+				CUIPlugin.log(e);
+			}
+		}
+		if (desc == null) {
+			IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
+			desc = registry.getDefaultEditor(input.getName(), contentType);
+		}
 		if (desc != null) {
 			String editorID = desc.getId();
 			if (input instanceof IFileEditorInput) {

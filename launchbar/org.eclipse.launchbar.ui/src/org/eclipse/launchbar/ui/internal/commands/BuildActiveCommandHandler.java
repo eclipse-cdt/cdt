@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
@@ -100,6 +102,12 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 								if (delegate == null)
 									delegate = config.getType().getDelegates(modes)[0];
 								ILaunchConfigurationDelegate configDel = delegate.getDelegate();
+								/* This build is started manually by pressing the LaunchBar build button.
+								 * Always build, regardless if auto build is disabled in the launch configuration.
+								 */
+								ILaunchConfigurationWorkingCopy configCopy = config.copy(config.getName() + "Copy"); //$NON-NLS-1$
+								configCopy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
+										ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_ENABLED);
 								if (configDel instanceof ILaunchConfigurationTargetedDelegate) {
 									ILaunchConfigurationTargetedDelegate configDel2 = (ILaunchConfigurationTargetedDelegate) configDel;
 									boolean ret;
@@ -107,7 +115,7 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 									if (!ret) {
 										return Status.CANCEL_STATUS;
 									}
-									if (!configDel2.buildForLaunch(config, mode, target, monitor)) {
+									if (!configDel2.buildForLaunch(configCopy, mode, target, monitor)) {
 										return Status.OK_STATUS;
 									}
 								} else if (configDel instanceof ILaunchConfigurationDelegate2) {
@@ -117,7 +125,8 @@ public class BuildActiveCommandHandler extends AbstractHandler {
 									if (!ret) {
 										return Status.CANCEL_STATUS;
 									}
-									if (!configDel2.buildForLaunch(config, mode, monitor)) {
+
+									if (!configDel2.buildForLaunch(configCopy, mode, monitor)) {
 										return Status.OK_STATUS;
 									}
 								}

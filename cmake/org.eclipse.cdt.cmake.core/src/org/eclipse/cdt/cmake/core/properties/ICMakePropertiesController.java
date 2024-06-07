@@ -19,6 +19,7 @@ import java.io.IOException;
  * @author Martin Weber
  * @since 1.4
  */
+@Deprecated
 public interface ICMakePropertiesController {
 
 	/** Creates a new {@code ICMakeProperties} object, initialized from the persistence store.

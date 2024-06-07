@@ -33,9 +33,9 @@ import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
 import org.eclipse.cdt.cmake.core.ParsingConsoleOutputStream;
 import org.eclipse.cdt.cmake.core.internal.CommandDescriptorBuilder.CommandDescriptor;
-import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
+import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
 import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -83,6 +83,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	public static final String CLEAN_COMMAND_DEFAULT = "clean"; //$NON-NLS-1$
 
 	private ICMakeToolChainFile toolChainFile;
+
+	// lazily instantiated..
+	private CMakePropertiesController pc;
 
 	private Map<IResource, IScannerInfo> infoPerResource;
 	/**
@@ -155,7 +158,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				runCMake = true;
 			}
 
-			ICMakeProperties cmakeProperties = new CMakePropertiesBean();
+			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			runCMake |= !Files.exists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
 
 			final SimpleOsOverridesSelector overridesSelector = new SimpleOsOverridesSelector();
@@ -289,7 +292,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
-			ICMakeProperties cmakeProperties = new CMakePropertiesBean();
+			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties,
 					new SimpleOsOverridesSelector());
 			CommandDescriptor command = cmdBuilder.makeCMakeBuildCommandline(getCleanCommand());
@@ -372,10 +375,27 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	/** Lazily creates the CMakePropertiesController for the project.
+	 */
+	private CMakePropertiesController getPropertiesController() {
+		if (pc == null) {
+			final Path filePath = Path.of(getProject().getFile(".settings/CDT-cmake.yaml").getLocationURI()); //$NON-NLS-1$
+			pc = new CMakePropertiesController(filePath, () -> {
+				deleteCMakeCache = true;
+				// TODO delete cache file here for the case a user restarts the workbench
+				// prior to running a new build
+			});
+		}
+		return pc;
+	}
+
 	// interface IAdaptable
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T> T getAdapter(Class<T> adapter) {
+		if (ICMakePropertiesController.class.equals(adapter)) {
+			return (T) pc;
+		}
 		return super.getAdapter(adapter);
 	}
 

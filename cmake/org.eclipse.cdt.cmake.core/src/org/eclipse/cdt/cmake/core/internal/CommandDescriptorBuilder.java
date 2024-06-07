@@ -77,6 +77,7 @@ class CommandDescriptorBuilder {
 				args.add(file);
 			}
 		}
+		CommandDescriptorBuilder.appendCMakeArguments(args, cmakeProperties.getExtraArguments());
 
 		/* at last, add our requirements that override extra args specified by the user... */
 		{

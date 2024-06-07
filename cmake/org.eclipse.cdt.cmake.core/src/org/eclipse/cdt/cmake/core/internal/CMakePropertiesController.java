@@ -41,7 +41,6 @@ import org.yaml.snakeyaml.representer.Representer;
  * us to delete file CMakeCache.txt to avoid complaints by cmake.
  * @author Martin Weber
  */
-@Deprecated
 class CMakePropertiesController implements ICMakePropertiesController {
 
 	private final Path storageFile;

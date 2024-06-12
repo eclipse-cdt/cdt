@@ -320,7 +320,16 @@ public class CBuildConfigurationManager
 		ICBuildConfigurationProvider provider = getProvider(project);
 		if (provider != null) {
 			// The provider will call us back to add in the new one
-			return provider.createBuildConfiguration(project, toolChain, launchMode, monitor);
+			ICBuildConfiguration cconfig = provider.createBuildConfiguration(project, toolChain, launchMode, monitor);
+			if (cconfig != null) {
+				/*
+				 * The IScannerInfoProvider may be cached with an incorrect value if the ICBuildConfiguration is not
+				 * available at the time it is checked. Now that one has been created, the previous value should be
+				 * forgotten so the new cconfig can be used.
+				 */
+				CCorePlugin.getDefault().resetCachedScannerInfoProvider(project);
+			}
+			return cconfig;
 		} else {
 			return null;
 		}

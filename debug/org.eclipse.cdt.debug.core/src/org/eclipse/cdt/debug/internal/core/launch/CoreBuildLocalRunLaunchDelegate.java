@@ -60,6 +60,8 @@ public class CoreBuildLocalRunLaunchDelegate extends CoreBuildLaunchConfigDelega
 			String workingDirectory = configuration
 					.getAttribute(ICDTLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
 			if (!workingDirectory.isBlank()) {
+				workingDirectory = VariablesPlugin.getDefault().getStringVariableManager()
+						.performStringSubstitution(workingDirectory);
 				builder.directory(new File(workingDirectory));
 			}
 

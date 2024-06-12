@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.internal.corebuild;
 
+import org.eclipse.cdt.launch.ui.CArgumentsTab;
 import org.eclipse.cdt.launch.ui.corebuild.CoreBuildMainTab;
 import org.eclipse.cdt.launch.ui.corebuild.CoreBuildTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
@@ -22,8 +23,9 @@ public class LocalLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab mainTab = new CoreBuildMainTab();
 		ILaunchConfigurationTab buildTab = new CoreBuildTab();
+		ILaunchConfigurationTab argumentsTab = new CArgumentsTab();
 
-		setTabs(new ILaunchConfigurationTab[] { mainTab, buildTab });
+		setTabs(new ILaunchConfigurationTab[] { mainTab, buildTab, argumentsTab });
 	}
 
 }

@@ -12,6 +12,7 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileReader;
@@ -20,9 +21,12 @@ import org.eclipse.cdt.managedbuilder.core.jsoncdb.CompilationDatabaseInformatio
 import org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder;
 import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
@@ -166,5 +170,33 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 		IPreferenceStore preferenceStore = new ScopedPreferenceStore(InstanceScope.INSTANCE,
 				"org.eclipse.cdt.managedbuilder.ui");
 		preferenceStore.setToDefault(CommonBuilder.COMPILATION_DATABASE_ENABLEMENT);
+	}
+
+	@Test
+	public void testCompilerPath() throws Exception {
+		setWorkspace("regressions");
+		final IProject app = loadProject("helloworldC");
+		setGenerateFileOptionEnabled(true);
+		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		IFile commandsFile = app.getFile("Debug/compile_commands.json");
+
+		if (commandsFile.exists()) {
+			try (FileReader reader = new FileReader(commandsFile.getLocation().toFile())) {
+				Gson gson = new Gson();
+				JsonArray jsonArray = gson.fromJson(reader, JsonArray.class);
+				for (JsonElement element : jsonArray) {
+					CompilationDatabaseInformation compileCommand = gson.fromJson(element,
+							CompilationDatabaseInformation.class);
+					String command = compileCommand.command();
+					String[] commandParts = CommandLineUtil.argumentsToArray(command);
+					String compilerPath = commandParts[0];
+					assertNotNull("Compiler path should not be null", compilerPath);
+					assertFalse(compilerPath.isEmpty(), "Compiler path should not be empty");
+					IPath path = new Path(compilerPath);
+					boolean isAbsolute = path.isAbsolute();
+					assertTrue(isAbsolute, "Path should be absolute: " + path);
+				}
+			}
+		}
 	}
 }

@@ -15,7 +15,9 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.model.IBinary;
@@ -32,6 +34,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 
@@ -65,7 +68,15 @@ public class CoreBuildLocalRunLaunchDelegate extends CoreBuildLaunchConfigDelega
 				builder.directory(new File(workingDirectory));
 			}
 
-			buildConfig.setBuildEnvironment(builder.environment());
+			Map<String, String> environment = builder.environment();
+			Map<String, String> launchEnvironment = configuration
+					.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new HashMap<>());
+			if (!configuration.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true)) {
+				environment.clear();
+			}
+			environment.putAll(launchEnvironment);
+
+			buildConfig.setBuildEnvironment(environment);
 			Process process = builder.start();
 			DebugPlugin.newProcess(launch, process, exeFile.getPath().lastSegment());
 		} catch (IOException e) {

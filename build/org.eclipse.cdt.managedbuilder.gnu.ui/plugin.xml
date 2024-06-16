@@ -12,6 +12,7 @@ SPDX-License-Identifier: EPL-2.0
 Contributors:
     Intel Corporation - initial API and implementation
     John Dallaway - add assembler debug level option (#727)
+    John Dallaway - extend optimization options (#828)
 -->
 <plugin>
    <!-- Managed Make Builder Tool Specifications -->
@@ -1058,9 +1059,17 @@ Contributors:
                   command="-O3"
                   id="gnu.c.optimization.level.most" />
             <enumeratedOptionValue
+                  command="-Og"
+                  id="gnu.c.optimization.level.debug"
+                  name="%Option.Posix.Optimize.Debug" />
+            <enumeratedOptionValue
                   command="-Os"
                   id="gnu.c.optimization.level.size"
                   name="%Option.Posix.Optimize.Size" />
+            <enumeratedOptionValue
+                  command="-Oz"
+                  id="gnu.c.optimization.level.size.more"
+                  name="%Option.Posix.Optimize.Size.More" />
             <enablement
                   type="CONTAINER_ATTRIBUTE"
                   attribute="defaultValue"
@@ -1548,9 +1557,17 @@ Contributors:
                   command="-O3"
                   id="gnu.cpp.compiler.optimization.level.most" />
             <enumeratedOptionValue
+                  command="-Og"
+                  id="gnu.cpp.compiler.optimization.level.debug"
+                  name="%Option.Posix.Optimize.Debug" />
+            <enumeratedOptionValue
                   command="-Os"
                   id="gnu.cpp.compiler.optimization.level.size"
                   name="%Option.Posix.Optimize.Size" />
+            <enumeratedOptionValue
+                  command="-Oz"
+                  id="gnu.cpp.compiler.optimization.level.size.more"
+                  name="%Option.Posix.Optimize.Size.More" />
             <enablement
                   type="CONTAINER_ATTRIBUTE"
                   attribute="value"

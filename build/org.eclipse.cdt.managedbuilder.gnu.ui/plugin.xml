@@ -36,8 +36,7 @@ Contributors:
          </supportedProperties>
          <envVarBuildPath
                pathType="buildpathLibrary"
-               variableList="LIBRARY_PATH">
-         </envVarBuildPath>
+               variableList="LIBRARY_PATH" />
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.linker"
                name="%OptionCategory.General"
@@ -149,8 +148,7 @@ Contributors:
                category="gnu.c.link.category.shared"
                command="-Wl,-soname="
                id="gnu.c.link.option.soname"
-               valueType="string">
-         </option>
+               valueType="string" />
          <option
                name="%Option.Posix.Linker.Implib"
                category="gnu.c.link.category.shared"
@@ -206,8 +204,7 @@ Contributors:
                defaultValue="false"
                id="gnu.c.link.option.debugging.prof"
                name="%Option.Posix.Debug.prof"
-               valueType="boolean">
-         </option>
+               valueType="boolean" />
          <option
                applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GprofAppCalculator"
                command="-pg"
@@ -238,8 +235,7 @@ Contributors:
          </supportedProperties>
          <envVarBuildPath
                pathType="buildpathLibrary"
-               variableList="LIBRARY_PATH">
-         </envVarBuildPath>
+               variableList="LIBRARY_PATH" />
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.linker"
                name="%OptionCategory.General"
@@ -344,8 +340,7 @@ Contributors:
                category="gnu.cpp.link.category.shared"
                command="-Wl,-soname="
                valueType="string"
-               id="gnu.cpp.link.option.soname">
-         </option>
+               id="gnu.cpp.link.option.soname" />
          <option
                name="%Option.Posix.Linker.Implib"
                category="gnu.cpp.link.category.shared"
@@ -401,8 +396,7 @@ Contributors:
                defaultValue="false"
                id="gnu.cpp.link.option.debugging.prof"
                name="%Option.Posix.Debug.prof"
-               valueType="boolean">
-         </option>
+               valueType="boolean" />
          <option
                applicabilityCalculator="org.eclipse.cdt.managedbuilder.gnu.ui.GprofAppCalculator"
                command="-pg"
@@ -432,8 +426,7 @@ Contributors:
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.archiver"
                name="%OptionCategory.General"
-               id="gnu.lib.category.general">
-         </optionCategory>
+               id="gnu.lib.category.general" />
          <option
                defaultValue="-r -P"
                name="%Option.Posix.Archiver.Flags"
@@ -459,8 +452,7 @@ Contributors:
                outputPrefix="lib"
                buildVariable="ARCHIVES"
                nameProvider="org.eclipse.cdt.managedbuilder.makegen.gnu.GnuLinkOutputNameProvider"
-               id="cdt.managedbuild.tool.gnu.archiver.output">
-         </outputType>
+               id="cdt.managedbuild.tool.gnu.archiver.output" />
       </tool>
       <!--tool
             command="windres"
@@ -575,8 +567,7 @@ Contributors:
                commandGenerator="org.eclipse.cdt.managedbuilder.gnu.ui.GnuAsmFlagsCommandGenerator"
                defaultValue="-c"
                valueType="string"
-               id="gnu.both.asm.option.flags">
-         </option>
+               id="gnu.both.asm.option.flags" />
          <option
                command="-I"
                valueType="includePath"
@@ -623,8 +614,7 @@ Contributors:
          </supportedProperties>
          <envVarBuildPath
                pathType="buildpathLibrary"
-               variableList="LIBRARY_PATH">
-         </envVarBuildPath>
+               variableList="LIBRARY_PATH" />
          <optionCategory
                owner="cdt.managedbuild.tool.macosx.c.linker"
                name="%OptionCategory.General"
@@ -669,8 +659,7 @@ Contributors:
                category="macosx.c.link.category.general"
                command="-nostdlib"
                id="macosx.c.link.option.nostdlibs"
-               valueType="boolean">
-         </option>
+               valueType="boolean" />
          <option
                defaultValue="false"
                name="%Option.Posix.Linker.Strip"
@@ -798,8 +787,7 @@ Contributors:
          </supportedProperties>
          <envVarBuildPath
                pathType="buildpathLibrary"
-               variableList="LIBRARY_PATH">
-         </envVarBuildPath>
+               variableList="LIBRARY_PATH" />
          <optionCategory
                owner="cdt.managedbuild.tool.macosx.cpp.linker"
                name="%OptionCategory.General"
@@ -946,8 +934,7 @@ Contributors:
          </supportedProperties>
          <envVarBuildPath
                pathType="buildpathInclude"
-               variableList="CPATH,C_INCLUDE_PATH">
-         </envVarBuildPath>
+               variableList="CPATH,C_INCLUDE_PATH" />
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.compiler"
                name="%OptionCategory.Dialect"
@@ -981,8 +968,7 @@ Contributors:
                category="gnu.c.compiler.category.dialect"
                id="gnu.c.compiler.option.dialect.flags"
                useByScannerDiscovery="true"
-               valueType="string">
-         </option>
+               valueType="string" />
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.compiler"
                name="%OptionCategory.Preproc"
@@ -1093,8 +1079,7 @@ Contributors:
                name="%Option.Posix.Optimize.Flags"
                category="gnu.c.compiler.category.optimization"
                id="gnu.c.compiler.option.optimization.flags"
-               valueType="string">
-         </option>
+               valueType="string" />
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.c.compiler"
                name="%OptionCategory.Debug"
@@ -1145,8 +1130,7 @@ Contributors:
                name="%Option.Posix.Debug.Other"
                category="gnu.c.compiler.category.debug"
                id="gnu.c.compiler.option.debugging.other"
-               valueType="string">
-         </option>
+               valueType="string" />
          <option
                defaultValue="false"
                name="%Option.Posix.Debug.prof"
@@ -1437,8 +1421,7 @@ Contributors:
          </supportedProperties>
          <envVarBuildPath
                pathType="buildpathInclude"
-               variableList="CPATH,CPLUS_INCLUDE_PATH">
-         </envVarBuildPath>
+               variableList="CPATH,CPLUS_INCLUDE_PATH" />
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.compiler"
                name="%OptionCategory.Dialect"
@@ -1480,8 +1463,7 @@ Contributors:
                category="gnu.cpp.compiler.category.dialect"
                id="gnu.cpp.compiler.option.dialect.flags"
                useByScannerDiscovery="true"
-               valueType="string">
-         </option>
+               valueType="string" />
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.compiler"
                name="%OptionCategory.Preproc"
@@ -1591,8 +1573,7 @@ Contributors:
                name="%Option.Posix.Optimize.Flags"
                category="gnu.cpp.compiler.category.optimization"
                id="gnu.cpp.compiler.option.optimization.flags"
-               valueType="string">
-         </option>
+               valueType="string" />
          <optionCategory
                owner="cdt.managedbuild.tool.gnu.cpp.compiler"
                name="%OptionCategory.Debug"
@@ -1643,8 +1624,7 @@ Contributors:
                name="%Option.Posix.Debug.Other"
                category="gnu.cpp.compiler.category.debug"
                id="gnu.cpp.compiler.option.debugging.other"
-               valueType="string">
-         </option>
+               valueType="string" />
          <option
                defaultValue="false"
                name="%Option.Posix.Debug.prof"
@@ -2166,8 +2146,7 @@ Contributors:
          </tool>
          <tool
                id="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin.base"
-               superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin">
-         </tool>
+               superClass="cdt.managedbuild.tool.gnu.cpp.compiler.cygwin" />
          <tool
                id="cdt.managedbuild.tool.gnu.c.compiler.cygwin.base"
                superClass="cdt.managedbuild.tool.gnu.c.compiler.cygwin" />
@@ -2228,8 +2207,7 @@ Contributors:
          </tool>
          <tool
                id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base"
-               superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
-         </tool>
+               superClass="cdt.managedbuild.tool.gnu.cpp.compiler" />
          <tool
                id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base"
                superClass="cdt.managedbuild.tool.gnu.c.compiler" />
@@ -2247,8 +2225,7 @@ Contributors:
             <outputType
                   id="cdt.managedbuild.tool.gnu.c.linker.mingw.so.output.base"
                   superClass="cdt.managedbuild.tool.gnu.c.linker.output.so"
-                  outputs="dll">
-            </outputType>
+                  outputs="dll" />
          </tool>
          <tool
                id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base"
@@ -2264,8 +2241,7 @@ Contributors:
             <outputType
                   id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.so.output.base"
                   superClass="cdt.managedbuild.tool.gnu.cpp.linker.output.so"
-                  outputs="dll">
-            </outputType>
+                  outputs="dll" />
          </tool>
       </toolChain>
       <toolChain
@@ -2320,8 +2296,7 @@ Contributors:
          </tool>
          <tool
                id="cdt.managedbuild.tool.gnu.cpp.compiler.macosx.base"
-               superClass="cdt.managedbuild.tool.gnu.cpp.compiler">
-         </tool>
+               superClass="cdt.managedbuild.tool.gnu.cpp.compiler" />
          <tool
                id="cdt.managedbuild.tool.gnu.c.compiler.macosx.base"
                superClass="cdt.managedbuild.tool.gnu.c.compiler" />
@@ -2469,8 +2444,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.c.linker.exe.debug"
-                     superClass="cdt.managedbuild.tool.gnu.c.linker.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.c.linker.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.cpp.linker.exe.debug"
                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.base" />
@@ -2516,8 +2490,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.c.linker.exe.release"
-                     superClass="cdt.managedbuild.tool.gnu.c.linker.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.c.linker.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.cpp.linker.exe.release"
                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.base" />
@@ -2589,8 +2562,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.so.debug"
-                     superClass="cdt.managedbuild.tool.gnu.assembler.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.assembler.base" />
             </toolChain>
          </configuration>
          <configuration
@@ -2650,8 +2622,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.so.release"
-                     superClass="cdt.managedbuild.tool.gnu.assembler.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.assembler.base" />
             </toolChain>
          </configuration>
       </projectType>
@@ -2697,8 +2668,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.archiver.lib.debug"
-                     superClass="cdt.managedbuild.tool.gnu.archiver.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.archiver.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.lib.debug"
                      superClass="cdt.managedbuild.tool.gnu.assembler.base" />
@@ -2741,8 +2711,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.archiver.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.archiver.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.archiver.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.lib.release"
                      superClass="cdt.managedbuild.tool.gnu.assembler.base" />
@@ -2815,8 +2784,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.debug"
-                     superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.debug"
                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base" />
@@ -2862,8 +2830,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.c.linker.cygwin.exe.release"
-                     superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.c.linker.cygwin.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.exe.release"
                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.cygwin.base" />
@@ -2935,8 +2902,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.cygwin.so.debug"
-                     superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base" />
             </toolChain>
          </configuration>
          <configuration
@@ -2996,8 +2962,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.cygwin.so.release"
-                     superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base" />
             </toolChain>
          </configuration>
       </projectType>
@@ -3043,8 +3008,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.debug"
-                     superClass="cdt.managedbuild.tool.gnu.archiver.cygwin.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.archiver.cygwin.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.debug"
                      superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base" />
@@ -3087,8 +3051,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.archiver.cygwin.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.archiver.cygwin.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.archiver.cygwin.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.cygwin.lib.release"
                      superClass="cdt.managedbuild.tool.gnu.assembler.cygwin.base" />
@@ -3158,8 +3121,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.debug"
-                     superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.debug"
                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base" />
@@ -3202,8 +3164,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.c.linker.mingw.exe.release"
-                     superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.exe.release"
                      superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base" />
@@ -3272,8 +3233,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.mingw.so.debug"
-                     superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base" />
             </toolChain>
          </configuration>
          <configuration
@@ -3330,8 +3290,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.mingw.so.release"
-                     superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base" />
             </toolChain>
          </configuration>
       </projectType>
@@ -3374,8 +3333,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.archiver.mingw.lib.debug"
-                     superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.mingw.lib.debug"
                      superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base" />
@@ -3415,8 +3373,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.archiver.mingw.lib.release"
-                     superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.mingw.lib.release"
                      superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base" />
@@ -3488,8 +3445,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug"
-                     superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base" />
                <tool
                      id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.debug"
                      superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base" />
@@ -3535,8 +3491,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release"
-                     superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.base" />
                <tool
                      id="cdt.managedbuild.tool.macosx.cpp.linker.macosx.exe.release"
                      superClass="cdt.managedbuild.tool.macosx.cpp.linker.macosx.base" />
@@ -3614,8 +3569,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.macosx.so.debug"
-                     superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base" />
             </toolChain>
          </configuration>
          <configuration
@@ -3681,8 +3635,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.macosx.so.release"
-                     superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base" />
             </toolChain>
          </configuration>
       </projectType>
@@ -3728,8 +3681,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.toolmacosx.lib.debug.gnu.archiver"
-                     superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.macosx.lib.debug"
                      superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base" />
@@ -3772,8 +3724,7 @@ Contributors:
                </tool>
                <tool
                      id="cdt.managedbuild.toolmacosx.lib.release.gnu.archiver"
-                     superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base">
-               </tool>
+                     superClass="cdt.managedbuild.tool.gnu.archiver.macosx.base" />
                <tool
                      id="cdt.managedbuild.tool.gnu.assembler.macosx.lib.release"
                      superClass="cdt.managedbuild.tool.gnu.assembler.macosx.base" />

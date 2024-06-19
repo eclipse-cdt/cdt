@@ -98,6 +98,12 @@ public class VT100Emulator implements ControlListener {
 	private static final int ANSISTATE_EXPECTING_CHARSET_DESIGNATION = 5;
 
 	/**
+	 * For cases where the OSC (OS Command) ends with a multi-byte ST (i.e. ESC \)
+	 * we use this extra state.
+	 */
+	private static final int ANSISTATE_EXPECTING_OS_COMMAND_END = 6;
+
+	/**
 	 * This field holds the current state of the Finite TerminalState Automaton (FSA)
 	 * that recognizes ANSI escape sequences.
 	 *
@@ -428,13 +434,24 @@ public class VT100Emulator implements ControlListener {
 				break;
 
 			case ANSISTATE_EXPECTING_OS_COMMAND:
-				// A BEL (\u0007) character marks the end of the OSC sequence.
+				// A BEL (\u0007) or ESC \ ('\e\\') character marks the end of the OSC sequence.
 
 				if (character == '\u0007') {
 					ansiState = ANSISTATE_INITIAL;
 					processAnsiOsCommand();
+				} else if (character == '\u001b') {
+					ansiState = ANSISTATE_EXPECTING_OS_COMMAND_END;
 				} else {
 					ansiOsCommand.append(character);
+				}
+				break;
+
+			case ANSISTATE_EXPECTING_OS_COMMAND_END:
+				ansiState = ANSISTATE_INITIAL;
+				if (character == '\\') {
+					processAnsiOsCommand();
+				} else {
+					Logger.log("Unsupported escape sequence: escape '" + ansiOsCommand + " \\e" + character + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				break;
 

@@ -37,8 +37,16 @@ public class VT100EmulatorTest {
 	private static final String CLEAR_ENTIRE_SCREEN = "\033[2J";
 	private static final String SCROLL_REVERSE = "\033M";
 
-	private static String TITLE(String title) {
+	private static String TITLE_ST_BEL(String title) {
 		return "\033]0;" + title + "\007";
+	}
+
+	private static String TITLE_ST_ESC_BACKSLASH(String title) {
+		return "\033]0;" + title + "\033\\";
+	}
+
+	private static String TITLE(String title) {
+		return TITLE_ST_BEL(title);
 	}
 
 	private static String SCROLL_REGION(int startRow, int endRow) {
@@ -338,6 +346,33 @@ public class VT100EmulatorTest {
 		run("New text on top line following scroll reverse");
 		expected.set(2, "New text on top line following scroll reverse");
 		assertAll(() -> assertCursorLocation(2, expected.get(2).length()), () -> assertTextEquals(expected));
+	}
+
+	@Test
+	public void testStringTerminator() {
+		run( //
+				TITLE_ST_BEL("TITLE1"), //
+				"HELLO1", //
+				TITLE_ST_ESC_BACKSLASH("TITLE2"), //
+				"HELLO2", //
+				TITLE_ST_BEL("TITLE3"), //
+				"HELLO3", //
+				TITLE_ST_ESC_BACKSLASH("TITLE4") //
+		);
+		assertAll(() -> assertTextEquals("HELLO1HELLO2HELLO3"),
+				() -> assertEquals(List.of("TITLE1", "TITLE2", "TITLE3", "TITLE4"), control.getAllTitles()));
+	}
+
+	@Test
+	public void testMalformedStringTerminator() {
+		run( //
+				TITLE_ST_ESC_BACKSLASH("TITLE1"), //
+				"\033]0;" + "TITLE1" + "\033X", //
+				TITLE_ST_ESC_BACKSLASH("TITLE2"), //
+				"HELLO" //
+		);
+		assertAll(() -> assertTextEquals("HELLO"),
+				() -> assertEquals(List.of("TITLE1", "TITLE2"), control.getAllTitles()));
 	}
 
 }

@@ -13,6 +13,7 @@ Contributors:
     Intel Corporation - initial API and implementation
     John Dallaway - add assembler debug level option (#727)
     John Dallaway - extend optimization options (#828)
+    John Dallaway - add archiver other objects option (#653)
 -->
 <plugin>
    <!-- Managed Make Builder Tool Specifications -->
@@ -433,6 +434,12 @@ Contributors:
                category="gnu.lib.category.general"
                valueType="string"
                id="gnu.both.lib.option.flags" />
+         <option
+               browseType="file"
+               category="gnu.lib.category.general"
+               id="gnu.both.lib.option.userobjs"
+               name="%Option.Posix.UserObjs"
+               valueType="userObjs" />
          <inputType
                sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
                sources="o"

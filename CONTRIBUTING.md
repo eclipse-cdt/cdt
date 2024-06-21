@@ -132,4 +132,4 @@ Contact the project developers via the project's "dev" list, raise an issue or s
 * Discussions: https://github.com/eclipse-cdt/cdt/discussions
 
 The Eclipse CDT project has a monthly call and everyone in the community is welcome to join.
-See [Eclipse CDT Calls](https://hackmd.io/@jonahgraham/EclipseCDTCalls)
+See [Eclipse CDT Calls](https://github.com/eclipse-cdt/cdt/discussions/836)

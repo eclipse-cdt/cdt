@@ -14,3 +14,4 @@ docker build --rm -f cdt-infra-base/ubuntu-18.04/Dockerfile -t cdt-infra-base:ub
 docker build --rm -f cdt-infra-all-gdbs/ubuntu-18.04/Dockerfile -t cdt-infra-all-gdbs:ubuntu-18.04 .
 docker build --rm -f cdt-infra-eclipse-full/ubuntu-18.04/Dockerfile -t cdt-infra-eclipse-full:ubuntu-18.04 .
 docker build --rm -f cdt-infra-plus-eclipse-install/ubuntu-18.04/Dockerfile -t cdt-infra-plus-eclipse-install:ubuntu-18.04 .
+docker build --rm -f cdt-infra-plus-eclipse-install-github/ubuntu-18.04/Dockerfile -t cdt-infra-plus-eclipse-install-github:ubuntu-18.04 .

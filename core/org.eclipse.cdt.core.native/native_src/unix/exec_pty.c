@@ -34,12 +34,12 @@ extern char *pfind(const char *name, char *const envp[]);
 static int sys_close_range_wrapper(unsigned int from_fd_inclusive) {
     // Use fast `close_range` (https://man7.org/linux/man-pages/man2/close_range.2.html) if available.
     // Cannot call `close_range` from libc, as it may be unavailable in older libc.
-# if defined(__linux__) && defined(SYS_close_range) && defined(CLOSE_RANGE_UNSHARE)
+#if defined(__linux__) && defined(SYS_close_range) && defined(CLOSE_RANGE_UNSHARE)
     return syscall(SYS_close_range, from_fd_inclusive, ~0U, CLOSE_RANGE_UNSHARE);
-# else
+#else
     errno = ENOSYS;
     return -1;
-# endif
+#endif
 }
 
 static int close_all_fds_using_parsing(unsigned int from_fd_inclusive) {
@@ -57,7 +57,8 @@ static int close_all_fds_using_parsing(unsigned int from_fd_inclusive) {
 #endif
 
     DIR *dirp = opendir(FD_DIR);
-    if (dirp == NULL) return -1;
+    if (dirp == NULL)
+        return -1;
 
     struct dirent *direntp;
 
@@ -77,7 +78,8 @@ static int close_all_fds_using_parsing(unsigned int from_fd_inclusive) {
 
 static void close_all_fds_fallback(unsigned int from_fd_inclusive) {
     int fdlimit = sysconf(_SC_OPEN_MAX);
-    if (fdlimit == -1) fdlimit = 65535; // arbitrary default, just in case
+    if (fdlimit == -1)
+        fdlimit = 65535; // arbitrary default, just in case
     for (int fd = from_fd_inclusive; fd < fdlimit; fd++) {
         close(fd);
     }
@@ -85,8 +87,10 @@ static void close_all_fds_fallback(unsigned int from_fd_inclusive) {
 
 static void close_all_fds() {
     unsigned int from_fd = STDERR_FILENO + 1;
-    if (sys_close_range_wrapper(from_fd) == 0) return;
-    if (close_all_fds_using_parsing(from_fd) == 0) return;
+    if (sys_close_range_wrapper(from_fd) == 0)
+        return;
+    if (close_all_fds_using_parsing(from_fd) == 0)
+        return;
     close_all_fds_fallback(from_fd);
 }
 

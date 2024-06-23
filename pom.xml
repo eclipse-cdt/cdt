@@ -25,8 +25,8 @@
 		<tycho-version>4.0.6</tycho-version>
 		<cbi-plugins.version>1.4.3</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-		<cdt-site>https://ci.eclipse.org/cdt/job/cdt/job/main/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
-		<simrel-site>https://download.eclipse.org/staging/2024-06/</simrel-site>
+		<cdt-site>https://ci.eclipse.org/cdt/job/cdt/job/cdt_11_6/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
+		<simrel-site>https://download.eclipse.org/releases/2024-06//</simrel-site>
 		<repo-path>tools/cdt/builds/master/nightly</repo-path>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
@@ -40,9 +40,9 @@
 		<tycho.scmUrl>scm:git:https://github.com/eclipse-cdt/cdt</tycho.scmUrl>
 		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->
 		<base.test.vmargs>-Xms256m -Xmx512m -ea --add-opens=java.xml/com.sun.org.apache.xerces.internal.dom=ALL-UNNAMED</base.test.vmargs>
-		<comparator.repo>https://download.eclipse.org/tools/cdt/builds/11.5/cdt-11.5.0-rc2/</comparator.repo>
-		<api-baseline.repo>https://download.eclipse.org/tools/cdt/builds/11.5/cdt-11.5.0-rc2/</api-baseline.repo>
-		<api-baseline.repo.simrel>https://download.eclipse.org/releases/2024-03/</api-baseline.repo.simrel>
+		<comparator.repo>https://download.eclipse.org/tools/cdt/releases/11.6/</comparator.repo>
+		<api-baseline.repo>https://download.eclipse.org/tools/cdt/releases/11.6/</api-baseline.repo>
+		<api-baseline.repo.simrel>https://download.eclipse.org/releases/2024-06/</api-baseline.repo.simrel>
 		<!-- these parameters are to control baseline replace and compare. On a local build you want
 		     to avoid baseline replace and compare, especially if you have different versions of Java than
 			 the baseline was built with. This is the default.

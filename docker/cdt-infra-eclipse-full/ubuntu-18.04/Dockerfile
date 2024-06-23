@@ -26,6 +26,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       libxml2-utils \
       gettext-base \
       xserver-xephyr \
+      clang-format \
+      xvfb \
+      ssh-askpass \
     && apt-get install -y llvm \
     && apt-get install -y --no-install-recommends texinfo bison flex \
     && rm -rf /var/lib/apt/lists/* \

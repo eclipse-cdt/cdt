@@ -11,7 +11,7 @@ namespace=${1:-quay.io/eclipse-cdt}
 shorthash=$(git rev-parse --short HEAD)
 toplevel=$(git rev-parse --show-toplevel)
 
-images="cdt-infra-eclipse-full:ubuntu-18.04 cdt-infra-plus-eclipse-install:ubuntu-18.04"
+images="cdt-infra-eclipse-full:ubuntu-18.04 cdt-infra-plus-eclipse-install:ubuntu-18.04 cdt-infra-plus-eclipse-install-github:ubuntu-18.04"
 
 $toplevel/docker/build-images.sh
 
@@ -28,7 +28,7 @@ for image in $images; do
     hashname=$(docker inspect --format='{{index .RepoDigests 0}}' $image)
     echo $image "-->" $hashname
     nameonly=$(echo $image | sed -es,:.*,,)
-    find $toplevel -name \*\.Jenkinsfile -or -name \*\.yaml | while read file; do
+    find $toplevel -name \*\.Jenkinsfile -or -name \*\.yaml -or -name \*\.yml | while read file; do
         sed -i "s#image: $namespace/$nameonly[:@].*#image: $hashname#" $file
         git add $file
     done

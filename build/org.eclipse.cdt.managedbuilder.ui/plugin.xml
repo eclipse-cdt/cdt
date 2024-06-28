@@ -820,6 +820,12 @@
             class="org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.CompilationDatabaseGeneratorBlock"
             id="org.eclipse.cdt.managedbuilder.ui.properties.Page_JsonCompilationDatabaseGenerator"
             name="%JSONCompilatioDatabaseGeneratorPage.name">
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject">
+	           <test property="org.eclipse.core.resources.projectNature"
+	                  value="org.eclipse.cdt.managedbuilder.core.managedBuildNature"/>
+            </adapt>
+         </enabledWhen>
       </page>
 
   </extension>

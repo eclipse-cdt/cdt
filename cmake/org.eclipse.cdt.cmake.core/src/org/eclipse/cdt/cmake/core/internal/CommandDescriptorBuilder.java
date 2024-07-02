@@ -78,8 +78,6 @@ class CommandDescriptorBuilder {
 			}
 		}
 		CommandDescriptorBuilder.appendCMakeArguments(args, cmakeProperties.getExtraArguments());
-		/* add settings for the operating system we are running under */
-		CommandDescriptorBuilder.appendCMakeOsOverrideArgs(args, overridesSelector.getOsOverrides(cmakeProperties));
 
 		/* at last, add our requirements that override extra args specified by the user... */
 		{
@@ -94,6 +92,10 @@ class CommandDescriptorBuilder {
 		if (toolChainFile != null) {
 			args.add("-DCMAKE_TOOLCHAIN_FILE=" + toolChainFile.toString()); //$NON-NLS-1$
 		}
+		/* Add settings for the operating system we are running under,
+		 * and the user additional CMake arguments set in the Launch Configuration UI.
+		 */
+		CommandDescriptorBuilder.appendCMakeOsOverrideArgs(args, overridesSelector.getOsOverrides(cmakeProperties));
 
 		return new CommandDescriptor(args, env);
 	}

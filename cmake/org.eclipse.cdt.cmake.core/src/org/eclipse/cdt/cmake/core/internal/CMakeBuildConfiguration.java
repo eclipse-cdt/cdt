@@ -68,6 +68,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.core.ILaunchManager;
 import org.osgi.service.prefs.Preferences;
 
 public class CMakeBuildConfiguration extends CBuildConfiguration {
@@ -160,6 +161,13 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			runCMake |= !Files.exists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
+
+			// Causes CMAKE_BUILD_TYPE to be set according to the launch mode
+			if (ILaunchManager.DEBUG_MODE.equals(getLaunchMode())) {
+				cmakeProperties.setBuildType("Debug"); //$NON-NLS-1$
+			} else {
+				cmakeProperties.setBuildType("Release"); //$NON-NLS-1$
+			}
 
 			final SimpleOsOverridesSelector overridesSelector = new SimpleOsOverridesSelector();
 			if (!runCMake) {

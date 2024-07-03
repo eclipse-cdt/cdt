@@ -26,4 +26,7 @@ See [Noteworthy issues and PRs](https://github.com/eclipse-cdt/cdt/issues?q=is%3
 
 # Bugs Fixed in this Release
 
-See [GitHub milestones](https://github.com/eclipse-cdt/cdt/milestone/10?closed=1)
+See GitHub milestones:
+- [![11.6.0](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/10)](https://github.com/eclipse-cdt/cdt/milestone/10?closed=1)
+- [![11.6.1](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/16)](https://github.com/eclipse-cdt/cdt/milestone/16?closed=1)
+

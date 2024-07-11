@@ -1,0 +1,2 @@
+// support image rendering within the Asciidoctor Editor (#873)
+:imagesdir: {asciidoctorconfigdir}/images

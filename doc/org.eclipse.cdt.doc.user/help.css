@@ -60,3 +60,25 @@ div.linux  {display:none;}
 .bold {font-weight:600;}
 .linethrough {text-decoration: line-through;}
 .underline {text-decoration: underline;}
+
+/* AsciiDoc support based on Asciidoctor default stylesheet | MIT License | http://asciidoctor.org (#873) */
+p.tableblock { margin: 0 }
+table.tableblock tr th, table.tableblock tr td { padding: 0.3em }
+table.tableblock, th.tableblock, td.tableblock { border: 0 solid #dedede }
+table.grid-all>thead>tr>.tableblock, table.grid-all>tbody>tr>.tableblock { border-width: 0 1px 1px 0 }
+table.grid-all>tfoot>tr>.tableblock { border-width: 1px 1px 0 0 }
+table.grid-cols>*>tr>.tableblock { border-width: 0 1px 0 0 }
+table.grid-rows>thead>tr>.tableblock, table.grid-rows>tbody>tr>.tableblock { border-width: 0 0 1px 0 }
+table.grid-rows>tfoot>tr>.tableblock { border-width: 1px 0 0 0 }
+table.grid-all>*>tr>.tableblock:last-child, table.grid-cols>*>tr>.tableblock:last-child { border-right-width: 0 }
+table.grid-all>tbody>tr:last-child>.tableblock, table.grid-all>thead:last-child>tr>.tableblock, table.grid-rows>tbody>tr:last-child>.tableblock, table.grid-rows>thead:last-child>tr>.tableblock { border-bottom-width: 0 }
+table.frame-all { border-width: 1px }
+table.frame-sides { border-width: 0 1px }
+table.frame-topbot { border-width: 1px 0 }
+th.halign-left, td.halign-left { text-align: left }
+th.halign-right, td.halign-right { text-align: right }
+th.halign-center, td.halign-center { text-align: center }
+th.valign-top, td.valign-top { vertical-align: top }
+th.valign-bottom, td.valign-bottom { vertical-align: bottom }
+th.valign-middle, td.valign-middle { vertical-align: middle }
+div.listingblock pre { padding: 0.7em }

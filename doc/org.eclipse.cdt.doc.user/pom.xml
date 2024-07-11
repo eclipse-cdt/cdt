@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Copyright (c) 2011, 2021 Contributors to the Eclipse Foundation
+   Copyright (c) 2011, 2024 Contributors to the Eclipse Foundation
 
    This program and the accompanying materials
    are made available under the terms of the Eclipse Public License 2.0
@@ -37,6 +37,32 @@
 					<execution>
 						<id>attach-source</id>
 						<phase>none</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>adoc-to-html</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.basedir}/html</outputDirectory>
+							<attributes>
+								<icons>font</icons>
+								<imagesdir>../images</imagesdir>
+								<linkcss />
+								<reproducible />
+								<source-highlighter>coderay</source-highlighter>
+								<stylesheet>../help.css</stylesheet>
+								<toc>macro</toc>
+							</attributes>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

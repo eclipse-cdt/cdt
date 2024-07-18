@@ -18,6 +18,7 @@ public class Messages extends NLS {
 	public static String ReverseDebugging_ToggleHardwareTrace;
 	public static String ReverseDebugging_ToggleSoftwareTrace;
 	public static String ReverseDebugging_ToggleReverseDebugging;
+	public static String ToogleCommand_State_Not_found;
 
 	static {
 		// initialize resource bundle

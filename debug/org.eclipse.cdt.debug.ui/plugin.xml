@@ -280,17 +280,6 @@
                helpContextId="move_to_line_action_context"
                label="%GlobalMoveToLineAction.label"
                menubarPath="org.eclipse.ui.run/stepGroup"/>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
-               helpContextId="toggle_instruction_step_mode_action_context"
-               icon="icons/elcl16/instr_step.gif"
-               id="org.eclipse.cdt.debug.ui.actions.ToggleInstructionStepMode"
-               label="%ToggleInstructionStepModeAction.label"
-               menubarPath="org.eclipse.ui.run/stepGroup"
-               state="false"
-               style="toggle"
-               toolbarPath="org.eclipse.debug.ui.main.toolbar/renderGroup">
-		 </action>                              
       </actionSet>
    </extension>
    <extension
@@ -340,27 +329,6 @@
       
    <extension
          point="org.eclipse.ui.popupMenus">
-      <viewerContribution
-            targetID="org.eclipse.debug.ui.DebugView"
-            id="org.eclipse.cdt.debug.ui.debugview.popupMenu">
-         <action
-               state="false"
-               style="toggle"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
-               icon="icons/elcl16/instr_step.gif"
-               helpContextId="toggle_instruction_step_mode_action_context"
-               label="%ToggleInstructionStepModeAction.label"
-               menubarPath="renderGroup"
-               tooltip="%ToggleInstructionStepModeAction.tooltip">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-      </viewerContribution>
       <viewerContribution
             targetID="#CEditorRulerContext"
             id="org.eclipse.cdt.debug.ui.CEditorRulerActions">
@@ -675,28 +643,6 @@
    </extension>
    <extension
          point="org.eclipse.ui.viewActions">
-      <viewContribution
-            targetID="org.eclipse.debug.ui.DebugView"
-            id="org.eclipse.cdt.debug.ui.debugview.toolbar">
-         <action
-               state="false"
-               style="toggle"
-               id="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
-               toolbarPath="renderGroup"
-               class="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeActionDelegate"
-               disabledIcon="icons/dlcl16/instr_step.gif"
-               icon="icons/elcl16/instr_step.gif"
-               label="%ToggleInstructionStepModeAction.label"
-               helpContextId="toggle_instruction_step_mode_action_context"
-               tooltip="%ToggleInstructionStepModeAction.tooltip">
-            <enablement>
-               <pluginState
-                     value="activated"
-                     id="org.eclipse.cdt.debug.ui">
-               </pluginState>
-            </enablement>
-         </action>
-      </viewContribution>
       <viewContribution
             targetID="org.eclipse.debug.ui.DebugView"
             id="org.eclipse.cdt.debug.ui.debugView.menu">
@@ -1379,9 +1325,85 @@
            id="org.eclipse.debug.ui.actions.BreakpointTypesContribution"
            class="org.eclipse.debug.ui.actions.BreakpointTypesContribution">
        </dynamic>
-    </menu>         
-    </menuContribution>    
-          
+    </menu>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">
+       <command
+             commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand"
+             disabledIcon="icons/dlcl16/instr_step.gif"
+             helpContextId="toggle_instruction_step_mode_action_context"
+             icon="icons/elcl16/instr_step.gif"
+             label="%ToggleInstructionStepModeAction.label"
+             style="toggle"
+             tooltip="%ToggleInstructionStepModeAction.tooltip">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+             </test>
+          </visibleWhen>
+       </command>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="popup:org.eclipse.debug.ui.DebugView?after=renderGroup">
+       <command
+             commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand"
+             disabledIcon="icons/dlcl16/instr_step.gif"
+             helpContextId="toggle_instruction_step_mode_action_context"
+             icon="icons/elcl16/instr_step.gif"
+             label="%ToggleInstructionStepModeAction.label"
+             style="toggle"
+             tooltip="%ToggleInstructionStepModeAction.tooltip">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+             </test>
+          </visibleWhen>
+       </command>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="menu:org.eclipse.ui.run?endof=stepGroup">
+       <command
+             commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand"
+             disabledIcon="icons/dlcl16/instr_step.gif"
+             helpContextId="toggle_instruction_step_mode_action_context"
+             icon="icons/elcl16/instr_step.gif"
+             label="%ToggleInstructionStepModeAction.label"
+             style="toggle"
+             tooltip="%ToggleInstructionStepModeAction.tooltip">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+             </test>
+          </visibleWhen>
+       </command>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?after=renderGroup">
+       <command
+             commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand"
+             disabledIcon="icons/dlcl16/instr_step.gif"
+             helpContextId="toggle_instruction_step_mode_action_context"
+             icon="icons/elcl16/instr_step.gif"
+             label="%ToggleInstructionStepModeAction.label"
+             style="toggle"
+             tooltip="%ToggleInstructionStepModeAction.tooltip">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+             </test>
+          </visibleWhen>
+       </command>
+    </menuContribution>
+
    </extension>
    <extension
          point="org.eclipse.core.runtime.adapters">
@@ -1660,6 +1682,14 @@
           id="org.eclipse.cdt.debug.ui.command.loadAllSymbols"
           name="%LoadSymbolsForAllAction.label">
     </command>
+    <command
+          id="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand"
+          name="%ToggleInstructionStepModeAction.label">
+       <state
+             class="org.eclipse.ui.handlers.RegistryToggleState:false"
+             id="org.eclipse.ui.commands.toggleState">
+       </state>
+    </command>
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -1737,7 +1767,11 @@
                </with>
              </and>
            </enabledWhen>
-      </handler>   
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.commands.ToggleInstructionStepModeHandler"
+            commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand">
+      </handler>
  </extension>
  <extension
          point="org.eclipse.core.expressions.definitions">
@@ -2563,6 +2597,13 @@
            namespace="org.eclipse.cdt.debug.ui"
            properties="createBreakpointAdapt"
            type="org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointContext">
+     </propertyTester>
+     <propertyTester
+           class="org.eclipse.cdt.debug.internal.ui.actions.CDTDebugPropertyTester"
+           id="org.eclipse.cdt.debug.CDTDebugPropertyTester"
+           namespace="org.eclipse.cdt.debug.ui"
+           properties="isCDTDebugging"
+           type="java.lang.Object">
      </propertyTester>
   </extension>
   <extension

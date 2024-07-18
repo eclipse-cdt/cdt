@@ -16,8 +16,9 @@ package org.eclipse.cdt.dsf.debug.ui.actions;
 import org.eclipse.cdt.debug.core.model.ISteppingModeTarget;
 import org.eclipse.cdt.debug.core.model.ITargetProperties;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -30,11 +31,9 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 
 	private static final String ID_DISASSEMBLY_VIEW = "org.eclipse.cdt.dsf.debug.ui.disassembly.view"; //$NON-NLS-1$
 
-	private final Preferences fPreferences;
+	private IEclipsePreferences fPreferences = InstanceScope.INSTANCE.getNode(DsfUIPlugin.PLUGIN_ID); //$NON-NLS-1$
 
 	public DsfSteppingModeTarget() {
-		fPreferences = new Preferences();
-		fPreferences.setDefault(PREF_INSTRUCTION_STEPPING_MODE, false);
 	}
 
 	/*
@@ -42,7 +41,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	 */
 	@Override
 	public void enableInstructionStepping(boolean enabled) {
-		fPreferences.setValue(PREF_INSTRUCTION_STEPPING_MODE, enabled);
+		fPreferences.putBoolean(ITargetProperties.PREF_INSTRUCTION_STEPPING_MODE, enabled);
 		if (enabled) {
 			try {
 				final IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -60,7 +59,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	 */
 	@Override
 	public boolean isInstructionSteppingEnabled() {
-		return fPreferences.getBoolean(PREF_INSTRUCTION_STEPPING_MODE);
+		return fPreferences.getBoolean(ITargetProperties.PREF_INSTRUCTION_STEPPING_MODE, false);
 	}
 
 	/*
@@ -76,7 +75,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	 */
 	@Override
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		fPreferences.addPropertyChangeListener(listener);
+		// Left unimplemented because of backward compatibility.
 	}
 
 	/*
@@ -84,7 +83,7 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 	 */
 	@Override
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		fPreferences.removePropertyChangeListener(listener);
+		// Left unimplemented because of backward compatibility.
 	}
 
 }

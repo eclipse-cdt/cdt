@@ -114,6 +114,8 @@ public class Elf implements AutoCloseable {
 		public static final int EM_SPARC32PLUS = 18;
 		public static final int EM_PPC = 20;
 		public static final int EM_PPC64 = 21;
+		/** @since 8.5*/
+		public static final int EM_V800 = 36;
 		public static final int EM_ARM = 40;
 		public static final int EM_SH = 42;
 		public static final int EM_SPARCV9 = 43;
@@ -157,6 +159,10 @@ public class Elf implements AutoCloseable {
 		public static final int EM_RL78 = 197; /* Renesas RL78 Microcontroller */
 		/** @since 6.0 */
 		public static final int EM_AARCH64 = 183;
+		/** @since 8.5 */
+		public static final int EM_AVR32 = 185;
+		/** @since 8.5 */
+		public static final int EM_MICROBLAZE = 189;
 
 		/** @since 7.0 */
 		public static final int EM_RISCV = 243;
@@ -824,6 +830,9 @@ public class Elf implements AutoCloseable {
 		case Elf.ELFhdr.EM_H8_300H:
 			attrib.cpu = "h8300"; //$NON-NLS-1$
 			break;
+		case Elf.ELFhdr.EM_V800:
+			attrib.cpu = "v800"; //$NON-NLS-1$
+			break;
 		case Elf.ELFhdr.EM_V850:
 		case Elf.ELFhdr.EM_CYGNUS_V850:
 			attrib.cpu = "v850"; //$NON-NLS-1$
@@ -870,6 +879,9 @@ public class Elf implements AutoCloseable {
 		case Elf.ELFhdr.EM_AVR:
 			attrib.cpu = "avr"; //$NON-NLS-1$
 			break;
+		case Elf.ELFhdr.EM_AVR32:
+			attrib.cpu = "avr32"; //$NON-NLS-1$
+			break;
 		case Elf.ELFhdr.EM_MSP430:
 			attrib.cpu = "msp430"; //$NON-NLS-1$
 			break;
@@ -882,6 +894,7 @@ public class Elf implements AutoCloseable {
 		case Elf.ELFhdr.EM_X86_64:
 			attrib.cpu = "x86_64"; //$NON-NLS-1$
 			break;
+		case Elf.ELFhdr.EM_MICROBLAZE:
 		case Elf.ELFhdr.EM_XILINX_MICROBLAZE:
 			attrib.cpu = "microblaze"; //$NON-NLS-1$
 			break;

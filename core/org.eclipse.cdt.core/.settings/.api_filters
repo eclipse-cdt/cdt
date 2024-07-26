@@ -22,4 +22,24 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="utils/org/eclipse/cdt/utils/elf/Elf.java" type="org.eclipse.cdt.utils.elf.Elf$ELFhdr">
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.elf.Elf.ELFhdr"/>
+                <message_argument value="EM_AVR32"/>
+            </message_arguments>
+        </filter>
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.elf.Elf.ELFhdr"/>
+                <message_argument value="EM_MICROBLAZE"/>
+            </message_arguments>
+        </filter>
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.elf.Elf.ELFhdr"/>
+                <message_argument value="EM_V800"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

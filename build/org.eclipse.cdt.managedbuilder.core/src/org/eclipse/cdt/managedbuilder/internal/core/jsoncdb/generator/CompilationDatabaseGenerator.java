@@ -10,13 +10,19 @@
 package org.eclipse.cdt.managedbuilder.internal.core.jsoncdb.generator;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -34,6 +40,8 @@ import org.eclipse.cdt.managedbuilder.core.jsoncdb.ICompilationDatabaseContribut
 import org.eclipse.cdt.managedbuilder.internal.macros.FileContextData;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
+import org.eclipse.cdt.utils.CommandLineUtil;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -58,7 +66,11 @@ public final class CompilationDatabaseGenerator {
 
 	private static final String CDB_FILENAME = "compile_commands.json"; //$NON-NLS-1$
 	private static final String ERROR_MESSAGE = "Can not set contents to compile_commands.json file"; //$NON-NLS-1$
-
+	/**
+	 * Checked on each build
+	 * Used before we look up the environment
+	 */
+	private Map<ITool, String> toolMap = new HashMap<>();
 	private IProject project;
 	private IConfiguration configuration;
 	private ICSourceEntry[] srcEntries;
@@ -217,10 +229,22 @@ public final class CompilationDatabaseGenerator {
 						outputLocation + "", inputStrings, sourceLocation, outputLocation); //$NON-NLS-1$
 
 				IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
-				String resolvedOptionFileContents = provider.resolveValueToMakefileFormat(cmdLInfo.getCommandLine(), "", //$NON-NLS-1$
-						" ", IBuildMacroProvider.CONTEXT_FILE, //$NON-NLS-1$
-						new FileContextData(sourceLocation, outputLocation, null, tool));
+				String compilerName = CompilationDatabaseGenerator.getCompilerName(tool);
+				String commandLine = cmdLInfo.getCommandLine();
+				commandLine = commandLine.replace(compilerName, "").trim(); //$NON-NLS-1$
+				String compilerPath = findCompilerInPath(tool, config);
+				String resolvedOptionFileContents;
+				if (compilerPath != null && !compilerPath.isEmpty()) {
+					resolvedOptionFileContents = provider.resolveValueToMakefileFormat(compilerPath + " " + commandLine, //$NON-NLS-1$
+							"", " ", //$NON-NLS-1$//$NON-NLS-2$
+							IBuildMacroProvider.CONTEXT_FILE,
+							new FileContextData(sourceLocation, outputLocation, null, tool));
+				} else {
+					resolvedOptionFileContents = provider.resolveValueToMakefileFormat(commandLine, "", " ", //$NON-NLS-1$//$NON-NLS-2$
+							IBuildMacroProvider.CONTEXT_FILE,
+							new FileContextData(sourceLocation, outputLocation, null, tool));
 
+				}
 				objList.add(new CompilationDatabaseInformation(project.getLocation().toString(),
 						resolvedOptionFileContents, resource.getLocation().toString()));
 			}
@@ -412,6 +436,46 @@ public final class CompilationDatabaseGenerator {
 			return true;
 		}
 
+	}
+
+	private String findCompilerInPath(ITool tool, IConfiguration config) {
+		if (toolMap.containsKey(tool)) {
+			return "\"" + toolMap.get(tool) + "\""; //$NON-NLS-1$//$NON-NLS-2$
+		}
+		String compilerName = CompilationDatabaseGenerator.getCompilerName(tool);
+		File pathToCompiler = new File(compilerName);
+
+		if (pathToCompiler.isAbsolute()) {
+			toolMap.put(tool, compilerName);
+			return "\"" + compilerName + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		ICConfigurationDescription cfg = ManagedBuildManager.getDescriptionForConfiguration(config);
+		IEnvironmentVariable[] variables = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg,
+				true);
+
+		for (IEnvironmentVariable variable : variables) {
+			if ("PATH".equalsIgnoreCase(variable.getName())) { //$NON-NLS-1$
+				IPath resolvedPath = PathUtil.findProgramLocation(compilerName, variable.getValue());
+				if (resolvedPath != null) {
+					String path = resolvedPath.toString();
+					toolMap.put(tool, path);
+					return "\"" + path + "\""; //$NON-NLS-1$ //$NON-NLS-2$
+				} else {
+					return null; // Only one PATH so can exit early
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private static String getCompilerName(ITool tool) {
+		String compilerCommand = tool.getToolCommand();
+		String[] arguments = CommandLineUtil.argumentsToArray(compilerCommand);
+		if (arguments.length == 0) {
+			return ""; //$NON-NLS-1$
+		}
+		return arguments[0];
 	}
 
 }

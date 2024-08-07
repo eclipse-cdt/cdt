@@ -12,6 +12,15 @@
                after="org.eclipse.debug.ui.prototypeTab">
          </placement>
       </tab>
+      <!-- Test for Launch Bar Launch Configuration Warnings -->
+      <tab
+            class="org.eclipse.launchbar.ui.tests.internal.WarningLaunchConfigTab"
+            group="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup"
+            id="org.eclipse.launchbar.ui.tests.internal.WarningLaunchConfigTab"
+            name="Warning Tab">
+         <placement
+               after="my.custom.tab">
+         </placement>
+      </tab>
    </extension>
-
 </plugin>

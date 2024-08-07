@@ -1,0 +1,65 @@
+////
+Copyright (c) 2024 John Dallaway and others
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+
+Contributors:
+    John Dallaway - initial example AsciiDoc content (#873)
+////
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: https://raw.githubusercontent.com/eclipse-cdt/cdt/main/doc/org.eclipse.cdt.doc.user/images
+:toc:
+:toc-placement!:
+endif::[]
+
+= Example document
+
+toc::[]
+
+== Images
+
+Example image:
+
+image:search.png[Search dialog]
+
+== Tables
+
+Example table:
+
+[options="header"]
+|===
+|Column A |Column B
+|Cell 1A  |Cell 1B
+|Cell 2A  |Cell 2B
+|Cell 3A  |Cell 3B
+|===
+
+== Lists
+
+Example list:
+
+. Item A
+. Item B
+. Item C
+
+== Code blocks
+
+Example code block:
+
+[source,c]
+----
+#include <stdio.h>
+
+int main (int argc, char* argv[]) {
+
+    printf("Hello World!\n");
+    return 0;
+
+}
+----

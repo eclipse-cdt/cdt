@@ -181,3 +181,4 @@ cdtOptions text
 *.py text
 *.xhtml text
 *.entitlements text
+*.adoc text

@@ -54,8 +54,9 @@ static int close_all_fds_using_parsing(unsigned int from_fd_inclusive) {
 #endif
 
     DIR *dirp = opendir(FD_DIR);
-    if (dirp == NULL)
+    if (dirp == NULL) {
         return -1;
+    }
 
     struct dirent *direntp;
 
@@ -75,8 +76,9 @@ static int close_all_fds_using_parsing(unsigned int from_fd_inclusive) {
 
 static void close_all_fds_fallback(unsigned int from_fd_inclusive) {
     int fdlimit = sysconf(_SC_OPEN_MAX);
-    if (fdlimit == -1)
+    if (fdlimit == -1) {
         fdlimit = 65535; // arbitrary default, just in case
+    }
     for (int fd = from_fd_inclusive; fd < fdlimit; fd++) {
         close(fd);
     }
@@ -84,10 +86,12 @@ static void close_all_fds_fallback(unsigned int from_fd_inclusive) {
 
 static void close_all_fds() {
     unsigned int from_fd = STDERR_FILENO + 1;
-    if (sys_close_range_wrapper(from_fd) == 0)
+    if (sys_close_range_wrapper(from_fd) == 0) {
         return;
-    if (close_all_fds_using_parsing(from_fd) == 0)
+    }
+    if (close_all_fds_using_parsing(from_fd) == 0) {
         return;
+    }
     close_all_fds_fallback(from_fd);
 }
 

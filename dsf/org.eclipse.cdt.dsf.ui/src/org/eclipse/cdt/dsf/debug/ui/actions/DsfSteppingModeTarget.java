@@ -87,4 +87,9 @@ public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProper
 		fPreferences.removePropertyChangeListener(listener);
 	}
 
+	@Override
+	public String toString() {
+		return super.toString().concat("-Instruction Stepping Mode: " + isInstructionSteppingEnabled()); //$NON-NLS-1$
+	}
+
 }

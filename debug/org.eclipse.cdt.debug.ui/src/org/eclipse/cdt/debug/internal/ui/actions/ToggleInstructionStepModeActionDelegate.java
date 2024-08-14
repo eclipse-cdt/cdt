@@ -187,4 +187,12 @@ public class ToggleInstructionStepModeActionDelegate extends ActionDelegate
 		return target;
 	}
 
+	@Override
+	public String toString() {
+		if (fTarget != null) {
+			return super.toString().concat("-Instruction Stepping Mode: " + fTarget.isInstructionSteppingEnabled()); //$NON-NLS-1$
+		}
+		return super.toString();
+	}
+
 }

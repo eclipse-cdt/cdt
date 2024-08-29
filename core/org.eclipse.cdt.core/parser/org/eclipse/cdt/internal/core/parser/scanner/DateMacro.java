@@ -36,7 +36,11 @@ public final class DateMacro extends DynamicMacro {
 		DateFormatSymbols dfs = new DateFormatSymbols();
 		buffer.append(dfs.getShortMonths()[cal.get(Calendar.MONTH)]);
 		buffer.append(" "); //$NON-NLS-1$
-		append(buffer, cal.get(Calendar.DAY_OF_MONTH));
+		int dom = cal.get(Calendar.DAY_OF_MONTH);
+		if (dom < 10) {
+			buffer.append(" "); //$NON-NLS-1$
+		}
+		buffer.append(dom);
 		buffer.append(" "); //$NON-NLS-1$
 		buffer.append(cal.get(Calendar.YEAR));
 		buffer.append("\""); //$NON-NLS-1$

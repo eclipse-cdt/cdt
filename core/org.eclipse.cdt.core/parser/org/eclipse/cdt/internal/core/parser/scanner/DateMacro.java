@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
+import java.util.Locale;
 
 import org.eclipse.cdt.core.parser.IToken;
 
@@ -33,7 +34,7 @@ public final class DateMacro extends DynamicMacro {
 		char[] charArray;
 		StringBuilder buffer = new StringBuilder("\""); //$NON-NLS-1$
 		Calendar cal = Calendar.getInstance();
-		DateFormatSymbols dfs = new DateFormatSymbols();
+		DateFormatSymbols dfs = new DateFormatSymbols(Locale.ENGLISH);
 		buffer.append(dfs.getShortMonths()[cal.get(Calendar.MONTH)]);
 		buffer.append(" "); //$NON-NLS-1$
 		int dom = cal.get(Calendar.DAY_OF_MONTH);

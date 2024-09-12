@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2021 QNX Software Systems and others.
+ * Copyright (c) 2016, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.ILaunchConfigurationTab2;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -163,6 +164,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 				newTab.activated(workingCopy);
 
 				selItem.getControl().setFocus();
+				updateMessage();
 			}
 		});
 
@@ -386,6 +388,29 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		return null;
 	}
 
+	/**
+	 * Returns the current warning message or <code>null</code> if none.
+	 * @return Returns an appropriate warning message for display to user. The message returned will be:
+	 * The warning message defined by the visible tab or <code>null</code> if no message is defined.
+	 * Copied from LaunchConfigurationTabGroupViewer#getWarningMessage().
+	 */
+	private String getWarningMessage() {
+		if (initing) {
+			return null;
+		}
+		String message = null;
+
+		ILaunchConfigurationTab tab = getActiveTab();
+		if (tab instanceof ILaunchConfigurationTab2 confTab) {
+			String tabMessage = confTab.getWarningMessage();
+			if (tabMessage != null) {
+				message = tabMessage;
+			}
+		}
+
+		return message;
+	}
+
 	private String getTabsMessage() {
 		ILaunchConfigurationTab activeTab = getActiveTab();
 		if (activeTab != null) {
@@ -448,6 +473,12 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		if (message != null) {
 			setMessage(message, IMessageProvider.ERROR);
 			okButton.setEnabled(false);
+			return;
+		}
+
+		message = getWarningMessage();
+		if (message != null) {
+			setMessage(message, IMessageProvider.WARNING);
 			return;
 		}
 

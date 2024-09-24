@@ -11,7 +11,7 @@ namespace=${1:-quay.io/eclipse-cdt}
 shorthash=$(git rev-parse --short HEAD)
 toplevel=$(git rev-parse --show-toplevel)
 
-images="cdt-infra-eclipse-full:ubuntu-18.04 cdt-infra-plus-eclipse-install:ubuntu-18.04 cdt-infra-plus-eclipse-install-github:ubuntu-18.04"
+images="cdt-infra-eclipse-full:ubuntu-18.04 cdt-infra-plus-eclipse-install:ubuntu-18.04 cdt-infra-plus-eclipse-install-github:ubuntu-18.04 cdt-infra-plus-node:ubuntu-18.04"
 
 $toplevel/docker/build-images.sh
 

@@ -156,20 +156,18 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 	public void removeToolChainFile(ICMakeToolChainFile file) {
 		init();
 		fireEvent(new CMakeToolChainEvent(CMakeToolChainEvent.REMOVED, file));
-		String tcId = makeToolChainId(file.getProperty(CMakeBuildConfiguration.TOOLCHAIN_TYPE),
-				file.getProperty(CMakeBuildConfiguration.TOOLCHAIN_ID));
-		filesByToolChain.remove(tcId);
-
-		String n = ((CMakeToolChainFile) file).n;
-		if (n != null) {
-			Preferences prefs = getPreferences();
-			Preferences tcNode = prefs.node(n);
-			try {
+		try {
+			String tcId = makeToolChainId(file.getToolChain());
+			filesByToolChain.remove(tcId);
+			String n = ((CMakeToolChainFile) file).n;
+			if (n != null) {
+				Preferences prefs = getPreferences();
+				Preferences tcNode = prefs.node(n);
 				tcNode.removeNode();
 				prefs.flush();
-			} catch (BackingStoreException e) {
-				Activator.log(e);
 			}
+		} catch (CoreException | BackingStoreException e) {
+			Activator.log(e);
 		}
 	}
 

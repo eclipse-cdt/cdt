@@ -166,10 +166,8 @@ public class CMakeToolChainManager implements ICMakeToolChainManager {
 				tcNode.removeNode();
 				prefs.flush();
 			}
-		} catch (CoreException ce) {
-			Activator.log(ce);
-		} catch (BackingStoreException be) {
-			Activator.log(be);
+		} catch (CoreException | BackingStoreException e) {
+			Activator.log(e);
 		}
 	}
 

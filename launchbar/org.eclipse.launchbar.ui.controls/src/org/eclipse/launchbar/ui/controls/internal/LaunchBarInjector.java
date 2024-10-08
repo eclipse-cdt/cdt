@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.controls.internal;
 
-import javax.inject.Inject;
-
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -30,6 +28,8 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Widget;
+
+import jakarta.inject.Inject;
 
 public class LaunchBarInjector {
 

@@ -15,9 +15,6 @@
  *******************************************************************************/
 package org.eclipse.launchbar.ui.controls.internal;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.runtime.CoreException;
@@ -43,6 +40,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
+
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 
 public class LaunchBarControl implements ILaunchBarListener {
 	public static final String ID = "org.eclipse.launchbar"; //$NON-NLS-1$

@@ -3,7 +3,7 @@
 <target name="cdt-baseline" sequenceNumber="37">
   <locations>
     <location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-      <repository location="https://download.eclipse.org/tools/cdt/builds/11.6/cdt-11.6.0-rc2/"/>
+      <repository location="https://download.eclipse.org/tools/cdt/releases/11.6/cdt-11.6.1/"/>
       <unit id="org.eclipse.cdt.autotools.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.cdt.build.crossgcc.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.cdt.cmake.feature.group" version="0.0.0"/>

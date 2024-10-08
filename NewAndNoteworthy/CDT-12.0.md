@@ -15,7 +15,7 @@ Please see [CHANGELOG-API](CHANGELOG-API.md) for details on the breaking API cha
 
 # Noteworthy Issues and Pull Requests
 
-See [Noteworthy issues and PRs](https://github.com/eclipse-cdt/cdt/issues?q=is%3Aclosed+label%3Anoteworthy+milestone%3A11.7.0) for this release in the issue/PR tracker.
+See [Noteworthy issues and PRs](https://github.com/eclipse-cdt/cdt/issues?q=is%3Aclosed+label%3Anoteworthy+milestone%3A12.0.0) for this release in the issue/PR tracker.
 
 # Bugs Fixed in this Release
 

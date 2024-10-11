@@ -232,4 +232,13 @@ public class GCCErrorParserTests extends GenericErrorParserTests {
 						"unused parameter 'bitrate' [-Wunused-parameter]" },
 				new String[] { GCC_ERROR_PARSER_ID });
 	}
+
+	@Test
+	public void testGccErrorMessages_UnrecognizedCommandLineOption() throws IOException {
+		runParserTest(new String[] { "arm-none-eabi-gcc: error: unrecognized command-line option '--foobar'" }, 1, // errors
+				0, //warnings
+				0, //infos
+				null, new String[] { "unrecognized command-line option '--foobar'" },
+				new String[] { GCC_ERROR_PARSER_ID });
+	}
 }

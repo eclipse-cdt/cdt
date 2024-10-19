@@ -27,15 +27,16 @@
             targetID="org.eclipse.debug.ui.DebugPerspective">
             
          <!-- add Visualizer View in same "slot" as outline view -->
-         <view
-               relative="org.eclipse.ui.views.ContentOutline"
-               visible="true"
-               relationship="stack"
-               id="org.eclipse.cdt.visualizer.view">
-         </view>
          <viewShortcut
                id="org.eclipse.cdt.visualizer.view">
          </viewShortcut>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.contextViewBindings">
+     <contextViewBinding
+           contextId="org.eclipse.cdt.debug.ui.debugging"
+           viewId="org.eclipse.cdt.visualizer.view"
+           autoClose="false"/>     
    </extension>
 </plugin>

@@ -226,11 +226,6 @@
          <viewShortcut
                id="org.eclipse.ui.views.ProblemView">
          </viewShortcut>
-         <view
-               id="org.eclipse.cdt.debug.ui.executablesView"
-               relative="org.eclipse.ui.console.ConsoleView"
-               relationship="stack">
-         </view>
          <viewShortcut
                id="org.eclipse.cdt.debug.ui.executablesView">
          </viewShortcut>
@@ -963,8 +958,8 @@
          point="org.eclipse.debug.ui.contextViewBindings">
       <contextViewBinding
             viewId="org.eclipse.debug.ui.MemoryView"
-            contextId="org.eclipse.cdt.debug.ui.debugging">
-      </contextViewBinding>
+            contextId="org.eclipse.cdt.debug.ui.debugging"
+            autoClose="false"/>
       <contextViewBinding
             autoOpen="false"
             contextId="org.eclipse.cdt.debug.ui.debugging"
@@ -982,6 +977,10 @@
            contextId="org.eclipse.cdt.debug.ui.debugging"
            viewId="org.eclipse.cdt.debug.ui.debuggerConsoleView"
            autoClose="false"/>
+     <contextViewBinding
+           contextId="org.eclipse.cdt.debug.ui.debugging"
+           viewId="org.eclipse.cdt.debug.ui.executablesView"
+           autoClose="false"/>     
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

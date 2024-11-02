@@ -49,6 +49,7 @@ public class VSInstallationRegistry {
 		String versionFilterRange = "[" + baseVersion.toString() + "," + upperBound + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		String vsInstallationLocation[] = ProcessOutputUtil.getAllOutputFromCommand("cmd", "/c", //$NON-NLS-1$//$NON-NLS-2$
 				"\"\"%ProgramFiles(x86)%\\Microsoft Visual Studio\\Installer\\vswhere.exe\"\"", //$NON-NLS-1$
+				"-products", "*", "-requires", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				"-version", versionFilterRange, "-property", "installationPath"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (vsInstallationLocation == null || vsInstallationLocation.length == 0
 				|| vsInstallationLocation[0].isEmpty()) {

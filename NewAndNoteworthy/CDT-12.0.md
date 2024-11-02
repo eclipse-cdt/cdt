@@ -1,11 +1,20 @@
 # Release Notes and New & Noteworthy page
 
-This is the New & Noteworthy page for CDT 11.7 which is part of Eclipse 2024-09 Simultaneous Release
+This is the New & Noteworthy page for CDT 12.0 which is part of Eclipse 2025-03 Simultaneous Release
 
 ---
 
 # Release Notes
 
+# Managed Build
+
+## Other objects for GNU archive files
+
+The managed build system now provides an option to specify other object files to be included when building GNU archive files:
+
+<p align="center"><img src="images/CDT-12.0-gnu-ar-other-objects.png" width="80%"></p>
+
+The new option applies to static library projects using a _Cross GCC_, _Cygwin GCC_, _Linux GCC_ or _MinGW GCC_ toolchain.
 
 # API Changes, current and planned
 

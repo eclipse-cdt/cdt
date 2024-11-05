@@ -13,7 +13,7 @@ Contributors:
 
 // support image rendering and table of contents within GitHub
 ifdef::env-github[]
-:imagesdir: https://raw.githubusercontent.com/eclipse-cdt/cdt/main/doc/org.eclipse.cdt.doc.user/images
+:imagesdir: ../../images
 :toc:
 :toc-placement!:
 endif::[]

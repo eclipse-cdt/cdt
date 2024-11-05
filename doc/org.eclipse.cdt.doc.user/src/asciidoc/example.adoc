@@ -26,7 +26,7 @@ toc::[]
 
 Example image:
 
-image:search.png[Search dialog]
+image:search2.png[Search dialog]
 
 == Tables
 

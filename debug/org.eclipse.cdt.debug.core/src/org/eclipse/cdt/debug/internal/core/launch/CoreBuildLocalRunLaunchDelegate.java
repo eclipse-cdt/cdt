@@ -12,7 +12,6 @@ package org.eclipse.cdt.debug.internal.core.launch;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,7 +54,7 @@ public class CoreBuildLocalRunLaunchDelegate extends CoreBuildLaunchConfigDelega
 
 			String[] arguments = CommandLineUtil.argumentsToArray(args);
 			List<String> command = new ArrayList<>(1 + arguments.length);
-			command.add(Paths.get(exeFile.getLocationURI()).toString());
+			command.add(getProgramPath(configuration, exeFile));
 			command.addAll(Arrays.asList(arguments));
 
 			ProcessBuilder builder = new ProcessBuilder(command);

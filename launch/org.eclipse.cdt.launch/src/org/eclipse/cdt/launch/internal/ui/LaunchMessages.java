@@ -52,6 +52,7 @@ public class LaunchMessages extends NLS {
 	public static String CommonBuildTab_Default;
 	public static String CommonBuildTab_NotFound;
 	public static String CommonBuildTab_Toolchain;
+	public static String CoreBuildMainTab_Keep_empty_for_auto_selection;
 	public static String CoreBuildTab_Build;
 	public static String CoreBuildTab_NoOptions;
 	public static String CoreFileLaunchDelegate_Launching_postmortem_debugger;

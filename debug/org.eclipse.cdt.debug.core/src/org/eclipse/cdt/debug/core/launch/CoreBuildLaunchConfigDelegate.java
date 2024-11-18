@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.core.launch;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -23,14 +24,18 @@ import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.LaunchConfigurationTargetedDelegate;
@@ -121,6 +126,28 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		return exeFile;
 	}
 
+	/**
+	 * @since 8.8
+	 */
+	protected String getProgramPath(ILaunchConfiguration configuration, IBinary exeFile) throws CoreException {
+		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
+
+		if (programName.isBlank()) {
+			return Paths.get(exeFile.getLocationURI()).toString();
+		} else {
+			IPath path = new Path(
+					VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(programName));
+			String fullPath;
+			if (path.isAbsolute()) {
+				fullPath = path.toOSString();
+			} else {
+				IProject project = getProject(configuration);
+				fullPath = project.getFile(path).getLocation().toOSString();
+			}
+			return fullPath;
+		}
+	}
+
 	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		// 1. Extract project from configuration
@@ -140,6 +167,16 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, ILaunchTarget target,
 			IProgressMonitor monitor) throws CoreException {
+
+		// We will never get here if "build before launching" is disabled in the Workspace settings, even if in the
+		// CDT launch configuration "Use workspace settings" is not selected.
+		// The workspace setting is already considered in org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(),
+		// before the settings in the CDT launch configuration.
+		int autoBuild = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH, 2);
+		if (autoBuild == 0) {
+			return false;
+		}
+
 		ICBuildConfiguration buildConfig = getBuildConfiguration(configuration, mode, target, monitor);
 		if (buildConfig != null) {
 			IProject project = getProject(configuration);

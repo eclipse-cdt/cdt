@@ -10,73 +10,51 @@
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui.corebuild;
 
-import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
+import org.eclipse.cdt.launch.ui.CMainTab2;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 9.1
  */
-public class CoreBuildMainTab extends AbstractLaunchConfigurationTab {
+public class CoreBuildMainTab extends CMainTab2 {
 
-	private Text projectName;
-
+	/*
+	 * A Core Build launch configuration is created immediately upon the Core Build project creation.
+	 * It cannot be created by hand and it is not duplicatable and can't be renamed.
+	 * The launch configuration is tied to the project. The project name may not be changed.
+	 */
 	@Override
-	public void createControl(Composite parent) {
-		Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
-
-		Label label = new Label(comp, SWT.NONE);
-		label.setText("This launch configuration was automatically created.");
-		label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-		label = new Label(comp, SWT.NONE);
-		label.setText("Project:");
-
-		projectName = new Text(comp, SWT.READ_ONLY | SWT.BORDER);
-		projectName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-
-		setControl(comp);
+	protected void createProjectGroup(Composite parent, int colSpan) {
+		super.createProjectGroup(parent, colSpan);
+		fProjText.setEnabled(false);
+		fProjButton.setVisible(false);
 	}
 
 	@Override
-	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
-		// none
+	protected void createExeFileGroup(Composite parent, int colSpan) {
+		super.createExeFileGroup(parent, colSpan);
+		fProgText.setMessage(LaunchMessages.CoreBuildMainTab_Keep_empty_for_auto_selection);
 	}
 
+	/*
+	 * For Core Build projects the build configuration is hidden and it is selected
+	 * via the LaunchBar Launch Mode. We remove the BuildConfigCombo.
+	 */
 	@Override
-	public void initializeFrom(ILaunchConfiguration configuration) {
-		try {
-			for (IResource resource : configuration.getMappedResources()) {
-				if (resource instanceof IProject) {
-					projectName.setText(resource.getName());
-					break;
-				}
-			}
-		} catch (CoreException e) {
-			LaunchUIPlugin.log(e.getStatus());
-		}
+	protected void createBuildConfigCombo(Composite parent, int colspan) {
+		fBuildConfigCombo = null;
 	}
 
+	/*
+	 * Don't check the program name if it is empty. When the program name is empty the default
+	 * CoreBuild binary is used.
+	 */
 	@Override
-	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		// TODO Auto-generated method stub
-
+	public boolean isValid(ILaunchConfiguration config) {
+		String programName = fProgText.getText().trim();
+		setDontCheckProgram(programName.isEmpty());
+		return super.isValid(config);
 	}
-
-	@Override
-	public String getName() {
-		return "Main";
-	}
-
 }

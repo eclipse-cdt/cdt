@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
@@ -86,8 +87,8 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		gdbLaunch.setGDBPath(gdbPath != null ? gdbPath.toString() : "gdb"); //$NON-NLS-1$
 		String gdbVersion = gdbLaunch.getGDBVersion();
 
-		Path exeFile = Paths.get(getBinary(buildConfig).getLocationURI());
-		gdbLaunch.setProgramPath(exeFile.toString());
+		IBinary exeFile = getBinary(buildConfig);
+		gdbLaunch.setProgramPath(getProgramPath(configuration, exeFile));
 
 		gdbLaunch.setServiceFactory(new GdbDebugServicesFactory(gdbVersion, configuration));
 

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -66,6 +67,10 @@ public class CoreBuildLocalLaunchConfigProvider extends AbstractLaunchConfigProv
 
 		// Set the project and the connection
 		IProject project = descriptor.getAdapter(IProject.class);
+		// CMainTab2 expects these attributes when calling CLaunchConfigurationTab.getContext()
+		// Using empty string for default Core Build program.
+		workingCopy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROJECT_NAME, project.getName());
+		workingCopy.setAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
 		workingCopy.setMappedResources(new IResource[] { project });
 	}
 

@@ -40,6 +40,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.launch.ITargetedLaunch;
 
@@ -80,6 +81,14 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		Properties envProps = new Properties();
 		envProps.putAll(buildEnv);
 		gdbLaunch.setInitialEnvironment(envProps);
+
+		// Override initial environment by launch configuration attributes.
+		Map<String, String> launchEnvironment = configuration.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES,
+				new HashMap<>());
+		if (!configuration.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true)) {
+			envProps.clear();
+		}
+		envProps.putAll(launchEnvironment);
 
 		IToolChain toolChain = buildConfig.getToolChain();
 		Path gdbPath = toolChain.getCommandPath(Paths.get("gdb")); //$NON-NLS-1$

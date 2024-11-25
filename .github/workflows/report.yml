@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Download Test Report
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           name: test-results
           path: test-results

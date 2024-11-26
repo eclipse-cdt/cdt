@@ -93,7 +93,7 @@ public class CMainTab2 extends CAbstractMainTab {
 	 */
 	protected Combo fCoreTypeCombo;
 
-	private boolean fDontCheckProgram;
+	private boolean fDontCheckProgram = false;
 	private final boolean fSpecifyCoreFile;
 	private final boolean fIncludeBuildSettings;
 

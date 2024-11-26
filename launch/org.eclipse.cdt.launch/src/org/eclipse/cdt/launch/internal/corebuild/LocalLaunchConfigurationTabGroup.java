@@ -11,7 +11,7 @@
 package org.eclipse.cdt.launch.internal.corebuild;
 
 import org.eclipse.cdt.launch.ui.CArgumentsTab;
-import org.eclipse.cdt.launch.ui.corebuild.CoreBuildMainTab;
+import org.eclipse.cdt.launch.ui.corebuild.CoreBuildMainTab2;
 import org.eclipse.cdt.launch.ui.corebuild.CoreBuildTab;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.EnvironmentTab;
@@ -22,7 +22,7 @@ public class LocalLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
-		ILaunchConfigurationTab mainTab = new CoreBuildMainTab();
+		ILaunchConfigurationTab mainTab = new CoreBuildMainTab2();
 		ILaunchConfigurationTab buildTab = new CoreBuildTab();
 		ILaunchConfigurationTab argumentsTab = new CArgumentsTab();
 		ILaunchConfigurationTab environmentTab = new EnvironmentTab();

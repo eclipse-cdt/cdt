@@ -43,6 +43,15 @@
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
+      <launchDelegate
+            delegate="org.eclipse.cdt.dsf.gdb.internal.launching.CoreBuildLocalDebugLaunchDelegate"
+            id="org.eclipse.cdt.dsf.gdb.coreBuildLocalDebug"
+            modes="debug"
+            name="%coreBuildLocalDebug.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
+      </launchDelegate>
    </extension>
    
    <extension
@@ -84,22 +93,6 @@
 			name="org.eclipse.cdt.dsf.gdb">
 		</bundle>
 	</component>
-   </extension>
-   <extension
-         point="org.eclipse.debug.core.launchDelegates">
-      <launchDelegate
-            delegate="org.eclipse.cdt.dsf.gdb.internal.launching.CoreBuildLocalDebugLaunchDelegate"
-            id="org.eclipse.cdt.dsf.gdb.coreBuildLocalDebug"
-            modes="debug"
-            name="%coreBuildLocalDebug.name"
-            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
-            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
-            type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
-         <modeCombination
-               modes="debug"
-               perspective="org.eclipse.debug.ui.DebugPerspective">
-         </modeCombination>
-      </launchDelegate>
    </extension>
    <extension
          point="org.eclipse.launchbar.core.launchTargetTypes">

@@ -18,6 +18,13 @@ import org.eclipse.debug.ui.EnvironmentTab;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
+/**
+ * Tab group for local Core Build projects.
+ *
+ * @deprecated in 11.0, because the composition of the Core Build local tab group is defined
+ * via the launchConfigurationTabGroups extension-point.
+ */
+@Deprecated
 public class LocalLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {
 
 	@Override

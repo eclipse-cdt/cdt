@@ -25,7 +25,8 @@ import org.osgi.framework.BundleContext;
  */
 public class ControlFlowGraphPlugin extends AbstractUIPlugin {
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.ui.cfgview"; //$NON-NLS-1$
+	//Fixed the loading failure issue of Control Flow Graph view (Window ->Show View ->Other... ->C/C++->Control Flow Graph).
+	public static final String PLUGIN_ID = "org.eclipse.cdt.codan.ui.example.cfgview"; //$NON-NLS-1$
 	// The shared instance
 	private static ControlFlowGraphPlugin plugin;
 

@@ -127,12 +127,20 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 	}
 
 	/**
+	 * Returns the full path to the binary.
+	 *
 	 * @since 8.8
+	 * @param configuration
+	 * @param buildConfig
+	 * @return
+	 * @throws CoreException
 	 */
-	protected String getProgramPath(ILaunchConfiguration configuration, IBinary exeFile) throws CoreException {
+	protected String getProgramPath(ILaunchConfiguration configuration, ICBuildConfiguration buildConfig)
+			throws CoreException {
 		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
 
 		if (programName.isBlank()) {
+			IBinary exeFile = getBinary(buildConfig);
 			return Paths.get(exeFile.getLocationURI()).toString();
 		} else {
 			IPath path = new Path(

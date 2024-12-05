@@ -16,7 +16,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * @since 10.4
+ * @since 11.0
  */
 public class CoreBuildMainTab2 extends CMainTab2 {
 

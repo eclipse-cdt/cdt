@@ -112,7 +112,7 @@ public class CMainTab2 extends CAbstractMainTab {
 	}
 
 	/**
-	 * @since 10.4
+	 * @since 11.0
 	 */
 	protected void setDontCheckProgram(boolean dontCheck) {
 		fDontCheckProgram = dontCheck;

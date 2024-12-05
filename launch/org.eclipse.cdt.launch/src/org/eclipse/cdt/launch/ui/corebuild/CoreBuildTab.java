@@ -40,6 +40,10 @@ import org.eclipse.swt.widgets.Label;
  */
 public class CoreBuildTab extends AbstractLaunchConfigurationTab {
 
+	/**
+	 * @since 11.0
+	 */
+	public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.buildSettingsTab"; //$NON-NLS-1$
 	private Composite container;
 	private IProject activeProject;
 	private ILaunchConfigurationTab activeTab;
@@ -155,4 +159,8 @@ public class CoreBuildTab extends AbstractLaunchConfigurationTab {
 		return null;
 	}
 
+	@Override
+	public String getId() {
+		return TAB_ID;
+	}
 }

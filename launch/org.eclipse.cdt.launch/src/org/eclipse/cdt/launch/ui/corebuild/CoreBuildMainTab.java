@@ -29,6 +29,12 @@ import org.eclipse.swt.widgets.Text;
  */
 public class CoreBuildMainTab extends AbstractLaunchConfigurationTab {
 
+	/**
+	 * @since 11.0
+	 */
+	// Same as CoreBuildMainTab2/CMainTab2
+	public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.mainTab"; //$NON-NLS-1$
+
 	private Text projectName;
 
 	@Override
@@ -79,4 +85,8 @@ public class CoreBuildMainTab extends AbstractLaunchConfigurationTab {
 		return "Main";
 	}
 
+	@Override
+	public String getId() {
+		return TAB_ID;
+	}
 }

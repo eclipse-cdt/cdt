@@ -16,6 +16,16 @@
             sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer">
       </launchDelegate>
+      <launchDelegate
+            delegate="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLocalRunLaunchDelegate"
+            delegateDescription="%LocalCDTLaunch.description"
+            id="org.eclipse.cdt.cdi.launch.localCoreBuildCLaunch"
+            modes="run"
+            name="%LocalCDTLaunch.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
+      </launchDelegate>
 
    </extension>
 
@@ -52,6 +62,51 @@
             class="org.eclipse.debug.ui.CommonTab">
         <associatedDelegate delegate="org.eclipse.cdt.cdi.launch.localCLaunch"/>
         <placement after="org.eclipse.debug.ui.environmentTab"/>
+      </tab>
+      <tab
+            class="org.eclipse.cdt.launch.ui.corebuild.CoreBuildMainTab2"
+            group="org.eclipse.cdt.launch.launchRunConfigurationTabGroup.local"
+            id="org.eclipse.cdt.cdi.launch.runLocalCoreBuild.mainTab"
+            name="%MainLaunchTab.name">
+         <associatedDelegate
+               delegate="org.eclipse.cdt.cdi.launch.localCoreBuildCLaunch">
+         </associatedDelegate>
+      </tab>
+      <tab
+            class="org.eclipse.cdt.launch.ui.corebuild.CoreBuildTab"
+            group="org.eclipse.cdt.launch.launchRunConfigurationTabGroup.local"
+            id="org.eclipse.cdt.cdi.launch.runLocalCoreBuild.buildSettingsTab"
+            name="%BuildSettingsLaunchTab.name">
+         <associatedDelegate
+               delegate="org.eclipse.cdt.cdi.launch.localCoreBuildCLaunch">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.cdt.cdi.launch.mainTab">
+         </placement>
+      </tab>
+      <tab
+            class="org.eclipse.cdt.launch.ui.CArgumentsTab"
+            group="org.eclipse.cdt.launch.launchRunConfigurationTabGroup.local"
+            id="org.eclipse.cdt.cdi.launch.runLocalCoreBuild.argumentsTab"
+            name="%ArgumentsLaunchTab.name">
+         <associatedDelegate
+               delegate="org.eclipse.cdt.cdi.launch.localCoreBuildCLaunch">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.cdt.cdi.launch.buildSettingsTab">
+         </placement>
+      </tab>
+      <tab
+            class="org.eclipse.debug.ui.EnvironmentTab"
+            group="org.eclipse.cdt.launch.launchRunConfigurationTabGroup.local"
+            id="org.eclipse.cdt.cdi.launch.runLocalCoreBuild.environmentTab"
+            name="%EnvironmentLaunchTab.name">
+         <associatedDelegate
+               delegate="org.eclipse.cdt.cdi.launch.localCoreBuildCLaunch">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.cdt.cdi.launch.argumentsTab">
+         </placement>
       </tab>
    </extension>
    <extension
@@ -109,9 +164,20 @@
    <extension
          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
       <launchConfigurationTabGroup
-            class="org.eclipse.cdt.launch.internal.corebuild.LocalLaunchConfigurationTabGroup"
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
             id="org.eclipse.cdt.launch.launchConfigurationTabGroup.local"
             type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
+         <launchMode
+               mode="debug">
+         </launchMode>
+      </launchConfigurationTabGroup>
+      <launchConfigurationTabGroup
+            class="org.eclipse.cdt.debug.internal.ui.launch.PlaceHolderLaunchConfigurationTabGroup"
+            id="org.eclipse.cdt.launch.launchRunConfigurationTabGroup.local"
+            type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
+         <launchMode
+               mode="run">
+         </launchMode>
       </launchConfigurationTabGroup>
       <launchConfigurationTabGroup
             class="org.eclipse.cdt.launch.internal.corebuild.GenericLaunchConfigTabGroup"

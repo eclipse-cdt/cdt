@@ -464,9 +464,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="org.eclipse.cdt.debug.internal.core.launch.CoreBuildLocalRunLaunchDelegate"
             id="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType"
-            modes="run"
             name="%localApplicationLaunch.name"
             public="false">
       </launchConfigurationType>

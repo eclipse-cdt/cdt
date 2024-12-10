@@ -10,15 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.launching;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
-import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
@@ -82,9 +79,6 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		envProps.putAll(buildEnv);
 		gdbLaunch.setInitialEnvironment(envProps);
 
-		IToolChain toolChain = buildConfig.getToolChain();
-		Path gdbPath = toolChain.getCommandPath(Paths.get("gdb")); //$NON-NLS-1$
-		gdbLaunch.setGDBPath(gdbPath != null ? gdbPath.toString() : "gdb"); //$NON-NLS-1$
 		String gdbVersion = gdbLaunch.getGDBVersion();
 
 		IBinary exeFile = getBinary(buildConfig);

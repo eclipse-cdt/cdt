@@ -180,8 +180,9 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		// CDT launch configuration "Use workspace settings" is not selected.
 		// The workspace setting is already considered in org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(),
 		// before the settings in the CDT launch configuration.
-		int autoBuild = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH, 2);
-		if (autoBuild == 0) {
+		int autoBuild = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
+				ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
+		if (autoBuild == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED) {
 			return false;
 		}
 

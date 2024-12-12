@@ -142,8 +142,7 @@ at any time by right-clicking on the project in the *Project Explorer*
 view and clicking Properties.
 
 xref:cdt_w_newcpp.adoc[image:ngnext.gif[Next
-Icon,width=16,height=16]] xref:cdt_w_newcpp.adoc[*Next: Creating your {cpp}
-file*]
+Icon,width=16,height=16]] xref:core_build_system.adoc[*Next: Core Build System*]
 
 For more information about:
 

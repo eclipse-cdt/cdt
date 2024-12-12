@@ -1,0 +1,77 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+= Core Build System
+
+The Core Build System is the successor of the legacy Managed Build
+System.
+
+The classical Makefile projects are based on the Managed Build System.
+Managed Build projects can generate a Makefile based on GUI controlled
+build configurations in the project properties. The user can
+manage the separate build configurations for Run and Debug. There is a
+notion of "active" build configuration, which is the one that gets
+built when the build button is pressed.
+
+The Core Build System is the basis for CMake projects and Core Build
+Makefile projects. The CDT LaunchBar plays a central role and is used
+for building and launching the program. The philosophy is "Build for
+launch". It simplifies the flow a lot.
+
+These are the main differences compared with the Managed Build System:
+
+* No build configurations. No build file (Makefile or
+  CMakeLists.txt) generation. The user writes it by hand. A
+  "helloworld" example build file can be created for new projects.
+* Each new project is created with a launch configuration tied to it.
+* Build settings are presented in the launch configuration Build Settings tab.
+* The LaunchBar determines Run or Debug mode for building. There is no
+  concept of an active build configuration as there is in Managed
+  Build projects.
+* Auto discovery. The project's macro definitions and include paths,
+  needed for indexing, are extracted from the build step. For CMake
+  projects, data is obtained from the generated JSON file. For Makefile
+  projects, data is extracted from the build step console output.
+* Simpler wizards. Creation of a CMake project is via a simple one page
+  wizard. Using existing code is simply done by creating a new project
+  on top of the existing code. It is not necessary to import the project
+  (menu:File[Import...]).
+
+Core Build connects CDT projects to industry standard external build
+systems like CMake, Makefile, and Meson. The removal of the CDT
+specific build configurations allow Core Build projects to be
+easily be shared with other IDEs, command-line use, and Continuous
+Integration (CI) flows.
+
+Thanks to the auto discovery, the indexing of the C/C++ code has
+improved, because all compilation flags are known per file. This is especially
+beneficial for projects that use multiple toolchains in one project.
+
+icon:arrow-circle-right[] link:pass:[../html/new_cmake_proj.html][Next: Creating a CMake project]

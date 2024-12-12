@@ -14,6 +14,7 @@
 	</topic>
 	<topic label="Editing C/C++ files" href="concepts/cdt_o_edit.htm"> 
 		<topic label="C/C++ editor" href="concepts/cdt_c_editor.htm"/>
+		<anchor id="cdt_EditingCpp_Anchor"/>
 		<topic label="Makefile" href="concepts/cdt_c_makefile.htm"/>
 	</topic>
 	<topic label="Navigation aids" href="concepts/cdt_o_nav.htm"> 

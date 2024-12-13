@@ -127,12 +127,20 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 	}
 
 	/**
+	 * Returns the full path to the binary.
+	 *
 	 * @since 8.8
+	 * @param configuration
+	 * @param buildConfig
+	 * @return
+	 * @throws CoreException
 	 */
-	protected String getProgramPath(ILaunchConfiguration configuration, IBinary exeFile) throws CoreException {
+	protected String getProgramPath(ILaunchConfiguration configuration, ICBuildConfiguration buildConfig)
+			throws CoreException {
 		String programName = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_NAME, ""); //$NON-NLS-1$
 
 		if (programName.isBlank()) {
+			IBinary exeFile = getBinary(buildConfig);
 			return Paths.get(exeFile.getLocationURI()).toString();
 		} else {
 			IPath path = new Path(
@@ -172,8 +180,9 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		// CDT launch configuration "Use workspace settings" is not selected.
 		// The workspace setting is already considered in org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(),
 		// before the settings in the CDT launch configuration.
-		int autoBuild = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH, 2);
-		if (autoBuild == 0) {
+		int autoBuild = configuration.getAttribute(ICDTLaunchConfigurationConstants.ATTR_BUILD_BEFORE_LAUNCH,
+				ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_USE_WORKSPACE_SETTING);
+		if (autoBuild == ICDTLaunchConfigurationConstants.BUILD_BEFORE_LAUNCH_DISABLED) {
 			return false;
 		}
 

@@ -219,6 +219,18 @@
                after="org.eclipse.cdt.dsf.gdb.launch.debuggerTab">
          </placement>
       </tab>
+      <tab
+            class="org.eclipse.debug.ui.CommonTab"
+            group="org.eclipse.cdt.launch.launchConfigurationTabGroup.local"
+            id="org.eclipse.cdt.cdi.launch.localCoreBuild.commonTab"
+            name="%launchTab.common.name">
+         <associatedDelegate
+               delegate="org.eclipse.cdt.dsf.gdb.coreBuildLocalDebug">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.debug.ui.sourceLookupTab">
+         </placement>
+      </tab>
    </extension>
    <extension point="org.eclipse.core.runtime.adapters">
       <!-- Extenders providing their own subclass of GdbAdapterFactory must also extend GdbLaunch 

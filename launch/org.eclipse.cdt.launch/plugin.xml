@@ -108,6 +108,18 @@
                after="org.eclipse.cdt.cdi.launch.argumentsTab">
          </placement>
       </tab>
+      <tab
+            class="org.eclipse.debug.ui.CommonTab"
+            group="org.eclipse.cdt.launch.launchRunConfigurationTabGroup.local"
+            id="org.eclipse.cdt.cdi.launch.runLocalCoreBuild.commonTab"
+            name="%CommonLaunchTab.name">
+         <associatedDelegate
+               delegate="org.eclipse.cdt.cdi.launch.localCoreBuildCLaunch">
+         </associatedDelegate>
+         <placement
+               after="org.eclipse.debug.ui.environmentTab">
+         </placement>
+      </tab>
    </extension>
    <extension
          point="org.eclipse.debug.core.statusHandlers">

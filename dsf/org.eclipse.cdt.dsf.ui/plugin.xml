@@ -678,7 +678,7 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            category="org.eclipse.debug.ui.DebugPreferencePage"
+            category="org.eclipse.cdt.debug.ui.CDebugPreferencePage"
             class="org.eclipse.cdt.dsf.debug.internal.ui.preferences.DsfDebugPreferencePage"
             id="org.eclipse.cdt.dsf.debug.ui.preferences"
             name="%preferencePage.name">

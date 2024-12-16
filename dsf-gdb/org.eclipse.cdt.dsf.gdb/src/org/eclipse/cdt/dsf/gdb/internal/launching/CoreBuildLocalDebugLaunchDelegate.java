@@ -68,6 +68,7 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 	@Override
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
+		org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.dsfgdbActivity", true); //$NON-NLS-1$
 		GdbLaunch gdbLaunch = (GdbLaunch) launch;
 		ILaunchTarget target = ((ITargetedLaunch) launch).getLaunchTarget();
 		ICBuildConfiguration buildConfig = getBuildConfiguration(configuration, mode, target, monitor);

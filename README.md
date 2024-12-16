@@ -14,9 +14,20 @@ See also https://projects.eclipse.org/projects/tools.cdt and https://eclipse.org
 
 ## Download
 
-The recommended way to obtain Eclipse CDT is to download it as part of the complete *Eclipse IDE for C/C++ Developers* or *Eclipse IDE for Embedded C/C++ Developers* or *Eclipse IDE for Scientific Computing* from the main [Eclipse IDE download site](https://eclipseide.org/release/).
+The recommended way to obtain Eclipse CDT is to download it as part of the complete *Eclipse IDE for C/C++ Developers* or *Eclipse IDE for Embedded C/C++ Developers* from the main [Eclipse IDE download site](https://eclipseide.org/release/).
 
 Alternatively Eclipse CDT can be installed into an existing Eclipse installation using this p2 URL: `https://download.eclipse.org/tools/cdt/releases/latest/` ([see how](https://help.eclipse.org/topic/org.eclipse.platform.doc.user/tasks/tasks-127.htm))
+
+### Download Development Builds
+
+Milestone builds of the *Eclipse IDE for C/C++ Developers* or *Eclipse IDE for Embedded C/C++ Developers* can be found on the [Eclipse Downloads page](https://www.eclipse.org/downloads/packages/) by clicking on the Eclipse Developer Builds tab (only present when there is a milestone build newer than the latest release).
+
+Alternatively, milestone builds of Eclipse CDT can be installed into an existing Eclipse installation using one of the p2 URLs in: <https://download.eclipse.org/tools/cdt/builds> ([see how](https://help.eclipse.org/topic/org.eclipse.platform.doc.user/tasks/tasks-127.htm)).
+See [cdt.aggrcon](https://github.com/eclipse-simrel/simrel.build/blob/main/cdt.aggrcon#L3) for which milestone is currently contributed to Eclipse SimRel.
+
+Bleeding edge continuous (aka nightly) builds are available for the main branch from the p2 software repository: `https://download.eclipse.org/tools/cdt/builds/cdt/main/`
+
+### Download older versions
 
 Downloads links for older versions are available in [Downloads](Downloads.md).
 

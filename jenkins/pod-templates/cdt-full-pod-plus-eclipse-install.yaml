@@ -20,6 +20,8 @@ spec:
       readOnly: true
     - name: m2-repo
       mountPath: /home/jenkins/.m2/repository
+    - name: volume-known-hosts
+      mountPath: /home/jenkins/.ssh
     - name: "jenkins-home"
       mountPath: "/home/jenkins"
       readOnly: false
@@ -33,6 +35,9 @@ spec:
       limits:
         memory: "512Mi"
         cpu: "500m"
+    volumeMounts:
+    - name: volume-known-hosts
+      mountPath: /home/jenkins/.ssh
   volumes:
   - name: settings-xml
     secret:
@@ -42,6 +47,9 @@ spec:
         path: settings.xml
   - name: m2-repo
     emptyDir: {}
+  - name: volume-known-hosts
+    configMap:
+      name: known-hosts
   - name: "jenkins-home"
     emptyDir: {}
   - name: tools

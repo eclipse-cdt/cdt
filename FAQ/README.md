@@ -280,7 +280,7 @@ update site.
 
 2. You can take the bleeding edge updates from nightly builds (they are
 usually quite stable). The update site for most recent nightly builds is
-<http://download.eclipse.org/tools/cdt/builds/master/nightly>
+<https://download.eclipse.org/tools/cdt/builds/cdt/main/>
 
 #### I can't find the CDT download for the XXX operating system?
 
@@ -2413,7 +2413,7 @@ The path to windres.exe must be known to eclipse.
 
 #### How do I get a more recent build than is on the downloads page?
 
-<http://download.eclipse.org/tools/cdt/builds/>
+<https://download.eclipse.org/tools/cdt/builds/cdt/main/>
 
 These plugin builds can be installed for use in the usual way via
 Software Updates -\> Find and Install... but are packed which the

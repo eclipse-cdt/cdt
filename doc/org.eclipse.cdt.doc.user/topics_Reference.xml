@@ -92,7 +92,9 @@
 			<topic label="Templates" href="reference/cdt_u_code_temp.htm"/>
 			<topic label="Typing" href="reference/cdt_u_c_editor_typing.htm"/>
 		</topic>
-		
+
+		<anchor id="cdt_Preferences_Anchor"/>
+
 		<topic label="File Types" href="reference/cdt_u_c_file_types.htm"/>
 		<topic label="Indexer" href="reference/cdt_u_indexer_preference.html"/>
 		<topic label="Language Mappings" href="reference/cdt_u_language_mapping_pref.htm"/>

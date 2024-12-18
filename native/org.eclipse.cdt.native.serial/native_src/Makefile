@@ -90,7 +90,7 @@ $(OS_DIR)/win32/x86_64/serial.dll:	serial.c
 $(OS_DIR)/win32/aarch64/serial.dll:	serial.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
-	aarch64-w64-mingw32-gcc $(COMMON_CFLAGS) -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ $^
+	aarch64-w64-mingw32-clang $(COMMON_CFLAGS) -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ $^
 
 $(OS_DIR)/linux/x86_64/libserial.so:	serial.c
 	mkdir -p $(dir $@) && \

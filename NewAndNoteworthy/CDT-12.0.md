@@ -6,6 +6,12 @@ This is the New & Noteworthy page for CDT 12.0 which is part of Eclipse 2025-03 
 
 # Release Notes
 
+## Minimum version of GLIBC required
+
+The minimum version of GLIBC required is now 2.31.
+This version can be found in Ubuntu 20.04 and later, RHEL 9.0 and later and other distros as well.
+CDT's native components will likely work with older versions of glibc too, assuming they provide the required APIs for Eclipse CDT.
+
 # Managed Build
 
 ## Other objects for GNU archive files

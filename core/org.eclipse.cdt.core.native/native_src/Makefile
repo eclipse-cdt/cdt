@@ -28,7 +28,8 @@ OS_DIR_LINUX_PPC64LE := ../../org.eclipse.cdt.core.linux.ppc64le/os/linux/ppc64l
 OS_DIR_MACOS_X86_64 := ../../org.eclipse.cdt.core.macosx/os/macosx/x86_64
 OS_DIR_MACOS_AARCH64 := ../../org.eclipse.cdt.core.macosx/os/macosx/aarch64
 
-COMMON_CFLAGS :=  -Wall -pedantic -Werror
+COMMON_CFLAGS :=  -Wall -pedantic -Werror -std=gnu11
+COMMON_CCFLAGS :=  -Wall -pedantic -Werror -std=gnu++14
 
 UNAME = $(shell uname)
 ifeq ($(UNAME),Linux)
@@ -55,7 +56,8 @@ LIBS = \
 	$(OS_DIR_MACOS_AARCH64)/libpty.jnilib
 else
 ifeq ($(findstring ARM64,$(UNAME)),ARM64)
-COMMON_CFLAGS :=  -Wall -pedantic
+COMMON_CFLAGS :=  -Wall -pedantic -std=gnu11
+COMMON_CCFLAGS :=  -Wall -pedantic -std=gnu++14
 LIBS = \
 	$(OS_DIR_WIN32_AARCH64)/starter.exe \
 	$(OS_DIR_WIN32_AARCH64)/spawner.dll
@@ -127,7 +129,7 @@ $(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win
 $(OS_DIR_WIN32_X86_64)/pty.dll: win/pty.cpp win/pty_dllmain.cpp  win/util.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
-	x86_64-w64-mingw32-g++ $(COMMON_CFLAGS) -o $@ -Iinclude -Iwin/include -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
+	x86_64-w64-mingw32-g++ $(COMMON_CCFLAGS) -o $@ -Iinclude -Iwin/include -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
 		-DUNICODE \
 		$^ \
 		-Wl,--kill-at --shared -L$(OS_DIR_WIN32_X86_64) -lwinpty -static-libstdc++ -static-libgcc

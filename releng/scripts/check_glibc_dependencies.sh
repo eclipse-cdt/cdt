@@ -1,6 +1,6 @@
 #!/bin/bash
 ###############################################################################
-# Copyright (c) 2020 Kichwa Coders Canada Inc and others.
+# Copyright (c) 2020, 2024 Kichwa Coders Canada Inc and others.
 #
 # This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,7 @@ function check {
     ALLOWED_LIBS="$@"; shift
     ret_code=0
     while read line; do
+        echo "checking ${line}"
         ${PREFIX}-linux-gnu-readelf -d ${line} | grep -E '\(NEEDED\)' | while read needed; do
             needed=${needed//*Shared library: [/}
             needed=${needed//]*/}
@@ -64,8 +65,8 @@ function check {
 exit_code=0
 # This is the current set of allowed so dependencies for CDT code. Additional entries here are permitted,
 # provided they are found on all Linux machines by default.
-check aarch64 aarch64 2.17 libc.so.6 ld-linux-aarch64.so.1 || exit_code=1
-check x86_64 x86_64 2.4 libc.so.6 || exit_code=1
-check ppc64le powerpc64le 2.17 libc.so.6 || exit_code=1
+check aarch64 aarch64 2.31 libc.so.6 ld-linux-aarch64.so.1 || exit_code=1
+check x86_64 x86_64 2.31 libc.so.6 || exit_code=1
+check ppc64le powerpc64le 2.31 libc.so.6 || exit_code=1
 
 exit ${exit_code}

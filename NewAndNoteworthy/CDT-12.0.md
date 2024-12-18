@@ -26,6 +26,10 @@ Please see [CHANGELOG-API](CHANGELOG-API.md) for details on the breaking API cha
 
 See [Noteworthy issues and PRs](https://github.com/eclipse-cdt/cdt/issues?q=is%3Aclosed+label%3Anoteworthy+milestone%3A12.0.0) for this release in the issue/PR tracker.
 
+## Improved launch configuration for CMake and other Core Build System projects
+
+The CMake and CBS Makefile project launch configurations for local applications have an improved Main tab and new Arguments, Environment, Debugger, Source, and Common tabs.
+
 # Bugs Fixed in this Release
 
 See [GitHub milestones](https://github.com/eclipse-cdt/cdt/milestone/11?closed=1)

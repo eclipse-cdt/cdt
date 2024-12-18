@@ -93,9 +93,4 @@ public class PTYInputStream extends InputStream {
 	private native int read0(int fd, byte[] buf, int len) throws IOException;
 
 	private native int close0(int fd) throws IOException;
-
-	static {
-		System.loadLibrary("pty"); //$NON-NLS-1$
-	}
-
 }

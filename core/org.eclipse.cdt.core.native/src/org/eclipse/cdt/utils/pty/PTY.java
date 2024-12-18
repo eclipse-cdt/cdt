@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2021 QNX Software Systems and others.
+ * Copyright (c) 2002, 2024 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,6 +29,20 @@ import org.eclipse.core.runtime.Platform;
 public class PTY {
 
 	/**
+	 * Java property key that can be set to false disable ConPTY.
+	 *
+	 * Defaults to True.
+	 */
+	private static final String CONPTY_ENABLED_PROP = "org.eclipse.cdt.core.conpty_enabled"; //$NON-NLS-1$
+	/**
+	 * Java property key that can be set to true to force console mode
+	 * to be allowed on Windows.
+	 *
+	 * Defaults to False.
+	 */
+	private static final String FORCE_CONSOLE_MODE_ENABLED_PROP = "org.eclipse.cdt.core.winpty_console_mode"; //$NON-NLS-1$
+
+	/**
 	 * The pty modes.
 	 * @since 5.6
 	 */
@@ -55,18 +69,40 @@ public class PTY {
 	 */
 	int master;
 
-	private static boolean hasPTY;
-
-	private enum IS_CONPTY {
-		CONPTY_UNKNOWN, CONPTY_YES, CONPTY_NO;
+	private enum PTY_TYPE {
+		/**
+		 * PTY type has not been determined yet,
+		 * it will be determined for the system on first PTY that is created.
+		 */
+		PTY_UNKNOWN,
+		/**
+		 * On newer Windows 10 and later, use ConPTY API to connected a console.
+		 */
+		PTY_CONPTY,
+		/**
+		 * On Windows, as a fallback use WinPTY.
+		 */
+		PTY_WINPTY,
+		/**
+		 * On Linux/macOS PTY operations just work and no special API is needed.
+		 */
+		PTY_NATIVE,
+		/**
+		 * There is no functional PTY on this system. An error message will be logged
+		 * and future operations on PTY will fail.
+		 */
+		PTY_BROKEN;
 	}
 
 	/**
-	 * We don't know if we have conpty until we try - so this starts
-	 * null and will be true or false once it is determined.
+	 * The type of API that is in use.
 	 */
-	private static IS_CONPTY isConPTY = IS_CONPTY.CONPTY_UNKNOWN;
-	private static boolean isWinPTY;
+	private static PTY_TYPE ptyType = PTY_TYPE.PTY_UNKNOWN;
+
+	/**
+	 * Whether console mode is supported. Always true when ptyType == PTY_NATIVE,
+	 * on Windows can be enabled with system property {@value #FORCE_CONSOLE_MODE_ENABLED_PROP}
+	 */
 	private static boolean isConsoleModeSupported;
 	private static boolean setTerminalSizeErrorAlreadyLogged;
 	private ConPTY conPTY;
@@ -99,7 +135,7 @@ public class PTY {
 	 * @since 5.6
 	 */
 	public static boolean isSupported(Mode mode) {
-		return hasPTY && (isConsoleModeSupported || mode == Mode.TERMINAL);
+		return ptyType != PTY_TYPE.PTY_BROKEN && (isConsoleModeSupported || mode == Mode.TERMINAL);
 	}
 
 	/**
@@ -133,39 +169,29 @@ public class PTY {
 	 */
 	public PTY(Mode mode) throws IOException {
 		this.mode = mode;
+
 		if (isConsole() && !isConsoleModeSupported) {
 			throw new IOException(Messages.Util_exception_cannotCreatePty);
 		}
+
 		PTYInputStream inInit = null;
 		PTYOutputStream outInit = null;
 		String slaveInit = null;
-		if (isConPTY != IS_CONPTY.CONPTY_NO) {
-			try {
-				conPTY = new ConPTY();
-				isConPTY = IS_CONPTY.CONPTY_YES;
-				slaveInit = "conpty"; //$NON-NLS-1$
-				inInit = new ConPTYInputStream(conPTY);
-				outInit = new ConPTYOutputStream(conPTY);
-			} catch (NoClassDefFoundError e) {
-				isConPTY = IS_CONPTY.CONPTY_NO;
-				CNativePlugin.log(Messages.PTY_NoClassDefFoundError, e);
-			} catch (Throwable e) {
-				isConPTY = IS_CONPTY.CONPTY_NO;
-				CNativePlugin.log(Messages.PTY_FailedToStartConPTY, e);
-			}
-		}
 
-		// fall through in exception case as well as normal non-conPTY
-		if (isConPTY == IS_CONPTY.CONPTY_NO) {
-
-			slaveInit = hasPTY ? openMaster(isConsole()) : null;
-
+		// con pty has its own implementation of everything, so everything is delegated to conPTY
+		if (ptyType == PTY_TYPE.PTY_CONPTY) {
+			conPTY = new ConPTY();
+			slaveInit = "conpty"; //$NON-NLS-1$
+			inInit = new ConPTYInputStream(conPTY);
+			outInit = new ConPTYOutputStream(conPTY);
+		} else {
+			slaveInit = (ptyType != PTY_TYPE.PTY_BROKEN) ? openMaster(isConsole()) : null;
 			if (slaveInit == null) {
 				throw new IOException(Messages.Util_exception_cannotCreatePty);
 			}
 
 			inInit = new PTYInputStream(new MasterFD());
-			outInit = new PTYOutputStream(new MasterFD(), !isWinPTY);
+			outInit = new PTYOutputStream(new MasterFD(), ptyType != PTY_TYPE.PTY_WINPTY);
 		}
 		slave = slaveInit;
 		in = inInit;
@@ -181,7 +207,7 @@ public class PTY {
 	public void validateSlaveName() throws IOException {
 		// on windows the slave name is just an internal identifier
 		// and does not represent a real device
-		if (isWinPTY) {
+		if (ptyType == PTY_TYPE.PTY_CONPTY || ptyType == PTY_TYPE.PTY_WINPTY) {
 			throw new IOException("Slave name is not valid"); //$NON-NLS-1$
 		}
 	}
@@ -228,7 +254,7 @@ public class PTY {
 	 */
 	public final void setTerminalSize(int width, int height) {
 		try {
-			if (isConPTY == IS_CONPTY.CONPTY_YES) {
+			if (ptyType == PTY_TYPE.PTY_CONPTY) {
 				conPTY.setTerminalSize(width, height);
 			} else {
 				change_window_size(master, width, height);
@@ -248,9 +274,9 @@ public class PTY {
 	 */
 	public int exec_pty(Spawner spawner, String[] cmdarray, String[] envp, String dir, IChannel[] chan)
 			throws IOException {
-		if (isConPTY == IS_CONPTY.CONPTY_YES) {
+		if (ptyType == PTY_TYPE.PTY_CONPTY) {
 			return conPTY.exec(cmdarray, envp, dir);
-		} else if (isWinPTY) {
+		} else if (ptyType == PTY_TYPE.PTY_WINPTY) {
 			return exec2(cmdarray, envp, dir, chan, slave, master, isConsole());
 		} else {
 			return spawner.exec2(cmdarray, envp, dir, chan, slave, master, isConsole());
@@ -262,9 +288,9 @@ public class PTY {
 	 * @since 5.6
 	 */
 	public int waitFor(Spawner spawner, int pid) {
-		if (isConPTY == IS_CONPTY.CONPTY_YES) {
+		if (ptyType == PTY_TYPE.PTY_CONPTY) {
 			return conPTY.waitFor();
-		} else if (isWinPTY) {
+		} else if (ptyType == PTY_TYPE.PTY_WINPTY) {
 			return waitFor(master, pid);
 		} else {
 			return spawner.waitFor(pid);
@@ -287,35 +313,51 @@ public class PTY {
 	native int waitFor(int masterFD, int processID);
 
 	static {
-		try {
-			boolean isWindows = Platform.OS_WIN32.equals(Platform.getOS());
-			if (!isWindows) {
-				isConPTY = IS_CONPTY.CONPTY_NO;
-			}
-			// Disable ConPTY if the user needs to
-			boolean conPtyEnabled = Boolean
-					.parseBoolean(System.getProperty("org.eclipse.cdt.core.conpty_enabled", "true")); //$NON-NLS-1$ //$NON-NLS-2$
-			if (!conPtyEnabled) {
-				isConPTY = IS_CONPTY.CONPTY_NO;
+		if (Platform.OS_WIN32.equals(Platform.getOS())) {
+			boolean conPtyEnabled = Boolean.parseBoolean(System.getProperty(CONPTY_ENABLED_PROP, "true")); //$NON-NLS-1$
+			if (conPtyEnabled) {
+				try {
+					// Try creating and closing a ConPTY to see if the API is available.
+					ConPTY pty = new ConPTY();
+					pty.close();
+					ptyType = PTY_TYPE.PTY_CONPTY;
+					isConsoleModeSupported = Boolean.getBoolean(FORCE_CONSOLE_MODE_ENABLED_PROP);
+
+				} catch (NoClassDefFoundError e) {
+					CNativePlugin.log(Messages.PTY_NoClassDefFoundError, e);
+				} catch (Throwable e) {
+					CNativePlugin.log(Messages.PTY_FailedToStartConPTY, e);
+				}
 			}
 
-			isWinPTY = isWindows;
-			if (isWindows) {
-				// When we used to build with VC++ we used DelayLoadDLLs (See Gerrit 167674 and Bug 521515) so that the winpty
-				// could be found. When we ported to mingw we didn't port across this feature because it was simpler to just
-				// manually load winpty first.
-				System.loadLibrary("winpty"); //$NON-NLS-1$
+			if (ptyType == PTY_TYPE.PTY_UNKNOWN) {
+				try {
+					// When we used to build with VC++ we used DelayLoadDLLs (See Gerrit 167674 and Bug 521515) so that the winpty
+					// could be found. When we ported to mingw we didn't port across this feature because it was simpler to just
+					// manually load winpty first.
+					System.loadLibrary("winpty"); //$NON-NLS-1$
+					System.loadLibrary("pty"); //$NON-NLS-1$
+					ptyType = PTY_TYPE.PTY_WINPTY;
+					isConsoleModeSupported = Boolean.getBoolean(FORCE_CONSOLE_MODE_ENABLED_PROP);
+				} catch (Throwable e) {
+					CNativePlugin.log(Messages.PTY_FailedToStartWinPTY, e);
+				}
 			}
-			System.loadLibrary("pty"); //$NON-NLS-1$
-			hasPTY = true;
-			// on windows console mode is not supported except for experimental use
-			// to enable it, set system property org.eclipse.cdt.core.winpty_console_mode=true
-			isConsoleModeSupported = !isWinPTY || Boolean.getBoolean("org.eclipse.cdt.core.winpty_console_mode"); //$NON-NLS-1$
-		} catch (SecurityException | UnsatisfiedLinkError e) {
-			CNativePlugin.log(
-					"Failed to load the PTY library. This may indicate a configuration problem, but can be ignored if no further problems are observed.", //$NON-NLS-1$
-					e);
+		} else {
+			try {
+				System.loadLibrary("pty"); //$NON-NLS-1$
+				ptyType = PTY_TYPE.PTY_NATIVE;
+				isConsoleModeSupported = true;
+			} catch (Throwable e) {
+				CNativePlugin.log(Messages.PTY_FailedToStartNativePTY, e);
+			}
 		}
-	}
 
+		if (ptyType == PTY_TYPE.PTY_UNKNOWN) {
+			ptyType = PTY_TYPE.PTY_BROKEN;
+			isConsoleModeSupported = true;
+			CNativePlugin.log(Messages.PTY_FailedToStartPTY);
+		}
+
+	}
 }

@@ -100,9 +100,4 @@ public class PTYOutputStream extends OutputStream {
 	private native int write0(int fd, byte[] b, int len) throws IOException;
 
 	private native int close0(int fd) throws IOException;
-
-	static {
-		System.loadLibrary("pty"); //$NON-NLS-1$
-	}
-
 }

@@ -1,5 +1,5 @@
 #*******************************************************************************
-# Copyright (c) 2002, 2019 QNX Software Systems and others.
+# Copyright (c) 2002, 2024 QNX Software Systems and others.
 #
 # This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
 # Contributors:
 #     QNX Software Systems - initial API and implementation
 #     Alex Blewitt - MacOSX with a 64-bit vm 
+#     Tue Ton - support for Windows on Arm64
 #*******************************************************************************/
 SHELL=/bin/bash -o pipefail
 ifeq ($(JAVA_HOME),)
@@ -38,8 +39,14 @@ ifeq ($(UNAME),Darwin)
 LIBS = \
 	$(OS_DIR)/macosx/x86_64/libserial.jnilib
 else
+ifeq ($(findstring ARM64,$(UNAME)),ARM64)
+COMMON_CFLAGS := -Wall -pedantic
+LIBS = \
+	$(OS_DIR)/win32/aarch64/serial.dll
+else
 LIBS = \
 	$(OS_DIR)/win32/x86_64/serial.dll
+endif
 endif
 endif
 
@@ -49,7 +56,7 @@ clean :
 	$(RM) $(LIBS)
 
 MAC_TO_SIGN=$(OS_DIR)/macosx/x86_64/libserial.jnilib $(OS_DIR)/macosx/aarch64/libserial.jnilib
-WIN_TO_SIGN=$(OS_DIR)/win32/x86_64/serial.dll
+WIN_TO_SIGN=$(OS_DIR)/win32/x86_64/serial.dll $(OS_DIR)/win32/aarch64/serial.dll
 ### This block of code also exists in core/org.eclipse.cdt.core.native/native_src/Makefile
 TMPDIR := $(shell mktemp -d -t production-XXXXXXXXXX)
 .PHONY: production
@@ -79,6 +86,11 @@ $(OS_DIR)/win32/x86_64/serial.dll:	serial.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
 	x86_64-w64-mingw32-gcc $(COMMON_CFLAGS) -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ $^
+
+$(OS_DIR)/win32/aarch64/serial.dll:	serial.c
+	mkdir -p $(dir $@) && \
+	$(REPRODUCIBLE_BUILD_WRAPPER) \
+	aarch64-w64-mingw32-gcc $(COMMON_CFLAGS) -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" -shared -o $@ $^
 
 $(OS_DIR)/linux/x86_64/libserial.so:	serial.c
 	mkdir -p $(dir $@) && \

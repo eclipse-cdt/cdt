@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Torbjörn Svensson and others.
+ * Copyright (c) 2020, 2024 Torbjörn Svensson and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include <errno.h>
 
 static bool spawner = false;
 static bool spawnerDetails = false;

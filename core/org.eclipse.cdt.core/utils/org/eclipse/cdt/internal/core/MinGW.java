@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2023 Andrew Gvozdev and others.
+ * Copyright (c) 2012, 2024 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     Andrew Gvozdev - Initial API and implementation
  *     John Dallaway - Support multiple MSYS2 64-bit registry names (#237)
  *     John Dallaway - Detect MSYS2 UCRT64 toolchains (#568)
+ *     Tue Ton - Support for Windows on Arm64
  *******************************************************************************/
 package org.eclipse.cdt.internal.core;
 
@@ -84,6 +85,7 @@ public class MinGW {
 
 		// Look in PATH values. Look for mingw32-gcc.exe or
 		// x86_64-w64-mingw32-gcc.exe
+		// or aarch64-w64-mingw32-gcc.exe
 		if (rootValue == null) {
 			rootValue = findMingwInPath(envPathValue);
 		}
@@ -93,7 +95,8 @@ public class MinGW {
 			WindowsRegistry registry = WindowsRegistry.getRegistry();
 			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
 			String subkey;
-			boolean on64bit = Platform.getOSArch().equals(Platform.ARCH_X86_64);
+			boolean on64bit = Platform.getOSArch().equals(Platform.ARCH_X86_64)
+					|| Platform.getOSArch().equals(Platform.ARCH_AARCH64);
 			String key32bit = null;
 			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
 				String compKey = uninstallKey + '\\' + subkey;
@@ -183,6 +186,8 @@ public class MinGW {
 			// http://mingw-w64.sourceforge.net/
 			if (Platform.ARCH_X86_64.equals(Platform.getOSArch())) {
 				mingwLocation = findMinGwInstallationLocation("x86_64-w64-mingw32-gcc.exe", envPath).orElse(null); //$NON-NLS-1$
+			} else if (Platform.ARCH_AARCH64.equals(Platform.getOSArch())) {
+				mingwLocation = findMinGwInstallationLocation("aarch64-w64-mingw32-gcc.exe", envPath).orElse(null); //$NON-NLS-1$
 			}
 
 			if (mingwLocation == null) {
@@ -229,7 +234,8 @@ public class MinGW {
 			WindowsRegistry registry = WindowsRegistry.getRegistry();
 			String uninstallKey = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall"; //$NON-NLS-1$
 			String subkey;
-			boolean on64bit = Platform.getOSArch().equals(Platform.ARCH_X86_64);
+			boolean on64bit = Platform.getOSArch().equals(Platform.ARCH_X86_64)
+					|| Platform.getOSArch().equals(Platform.ARCH_AARCH64);
 			String key32bit = null;
 			for (int i = 0; (subkey = registry.getCurrentUserKeyName(uninstallKey, i)) != null; i++) {
 				String compKey = uninstallKey + '\\' + subkey;

@@ -1,0 +1,5 @@
+*.exp
+*.pdb
+pty.lib
+spawner.lib
+

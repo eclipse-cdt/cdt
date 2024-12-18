@@ -79,7 +79,7 @@
 								<configuration>
 									<target>
 										<exec executable="docker" newenvironment="false" failOnError="true">
-										<!-- docker run -\-rm -t -v $(git rev-parse -\-show-toplevel):/work -w /work/$(git rev-parse -\-show-prefix) quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest  make -C native_src rebuild -->
+										<!-- docker run -\-rm -t -v $(git rev-parse -\-show-toplevel):/work -w /work/$(git rev-parse -\-show-prefix) quay.io/eclipse-cdt/cdt-infra:latest  make -C native_src rebuild -->
 											<arg value="run" />
 											<arg value="--rm" />
 											<arg value="-t" />
@@ -87,7 +87,7 @@
 											<arg value="${project.basedir}/../..:/work" />
 											<arg value="-w" />
 											<arg value="/work/core/org.eclipse.cdt.core.native" />
-											<arg value="quay.io/eclipse-cdt/cdt-infra-eclipse-full:latest" />
+											<arg value="quay.io/eclipse-cdt/cdt-infra:latest" />
 											<arg value="make" />
 											<arg value="-C" />
 											<arg value="native_src" />

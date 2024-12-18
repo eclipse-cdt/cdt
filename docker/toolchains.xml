@@ -8,7 +8,7 @@
          <vendor>default</vendor>
       </provides>
       <configuration>
-         <jdkHome>/usr/lib/jvm/jdk-21.0.3+9</jdkHome>
+         <jdkHome>/usr/lib/jvm/jdk-21.0.5+11</jdkHome>
       </configuration>
    </toolchain>
    <toolchain>
@@ -19,7 +19,7 @@
          <vendor>default</vendor>
       </provides>
       <configuration>
-         <jdkHome>/usr/lib/jvm/jdk-17.0.11+9</jdkHome>
+         <jdkHome>/usr/lib/jvm/jdk-17.0.13+11</jdkHome>
       </configuration>
    </toolchain>
 </toolchains>

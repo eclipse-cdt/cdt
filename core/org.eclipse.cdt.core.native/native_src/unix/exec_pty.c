@@ -85,7 +85,7 @@ static void close_all_fds_fallback(unsigned int from_fd_inclusive) {
     }
 }
 
-static void close_all_fds() {
+static void close_all_fds(void) {
     unsigned int from_fd = STDERR_FILENO + 1;
     if (sys_close_range_wrapper(from_fd) == 0)
         return;

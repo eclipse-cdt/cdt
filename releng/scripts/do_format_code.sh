@@ -23,12 +23,12 @@ CDTDIR=${DIR}/../..
 ##
 # Format code
 ##
-: ${ECLIPSE:=~/buildtools/eclipse-SDK-4.31/eclipse}
+: ${ECLIPSE:=~/buildtools/eclipse-SDK-4.34/eclipse}
 
 if test ! -e "$ECLIPSE" ; then
     echo "The Eclipse binary was not found at \"$ECLIPSE\"!"
     echo "You can download it to and pass it via environment variable:"
-    echo "  curl -L https://download.eclipse.org/eclipse/downloads/drops4/R-4.31-202402290520/eclipse-SDK-4.31-linux-gtk-x86_64.tar.gz | tar xzC /tmp"
+    echo "  curl -L https://download.eclipse.org/eclipse/downloads/drops4/R-4.34-202402290520/eclipse-SDK-4.34-linux-gtk-x86_64.tar.gz | tar xzC /tmp"
     echo "  ECLIPSE=/tmp/eclipse/eclipse ./releng/scripts/check_code_cleanliness.sh"
     exit 1
 fi

@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -94,11 +95,12 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 
 	private static final int FIND_RESOURCES_CACHE_SIZE = 100;
 
-	private LRUCache<URI, IResource[]> workspaceRootFindContainersForLocationURICache = new LRUCache<>(
-			FIND_RESOURCES_CACHE_SIZE);
-	private LRUCache<URI, IResource[]> workspaceRootFindFilesForLocationURICache = new LRUCache<>(
-			FIND_RESOURCES_CACHE_SIZE);
-	private HashMap<IProject, LRUCache<IPath, List<IResource>>> findPathInProjectCache = new HashMap<>();
+	private Map<URI, IResource[]> workspaceRootFindContainersForLocationURICache = Collections
+			.synchronizedMap(new LRUCache<>(FIND_RESOURCES_CACHE_SIZE));
+	private Map<URI, IResource[]> workspaceRootFindFilesForLocationURICache = Collections
+			.synchronizedMap(new LRUCache<>(FIND_RESOURCES_CACHE_SIZE));
+	private Map<IProject, LRUCache<IPath, List<IResource>>> findPathInProjectCache = Collections
+			.synchronizedMap(new HashMap<>());
 
 	//String pathStr, URI baseURI -> URI
 	private static class MappedURIKey {
@@ -144,11 +146,14 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	}
 
 	// Caches the result of determineMappedURI
-	private LRUCache<MappedURIKey, URI> mappedURICache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
+	private Map<MappedURIKey, URI> mappedURICache = Collections
+			.synchronizedMap(new LRUCache<>(FIND_RESOURCES_CACHE_SIZE));
 	// Caches the result of getFilesystemLocation
-	private LRUCache<URI, IPath> fileSystemLocationCache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
+	private Map<URI, IPath> fileSystemLocationCache = Collections
+			.synchronizedMap(new LRUCache<>(FIND_RESOURCES_CACHE_SIZE));
 	// Caches the result of new File(pathname).exists()
-	private LRUCache<IPath, Boolean> pathExistsCache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
+	private Map<IPath, Boolean> pathExistsCache = Collections
+			.synchronizedMap(new LRUCache<>(FIND_RESOURCES_CACHE_SIZE));
 
 	/** @since 8.2 */
 	protected EFSExtensionProvider efsProvider = null;

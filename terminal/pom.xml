@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright (c) 2018, 2021 Red Hat and others.
+    Copyright (c) 2018, 2024 Red Hat and others.
     This program and the accompanying materials
     are made available under the terms of the Eclipse Public License 2.0
     which accompanies this distribution, and is available at
@@ -41,6 +41,7 @@
 				<module>../core/org.eclipse.cdt.core.macosx</module>
 				<module>../core/org.eclipse.cdt.core.native</module>
 				<module>../core/org.eclipse.cdt.core.win32</module>
+				<module>../core/org.eclipse.cdt.core.win32.aarch64</module>
 				<module>../core/org.eclipse.cdt.core.win32.x86_64</module>
 				<module>../native/org.eclipse.cdt.native.serial</module>
 				<module>../remote/org.eclipse.remote.core</module>

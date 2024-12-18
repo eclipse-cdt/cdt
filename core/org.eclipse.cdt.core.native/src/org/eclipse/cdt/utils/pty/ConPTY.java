@@ -239,14 +239,18 @@ public class ConPTY {
 		}
 		boolean res;
 
-		res = ConPTYKernel32.INSTANCE.CloseHandle(handles.processInformation.hThread);
-		checkErr(res, "CloseHandle processInformation.hThread"); //$NON-NLS-1$
+		if (handles.processInformation != null) {
+			res = ConPTYKernel32.INSTANCE.CloseHandle(handles.processInformation.hThread);
+			checkErr(res, "CloseHandle processInformation.hThread"); //$NON-NLS-1$
 
-		res = ConPTYKernel32.INSTANCE.CloseHandle(handles.processInformation.hProcess);
-		checkErr(res, "CloseHandle processInformation.hProcess"); //$NON-NLS-1$
+			res = ConPTYKernel32.INSTANCE.CloseHandle(handles.processInformation.hProcess);
+			checkErr(res, "CloseHandle processInformation.hProcess"); //$NON-NLS-1$
+		}
 
-		ConPTYKernel32.INSTANCE.DeleteProcThreadAttributeList(handles.startupInfo.lpAttributeList);
-		handles.threadAttributeListMemory.clear();
+		if (handles.startupInfo != null) {
+			ConPTYKernel32.INSTANCE.DeleteProcThreadAttributeList(handles.startupInfo.lpAttributeList);
+			handles.threadAttributeListMemory.clear();
+		}
 
 		ConPTYKernel32.INSTANCE.ClosePseudoConsole(handles.pseudoConsole.getValue());
 

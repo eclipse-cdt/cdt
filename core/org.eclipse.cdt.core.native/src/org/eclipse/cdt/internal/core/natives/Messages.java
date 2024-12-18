@@ -17,6 +17,9 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	public static String PTY_FailedToStartConPTY;
+	public static String PTY_FailedToStartNativePTY;
+	public static String PTY_FailedToStartPTY;
+	public static String PTY_FailedToStartWinPTY;
 	public static String PTY_NoClassDefFoundError;
 	public static String Util_exception_cannotCreatePty;
 	public static String Util_exception_cannotSetTerminalSize;

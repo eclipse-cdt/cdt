@@ -63,6 +63,7 @@ int laterLineNotHitTest()
 int laterLineDifferentFileTest()
 {   int b = 0;
     value();  // LATER_LINE_DIFFERENT_FILE_LINE
+    return 0;
 }
 
 int differentFileTest()

@@ -252,6 +252,7 @@ int testUpdateIssue() {
 	/* testUpdateIssue_init */
 	a = 1.22;
 	a = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
+	return 0;
 }
 
 int testUpdateIssue2() {
@@ -262,7 +263,8 @@ int testUpdateIssue2() {
 	z.d = 1.0;
 	/* testUpdateIssue2_init */
 	z.d = 1.22;
-	z.d = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible	
+	z.d = 1.22; // this redundant line is here to ensure 3 steps after running to this func leaves locals visible
+	return 0;
 }
 
 int testConcurrentReadAndUpdateChild() {
@@ -273,6 +275,7 @@ int testConcurrentReadAndUpdateChild() {
 	z.d = 1;
 	/* testConcurrentReadAndUpdateChild_init */
 	z.d = 2;
+	return 0;
 }
 
 int testConcurrentUpdateOutOfScopeChildThenParent1() {
@@ -283,6 +286,7 @@ int testConcurrentUpdateOutOfScopeChildThenParent1() {
 	z.d = 1;
 	/* testConcurrentUpdateOutOfScopeChildThenParent1_init */
 	z.d = 1; // this redundant line is here to ensure 2 steps after running to this func leaves locals visible
+	return 0;
 }
 
 int testConcurrentUpdateOutOfScopeChildThenParent2() {
@@ -293,11 +297,13 @@ int testConcurrentUpdateOutOfScopeChildThenParent2() {
 	z.d = 2;
 	/* testConcurrentUpdateOutOfScopeChildThenParent2_init */
 	z.d = 2; // this redundant line is here to ensure 2 steps after running to this func leaves locals visible
+	return 0;
 }
 
 int testConcurrentUpdateOutOfScopeChildThenParent() {
 	testConcurrentUpdateOutOfScopeChildThenParent1();
 	testConcurrentUpdateOutOfScopeChildThenParent2();
+	return 0;
 }
 
 int testUpdateOfPointer() {

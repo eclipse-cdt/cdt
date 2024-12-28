@@ -205,7 +205,7 @@
       xsi:type="git:GitCloneTask"
       id="github.clone.cdt-lsp"
       remoteURI="eclipse-cdt/cdt-lsp"
-      checkoutBranch="master">
+      checkoutBranch="main">
     <annotation
         source="http://www.eclipse.org/oomph/setup/InducedChoices">
       <detail

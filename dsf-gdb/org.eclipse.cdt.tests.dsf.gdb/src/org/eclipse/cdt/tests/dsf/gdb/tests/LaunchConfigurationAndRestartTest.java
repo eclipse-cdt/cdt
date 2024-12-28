@@ -72,11 +72,13 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	protected static final String SOURCE_NAME = "LaunchConfigurationAndRestartTestApp.cc";
 
 	protected static final String[] LINE_TAGS = new String[] { "FIRST_LINE_IN_MAIN", "LAST_LINE_IN_MAIN",
-			"three_steps_back_from_b_stopAtOther" };
+			"three_steps_back_from_b_stopAtOther", "END_ENV_TEST_LINE", "MAIN_INIT_LINE" };
 
 	protected int FIRST_LINE_IN_MAIN;
 	protected int LAST_LINE_IN_MAIN;
 	protected int three_steps_back_from_b_stopAtOther;
+	protected int END_ENV_TEST_LINE;
+	protected int MAIN_INIT_LINE;
 
 	// The exit code returned by the test program
 	private static final int TEST_EXIT_CODE = 36;
@@ -105,6 +107,8 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		FIRST_LINE_IN_MAIN = getLineForTag("FIRST_LINE_IN_MAIN");
 		LAST_LINE_IN_MAIN = getLineForTag("LAST_LINE_IN_MAIN");
 		three_steps_back_from_b_stopAtOther = getLineForTag("three_steps_back_from_b_stopAtOther");
+		END_ENV_TEST_LINE = getLineForTag("END_ENV_TEST_LINE");
+		MAIN_INIT_LINE = getLineForTag("MAIN_INIT_LINE");
 	}
 
 	@Override
@@ -287,8 +291,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		setLaunchAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
 		doLaunch();
 
-		SyncUtil.runToLocation("envTest");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(Integer.toString(END_ENV_TEST_LINE));
 
 		// The program has stored the content of $HOME into a variable called 'home'.
 		// Let's verify this variable is 0x0 which means $HOME does not exist.
@@ -329,8 +332,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		setLaunchAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		doLaunch();
 
-		SyncUtil.runToLocation("envTest");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(Integer.toString(END_ENV_TEST_LINE));
 
 		// The program has stored the content of $LAUNCHTEST into a variable called 'launchTest'.
 		// Let's verify this variable is set to "IS SET".
@@ -390,8 +392,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		setLaunchAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		doLaunch();
 
-		SyncUtil.runToLocation("envTest");
-		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(Integer.toString(END_ENV_TEST_LINE));
 
 		// The program has stored the content of $LAUNCHTEST into a variable called 'launchTest'.
 		// Let's verify this variable is set to "IS SET".
@@ -449,7 +450,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, "1 2 3\n4 5 6");
 		doLaunch();
 
-		MIStoppedEvent stoppedEvent = getInitialStoppedEvent();
+		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation(Integer.toString(MAIN_INIT_LINE));
 
 		// Check that argc is correct
 		final IExpressionDMContext argcDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argc");

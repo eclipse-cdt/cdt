@@ -14,6 +14,7 @@ Contributors:
     John Dallaway - add assembler debug level option (#727)
     John Dallaway - extend optimization options (#828)
     John Dallaway - add archiver other objects option (#653)
+    John Dallaway - extend language standard options (#944)
 -->
 <plugin>
    <!-- Managed Make Builder Tool Specifications -->
@@ -969,6 +970,14 @@ Contributors:
                   name="%Option.Posix.Dialect.c11"
                   command="-std=c11"
                   id="gnu.c.compiler.dialect.c11" />
+            <enumeratedOptionValue
+                  name="%Option.Posix.Dialect.c17"
+                  command="-std=c17"
+                  id="gnu.c.compiler.dialect.c17" />
+            <enumeratedOptionValue
+                  name="%Option.Posix.Dialect.c23"
+                  command="-std=c23"
+                  id="gnu.c.compiler.dialect.c23" />
          </option>
          <option
                name="%Option.Posix.Dialect.Flags"
@@ -1462,8 +1471,16 @@ Contributors:
                   id="gnu.cpp.compiler.dialect.c++17" />
             <enumeratedOptionValue
                   name="%Option.Posix.Dialect.c++2a"
-                  command="-std=c++2a"
+                  command="-std=c++20"
                   id="gnu.cpp.compiler.dialect.c++2a" />
+            <enumeratedOptionValue
+                  name="%Option.Posix.Dialect.c++23"
+                  command="-std=c++23"
+                  id="gnu.cpp.compiler.dialect.c++23" />
+            <enumeratedOptionValue
+                  name="%Option.Posix.Dialect.c++26"
+                  command="-std=c++26"
+                  id="gnu.cpp.compiler.dialect.c++26" />
          </option>
          <option
                name="%Option.Posix.Dialect.Flags"

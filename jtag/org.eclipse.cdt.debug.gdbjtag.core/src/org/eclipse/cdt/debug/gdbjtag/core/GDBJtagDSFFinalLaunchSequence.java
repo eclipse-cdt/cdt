@@ -108,8 +108,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  */
 public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 
-	private static final String ATTR_JTAG_DEVICE = Activator.PLUGIN_ID + ".jtagDevice"; //$NON-NLS-1$
-
 	private abstract class DownloadStatusListener implements IEventListener {
 
 		private static final String ASYNC_CLASS_DOWNLOAD = "download"; //$NON-NLS-1$
@@ -808,8 +806,8 @@ public class GDBJtagDSFFinalLaunchSequence extends FinalLaunchSequence {
 		}
 
 		// Fall back to old behavior with name only if ID is missing
-		if (attributes.containsKey(ATTR_JTAG_DEVICE)) {
-			String deviceName = CDebugUtils.getAttribute(attributes, ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
+		if (attributes.containsKey(IGDBJtagConstants.ATTR_JTAG_DEVICE)) {
+			String deviceName = CDebugUtils.getAttribute(attributes, IGDBJtagConstants.ATTR_JTAG_DEVICE, ""); //$NON-NLS-1$
 			if (!deviceName.isEmpty()) {
 				return GDBJtagDeviceContributionFactory.getInstance().findByDeviceName(deviceName);
 			}

@@ -33,6 +33,8 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_PORT_NUMBER = Activator.PLUGIN_ID + ".portNumber"; //$NON-NLS-1$
 	/** @since 9.2 */
 	public static final String ATTR_JTAG_DEVICE_ID = Activator.PLUGIN_ID + ".jtagDeviceId"; //$NON-NLS-1$
+	/** @since 10.9 */
+	public static final String ATTR_JTAG_DEVICE = Activator.PLUGIN_ID + ".jtagDevice"; //$NON-NLS-1$
 
 	public static final boolean DEFAULT_USE_REMOTE_TARGET = true;
 	public static final String DEFAULT_IP_ADDRESS = "unspecified-ip-address"; //$NON-NLS-1$

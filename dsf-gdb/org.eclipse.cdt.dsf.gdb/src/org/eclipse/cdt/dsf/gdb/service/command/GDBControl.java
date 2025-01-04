@@ -113,6 +113,11 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	private static final int STATUS_CODE_COMMAND_TIMED_OUT = 20100;
 
 	/**
+	 * @since 7.2
+	 */
+	protected final ILaunchConfiguration config;
+
+	/**
 	 * Event indicating that the back end process has started.
 	 */
 	private static class GDBControlInitializedDMEvent extends AbstractDMEvent<ICommandControlDMContext>
@@ -240,6 +245,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	protected GDBControl(DsfSession session, boolean useThreadAndFrameOptions, ILaunchConfiguration config,
 			CommandFactory factory) {
 		super(session, useThreadAndFrameOptions, factory);
+		this.config = config;
 	}
 
 	@Override

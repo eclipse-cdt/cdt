@@ -88,7 +88,11 @@ public class StartOrRestartProcessSequence_7_0 extends ReflectionSequence {
 
 	private MIBreakpoint fBreakPointForReverse;
 	private boolean fReverseEnabled;
-	private final Map<String, Object> fAttributes;
+
+	/**
+	 * @since 7.2
+	 */
+	protected final Map<String, Object> fAttributes;
 
 	// Indicates if the sequence is being used for a restart or a start
 	private final boolean fRestart;

@@ -43,13 +43,10 @@ public class StartOrRestartProcessSequence_7_10 extends StartOrRestartProcessSeq
 	private IGDBControl fCommandControl;
 	private IReverseRunControl2 fReverseService;
 	private ReverseDebugMethod fReverseMode = ReverseDebugMethod.SOFTWARE;
-	private final Map<String, Object> fAttributes;
 
 	public StartOrRestartProcessSequence_7_10(DsfExecutor executor, IContainerDMContext containerDmc,
 			Map<String, Object> attributes, boolean restart, DataRequestMonitor<IContainerDMContext> rm) {
 		super(executor, containerDmc, attributes, restart, rm);
-
-		fAttributes = attributes;
 	}
 
 	@Override

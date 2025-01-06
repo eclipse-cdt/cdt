@@ -14,6 +14,21 @@ CDT's native components will likely work with older versions of glibc too, assum
 
 # Managed Build
 
+## New *C Project* and new *C++ Project* available via *New C/C++ Project* wizard
+
+The separate new C and C++ project wizards are now exclusively available via the *New C/C++ Project* wizard.
+From the second page of *New C/C++ Project* wizard select *C Managed Build* to access the *New C Project* wizard and select *C++ Managed Build* to access the *New C++ Project* wizard.
+
+See [Issue #965](https://github.com/eclipse-cdt/cdt/issues/965) for additional details, including how to restore these menu entries if your Eclipse CDT product depends on it.
+
+## New *Makefile Project with Existing Code* available via *Existing Code as Makefile Project* import wizard
+
+The *Makefile Project with Existing Code* wizard is no longer available in the new project wizard.
+For users who need it, it remains available in the *Existing Code as Makefile Project* import wizard.
+Most users should be using the *Makefile project* type in the *New C/C++ Project* wizard.
+
+See [Issue #965](https://github.com/eclipse-cdt/cdt/issues/965) for additional details, including how to restore these menu entries if your Eclipse CDT product depends on it.
+
 ## Other objects for GNU archive files
 
 The managed build system now provides an option to specify other object files to be included when building GNU archive files:

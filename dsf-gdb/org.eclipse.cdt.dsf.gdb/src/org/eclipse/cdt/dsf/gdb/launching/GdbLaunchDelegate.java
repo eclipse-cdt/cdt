@@ -89,6 +89,8 @@ public class GdbLaunchDelegate extends AbstractCLaunchDelegate2 {
 	@Override
 	public void launch(ILaunchConfiguration config, String mode, ILaunch launch, IProgressMonitor monitor)
 			throws CoreException {
+		// This activity is no longer used within CDT, but this enablement is left for extenders who were
+		// relying on the activity being enabled to show some UI.
 		org.eclipse.cdt.launch.LaunchUtils.enableActivity("org.eclipse.cdt.debug.dsfgdbActivity", true); //$NON-NLS-1$
 		if (monitor == null) {
 			monitor = new NullProgressMonitor();

@@ -22,6 +22,21 @@ The managed build system now provides an option to specify other object files to
 
 The new option applies to static library projects using a _Cross GCC_, _Cygwin GCC_, _Linux GCC_ or _MinGW GCC_ toolchain.
 
+# Debug
+
+## DSF Preference Pages always visible
+
+The DSF Preference pages (Preferences -> C/C++ -> Debug -> GDB and children) are not always shown to users.
+Prior to CDT 12 these were not visible until after the first debug session was started.
+
+At the first debug session CDT enables the [activity](https://help.eclipse.org/latest/topic/org.eclipse.platform.doc.isv/reference/extension-points/org_eclipse_ui_activities.html) for DSF (`org.eclipse.cdt.debug.dsfgdbActivity`), with this change nothing in CDT is bound to this activity key anymore.
+
+## Preferences -> Run/Debug -> View Performance relocated
+
+The View Performance preference page, which is CDT specific, has been relocated to the Preferences -> C/C++ -> Debug section of preferences.
+This only affects where in the Preferences tree the page is located, the preferences and key names have not changed.
+In addition, this page is always visible.
+
 # API Changes, current and planned
 
 ## Breaking API changes

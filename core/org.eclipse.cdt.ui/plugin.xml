@@ -433,34 +433,6 @@
             %NewWizards.class.description
          </description>
       </wizard>
-      <wizard
-            canFinishEarly="false"
-            category="org.eclipse.cdt.ui.newCWizards"
-            class="org.eclipse.cdt.ui.wizards.CCProjectWizard"
-            finalPerspective="org.eclipse.cdt.ui.CPerspective"
-            hasPages="true"
-            icon="icons/elcl16/newmngcc_app.gif"
-            id="org.eclipse.cdt.ui.wizards.NewCWizard1"
-            name="%CPPproject"
-            project="true">
-          <description>
-             %CPPproject.desc
-          </description>
-       </wizard>
-       <wizard
-             canFinishEarly="false"
-             category="org.eclipse.cdt.ui.newCWizards"
-             class="org.eclipse.cdt.ui.wizards.CProjectWizard"
-             finalPerspective="org.eclipse.cdt.ui.CPerspective"
-             hasPages="true"
-             icon="icons/elcl16/newmngc_app.gif"
-             id="org.eclipse.cdt.ui.wizards.NewCWizard2"
-             name="%Cproject"
-             project="true">
-         <description>
-             %Cproject.desc
-         </description>
-      </wizard>
        <wizard
              canFinishEarly="false"
              category="org.eclipse.cdt.ui.newCWizards"

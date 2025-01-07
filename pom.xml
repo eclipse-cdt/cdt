@@ -22,8 +22,8 @@
 
 	<properties>
 		<required-maven-version>3.9.1</required-maven-version>
-		<tycho-version>4.0.6</tycho-version>
-		<cbi-plugins.version>1.4.3</cbi-plugins.version>
+		<tycho-version>4.0.10</tycho-version>
+		<cbi-plugins.version>1.5.2</cbi-plugins.version>
 		<sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
 		<cdt-site>https://ci.eclipse.org/cdt/job/cdt/job/main/lastSuccessfulBuild/artifact/releng/org.eclipse.cdt.repo/target/repository</cdt-site>
 		<simrel-site>https://download.eclipse.org/staging/2024-06/</simrel-site>
@@ -626,7 +626,7 @@
 				<inherited>true</inherited>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.4.1</version>
+				<version>3.5.0</version>
 				<executions>
 				<execution>
 					<id>enforce-maven-version</id>
@@ -770,7 +770,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.11</version>
+				<version>0.8.12</version>
 				<executions>
 					<execution>
 						<id>pre-test</id>
@@ -939,7 +939,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.12.1</version>
+					<version>3.13.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -961,7 +961,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.21.2</version>
+					<version>3.26.0</version>
 					<configuration>
 						<inputEncoding>utf-8</inputEncoding>
 						<minimumTokens>100</minimumTokens>
@@ -1064,7 +1064,7 @@
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>build-helper-maven-plugin</artifactId>
-					<version>3.5.0</version>
+					<version>3.6.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>

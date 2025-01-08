@@ -21,3 +21,4 @@ ${DIR}/do_add_all_file_types_to_gitattributes.sh
 ${DIR}/do_project_settings.sh
 ${DIR}/do_rebuild_natives.sh
 ${DIR}/do_fix_file_permissions.sh
+${DIR}/do_generate_asciidoc.sh

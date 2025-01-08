@@ -1,0 +1,180 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Importing your C/{cpp} source files into Eclipse
+
+Using the CVS Repository Exploring perspective, you can check out
+modules or directories into existing projects, or create new projects. A
+common scenario that you may encounter when starting to use the CDT, is
+determining how to bring existing C/{cpp} source files into Eclipse. There
+are a number of ways to do this. The scenarios described below are
+recommended approaches.
+
+=== Creating a project from source files in CVS
+
+If your existing source tree is managed in CVS, you can use the CVS
+Repository perspective to "Checkout As..." any folder in the repository.
+The first time you "Checkout As...", the New Project wizard launches and
+you need to create a C or {cpp} project for the folder. For more
+information, see xref:../tasks/cdt_t_proj_new.adoc[Creating a project],
+xref:../tasks/cdt_t_proj_new_with_template.adoc[Creating a project via a
+project template] and xref:../tasks/cdt_o_proj_files.adoc[Working with
+C/{cpp} project files].
+
+After you perform a checkout operation, a CVS checkout of the project
+occurs into the project's location. It is recommended that you
+eventually add and commit the CDT project files back into CVS. These
+files include .project, .cdtproject, and .cdtbuild (for Managed Build
+projects) and are located at the root folder of each CDT project.
+
+Bringing code into the IDE from CVS differs slightly, depending on what
+you're importing:
+
+* an existing C/{cpp} project
+* existing C/{cpp} code that isn't part of a project
+* existing C/{cpp} code that needs to be added to an existing project
+
+==== Importing a C/{cpp} project from CVS
+
+To check out an existing C/{cpp} project from the CVS repository into your
+workspace, right-click the project in the CVS Repositories view, and
+select *Check Out* from the menu. A project with the same name as the
+CVS module is checked out in to your workspace.
+
+==== Importing C/{cpp} code from CVS
+
+To check out existing C/{cpp} code that is not part of a project:
+
+. Right-click the module or directory in the CVS Repositories view and
+choose *Check Out As...* from the menu.
++
+The Check Out As wizard displays.
+. Choose how to check out this project:
+* as a project configured using the New Project wizard
++
+or:
+* as a new project in the workspace
++
+or:
+* as a Standard Make C/{cpp} Project - if you need to create your own
+Makefile to integrate with an existing build process
++
+Choose the workspace location for this project, then the CVS tag to
+check out.
+. Click *Finish* to exit the *Check Out As* dialog.
+. Click *Next* to continue.
+
+==== Importing C/{cpp} code into an existing project
+
+To import a directory full of C/{cpp} code into an existing project:
+
+. Right-click the module or directory in the CVS Repositories view and
+choose *Check Out As* from the menu.
++
+The IDE displays the Check Out As dialog.
+. Choose *Check out into an existing project*, and then click *Next*.
+The IDE displays the Check Out Into dialog:
+. Select an existing project from the list, and then click *Finish* to
+add the code from CVS to the selected project.
+
+=== Creating new projects from existing source roots
+
+If your resource code is not managed in CVS but is available from the
+file system, then you need to perform two steps:
+
+. Identify a "root folder" of your source code tree.
+. Create a new C/{cpp} project using the New Project Wizard, and specify
+the "root folder" as a non-default location of the new project.
+
+Typically, existing projects will have their own makefiles, so you
+should create a new Make C/{cpp} project. For more information see
+xref:../tasks/cdt_t_proj_new.adoc[Creating a project] and
+xref:../tasks/cdt_o_proj_files.adoc[Working with C/{cpp} project files].
+
+To help you to identify a root folder for your project, consider the
+following guidelines:
+
+* all source code for the project is available on or beneath the root
+folder
+* the build results are also produced in or beneath the root folder
+* there is often a makefile in the root folder. In complex projects, the
+makefile in the root folder calls other makefiles in other directories
+to produce the build results.
+* external header files and library files do not need to be in or
+beneath the root folder.
+
+The resources for the project are maintained in the remote location
+specified, not in the workspace folder for Eclipse. However, your
+existing folder structure is displayed in the C/{cpp} Projects view. Meta
+data for the project, such as the index for the project and the link to
+the existing source, is stored in the metadata directory in the
+workspace folder. For more information on the workspace folder, see
+*Workbench User Guide > Tasks > Upgrading Eclipse*.
+
+After you create a CDT project, you cannot easily move it or redefine
+its root folders. If you need to, you can delete the CDT project
+(without deleting its contents) and then recreate it specifying a
+different non-default location.
+
+=== Import your C/{cpp} source file system
+
+Another approach would be to create a C/{cpp} Project and then import your
+existing file system. For more information about importing, see
+*Workbench User Guide > Tasks > Importing > Importing resources from the
+file system*.
+
+This approach copies the files from your file system to an Eclipse
+Workbench project or folder. Your original source files remain unchanged
+and it is the copies of the files that will be edited, built and
+debugged using the CDT. When you have successfully imported your
+existing file system, the folder structure is displayed in the C/{cpp}
+Projects view. Again, you should identify an appropriate "root folder"
+to import from.
+
+==== Tip:
+
+* Importing your existing file system can consume significant disk space
+depending on the size of your files.
+* Your files may become detached from an existing source control system
+that previously referenced the original file location such as a
+ClearCase view.
+
+image:ngconcepts.gif[Related concepts,width=143,height=21]
+
+* xref:../concepts/cdt_c_over_cdt.adoc[Overview of the CDT]
+* xref:../concepts/cdt_c_projects.adoc[CDT Projects]
+
+image:ngtasks.gif[Related tasks,width=143,height=21]
+
+* xref:../tasks/cdt_o_proj_files.adoc[Working with C/{cpp} project files]
+
+image:ngref.gif[Related reference,width=143,height=21]
+
+* xref:../reference/cdt_o_proj_prop_pages.adoc[Project properties]

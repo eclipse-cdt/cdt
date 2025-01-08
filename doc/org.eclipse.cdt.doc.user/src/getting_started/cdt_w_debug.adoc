@@ -1,0 +1,147 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Debugging a project
+
+The debugger lets you control the execution of your program by setting
+breakpoints, suspending executed programs, stepping through your code,
+and examining the contents of variables.
+
+=== To debug a project:
+
+. Click the *Run > Debug Configurations...* menu option.
++
+The *Debug* *Configurations* dialog opens.
+ +
+image:cdt_w_debug_configurations_01.png[Debug Configurations
+dialog,width=873,height=662]
+ +
+. Double-click *C/{cpp} Application* to create a new launch
+configuration.
+ +
+image:cdt_w_debug_configurations_02.png[C/{cpp} Application
+debug configuration,width=763,height=601]
+ +
++
+If a project is selected in the
+xref:../reference/cdt_u_project_explorer_view.adoc[Project Explorer] view
+the following data is automatically entered, take a moment to verify its
+accuracy or change as needed.
+ +
+[loweralpha]
+.. In the *Name* edit box, type the project name, like *Hello World*.
+ +
+You can now select this debug launch configuration by name the next time
+that you debug this project.
+ +
+.. In the *C/{cpp} Application* edit box, type the name of the executable
+if its not already entered.
+ +
+If not, click the *Search Project* button to locate the executable in
+the project.
+ +
+.. In the *Project* edit box, type or choose your project, e.g.
+*HelloWorld*.
++
+*NOTE* If you see the error "[.typewriter]#[Debugger]: No debugger
+available#", select the *Debugger* tab and choose a valid debugger for
+your platform (e.g. [.typewriter]#gdb/mi#).
+ +
+. Click *Debug*.
+ +
+You may be prompted to switch to the *Debug* perspective. Click *Yes*
++
+The *Debug* perspective appears with the [.typewriter]#helloworld.exe#
+application window open. The C/{cpp} editor repositions in the
+perspective.
++
+*NOTE:* If you see the error "[.typewriter]#Can't find source
+file#" in the editor view, use the *Locate File* button to locate your
+source file.
++
+. In the left margin of the [.typewriter]#main.cpp# window, double-click
+to set a breakpoint on: [.typewriter]#cout {lt}{lt} "You just entered"#
+ +
+You'll see a blue circle
+(image:icon_breakpoint_obj.gif[Breakpoint,width=16,height=16])
+there indicating the breakpoint is set.
+ +
+. Click *Run > Resume*.
+ +
+Or, you can use the *Resume* button
+(image:icon_db_resume.png[Resume,width=19,height=14]) on the
+toolbar of the *Debug* view .
+ +
+. When prompted, in the *Console* view, type a value other than 'm', and
+press Enter.
+ +
+The breakpoint will be hit.
+ +
+. In the *Variables* view, verify that the variable is not 'm'.
++
+. Click *Run > Resume*.
++
+. When prompted, again type a value other than 'm' in the
+xref:../reference/cdt_u_console_view.adoc[Console] view, and press Enter.
++
+The breakpoint will be hit.
+. In the *Variables* view, verify that the variable is not 'm'.
++
+. In the *Variables* view, right-click the input variable, and select
+*Change Value...* and type *'m'* _between the single quotes_ and hit
+*OK*.
+ +
+. Click *Run > Resume*.
++
+The output in the [.typewriter]#helloworld.exe# application window is:
+"[.typewriter]#Thank you. Exiting.#"
+. The application terminates and the debug session ends. The *Debug*
+perspective remains open.
+
+To learn more about debugging, see the related debug conceptual topics.
+
+xref:cdt_w_build.adoc[image:ngback.gif[Back
+icon,width=16,height=16]] *xref:cdt_w_build.adoc[Back: Building a
+project]*
+
+image:ngconcepts.gif[Related concepts,width=143,height=21]
+
+* xref:../concepts/cdt_c_over_dbg.adoc[Debug overview]
+* xref:../concepts/cdt_c_dbg_info.adoc[Debug information]
+
+image:ngtasks.gif[Related tasks,width=143,height=21]
+
+* xref:../tasks/cdt_o_debug.adoc[Debugging]
+
+image:ngref.gif[Related reference,width=143,height=21]
+
+* xref:../reference/cdt_u_dbg_view.adoc[Debug view]
+* xref:../reference/cdt_u_dbg_view.adoc[Debug launch controls]
+

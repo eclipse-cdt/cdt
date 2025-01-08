@@ -1,0 +1,85 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Building a project
+
+The make output and build progress information displays in the
+xref:../reference/cdt_u_console_view.adoc[Console] view. The
+xref:../reference/cdt_u_make_targets_view.adoc[Make Targets] view
+displays makefile actions, and the
+xref:../reference/cdt_u_problems_view.adoc[Problems] view displays
+compile warnings or errors.
+
+=== To build a project:
+
+. In the *Project Explorer* view, select your project. For the tutorial,
+you can select the *HelloWorld* project you created earlier.
++
+. Click *Project > Build Project*, or click the build icon
+image:hammer-icon.png[build icon] on the toolbar.
+ +
++
+If you see an error message, such as:
++
+`(Cannot run program "make": Launching failed)`
++
+then CDT cannot locate the build command, usually `make`. Either your
+path is not configured correctly, or you do not have `make` installed on
+your system.
+ +
+. You can see in the *Console* view the output and results of the build
+command. Click on its tab to bring the view forward if it is not
+currently visible. If for some reason it's not present, you can open it
+by selecting *Window > Show View > Console*.
+ +
+image:cdt_w_newmake03.png[Console view in C/{cpp}
+Perspective,width=842,height=633]
+
+image:ngconcepts.gif[Related concepts,width=143,height=21]
+
+* xref:../concepts/cdt_c_projects.adoc[CDT Projects]
+* xref:../concepts/cdt_c_build_over.adoc[Build overview]
+
+image:ngtasks.gif[Related tasks,width=143,height=21]
+
+* xref:../tasks/cdt_o_build_task.adoc[Building projects]
+
+image:ngref.gif[Related reference,width=143,height=21]
+
+* xref:../reference/cdt_u_newproj_buildset.adoc[Make Builder page&#44;
+C/{cpp} Properties window]
+
+xref:cdt_w_debug.adoc[image:ngnext.gif[Next
+icon,width=16,height=16]] *xref:cdt_w_debug.adoc[Next: Debugging a
+project]*
+
+xref:cdt_w_newmake.adoc[image:ngback.gif[Previous
+icon,width=16,height=16]] *xref:cdt_w_newmake.adoc[Back: Creating a
+makefile]*

@@ -1,0 +1,112 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Installing and updating the CDT
+
+You can use the Software Updates manager to quickly install or update
+the CDT directly from the Eclipse workbench using your internet
+connection.
+
+To obtain the latest CDT features:
+
+. Select *Help > Software Updates > Find and Install*.
++
+image:cdt_update_find-install.png[]
++
+. In the *Feature Updates* window, select *Search for new features to
+install* and click *Next*.
++
+Note: If you want to search for updates on features that you currently
+have installed, you can select the option *Search for updates of the
+currently installed features*, and then follow the steps to update using
+that method.
++
+image:cdt_update_install_new.png[]
++
+. If you have not updated previously, you will have to enter the
+location of the Eclipse CDT Install site. Click *New Remote Site...*.
++
+image:cdt_update_install_sites.png[]
++
+. In the New Update Site dialog box, type the name and URL for the
+Eclipse update site.
++
+image:cdt_update_install_new_sites.png[]
++
+. Click *OK*.
++
+. From the *Sites to include in search* list, select the update site you
+just created by clicking the appropriate check box, and click *Finish*.
++
+image:cdt_update_install_cdt_site.png[]
++
+. The Search Results dialog shows the features available to install from
+the update site. Expand and select any additional features that you
+require. De-select any options that do not apply to you.
++
+. Click *Next*.
++
+image:cdt_update_search_results.png[]
++
+. You must accept the Eclipse.org Software User Agreement to continue
+installing the CDT update. If you accept the terms, select *I accept the
+terms in the license agreement* and then click *Next*.
++
+image:cdt_update_license_agreement.png[]
++
++
+You can review the summary list of the features you selected to
+install.
++
+. Optional: Click *Change Location* to select the location you would
+like the updates installed. Typically, this is the directory where you
+installed Eclipse.
++
+. Click *Finish*.
++
+image:cdt_update_location.png[]
++
+. You will now start downloading the CDT components. You will have to
+verify that you want the features installed by clicking *Install* for
+each feature you selected.
++
+image:cdt_update_jar_verification.png[]
++
++
+Now, you have to restart Eclipse.
++
+. Select *Yes* to complete the feature installation process.
++
+image:cdt_restart.png[]
+
+image:ngconcepts.gif[Related concepts,width=143,height=21]
+
+* xref:../concepts/cdt_c_over_cdt.adoc[CDT Overview]
+* xref:../concepts/cdt_c_perspectives.adoc[C/{cpp} Development perspective]

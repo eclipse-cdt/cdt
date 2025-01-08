@@ -1,0 +1,108 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Creating your {cpp} file
+
+You can begin coding your HelloWorld program. The .cpp file that you
+create will be saved in the project folder you just created
+xref:cdt_w_newproj.adoc[Creating a Makefile project].
+
+Files are edited in the C/{cpp} editor located to the right of the C/{cpp}
+Projects view. The left margin of the C/{cpp} editor, called the marker
+bar, displays icons for items such as bookmarks, breakpoints, and
+compiler errors and warnings.
+
+For more information about:
+
+* The editor area and marker bar, see *Workbench User Guide > Reference
+> User interface information > Views and editors > Editor area*
+* The marker bar icons, see *Workbench User Guide > Reference > User
+interface information > Icons and buttons > Editor area marker bar*
+
+To create a {cpp} file:
+
+. In the *Project Explorer* view, right-click the *HelloWorld* project
+folder, and select *New > Source File*.
+. In the *Source file:* field, type *main.cpp*.
+By default the source folder should be your project folder.
+The template selected is probably ``Default C/{cpp} Source Template.''
+. Click *Finish*.
+. A Comment template probably appears at the top of an otherwise empty
+file. Type the code, exactly as it appears below, in the editor. Or you
+can paste it in from this help file.
++
+....
+#include <iostream>
+using namespace std;
+
+int main () {
+    // Say HelloWorld five times
+    for (int index = 0; index < 5; ++index)
+        cout << "HelloWorld!" << endl;
+    char input = 'i';
+    cout << "To exit, press 'm' then the 'Enter' key." << endl;
+    cin  >> input;
+    while(input != 'm') {
+        cout << "You just entered '" << input << "'. "
+             << "You need to enter 'm' to exit." << endl;
+        cin  >> input;
+    }
+    cout << "Thank you. Exiting." << endl;
+    return 0;
+}
+....
+. Click *File > Save*.
+
+Your new .cpp file is displayed in the *Project Explorer* view. Your
+project now contains main.cpp. Before you can build your HelloWorld
+project, you must create a makefile.
+
+xref:cdt_w_newmake.adoc[image:ngnext.gif[Next
+icon,width=16,height=16]] *xref:cdt_w_newmake.adoc[Next: Creating your
+makefile]*
+
+xref:cdt_w_newproj.adoc[image:ngback.gif[Back
+icon,width=16,height=16]] *xref:cdt_w_newproj.adoc[Back: Creating your
+project]*
+
+image:ngconcepts.gif[Related concepts,width=143,height=21]
+
+* xref:../concepts/cdt_c_projects.adoc[CDT projects]
+* xref:../concepts/cdt_c_proj_file_views.adoc[Project file views]
+* xref:../concepts/cdt_o_code_entry.adoc[Coding aids]
+
+image:ngtasks.gif[Related tasks,width=143,height=21]
+
+* xref:../tasks/cdt_o_proj_files.adoc[Working with C/{cpp} project files]
+* xref:../tasks/cdt_o_write_code.adoc[Writing code]
+
+image:ngref.gif[Related reference,width=143,height=21]
+
+* xref:../reference/cdt_o_proj_prop_pages.adoc[C/{cpp} Projects view]

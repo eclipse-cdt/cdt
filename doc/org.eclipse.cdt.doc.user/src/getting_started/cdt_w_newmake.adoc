@@ -1,0 +1,87 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Creating a makefile
+
+For the purpose of this tutorial, you were instructed to create a {cpp}
+Project which requires you to create a makefile.
+
+To create a makefile:
+
+. In the *Project Explorer* view, right-click the *HelloWorld* project
+folder and select *New > File*.
+. In the *File name* box, type *makefile*.
+. Click *Finish*.
+. Type the gnu make instructions below in the editor. Lines are indented
+with tab characters, not with spaces.
++
+[source,makefile]
+----
+all: hello.exe
+
+# NOTE: ensure the indented lines are indented with tab characters and not space.
+clean:
+	rm main.o hello.exe
+
+hello.exe: main.o
+	g++ -g -o hello main.o
+
+main.o:
+	g++ -c -g main.cpp
+----
+. Click *File > Save*.
+
+Your new makefile, along with your main.cpp file are displayed in the
+Project Explorer view. Your project now contains main.cpp and makefile.
+You can now build your HelloWorld project.
+
+image:cdt_w_newmake02.png[]
+
+xref:cdt_w_build.adoc[image:ngnext.gif[Next
+icon,width=16,height=16]] *xref:cdt_w_build.adoc[Next: Building your
+project]*
+
+xref:cdt_w_newcpp.adoc[image:ngback.gif[Back
+icon,width=16,height=16]] *xref:cdt_w_newcpp.adoc[Back: Creating your {cpp}
+file]*
+
+image:ngconcepts.gif[Related concepts,width=143,height=21]
+
+* xref:../concepts/cdt_c_projects.adoc[Project]
+* xref:../concepts/cdt_o_code_entry.adoc[Code entry]
+
+image:ngtasks.gif[Related tasks,width=143,height=21]
+
+* xref:../tasks/cdt_o_proj_files.adoc[Working with C/{cpp} project files]
+* xref:../tasks/cdt_o_write_code.adoc[Writing code]
+
+image:ngref.gif[Related reference,width=143,height=21]
+
+* xref:../reference/cdt_o_proj_prop_pages.adoc[C/{cpp} Projects view]

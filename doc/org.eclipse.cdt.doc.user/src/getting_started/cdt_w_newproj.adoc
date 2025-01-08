@@ -1,0 +1,166 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Creating a Makefile project
+
+This tutorial describes the process of creating a new {cpp} project that
+includes a makefile, and debugging the program.
+
+You need to create a project to contain your source code and related
+files. A project has an associated builder that can incrementally
+compile source files as they are changed.
+
+To create a project:
+
+. Select *File > New > Project*.
++
+When you create a new project, you are required to specify the project
+type. This project type will determine the toolchain, data, and tabs
+that the CDT uses/displays.
++
+. Select the type of project to create. For this tutorial, expand the
+*C/{cpp}* folder and select *{cpp} Project*.
++
+The *{cpp} Project* wizard opens. javascript:void(0)[Click here to see an
+illustration.]
++
+By default, the CDT filters the *Toolchain* and *Project types* that
+currently display in those lists are based on the language support for
+the {cpp} Project wizard you selected for this tutorial.
++
+. In the *Project name* field, type HelloWorld.
+. Leave the *Use Default Location* option selected.
++
+Next, you want to select the type of project to create. In the New CDT
+Project Wizard, you can choose from the following project types:
+* *Executable* - Provides an executable application. This project type
+folder contains three templates.
+** *Hello World {cpp} Example* provides a simple {cpp} Hello World
+application with main().
+** *Hello World ANSI C Example* provides a simple C Hello World
+application with main().
+** *Empty Project* provides a single source project folder that contains
+no files.
+ +
+After you select this template, the result is a project with only the
+meta-data files required for the project type. You are expected to
+provide source files for the project's target.
+ +
+The makefile for the *Executable* project type is automatically created
+by the CDT.
+ +
+
+* *Shared Library* - An executable module that is compiled and linked
+separately. When you create a project that uses a shared library
+(libxx.so), you define your shared library's project as a Project
+Reference for your application. For this project type, the CDT combines
+object files together and joins them so they're relocatable and can be
+shared by many processes. Shared libraries are named using the format
+libxx.so.`version`, where `version` is a number with a default of 1. The
+libxx.so file usually is a symbolic link to the latest version. The
+makefile for this project type is automatically created by the CDT.
+* *Static Library* - A collection of object files that you can link into
+another application (libxx.a). The CDT combines object files (i.e. *.o)
+into an archive (*.a) that is directly linked into an executable. The
+makefile for this project type is automatically created by the CDT.
+* *Makefile Project* - Creates an empty project without the meta-data
+files. This selection is useful for importing and modifying existing
+makefile-based projects; a new makefile is not created for this project
+type.
++
+By default, the CDT filters the *Toolchain* and *Project types* that
+currently display in those lists based on the language support for the
+{cpp} Project wizard you selected for this tutorial.
++
+
+. From the *Project types* list, expand *Makefile project* and select
+*Empty Project*. This project lets you enter the source file and the
+makefile yourself.
+. Select a required toolchain from the *Toolchain* list.
++
+A toolchain is a set of tools (such as a compiler, linker, and
+assembler) intended to build your project. Additional tools, such as a
+debugger, can be associated with a toolchain.
+There can be several toolchains available, depending on the compilers
+installed on your system.
+. Click *Next*.
+. (Optional) On the *Select Configurations* page, Click *Advanced
+Settings*.
+* Expand *C/{cpp}Build > Settings*. Click the *Binary Parsers* tab.
++
+javascript:void(0)[Click here to see an illustration.]
++
+* In the *Binary Parser* list, select the error parser that is
+appropriate for your platform. Other project settings can be modified
+here as well. The default selection is probably OK.
++
+To ensure the accuracy of the C/{cpp} Projects view and the ability to
+successfully run and debug your programs, selecting the correct parser
+is important. After you select the correct parser for your development
+environment and build your project, you can view the components of the
+.o file in the C/{cpp} Projects view. You can also view the contents of
+the .o file in the C/{cpp} editor.
++
+Click *OK* to close the Project Properties window.
+. Click *Finish*.
+. If a message box prompts you to change perspectives, click *Yes*.
+
+Your new project displays in the Project Explorer view. Your project is
+empty because you have not yet created files for your project. You may
+see an error since there is nothing to build yet for your project. You
+can now start writing the code for your HelloWorld program.
+
+*Tip:* You can view and modify the properties of your HelloWorld project
+at any time by right-clicking on the project in the *Project Explorer*
+view and clicking Properties.
+
+xref:cdt_w_newcpp.adoc[image:ngnext.gif[Next
+Icon,width=16,height=16]] xref:cdt_w_newcpp.adoc[*Next: Creating your {cpp}
+file*]
+
+For more information about:
+
+* Projects, see *Workbench User Guide > Concepts > Workbench >
+Resources*
+* The workspace, see *Workbench User Guide > Tasks > Upgrading Eclipse*
+
+image:ngconcepts.gif[Related concepts,width=143,height=21]
+
+* xref:../concepts/cdt_c_over_cdt.adoc[CDT overview]
+* xref:../concepts/cdt_c_projects.adoc[CDT projects]
+* xref:../concepts/cdt_c_proj_file_views.adoc[Project file views]
+
+image:ngtasks.gif[Related tasks,width=143,height=21]
+
+* xref:../tasks/cdt_o_proj_files.adoc[Working with C/{cpp} project files]
+
+image:ngref.gif[Related reference,width=143,height=21]
+
+* xref:../reference/cdt_o_proj_prop_pages.adoc[C/{cpp} Projects view]

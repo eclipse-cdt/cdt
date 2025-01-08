@@ -1,0 +1,42 @@
+/* AsciiDoc support based on Asciidoctor default stylesheet combined with help.css to match Eclipse Help look and feel | MIT License | http://asciidoctor.org (#873) */
+/* Additional entries can be added here as more parts of asciidoc are used */
+
+@import "./help.css";
+
+/* The original help code in CDT relied heavily on <br> to add a bit of
+vertical space and had margins set to 0 most places. So for the adoc
+version we do it with CSS instead.  */
+ol li p	     { margin-top: 0; margin-bottom: 0.5em } 
+
+p.tableblock { margin: 0 }
+table.tableblock tr th, table.tableblock tr td { padding: 0.3em }
+table.tableblock, th.tableblock, td.tableblock { border: 0 solid #dedede }
+table.grid-all>thead>tr>.tableblock, table.grid-all>tbody>tr>.tableblock { border-width: 0 1px 1px 0 }
+table.grid-all>tfoot>tr>.tableblock { border-width: 1px 1px 0 0 }
+table.grid-cols>*>tr>.tableblock { border-width: 0 1px 0 0 }
+table.grid-rows>thead>tr>.tableblock, table.grid-rows>tbody>tr>.tableblock { border-width: 0 0 1px 0 }
+table.grid-rows>tfoot>tr>.tableblock { border-width: 1px 0 0 0 }
+table.grid-all>*>tr>.tableblock:last-child, table.grid-cols>*>tr>.tableblock:last-child { border-right-width: 0 }
+table.grid-all>tbody>tr:last-child>.tableblock, table.grid-all>thead:last-child>tr>.tableblock, table.grid-rows>tbody>tr:last-child>.tableblock, table.grid-rows>thead:last-child>tr>.tableblock { border-bottom-width: 0 }
+table.frame-all { border-width: 1px }
+table.frame-sides { border-width: 0 1px }
+table.frame-topbot { border-width: 1px 0 }
+th.halign-left, td.halign-left { text-align: left }
+th.halign-right, td.halign-right { text-align: right }
+th.halign-center, td.halign-center { text-align: center }
+th.valign-top, td.valign-top { vertical-align: top }
+th.valign-bottom, td.valign-bottom { vertical-align: bottom }
+th.valign-middle, td.valign-middle { vertical-align: middle }
+div.listingblock pre { padding: 0.7em }
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:initial}
+.admonitionblock>table td.icon .title{font-weight:bold;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning:before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution:before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important:before{content:"\f06a";color:#bf0000}

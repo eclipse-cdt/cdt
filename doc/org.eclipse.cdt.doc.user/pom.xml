@@ -43,26 +43,37 @@
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>
-				<version>3.1.1</version>
+				<configuration>
+					<sourceDirectory>${project.basedir}/src</sourceDirectory>
+					<outputDirectory>${project.basedir}</outputDirectory>
+					<preserveDirectories>true</preserveDirectories>
+					<relativeBaseDir>true</relativeBaseDir>
+					<attributes>
+						<icons>font</icons>
+						<iconfont-remote>false</iconfont-remote>
+						<!--
+						stylesdir is used for all style sheets, for now we are just using font-awesome so this layout work,
+						but if we use more stylesheets a better layout may be desired.
+						-->
+						<stylesdir>../font-awesome/css</stylesdir>
+						<imagesdir>../images</imagesdir>
+						<linkcss />
+						<reproducible />
+						<source-highlighter>coderay</source-highlighter>
+						<coderay-css>style</coderay-css>
+						<stylesheet>../../helpadoc.css</stylesheet>
+						<toc>macro</toc>
+						<!-- to preserve filenames/urls, we use the old htm suffix that files originally had-->
+						<outfilesuffix>.htm</outfilesuffix>
+					</attributes>
+				</configuration>
 				<executions>
 					<execution>
-						<id>adoc-to-html</id>
+						<id>generate-online-help-from-asciidoc</id>
 						<phase>generate-resources</phase>
 						<goals>
 							<goal>process-asciidoc</goal>
 						</goals>
-						<configuration>
-							<outputDirectory>${project.basedir}/html</outputDirectory>
-							<attributes>
-								<icons>font</icons>
-								<imagesdir>../images</imagesdir>
-								<linkcss />
-								<reproducible />
-								<source-highlighter>coderay</source-highlighter>
-								<stylesheet>../help.css</stylesheet>
-								<toc>macro</toc>
-							</attributes>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -70,6 +81,26 @@
 	</build>
 
 	<profiles>
+		<profile>
+			<id>asciidoc-auto-refresh</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.asciidoctor</groupId>
+						<artifactId>asciidoctor-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>generate-online-help-from-asciidoc-auto-refresh</id>
+								<phase>generate-resources</phase>
+								<goals>
+									<goal>auto-refresh</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<profile>
 			<id>build-doc</id>
 			<activation>

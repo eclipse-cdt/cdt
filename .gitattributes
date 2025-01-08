@@ -156,6 +156,15 @@ output-1 text
 *.srec text eol=lf
 test_commands text
 
+# Font awesome files (other files could have the same extensions)
+*.eot binary
+*.less binary
+*.otf binary
+*.scss binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+
 # Other special files
 cdtOptions text
 .clang-format text

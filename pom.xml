@@ -1066,6 +1066,11 @@
 					<artifactId>build-helper-maven-plugin</artifactId>
 					<version>3.6.0</version>
 				</plugin>
+				<plugin>
+					<groupId>org.asciidoctor</groupId>
+					<artifactId>asciidoctor-maven-plugin</artifactId>
+					<version>3.1.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

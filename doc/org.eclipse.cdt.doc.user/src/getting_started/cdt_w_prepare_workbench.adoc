@@ -1,0 +1,66 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Preparing the Workbench
+
+This tutorial will get you started using the C/{cpp} Development Toolkit (CDT) in the Workbench.
+
+First, you will verify that the workbench is properly configured for C/{cpp} development. It is assumed that:
+
+- Your Workbench has its default settings. To reset the current perspective to its original layout, from the menu bar select **Window &gt; Reset Perspective**.
+
+- You are familiar with the basic Workbench features, such as views xref:../concepts/cdt_c_views.adoc[views] and xref:../concepts/cdt_c_perspectives.adoc[perspectives]
+
+
+== Setting the global editor operations and appearance
+
+The main place to configure global editor-related preferences is the image:command_link.png[] xref:javascript:executeCommand('org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Editors)')[General &gt; Editors] preference pages (also accessible through the **Window &gt; Preferences** menu item)
+
+
+== Setting the C/{cpp} editor operations and appearance
+
+C/{cpp}-specific editor preferences are under image:command_link.png[] xref:javascript:executeCommand('org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Editors)')[C/{cpp} &gt; Editor].
+They include the following:
+
+- xref:../reference/cdt_u_c_editor_gen.adoc[Editor] - control the appearance of text highlighting
+- xref:../reference/cdt_u_c_editor_con_assist.adoc[Content Assist] - customize the Content Assist feature
+- xref:../reference/cdt_u_c_editor_folding.adoc[Folding] - customize folding behavior
+- xref:../reference/cdt_u_c_editor_hov.adoc[Hovering] customize hover behavior
+- xref:../reference/cdt_u_c_editor_mark_occurrences.adoc[Mark Occurrences] - set annotations
+- xref:../reference/cdt_u_c_editor_save_actions.adoc[Save Actions] - configure actions performed while saving a file
+- xref:../reference/cdt_u_c_editor_scalability.adoc[Scalability] - configure behavior for handling large source files
+- xref:../reference/cdt_u_c_editor_color.adoc[Syntax Coloring] - specify how C/{cpp} source code is rendered
+- xref:../reference/cdt_u_c_code_templates_pref.adoc[Templates] - configure the format of newly generated code stubs, comments and files
+- xref:../reference/cdt_u_c_editor_typing.adoc[Typing] - configure formatting input as you type
+
+
+image:ngref.gif["Related reference"]
+
+- xref:../reference/cdt_o_ceditor_pref.adoc[C/{cpp} Editor Preferences]

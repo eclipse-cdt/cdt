@@ -1,0 +1,74 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Creating a CMake project
+
+This tutorial describes the process of creating a new C/{cpp} project that includes a CMakeLists.txt file.
+
+You need to create a project to contain your source code and related files.
+A project has an associated builder that can incrementally compile source files as they are changed.
+
+To create a project:
+
+. Select menu:File[New > Project].
+
+
+When you create a new project, you are required to specify the project type.
+This project type will determine the toolchain, data, and tabs that the CDT uses/displays.
+
+. Select the type of project to create. For this tutorial, expand the *C/{cpp}* folder and select *C/{cpp} Project*.
+. Click btn:[Next].
+
+
+The *C/{cpp} Project* wizard opens:
+
+
+image:c_cpp_project_wizard.png[width=515]
+
+
+By default, the CDT presents all *C/{cpp} Project* templates.
+
+. Select the *CMake* template filter and choose from the following *CMake* project templates:
+
+
+- *CMake Project* - provides a simple {cpp} Hello World executable application project with main() and a supporting CMakeLists.txt file.
+- *Empty or Existing CMake Project* - provides an empty executable application project suitable for importing existing source and CMakeLists.txt files.
+
+. Click btn:[Next].
+. In the *Project name* field, provide a name for the new project.
+. Leave the *Use Default Location* option selected.
+. Click btn:[Finish].
+. If a message box prompts you to change perspectives, click btn:[Yes].
+
+Your new project displays in the Project Explorer view.
+Your project may be empty because you have not yet created files for your project.
+You can now start writing the code for your application or importing code from elsewhere.
+
+icon:arrow-circle-right[] xref:cdt_w_newcpp.adoc[Next: Creating your {cpp} file]

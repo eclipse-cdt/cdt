@@ -174,7 +174,7 @@ public class CommandLineArgsTest extends BaseParametrizedTestCase {
 	 */
 	protected void checkArguments(String... expected) throws Throwable {
 
-		MIStoppedEvent stoppedEvent = runToTag("main_init");
+		MIStoppedEvent stoppedEvent = runToTag("MAIN_INIT_LINE");
 
 		// Check that argc is correct
 		final IExpressionDMContext argcDmc = SyncUtil.createExpression(stoppedEvent.getDMContext(), "argc");

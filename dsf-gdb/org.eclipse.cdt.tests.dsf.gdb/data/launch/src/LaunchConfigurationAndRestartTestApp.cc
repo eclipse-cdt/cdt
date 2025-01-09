@@ -19,7 +19,7 @@ int envTest() {
     char *home, *launchTest;
     home = getenv("HOME");
     launchTest = getenv("LAUNCHTEST");
-    return 0;
+    return 0; // END_ENV_TEST_LINE
 }
 
 int main (int argc, char *argv[])
@@ -29,7 +29,7 @@ int main (int argc, char *argv[])
 	var = 3;
 	var = 4; // three_steps_back_from_b_stopAtOther
 	var = 5;
-	stopAtOther(); // main_init
+	stopAtOther(); // MAIN_INIT_LINE
     reverseTest(); // tests assume that every line between first and last
     envTest(); // is steppable, so no blank lines allowed.
     return 36; // LAST_LINE_IN_MAIN

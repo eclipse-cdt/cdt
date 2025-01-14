@@ -74,4 +74,4 @@ Thanks to the auto discovery, the indexing of the C/C++ code has
 improved, because all compilation flags are known per file. This is especially
 beneficial for projects that use multiple toolchains in one project.
 
-icon:arrow-circle-right[] link:pass:[../html/new_cmake_proj.html][Next: Creating a CMake project]
+icon:arrow-circle-right[] xref:new_cmake_proj.adoc[Next: Creating a CMake project]

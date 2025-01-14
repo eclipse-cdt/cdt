@@ -53,6 +53,12 @@ pipeline {
                       -Dmaven.repo.local=/home/jenkins/.m2/repository \
                       --settings /home/jenkins/.m2/settings.xml \
                       '''
+                sh '''
+                  echo "TIMESTAMP: $(date)" > releng/org.eclipse.cdt.repo/target/repository/ci-and-git-info.txt
+                  echo "CI URL: ${BUILD_URL}" >> releng/org.eclipse.cdt.repo/target/repository/ci-and-git-info.txt
+                  echo "Most recent git commits: (output of  git log --graph --pretty='tformat:%h [%ci] - %s' -20)"  >> releng/org.eclipse.cdt.repo/target/repository/ci-and-git-info.txt
+                  git log --graph --pretty='tformat:%h [%ci] - %s' -20 | tee -a releng/org.eclipse.cdt.repo/target/repository/ci-and-git-info.txt
+                '''
               }
             }
           }

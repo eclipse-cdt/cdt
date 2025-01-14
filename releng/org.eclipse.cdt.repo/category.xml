@@ -189,7 +189,7 @@
    <bundle id="javax.activation" version="1.2.2.v20221203-1659"/>
    <bundle id="jakarta.xml.bind-api" version="2.3.3"/>
    <bundle id="com.google.gson" version="0.0.0"/>
-   <bundle id="org.freemarker.freemarker" version="2.3.33"/>
+   <bundle id="org.freemarker.freemarker" version="2.3.33.stable"/>
    <bundle id="org.yaml.snakeyaml" version="0.0.0"/>
    <bundle id="com.sun.jna" version="0.0.0"/>
    <bundle id="com.sun.jna.platform" version="0.0.0"/>

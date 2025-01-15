@@ -26,5 +26,3 @@ jobs:
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           junit_files: "test-results/**/*.xml"
-          root_log_level: DEBUG
-          log_level: DEBUG

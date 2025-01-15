@@ -6,6 +6,7 @@ pipeline {
   }
   options {
     timestamps()
+    buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '2'))
   }
   stages {
     stage('initialize PGP') {

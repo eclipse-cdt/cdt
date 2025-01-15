@@ -8,7 +8,7 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.cmake.core;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,13 +26,13 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.eclipse.cdt.cmake.core.CMakeErrorParser;
-import org.eclipse.cdt.cmake.core.CMakeExecutionMarkerFactory;
-import org.eclipse.cdt.cmake.core.ICMakeExecutionMarkerFactory;
-import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
-import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
-import org.eclipse.cdt.cmake.core.ParsingConsoleOutputStream;
+import org.eclipse.cdt.cmake.core.internal.Activator;
+import org.eclipse.cdt.cmake.core.internal.CMakeConsoleWrapper;
+import org.eclipse.cdt.cmake.core.internal.CMakePropertiesController;
+import org.eclipse.cdt.cmake.core.internal.CMakeUtils;
+import org.eclipse.cdt.cmake.core.internal.CommandDescriptorBuilder;
 import org.eclipse.cdt.cmake.core.internal.CommandDescriptorBuilder.CommandDescriptor;
+import org.eclipse.cdt.cmake.core.internal.IOsOverridesSelector;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
@@ -71,6 +71,9 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
 import org.osgi.service.prefs.Preferences;
 
+/**
+ * @since 1.6
+ */
 public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	public static final String CMAKE_USE_UI_OVERRIDES = "cmake.use.ui.overrides"; //$NON-NLS-1$
@@ -86,7 +89,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	private ICMakeToolChainFile toolChainFile;
 
 	// lazily instantiated..
-	private CMakePropertiesController pc;
+	private ICMakePropertiesController pc;
 
 	private Map<IResource, IScannerInfo> infoPerResource;
 	/**
@@ -385,7 +388,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 	/** Lazily creates the CMakePropertiesController for the project.
 	 */
-	private CMakePropertiesController getPropertiesController() {
+	private ICMakePropertiesController getPropertiesController() {
 		if (pc == null) {
 			final Path filePath = Path.of(getProject().getFile(".settings/CDT-cmake.yaml").getLocationURI()); //$NON-NLS-1$
 			pc = new CMakePropertiesController(filePath, () -> {

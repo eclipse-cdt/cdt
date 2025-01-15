@@ -15,7 +15,7 @@
    <extension
          point="org.eclipse.cdt.core.buildConfigProvider">
       <provider
-            class="org.eclipse.cdt.cmake.core.internal.CMakeBuildConfigurationProvider"
+            class="org.eclipse.cdt.cmake.core.CMakeBuildConfigurationProvider"
             id="org.eclipse.cdt.cmake.core.provider"
             natureId="org.eclipse.cdt.cmake.core.cmakeNature">
       </provider>

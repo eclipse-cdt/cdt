@@ -41,7 +41,7 @@ import org.yaml.snakeyaml.representer.Representer;
  * us to delete file CMakeCache.txt to avoid complaints by cmake.
  * @author Martin Weber
  */
-class CMakePropertiesController implements ICMakePropertiesController {
+public class CMakePropertiesController implements ICMakePropertiesController {
 
 	private final Path storageFile;
 	private final Runnable cmakeCacheDirtyMarker;
@@ -62,7 +62,7 @@ class CMakePropertiesController implements ICMakePropertiesController {
 	 * 		the object to notify when modifications to the project properties force
 	 * us to delete file CMakeCache.txt to avoid complaints by cmake
 	 */
-	CMakePropertiesController(Path storageFile, Runnable cmakeCacheDirtyMarker) {
+	public CMakePropertiesController(Path storageFile, Runnable cmakeCacheDirtyMarker) {
 		this.storageFile = Objects.requireNonNull(storageFile);
 		this.cmakeCacheDirtyMarker = Objects.requireNonNull(cmakeCacheDirtyMarker);
 	}

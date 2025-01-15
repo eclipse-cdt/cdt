@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
@@ -29,7 +30,7 @@ import org.eclipse.core.variables.VariablesPlugin;
  *
  * @author Martin Weber
  */
-class CommandDescriptorBuilder {
+public class CommandDescriptorBuilder {
 
 	private final ICMakeProperties cmakeProperties;
 	private final IOsOverridesSelector overridesSelector;
@@ -37,7 +38,7 @@ class CommandDescriptorBuilder {
 	/**
 	 * @param cmakeProperties the project properties related to the cmake command
 	 */
-	CommandDescriptorBuilder(ICMakeProperties cmakeProperties, IOsOverridesSelector overridesSelector) {
+	public CommandDescriptorBuilder(ICMakeProperties cmakeProperties, IOsOverridesSelector overridesSelector) {
 		this.cmakeProperties = Objects.requireNonNull(cmakeProperties);
 		this.overridesSelector = Objects.requireNonNull(overridesSelector);
 	}
@@ -51,7 +52,7 @@ class CommandDescriptorBuilder {
 	 * @return the command-line arguments and environment to invoke cmake.
 	 * @throws CoreException
 	 */
-	CommandDescriptor makeCMakeCommandline(Path toolChainFile) throws CoreException {
+	public CommandDescriptor makeCMakeCommandline(Path toolChainFile) throws CoreException {
 		List<String> args = new ArrayList<>();
 		List<String> env = new ArrayList<>();
 
@@ -107,7 +108,7 @@ class CommandDescriptorBuilder {
 	 * @return the command-line arguments and environment to invoke cmake.
 	 * @throws CoreException
 	 */
-	CommandDescriptor makeCMakeBuildCommandline(String buildscriptTarget) throws CoreException {
+	public CommandDescriptor makeCMakeBuildCommandline(String buildscriptTarget) throws CoreException {
 		List<String> args = new ArrayList<>();
 		List<String> env = new ArrayList<>();
 
@@ -171,7 +172,7 @@ class CommandDescriptorBuilder {
 	 * Command-line arguments and additional environment variables to be used to run a process.
 	 * @author Martin Weber
 	 */
-	static final class CommandDescriptor {
+	public static final class CommandDescriptor {
 		private final List<String> arguments;
 		private final List<String> environment;
 

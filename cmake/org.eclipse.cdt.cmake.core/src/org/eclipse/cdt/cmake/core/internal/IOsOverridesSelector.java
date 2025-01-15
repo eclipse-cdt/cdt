@@ -20,7 +20,7 @@ import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
  *
  * @author Martin Weber
  */
-interface IOsOverridesSelector {
+public interface IOsOverridesSelector {
 	/**
 	 * Gets the overrides from the specified {@code ICMakeProperties} object that match the target
 	 * operating system. <br>

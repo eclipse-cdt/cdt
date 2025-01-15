@@ -161,7 +161,7 @@
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/tools/cdt/builds/11.6/cdt-11.6.0-rc2/"/>
+            url="hhttps://download.eclipse.org/tools/cdt/releases/11.6/cdt-11.6.1/"/>
       </repositoryList>
     </targlet>
   </setupTask>
@@ -280,7 +280,7 @@
         <repository
             url="https://download.eclipse.org/tm4e/snapshots"/>
         <repository
-            url="https://download.eclipse.org/tools/cdt/builds/11.6/cdt-11.6.0-rc2/"/>
+            url="https://download.eclipse.org/tools/cdt/builds/cdt/main/"/>
         <repository
             url="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release"/>
         <repository

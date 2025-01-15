@@ -21,9 +21,8 @@ import org.eclipse.core.runtime.CoreException;
 /** Intercepts output to a console and forwards its error stream to a stream that does error parsing for processing.
 
  * @author Martin Weber
- *
  */
-class CMakeConsoleWrapper implements IConsole {
+public class CMakeConsoleWrapper implements IConsole {
 	private final IConsole delegate;
 	private final ConsoleOutputStream err;
 

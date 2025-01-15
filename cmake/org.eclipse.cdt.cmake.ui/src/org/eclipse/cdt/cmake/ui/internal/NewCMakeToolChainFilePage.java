@@ -12,9 +12,9 @@ package org.eclipse.cdt.cmake.ui.internal;
 
 import java.nio.file.Paths;
 
+import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
-import org.eclipse.cdt.cmake.core.internal.CMakeBuildConfiguration;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.core.runtime.CoreException;

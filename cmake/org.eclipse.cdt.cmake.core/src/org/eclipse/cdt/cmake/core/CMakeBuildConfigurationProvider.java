@@ -8,14 +8,13 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
-package org.eclipse.cdt.cmake.core.internal;
+package org.eclipse.cdt.cmake.core;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
-import org.eclipse.cdt.cmake.core.ICMakeToolChainManager;
+import org.eclipse.cdt.cmake.core.internal.Activator;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
@@ -27,6 +26,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
+/**
+ * @since 1.6
+ */
 public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProvider {
 
 	public static final String ID = "org.eclipse.cdt.cmake.core.provider"; //$NON-NLS-1$

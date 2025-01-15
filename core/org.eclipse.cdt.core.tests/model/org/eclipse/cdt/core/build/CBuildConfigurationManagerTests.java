@@ -14,8 +14,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.eclipse.cdt.cmake.core.CMakeBuildConfigurationProvider;
 import org.eclipse.cdt.cmake.core.CMakeNature;
-import org.eclipse.cdt.cmake.core.internal.CMakeBuildConfigurationProvider;
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;

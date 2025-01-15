@@ -13,8 +13,8 @@ package org.eclipse.cdt.cmake.ui.internal;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.cmake.core.internal.CMakeBuildConfiguration;
-import org.eclipse.cdt.cmake.core.internal.CMakeBuildConfigurationProvider;
+import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
+import org.eclipse.cdt.cmake.core.CMakeBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.launch.ui.corebuild.CommonBuildTab;
 import org.eclipse.debug.core.ILaunchConfiguration;

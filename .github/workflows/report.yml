@@ -26,5 +26,5 @@ jobs:
         with:
           commit: ${{ github.event.workflow_run.head_sha }}
           junit_files: "test-results/**/*.xml"
-          event_file: event.json
+          event_file: test-results/event.json
           event_name: ${{ github.event.workflow_run.event }}

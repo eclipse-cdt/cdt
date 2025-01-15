@@ -28,3 +28,5 @@ jobs:
           junit_files: "test-results/**/*.xml"
           event_file: test-results/event.json
           event_name: ${{ github.event.workflow_run.event }}
+          # Workaround as suggested in https://github.com/EnricoMi/publish-unit-test-result-action/issues/12
+          check_run: false

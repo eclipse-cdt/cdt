@@ -12,70 +12,6 @@
    </extension>
 
    <extension point="org.eclipse.ui.viewActions">
-      <!-- Breakpoints View menu contributions -->
-      <viewContribution
-            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.breakpoints.update.Refresh"
-            targetID="org.eclipse.debug.ui.BreakpointView">
-         <action
-               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.breakpoints.viewmodel.update.actions.refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-
-      <!-- Variables View menu contributions -->
-      <viewContribution
-            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.variables.update.Refresh"
-            targetID="org.eclipse.debug.ui.VariableView">
-         <action
-               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.variables.viewmodel.update.actions.refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-
-      <!-- Registers View menu contributions -->
-      <viewContribution
-            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.registers.update.Refresh"
-            targetID="org.eclipse.debug.ui.RegisterView">
-         <action
-               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.registers.viewmodel.update.actions.refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-      
-      <!-- Expressions View menu contributions -->
-      <viewContribution
-            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.expressions.update.Refresh"
-            targetID="org.eclipse.debug.ui.ExpressionView">
-         <action
-               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.expressions.viewmodel.update.actions.refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
-
-      <!-- Debug View menu contributions -->
-      <viewContribution
-            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.debugview.update.Refresh"
-            targetID="org.eclipse.debug.ui.DebugView">
-         <action
-               class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
-               id="org.eclipse.cdt.dsf.debug.ui.debugview.viewmodel.update.actions.refresh"
-               label="%action.refresh.label"
-               toolbarPath="additions">
-         </action>
-      </viewContribution>
       <viewContribution
             id="org.eclipse.cdt.debug.ui.disassembly.toolbar"
             targetID="org.eclipse.cdt.dsf.debug.ui.disassembly.view">
@@ -355,6 +291,106 @@
 	           </dynamic>
             </menu>         
        </menuContribution>
+       <!-- Refresh command for view toolbar -->
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.debug.ui.BreakpointView?after=additions">
+          <separator
+                name="refreshGroup"
+                visible="true">
+          </separator>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.debug.ui.BreakpointView?after=refreshGroup">
+          <command
+                commandId="org.eclipse.cdt.dsf.debug.ui.viewmodel.refresh"
+                icon="icons/refresh.gif"
+                label="%action.refresh.label"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <test
+                      property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+                </test>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.debug.ui.VariableView?after=additions">
+          <command
+                commandId="org.eclipse.cdt.dsf.debug.ui.viewmodel.refresh"
+                icon="icons/refresh.gif"
+                label="%action.refresh.label"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <test
+                      property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+                </test>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.debug.ui.ExpressionView?after=additions">
+          <command
+                commandId="org.eclipse.cdt.dsf.debug.ui.viewmodel.refresh"
+                icon="icons/refresh.gif"
+                label="%action.refresh.label"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <test
+                      property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+                </test>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.debug.ui.RegisterView?after=additions">
+          <command
+                commandId="org.eclipse.cdt.dsf.debug.ui.viewmodel.refresh"
+                icon="icons/refresh.gif"
+                label="%action.refresh.label"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <test
+                      property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+                </test>
+             </visibleWhen>
+          </command>
+       </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">
+          <separator
+                name="placeholder"
+                visible="true">
+          </separator>
+          <separator
+                name="togInstStepModeGroup">
+          </separator>
+          <separator
+                name="refreshGroup"
+                visible="true">
+          </separator>
+          <command
+                commandId="org.eclipse.cdt.dsf.debug.ui.viewmodel.refresh"
+                icon="icons/refresh.gif"
+                label="%action.refresh.label"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <test
+                      property="org.eclipse.cdt.debug.ui.isCDTDebugging">
+                </test>
+             </visibleWhen>
+          </command>
+       </menuContribution>
    </extension>  
 
    <extension point="org.eclipse.ui.handlers">
@@ -443,6 +479,10 @@
 			        </count>
 			    </with>
 			</activeWhen>
+      </handler>
+      <handler
+            class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.ViewRefreshHandler"
+            commandId="org.eclipse.cdt.dsf.debug.ui.viewmodel.refresh">
       </handler>
    </extension>
    <extension point="org.eclipse.core.expressions.definitions">
@@ -635,6 +675,10 @@
             description="%command.jumpToMemory.description"
             id="org.eclipse.cdt.debug.ui.memory.memorybrowser.jumpToMemory"
             name="%command.jumpToMemory.name"/>
+      <command
+            id="org.eclipse.cdt.dsf.debug.ui.viewmodel.refresh"
+            name="%action.refresh.label">
+      </command>
    </extension>
 
    <extension point="org.eclipse.ui.bindings">

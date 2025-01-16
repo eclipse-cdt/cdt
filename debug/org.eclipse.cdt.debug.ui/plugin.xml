@@ -1328,7 +1328,7 @@
     </menuContribution>
     <menuContribution
           allPopups="false"
-          locationURI="toolbar:org.eclipse.debug.ui.DebugView?after=additions">
+          locationURI="toolbar:org.eclipse.debug.ui.DebugView?endof=togInstStepModeGroup">
        <command
              commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand"
              disabledIcon="icons/dlcl16/instr_step.gif"

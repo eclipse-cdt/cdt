@@ -1,6 +1,6 @@
 # This workflow will check for Maven projects if the licenses of all (transitive) dependencies are vetted.
 
-name: License vetting status check
+name: License check
 
 on:
   push:
@@ -13,7 +13,7 @@ on:
     types: [created]
 
 jobs:
-  call-license-check:
+  call:
     uses: eclipse-dash/dash-licenses/.github/workflows/mavenLicenseCheck.yml@master
     with:
       projectId: tools.cdt

@@ -53,7 +53,7 @@ jobs:
           -Ddsf-gdb.skip.tests=$(test ${{ steps.filter.outputs.dsf }} == 'false' && echo 'true' || echo 'false') \
           -Dindexer.timeout=300
     - name: Upload Logs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       if: success() || failure()
       with:
         name: Code Cleanliness Detailed Logs

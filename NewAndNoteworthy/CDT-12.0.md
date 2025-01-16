@@ -52,6 +52,15 @@ The View Performance preference page, which is CDT specific, has been relocated 
 This only affects where in the Preferences tree the page is located, the preferences and key names have not changed.
 In addition, this page is always visible.
 
+# Terminal
+
+## Default encoding for terminal is now UTF-8
+
+For a [while](https://eclipse.dev/eclipse/news/4.24/platform.html#explicit-encoding-workspaces), the default encoding in Eclipse has been UTF-8.
+Starting in CDT 12, the Terminal will now default to UTF-8.
+
+<p align="center"><img src="images/CDT-12.0-default-terminal-encoding.png"></p>
+
 # API Changes, current and planned
 
 ## Breaking API changes

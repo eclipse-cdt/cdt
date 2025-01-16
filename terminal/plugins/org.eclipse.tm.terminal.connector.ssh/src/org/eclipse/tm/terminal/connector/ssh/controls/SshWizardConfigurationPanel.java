@@ -232,7 +232,7 @@ public class SshWizardConfigurationPanel extends AbstractExtendedConfigurationPa
 				if (encoding == null || "null".equals(encoding)) { //$NON-NLS-1$
 					String defaultEncoding = getSelectionEncoding();
 					encoding = defaultEncoding != null && !"".equals(defaultEncoding.trim()) ? defaultEncoding.trim() //$NON-NLS-1$
-							: "ISO-8859-1"; //$NON-NLS-1$
+							: "UTF-8"; //$NON-NLS-1$
 				}
 				setEncoding(encoding);
 			} else {

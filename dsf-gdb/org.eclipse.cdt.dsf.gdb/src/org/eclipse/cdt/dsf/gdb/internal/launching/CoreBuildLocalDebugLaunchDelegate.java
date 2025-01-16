@@ -10,18 +10,22 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.launching;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
+import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.Messages;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
@@ -78,6 +82,18 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		envProps.putAll(buildEnv);
 		gdbLaunch.setInitialEnvironment(envProps);
 
+		String debugger = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEBUG_NAME,
+				IGDBLaunchConfigurationConstants.DEBUGGER_DEBUG_NAME_DEFAULT);
+		Path debuggerPath = Paths.get(debugger);
+		// Try to find the debugger in the toolchain if the name is not absolute.
+		if (!debuggerPath.isAbsolute()) {
+			IToolChain toolChain = buildConfig.getToolChain();
+			Path gdbPath = toolChain.getCommandPath(debuggerPath);
+			if (gdbPath != null) {
+				gdbLaunch.setGDBPath(gdbPath.toString());
+			}
+			// When not found, GdbLaunch will search the debugger in PATH.
+		}
 		String gdbVersion = gdbLaunch.getGDBVersion();
 
 		gdbLaunch.setProgramPath(getProgramPath(configuration, buildConfig));

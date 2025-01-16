@@ -50,7 +50,6 @@ jobs:
           -Dmaven.test.failure.ignore=true \
           -DexcludedGroups=flakyTest,slowTest \
           -Ddsf.gdb.tests.timeout.multiplier=50 \
-          -Ddsf-gdb.skip.tests=$(test ${{ steps.filter.outputs.dsf }} == 'false' && echo 'true' || echo 'false') \
           -Dindexer.timeout=300
     - name: Upload Logs
       uses: actions/upload-artifact@v4

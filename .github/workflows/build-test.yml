@@ -15,12 +15,18 @@ jobs:
     - uses: dorny/paths-filter@v3
       id: filter
       with:
+        # dsf filters are to know when to run dsf-gdb tests (See ref below)
+        # it includes any changes to debug, or anything likely to affect gdb
+        # testing
         filters: |
           dsf:
             - 'dsf-gdb/**'
             - 'dsf/**'
             - 'debug/**'
             - 'jtag/**'
+            - 'pom.xml'
+            - 'releng/**'
+            - '.github/**'
           docs:
             - 'doc/org.eclipse.cdt.doc.user/**'
     - name: Set up JDK 21
@@ -50,6 +56,7 @@ jobs:
           -Dmaven.test.failure.ignore=true \
           -DexcludedGroups=flakyTest,slowTest \
           -Ddsf.gdb.tests.timeout.multiplier=50 \
+          -Ddsf-gdb.skip.tests=$(test ${{ steps.filter.outputs.dsf }} == 'false' && echo 'true' || echo 'false') \
           -Dindexer.timeout=300
     - name: Upload Logs
       uses: actions/upload-artifact@v4

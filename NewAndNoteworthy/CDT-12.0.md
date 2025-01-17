@@ -12,6 +12,21 @@ The minimum version of GLIBC required is now 2.31.
 This version can be found in Ubuntu 20.04 and later, RHEL 9.0 and later and other distros as well.
 CDT's native components will likely work with older versions of glibc too, assuming they provide the required APIs for Eclipse CDT.
 
+# Core Build
+
+## More CMake build settings are now available in the user interface
+
+The CMake build setting GUI has been updated to include more CMake settings, and some of the settings that did not used to do the correct thing have been updated for more consistent behavior.
+The way these settings are saved has been slightly modified, meaning workspaces with CMake projects from before CDT 12 will have their build settings restored to defaults.
+Build settings can be customized by unchecking "Use default CMake settings".
+
+TODO: Before release add the final screenshot for the build settings here. I am not including it now because the UI keeps changing.
+
+## Default build system generator for CMake changed to Ninja on all platforms
+
+The default for CMake's  build system generator is now Ninja on all platforms.
+Users who want to use other build system generators can select their desired generator in the build settings.
+
 # Managed Build
 
 ## New *C Project* and new *C++ Project* available via *New C/C++ Project* wizard

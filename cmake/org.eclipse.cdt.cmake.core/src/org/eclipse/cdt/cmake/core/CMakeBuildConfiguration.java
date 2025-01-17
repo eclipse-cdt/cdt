@@ -12,11 +12,8 @@ package org.eclipse.cdt.cmake.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,19 +21,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.eclipse.cdt.cmake.core.internal.Activator;
 import org.eclipse.cdt.cmake.core.internal.CMakeConsoleWrapper;
-import org.eclipse.cdt.cmake.core.internal.CMakePropertiesController;
 import org.eclipse.cdt.cmake.core.internal.CMakeUtils;
 import org.eclipse.cdt.cmake.core.internal.CommandDescriptorBuilder;
 import org.eclipse.cdt.cmake.core.internal.CommandDescriptorBuilder.CommandDescriptor;
-import org.eclipse.cdt.cmake.core.internal.IOsOverridesSelector;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
+import org.eclipse.cdt.cmake.core.properties.CMakePropertiesFactory;
+import org.eclipse.cdt.cmake.core.properties.ICMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
-import org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController;
-import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
@@ -56,6 +50,7 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.jsoncdb.core.CompileCommandsJsonParser;
 import org.eclipse.cdt.jsoncdb.core.ISourceFileInfoConsumer;
 import org.eclipse.cdt.jsoncdb.core.ParseRequest;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -69,27 +64,13 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
-import org.osgi.service.prefs.Preferences;
 
 /**
- * @since 1.6
+ * @since 2.0
  */
-public class CMakeBuildConfiguration extends CBuildConfiguration {
-
-	public static final String CMAKE_USE_UI_OVERRIDES = "cmake.use.ui.overrides"; //$NON-NLS-1$
-	public static final boolean CMAKE_USE_UI_OVERRIDES_DEFAULT = false;
-	public static final String CMAKE_GENERATOR = "cmake.generator"; //$NON-NLS-1$
-	public static final String CMAKE_ARGUMENTS = "cmake.arguments"; //$NON-NLS-1$
-	public static final String CMAKE_ENV = "cmake.environment"; //$NON-NLS-1$
-	public static final String BUILD_COMMAND = "cmake.command.build"; //$NON-NLS-1$
-	public static final String BUILD_COMMAND_DEFAULT = "cmake"; //$NON-NLS-1$
-	public static final String CLEAN_COMMAND = "cmake.command.clean"; //$NON-NLS-1$
-	public static final String CLEAN_COMMAND_DEFAULT = "clean"; //$NON-NLS-1$
+public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMakeBuildConfiguration {
 
 	private ICMakeToolChainFile toolChainFile;
-
-	// lazily instantiated..
-	private ICMakePropertiesController pc;
 
 	private Map<IResource, IScannerInfo> infoPerResource;
 	/**
@@ -102,10 +83,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 	 * To work around that, we run cmake in advance with its dedicated working error parser.
 	 */
 	private boolean cmakeListsModified;
-	/**
-	 * whether we have to delete file CMakeCache.txt to avoid complaints by cmake
-	 */
-	private boolean deleteCMakeCache;
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -122,6 +99,50 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			ICMakeToolChainFile toolChainFile, String launchMode) {
 		super(config, name, toolChain, launchMode);
 		this.toolChainFile = toolChainFile;
+	}
+
+	@Override
+	public ICMakeProperties getCMakeProperties() {
+		ICMakeProperties cmakeProperties = CMakePropertiesFactory.createProperties();
+
+		String useDefaultCMakeSettings = getProperty(CMAKE_USE_DEFAULT_CMAKE_SETTINGS);
+		final Map<String, String> properties;
+		if (Boolean.parseBoolean(useDefaultCMakeSettings)) {
+			properties = getDefaultProperties();
+		} else {
+			properties = getProperties();
+		}
+
+		String cmakeGenerator = properties.get(CMAKE_GENERATOR);
+		if (cmakeGenerator != null) {
+			CMakeGenerator generator = CMakeGenerator.getGenerator(cmakeGenerator);
+			if (generator == null) {
+				cmakeProperties.setGenerator(new CustomCMakeGenerator(cmakeGenerator));
+			} else {
+				cmakeProperties.setGenerator(generator);
+			}
+		}
+
+		String extraArgs = properties.get(CMAKE_ARGUMENTS);
+		List<String> extraArgsList = Arrays.asList(CommandLineUtil.argumentsToArray(extraArgs));
+		cmakeProperties.setExtraArguments(extraArgsList);
+
+		String buildCommand = properties.get(CMAKE_BUILD_COMMAND);
+		if (buildCommand != null && !buildCommand.isBlank()) {
+			cmakeProperties.setCommand(buildCommand);
+		}
+
+		String cleanTarget = properties.get(CMAKE_CLEAN_TARGET);
+		if (cleanTarget != null && !cleanTarget.isBlank()) {
+			cmakeProperties.setCleanTarget(cleanTarget);
+		}
+
+		String allTarget = properties.get(CMAKE_ALL_TARGET);
+		if (allTarget != null && !allTarget.isBlank()) {
+			cmakeProperties.setAllTarget(allTarget);
+		}
+
+		return cmakeProperties;
 	}
 
 	/**
@@ -156,13 +177,8 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 			Path buildDir = getBuildDirectory();
 
 			boolean runCMake = cmakeListsModified;
-			if (deleteCMakeCache) {
-				Files.deleteIfExists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
-				deleteCMakeCache = false;
-				runCMake = true;
-			}
+			ICMakeProperties cmakeProperties = getCMakeProperties();
 
-			ICMakeProperties cmakeProperties = getPropertiesController().load();
 			runCMake |= !Files.exists(buildDir.resolve("CMakeCache.txt")); //$NON-NLS-1$
 
 			// Causes CMAKE_BUILD_TYPE to be set according to the launch mode
@@ -172,12 +188,16 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				cmakeProperties.setBuildType("Release"); //$NON-NLS-1$
 			}
 
-			final SimpleOsOverridesSelector overridesSelector = new SimpleOsOverridesSelector();
 			if (!runCMake) {
-				CMakeGenerator generator = overridesSelector.getOsOverrides(cmakeProperties).getGenerator();
-				runCMake |= !Files.exists(buildDir.resolve(generator.getMakefileName()));
+				ICMakeGenerator generator = cmakeProperties.getGenerator();
+				String makefileName = generator.getMakefileName();
+				if (makefileName == null) {
+					runCMake = true;
+				} else {
+					runCMake |= !Files.exists(buildDir.resolve(makefileName));
+				}
 			}
-			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties, overridesSelector);
+			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties);
 			if (runCMake) {
 				CMakeBuildConfiguration.deleteCMakeErrorMarkers(project);
 
@@ -243,7 +263,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 					}
 				}
 
-				CommandDescriptor commandDescr = cmdBuilder.makeCMakeBuildCommandline("all"); //$NON-NLS-1$
+				CommandDescriptor commandDescr = cmdBuilder.makeCMakeBuildCommandline(cmakeProperties.getAllTarget());
 				List<String> command = commandDescr.getArguments();
 				infoStream.write(String.join(" ", command) + '\n'); //$NON-NLS-1$
 
@@ -279,23 +299,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	/**
-	 * When UI overrides are in force, gets the user specified clean target (if not blank), otherwise the default clean target.
-	 * @return Always a non-null String indicating the clean target.
-	 */
-	private String getCleanCommand() {
-		String retVal = CLEAN_COMMAND_DEFAULT;
-		Preferences settings = this.getSettings();
-		boolean useUiOverrides = settings.getBoolean(CMAKE_USE_UI_OVERRIDES, CMAKE_USE_UI_OVERRIDES_DEFAULT);
-		if (useUiOverrides) {
-			String cleanCommand = settings.get(CLEAN_COMMAND, CLEAN_COMMAND_DEFAULT);
-			if (!cleanCommand.isBlank()) {
-				retVal = cleanCommand;
-			}
-		}
-		return retVal;
-	}
-
 	@Override
 	public void clean(IConsole console, IProgressMonitor monitor) throws CoreException {
 		IProject project = getProject();
@@ -303,10 +306,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
-			ICMakeProperties cmakeProperties = getPropertiesController().load();
-			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties,
-					new SimpleOsOverridesSelector());
-			CommandDescriptor command = cmdBuilder.makeCMakeBuildCommandline(getCleanCommand());
+			ICMakeProperties cmakeProperties = getCMakeProperties();
+			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties);
+			CommandDescriptor command = cmdBuilder.makeCMakeBuildCommandline(cmakeProperties.getCleanTarget());
 			ConsoleOutputStream outStream = console.getOutputStream();
 
 			Path buildDir = getBuildDirectory();
@@ -360,54 +362,6 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 				new ParseRequest(file, new CMakeIndexerInfoConsumer(this::setScannerInformation),
 						CommandLauncherManager.getInstance().getCommandLauncher(this), console));
 		parser.parse(monitor);
-	}
-
-	/**
-	 * Recursively removes any files and directories found below the specified Path.
-	 */
-	private static void cleanDirectory(Path dir) throws IOException {
-		SimpleFileVisitor<Path> deltor = new SimpleFileVisitor<>() {
-			@Override
-			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-				Files.delete(file);
-				return FileVisitResult.CONTINUE;
-			}
-
-			@Override
-			public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-				super.postVisitDirectory(dir, exc);
-				Files.delete(dir);
-				return FileVisitResult.CONTINUE;
-			}
-		};
-		Path[] files = Files.list(dir).toArray(Path[]::new);
-		for (Path file : files) {
-			Files.walkFileTree(file, deltor);
-		}
-	}
-
-	/** Lazily creates the CMakePropertiesController for the project.
-	 */
-	private ICMakePropertiesController getPropertiesController() {
-		if (pc == null) {
-			final Path filePath = Path.of(getProject().getFile(".settings/CDT-cmake.yaml").getLocationURI()); //$NON-NLS-1$
-			pc = new CMakePropertiesController(filePath, () -> {
-				deleteCMakeCache = true;
-				// TODO delete cache file here for the case a user restarts the workbench
-				// prior to running a new build
-			});
-		}
-		return pc;
-	}
-
-	// interface IAdaptable
-	@Override
-	@SuppressWarnings("unchecked")
-	public <T> T getAdapter(Class<T> adapter) {
-		if (ICMakePropertiesController.class.equals(adapter)) {
-			return (T) pc;
-		}
-		return super.getAdapter(adapter);
 	}
 
 	/**
@@ -522,6 +476,36 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		project.deleteMarkers(ICMakeExecutionMarkerFactory.CMAKE_PROBLEM_MARKER_ID, false, IResource.DEPTH_INFINITE);
 	}
 
+	/**
+	 * For cases when a generator is not one of those built-in to CDT we use this
+	 * custom generator. Unlike the built-in generators this one does not know
+	 * what the generator will use as a makefile name, so the build need to run
+	 * the generation stage with each build instead of optimizing it. See
+	 * {@link CMakeBuildConfiguration#build(int, Map, IConsole, IProgressMonitor)}
+	 */
+	private static final class CustomCMakeGenerator implements ICMakeGenerator {
+		private final String cmakeGenerator;
+
+		private CustomCMakeGenerator(String cmakeGenerator) {
+			this.cmakeGenerator = cmakeGenerator;
+		}
+
+		@Override
+		public String getMakefileName() {
+			return null;
+		}
+
+		@Override
+		public String getIgnoreErrOption() {
+			return null;
+		}
+
+		@Override
+		public String getCMakeName() {
+			return cmakeGenerator;
+		}
+	}
+
 	private static class CMakeIndexerInfoConsumer implements ISourceFileInfoConsumer {
 		/**
 		 * gathered IScannerInfo objects or <code>null</code> if no new IScannerInfo was received
@@ -582,50 +566,28 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 		}
 	} // CMakeIndexerInfoConsumer
 
-	/**
-	 * Supports OS overrides and also User Interface (UI) overrides, provided in the CMakeBuildTab. The UI
-	 * overrides are stored in the intermediary CBuildConfiguration Preferences (CBuildConfiguration.getSettings())
-	 * and used only when CMAKE_USE_UI_OVERRIDES is true.
-	 */
-	private class SimpleOsOverridesSelector implements IOsOverridesSelector {
+	@Override
+	public Map<String, String> getDefaultProperties() {
+		return Map.of(//
+				CMAKE_GENERATOR, CMAKE_GENERATOR_DEFAULT, //
+				CMAKE_USE_DEFAULT_CMAKE_SETTINGS, CMAKE_USE_DEFAULT_CMAKE_SETTINGS_DEFAULT, //
+				CMAKE_ARGUMENTS, CMAKE_ARGUMENTS_DEFAULT, //
+				CMAKE_BUILD_COMMAND, CMAKE_BUILD_COMMAND_DEFAULT, //
+				CMAKE_ALL_TARGET, CMAKE_ALL_TARGET_DEFAULT, //
+				CMAKE_CLEAN_TARGET, CMAKE_CLEAN_TARGET_DEFAULT //
+		);
+	}
 
-		@Override
-		public IOsOverrides getOsOverrides(ICMakeProperties cmakeProperties) {
-			IOsOverrides overrides;
-			// get overrides. Simplistic approach ATM, probably a strategy might fit better.
-			// see comment in CMakeIndexerInfoConsumer#getFileForCMakePath()
-			final String os = Platform.getOS();
-			if (Platform.OS_WIN32.equals(os)) {
-				overrides = cmakeProperties.getWindowsOverrides();
-			} else {
-				// fall back to linux, if OS is unknown
-				overrides = cmakeProperties.getLinuxOverrides();
-			}
-			return getUiOrOsOverrides(overrides);
-		}
+	@Override
+	public Map<String, String> getProperties() {
+		var map = new HashMap<String, String>();
+		map.putAll(getDefaultProperties());
+		map.putAll(super.getProperties());
+		return map;
+	}
 
-		private IOsOverrides getUiOrOsOverrides(IOsOverrides osOverrides) {
-			IOsOverrides retVal = Objects.requireNonNull(osOverrides, "osOverrides must not be null"); //$NON-NLS-1$
-			Preferences settings = getSettings();
-			boolean useUiOverrides = settings.getBoolean(CMAKE_USE_UI_OVERRIDES, CMAKE_USE_UI_OVERRIDES_DEFAULT);
-			if (useUiOverrides) {
-				// Set UI override for generator
-				String gen = settings.get(CMAKE_GENERATOR, ""); //$NON-NLS-1$
-				retVal.setGenerator(CMakeGenerator.getGenerator(gen));
-				// Set UI override for Extra Arguments
-				String extraArgsStr = settings.get(CMAKE_ARGUMENTS, ""); //$NON-NLS-1$
-				// Convert String of args, separated by 1 or more spaces, into list of Strings
-				List<String> extraArgs = Arrays.stream(extraArgsStr.split("\\s+")).map(entry -> entry.trim()) //$NON-NLS-1$
-						.collect(Collectors.toList());
-				retVal.setExtraArguments(extraArgs);
-				// Set UI override for cmake build command, unless it's the default
-				String buildCommand = settings.get(BUILD_COMMAND, BUILD_COMMAND_DEFAULT);
-				if (!buildCommand.isBlank() && !BUILD_COMMAND_DEFAULT.equals(buildCommand)) {
-					retVal.setUseDefaultCommand(false);
-					retVal.setCommand(buildCommand);
-				}
-			}
-			return retVal;
-		}
-	} // SimpleOsOverridesSelector
+	@Override
+	public String getProperty(String name) {
+		return getSettings().get(name, getDefaultProperties().get(name));
+	}
 }

@@ -15,17 +15,16 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 
 	public static String CMakeBuildTab_BuildCommand;
-	public static String CMakeBuildTab_CleanCommand;
+	public static String CMakeBuildTab_AllTarget;
+	public static String CMakeBuildTab_CleanTarget;
 	public static String CMakeBuildTab_Cmake;
 	public static String CMakeBuildTab_CMakeArgs;
 	public static String CMakeBuildTab_Generator;
-	public static String CMakeBuildTab_Ninja;
 	public static String CMakeBuildTab_NoneAvailable;
 	public static String CMakeBuildTab_Settings;
 	public static String CMakeBuildTab_Toolchain;
-	public static String CMakeBuildTab_UnixMakefiles;
-	public static String CMakeBuildTab_useUICmakeSettings;
-	public static String CMakeBuildTab_useUICmakeSettingsTip;
+	public static String CMakeBuildTab_useDefaultCmakeSettings;
+	public static String CMakeBuildTab_useDefaultCmakeSettingsTip;
 	public static String CMakePreferencePage_Add;
 	public static String CMakePreferencePage_ConfirmRemoveDesc;
 	public static String CMakePreferencePage_ConfirmRemoveTitle;

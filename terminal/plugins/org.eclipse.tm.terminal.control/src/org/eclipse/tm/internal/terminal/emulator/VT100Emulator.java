@@ -1210,7 +1210,7 @@ public class VT100Emulator implements ControlListener {
 		}
 
 		try {
-			terminal.getOutputStream().write(reply.getBytes("ISO-8859-1")); //$NON-NLS-1$
+			terminal.getOutputStream().write(reply.getBytes("UTF-8")); //$NON-NLS-1$
 			terminal.getOutputStream().flush();
 		} catch (IOException ex) {
 			Logger.log("Caught IOException!"); //$NON-NLS-1$

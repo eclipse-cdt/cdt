@@ -833,8 +833,8 @@ public class TabFolderManager extends PlatformObject implements ISelectionProvid
 				buffer.append(" - "); //$NON-NLS-1$
 
 				String encoding = terminal.getEncoding();
-				if (encoding == null || "ISO-8859-1".equals(encoding)) { //$NON-NLS-1$
-					encoding = "Default (ISO-8859-1)"; //$NON-NLS-1$
+				if (encoding == null || "UTF-8".equals(encoding)) { //$NON-NLS-1$
+					encoding = "Default (UTF-8)"; //$NON-NLS-1$
 				}
 				buffer.append(NLS.bind(Messages.TabFolderManager_encoding, encoding));
 

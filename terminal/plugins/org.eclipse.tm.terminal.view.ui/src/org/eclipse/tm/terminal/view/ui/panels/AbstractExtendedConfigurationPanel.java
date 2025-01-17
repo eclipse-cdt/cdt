@@ -537,7 +537,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 			List<String> encodings = new ArrayList<>();
 
 			// Default encoding
-			encodings.add("Default (ISO-8859-1)"); //$NON-NLS-1$
+			encodings.add("Default (UTF-8)"); //$NON-NLS-1$
 
 			// The currently selected IDE encoding from the preferences
 			String ideEncoding = getResourceEncoding();
@@ -612,7 +612,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 		Assert.isNotNull(encoding);
 
 		if (encodingCombo != null && !encodingCombo.isDisposed()) {
-			int index = encodingCombo.indexOf("ISO-8859-1".equals(encoding) ? "Default (ISO-8859-1)" : encoding); //$NON-NLS-1$ //$NON-NLS-2$
+			int index = encodingCombo.indexOf("UTF-8".equals(encoding) ? "Default (UTF-8)" : encoding); //$NON-NLS-1$ //$NON-NLS-2$
 			if (index != -1)
 				encodingCombo.select(index);
 			else {
@@ -642,7 +642,7 @@ public abstract class AbstractExtendedConfigurationPanel extends AbstractConfigu
 	protected boolean isEncodingValid() {
 		try {
 			String encoding = getEncoding();
-			return Charset.isSupported(encoding != null ? encoding : "ISO-8859-1"); //$NON-NLS-1$
+			return Charset.isSupported(encoding != null ? encoding : "UTF-8"); //$NON-NLS-1$
 		} catch (IllegalCharsetNameException e) {
 			return false;
 		}

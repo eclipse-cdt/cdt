@@ -61,7 +61,7 @@ public class TerminalConnectorTest extends TestCase {
 
 		@Override
 		public String getEncoding() {
-			return "ISO-8859-1"; //$NON-NLS-1$
+			return "UTF-8"; //$NON-NLS-1$
 		}
 
 		@Override

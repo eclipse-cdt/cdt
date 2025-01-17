@@ -15,4 +15,42 @@
             pattern="org\.eclipse\.cdt\.dsf\.ui/org\.eclipse\.cdt\.dsf\.debug\.ui\.[A-Za-z]+\.viewmodel\.update\.actions\.refresh">
       </activityPatternBinding>
    </extension>
+
+<!-- In #974 I removed activities we were not using anymore, but it turns
+out if LaunchUtils.enableActivity is called on a removed id, strange
+things happen, such as other activities incorrectly being enabled.
+This may be a bug in platform, or just undefined behavior. But because
+extenders do have calls to LaunchUtils.enableActivity in their code,
+leave the empty activity ids behind. -->
+
+     <extension
+         point="org.eclipse.ui.activities">
+
+      <activity
+            name="%activity.name.dsf"
+            description="%activity.description.dsf"
+            id="org.eclipse.cdt.dsf.ui.dsfActivity">
+       </activity>
+
+      <activity
+            name="%activity.name.dsfgdb"
+            description="%activity.description.dsfgdb"
+            id="org.eclipse.cdt.debug.dsfgdbActivity">
+       </activity>
+
+       <activity
+            name="%activity.name.cdtdebug"
+            description="%activity.description.cdtdebug"
+            id="org.eclipse.cdt.debug.ui.cdtActivity">
+       </activity>
+
+		<defaultEnablement id="org.eclipse.cdt.debug.ui.cdtActivity" />
+
+        <activity
+            name="%activity.name.cdigdb"
+            description="%activity.description.cdigdb"
+            id="org.eclipse.cdt.debug.cdigdbActivity">
+       </activity>
+
+   </extension>
 </plugin>

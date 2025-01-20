@@ -3,10 +3,10 @@ PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 OBJS = ${projectName}.o
 
 ifeq ($(BUILD_MODE),debug)
-	CFLAGS += -g
+	CFLAGS += -g -O0
 else ifeq ($(BUILD_MODE),run)
 	CFLAGS += -O2
-else ifeq ($(BUILD_MODE),linuxtools)
+else ifeq ($(BUILD_MODE),profile)
 	CFLAGS += -g -pg -fprofile-arcs -ftest-coverage
 	LDFLAGS += -pg -fprofile-arcs -ftest-coverage
 	EXTRA_CLEAN += ${projectName}.gcda ${projectName}.gcno $(PROJECT_ROOT)gmon.out

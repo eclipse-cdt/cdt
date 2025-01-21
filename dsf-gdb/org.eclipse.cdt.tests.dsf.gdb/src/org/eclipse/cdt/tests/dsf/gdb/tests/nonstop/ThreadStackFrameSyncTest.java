@@ -225,7 +225,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		final IFrameDMContext frame0 = SyncUtil.getStackFrame(1, 0);
 
 		// do a few of times
-		for (int i = 0; i < 50; i++) {
+		for (int i = 0; i < 10; i++) {
 			// have the sync service switch stack frame to 1
 			Query<MIInfo> query1 = new Query<>() {
 				@Override

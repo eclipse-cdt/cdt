@@ -626,8 +626,8 @@ public class MIBreakpoint {
 				// Only supported starting with GDB 6.8
 				pending = true;
 			} else if (var.equals("script")) { //$NON-NLS-1$
-				if (value instanceof MITuple) {
-					parseCommands((MITuple) value);
+				if (value instanceof MITuple || value instanceof MIList) {
+					parseCommands(value);
 				}
 			} else if (var.equals("thread-groups")) { //$NON-NLS-1$
 				if (value instanceof MIList) {
@@ -639,8 +639,20 @@ public class MIBreakpoint {
 		}
 	}
 
-	void parseCommands(MITuple tuple) {
-		MIValue[] values = tuple.getMIValues();
+	void parseCommands(MIValue miValue) {
+		// "script" field of a breakpoint used to be output as a tuple (<= GDB 12),
+		// though it is a list. There are cases of flags that can be applied to
+		// get old or new behaviour too.
+		// This code handles both cases transparently.
+		// See https://sourceware.org/bugzilla/show_bug.cgi?id=24285
+		MIValue[] values;
+		if (miValue instanceof MITuple tuple) {
+			values = tuple.getMIValues();
+		} else if (miValue instanceof MIList list) {
+			values = list.getMIValues();
+		} else {
+			throw new IllegalStateException("miValue must be tuple or list"); //$NON-NLS-1$
+		}
 		StringBuilder cmds = new StringBuilder();
 		for (int i = 0; i < values.length; i++) {
 			MIValue value = values[i];

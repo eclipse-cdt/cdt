@@ -76,26 +76,6 @@
                toolbarPath="additions">
          </action>
       </viewContribution>
-      <viewContribution
-            id="org.eclipse.cdt.debug.ui.disassembly.toolbar"
-            targetID="org.eclipse.cdt.dsf.debug.ui.disassembly.view">
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/toolbar_pinned.gif"
-               id="org.eclipse.pinclone.disassembly.pinDebugContext"
-               label="%PinView.name "
-               style="toggle"
-               toolbarPath="pinGroup">
-         </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
-               icon="icons/open_new.gif"
-               id="org.eclipse.pinclone.disassembly.clone"
-               label="%OpenNewView.name"
-               style="push"
-               toolbarPath="pinGroup">
-         </action>
-      </viewContribution>
    </extension>
 
    <extension 
@@ -355,6 +335,34 @@
 	           </dynamic>
             </menu>         
        </menuContribution>
+       <menuContribution
+             allPopups="false"
+             locationURI="toolbar:org.eclipse.cdt.dsf.debug.ui.disassembly.view?after=additions">
+          <command
+                commandId="org.eclipse.cdt.debug.ui.PinViewCommand"
+                icon="icons/toolbar_pinned.gif"
+                label="%PinView.name "
+                style="toggle">
+             <visibleWhen
+                   checkEnabled="false">
+                <test
+                      property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+                </test>
+             </visibleWhen>
+          </command>
+          <command
+                commandId="org.eclipse.cdt.debug.ui.OpenNewViewCommand"
+                icon="icons/open_new.gif"
+                label="%OpenNewView.name"
+                style="push">
+             <visibleWhen
+                   checkEnabled="false">
+                <test
+                      property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+                </test>
+             </visibleWhen>
+          </command>
+       </menuContribution>
    </extension>  
 
    <extension point="org.eclipse.ui.handlers">
@@ -571,6 +579,13 @@
             namespace="org.eclipse.cdt.dsf.debug.ui"
             properties="isDisassemblyViewSupportsCBreakpoint"
             type="org.eclipse.cdt.dsf.debug.internal.ui.disassembly.DisassemblyPart">
+      </propertyTester>
+      <propertyTester
+            class="org.eclipse.cdt.dsf.debug.internal.ui.debugview.layout.PinCommandEnablementTester"
+            id="org.eclipse.cdt.dsf.ui.pinViewPropertyTester"
+            namespace="org.eclipse.cdt.dsf.ui"
+            properties="canPinViewEnabled"
+            type="java.lang.Object">
       </propertyTester>
    </extension>
 	<extension 

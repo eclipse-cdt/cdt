@@ -20,10 +20,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.Reader;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,10 +57,12 @@ import org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin;
 import org.eclipse.cdt.tests.dsf.gdb.tests.ITestConstants;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
@@ -66,6 +71,8 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -659,7 +666,49 @@ public class BaseTestCase {
 	@After
 	public void doAfterTest() throws Exception {
 		if (fLaunch != null) {
-			fLaunch.terminate();
+			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			PrintStream out = new PrintStream(byteArrayOutputStream, true, "UTF-8");
+			IProcess[] processes = fLaunch.getProcesses();
+
+			out.println("Processes: " + Arrays.toString(processes));
+			for (IProcess process : processes) {
+				out.println("Process: " + process);
+				if (process instanceof RuntimeProcess runtimeProcess) {
+					Field field = RuntimeProcess.class.getDeclaredField("fProcess");
+					field.trySetAccessible();
+					Process javaProcess = (Process) field.get(runtimeProcess);
+					out.println("javaProcess: " + javaProcess);
+					if (javaProcess != null) {
+						try {
+							List<ProcessHandle> descendants = javaProcess.descendants().collect(Collectors.toList());
+							out.println("descendants: " + descendants);
+						} catch (UnsupportedOperationException e) {
+							out.println("descendants unsupported");
+						}
+					}
+				} else {
+					out.println("Class: " + process.getClass());
+				}
+				if (process.isTerminated()) {
+					out.println("isTerminated: true");
+					out.println("exitValue: " + process.getExitValue());
+				} else {
+					out.println("isTerminated: false");
+				}
+			}
+			String info = byteArrayOutputStream.toString("UTF-8");
+			try {
+				fLaunch.terminate();
+			} catch (DebugException e) {
+				IStatus status = e.getStatus();
+				if (status != null) {
+					String statusString = status.toString();
+					throw new RuntimeException("Received debug exception with: " + statusString + "\ninfo:\n" + info,
+							e);
+				} else {
+					throw new RuntimeException("Received debug with no status\ninfo:\n" + info, e);
+				}
+			}
 			assertLaunchTerminates();
 			fLaunch = null;
 		}

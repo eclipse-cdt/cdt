@@ -167,7 +167,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 				"--interpreter", "console", //$NON-NLS-1$ //$NON-NLS-2$
 
 				// Now trigger the new console towards our PTY.
-				"-ex", "new-ui mi " + fMIPty.getSlaveName(), //$NON-NLS-1$ //$NON-NLS-2$
+				"-ex", "new-ui mi2 " + fMIPty.getSlaveName(), //$NON-NLS-1$ //$NON-NLS-2$
 
 				// With GDB.7.12, pagination can lock up the whole debug session
 				// when using the full GDB console, so we turn it off.

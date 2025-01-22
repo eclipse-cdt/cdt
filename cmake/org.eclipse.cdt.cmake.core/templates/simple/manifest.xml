@@ -6,6 +6,6 @@
 	<file src="/templates/simple/config.h.in"
 		dest="/${projectName}/config.h.in"/>
 	<file src="/templates/simple/main.cpp"
-		dest="/${projectName}/${projectName?replace(" ", "_")}.cpp"
+		dest='/${projectName}/${projectName?replace(" ", "_")}.cpp'
 		open="true"/>
 </templateManifest>

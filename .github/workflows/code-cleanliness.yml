@@ -16,7 +16,7 @@ jobs:
           image: quay.io/eclipse-cdt/cdt-infra-github@sha256:3d745b7b84e3f9f9492cc1d280ea3b44028a92c7e9748d1ea8771fed211b5dc4
           options: -v ${{ github.workspace }}:/work
           run: |
-            set -x
+            set -ex
             cd /work
             ./releng/scripts/check_code_cleanliness_only.sh
             ./releng/scripts/check_bundle_versions.sh

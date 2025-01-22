@@ -56,3 +56,9 @@ echo "sure no dependencies on unexpected or newer libraries are accidentally"
 echo "introduced."
 ${DIR}/check_dll_dependencies.sh
 ${DIR}/check_glibc_dependencies.sh
+
+##
+# Error out if some XML files are badly formed
+##
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+${DIR}/check_xml_well_formed.sh

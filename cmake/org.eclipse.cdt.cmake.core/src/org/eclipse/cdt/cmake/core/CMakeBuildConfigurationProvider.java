@@ -27,6 +27,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
 /**
+ * A ICBuildConfigurationProvider specialized for CMake
+ *
+ * Extenders can provide their own specialised CMakeConfiguration by extending this class and {@link CMakeBuildConfiguration}.
+ * Extenders need to override at least {@link #getId()}, and the various createCMakeBuildConfiguration methods.
+ * See the example project <a href="https://github.com/eclipse-cdt/cdt/tree/main/cmake/org.eclipse.cdt.cmake.example">
+ * org.eclipse.cdt.cmake.example</a> for a full example.
+ *
  * @since 1.6
  */
 public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProvider {
@@ -39,6 +46,30 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 	@Override
 	public String getId() {
 		return ID;
+	}
+
+	/**
+	 * Extenders should override this method to construct their specialized build configuration.
+	 */
+	protected CMakeBuildConfiguration createCMakeBuildConfiguration(IBuildConfiguration config, String name)
+			throws CoreException {
+		return new CMakeBuildConfiguration(config, name);
+	}
+
+	/**
+	 * Extenders should override this method to construct their specialized build configuration.
+	 */
+	protected CMakeBuildConfiguration createCMakeBuildConfiguration(IBuildConfiguration config, String name,
+			IToolChain toolChain) {
+		return new CMakeBuildConfiguration(config, name, toolChain);
+	}
+
+	/**
+	 * Extenders should override this method to construct their specialized build configuration.
+	 */
+	protected CMakeBuildConfiguration createCMakeBuildConfiguration(IBuildConfiguration config, String name,
+			IToolChain toolChain, ICMakeToolChainFile toolChainFile, String launchMode) {
+		return new CMakeBuildConfiguration(config, name, toolChain, toolChainFile, launchMode);
 	}
 
 	@Override
@@ -66,13 +97,13 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 			}
 
 			if (toolChain != null) {
-				return new CMakeBuildConfiguration(config, name, toolChain);
+				return createCMakeBuildConfiguration(config, name, toolChain);
 			} else {
 				// No valid combinations
 				return null;
 			}
 		}
-		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, name);
+		CMakeBuildConfiguration cmakeConfig = createCMakeBuildConfiguration(config, name);
 		ICMakeToolChainFile tcFile = cmakeConfig.getToolChainFile();
 		IToolChain toolChain = cmakeConfig.getToolChain();
 		if (toolChain == null) {
@@ -81,7 +112,7 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		}
 		if (tcFile != null && !toolChain.equals(tcFile.getToolChain())) {
 			// toolchain changed
-			return new CMakeBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
+			return createCMakeBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
 					cmakeConfig.getLaunchMode());
 		} else {
 			return cmakeConfig;
@@ -136,7 +167,7 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 			config = configManager.createBuildConfiguration(this, project, name, monitor);
 		}
 
-		CMakeBuildConfiguration cmakeConfig = new CMakeBuildConfiguration(config, name, toolChain, file, launchMode);
+		CMakeBuildConfiguration cmakeConfig = createCMakeBuildConfiguration(config, name, toolChain, file, launchMode);
 		configManager.addBuildConfiguration(config, cmakeConfig);
 		return cmakeConfig;
 	}

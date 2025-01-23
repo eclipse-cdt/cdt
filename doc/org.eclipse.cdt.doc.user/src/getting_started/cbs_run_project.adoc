@@ -1,0 +1,67 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Running a project
+
+Running a CBS project is done via the xref:cbs_launchbar.adoc[Launch Bar]. Make
+sure the launch bar is installed and enabled.
+
+First build the project for Run.
+See xref:cbs_build_project.adoc[Building a project].
+
+. Select the launch configuration of the project you want to run.
+. Select launch mode *Run*.
+. Press the *Run* button in the launch bar.
+. Inspect the program output in the Console window.
+
+image:cbs_run_cmake.png[Launch a CMake project for Run]
+
+=== Changing run settings
+
+To change run settings:
+
+. Set the launch mode to *Run*
+. Edit the project's launch configuration. Click on the gear icon.
+
+image:cbs_edit_launch_config_run.png[Edit launch configuration]
+
+The edit launch configuration wizard will open.
+
+On the *Main* tab you can set an alternative C/C++ application, and
+you can enable or disable build before launch.
+
+On the *Arguments* tab you specify optional arguments, and you can
+change the working directory.
+
+On the *Environment* tab you define optional environment variables.
+
+image:cbs_launch_config_tab_main.png[Launch configuration main tab]
+
+icon:arrow-circle-right[] xref:cbs_debug_project.adoc[Next: Debugging a project]

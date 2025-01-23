@@ -1,0 +1,116 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Building a project
+
+During Core Build System (CBS) project creation a launch configuration
+with the same name is created along with it. The Build settings are
+managed in the *Build Settings* tab of the launch configuration.
+
+CBS projects rely on the xref:cbs_launchbar.adoc[Launch Bar]. Make
+sure the launch bar is installed and enabled.
+
+=== Building for Run
+
+. Select the launch configurion of the project you want to build.
+. Select launch mode *Run*.
+. Press the *Build* button in the launch bar.
+. Inspect the build output in the Console window.
+. Find the build results in the Project Explorer.
+
+image:cbs_build.png[Build a project for Run]
+
+=== Building for Debug
+
+To build for Debug:
+
+. Select the launch configurion of the project you want to build.
+. Select launch mode *Debug*.
+. Press the *Build* button.
+. Inspect the build output in the Console window.
+. Find the build results in the Project Explorer.
+
+image:cbs_build_debug.png[Build a project for Debug]
+
+=== Changing build settings
+
+The launch configuration presents separate build settings for launch mode
+Run and Debug. You will see the build settings depending on the selected
+launch mode.
+
+To change Run build settings:
+
+. Set the launch mode to *Run*
+. Edit the project's launch configuration. Click on the gear icon.
+
+image:cbs_edit_launch_config_run.png[Edit launch configuration]
+
+The edit launch configuration wizard will open. Select the *Build
+Settings* tab.
+
+The only settings that can be changed are the build chain, and how
+CMake or Make is called. There are no options to set pre-processor
+symbols or include paths. This makes that the project can easily be
+shared with other IDEs, command line, or continuous integration flows.
+
+The following picture shows the build settings of a CMake project.
+
+image:cbs_build_settings_tab_cmake.png[CMake build settings tab]
+
+=== Makefile projects BUILD_MODE
+
+For CBS Makefile projects the launch mode is passed to `make` via
+environment variable `BUILD_MODE`. In the Makefile you can make use of
+this variable to set the wanted `CFLAGS` per launch mode.
+
+[cols="1,1"]
+|===
+|Launch mode | BUILD_MODE
+
+|Run
+|run
+
+|Debug
+|debug
+|===
+
+Here is some example code that makes use of `BUILD_MODE` to set the
+wanted `CFLAGS`:
+
+[source,makefile]
+----
+ifeq ($(BUILD_MODE),debug)
+	CFLAGS += -g -O0
+else ifeq ($(BUILD_MODE),run)
+	CFLAGS += -O2
+endif
+----
+
+icon:arrow-circle-right[] xref:cbs_run_project.adoc[Next: Running a project]

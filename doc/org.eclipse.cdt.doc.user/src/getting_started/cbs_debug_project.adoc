@@ -1,0 +1,81 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Debugging a project
+
+Debugging a CBS project is done via the xref:cbs_launchbar.adoc[Launch Bar]. Make
+sure the launch bar is installed and enabled.
+
+First build the project for Debug.
+See xref:cbs_build_project.adoc[Building a project].
+
+. Select the launch configuration of the project you want to run.
+. Select launch mode *Debug*.
+. Press the *Debug* button in the launch bar.
+. Confirm the switch to the Debug Perspective.
+
+image:cbs_debug_cmake.png[Launch a CMake project for Debug]
+
+The Perspective will change to *Debug*, and you can start debugging.
+
+image:cbs_debugging.png[Debugging a CMake project]
+
+
+=== Changing debug settings
+
+To change debug settings:
+
+. Set the launch mode to *Debug*
+. Edit the project's launch configuration. Click on the gear icon.
+
+image:cbs_edit_launch_config_debug.png[Edit launch configuration]
+
+The edit launch configuration wizard will open. Notice that there are
+now two extra tabs *Debugger* and *Source*, because the launch mode is
+*Debug*. These are not present in launch mode *Run*.
+
+On the *Main* tab you can set an alternative C/C++ application, and
+you can enable or disable build before launch.
+
+On the *Arguments* tab you specify optional arguments, and you can
+change the working directory.
+
+On the *Environment* tab you define optional environment variables.
+
+On the *Debugger* tab you can set an alternative debugger. If the
+debugger name is not an absolute path, CDT will look first for the
+debugger in the selected toolchain in the *Build Settings* tab. When
+it is not found in the toolchain the debugger is searched in the
+*PATH* environment variable defined locations.
+
+On the *Source* tab extra paths outside the project folder can be
+defined to look for source code.
+
+image:cbs_launch_config_tab_debug.png[Launch configuration debug tab]

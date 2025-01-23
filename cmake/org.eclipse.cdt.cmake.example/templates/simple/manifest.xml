@@ -1,0 +1,11 @@
+<templateManifest>
+	<file src="/templates/simple/.clangd"
+		dest="/${projectName}/.clangd"/>
+	<file src="/templates/simple/CMakeLists.txt"
+		dest="/${projectName}/CMakeLists.txt"/>
+	<file src="/templates/simple/config.h.in"
+		dest="/${projectName}/config.h.in"/>
+	<file src="/templates/simple/main.cpp"
+		dest='/${projectName}/${projectName?replace(" ", "_")}.cpp'
+		open="true"/>
+</templateManifest>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.cdt.core.buildConfigProvider">
+      <provider
+            class="org.eclipse.cdt.cmake.example.ExtendedCMakeBuildConfigurationProvider"
+            id="org.eclipse.cdt.cmake.example.provider.extended"
+            natureId="org.eclipse.cdt.cmake.example.extendedCmakeNature">
+      </provider>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.cmake.example.extendedCmakeNature"
+         name="%nature.name"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.cmake.example.ExtendedCMakeNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.launch.coreBuildTab">
+      <provider
+            nature="org.eclipse.cdt.cmake.example.extendedCmakeNature"
+            priority="10"
+            tabClass="org.eclipse.cdt.cmake.ui.internal.CMakeBuildTab">
+      </provider>
+   </extension>
+   <extension
+         point="org.eclipse.tools.templates.ui.templates">
+      <tag
+            id="org.eclipse.cdt.cmake.example.tag"
+            label="CMake Examples for ISVs">
+      </tag>
+      <template
+            icon="icons/cmake_logo-main.png"
+            id="org.eclipse.cdt.cmake.ui.example.newExtendedProjectTemplate"
+            label="Extended CMake Project (ISV Example)"
+            wizard="org.eclipse.cdt.cmake.example.NewExtendedCMakeProjectWizard">
+         <description>
+            A CMake project that demonstrates how to extend CDT's CMake project type. This project is an example and not shipped with CDT and is intended for ISVs as a demonstration.
+         </description>
+         <tagReference
+               id="org.eclipse.cdt.ui.cdtTag">
+         </tagReference>
+         <tagReference
+               id="org.eclipse.cdt.cmake.ui.tag">
+         </tagReference>
+         <tagReference
+               id="org.eclipse.cdt.cmake.example.tag">
+         </tagReference>
+      </template>
+   </extension>
+</plugin>

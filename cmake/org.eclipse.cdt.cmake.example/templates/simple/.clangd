@@ -1,0 +1,4 @@
+CompileFlags:
+  # When using clangd update this entry to point at the desired
+  # configuration directory to pick up the compile_commands.json
+  CompilationDatabase: build/default

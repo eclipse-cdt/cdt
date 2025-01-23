@@ -63,6 +63,14 @@ Starting in CDT 12, the Terminal will now default to UTF-8.
 
 # API Changes, current and planned
 
+## CMake Support easier for extenders and ISVs
+
+Improvements to the API for CMake has made it easier to extend and specialize CMake for ISVs.
+A fully worked example demonstrating the support is now provided in the CDT source in [org.eclipse.cdt.cmake.example](https://github.com/eclipse-cdt/cdt/tree/main/cmake/org.eclipse.cdt.cmake.example).
+This example demonstrates the API, and how to contribute a new project wizard to make such a project.
+
+<p align="center"><img src="images/CDT-12.0-cmake-example-project-for-isvs.png"></p>
+
 ## Breaking API changes
 
 Please see [CHANGELOG-API](CHANGELOG-API.md) for details on the breaking API changes in this release as well as future planned API changes.

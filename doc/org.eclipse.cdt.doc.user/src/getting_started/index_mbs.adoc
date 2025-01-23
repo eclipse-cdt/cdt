@@ -1,0 +1,45 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+= Legacy Managed Build System contents
+
+xref:cdt_w_basic.adoc[Tutorial: Creating a Managed Build System Makefile project]
+
+xref:cdt_w_import.adoc[Tutorial: Importing an existing project]
+
+xref:cdt_w_newcpp.adoc[Creating your {cpp} file]
+
+xref:cdt_w_newmake.adoc[Creating a makefile]
+
+xref:cdt_w_build.adoc[Building a project]
+
+xref:cdt_w_debug.adoc[Debugging a project]
+
+xref:cdt_w_existing_code.adoc[Importing your C/{cpp} source files into Eclipse]

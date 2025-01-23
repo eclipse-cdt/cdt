@@ -88,9 +88,9 @@ xref:cdt_w_newmake.adoc[image:ngnext.gif[Next
 icon,width=16,height=16]] *xref:cdt_w_newmake.adoc[Next: Creating your
 makefile]*
 
-xref:cdt_w_newproj.adoc[image:ngback.gif[Back
-icon,width=16,height=16]] *xref:cdt_w_newproj.adoc[Back: Creating your
-project]*
+xref:cdt_w_import.adoc[image:ngback.gif[Back
+icon,width=16,height=16]] *xref:cdt_w_import.adoc[Back: Importing an
+existing project]*
 
 image:ngconcepts.gif[Related concepts,width=143,height=21]
 

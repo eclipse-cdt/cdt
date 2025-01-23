@@ -28,17 +28,12 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Tutorial: Creating a simple application
+== Tutorial: Creating a Managed Build System Makefile project
 
 In this tutorial, you will use the CDT to create a simple 'Hello World'
 application. This tutorial describes the process of creating a new {cpp}
 project where the build is automatically managed by the CDT, and running
 the program.
-
-*NOTE*: In earlier versions of the CDT, there were two separate project
-types: Managed make (automatically generated a makefile) and Standard
-make (required the user's makefile to build). Now with CDT, you just
-select a project type, and that determines what build system to use.
 
 To create a simple "Hello World" application using CDT, perform the
 following general steps:
@@ -57,10 +52,13 @@ image:cdt_w_basic02.png[Select File > New > Project menu
 option,width=591,height=183]
 +
 . Select the type of project to create. For this tutorial, expand the
-*{cpp}* folder and select *{cpp} Project* and click *Next*.
+*C/{cpp}* folder and select *C/{cpp} Project* and click *Next*.
  +
-image:cdt_w_basic03a.png[Select project
-type,width=525,height=500]
+image:cdt_w_basic03a.png[Select project type]
+ +
+. Select *{cpp} Managed Build* and click *Next*.
+ +
+image:cdt_w_basic03b.png[Select {cpp} Managed Build]
  +
 . The *{cpp} Project* wizard opens.
 +
@@ -138,12 +136,6 @@ populated with objects created from your code.
  +
 image:cdt_w_basic13.png[C Editor with Outline
 view,width=731,height=333]
- +
-*NOTE:* You can specify a different editor, and add or modify existing
-code templates in *Window > Preferences*.
- +
-*OPTIONAL*: You can type additional code in this file, and then save the
-changes by clicking File > Save, or pressing *CTRL+S*.
  +
 Next, you will need to build your project before you can run it.
  +

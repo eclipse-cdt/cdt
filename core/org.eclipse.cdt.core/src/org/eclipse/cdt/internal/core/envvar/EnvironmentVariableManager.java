@@ -227,7 +227,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	 * or null if the the given level is not supported
 	 */
 	public IEnvironmentContextInfo getContextInfo(Object level) {
-		if (level instanceof IBuildConfiguration buildConfiguration
+		if (level instanceof ICBuildConfiguration || level instanceof IBuildConfiguration buildConfiguration
 				&& buildConfiguration.getAdapter(ICBuildConfiguration.class) != null) {
 			return new CMakeEnvironmentContextInfo(getDefaultContextInfo(level));
 		}

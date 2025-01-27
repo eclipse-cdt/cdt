@@ -2,15 +2,24 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <toc label="Getting Started">
           <topic label="Preparing the Workbench" href="getting_started/cdt_w_prepare_workbench.htm"/>
-          <topic label="Creating a simple application" href="getting_started/cdt_w_basic.htm"/>
-          <topic label="Creating a Makefile project" href="getting_started/cdt_w_newproj.htm"/>
-          <topic label="Core Build System" href="getting_started/core_build_system.htm"/>
-          <topic label="Creating a CMake project" href="getting_started/new_cmake_proj.htm"/>
-          <topic label="Importing an existing project" href="getting_started/cdt_w_import.htm"/>
-          <topic href="getting_started/cdt_w_newcpp.htm" label="Creating a C++ file"/>
-          <topic href="getting_started/cdt_w_newmake.htm" label="Creating a makefile"/>
-          <topic label="Building a project" href="getting_started/cdt_w_build.htm"/>
-          <topic label="Debugging projects" href="getting_started/cdt_w_debug.htm"/>
-          <topic label="Importing C/C++ source files into Eclipse" href="getting_started/cdt_w_existing_code.htm"/>
+	  <topic label="Core Build System" href="getting_started/index_cbs.htm">
+              <topic label="Core Build System" href="getting_started/core_build_system.htm"/>
+              <topic label="Creating a CMake project" href="getting_started/new_cmake_proj.htm"/>
+              <topic label="Creating a Core Build System Makefile project" href="getting_started/new_cbs_makefile_proj.htm"/>
+              <topic label="Using existing code" href="getting_started/cbs_using_existing_code.htm"/>
+              <topic label="Launch Bar" href="getting_started/cbs_launchbar.htm"/>
+              <topic label="Building a project" href="getting_started/cbs_build_project.htm"/>
+              <topic label="Running a project" href="getting_started/cbs_run_project.htm"/>
+              <topic label="Debugging a project" href="getting_started/cbs_debug_project.htm"/>
+          </topic>
+	  <topic label="Legacy Managed Build System" href="getting_started/index_mbs.htm">
+              <topic label="Creating a Managed Build System Makefile project" href="getting_started/cdt_w_basic.htm"/>
+              <topic label="Importing an existing project" href="getting_started/cdt_w_import.htm"/>
+              <topic href="getting_started/cdt_w_newcpp.htm" label="Creating a C++ file"/>
+              <topic href="getting_started/cdt_w_newmake.htm" label="Creating a makefile"/>
+              <topic label="Building a project" href="getting_started/cdt_w_build.htm"/>
+              <topic label="Debugging projects" href="getting_started/cdt_w_debug.htm"/>
+              <topic label="Importing C/C++ source files into Eclipse" href="getting_started/cdt_w_existing_code.htm"/>
+          </topic>
           <!--topic label="Updating the CDT" href="getting_started/cdt_w_install_cdt.htm"/-->
 </toc>

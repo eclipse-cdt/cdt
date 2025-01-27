@@ -28,23 +28,18 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Getting Started
+= Legacy Managed Build System contents
 
-The following tutorials guide you through the process of using the C/{cpp}
-Development Toolkit (CDT) to:
+xref:cdt_w_basic.adoc[Tutorial: Creating a Managed Build System Makefile project]
 
-* xref:cdt_w_prepare_workbench.adoc[Prepare the Workbench]
-* xref:cdt_w_basic.adoc[Create a simple application]
-* xref:new_cmake_proj.adoc[Creating a CMake project]
-* xref:cdt_w_basic.adoc[Create a Managed Build System Makefile project]
-* xref:cdt_w_import.adoc[Import an existing project]
-* xref:cdt_w_newcpp.adoc[Create a {cpp} file]
-* xref:cdt_w_newmake.adoc[Create a makefile]
-* xref:cdt_w_build.adoc[Build a project]
-* xref:cdt_w_debug.adoc[Debug a project]
-* xref:cdt_w_existing_code.adoc[Import C/{cpp} source into Eclipse]
-* xref:cdt_w_install_cdt.adoc[Install/update the CDT]
+xref:cdt_w_import.adoc[Tutorial: Importing an existing project]
 
-image:ngref.gif[Related reference]
+xref:cdt_w_newcpp.adoc[Creating your {cpp} file]
 
-* xref:../concepts/cdt_o_home.adoc[CDT Home]
+xref:cdt_w_newmake.adoc[Creating a makefile]
+
+xref:cdt_w_build.adoc[Building a project]
+
+xref:cdt_w_debug.adoc[Debugging a project]
+
+xref:cdt_w_existing_code.adoc[Importing your C/{cpp} source files into Eclipse]

@@ -30,9 +30,9 @@ endif::[]
 
 == Building a project
 
-During CBS project creation a launch configuration with the same name
-is created along with it. The Build settings are managed in the *Build
-Settings* tab of the launch configuration.
+During Core Build System (CBS) project creation a launch configuration
+with the same name is created along with it. The Build settings are
+managed in the *Build Settings* tab of the launch configuration.
 
 CBS projects rely on the xref:cbs_launchbar.adoc[Launch Bar]. Make
 sure the launch bar is installed and enabled.
@@ -83,5 +83,34 @@ shared with other IDEs, command line, or continuous integration flows.
 The following picture shows the build settings of a CMake project.
 
 image:cbs_build_settings_tab_cmake.png[CMake build settings tab]
+
+=== Makefile projects BUILD_MODE
+
+For CBS Makefile projects the launch mode is passed to `make` via
+environment variable `BUILD_MODE`. In the Makefile you can make use of
+this variable to set the wanted `CFLAGS` per launch mode.
+
+[cols="1,1"]
+|===
+|Launch mode | BUILD_MODE
+
+|Run
+|run
+
+|Debug
+|debug
+|===
+
+Here is some example code that makes use of `BUILD_MODE` to set the
+wanted `CFLAGS`:
+
+[source,makefile]
+----
+ifeq ($(BUILD_MODE),debug)
+	CFLAGS += -g -O0
+else ifeq ($(BUILD_MODE),run)
+	CFLAGS += -O2
+endif
+----
 
 icon:arrow-circle-right[] xref:cbs_run_project.adoc[Next: Running a project]

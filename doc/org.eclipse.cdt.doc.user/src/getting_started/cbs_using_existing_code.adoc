@@ -30,20 +30,20 @@ endif::[]
 
 == Using existing code
 
-This tutorial describes how to use existing code for Core Build System
-projects.
+This tutorial describes how to create a new Core Build System
+(CBS) project for use with existing code.
 
 Using existing code is done by creating a new **empty** project on top of the
 existing code.
 
 === Using an existing CMake project
 
-To create an empty CMake project select the template *Empty or Existing CMake
+To create an empty CMake project in CDT select the template *Empty or Existing CMake
 Project* in the *New C/{cpp} Project* wizard.
 
 image:cbs_empty_cmake_project.png[Empty or Existing CMake Project]
 
-Then in the *New CMake Project* wizard deselect *Use default location*
+In the *New CMake Project* wizard deselect *Use default location*
 and set the location of the existing code.
 
 image:cbs_existing_code_cmake.png[Existing code CMake]
@@ -53,12 +53,12 @@ xref:new_cmake_proj.adoc[Creating a CMake project]
 
 === Using an existing Makefile project
 
-Create a Makefile project as described in
+Create a CBS Makefile project in CDT as described in
 xref:new_cbs_makefile_proj.adoc[Creating a Core Build System Makefile project]
 with the following changes:
 
-In the *New Makefile Project* wizard deselect *Use default location*
-and set the location of the existing code, and deselect *Create Hello
+In the *New Makefile Project* wizard deselect *Use default location*,
+set the location of the existing code, and deselect *Create Hello
 World Source and Makefile example*.
 
 image:cbs_existing_code_makefile.png[Existing code Makefile]

@@ -30,9 +30,9 @@ endif::[]
 
 == Launch Bar
 
-CBS projects rely on the *LaunchBar*. Make sure the launch bar plugin
-is installed and enabled. In the global preferences the launch bar can
-be enabled or disabled.
+Core Build System (CBS) projects rely on the *Launch Bar*. Make sure
+the _LaunchBar UI_ feature is installed and enabled. In the global
+preferences the launch bar can be enabled or disabled.
 
 image:launchbar_preferences.png[Launch Bar preferences]
 

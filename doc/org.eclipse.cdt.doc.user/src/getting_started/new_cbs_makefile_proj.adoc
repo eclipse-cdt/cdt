@@ -38,11 +38,9 @@ A project has an associated builder that can incrementally compile source files 
 To create a project:
 
 . Select menu:File[New > Project].
-
-
++
 When you create a new project, you are required to specify the project type.
 This project type will determine the toolchain, data, and tabs that the CDT uses/displays.
-
 . Select the type of project to create. For this tutorial, expand the *C/{cpp}* folder and select *C/{cpp} Project*.
 . Click btn:[Next].
 
@@ -50,17 +48,14 @@ image:cdt_w_basic03a.png[Select project type]
 
 The *C/{cpp} Project* wizard opens:
 
-
 image:c_cpp_project_wizard.png[width=515]
-
 
 By default, the CDT presents all *C/{cpp} Project* templates.
 
 . Select the *Make* template filter and choose from the *Makefile project* project template.
-
-
++
 image:c_cpp_project_wizard_makefile.png[]
-
++
 . Click btn:[Next].
 . In the *Project name* field, provide a name for the new project.
 . Leave the *Use Default Location* option selected.

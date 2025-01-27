@@ -36,7 +36,7 @@ Development Toolkit (CDT) to:
 * xref:cdt_w_prepare_workbench.adoc[Prepare the Workbench]
 * xref:cdt_w_basic.adoc[Create a simple application]
 * xref:new_cmake_proj.adoc[Creating a CMake project]
-* xref:cdt_w_newproj.adoc[Create a Makefile project]
+* xref:cdt_w_basic.adoc[Create a Managed Build System Makefile project]
 * xref:cdt_w_import.adoc[Import an existing project]
 * xref:cdt_w_newcpp.adoc[Create a {cpp} file]
 * xref:cdt_w_newmake.adoc[Create a makefile]

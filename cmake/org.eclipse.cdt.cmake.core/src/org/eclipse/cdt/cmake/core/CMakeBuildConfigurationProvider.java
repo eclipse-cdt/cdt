@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.Platform;
  * See the example project <a href="https://github.com/eclipse-cdt/cdt/tree/main/cmake/org.eclipse.cdt.cmake.example">
  * org.eclipse.cdt.cmake.example</a> for a full example.
  *
- * @since 1.6
+ * @since 2.0
  */
 public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProvider {
 

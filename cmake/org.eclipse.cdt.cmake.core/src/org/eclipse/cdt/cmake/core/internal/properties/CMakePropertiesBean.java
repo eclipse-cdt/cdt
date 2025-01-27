@@ -13,7 +13,11 @@ package org.eclipse.cdt.cmake.core.internal.properties;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
+import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
+import org.eclipse.cdt.cmake.core.properties.ICMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
 
 /**
@@ -23,19 +27,41 @@ import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
  */
 public class CMakePropertiesBean implements ICMakeProperties {
 
-	private boolean warnNoDev, debugTryCompile, debugOutput, trace, warnUnitialized, warnUnused;
-	private String cacheFile;
-	private boolean clearCache;
+	private String command = CMakeBuildConfiguration.CMAKE_BUILD_COMMAND_DEFAULT;
+	private ICMakeGenerator generator = CMakeGenerator.getGenerator(CMakeBuildConfiguration.CMAKE_GENERATOR_DEFAULT);
+	private boolean warnNoDev = false, debugTryCompile = false, debugOutput = false, trace = false,
+			warnUninitialized = false, warnUnused = false;
+	private String cacheFile = ""; //$NON-NLS-1$
+	private boolean clearCache = false;
 	private List<String> extraArguments = new ArrayList<>(0);
-	private LinuxOverrides linuxOverrides = new LinuxOverrides();
-	private WindowsOverrides windowsOverrides = new WindowsOverrides();
 	private String buildType;
+	private String allTarget = CMakeBuildConfiguration.CMAKE_ALL_TARGET_DEFAULT;
+	private String cleanTarget = CMakeBuildConfiguration.CMAKE_CLEAN_TARGET_DEFAULT;
 
 	/**
 	 * Creates a new object, initialized with all default values.
 	 */
 	public CMakePropertiesBean() {
-		reset(true);
+	}
+
+	@Override
+	public final String getCommand() {
+		return command;
+	}
+
+	@Override
+	public void setCommand(String command) {
+		this.command = Objects.requireNonNull(command, "command"); //$NON-NLS-1$
+	}
+
+	@Override
+	public final ICMakeGenerator getGenerator() {
+		return generator;
+	}
+
+	@Override
+	public void setGenerator(ICMakeGenerator generator) {
+		this.generator = Objects.requireNonNull(generator, "generator"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -79,22 +105,22 @@ public class CMakePropertiesBean implements ICMakeProperties {
 	}
 
 	@Override
-	public boolean isWarnUnitialized() {
-		return warnUnitialized;
+	public boolean isWarnUninitialized() {
+		return warnUninitialized;
 	}
 
 	@Override
-	public void setWarnUnitialized(boolean warnUnitialized) {
-		this.warnUnitialized = warnUnitialized;
+	public void setWarnUninitialized(boolean warnUninitialized) {
+		this.warnUninitialized = warnUninitialized;
 	}
 
 	@Override
-	public boolean isWarnUnused() {
+	public boolean isWarnUnusedVars() {
 		return warnUnused;
 	}
 
 	@Override
-	public void setWarnUnused(boolean warnUnused) {
+	public void setWarnUnusedVars(boolean warnUnused) {
 		this.warnUnused = warnUnused;
 	}
 
@@ -119,24 +145,6 @@ public class CMakePropertiesBean implements ICMakeProperties {
 	}
 
 	@Override
-	public LinuxOverrides getLinuxOverrides() {
-		return linuxOverrides;
-	}
-
-	public void setLinuxOverrides(LinuxOverrides linuxOverrides) {
-		this.linuxOverrides = linuxOverrides;
-	}
-
-	@Override
-	public WindowsOverrides getWindowsOverrides() {
-		return windowsOverrides;
-	}
-
-	public void setWindowsOverrides(WindowsOverrides windowsOverrides) {
-		this.windowsOverrides = windowsOverrides;
-	}
-
-	@Override
 	public String getCacheFile() {
 		return cacheFile;
 	}
@@ -157,19 +165,22 @@ public class CMakePropertiesBean implements ICMakeProperties {
 	}
 
 	@Override
-	public void reset(boolean resetOsOverrides) {
-		warnNoDev = false;
-		debugTryCompile = false;
-		debugOutput = false;
-		trace = false;
-		warnUnitialized = false;
-		warnUnused = false;
-		extraArguments.clear();
-		cacheFile = ""; //$NON-NLS-1$
+	public String getCleanTarget() {
+		return cleanTarget;
+	}
 
-		if (resetOsOverrides) {
-			linuxOverrides.reset();
-			windowsOverrides.reset();
-		}
+	@Override
+	public void setCleanTarget(String cleanTarget) {
+		this.cleanTarget = cleanTarget;
+	}
+
+	@Override
+	public String getAllTarget() {
+		return allTarget;
+	}
+
+	@Override
+	public void setAllTarget(String allTarget) {
+		this.allTarget = allTarget;
 	}
 }

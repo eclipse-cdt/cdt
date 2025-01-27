@@ -18,7 +18,7 @@ package org.eclipse.cdt.cmake.core.properties;
  * @author Martin Weber
  * @since 1.4
  */
-public enum CMakeGenerator {
+public enum CMakeGenerator implements ICMakeGenerator {
 	/*
 	 * Implementation Note: Please do not include generators for IDE project files,
 	 * such as "Eclipse CDT4 - Unix Makefiles".
@@ -59,6 +59,7 @@ public enum CMakeGenerator {
 	 * @return a non-empty string, which must be a valid argument for cmake's -G
 	 *         option.
 	 */
+	@Override
 	public String getCMakeName() {
 		return name;
 	}
@@ -69,6 +70,7 @@ public enum CMakeGenerator {
 	 *
 	 * @return name of the makefile.
 	 */
+	@Override
 	public String getMakefileName() {
 		return "Makefile"; //$NON-NLS-1$
 	}
@@ -78,6 +80,7 @@ public enum CMakeGenerator {
 	 *
 	 * @return the command option string or {@code null} if no argument is needed.
 	 */
+	@Override
 	public String getIgnoreErrOption() {
 		return ignoreErrOption;
 	}

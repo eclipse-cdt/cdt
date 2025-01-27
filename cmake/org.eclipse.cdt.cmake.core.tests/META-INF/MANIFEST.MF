@@ -5,9 +5,12 @@ Bundle-SymbolicName: org.eclipse.cdt.cmake.core.tests
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.cdt.cmake.core;bundle-version="1.5.0"
 Import-Package: org.assertj.core.api;version="[3.24.2,4.0.0)",
- org.junit.jupiter.api;version="[5.9.3,6.0.0)"
+ org.junit.jupiter.api;version="[5.9.3,6.0.0)",
+ org.mockito;version="[5.15.0,6.0.0)",
+ org.mockito.stubbing;version="[5.15.0,6.0.0)"
 Automatic-Module-Name: org.eclipse.cdt.cmake.core.tests
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Copyright: %Bundle-Copyright
-Require-Bundle: org.junit
+Require-Bundle: org.junit,
+ org.eclipse.cdt.core.tests;bundle-version="[5.4.0,6.0.0)"
 

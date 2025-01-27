@@ -23,6 +23,29 @@ import java.util.List;
  * @since 1.4
  */
 public interface ICMakeProperties {
+	/**
+	 * Gets the cmake command. Has no effect if {@link #getUseDefaultCommand()} returns <code>false</code>.
+	 * @since 2.0
+	 */
+	String getCommand();
+
+	/**
+	 * Sets the cmake command.
+	 * @since 2.0
+	 */
+	void setCommand(String command);
+
+	/**
+	 * Gets the cmake buildscript generator.
+	 * @since 2.0
+	 */
+	ICMakeGenerator getGenerator();
+
+	/**
+	 * Sets the cmake build-script generator.
+	 * @since 2.0
+	 */
+	void setGenerator(ICMakeGenerator generator);
 
 	/**
 	 * {@code -Wno-dev}
@@ -66,23 +89,27 @@ public interface ICMakeProperties {
 
 	/**
 	 * {@code --warn-uninitialized}
+	 * @since 2.0
 	 */
-	boolean isWarnUnitialized();
+	boolean isWarnUninitialized();
 
 	/**
 	 * {@code --warn-uninitialized}
+	 * @since 2.0
 	 */
-	void setWarnUnitialized(boolean warnUnitialized);
+	void setWarnUninitialized(boolean warnUninitialized);
 
 	/**
 	 * {@code --warn-unused-vars}
+	 * @since 2.0
 	 */
-	boolean isWarnUnused();
+	boolean isWarnUnusedVars();
 
 	/**
 	 * {@code --warn-unused-vars}
+	 * @since 2.0
 	 */
-	void setWarnUnused(boolean warnUnused);
+	void setWarnUnusedVars(boolean warnUnused);
 
 	/** Gets the build type ({@code Debug}, {@code Release}, ...). The returned value is passed to cmake
 	 * as the {@code CMAKE_BUILD_TYPE} symbol on the command-line.
@@ -141,22 +168,27 @@ public interface ICMakeProperties {
 	void setClearCache(boolean clearCache);
 
 	/**
-	 * Gets the override/augmenting properties to apply when the build runs on linux.
+	 * The target to pass to {@code --target} CMake command line option, used when user asks to clean a project.
+	 * @since 2.0
 	 */
-	IOsOverrides getLinuxOverrides();
+	String getCleanTarget();
 
 	/**
-	 * Gets the override/augmenting properties to apply when the build runs on windows.
+	 * @param cleanTarget The target to pass to {@code --target} CMake command line option, used when user asks to clean a project.
+	 * @since 2.0
 	 */
-	IOsOverrides getWindowsOverrides();
+	void setCleanTarget(String cleanTarget);
 
 	/**
-	 * Sets each property to its default value. This is intended for UIs that wish to implement a restore-defaults feature.<br>
-	 *
-	 * @param resetOsOverrides
-	 * 		  whether to also reset the OS-specific overrides ({@link #getLinuxOverrides()},
-	 * 		  {@link #getWindowsOverrides()}). If the overrides are displayed in separate tabs in the UI, <code>false</code>
-	 * 		  should be specified.
+	 * The target to pass to {@code --target} CMake command line option, used when user asks to build a project.
+	 * @since 2.0
 	 */
-	void reset(boolean resetOsOverrides);
+	String getAllTarget();
+
+	/**
+	 * @param allTarget The target to pass to {@code --target} CMake command line option, used when user asks to build a project.
+	 * @since 2.0
+	 */
+	void setAllTarget(String allTarget);
+
 }

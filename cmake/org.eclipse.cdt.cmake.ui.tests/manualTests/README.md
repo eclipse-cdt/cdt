@@ -33,7 +33,7 @@ Note, the Build Settings tab settings are stored separately for Run mode and Deb
 #### 5.1) Enter a custom all target, such as `helloworld`, and run build
   Expected: the custom target is used in the cmake command line
   
-### 6) Build Settings specific all target:  
+### 6) Build Settings specific clean target:
 #### 6.1) Enter a custom clean target, such as `help`, and clean project
   Expected: the custom target is used in the cmake command line
 

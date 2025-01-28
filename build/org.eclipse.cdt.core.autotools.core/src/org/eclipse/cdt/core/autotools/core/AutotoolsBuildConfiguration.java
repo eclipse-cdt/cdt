@@ -90,7 +90,7 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 		try {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
-			ConsoleOutputStream outStream = console.getOutputStream();
+			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			try (ErrorParserManager epm = new ErrorParserManager(project, getBuildDirectoryURI(), this,
 					getToolChain().getErrorParserIds())) {
@@ -98,8 +98,8 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 
 				IEnvironmentVariable[] env = new IEnvironmentVariable[0];
 
-				outStream.write("Building in: " + processCwd.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-				outStream.write("Running: " + commandJoined + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				infoStream.write("Building in: " + processCwd.toString() + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+				infoStream.write("Running: " + commandJoined + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				Process p = startBuildProcess(command, env, processCwd, console, monitor);
 				if (p == null) {
 					console.getErrorStream().write("Error executing: " + commandJoined); //$NON-NLS-1$

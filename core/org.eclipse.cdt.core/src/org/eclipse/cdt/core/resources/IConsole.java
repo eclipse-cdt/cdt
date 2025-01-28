@@ -29,9 +29,32 @@ public interface IConsole {
 	 */
 	void start(IProject project);
 
+	/**
+	 * Get the stream that shows up as output in the console. This
+	 * is typically connected to the output of the build process.
+	 */
 	ConsoleOutputStream getOutputStream() throws CoreException;
 
+	/**
+	 * Get the stream that shows up as information messages in
+	 * the console. This is typically not connected to the output
+	 * of the build process. Typically information messages, such
+	 * as build started and build completed messages are written
+	 * to the info stream.
+	 *
+	 * @apiNote Whether the command line used to launch the process
+	 * is written to the info stream or to the output stream is
+	 * very inconsistent in CDT's code base. Core Build mostly
+	 * uses the info stream for this purpose, but MBS typically
+	 * uses output stream.
+	 */
 	ConsoleOutputStream getInfoStream() throws CoreException;
 
+	/**
+	 * Get the stream that shows up as output in the console. This
+	 * is typically connected to the error output of the build process
+	 * and errors detected when launching the process can be output
+	 * to here as well.
+	 */
 	ConsoleOutputStream getErrorStream() throws CoreException;
 }

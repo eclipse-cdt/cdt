@@ -119,11 +119,11 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		try {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
-			ConsoleOutputStream outStream = console.getOutputStream();
+			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			Path buildDir = getBuildDirectory();
 
-			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingIn, buildDir.toString()));
+			infoStream.write(String.format(Messages.MesonBuildConfiguration_BuildingIn, buildDir.toString()));
 
 			// Make sure we have a toolchain file if cross
 			if (toolChainFile == null && !isLocal()) {
@@ -169,7 +169,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				monitor.subTask(Messages.MesonBuildConfiguration_RunningMeson);
 
-				outStream.write(String.join(" ", envStr != null ? ("env " + envStr) : "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				infoStream.write(String.join(" ", envStr != null ? ("env " + envStr) : "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						"sh -c \"meson", userArgs != null ? userArgs : "", projOptions != null ? projOptions : "", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 						getBuildDirectory().getParent().getParent().toString() + "\"\n")); //$NON-NLS-1$
 
@@ -246,7 +246,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 			// Process compile_commands.json file and generate Scanner info
 			refreshScannerInfo();
 
-			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));
+			infoStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));
 
 			return new IProject[] { project };
 		} catch (IOException e) {
@@ -261,11 +261,11 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		try {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
-			ConsoleOutputStream outStream = console.getOutputStream();
+			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			Path buildDir = getBuildDirectory();
 
-			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingIn, buildDir.toString()));
+			infoStream.write(String.format(Messages.MesonBuildConfiguration_BuildingIn, buildDir.toString()));
 
 			if (!Files.exists(buildDir.resolve("build.ninja"))) { //$NON-NLS-1$
 				console.getOutputStream().write(Messages.MesonBuildConfiguration_NoNinjaFileToClean);
@@ -290,7 +290,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 
 				IEnvironmentVariable[] env = new IEnvironmentVariable[0];
 
-				outStream.write(String.join(" ", commandList) + '\n'); //$NON-NLS-1$
+				infoStream.write(String.join(" ", commandList) + '\n'); //$NON-NLS-1$
 				Process p = startBuildProcess(commandList, env, workingDir, console, monitor);
 				if (p == null) {
 					console.getErrorStream()
@@ -301,7 +301,7 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 				watchProcess(console, monitor);
 			}
 
-			outStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));
+			infoStream.write(String.format(Messages.MesonBuildConfiguration_BuildingComplete, buildDir.toString()));
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

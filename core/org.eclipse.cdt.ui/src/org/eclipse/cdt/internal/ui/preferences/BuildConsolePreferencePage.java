@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -49,8 +50,17 @@ public class BuildConsolePreferencePage extends FieldEditorPreferencePage implem
 	public static final String PREF_BUILDCONSOLE_TAB_WIDTH = "buildConsoleTabWith"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_LINES = "buildConsoleLines"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_UPDATE_DELAY_MS = "buildConsoleUpdateDelayMs"; //$NON-NLS-1$
+	/**
+	 * The color of the {@link IConsole#getInfoStream()}
+	 */
 	public static final String PREF_BUILDCONSOLE_INFO_COLOR = "buildConsoleInfoStreamColor"; //$NON-NLS-1$
+	/**
+	 * The color of the {@link IConsole#getOutputStream()}
+	 */
 	public static final String PREF_BUILDCONSOLE_OUTPUT_COLOR = "buildConsoleOutputStreamColor"; //$NON-NLS-1$
+	/**
+	 * The color of the {@link IConsole#getErrorStream()}
+	 */
 	public static final String PREF_BUILDCONSOLE_ERROR_COLOR = "buildConsoleErrorStreamColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_BACKGROUND_COLOR = "buildConsoleBackgroundColor"; //$NON-NLS-1$
 	public static final String PREF_BUILDCONSOLE_PROBLEM_BACKGROUND_COLOR = "buildConsoleProblemBackgroundColor"; //$NON-NLS-1$

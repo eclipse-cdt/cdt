@@ -309,16 +309,16 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 			ICMakeProperties cmakeProperties = getCMakeProperties();
 			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties);
 			CommandDescriptor command = cmdBuilder.makeCMakeBuildCommandline(cmakeProperties.getCleanTarget());
-			ConsoleOutputStream outStream = console.getOutputStream();
+			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			Path buildDir = getBuildDirectory();
 
 			if (!Files.exists(buildDir.resolve("CMakeFiles"))) { //$NON-NLS-1$
-				outStream.write(Messages.CMakeBuildConfiguration_NotFound);
+				infoStream.write(Messages.CMakeBuildConfiguration_NotFound);
 				return;
 			}
 
-			outStream.write(String.join(" ", command.getArguments()) + '\n'); //$NON-NLS-1$
+			infoStream.write(String.join(" ", command.getArguments()) + '\n'); //$NON-NLS-1$
 
 			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 					getBuildDirectory().toString());
@@ -341,7 +341,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 				addMarker(project, -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
 			}
 
-			outStream.write(Messages.CMakeBuildConfiguration_BuildComplete);
+			infoStream.write(Messages.CMakeBuildConfiguration_BuildComplete);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

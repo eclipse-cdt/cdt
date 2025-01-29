@@ -31,7 +31,6 @@ import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -39,7 +38,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -238,11 +236,11 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		try {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
-			ConsoleOutputStream outStream = console.getOutputStream();
+			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			Path buildDir = getBuildDirectory();
 
-			outStream.write(String.format(Messages.StandardBuildConfiguration_0, buildDir.toString()));
+			infoStream.write(String.format(Messages.StandardBuildConfiguration_0, buildDir.toString()));
 
 			List<String> command = new ArrayList<>();
 			command.add(buildCommand[0]);
@@ -278,7 +276,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 				project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 
-				outStream.write(String.format(Messages.StandardBuildConfiguration_1, epm.getErrorCount(),
+				infoStream.write(String.format(Messages.StandardBuildConfiguration_1, epm.getErrorCount(),
 						epm.getWarningCount(), buildDir.toString()));
 			}
 			return new IProject[] { project };
@@ -294,11 +292,11 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		try {
 			project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 
-			ConsoleOutputStream outStream = console.getOutputStream();
+			ConsoleOutputStream infoStream = console.getInfoStream();
 
 			Path buildDir = getBuildDirectory();
 
-			outStream.write(String.format(Messages.StandardBuildConfiguration_0, buildDir.toString()));
+			infoStream.write(String.format(Messages.StandardBuildConfiguration_0, buildDir.toString()));
 
 			List<String> command = new ArrayList<>();
 			List<String> buildCommand;
@@ -323,7 +321,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			}
 
 			// run make
-			outStream.write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
+			infoStream.write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
 
 			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 					getBuildDirectory().toString());
@@ -335,7 +333,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 			watchProcess(console, monitor);
 
-			outStream.write(Messages.CBuildConfiguration_BuildComplete);
+			infoStream.write(Messages.CBuildConfiguration_BuildComplete);
 
 			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
 		} catch (IOException e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2020 Martin Weber.
+ * Copyright (c) 2025 Renesas Electronics Europe.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -8,20 +8,15 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *******************************************************************************/
+package org.eclipse.cdt.cmake.core.properties;
 
-package org.eclipse.cdt.cmake.core.internal.properties;
+import org.eclipse.cdt.cmake.core.internal.properties.CMakePropertiesBean;
 
 /**
- * Preferences that override/augment the generic properties when running under
- * Linux.
- *
- * @author Martin Weber
+ * @since 2.0
  */
-public class LinuxOverrides extends AbstractOsOverrides {
-
-	/**
-	 * Creates a new object, initialized with all default values.
-	 */
-	public LinuxOverrides() {
+public class CMakePropertiesFactory {
+	public static ICMakeProperties createProperties() {
+		return new CMakePropertiesBean();
 	}
 }

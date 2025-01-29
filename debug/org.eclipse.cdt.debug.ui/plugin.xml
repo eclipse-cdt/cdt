@@ -718,76 +718,6 @@
                helpContextId="add_line_breakpoint_action_context"
                tooltip="%AddLineBreakpoint.tooltip"/>
       </viewContribution>
-      <viewContribution
-            targetID="org.eclipse.debug.ui.RegisterView"
-            id="org.eclipse.debug.ui.registersView.toolbar">
-         <menu
-               label="%Dummy"
-               id="org.eclipse.cdt.debug.ui.refresh">
-            <separator name="refreshGroup"/>
-            <separator name="emptyRefreshGroup"/>
-         </menu>
-      </viewContribution>
-      <viewContribution
-            id="org.eclipse.cdt.debug.ui.expression.toolbar"
-            targetID="org.eclipse.debug.ui.ExpressionView">
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/elcl16/toolbar_pinned.gif"
-               id="org.eclipse.pinclone.expression.pinDebugContext"
-               label="%PinView.name "
-               style="toggle"
-               toolbarPath="pinGroup">
-         </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
-               icon="icons/elcl16/open_new.gif"
-               id="org.eclipse.pinclone.expression.clone"
-               label="%OpenNewView.name"
-               style="push"
-               toolbarPath="pinGroup">
-         </action>
-      </viewContribution>
-      <viewContribution
-            id="org.eclipse.cdt.debug.ui.variable.toolbar"
-            targetID="org.eclipse.debug.ui.VariableView">
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/elcl16/toolbar_pinned.gif"
-               id="org.eclipse.pinclone.variable.pinDebugContext"
-               label="%PinView.name "
-               style="toggle"
-               toolbarPath="pinGroup">
-         </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
-               icon="icons/elcl16/open_new.gif"
-               id="org.eclipse.pinclone.variable.clone"
-               label="%OpenNewView.name"
-               style="push"
-               toolbarPath="pinGroup">
-         </action>
-      </viewContribution>
-      <viewContribution
-            id="org.eclipse.cdt.debug.ui.register.toolbar"
-            targetID="org.eclipse.debug.ui.RegisterView">
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/elcl16/toolbar_pinned.gif"
-               id="org.eclipse.pinclone.register.pinDebugContext"
-               label="%PinView.name "
-               style="toggle"
-               toolbarPath="pinGroup">
-         </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
-               icon="icons/elcl16/open_new.gif"
-               id="org.eclipse.pinclone.register.clone"
-               label="%OpenNewView.name"
-               style="push"
-               toolbarPath="pinGroup">
-         </action>
-      </viewContribution>   
    </extension>
    <extension
          point="org.eclipse.ui.editorActions">
@@ -1402,6 +1332,102 @@
           </visibleWhen>
        </command>
     </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="toolbar:org.eclipse.debug.ui.VariableView?after=additions">
+       <separator
+             name="org.eclipse.cdt.debug.ui.pinGroup"
+             visible="true">
+       </separator>
+       <command
+             commandId="org.eclipse.cdt.debug.ui.PinViewCommand"
+             icon="icons/elcl16/toolbar_pinned.gif"
+             label="%PinView.name "
+             style="toggle">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+             </test>
+          </visibleWhen>
+       </command>
+       <command
+             commandId="org.eclipse.cdt.debug.ui.OpenNewViewCommand"
+             icon="icons/elcl16/open_new.gif"
+             label="%OpenNewView.name"
+             style="push">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+             </test>
+          </visibleWhen>
+       </command>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="toolbar:org.eclipse.debug.ui.ExpressionView?after=additions">
+       <separator
+             name="org.eclipse.cdt.debug.ui.pinGroup"
+             visible="true">
+       </separator>
+       <command
+             commandId="org.eclipse.cdt.debug.ui.PinViewCommand"
+             icon="icons/elcl16/toolbar_pinned.gif"
+             label="%PinView.name "
+             style="toggle">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+             </test>
+          </visibleWhen>
+       </command>
+       <command
+             commandId="org.eclipse.cdt.debug.ui.OpenNewViewCommand"
+             icon="icons/elcl16/open_new.gif"
+             label="%OpenNewView.name"
+             style="push">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+             </test>
+          </visibleWhen>
+       </command>
+    </menuContribution>
+    <menuContribution
+          allPopups="false"
+          locationURI="toolbar:org.eclipse.debug.ui.RegisterView?after=additions">
+       <separator
+             name="org.eclipse.cdt.debug.ui.pinGroup"
+             visible="true">
+       </separator>
+       <command
+             commandId="org.eclipse.cdt.debug.ui.PinViewCommand"
+             icon="icons/elcl16/toolbar_pinned.gif"
+             label="%PinView.name "
+             style="toggle">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+             </test>
+          </visibleWhen>
+       </command>
+       <command
+             commandId="org.eclipse.cdt.debug.ui.OpenNewViewCommand"
+             icon="icons/elcl16/open_new.gif"
+             label="%OpenNewView.name"
+             style="push">
+          <visibleWhen
+                checkEnabled="false">
+             <test
+                   property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+             </test>
+          </visibleWhen>
+       </command>
+    </menuContribution>
 
    </extension>
    <extension
@@ -1689,6 +1715,14 @@
              id="org.eclipse.ui.commands.toggleState">
        </state>
     </command>
+    <command
+          id="org.eclipse.cdt.debug.ui.PinViewCommand"
+          name="%PinView.name ">
+    </command>
+    <command
+          id="org.eclipse.cdt.debug.ui.OpenNewViewCommand"
+          name="%OpenNewView.name">
+    </command>
  </extension>
  <extension
          point="org.eclipse.ui.handlers">
@@ -1770,6 +1804,14 @@
       <handler
             class="org.eclipse.cdt.debug.internal.ui.commands.ToggleInstructionStepModeHandler"
             commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.actions.PinViewHandler"
+            commandId="org.eclipse.cdt.debug.ui.PinViewCommand">
+      </handler>
+      <handler
+            class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewHandler"
+            commandId="org.eclipse.cdt.debug.ui.OpenNewViewCommand">
       </handler>
  </extension>
  <extension

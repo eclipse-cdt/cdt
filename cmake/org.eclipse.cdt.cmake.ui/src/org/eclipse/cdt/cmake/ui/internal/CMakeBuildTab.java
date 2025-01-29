@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.ui.internal;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
 import org.eclipse.cdt.cmake.core.CMakeBuildConfigurationProvider;
+import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.launch.ui.corebuild.CommonBuildTab;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -25,6 +26,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
@@ -33,20 +35,17 @@ import org.eclipse.swt.widgets.Text;
 
 public class CMakeBuildTab extends CommonBuildTab {
 
-	/**
-	 * Checkbox allowing user to choose these settings over the default operating system defaults.
-	 * This is connected to the CMakeBuildConfiguration.CMAKE_USE_UI_OVERRIDES preference.
-	 */
-	private Button useUiCmakeSettings;
-	private Button unixGenButton;
-	private Button ninjaGenButton;
+	private Button useDefaultCmakeSettings;
+	private Combo generatorCombo;
 	private Text cmakeArgsText;
 	private Text buildCommandText;
-	private Text cleanCommandText;
+	private Text allTargetText;
+	private Text cleanTargetText;
 	private Label generatorLabel;
 	private Label cmakeArgsLabel;
 	private Label buildCommandLabel;
-	private Label cleanCommandLabel;
+	private Label allTargetLabel;
+	private Label cleanTargetLabel;
 
 	@Override
 	protected String getBuildConfigProviderId() {
@@ -67,35 +66,28 @@ public class CMakeBuildTab extends CommonBuildTab {
 		cmakeGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		cmakeGroup.setLayout(new GridLayout());
 
-		useUiCmakeSettings = new Button(cmakeGroup, SWT.CHECK);
-		useUiCmakeSettings.setText(Messages.CMakeBuildTab_useUICmakeSettings);
-		useUiCmakeSettings.setToolTipText(Messages.CMakeBuildTab_useUICmakeSettingsTip);
-		useUiCmakeSettings.addSelectionListener(new SelectionAdapter() {
+		useDefaultCmakeSettings = new Button(cmakeGroup, SWT.CHECK);
+		useDefaultCmakeSettings.setText(Messages.CMakeBuildTab_useDefaultCmakeSettings);
+		useDefaultCmakeSettings.setToolTipText(Messages.CMakeBuildTab_useDefaultCmakeSettingsTip);
+		useDefaultCmakeSettings.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				showDefaultsInUi();
 				updateEnablement();
 				updateLaunchConfigurationDialog();
 			}
+
 		});
 
 		generatorLabel = new Label(cmakeGroup, SWT.NONE);
 		generatorLabel.setText(Messages.CMakeBuildTab_Generator);
 
-		Composite genComp = new Composite(cmakeGroup, SWT.BORDER);
-		genComp.setLayout(new GridLayout(2, true));
-
-		unixGenButton = new Button(genComp, SWT.RADIO);
-		unixGenButton.setText(Messages.CMakeBuildTab_UnixMakefiles);
-		unixGenButton.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
-
-		ninjaGenButton = new Button(genComp, SWT.RADIO);
-		ninjaGenButton.setText(Messages.CMakeBuildTab_Ninja);
-		ninjaGenButton.addSelectionListener(new SelectionAdapter() {
+		CMakeGenerator[] generators = CMakeGenerator.values();
+		String[] generatorNames = Arrays.stream(generators).map(CMakeGenerator::getCMakeName).toArray(String[]::new);
+		generatorCombo = new Combo(cmakeGroup, SWT.DROP_DOWN);
+		generatorCombo.setItems(generatorNames);
+		generatorCombo.select(0);
+		generatorCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				updateLaunchConfigurationDialog();
@@ -116,36 +108,54 @@ public class CMakeBuildTab extends CommonBuildTab {
 		buildCommandText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		buildCommandText.addModifyListener(e -> updateLaunchConfigurationDialog());
 
-		cleanCommandLabel = new Label(cmakeGroup, SWT.NONE);
-		cleanCommandLabel.setText(Messages.CMakeBuildTab_CleanCommand);
+		allTargetLabel = new Label(cmakeGroup, SWT.NONE);
+		allTargetLabel.setText(Messages.CMakeBuildTab_AllTarget);
 
-		cleanCommandText = new Text(cmakeGroup, SWT.BORDER);
-		cleanCommandText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		cleanCommandText.addModifyListener(e -> updateLaunchConfigurationDialog());
+		allTargetText = new Text(cmakeGroup, SWT.BORDER);
+		allTargetText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		allTargetText.addModifyListener(e -> updateLaunchConfigurationDialog());
+
+		cleanTargetLabel = new Label(cmakeGroup, SWT.NONE);
+		cleanTargetLabel.setText(Messages.CMakeBuildTab_CleanTarget);
+
+		cleanTargetText = new Text(cmakeGroup, SWT.BORDER);
+		cleanTargetText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		cleanTargetText.addModifyListener(e -> updateLaunchConfigurationDialog());
+	}
+
+	/**
+	 * When use CMake defaults is selected, restore the defaults
+	 */
+	private void showDefaultsInUi() {
+		if (useDefaultCmakeSettings.getSelection()) {
+			restoreProperties(getBuildConfiguration().getDefaultProperties());
+		}
 	}
 
 	/**
 	 * Updates the enabled state of the CMake settings controls based on useUiCmakeSettings checkbox
 	 */
 	private void updateEnablement() {
-		boolean isSelected = useUiCmakeSettings.getSelection();
-		generatorLabel.setEnabled(isSelected);
-		unixGenButton.setEnabled(isSelected);
-		ninjaGenButton.setEnabled(isSelected);
-		cmakeArgsLabel.setEnabled(isSelected);
-		cmakeArgsText.setEnabled(isSelected);
-		buildCommandLabel.setEnabled(isSelected);
-		buildCommandText.setEnabled(isSelected);
-		cleanCommandLabel.setEnabled(isSelected);
-		cleanCommandText.setEnabled(isSelected);
+		boolean isDefaultCMakeProperties = useDefaultCmakeSettings.getSelection();
+		boolean enabled = !isDefaultCMakeProperties;
+		generatorLabel.setEnabled(enabled);
+		generatorCombo.setEnabled(enabled);
+		cmakeArgsLabel.setEnabled(enabled);
+		cmakeArgsText.setEnabled(enabled);
+		buildCommandLabel.setEnabled(enabled);
+		buildCommandText.setEnabled(enabled);
+		allTargetLabel.setEnabled(enabled);
+		allTargetText.setEnabled(enabled);
+		cleanTargetLabel.setEnabled(enabled);
+		cleanTargetText.setEnabled(enabled);
 	}
 
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// Set defaults for Build Settings
 		ICBuildConfiguration buildConfig = getBuildConfiguration();
-		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_UI_OVERRIDES,
-				Boolean.toString(CMakeBuildConfiguration.CMAKE_USE_UI_OVERRIDES_DEFAULT));
+		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS,
+				CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS_DEFAULT);
 	}
 
 	@Override
@@ -154,41 +164,17 @@ public class CMakeBuildTab extends CommonBuildTab {
 
 		ICBuildConfiguration buildConfig = getBuildConfiguration();
 
-		String generator = buildConfig.getProperty(CMakeBuildConfiguration.CMAKE_GENERATOR);
-		updateGeneratorButtons(generator);
+		boolean isDefaultCMakeProperties = Boolean
+				.valueOf(buildConfig.getProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS));
+		useDefaultCmakeSettings.setSelection(isDefaultCMakeProperties);
 
-		String cmakeArgs = buildConfig.getProperty(CMakeBuildConfiguration.CMAKE_ARGUMENTS);
-		if (cmakeArgs != null) {
-			cmakeArgsText.setText(cmakeArgs);
+		if (isDefaultCMakeProperties) {
+			restoreProperties(buildConfig.getDefaultProperties());
 		} else {
-			cmakeArgsText.setText(""); //$NON-NLS-1$
+			restoreProperties(buildConfig.getProperties());
 		}
 
-		String buildCommand = buildConfig.getProperty(CMakeBuildConfiguration.BUILD_COMMAND);
-		if (buildCommand != null) {
-			buildCommandText.setText(buildCommand);
-		} else {
-			buildCommandText.setText(""); //$NON-NLS-1$
-		}
-
-		String cleanCommand = buildConfig.getProperty(CMakeBuildConfiguration.CLEAN_COMMAND);
-		if (cleanCommand != null) {
-			cleanCommandText.setText(cleanCommand);
-		} else {
-			cleanCommandText.setText(""); //$NON-NLS-1$
-		}
-
-		boolean isSelected = Boolean.valueOf(buildConfig.getProperty(CMakeBuildConfiguration.CMAKE_USE_UI_OVERRIDES));
-		useUiCmakeSettings.setSelection(isSelected);
 		updateEnablement();
-	}
-
-	private void updateGeneratorButtons(String generator) {
-		if (generator == null || generator.equals("Ninja")) { //$NON-NLS-1$
-			ninjaGenButton.setSelection(true);
-		} else {
-			unixGenButton.setSelection(true);
-		}
 	}
 
 	@Override
@@ -197,8 +183,8 @@ public class CMakeBuildTab extends CommonBuildTab {
 
 		ICBuildConfiguration buildConfig = getBuildConfiguration();
 
-		String gen = ninjaGenButton.getSelection() ? "Ninja" : "Unix Makefiles"; //$NON-NLS-1$ //$NON-NLS-2$
-		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_GENERATOR, gen);
+		String generator = generatorCombo.getText().trim();
+		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_GENERATOR, generator);
 
 		String cmakeArgs = cmakeArgsText.getText().trim();
 		if (!cmakeArgs.isEmpty()) {
@@ -209,75 +195,63 @@ public class CMakeBuildTab extends CommonBuildTab {
 
 		String buildCommand = buildCommandText.getText().trim();
 		if (!buildCommand.isEmpty()) {
-			buildConfig.setProperty(CMakeBuildConfiguration.BUILD_COMMAND, buildCommand);
+			buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_BUILD_COMMAND, buildCommand);
 		} else {
-			buildConfig.removeProperty(CMakeBuildConfiguration.BUILD_COMMAND);
+			buildConfig.removeProperty(CMakeBuildConfiguration.CMAKE_BUILD_COMMAND);
 		}
 
-		String cleanCommand = cleanCommandText.getText().trim();
-		if (!cleanCommand.isEmpty()) {
-			buildConfig.setProperty(CMakeBuildConfiguration.CLEAN_COMMAND, cleanCommand);
+		String allTarget = allTargetText.getText().trim();
+		if (!allTarget.isEmpty()) {
+			buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_ALL_TARGET, allTarget);
 		} else {
-			buildConfig.removeProperty(CMakeBuildConfiguration.CLEAN_COMMAND);
+			buildConfig.removeProperty(CMakeBuildConfiguration.CMAKE_ALL_TARGET);
 		}
 
-		boolean isSelected = useUiCmakeSettings.getSelection();
-		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_UI_OVERRIDES, Boolean.toString(isSelected));
+		String cleanTarget = cleanTargetText.getText().trim();
+		if (!cleanTarget.isEmpty()) {
+			buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_CLEAN_TARGET, cleanTarget);
+		} else {
+			buildConfig.removeProperty(CMakeBuildConfiguration.CMAKE_CLEAN_TARGET);
+		}
 
-		Map<String, String> saved = new HashMap<>();
-		saved.put(CMakeBuildConfiguration.CMAKE_USE_UI_OVERRIDES, Boolean.toString(isSelected));
-		getBuildConfiguration().setProperties(saved);
+		boolean isDefaultCMakeProperties = useDefaultCmakeSettings.getSelection();
+		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS,
+				Boolean.toString(isDefaultCMakeProperties));
 	}
 
 	@Override
 	protected void saveProperties(Map<String, String> properties) {
 		super.saveProperties(properties);
-		properties.put(CMakeBuildConfiguration.CMAKE_GENERATOR,
-				ninjaGenButton.getSelection() ? "Ninja" : "Unix Makefiles"); //$NON-NLS-1$ //$NON-NLS-2$
-
+		properties.put(CMakeBuildConfiguration.CMAKE_GENERATOR, generatorCombo.getText().trim());
 		properties.put(CMakeBuildConfiguration.CMAKE_ARGUMENTS, cmakeArgsText.getText().trim());
-		properties.put(CMakeBuildConfiguration.BUILD_COMMAND, buildCommandText.getText().trim());
-		properties.put(CMakeBuildConfiguration.CLEAN_COMMAND, cleanCommandText.getText().trim());
+		properties.put(CMakeBuildConfiguration.CMAKE_BUILD_COMMAND, buildCommandText.getText().trim());
+		properties.put(CMakeBuildConfiguration.CMAKE_ALL_TARGET, allTargetText.getText().trim());
+		properties.put(CMakeBuildConfiguration.CMAKE_CLEAN_TARGET, cleanTargetText.getText().trim());
 	}
 
 	@Override
 	protected void restoreProperties(Map<String, String> properties) {
 		super.restoreProperties(properties);
 
-		String gen = properties.get(CMakeBuildConfiguration.CMAKE_GENERATOR);
-		if (gen != null) {
-			switch (gen) {
-			case "Ninja": //$NON-NLS-1$
-				ninjaGenButton.setSelection(true);
-				unixGenButton.setSelection(false);
-				break;
-			case "Unix Makefiles": //$NON-NLS-1$
-				ninjaGenButton.setSelection(false);
-				unixGenButton.setSelection(true);
-				break;
-			}
-		}
+		String gen = properties.getOrDefault(CMakeBuildConfiguration.CMAKE_GENERATOR,
+				CMakeBuildConfiguration.CMAKE_GENERATOR_DEFAULT);
+		generatorCombo.setText(gen);
 
-		String cmakeArgs = properties.get(CMakeBuildConfiguration.CMAKE_ARGUMENTS);
-		if (cmakeArgs != null) {
-			cmakeArgsText.setText(cmakeArgs);
-		} else {
-			cmakeArgsText.setText(""); //$NON-NLS-1$
-		}
+		String cmakeArgs = properties.getOrDefault(CMakeBuildConfiguration.CMAKE_ARGUMENTS,
+				CMakeBuildConfiguration.CMAKE_ARGUMENTS_DEFAULT);
+		cmakeArgsText.setText(cmakeArgs);
 
-		String buildCmd = properties.get(CMakeBuildConfiguration.BUILD_COMMAND);
-		if (buildCmd != null) {
-			buildCommandText.setText(buildCmd);
-		} else {
-			buildCommandText.setText(""); //$NON-NLS-1$
-		}
+		String buildCmd = properties.getOrDefault(CMakeBuildConfiguration.CMAKE_BUILD_COMMAND,
+				CMakeBuildConfiguration.CMAKE_BUILD_COMMAND_DEFAULT);
+		buildCommandText.setText(buildCmd);
 
-		String cleanCmd = properties.get(CMakeBuildConfiguration.CLEAN_COMMAND);
-		if (cleanCmd != null) {
-			cleanCommandText.setText(cleanCmd);
-		} else {
-			cleanCommandText.setText(""); //$NON-NLS-1$
-		}
+		String allTarget = properties.getOrDefault(CMakeBuildConfiguration.CMAKE_ALL_TARGET,
+				CMakeBuildConfiguration.CMAKE_ALL_TARGET_DEFAULT);
+		allTargetText.setText(allTarget);
+
+		String cleanTarget = properties.getOrDefault(CMakeBuildConfiguration.CMAKE_CLEAN_TARGET,
+				CMakeBuildConfiguration.CMAKE_CLEAN_TARGET_DEFAULT);
+		cleanTargetText.setText(cleanTarget);
 	}
 
 	@Override

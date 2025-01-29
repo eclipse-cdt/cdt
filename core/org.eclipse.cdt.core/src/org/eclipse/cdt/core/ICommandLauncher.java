@@ -16,6 +16,7 @@ package org.eclipse.cdt.core;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -113,6 +114,11 @@ public interface ICommandLauncher {
 	 * polled to test if the cancel button has been pressed. Destroys the
 	 * process if the monitor becomes canceled override to implement a different
 	 * way to read the process inputs
+	 *
+	 * @param output the output stream that the command's stdout should be directed to.
+	 *               Typically connected to {@link IConsole#getOutputStream()}
+	 * @param err the output stream that the command's stderr should be directed to.
+	 *               Typically connected to {@link IConsole#getErrorStream()}
 	 */
 	public int waitAndRead(OutputStream output, OutputStream err, IProgressMonitor monitor);
 }

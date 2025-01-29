@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.example;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
 import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
+import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
@@ -34,5 +38,14 @@ public class ExtendedCMakeBuildConfiguration extends CMakeBuildConfiguration {
 		super(config, name, toolChain);
 	}
 
-	// TODO: Here goes the example extending that is being developed in #1046 https://github.com/eclipse-cdt/cdt/pull/1046
+	@Override
+	public Map<String, String> getDefaultProperties() {
+		/*
+		 * Here we demonstrate how an ISV can provide a different default generator.
+		 * More examples can be found in CMakeBuildConfigurationTests
+		 */
+		var defs = new HashMap<>(super.getDefaultProperties());
+		defs.put(CMAKE_GENERATOR, CMakeGenerator.UnixMakefiles.getCMakeName());
+		return defs;
+	}
 }

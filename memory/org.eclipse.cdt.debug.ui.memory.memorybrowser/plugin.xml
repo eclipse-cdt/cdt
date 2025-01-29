@@ -40,29 +40,6 @@
          point="org.eclipse.core.runtime.preferences">
       <initializer class="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowserPreferenceInitializer"/>
    </extension>
-   <extension
-         point="org.eclipse.ui.viewActions">
-      <viewContribution
-            id="org.eclipse.cdt.debug.ui.memoryBrowser.toolbar"
-            targetID="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser">
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.PinDebugContextActionDelegate"
-               icon="icons/toolbar_pinned.gif"
-               id="org.eclipse.pinclone.memoryBrowser.pinDebugContext"
-               label="%PinView.name "
-               style="toggle"
-               toolbarPath="pinGroup">
-         </action>
-         <action
-               class="org.eclipse.cdt.debug.internal.ui.actions.OpenNewViewActionDelegate"
-               icon="icons/open_new.gif"
-               id="org.eclipse.pinclone.memoryBrowser.clone"
-               label="%OpenNewView.name"
-               style="push"
-               toolbarPath="pinGroup">
-         </action>
-      </viewContribution>
-   </extension>
    <!-- Add the ability to clear the expressions list -->
    <extension point="org.eclipse.ui.viewActions">
      <viewContribution
@@ -90,5 +67,36 @@
                tooltip="%AddWatchpoint.tooltip">
          </action>
       </viewerContribution>
+  </extension>
+  <extension
+        point="org.eclipse.ui.menus">
+     <menuContribution
+           allPopups="false"
+           locationURI="toolbar:org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser?after=additions">
+        <command
+              commandId="org.eclipse.cdt.debug.ui.PinViewCommand"
+              icon="icons/toolbar_pinned.gif"
+              label="%PinView.name"
+              style="toggle">
+           <visibleWhen
+                 checkEnabled="false">
+              <test
+                    property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+              </test>
+           </visibleWhen>
+        </command>
+        <command
+              commandId="org.eclipse.cdt.debug.ui.OpenNewViewCommand"
+              icon="icons/open_new.gif"
+              label="%OpenNewView.name"
+              style="push">
+           <visibleWhen
+                 checkEnabled="false">
+              <test
+                    property="org.eclipse.cdt.dsf.ui.canPinViewEnabled">
+              </test>
+           </visibleWhen>
+        </command>
+     </menuContribution>
   </extension>
 </plugin>

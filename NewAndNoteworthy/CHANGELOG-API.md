@@ -8,6 +8,23 @@ This section describes API removals that occurred in past releases, and upcoming
 
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
 
+## API Changes in CDT 12.0.
+
+### org.eclipse.cdt.cmake.core.properties refactored
+
+A significant simplification to the CMake build properties was completed, this included removing some API that was not used.
+The following classes have been removed or modified in API breaking ways:
+
+- org.eclipse.cdt.cmake.core.properties.ICMakePropertiesController removed
+- org.eclipse.cdt.cmake.core.properties.IGeneralProperties removed
+- org.eclipse.cdt.cmake.core.properties.IOsOverrides removed
+- org.eclipse.cdt.cmake.core.properties.ICMakeProperties:
+  - new methods added to compensate for removal of IOsOverrides
+  - reset method removed
+  - spelling corrected for methods with Uninitialized in the name
+  - setWarnUnused renamed to setWarnUnusedVars and isWarnUnused renamed to isWarnUnusedVars
+
+
 ## API Changes in CDT 11.5.
 
 ### org.eclipse.cdt.make.ui.dialogs.DiscoveredPathContainerPage removed

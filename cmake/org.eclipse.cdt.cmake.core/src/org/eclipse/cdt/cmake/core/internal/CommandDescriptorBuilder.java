@@ -16,10 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
-import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
+import org.eclipse.cdt.cmake.core.properties.ICMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
-import org.eclipse.cdt.cmake.core.properties.IOsOverrides;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -33,14 +31,12 @@ import org.eclipse.core.variables.VariablesPlugin;
 public class CommandDescriptorBuilder {
 
 	private final ICMakeProperties cmakeProperties;
-	private final IOsOverridesSelector overridesSelector;
 
 	/**
 	 * @param cmakeProperties the project properties related to the cmake command
 	 */
-	public CommandDescriptorBuilder(ICMakeProperties cmakeProperties, IOsOverridesSelector overridesSelector) {
+	public CommandDescriptorBuilder(ICMakeProperties cmakeProperties) {
 		this.cmakeProperties = Objects.requireNonNull(cmakeProperties);
-		this.overridesSelector = Objects.requireNonNull(overridesSelector);
 	}
 
 	/**
@@ -56,8 +52,10 @@ public class CommandDescriptorBuilder {
 		List<String> args = new ArrayList<>();
 		List<String> env = new ArrayList<>();
 
-		// defaults for all OSes...
-		args.add(CMakeBuildConfiguration.BUILD_COMMAND_DEFAULT);
+		// cmake command
+		IStringVariableManager varManager = VariablesPlugin.getDefault().getStringVariableManager();
+		args.add(varManager.performStringSubstitution(cmakeProperties.getCommand()));
+
 		/* add general settings */
 		if (cmakeProperties.isWarnNoDev())
 			args.add("-Wno-dev"); //$NON-NLS-1$
@@ -67,10 +65,10 @@ public class CommandDescriptorBuilder {
 			args.add("--debug-output"); //$NON-NLS-1$
 		if (cmakeProperties.isTrace())
 			args.add("--trace"); //$NON-NLS-1$
-		if (cmakeProperties.isWarnUnitialized())
-			args.add("--warn-unitialized"); //$NON-NLS-1$
-		if (cmakeProperties.isWarnUnused())
-			args.add("--warn-unused"); //$NON-NLS-1$
+		if (cmakeProperties.isWarnUninitialized())
+			args.add("--warn-uninitialized"); //$NON-NLS-1$
+		if (cmakeProperties.isWarnUnusedVars())
+			args.add("--warn-unused-vars"); //$NON-NLS-1$
 		{
 			String file = cmakeProperties.getCacheFile();
 			if (!(file == null || file.isBlank())) {
@@ -78,7 +76,6 @@ public class CommandDescriptorBuilder {
 				args.add(file);
 			}
 		}
-		CommandDescriptorBuilder.appendCMakeArguments(args, cmakeProperties.getExtraArguments());
 
 		/* at last, add our requirements that override extra args specified by the user... */
 		{
@@ -93,10 +90,12 @@ public class CommandDescriptorBuilder {
 		if (toolChainFile != null) {
 			args.add("-DCMAKE_TOOLCHAIN_FILE=" + toolChainFile.toString()); //$NON-NLS-1$
 		}
-		/* Add settings for the operating system we are running under,
-		 * and the user additional CMake arguments set in the Launch Configuration UI.
-		 */
-		CommandDescriptorBuilder.appendCMakeOsOverrideArgs(args, overridesSelector.getOsOverrides(cmakeProperties));
+
+		args.add("-G"); //$NON-NLS-1$
+		final ICMakeGenerator generator = cmakeProperties.getGenerator();
+		args.add(generator.getCMakeName());
+
+		CommandDescriptorBuilder.appendCMakeArguments(args, cmakeProperties.getExtraArguments());
 
 		return new CommandDescriptor(args, env);
 	}
@@ -112,14 +111,9 @@ public class CommandDescriptorBuilder {
 		List<String> args = new ArrayList<>();
 		List<String> env = new ArrayList<>();
 
-		IOsOverrides osOverrides = overridesSelector.getOsOverrides(cmakeProperties);
-		if (osOverrides.getUseDefaultCommand()) {
-			args.add(CMakeBuildConfiguration.BUILD_COMMAND_DEFAULT);
-		} else {
-			IStringVariableManager varManager = VariablesPlugin.getDefault().getStringVariableManager();
-			String cmd = varManager.performStringSubstitution(osOverrides.getCommand());
-			args.add(cmd);
-		}
+		IStringVariableManager varManager = VariablesPlugin.getDefault().getStringVariableManager();
+		String cmd = varManager.performStringSubstitution(cmakeProperties.getCommand());
+		args.add(cmd);
 		args.add("--build"); //$NON-NLS-1$
 		args.add("."); //$NON-NLS-1$
 		args.add("--target"); //$NON-NLS-1$
@@ -144,28 +138,6 @@ public class CommandDescriptorBuilder {
 			String expanded = mgr.performStringSubstitution(arg);
 			argList.add(expanded);
 		}
-	}
-
-	/**
-	 * Appends arguments specific to the given OS preferences for build-script generation. The first
-	 * argument in the list will be replaced by the cmake command from the specified preferences, if
-	 * given.
-	 *
-	 * @param args  the list to append cmake-arguments to.
-	 * @param prefs the generic OS specific cmake build properties to convert and append.
-	 * @throws CoreException if unable to resolve the value of one or more variables
-	 */
-	private static void appendCMakeOsOverrideArgs(List<String> args, final IOsOverrides prefs) throws CoreException {
-		// replace cmake command, if given
-		if (!prefs.getUseDefaultCommand()) {
-			IStringVariableManager varManager = VariablesPlugin.getDefault().getStringVariableManager();
-			String cmd = varManager.performStringSubstitution(prefs.getCommand());
-			args.set(0, cmd);
-		}
-		args.add("-G"); //$NON-NLS-1$
-		final CMakeGenerator generator = prefs.getGenerator();
-		args.add(generator.getCMakeName());
-		appendCMakeArguments(args, prefs.getExtraArguments());
 	}
 
 	/**

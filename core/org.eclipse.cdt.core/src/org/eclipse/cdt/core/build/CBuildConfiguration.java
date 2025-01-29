@@ -596,7 +596,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	 */
 	protected int watchProcess(IConsole console, IProgressMonitor monitor) throws CoreException {
 		assertLauncherNotNull(launcher);
-		return launcher.waitAndRead(console.getInfoStream(), console.getErrorStream(), monitor);
+		return launcher.waitAndRead(console.getOutputStream(), console.getErrorStream(), monitor);
 	}
 
 	/**

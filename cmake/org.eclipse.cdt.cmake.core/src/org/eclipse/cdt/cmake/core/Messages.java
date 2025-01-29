@@ -16,7 +16,7 @@ import org.eclipse.osgi.util.NLS;
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noreference This class is not intended to be referenced by clients.
- * @since 1.6
+ * @since 2.0
  */
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.cmake.core.messages"; //$NON-NLS-1$

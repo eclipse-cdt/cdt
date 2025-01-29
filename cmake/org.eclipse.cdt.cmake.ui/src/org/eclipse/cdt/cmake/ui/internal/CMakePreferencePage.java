@@ -68,7 +68,10 @@ import org.osgi.service.prefs.Preferences;
  */
 public class CMakePreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
-	private static final String NODENAME = "cmakeEnvironment"; //$NON-NLS-1$
+	private static final String NODENAME = "cmake_environment"; //$NON-NLS-1$
+	private static final String ENABLE_USE_CMAKE_LOCATION = "enable_use_cmake_location"; //$NON-NLS-1$
+	private static final String CMAKE_LOCATION = "cmake_location"; //$NON-NLS-1$
+	private static final String CMAKE_GENERATOR_LOCATION = "cmake_generator_locations"; //$NON-NLS-1$
 	private static final String VALUE_DELIMITER = " || "; //$NON-NLS-1$
 
 	private ICMakeToolChainManager manager;
@@ -211,6 +214,8 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 			@Override
 			public void modifyText(ModifyEvent evt) {
 				cmakeLocation = resolveVariableValue(cmakeLocationTextBox.getText());
+				testButton.setEnabled(useCmakeToolLocation && cmakeLocationTextBox.getText().trim().length() > 0);
+
 			}
 		});
 
@@ -285,7 +290,7 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 		editButton.setText(Messages.CMakePreferencePage_Edit);
 		editButton.setData(generatorLocationTextBox);
 		editButton.addListener(SWT.Selection, e -> {
-			EditGenerationLocationDialog dialog = new EditGenerationLocationDialog(getShell(),
+			EditGeneratorLocationDialog dialog = new EditGeneratorLocationDialog(getShell(),
 					Messages.CMakePreferencePage_EditGeneratorLocations_Title, generatorLocations);
 			if (dialog.open() == Window.OK && editButton.getData() instanceof Text t) {
 				generatorLocations = dialog.getValues();
@@ -303,7 +308,7 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 		cmakeLocationTextBox.setEnabled(enable);
 		generatorLocationTextBox.setEnabled(enable);
 		variablesButton.setEnabled(enable);
-		testButton.setEnabled(enable);
+		testButton.setEnabled(enable && cmakeLocationTextBox.getText().trim().length() > 0);
 		browseButton.setEnabled(enable);
 		editButton.setEnabled(enable);
 	}
@@ -368,17 +373,17 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 		filesToRemove.clear();
 
 		// Update Preferences for cmakeSupplier
-		getPreferences().putBoolean("useCmakeToolLocation", useCmakeToolLocation); //$NON-NLS-1$
-		getPreferences().put("cmakeLocation", cmakeLocation); //$NON-NLS-1$
-		getPreferences().put("generatorLocations", String.join(VALUE_DELIMITER, generatorLocations)); //$NON-NLS-1$
+		getPreferences().putBoolean(ENABLE_USE_CMAKE_LOCATION, useCmakeToolLocation);
+		getPreferences().put(CMAKE_LOCATION, cmakeLocation);
+		getPreferences().put(CMAKE_GENERATOR_LOCATION, String.join(VALUE_DELIMITER, generatorLocations));
 
 		return true;
 	}
 
-	public void updateCmakeToolGroupData() {
-		useCmakeToolLocation = getPreferences().getBoolean("useCmakeToolLocation", false); //$NON-NLS-1$
-		cmakeLocation = getPreferences().get("cmakeLocation", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		String genLocations = getPreferences().get("generatorLocations", ""); //$NON-NLS-1$ //$NON-NLS-2$
+	private void updateCmakeToolGroupData() {
+		useCmakeToolLocation = getPreferences().getBoolean(ENABLE_USE_CMAKE_LOCATION, false);
+		cmakeLocation = getPreferences().get(CMAKE_LOCATION, ""); //$NON-NLS-1$
+		String genLocations = getPreferences().get(CMAKE_GENERATOR_LOCATION, ""); //$NON-NLS-1$
 		generatorLocations = genLocations.length() > 0 ? genLocations.split(" \\|\\| ") : new String[0]; //$NON-NLS-1$
 	}
 
@@ -406,13 +411,13 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 		return null;
 	}
 
-	class EditGenerationLocationDialog extends Dialog {
+	private class EditGeneratorLocationDialog extends Dialog {
 
 		private String fTitle;
 		private FileListControl fListEditor;
 		private String[] fGeneratorLocations;
 
-		public EditGenerationLocationDialog(Shell parentShell, String title, String[] generatorLocations) {
+		public EditGeneratorLocationDialog(Shell parentShell, String title, String[] generatorLocations) {
 			super(parentShell);
 			this.fGeneratorLocations = generatorLocations;
 		}
@@ -431,7 +436,7 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 			comp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			comp.setLayout(new GridLayout());
 			fListEditor = new FileListControl(comp,
-					Messages.cMakePreferencePage_EditGeneratorLocations_GeneratorLocation, 0);
+					Messages.CMakePreferencePage_EditGeneratorLocations_GeneratorLocation, 0);
 			if (fGeneratorLocations != null) {
 				fListEditor.setList(fGeneratorLocations);
 			}

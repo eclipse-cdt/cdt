@@ -36,7 +36,7 @@ public class Messages extends NLS {
 	public static String CMakePreferencePage_Delete;
 	public static String CMakePreferencePage_Edit;
 	public static String CMakePreferencePage_EditGeneratorLocations_Title;
-	public static String cMakePreferencePage_EditGeneratorLocations_GeneratorLocation;
+	public static String CMakePreferencePage_EditGeneratorLocations_GeneratorLocation;
 	public static String CMakePreferencePage_FailToTestCmakeLocation_Body;
 	public static String CMakePreferencePage_FailToTestCmakeLocation_Title;
 	public static String CMakePreferencePage_Files;

@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2025 Renesas Electronics Europe and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
 package org.eclipse.cdt.internal.core.envvar;
 
 import java.util.ArrayList;
@@ -14,7 +24,10 @@ import org.osgi.service.prefs.Preferences;
  */
 public class CMakeBuildEnvironmentSupplier implements ICoreEnvironmentVariableSupplier {
 
-	public static final String NODENAME = "cmakeEnvironment"; //$NON-NLS-1$
+	private static final String NODENAME = "cmake_environment"; //$NON-NLS-1$
+	private static final String ENABLE_USE_CMAKE_LOCATION = "enable_use_cmake_location"; //$NON-NLS-1$
+	private static final String CMAKE_LOCATION = "cmake_location"; //$NON-NLS-1$
+	private static final String CMAKE_GENERATOR_LOCATION = "cmake_generator_locations"; //$NON-NLS-1$
 
 	private boolean useCmakeToolLocation;
 	private String cmakeLocation;
@@ -69,9 +82,9 @@ public class CMakeBuildEnvironmentSupplier implements ICoreEnvironmentVariableSu
 	}
 
 	private void updateSupplier() {
-		useCmakeToolLocation = getPreferences().getBoolean("useCmakeToolLocation", false); //$NON-NLS-1$
-		cmakeLocation = getPreferences().get("cmakeLocation", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		String genLocations = getPreferences().get("generatorLocations", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		useCmakeToolLocation = getPreferences().getBoolean(ENABLE_USE_CMAKE_LOCATION, false);
+		cmakeLocation = getPreferences().get(CMAKE_LOCATION, ""); //$NON-NLS-1$
+		String genLocations = getPreferences().get(CMAKE_GENERATOR_LOCATION, ""); //$NON-NLS-1$
 		generatorLocations = genLocations.length() > 0 ? genLocations.split(" \\|\\| ") : new String[0]; //$NON-NLS-1$
 	}
 }

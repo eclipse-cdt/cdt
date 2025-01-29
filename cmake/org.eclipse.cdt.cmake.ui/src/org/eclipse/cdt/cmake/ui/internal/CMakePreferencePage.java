@@ -257,6 +257,7 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 			} catch (IOException e1) {
 				MessageDialog.openError(getShell(), Messages.CMakePreferencePage_FailToTestCmakeLocation_Title,
 						Messages.CMakePreferencePage_FailToTestCmakeLocation_Body + e1.getMessage());
+				Activator.log(e1);
 			}
 		});
 
@@ -392,7 +393,7 @@ public class CMakePreferencePage extends PreferencePage implements IWorkbenchPre
 			ICdtVariableManager vm = CCorePlugin.getDefault().getCdtVariableManager();
 			return vm.resolveValue(value, null, "", null); //$NON-NLS-1$
 		} catch (CdtVariableException e) {
-			e.printStackTrace();
+			Activator.log(e);
 		}
 		return null;
 	}

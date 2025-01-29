@@ -158,10 +158,14 @@
           name="org.eclipse.tm.terminal.connector.remote.feature.feature.group"/>
       <requirement
           name="org.eclipse.tm.terminal.feature.feature.group"/>
+      <requirement
+          name="org.eclipse.cdt.lsp.feature.feature.group"/>
       <repositoryList
           name="CDT Latest Released">
         <repository
             url="https://download.eclipse.org/tools/cdt/releases/11.6/cdt-11.6.1/"/>
+        <repository
+            url="https://download.eclipse.org/tools/cdt/releases/cdt-lsp-2.0/cdt-lsp-2.0.0/"/>
       </repositoryList>
     </targlet>
   </setupTask>

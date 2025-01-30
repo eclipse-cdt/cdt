@@ -28,23 +28,28 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Getting Started
+== Launch Bar
 
-The following tutorials guide you through the process of using the C/{cpp}
-Development Toolkit (CDT) to:
+Core Build System (CBS) projects rely on the *Launch Bar*. Make sure
+the _LaunchBar UI_ feature is installed and enabled. In the global
+preferences the launch bar can be enabled or disabled.
 
-* xref:cdt_w_prepare_workbench.adoc[Prepare the Workbench]
-* xref:cdt_w_basic.adoc[Create a simple application]
-* xref:new_cmake_proj.adoc[Creating a CMake project]
-* xref:cdt_w_basic.adoc[Create a Managed Build System Makefile project]
-* xref:cdt_w_import.adoc[Import an existing project]
-* xref:cdt_w_newcpp.adoc[Create a {cpp} file]
-* xref:cdt_w_newmake.adoc[Create a makefile]
-* xref:cdt_w_build.adoc[Build a project]
-* xref:cdt_w_debug.adoc[Debug a project]
-* xref:cdt_w_existing_code.adoc[Import C/{cpp} source into Eclipse]
-* xref:cdt_w_install_cdt.adoc[Install/update the CDT]
+image:launchbar_preferences.png[Launch Bar preferences]
 
-image:ngref.gif[Related reference]
+The launch bar exists out of several components:
 
-* xref:../concepts/cdt_o_home.adoc[CDT Home]
+image:launchbar.png[Launch Bar]
+
+. Build button, to launch a build.
+. Run button, to launch a run. This button will change to a Debug
+button in Debug mode.
+. Stop button, to stop a Run or Debug session.
+. Launch mode selector. To change between Run and Debug mode.
+. Launch configuration selector.
+. Edit launch configuration. To change the launch configuration
+properties.
+. Target selector. Not always visible.
+. Edit target.
+
+icon:arrow-circle-right[] xref:cbs_build_project.adoc[Next: Building a
+project]

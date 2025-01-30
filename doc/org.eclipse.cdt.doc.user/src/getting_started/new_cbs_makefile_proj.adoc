@@ -28,9 +28,9 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Creating a CMake project
+== Creating a Core Build System Makefile project
 
-This tutorial describes the process of creating a new C/{cpp} project that includes a CMakeLists.txt file.
+This tutorial describes the process of creating a new C/{cpp} project that includes a Makefile file.
 
 You need to create a project to contain your source code and related files.
 A project has an associated builder that can incrementally compile source files as they are changed.
@@ -48,28 +48,26 @@ image:cdt_w_basic03a.png[Select project type]
 
 The *C/{cpp} Project* wizard opens:
 
-
 image:c_cpp_project_wizard.png[width=515]
-
 
 By default, the CDT presents all *C/{cpp} Project* templates.
 
-. Select the *CMake* template filter and choose from the following *CMake* project templates:
-
-
-- *CMake Project* - provides a simple {cpp} Hello World executable application project with main() and a supporting CMakeLists.txt file.
-- *Empty or Existing CMake Project* - provides an empty executable application project suitable for importing existing source and CMakeLists.txt files.
-
+. Select the *Make* template filter and choose from the *Makefile project* project template.
++
+image:c_cpp_project_wizard_makefile.png[]
++
 . Click btn:[Next].
 . In the *Project name* field, provide a name for the new project.
 . Leave the *Use Default Location* option selected.
+. Select *Create Hello World Source and Makefile example* to
+get a Hello World example application.
 . Click btn:[Finish].
 . If a message box prompts you to change perspectives, click btn:[Yes].
 
-image:c_cpp_project_wizard_cmake_properties.png[]
+image:c_cpp_project_wizard_makefile_properties.png[]
 
 Your new project displays in the Project Explorer view.
-Your project may be empty because you have not yet created files for your project.
+Your project may be empty if you did not select the Hello World example creation.
 You can now start writing the code for your application or importing code from elsewhere.
 
-icon:arrow-circle-right[] xref:new_cbs_makefile_proj.adoc[Next: Creating a Makefile project]
+icon:arrow-circle-right[] xref:cbs_using_existing_code.adoc[Next: Using existing code]

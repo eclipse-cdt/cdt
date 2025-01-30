@@ -28,23 +28,20 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Getting Started
+= Core Build System contents
 
-The following tutorials guide you through the process of using the C/{cpp}
-Development Toolkit (CDT) to:
+xref:core_build_system.adoc[Core Build System]
 
-* xref:cdt_w_prepare_workbench.adoc[Prepare the Workbench]
-* xref:cdt_w_basic.adoc[Create a simple application]
-* xref:new_cmake_proj.adoc[Creating a CMake project]
-* xref:cdt_w_basic.adoc[Create a Managed Build System Makefile project]
-* xref:cdt_w_import.adoc[Import an existing project]
-* xref:cdt_w_newcpp.adoc[Create a {cpp} file]
-* xref:cdt_w_newmake.adoc[Create a makefile]
-* xref:cdt_w_build.adoc[Build a project]
-* xref:cdt_w_debug.adoc[Debug a project]
-* xref:cdt_w_existing_code.adoc[Import C/{cpp} source into Eclipse]
-* xref:cdt_w_install_cdt.adoc[Install/update the CDT]
+xref:new_cmake_proj.adoc[Creating a CMake project]
 
-image:ngref.gif[Related reference]
+xref:new_cbs_makefile_proj.adoc[Creating a Core Build System Makefile project]
 
-* xref:../concepts/cdt_o_home.adoc[CDT Home]
+xref:cbs_using_existing_code.adoc[Using existing code]
+
+xref:cbs_launchbar.adoc[Launch Bar]
+
+xref:cbs_build_project.adoc[Building a project]
+
+xref:cbs_run_project.adoc[Running a project]
+
+xref:cbs_debug_project.adoc[Debugging a project]

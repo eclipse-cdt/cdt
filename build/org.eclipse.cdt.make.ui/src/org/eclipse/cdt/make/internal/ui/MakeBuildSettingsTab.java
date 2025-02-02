@@ -198,19 +198,8 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 					stdConfig.setBuildContainer(stdConfig.getProject());
 				}
 
-				String buildCommand = buildCmdText.getText().trim();
-				if (!buildCommand.isEmpty()) {
-					stdConfig.setBuildCommand(buildCommand.split(" ")); //$NON-NLS-1$
-				} else {
-					stdConfig.setBuildCommand(null);
-				}
-
-				String cleanCommand = cleanCmdText.getText().trim();
-				if (!cleanCommand.isEmpty()) {
-					stdConfig.setCleanCommand(cleanCommand.split(" ")); //$NON-NLS-1$
-				} else {
-					stdConfig.setCleanCommand(null);
-				}
+				stdConfig.setBuildCommand(buildCmdText.getText());
+				stdConfig.setCleanCommand(cleanCmdText.getText());
 			}
 		} catch (CoreException e) {
 			MakeUIPlugin.log(e.getStatus());

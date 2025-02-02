@@ -15,6 +15,7 @@
 package org.eclipse.cdt.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
@@ -267,6 +268,26 @@ public class CommandLineUtil {
 			aList.add(buffer.toString());
 		}
 		return aList.toArray(new String[aList.size()]);
+	}
+
+	/**
+	 * Converts argument array to a string suitable for passing to Bash like:
+	 *
+	 * This process reverses {@link #argumentsToArray(String)}, but does not
+	 * restore the exact same results.
+	 *
+	 * @param args
+	 *            the arguments to convert and escape
+	 * @param encodeNewline
+	 *            <code>true</code> if newline (<code>\r</code> or
+	 *            <code>\n</code>) should be encoded
+	 *
+	 * @return args suitable for passing to some process that decodes the string
+	 *         into an argument array
+	 * @since 9.0
+	 */
+	public static String argumentsToString(Collection<String> args, boolean encodeNewline) {
+		return argumentsToString(args.toArray(String[]::new), encodeNewline);
 	}
 
 	/**

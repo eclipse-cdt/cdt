@@ -24,6 +24,11 @@ The following classes have been removed or modified in API breaking ways:
   - spelling corrected for methods with Uninitialized in the name
   - setWarnUnused renamed to setWarnUnusedVars and isWarnUnused renamed to isWarnUnusedVars
 
+### StandardBuildConfiguration.setBuildCommand(String[]) and StandardBuildConfiguration.setCleanCommand(String[]) removed
+
+These methods (in `org.eclipse.cdt.core.build.StandardBuildConfiguration`) made it difficult to save and load users build and clean command without modifying it.
+They have been replaced with methods that take only a `String` for consistent parsing of command lines.
+See [#1072](https://github.com/eclipse-cdt/cdt/issues/1072) for more details on motivation for this change.
 
 ## API Changes in CDT 11.5.
 

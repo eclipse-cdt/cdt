@@ -165,6 +165,12 @@ Added methods that can be used to check/fix the Launch Target name:
 - Added class:
   - org.eclipse.launchbar.core.target.LaunchTargetUtils
 
+#### org.eclipse.cdt.core.build.CBuildConfiguration.getBuildDirectory() should not be overridden
+
+The `@nooverride` flag was added to `CBuildConfiguration.getBuildDirectory`.
+Extenders should only be overridding `getBuildDirectoryURI` which is part of the `ICBuildConfiguration2` API.
+`getBuildDirectory` is a convenience method to convert URI into Path.
+
 #### org.eclipse.cdt.cmake.core.properties refactored
 
 A significant simplification to the CMake build properties was completed, this included removing some API that was not used.

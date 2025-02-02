@@ -325,6 +325,13 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		return getBuildContainer().getLocationURI();
 	}
 
+	/**
+	 * Convenience method to convert getBuildDirectoryURI() to a Path
+	 * <p>
+	 * @apiNote This method used to be overridable, but it leads to unclear semantics for extenders.
+	 * Extenders looking to change the build directory should only override {@link #getBuildDirectoryURI()}
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 */
 	public Path getBuildDirectory() throws CoreException {
 		return Paths.get(getBuildDirectoryURI());
 	}

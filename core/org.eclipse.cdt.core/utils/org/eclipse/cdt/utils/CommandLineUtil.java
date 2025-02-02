@@ -15,6 +15,7 @@
 package org.eclipse.cdt.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.service.environment.Constants;
@@ -283,6 +284,26 @@ public class CommandLineUtil {
 	 *
 	 * @return args suitable for passing to some process that decodes the string
 	 *         into an argument array
+	 * @since 9.0
+	 */
+	public static String argumentsToString(Collection<String> args, boolean encodeNewline) {
+		return argumentsToString(args.toArray(String[]::new), encodeNewline);
+	}
+
+	/**
+	 * Converts argument array to a string suitable for passing to Bash like:
+	 *
+	 * This process reverses {@link #argumentsToArray(String)}, but does not
+	 * restore the exact same results.
+	 *
+	 * @param args
+	 *            the arguments to convert and escape
+	 * @param encodeNewline
+	 *            <code>true</code> if newline (<code>\r</code> or
+	 *            <code>\n</code>) should be encoded
+	 *
+	 * @return args suitable for passing to some process that decodes the string
+	 *         into an argument array
 	 * @since 6.2
 	 */
 	public static String argumentsToString(String[] args, boolean encodeNewline) {
@@ -346,20 +367,33 @@ public class CommandLineUtil {
 				builder.append(' ');
 			}
 
-			builder.append('\'');
+			StringBuilder argSb = new StringBuilder();
+			boolean argNeedsQuotes = false;
 			for (int j = 0; j < arg.length(); j++) {
 				char c = arg.charAt(j);
 				if (c == '\'') {
-					builder.append("'\"'\"'"); //$NON-NLS-1$
+					argNeedsQuotes = true;
+					argSb.append("'\"'\"'"); //$NON-NLS-1$
 				} else if (c == '\r' && encodeNewline) {
-					builder.append("'$'\\r''"); //$NON-NLS-1$
+					argNeedsQuotes = true;
+					argSb.append("'$'\\r''"); //$NON-NLS-1$
 				} else if (c == '\n' && encodeNewline) {
-					builder.append("'$'\\n''"); //$NON-NLS-1$
+					argNeedsQuotes = true;
+					argSb.append("'$'\\n''"); //$NON-NLS-1$
 				} else {
-					builder.append(c);
+					if (Character.isWhitespace(c)) {
+						argNeedsQuotes = true;
+					}
+					argSb.append(c);
 				}
 			}
-			builder.append('\'');
+			if (argNeedsQuotes) {
+				builder.append('\'');
+			}
+			builder.append(argSb);
+			if (argNeedsQuotes) {
+				builder.append('\'');
+			}
 		}
 
 		return builder.toString();

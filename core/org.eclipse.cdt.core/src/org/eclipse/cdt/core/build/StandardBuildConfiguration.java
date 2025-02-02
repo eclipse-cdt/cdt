@@ -29,6 +29,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.internal.core.build.Messages;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
@@ -99,14 +100,14 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 
 		String buildCmd = getProperty(BUILD_COMMAND);
 		if (buildCmd != null && !buildCmd.trim().isEmpty()) {
-			buildCommand = buildCmd.split(" "); //$NON-NLS-1$
+			buildCommand = CommandLineUtil.argumentsToArray(buildCmd);
 		} else {
 			buildCommand = DEFAULT_BUILD_COMMAND;
 		}
 
 		String cleanCmd = getProperty(CLEAN_COMMAND);
 		if (cleanCmd != null && !cleanCmd.trim().isEmpty()) {
-			cleanCommand = cleanCmd.split(" "); //$NON-NLS-1$
+			cleanCommand = CommandLineUtil.argumentsToArray(cleanCmd);
 		} else {
 			cleanCommand = DEFAULT_CLEAN_COMMAND;
 		}
@@ -164,7 +165,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	public void setBuildCommand(String[] buildCommand) {
 		if (buildCommand != null) {
 			this.buildCommand = buildCommand;
-			setProperty(BUILD_COMMAND, String.join(" ", buildCommand)); //$NON-NLS-1$
+			setProperty(BUILD_COMMAND, CommandLineUtil.argumentsToString(buildCommand, false));
 		} else {
 			this.buildCommand = DEFAULT_BUILD_COMMAND;
 			removeProperty(BUILD_COMMAND);
@@ -174,7 +175,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	public void setCleanCommand(String[] cleanCommand) {
 		if (cleanCommand != null) {
 			this.cleanCommand = cleanCommand;
-			setProperty(CLEAN_COMMAND, String.join(" ", cleanCommand)); //$NON-NLS-1$
+			setProperty(CLEAN_COMMAND, CommandLineUtil.argumentsToString(cleanCommand, false));
 		} else {
 			this.cleanCommand = DEFAULT_CLEAN_COMMAND;
 			removeProperty(CLEAN_COMMAND);
@@ -212,9 +213,9 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				return null;
 			}
 		case BUILD_COMMAND:
-			return String.join(" ", buildCommand); //$NON-NLS-1$
+			return CommandLineUtil.argumentsToString(buildCommand, false);
 		case CLEAN_COMMAND:
-			return String.join(" ", cleanCommand); //$NON-NLS-1$
+			return CommandLineUtil.argumentsToString(cleanCommand, false);
 		}
 
 		return null;
@@ -260,7 +261,8 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 					getToolChain().getErrorParserIds())) {
 				epm.setOutputStream(console.getOutputStream());
 				// run make
-				console.getOutputStream().write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
+				console.getOutputStream()
+						.write(String.format("%s\n", CommandLineUtil.argumentsToString(command, false))); //$NON-NLS-1$
 
 				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 						getBuildDirectory().toString());
@@ -321,7 +323,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			}
 
 			// run make
-			infoStream.write(String.format("%s\n", String.join(" ", command))); //$NON-NLS-1$ //$NON-NLS-2$
+			infoStream.write(String.format("%s\n", CommandLineUtil.argumentsToString(command, false))); //$NON-NLS-1$
 
 			org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
 					getBuildDirectory().toString());

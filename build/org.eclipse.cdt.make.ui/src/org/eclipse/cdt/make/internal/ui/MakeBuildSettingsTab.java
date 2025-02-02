@@ -16,6 +16,7 @@ import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.StandardBuildConfiguration;
 import org.eclipse.cdt.launch.ui.corebuild.CommonBuildTab;
 import org.eclipse.cdt.make.core.MakefileBuildConfigurationProvider;
+import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -200,14 +201,14 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 
 				String buildCommand = buildCmdText.getText().trim();
 				if (!buildCommand.isEmpty()) {
-					stdConfig.setBuildCommand(buildCommand.split(" ")); //$NON-NLS-1$
+					stdConfig.setBuildCommand(CommandLineUtil.argumentsToArray(buildCommand));
 				} else {
 					stdConfig.setBuildCommand(null);
 				}
 
 				String cleanCommand = cleanCmdText.getText().trim();
 				if (!cleanCommand.isEmpty()) {
-					stdConfig.setCleanCommand(cleanCommand.split(" ")); //$NON-NLS-1$
+					stdConfig.setCleanCommand(CommandLineUtil.argumentsToArray(cleanCommand));
 				} else {
 					stdConfig.setCleanCommand(null);
 				}

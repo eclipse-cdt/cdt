@@ -17,6 +17,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileReader;
 
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
+import org.eclipse.cdt.managedbuilder.core.IConfiguration;
+import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
+import org.eclipse.cdt.managedbuilder.core.IManagedProject;
+import org.eclipse.cdt.managedbuilder.core.IToolChain;
+import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.core.jsoncdb.CompilationDatabaseInformation;
 import org.eclipse.cdt.managedbuilder.internal.core.CommonBuilder;
 import org.eclipse.cdt.managedbuilder.testplugin.AbstractBuilderTest;
@@ -198,5 +204,20 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 				}
 			}
 		}
+	}
+
+	@Test
+	public void testMakeFileGenerationOff() throws Exception {
+		setWorkspace("regressions");
+		final IProject app = loadProject("helloworldC");
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(app);
+		IManagedProject mProj = info.getManagedProject();
+		IConfiguration cfg = mProj.getConfigurations()[0];
+		IToolChain toolChain = cfg.getToolChain();
+		IBuilder builder = toolChain.getBuilder();
+		setGenerateFileOptionEnabled(true);
+		builder.setManagedBuildOn(false);
+		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
+		assertFalse(app.getFile("Debug/compile_commands.json").exists());
 	}
 }

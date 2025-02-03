@@ -510,10 +510,6 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 			}
 
 			for (int i = 0; i < num; i++) {
-				if (isGenerateFileOptionEnabled()) {
-					CompilationDatabaseGenerator generator = new CompilationDatabaseGenerator(getProject(), activeCfg);
-					generator.generate();
-				}
 				//bug 219337
 				if (kind == INCREMENTAL_BUILD || kind == AUTO_BUILD) {
 					if (buildConfigResourceChanges()) { //only build projects with project resource changes
@@ -883,6 +879,12 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 
 	protected BuildStatus performPrebuildGeneration(int kind, CfgBuildInfo bInfo, BuildStatus buildStatus,
 			IProgressMonitor monitor) throws CoreException {
+
+		if (isGenerateFileOptionEnabled()) {
+			CompilationDatabaseGenerator generator = new CompilationDatabaseGenerator(getProject(),
+					bInfo.getConfiguration());
+			generator.generate();
+		}
 		IBuilder builder = bInfo.getBuilder();
 		if (builder.isInternalBuilder())
 			return buildStatus;

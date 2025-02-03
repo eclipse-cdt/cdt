@@ -11,12 +11,16 @@
 package org.eclipse.cdt.core.build;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
@@ -68,6 +72,7 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	private String[] cleanCommand = DEFAULT_CLEAN_COMMAND;
 	private IContainer buildContainer;
 	private IEnvironmentVariable[] envVars;
+	private Stack<String> directoryStack = new Stack<>();
 
 	public StandardBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -342,4 +347,82 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
+	private abstract class DirectoryPatternParser {
+		private final Pattern pattern;
+
+		public DirectoryPatternParser(String regex) {
+			this.pattern = Pattern.compile(regex);
+		}
+
+		public void processLine(String line) {
+			Matcher matcher = pattern.matcher(line);
+			if (matcher.find()) {
+				recordDirectoryChange(matcher);
+			}
+		}
+
+		abstract protected void recordDirectoryChange(Matcher matcher);
+	}
+
+	private final List<DirectoryPatternParser> enteringDirectoryPatterns = List.of( //
+			//
+			new DirectoryPatternParser("make\\[(.*)\\]: Entering directory [`'](.*)'") { //$NON-NLS-1$
+				@Override
+				protected void recordDirectoryChange(Matcher matcher) {
+					int level;
+					try {
+						level = Integer.valueOf(matcher.group(1)).intValue();
+					} catch (NumberFormatException e) {
+						level = 0;
+					}
+					String dir = matcher.group(2);
+					/*
+					 * Sometimes make screws up the output, so "leave" events can't be seen. Double-check
+					 * level here.
+					 */
+					int parseLevel = directoryStack.size();
+					for (; level < parseLevel; level++) {
+						if (!directoryStack.empty()) {
+							directoryStack.pop();
+						}
+					}
+					directoryStack.push(dir);
+				}
+			},
+
+			// This is emitted by GNU make using options -w or --print-directory.
+			new DirectoryPatternParser("make: Entering directory [`'](.*)'") { //$NON-NLS-1$
+				@Override
+				protected void recordDirectoryChange(Matcher matcher) {
+					String dir = matcher.group(1);
+					directoryStack.push(dir);
+				}
+			},
+
+			//
+			new DirectoryPatternParser("make(\\[.*\\])?: Leaving directory") { //$NON-NLS-1$
+				@Override
+				protected void recordDirectoryChange(Matcher matcher) {
+					if (!directoryStack.empty()) {
+						directoryStack.pop();
+					}
+				}
+			}
+
+	);
+
+	@Override
+	public boolean processLine(String line) {
+		enteringDirectoryPatterns.forEach(p -> p.processLine(line));
+		return super.processLine(line);
+	}
+
+	@Override
+	public URI getBuildDirectoryURI() throws CoreException {
+		if (!directoryStack.isEmpty()) {
+			return Path.of(directoryStack.peek()).toUri();
+		} else {
+			return super.getBuildDirectoryURI();
+		}
+	}
 }

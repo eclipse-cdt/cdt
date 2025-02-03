@@ -24,6 +24,11 @@ The following classes have been removed or modified in API breaking ways:
   - spelling corrected for methods with Uninitialized in the name
   - setWarnUnused renamed to setWarnUnusedVars and isWarnUnused renamed to isWarnUnusedVars
 
+## org.eclipse.cdt.core.build.CBuildConfiguration.getBuildDirectory() should not be overridden
+
+The `@nooverride` flag was added to `CBuildConfiguration.getBuildDirectory`.
+Extenders should only be overridding `getBuildDirectoryURI` which is part of the `ICBuildConfiguration2` API.
+`getBuildDirectory` is a convenience method to convert URI into Path.
 
 ## API Changes in CDT 11.5.
 

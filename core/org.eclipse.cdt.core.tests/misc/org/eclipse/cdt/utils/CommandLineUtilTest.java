@@ -35,11 +35,24 @@ public class CommandLineUtilTest extends TestCase {
 		return CommandLineUtil.argumentsToArray(line);
 	}
 
+	private String join(String[] line) {
+		return CommandLineUtil.argumentsToStringBash(line, false);
+	}
+
+	private String joinWin(String[] line) {
+		return CommandLineUtil.argumentsToStringWindowsCreateProcess(line, false);
+	}
+
+	private String joinU(String[] line) {
+		return CommandLineUtil.argumentsToString(line, false);
+	}
+
 	public void testArgumentsToArraySimple() {
 		String[] args = parse("A=B C");
 		assertEquals(2, args.length);
 		assertEquals("A=B", args[0]);
 		assertEquals("C", args[1]);
+		assertEquals("A=B C", join(args));
 	}
 
 	public void testArgumentsToArraySpaces() {
@@ -48,6 +61,7 @@ public class CommandLineUtilTest extends TestCase {
 		assertEquals(2, args.length);
 		assertEquals("A=B", args[0]);
 		assertEquals("C", args[1]);
+		assertEquals("A=B C", join(args));
 	}
 
 	public void testArgumentsToArraySpaces2() {
@@ -56,6 +70,7 @@ public class CommandLineUtilTest extends TestCase {
 		assertEquals(2, args.length);
 		assertEquals("A=B", args[0]);
 		assertEquals("C", args[1]);
+		assertEquals("A=B C", join(args));
 	}
 
 	public void testArgumentsToArrayDoubleQuotes() {
@@ -63,6 +78,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("Arg=\"a b c\"");
 		assertEquals(1, args.length);
 		assertEquals("Arg=a b c", args[0]);
+		assertEquals("'Arg=a b c'", join(args));
 	}
 
 	public void testArgumentsToArrayDoubleQuotes2() {
@@ -70,6 +86,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("Arg=\"\\\"quoted\\\"\"");
 		assertEquals(1, args.length);
 		assertEquals("Arg=\"quoted\"", args[0]);
+		assertEquals("'Arg=\"quoted\"'", join(args));
 	}
 
 	public void testArgumentsToArraySingleQuotes() {
@@ -77,6 +94,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("Arg='\"quoted\"'");
 		assertEquals(1, args.length);
 		assertEquals("Arg=\"quoted\"", args[0]);
+		assertEquals("'Arg=\"quoted\"'", join(args));
 	}
 
 	public void testArgumentsToArrayQuote() {
@@ -84,6 +102,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("\\\"");
 		assertEquals(1, args.length);
 		assertEquals("\"", args[0]);
+		assertEquals("'\"'", join(args));
 	}
 
 	public void testArgumentsToArrayQuotSpaces() {
@@ -91,6 +110,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("  \\\"");
 		assertEquals(1, args.length);
 		assertEquals("\"", args[0]);
+		assertEquals("'\"'", join(args));
 	}
 
 	public void testArgumentsToArrayOnlySpaces() {
@@ -98,6 +118,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("\"   \"");
 		assertEquals(1, args.length);
 		assertEquals("   ", args[0]);
+		assertEquals("'   '", join(args));
 	}
 
 	public void testArgumentsToArrayJumbledString() {
@@ -105,6 +126,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("\"a b\"-c");
 		assertEquals(1, args.length);
 		assertEquals("a b-c", args[0]);
+		assertEquals("'a b-c'", join(args));
 	}
 
 	public void testArgumentsToArrayJumbledString2() {
@@ -113,6 +135,7 @@ public class CommandLineUtilTest extends TestCase {
 		assertEquals(2, args.length);
 		assertEquals("x", args[0]);
 		assertEquals("a b-c", args[1]);
+		assertEquals("x 'a b-c'", join(args));
 	}
 
 	public void testArgumentsToArrayJumbledSQ() {
@@ -121,6 +144,7 @@ public class CommandLineUtilTest extends TestCase {
 		assertEquals(2, args.length);
 		assertEquals("x x", args[0]);
 		assertEquals("y", args[1]);
+		assertEquals("'x x' y", join(args));
 	}
 
 	public void testArgumentsToArrayEmptyString() {
@@ -128,6 +152,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("\"\"");
 		assertEquals(1, args.length);
 		assertEquals("", args[0]);
+		assertEquals("''", join(args));
 	}
 
 	public void testArgumentsToArrayEmptyString2() {
@@ -135,6 +160,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("''");
 		assertEquals(1, args.length);
 		assertEquals("", args[0]);
+		assertEquals("''", join(args));
 	}
 
 	public void testArgumentsToArrayEmpty3() {
@@ -143,6 +169,7 @@ public class CommandLineUtilTest extends TestCase {
 		assertEquals(2, args.length);
 		assertEquals("", args[0]);
 		assertEquals("a", args[1]);
+		assertEquals("'' a", join(args));
 	}
 
 	public void testArgumentsToArrayQuot1() {
@@ -150,6 +177,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("'\"'");
 		assertEquals(1, args.length);
 		assertEquals("\"", args[0]);
+		assertEquals("'\"'", join(args));
 	}
 
 	public void testArgumentsToArrayQuot2() {
@@ -157,24 +185,28 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("\"\\\"\"");
 		assertEquals(1, args.length);
 		assertEquals("\"", args[0]);
+		assertEquals("'\"'", join(args));
 	}
 
 	public void testArgumentsToArrayNull() {
 		// []
 		String[] args = parse(null);
 		assertEquals(0, args.length);
+		assertEquals("", join(args));
 	}
 
 	public void testArgumentsToArrayEmpty() {
 		// []
 		String[] args = parse("");
 		assertEquals(0, args.length);
+		assertEquals("", join(args));
 	}
 
 	public void testArgumentsToArrayEmptySpaces() {
 		// [   ]
 		String[] args = parse("   ");
 		assertEquals(0, args.length);
+		assertEquals("", join(args));
 	}
 
 	public void testArgumentsToArrayTabs() {
@@ -182,6 +214,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("a \tb");
 		assertEquals(2, args.length);
 		assertEquals("a", args[0]);
+		assertEquals("a b", join(args));
 	}
 
 	public void testArgumentsToArrayNL() {
@@ -189,6 +222,7 @@ public class CommandLineUtilTest extends TestCase {
 		String[] args = parse("\"a\\nb\"");
 		assertEquals(1, args.length);
 		assertEquals("a\nb", args[0]);
+		assertEquals("'a\nb'", join(args));
 	}
 
 	public void testArgumentsToArraySimpleWin() {
@@ -196,24 +230,28 @@ public class CommandLineUtilTest extends TestCase {
 		assertEquals(2, args.length);
 		assertEquals("A=B", args[0]);
 		assertEquals("C", args[1]);
+		assertEquals("A=B C", joinWin(args));
 	}
 
 	public void testArgumentsToArrayWindowsFiles() {
 		String[] args = parseWin("my\\file\\path");
 		assertEquals(1, args.length);
 		assertEquals("my\\file\\path", args[0]);
+		assertEquals("my\\file\\path", joinWin(args));
 	}
 
 	public void testArgumentsToArrayWindowsSpaces() {
 		String[] args = parseWin("\"my\\file\\path space\"");
 		assertEquals(1, args.length);
 		assertEquals("my\\file\\path space", args[0]);
+		assertEquals("\"my\\file\\path space\"", joinWin(args));
 	}
 
 	public void testArgumentsToArrayWindowsEmpty() {
 		String[] args = parseWin("\"\"");
 		assertEquals(1, args.length);
 		assertEquals("", args[0]);
+		assertEquals("\"\"", joinWin(args));
 	}
 
 	public void testArgumentsToArrayWindowsQuotes() {
@@ -221,6 +259,7 @@ public class CommandLineUtilTest extends TestCase {
 		assertEquals(2, args.length);
 		assertEquals("\"a", args[0]);
 		assertEquals("b\"", args[1]);
+		assertEquals("\"\\\"a\" \"b\\\"\"", joinWin(args));
 	}
 
 	public void testArgumentsToArraySimpleUniversal() {
@@ -229,5 +268,6 @@ public class CommandLineUtilTest extends TestCase {
 		assertEquals("A=B", args[0]);
 		assertEquals("C", args[1]);
 		assertEquals("D", args[2]);
+		assertEquals("A=B C D", joinU(args));
 	}
 }

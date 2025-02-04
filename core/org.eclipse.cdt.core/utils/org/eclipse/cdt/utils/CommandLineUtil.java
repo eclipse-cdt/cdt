@@ -346,20 +346,24 @@ public class CommandLineUtil {
 				builder.append(' ');
 			}
 
-			builder.append('\'');
-			for (int j = 0; j < arg.length(); j++) {
-				char c = arg.charAt(j);
-				if (c == '\'') {
-					builder.append("'\"'\"'"); //$NON-NLS-1$
-				} else if (c == '\r' && encodeNewline) {
-					builder.append("'$'\\r''"); //$NON-NLS-1$
-				} else if (c == '\n' && encodeNewline) {
-					builder.append("'$'\\n''"); //$NON-NLS-1$
-				} else {
-					builder.append(c);
+			if (needsQuoting(arg)) {
+				builder.append('\'');
+				for (int j = 0; j < arg.length(); j++) {
+					char c = arg.charAt(j);
+					if (c == '\'') {
+						builder.append("'\"'\"'"); //$NON-NLS-1$
+					} else if (c == '\r' && encodeNewline) {
+						builder.append("'$'\\r''"); //$NON-NLS-1$
+					} else if (c == '\n' && encodeNewline) {
+						builder.append("'$'\\n''"); //$NON-NLS-1$
+					} else {
+						builder.append(c);
+					}
 				}
+				builder.append('\'');
+			} else {
+				builder.append(arg);
 			}
-			builder.append('\'');
 		}
 
 		return builder.toString();
@@ -386,37 +390,48 @@ public class CommandLineUtil {
 				builder.append(' ');
 			}
 
-			builder.append('"');
-			for (int j = 0; j < arg.length(); j++) {
-				/*
-				 * backslashes are special if and only if they are followed by a
-				 * double-quote (") therefore doubling them depends on what is
-				 * next
-				 */
-				int numBackslashes = 0;
-				for (; j < arg.length() && arg.charAt(j) == '\\'; j++) {
-					numBackslashes++;
-				}
-				if (j == arg.length()) {
-					appendNBackslashes(builder, numBackslashes * 2);
-				} else if (arg.charAt(j) == '"') {
-					appendNBackslashes(builder, numBackslashes * 2);
-					builder.append('"');
-				} else if ((arg.charAt(j) == '\n' || arg.charAt(j) == '\r') && encodeNewline) {
-					builder.append(' ');
-				} else {
+			if (needsQuoting(arg)) {
+				builder.append('"');
+				for (int j = 0; j < arg.length(); j++) {
 					/*
-					 * this really is numBackslashes (no missing * 2), that is
-					 * because next character is not a double-quote (")
+					 * backslashes are special if and only if they are followed by a
+					 * double-quote (") therefore doubling them depends on what is
+					 * next
 					 */
-					appendNBackslashes(builder, numBackslashes);
-					builder.append(arg.charAt(j));
+					int numBackslashes = 0;
+					for (; j < arg.length() && arg.charAt(j) == '\\'; j++) {
+						numBackslashes++;
+					}
+					if (j == arg.length()) {
+						appendNBackslashes(builder, numBackslashes * 2);
+					} else if (arg.charAt(j) == '"') {
+						appendNBackslashes(builder, numBackslashes * 2);
+						builder.append('\\');
+						builder.append('"');
+					} else if ((arg.charAt(j) == '\n' || arg.charAt(j) == '\r') && encodeNewline) {
+						builder.append(' ');
+					} else {
+						/*
+						 * this really is numBackslashes (no missing * 2), that is
+						 * because next character is not a double-quote (")
+						 */
+						appendNBackslashes(builder, numBackslashes);
+						builder.append(arg.charAt(j));
+					}
 				}
+				builder.append('"');
+			} else {
+				builder.append(arg);
 			}
-			builder.append('"');
 		}
 
 		return builder.toString();
+	}
+
+	private static boolean needsQuoting(String arg) {
+		boolean needsQuoting = arg.isBlank() || arg.chars().mapToObj(i -> (char) i)
+				.anyMatch(c1 -> Character.isWhitespace(c1) || c1 == '"' || c1 == '\'');
+		return needsQuoting;
 	}
 
 	private static void appendNBackslashes(StringBuilder builder, int numBackslashes) {

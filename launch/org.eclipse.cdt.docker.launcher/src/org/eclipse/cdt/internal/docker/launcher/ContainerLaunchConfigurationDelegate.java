@@ -531,7 +531,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 			String providerId = configuration.getAttribute(ICBuildConfiguration.TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
 			IToolChain toolchain = toolChainManager.getToolChain(providerId, toolchainId);
 			if (toolchain != null) {
-				return configManager.getBuildConfiguration(project, toolchain, mode, monitor);
+				return configManager.getBuildConfiguration(project, toolchain, mode, target, monitor);
 			}
 		}
 
@@ -539,7 +539,8 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 		Map<String, String> properties = new HashMap<>();
 		properties.putAll(target.getAttributes());
 		for (IToolChain toolChain : toolChainManager.getToolChainsMatching(properties)) {
-			ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(project, toolChain, mode, monitor);
+			ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(project, toolChain, mode, target,
+					monitor);
 			if (buildConfig != null) {
 				return buildConfig;
 			}

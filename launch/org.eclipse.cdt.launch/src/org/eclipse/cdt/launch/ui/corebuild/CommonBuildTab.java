@@ -196,7 +196,8 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 
 		String mode = getLaunchConfigurationDialog().getMode();
 		try {
-			buildConfig = bcManager.getBuildConfiguration(project, newToolchain, mode, new NullProgressMonitor());
+			buildConfig = bcManager.getBuildConfiguration(project, newToolchain, mode, getLaunchTarget(),
+					new NullProgressMonitor());
 		} catch (CoreException e) {
 			LaunchUIPlugin.log(e.getStatus());
 		}

@@ -10,6 +10,148 @@ Below is the detailed descriptions of API changes and mitigation efforts API con
 
 ## API Changes in CDT 12.0.
 
+### org.eclipse.cdt.core.build.ICBuildConfigurationProvider
+
+Renamed method createBuildConfiguration to createCBuildConfiguration, which reflects it purpose of creating a new Core Build configuration. Also added the ILaunchTarget parameter.
+
+Added method:
+* createCBuildConfiguration(IProject, IToolChain, String, ILaunchTarget, IProgressMonitor)
+
+Removed method:
+* createBuildConfiguration(IProject, IToolChain, String, IProgressMonitor)
+
+Added method allowing extenders to customize the Core Build output directory name.
+* getCBuildConfigName(IProject, String, IToolChain, String, ILaunchTarget)
+
+###  org.eclipse.cdt.core.build
+Removed method:
+
+* org.eclipse.cdt.core.build.CBuildConfiguration.setLaunchMode(String)
+
+### Simplified constructors in org.eclipse.cdt.core.build.CBuildConfiguration
+
+The following constructors have been removed from CBuildConfiguration:
+
+* org.eclipse.cdt.core.build.CBuildConfiguration.CBuildConfiguration(IBuildConfiguration, String, IToolChain)
+* org.eclipse.cdt.core.build.CBuildConfiguration.CBuildConfiguration(IBuildConfiguration, String, IToolChain, String)
+* org.eclipse.cdt.core.build.CBuildConfiguration.CBuildConfiguration(IBuildConfiguration, IToolChain)
+
+Removing them simplified the API as these constructors were unneeded.
+
+Instead use:
+
+* org.eclipse.cdt.core.build.CBuildConfiguration.CBuildConfiguration(IBuildConfiguration, String)
+* org.eclipse.cdt.core.build.CBuildConfiguration.CBuildConfiguration(IBuildConfiguration, String, IToolChain, String, ILaunchTarget)
+
+The documentation on these constructors has been improved.
+
+### Simplified constructors in org.eclipse.cdt.cmake.core.CMakeBuildConfiguration
+
+The following constructors have been removed from CMakeBuildConfiguration:
+
+* org.eclipse.cdt.cmake.core.CMakeBuildConfiguration.CMakeBuildConfiguration(IBuildConfiguration, String, IToolChain)
+* org.eclipse.cdt.cmake.core.CMakeBuildConfiguration.CMakeBuildConfiguration(IBuildConfiguration, String, IToolChain, ICMakeToolChainFile, String)
+
+Instead use:
+
+* org.eclipse.cdt.cmake.core.CMakeBuildConfiguration.CMakeBuildConfiguration(IBuildConfiguration, String, IToolChain, ICMakeToolChainFile, String, ILaunchTarget)
+
+### Simplified constructors in org.eclipse.cdt.core.autotools.core.AutotoolsBuildConfiguration
+
+The following constructors have been removed from AutotoolsBuildConfiguration:
+* org.eclipse.cdt.core.autotools.core.AutotoolsBuildConfiguration.AutotoolsBuildConfiguration(IBuildConfiguration, String, IToolChain, String)
+* org.eclipse.cdt.core.autotools.core.AutotoolsBuildConfiguration.AutotoolsBuildConfiguration(IBuildConfiguration, String, IToolChain)
+
+Instead use:
+
+* org.eclipse.cdt.core.autotools.core.AutotoolsBuildConfiguration.AutotoolsBuildConfiguration(IBuildConfiguration, String, IToolChain, String, ILaunchTarget)
+
+### Simplified constructors in org.eclipse.cdt.core.build.StandardBuildConfiguration
+
+The following constructors have been removed from StandardBuildConfiguration:
+
+* org.eclipse.cdt.core.build.StandardBuildConfiguration.StandardBuildConfiguration(IBuildConfiguration, String, IToolChain, String)
+
+Instead use:
+
+* org.eclipse.cdt.core.build.StandardBuildConfiguration.StandardBuildConfiguration(IBuildConfiguration, String, IToolChain, String, ILaunchTarget)
+
+### Simplified constructors in org.eclipse.cdt.internal.meson.core.MesonBuildConfiguration
+
+The following constructors have been removed from MesonBuildConfiguration:
+
+* org.eclipse.cdt.internal.meson.core.MesonBuildConfiguration.MesonBuildConfiguration(IBuildConfiguration, String, IToolChain)
+
+* org.eclipse.cdt.internal.meson.core.MesonBuildConfiguration.MesonBuildConfiguration(IBuildConfiguration, String, IToolChain, IMesonToolChainFile, String)
+
+Instead use:
+
+* org.eclipse.cdt.internal.meson.core.MesonBuildConfiguration.MesonBuildConfiguration(IBuildConfiguration, String, IToolChain, String, ILaunchTarget)
+
+* org.eclipse.cdt.internal.meson.core.MesonBuildConfiguration.MesonBuildConfiguration(IBuildConfiguration, String, IToolChain, IMesonToolChainFile, String, ILaunchTarget)
+
+### org.eclipse.cdt.core.build.ICBuildConfiguration
+
+Added method:
+
+* org.eclipse.cdt.core.build.ICBuildConfiguration.getLaunchTarget()
+
+### org.eclipse.cdt.core.build.ICBuildConfigurationManager
+
+The documentation has been improved.
+
+Added method:
+
+* org.eclipse.cdt.core.build.ICBuildConfigurationManager.getBuildConfiguration(IProject, IToolChain, String, ILaunchTarget, IProgressMonitor)
+
+Removed method:
+
+* org.eclipse.cdt.core.build.ICBuildConfigurationManager.getBuildConfiguration(IProject, IToolChain, String, IProgressMonitor)
+
+* org.eclipse.cdt.core.build.ICBuildConfigurationManager.getBuildConfiguration(IProject, Map<String, String>, String, IProgressMonitor)
+
+### org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate
+
+Removed deprecated method:
+
+* org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate.getBuildConfiguration(IProject, String, ILaunchTarget, IProgressMonitor)
+
+### org.eclipse.launchbar.core.target.ILaunchTarget
+
+Removed deprecated method:
+
+* org.eclipse.launchbar.core.target.ILaunchTarget.getName()
+
+### org.eclipse.launchbar.core.target.ILaunchTargetManager
+
+Added method:
+
+* org.eclipse.launchbar.core.target.ILaunchTargetManager.getLocalLaunchTarget()
+
+Added field:
+
+* org.eclipse.launchbar.core.target.ILaunchTargetManager.localLaunchTargetId
+
+### org.eclipse.launchbar.core.target.LaunchTargetUtils
+
+Added methods that can be used to check/fix the Launch Target name:
+
+* org.eclipse.launchbar.core.target.LaunchTargetUtils.isInvalidName(String)
+* org.eclipse.launchbar.core.target.LaunchTargetUtils.sanitizeName(String)
+
+### org.eclipse.cdt.debug.core
+- Version bumped to 9.0.0
+- Removed method (already deprecated): 
+  - org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate.getBuildConfiguration(IProject, String, ILaunchTarget, IProgressMonitor)
+
+### org.eclipse.launchbar.core.target
+- Added method:
+  - org.eclipse.launchbar.core.target.ILaunchTargetManager.getLocalLaunchTarget()
+- Added field:
+  - org.eclipse.launchbar.core.target.ILaunchTargetManager.localLaunchTargetId
+- Added class:
+  - org.eclipse.launchbar.core.target.LaunchTargetUtils
+
 ### org.eclipse.cdt.cmake.core.properties refactored
 
 A significant simplification to the CMake build properties was completed, this included removing some API that was not used.

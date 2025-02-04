@@ -53,7 +53,15 @@ import org.eclipse.launchbar.core.target.TargetStatus;
  * @since 8.3
  */
 public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTargetListener {
-
+	/**
+	 * Useful for testing. Allows tests to wait for LaunchBarTracker to finish processing.
+	 * <pre>
+	 * Job.getJobManager().join(CoreBuildLaunchBarTracker.JOB_FAMILY_CORE_BUILD_LAUNCH_BAR_TRACKER, null);
+	 * </pre>
+	 *
+	 * @since 9.0
+	 */
+	public static final Object JOB_FAMILY_CORE_BUILD_LAUNCH_BAR_TRACKER = new Object();
 	private final ILaunchBarManager launchBarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
 	private final ICBuildConfigurationManager configManager = CDebugCorePlugin
 			.getService(ICBuildConfigurationManager.class);
@@ -130,6 +138,12 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 		// Pick core build config based on launch mode and toolchain for target
 		// Since this may create a new config, need to run it in a Job
 		Job job = new Job(InternalDebugCoreMessages.CoreBuildLaunchBarTracker_Job) {
+
+			@Override
+			public boolean belongsTo(Object family) {
+				return JOB_FAMILY_CORE_BUILD_LAUNCH_BAR_TRACKER == family;
+			}
+
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				try {
@@ -143,11 +157,14 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 							if (testConfig != null && !(testConfig instanceof ErrorBuildConfiguration)) {
 								// Match launch mode run/debug.
 								if (testConfig.getLaunchMode().equals(lastMode.getIdentifier())) {
-									// Match toolchain.
-									for (IToolChain tc : tcs) {
-										if (testConfig.getToolChain().equals(tc)) {
-											buildConfig = testConfig;
-											break configs;
+									// Match launch target
+									if (testConfig.getLaunchTarget().equals(lastTarget)) {
+										// Match toolchain.
+										for (IToolChain tc : tcs) {
+											if (testConfig.getToolChain().equals(tc)) {
+												buildConfig = testConfig;
+												break configs;
+											}
 										}
 									}
 								}
@@ -157,7 +174,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 						if (buildConfig == null) {
 							for (IToolChain toolChain : tcs) {
 								buildConfig = configManager.getBuildConfiguration(finalProject, toolChain,
-										mode.getIdentifier(), monitor);
+										mode.getIdentifier(), lastTarget, monitor);
 								if (buildConfig != null) {
 									break;
 								}

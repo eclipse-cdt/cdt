@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,6 +86,8 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -114,6 +117,14 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		IMarkerGenerator, IConsoleParser2, IElementChangedListener {
 
 	private static final String LAUNCH_MODE = "cdt.launchMode"; //$NON-NLS-1$
+	/**
+	 * Property name used to store the {@link ILaunchTarget#getTypeId()} in the ICBuildConfiguration properties.
+	 */
+	private static final String LAUNCH_TARGET_TYPE_ID = "cdt.launchTarget.typeId"; //$NON-NLS-1$
+	/**
+	 * Property name used to store the {@link ILaunchTarget#getId()} in the ICBuildConfiguration properties.
+	 */
+	private static final String LAUNCH_TARGET_ID = "cdt.launchTarget.id"; //$NON-NLS-1$
 
 	private static final String NEED_REFRESH = "cdt.needScannerRefresh"; //$NON-NLS-1$
 
@@ -124,7 +135,8 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	private final String name;
 	private final IBuildConfiguration config;
 	private final IToolChain toolChain;
-	private String launchMode;
+	private final String launchMode;
+	private final ILaunchTarget launchTarget;
 
 	private Object scannerInfoLock = new Object();
 
@@ -133,51 +145,95 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 
 	private ICommandLauncher launcher;
 
-	protected CBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
-		this.config = config;
-		this.name = name;
+	/**
+	 * Use when a Core Build configuration already exists (eg was created using
+	 * {@link #CBuildConfiguration(IBuildConfiguration, String, IToolChain, String, ILaunchTarget)}.
+	 * The toolchain, launch mode and launch target are loaded from preferences.
+	 *
+	 * @param buildConfig Platform Build Configuration. Must not be null.
+	 * @param cBuildConfigName Name to give the CMakeBuildConfiguration. Must not be null.
+	 * @throws CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> Toolchain is missing,</li>
+	 * <li> Launch mode missing,</li>
+	 * <li> Launch Target is missing.</li>
+	 * </ul>
+	 */
+	protected CBuildConfiguration(IBuildConfiguration buildConfig, String cBuildConfigName) throws CoreException {
+		this.config = Objects.requireNonNull(buildConfig, "buildConfig must not be null"); //$NON-NLS-1$
+		this.name = Objects.requireNonNull(cBuildConfigName, "cBuildConfigName must not be null"); //$NON-NLS-1$
 
+		/*
+		 * Retrieve previously saved toolchain, launch mode and launch target from preferences.
+		 * The STATUS_BUILD_CONFIG_NOT_VALID is used which causes CBuildConfigurationManager to quarantine this Build Configuration.
+		 */
 		Preferences settings = getSettings();
-		String typeId = settings.get(TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
-		String id = settings.get(TOOLCHAIN_ID, ""); //$NON-NLS-1$
+		String typeId = settings.get(TOOLCHAIN_TYPE, null);
+		String id = settings.get(TOOLCHAIN_ID, null);
 		IToolChainManager toolChainManager = CCorePlugin.getService(IToolChainManager.class);
 		IToolChain tc = toolChainManager.getToolChain(typeId, id);
-
 		if (tc == null) {
-			// check for other versions
-			tc = toolChainManager.getToolChain(typeId, id);
-			if (tc == null) {
-				throw new CoreException(
-						new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
-								String.format(Messages.CBuildConfiguration_ToolchainMissing, config.getName()), null));
-			}
+			throw new CoreException(
+					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
+							String.format(Messages.CBuildConfiguration_CBuildConfiguration_ToolchainMissing,
+									buildConfig.getName(), typeId, id),
+							null));
 		}
 		this.toolChain = tc;
 
-		this.launchMode = settings.get(LAUNCH_MODE, "run"); //$NON-NLS-1$
+		String launchMode = settings.get(LAUNCH_MODE, null);
+		if (launchMode == null || launchMode.isBlank()) {
+			throw new CoreException(
+					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
+							String.format(Messages.CBuildConfiguration_CBuildConfiguration_LaunchModeMissing,
+									buildConfig.getName(), launchMode),
+							null));
+		}
+		this.launchMode = launchMode;
+
+		String launchTargetTypeId = settings.get(LAUNCH_TARGET_TYPE_ID, null);
+		String launchTargetId = settings.get(LAUNCH_TARGET_ID, null);
+		ILaunchTargetManager launchTargetManager = CCorePlugin.getService(ILaunchTargetManager.class);
+		ILaunchTarget target = launchTargetManager.getLaunchTarget(launchTargetTypeId, launchTargetId);
+		if (target == null) {
+			throw new CoreException(
+					new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, CCorePlugin.STATUS_BUILD_CONFIG_NOT_VALID,
+							String.format(Messages.CBuildConfiguration_CBuildConfiguration_LaunchTargetMissing,
+									buildConfig.getName(), launchTargetTypeId, launchTargetId),
+							null));
+		}
+		this.launchTarget = target;
 
 		CoreModel.getDefault().addElementChangedListener(this);
 	}
 
-	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		this(config, name, toolChain, "run"); //$NON-NLS-1$
-	}
-
 	/**
-	 * @since 6.2
+	 * Use when a Core Build configuration is created for the first time. The toolchain, launch mode and launch target
+	 * are saved to preferences. This allows the Core Build configuration to retrieved later (maybe another workbench
+	 * session), using {@link #CBuildConfiguration(IBuildConfiguration, String)}
+	 *
+	 * @param buildConfig Platform Build Configuration. Must not be null.
+	 * @param cBuildConfigName  Name to give the CMakeBuildConfiguration. Must not be null.
+	 * @param toolChain Toolchain to associate with this CMakeBuildConfiguration. Must not be null.
+	 * @param launchMode Launch mode (eg "debug") to associate with this CMakeBuildConfiguration. Must not be null.
+	 * @param launchTarget Launch target to associate with this CMakeBuildConfiguration. Must not be null.
+	 * @since 9.0
 	 */
-	protected CBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, String launchMode) {
-		this.config = config;
-		this.name = name;
-		this.toolChain = toolChain;
-		this.launchMode = launchMode;
+	protected CBuildConfiguration(IBuildConfiguration buildConfig, String cBuildConfigName, IToolChain toolChain,
+			String launchMode, ILaunchTarget launchTarget) {
+		this.config = Objects.requireNonNull(buildConfig, "buildConfig must not be null"); //$NON-NLS-1$
+		this.name = Objects.requireNonNull(cBuildConfigName, "cBuildConfigName must not be null"); //$NON-NLS-1$
+		this.toolChain = Objects.requireNonNull(toolChain, "toolChain must not be null"); //$NON-NLS-1$
+		this.launchMode = Objects.requireNonNull(launchMode, "launchMode must not be null"); //$NON-NLS-1$
+		this.launchTarget = Objects.requireNonNull(launchTarget, "launchTarget must not be null"); //$NON-NLS-1$
 
 		Preferences settings = getSettings();
 		settings.put(TOOLCHAIN_TYPE, toolChain.getTypeId());
 		settings.put(TOOLCHAIN_ID, toolChain.getId());
-		if (launchMode != null) {
-			settings.put(LAUNCH_MODE, launchMode);
-		}
+		settings.put(LAUNCH_MODE, launchMode);
+		settings.put(LAUNCH_TARGET_TYPE_ID, launchTarget.getTypeId());
+		settings.put(LAUNCH_TARGET_ID, launchTarget.getId());
+
 		try {
 			settings.flush();
 		} catch (BackingStoreException e) {
@@ -185,10 +241,6 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		}
 
 		CoreModel.getDefault().addElementChangedListener(this);
-	}
-
-	protected CBuildConfiguration(IBuildConfiguration config, IToolChain toolChain) {
-		this(config, DEFAULT_NAME, toolChain);
 	}
 
 	@Override
@@ -208,18 +260,9 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 		return launchMode;
 	}
 
-	/**
-	 * @since 6.2
-	 */
-	protected void setLaunchMode(String launchMode) {
-		this.launchMode = launchMode;
-		Preferences settings = getSettings();
-		settings.put(LAUNCH_MODE, launchMode);
-		try {
-			settings.flush();
-		} catch (BackingStoreException e) {
-			CCorePlugin.log(e);
-		}
+	@Override
+	public ILaunchTarget getLaunchTarget() {
+		return launchTarget;
 	}
 
 	public IProject getProject() {

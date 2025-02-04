@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.cdt.core.autotools.core.internal.Activator;
+import org.eclipse.cdt.core.build.CBuildConfigUtils;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
@@ -28,12 +29,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 public class AutotoolsBuildConfigurationProvider implements ICBuildConfigurationProvider {
 
 	public static final String ID = Activator.PLUGIN_ID + ".provider"; //$NON-NLS-1$
 
-	private ICBuildConfigurationManager configManager = Activator.getService(ICBuildConfigurationManager.class);
+	private final ILaunchTargetManager launchTargetManager = Activator.getService(ILaunchTargetManager.class);
 
 	@Override
 	public String getId() {
@@ -64,7 +67,8 @@ public class AutotoolsBuildConfigurationProvider implements ICBuildConfiguration
 			}
 
 			if (toolChain != null) {
-				return new AutotoolsBuildConfiguration(config, name, toolChain);
+				return new AutotoolsBuildConfiguration(config, name, toolChain, "run", //$NON-NLS-1$
+						launchTargetManager.getLocalLaunchTarget());
 			}
 			// No valid combinations
 			return null;
@@ -79,53 +83,23 @@ public class AutotoolsBuildConfigurationProvider implements ICBuildConfiguration
 	}
 
 	@Override
-	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
-			IProgressMonitor monitor) throws CoreException {
-		// get matching toolchain file if any
-		Map<String, String> properties = new HashMap<>();
-		String os = toolChain.getProperty(IToolChain.ATTR_OS);
-		if (os != null && !os.isEmpty()) {
-			properties.put(IToolChain.ATTR_OS, os);
-		}
-		String arch = toolChain.getProperty(IToolChain.ATTR_ARCH);
-		if (arch != null && !arch.isEmpty()) {
-			properties.put(IToolChain.ATTR_ARCH, arch);
-		}
+	public ICBuildConfiguration createCBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+			ILaunchTarget launchTarget, IProgressMonitor monitor) throws CoreException {
+		// Compute name to use for ICBuildConfiguration
+		String cBuildConfigName = getCBuildConfigName(project, "autotools", toolChain, launchMode, launchTarget); //$NON-NLS-1$
 
-		// create config
-		StringBuilder configName = new StringBuilder("autotools."); //$NON-NLS-1$
-		configName.append(launchMode);
-		if ("linux-container".equals(os)) { //$NON-NLS-1$
-			String osConfigName = toolChain.getProperty("linux-container-id"); //$NON-NLS-1$
-			osConfigName = osConfigName.replaceAll("/", "_"); //$NON-NLS-1$ //$NON-NLS-2$
-			configName.append('.');
-			configName.append(osConfigName);
-		} else {
-			if (os != null) {
-				configName.append('.');
-				configName.append(os);
-			}
-			if (arch != null && !arch.isEmpty()) {
-				configName.append('.');
-				configName.append(arch);
-			}
-		}
-		String name = configName.toString();
-		IBuildConfiguration config = null;
-		// reuse any IBuildConfiguration with the same name for the project
-		// so adding the CBuildConfiguration will override the old one stored
-		// by the CBuildConfigurationManager
-		if (configManager.hasConfiguration(this, project, name)) {
-			config = project.getBuildConfig(this.getId() + '/' + name);
-		}
-		if (config == null) {
-			config = configManager.createBuildConfiguration(this, project, name, monitor);
-		}
+		// Create Platform Build configuration
+		ICBuildConfigurationManager cBuildConfigManager = Activator.getService(ICBuildConfigurationManager.class);
+		IBuildConfiguration buildConfig = CBuildConfigUtils.createBuildConfiguration(this, project, cBuildConfigName,
+				cBuildConfigManager, monitor);
 
-		AutotoolsBuildConfiguration autotoolsConfig = new AutotoolsBuildConfiguration(config, name, toolChain,
-				launchMode);
-		configManager.addBuildConfiguration(config, autotoolsConfig);
-		return autotoolsConfig;
+		// Create Core Build configuration
+		ICBuildConfiguration cBuildConfig = new AutotoolsBuildConfiguration(buildConfig, cBuildConfigName, toolChain,
+				launchMode, launchTarget);
+
+		// Add the Platform Build/Core Build configuration combination
+		cBuildConfigManager.addBuildConfiguration(buildConfig, cBuildConfig);
+		return cBuildConfig;
 	}
 
 }

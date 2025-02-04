@@ -16,6 +16,7 @@ import org.eclipse.cdt.cmake.core.ICMakeToolChainFile;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 public class ExtendedCMakeBuildConfigurationProvider extends CMakeBuildConfigurationProvider {
 	@SuppressWarnings("hiding")
@@ -34,14 +35,7 @@ public class ExtendedCMakeBuildConfigurationProvider extends CMakeBuildConfigura
 
 	@Override
 	protected CMakeBuildConfiguration createCMakeBuildConfiguration(IBuildConfiguration config, String name,
-			IToolChain toolChain) {
-		return new ExtendedCMakeBuildConfiguration(config, name, toolChain);
+			IToolChain toolChain, ICMakeToolChainFile toolChainFile, String launchMode, ILaunchTarget launchTarget) {
+		return new ExtendedCMakeBuildConfiguration(config, name, toolChain, toolChainFile, launchMode, launchTarget);
 	}
-
-	@Override
-	protected CMakeBuildConfiguration createCMakeBuildConfiguration(IBuildConfiguration config, String name,
-			IToolChain toolChain, ICMakeToolChainFile toolChainFile, String launchMode) {
-		return new ExtendedCMakeBuildConfiguration(config, name, toolChain, toolChainFile, launchMode);
-	}
-
 }

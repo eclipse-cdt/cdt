@@ -28,6 +28,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * A Build configuration that simply spits out an error message on the console at build and clean time.
@@ -42,6 +43,8 @@ public class ErrorBuildConfiguration extends PlatformObject implements ICBuildCo
 
 	private final IBuildConfiguration config;
 	private String errorMessage;
+	private static ICBuildConfigurationManager configManager = CCorePlugin
+			.getService(ICBuildConfigurationManager.class);
 
 	public static final String NAME = "!"; //$NON-NLS-1$
 
@@ -55,6 +58,17 @@ public class ErrorBuildConfiguration extends PlatformObject implements ICBuildCo
 		public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name)
 				throws CoreException {
 			return new ErrorBuildConfiguration(config, Messages.ErrorBuildConfiguration_What);
+		}
+
+		@Override
+		public ICBuildConfiguration createCBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+				ILaunchTarget launchTarget, IProgressMonitor monitor) throws CoreException {
+			IBuildConfiguration errorBuildConfig = configManager.createBuildConfiguration(this, project,
+					"ErrorBuildConfiguration", monitor); //$NON-NLS-1$
+			ErrorBuildConfiguration errorCBuildConfiguration = new ErrorBuildConfiguration(errorBuildConfig,
+					Messages.ErrorBuildConfiguration_What);
+			configManager.addBuildConfiguration(errorBuildConfig, errorCBuildConfiguration);
+			return errorCBuildConfiguration;
 		}
 	}
 
@@ -93,31 +107,23 @@ public class ErrorBuildConfiguration extends PlatformObject implements ICBuildCo
 
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void subscribe(IResource resource, IScannerInfoChangeListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setActive() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public URI getBuildDirectoryURI() throws CoreException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -128,19 +134,16 @@ public class ErrorBuildConfiguration extends PlatformObject implements ICBuildCo
 
 	@Override
 	public IToolChain getToolChain() throws CoreException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IEnvironmentVariable getVariable(String name) throws CoreException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public IEnvironmentVariable[] getVariables() throws CoreException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -149,5 +152,4 @@ public class ErrorBuildConfiguration extends PlatformObject implements ICBuildCo
 		// Return empty list to prevent possible NPE
 		return Collections.emptyList();
 	}
-
 }

@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * This is the root interface for "new style" CDT build configurations. Adapting
@@ -71,6 +72,13 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * @since 6.4
 	 */
 	default String getLaunchMode() {
+		return null;
+	}
+
+	/**
+	 * @since 9.0
+	 */
+	default ILaunchTarget getLaunchTarget() {
 		return null;
 	}
 
@@ -236,5 +244,4 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	default boolean supportsProperties(Map<String, String> properties) {
 		return false;
 	}
-
 }

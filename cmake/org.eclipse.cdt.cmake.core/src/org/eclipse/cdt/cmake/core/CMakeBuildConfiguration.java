@@ -64,6 +64,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 /**
  * @since 2.0
@@ -83,6 +85,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 	 * To work around that, we run cmake in advance with its dedicated working error parser.
 	 */
 	private boolean cmakeListsModified;
+	private final static ILaunchTargetManager launchTargetManager = Activator.getService(ILaunchTargetManager.class);
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -91,13 +94,21 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 		toolChainFile = manager.getToolChainFileFor(getToolChain());
 	}
 
-	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		this(config, name, toolChain, null, "run"); //$NON-NLS-1$
+	// TODO: delete ??
+	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) throws CoreException {
+		this(config, name, toolChain, null, "run", launchTargetManager.getLocalLaunchTarget()); //$NON-NLS-1$
+	}
+
+	// TODO: delete ??
+	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
+			ICMakeToolChainFile toolChainFile, String launchMode) throws CoreException {
+		super(config, name, toolChain, launchMode, launchTargetManager.getLocalLaunchTarget());
+		this.toolChainFile = toolChainFile;
 	}
 
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			ICMakeToolChainFile toolChainFile, String launchMode) {
-		super(config, name, toolChain, launchMode);
+			ICMakeToolChainFile toolChainFile, String launchMode, ILaunchTarget launchTarget) throws CoreException {
+		super(config, name, toolChain, launchMode, launchTarget);
 		this.toolChainFile = toolChainFile;
 	}
 

@@ -25,6 +25,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.launchbar.core.target.LaunchTargetUtils;
 
 /**
  * A ICBuildConfigurationProvider specialized for CMake
@@ -39,7 +42,7 @@ import org.eclipse.core.runtime.Platform;
 public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProvider {
 
 	public static final String ID = "org.eclipse.cdt.cmake.core.provider"; //$NON-NLS-1$
-
+	private final static ILaunchTargetManager launchTargetManager = Activator.getService(ILaunchTargetManager.class);
 	private ICMakeToolChainManager manager = Activator.getService(ICMakeToolChainManager.class);
 	private ICBuildConfigurationManager configManager = Activator.getService(ICBuildConfigurationManager.class);
 
@@ -58,18 +61,21 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 
 	/**
 	 * Extenders should override this method to construct their specialized build configuration.
+	 *
+	 * @param config Platform Build Configuration. Must not be null.
+	 * @param name Name to give the CMakeBuildConfiguration. Must not be null.
+	 * @param toolChain Toolchain to associate with this CMakeBuildConfiguration. Must not be null.
+	 * @param toolChainFile CMake toolchain file to associate with this CMakeBuildConfiguration. May be null.
+	 * @param launchMode Launch mode (eg "debug") to associate with this CMakeBuildConfiguration.
+	 * @param launchTarget Launch target to associate with this CMakeBuildConfiguration. Must not be null.
+	 * @return a CMakeBuildConfiguration
+	 * @throws CoreException
+	 *             if the Launch Target is null.
 	 */
 	protected CMakeBuildConfiguration createCMakeBuildConfiguration(IBuildConfiguration config, String name,
-			IToolChain toolChain) {
-		return new CMakeBuildConfiguration(config, name, toolChain);
-	}
-
-	/**
-	 * Extenders should override this method to construct their specialized build configuration.
-	 */
-	protected CMakeBuildConfiguration createCMakeBuildConfiguration(IBuildConfiguration config, String name,
-			IToolChain toolChain, ICMakeToolChainFile toolChainFile, String launchMode) {
-		return new CMakeBuildConfiguration(config, name, toolChain, toolChainFile, launchMode);
+			IToolChain toolChain, ICMakeToolChainFile toolChainFile, String launchMode, ILaunchTarget launchTarget)
+			throws CoreException {
+		return new CMakeBuildConfiguration(config, name, toolChain, toolChainFile, launchMode, launchTarget);
 	}
 
 	@Override
@@ -97,7 +103,8 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 			}
 
 			if (toolChain != null) {
-				return createCMakeBuildConfiguration(config, name, toolChain);
+				return createCMakeBuildConfiguration(config, name, toolChain, null, "run", //$NON-NLS-1$
+						launchTargetManager.getLocalLaunchTarget());
 			} else {
 				// No valid combinations
 				return null;
@@ -113,7 +120,7 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		if (tcFile != null && !toolChain.equals(tcFile.getToolChain())) {
 			// toolchain changed
 			return createCMakeBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
-					cmakeConfig.getLaunchMode());
+					cmakeConfig.getLaunchMode(), launchTargetManager.getLocalLaunchTarget());
 		} else {
 			return cmakeConfig;
 		}
@@ -121,7 +128,7 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 
 	@Override
 	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
-			IProgressMonitor monitor) throws CoreException {
+			ILaunchTarget launchTarget, IProgressMonitor monitor) throws CoreException {
 		// get matching toolchain file if any
 		Map<String, String> properties = new HashMap<>();
 		String os = toolChain.getProperty(IToolChain.ATTR_OS);
@@ -154,7 +161,11 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 				configName.append('.');
 				configName.append(fragment);
 			}
+			// Add Launch Target name
+			configName.append('.');
+			configName.append(LaunchTargetUtils.sanitizeName(launchTarget.getId()));
 		}
+
 		String name = configName.toString();
 		IBuildConfiguration config = null;
 		// reuse any IBuildConfiguration with the same name for the project
@@ -167,9 +178,9 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 			config = configManager.createBuildConfiguration(this, project, name, monitor);
 		}
 
-		CMakeBuildConfiguration cmakeConfig = createCMakeBuildConfiguration(config, name, toolChain, file, launchMode);
+		CMakeBuildConfiguration cmakeConfig = createCMakeBuildConfiguration(config, name, toolChain, file, launchMode,
+				launchTarget);
 		configManager.addBuildConfiguration(config, cmakeConfig);
 		return cmakeConfig;
 	}
-
 }

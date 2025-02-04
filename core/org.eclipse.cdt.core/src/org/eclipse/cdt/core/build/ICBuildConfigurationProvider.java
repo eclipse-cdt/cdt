@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * A CBuildConfigurationProvider provides C build configurations.
@@ -40,23 +41,19 @@ public interface ICBuildConfigurationProvider {
 	ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException;
 
 	/**
-	 * Create a new build configuration for a given project using a given
-	 * toolchain and builds for a given launch mode.
-	 *
-	 * @param project
-	 *            project for the config
-	 * @param toolChain
-	 *            toolchain the build config will use
-	 * @param launchMode
-	 *            launch mode the buld config will build for
-	 * @return new build configuration or null combination not supported
+	 * Create a Core Build Configuration.
+	 * @param project Project to associate this Core Build Configuration to.
+	 * @param toolChain Toolchain to associate with this CMakeBuildConfiguration. Must not be null.
+	 * @param launchMode Launch mode (eg "debug") to associate with this CMakeBuildConfiguration.
+	 * @param launchTarget Launch target to associate with this CMakeBuildConfiguration. Must not be null.
+	 * @param monitor
+	 * @return
 	 * @throws CoreException
-	 * @since 6.1
+	 *             if the Launch Target is null.
+	 * @since 9.0
 	 */
-	default ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
-			IProgressMonitor monitor) throws CoreException {
-		return null;
-	}
+	ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
+			ILaunchTarget launchTarget, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Return a collection of supported toolchains for build configurations of this

@@ -30,11 +30,14 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.launchbar.core.target.LaunchTargetUtils;
 
 public class MesonBuildConfigurationProvider implements ICBuildConfigurationProvider {
 
 	public static final String ID = "org.eclipse.cdt.meson.core.provider"; //$NON-NLS-1$
-
+	private final static ILaunchTargetManager launchTargetManager = Activator.getService(ILaunchTargetManager.class);
 	private IMesonToolChainManager manager = Activator.getService(IMesonToolChainManager.class);
 	private ICBuildConfigurationManager configManager = Activator.getService(ICBuildConfigurationManager.class);
 
@@ -68,7 +71,8 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 			}
 
 			if (toolChain != null) {
-				return new MesonBuildConfiguration(config, name, toolChain);
+				return new MesonBuildConfiguration(config, name, toolChain, "run", //$NON-NLS-1$
+						launchTargetManager.getLocalLaunchTarget());
 			}
 			// No valid combinations
 			return null;
@@ -82,15 +86,15 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 		}
 		if (tcFile != null && !toolChain.equals(tcFile.getToolChain())) {
 			// toolchain changed
-			return new MesonBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
-					mesonConfig.getLaunchMode());
+			return new MesonBuildConfiguration(config, name, tcFile.getToolChain(), tcFile, mesonConfig.getLaunchMode(),
+					launchTargetManager.getLocalLaunchTarget());
 		}
 		return mesonConfig;
 	}
 
 	@Override
 	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
-			IProgressMonitor monitor) throws CoreException {
+			ILaunchTarget launchTarget, IProgressMonitor monitor) throws CoreException {
 		// get matching toolchain file if any
 		Map<String, String> properties = new HashMap<>();
 		String os = toolChain.getProperty(IToolChain.ATTR_OS);
@@ -127,7 +131,11 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 				configName.append('.');
 				configName.append(arch);
 			}
+			// Add Launch Target name
+			configName.append('.');
+			configName.append(LaunchTargetUtils.sanitizeName(launchTarget.getId()));
 		}
+
 		String name = configName.toString();
 		IBuildConfiguration config = null;
 		// reuse any IBuildConfiguration with the same name for the project
@@ -140,7 +148,8 @@ public class MesonBuildConfigurationProvider implements ICBuildConfigurationProv
 			config = configManager.createBuildConfiguration(this, project, name, monitor);
 		}
 
-		MesonBuildConfiguration mesonConfig = new MesonBuildConfiguration(config, name, toolChain, file, launchMode);
+		MesonBuildConfiguration mesonConfig = new MesonBuildConfiguration(config, name, toolChain, file, launchMode,
+				launchTarget);
 		configManager.addBuildConfiguration(config, mesonConfig);
 		return mesonConfig;
 	}

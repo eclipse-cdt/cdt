@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.launchbar.core;singleton:=true
-Bundle-Version: 2.5.300.qualifier
+Bundle-Version: 3.0.0
 Bundle-Activator: org.eclipse.launchbar.core.internal.Activator
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime,

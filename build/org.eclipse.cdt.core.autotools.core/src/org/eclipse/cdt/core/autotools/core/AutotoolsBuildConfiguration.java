@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 
@@ -46,13 +47,9 @@ public class AutotoolsBuildConfiguration extends CBuildConfiguration {
 		super(config, name);
 	}
 
-	public AutotoolsBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		super(config, name, toolChain, "run"); // TODO: why "run" //$NON-NLS-1$
-	}
-
-	public AutotoolsBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			String launchMode) {
-		super(config, name, toolChain, launchMode);
+	public AutotoolsBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, String launchMode,
+			ILaunchTarget launchTarget) throws CoreException {
+		super(config, name, toolChain, launchMode, launchTarget);
 	}
 
 	@Override

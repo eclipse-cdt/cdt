@@ -24,6 +24,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.launchbar.core.target.LaunchTargetUtils;
 
 /**
  * @since 7.4
@@ -31,6 +34,7 @@ import org.eclipse.core.runtime.Platform;
 public class MakefileBuildConfigurationProvider implements ICBuildConfigurationProvider {
 
 	public static final String ID = "org.eclipse.cdt.make.core.provider"; //$NON-NLS-1$
+	private final ILaunchTargetManager launchTargetManager = MakeCorePlugin.getService(ILaunchTargetManager.class);
 
 	@Override
 	public String getId() {
@@ -61,7 +65,8 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 			}
 
 			if (toolChain != null) {
-				return new StandardBuildConfiguration(config, name, toolChain, "run"); //$NON-NLS-1$
+				return new StandardBuildConfiguration(config, name, toolChain, "run", //$NON-NLS-1$
+						launchTargetManager.getLocalLaunchTarget());
 			} else {
 				// No valid combinations
 				return null;
@@ -72,7 +77,7 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 
 	@Override
 	public ICBuildConfiguration createBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
-			IProgressMonitor monitor) throws CoreException {
+			ILaunchTarget launchTarget, IProgressMonitor monitor) throws CoreException {
 		ICBuildConfigurationManager configManager = MakeCorePlugin.getService(ICBuildConfigurationManager.class);
 
 		StringBuilder configName = new StringBuilder("make."); //$NON-NLS-1$
@@ -93,7 +98,11 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 				configName.append('.');
 				configName.append(arch);
 			}
+			// Add Launch Target name
+			configName.append('.');
+			configName.append(LaunchTargetUtils.sanitizeName(launchTarget.getId()));
 		}
+
 		String name = configName.toString();
 		IBuildConfiguration config = null;
 		// reuse any IBuildConfiguration with the same name for the project
@@ -105,7 +114,8 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 		if (config == null) {
 			config = configManager.createBuildConfiguration(this, project, name, monitor);
 		}
-		StandardBuildConfiguration makeConfig = new StandardBuildConfiguration(config, name, toolChain, launchMode);
+		StandardBuildConfiguration makeConfig = new StandardBuildConfiguration(config, name, toolChain, launchMode,
+				launchTarget);
 		configManager.addBuildConfiguration(config, makeConfig);
 		return makeConfig;
 	}

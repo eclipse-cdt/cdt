@@ -1,0 +1,67 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Using existing code
+
+This tutorial describes how to create a new Core Build System
+(CBS) project for use with existing code.
+
+Using existing code is done by creating a new **empty** CDT project in
+the top directory containing the existing source files. CDT project
+files will be created in the existing source directory.
+
+=== Using an existing CMake project
+
+To create an empty CMake project in CDT select the template *Empty or Existing CMake
+Project* in the *New C/{cpp} Project* wizard.
+
+image:cbs_empty_cmake_project.png[Empty or Existing CMake Project]
+
+In the *New CMake Project* wizard uncheck *Use default location*
+and set the location of the existing code.
+
+image:cbs_existing_code_cmake.png[Existing code CMake]
+
+More information about creating a CMake project is described in
+xref:new_cmake_proj.adoc[Creating a CMake project]
+
+=== Using an existing Makefile project
+
+Create a CBS Makefile project in CDT as described in
+xref:new_cbs_makefile_proj.adoc[Creating a Core Build System Makefile project]
+with the following changes:
+
+In the *New Makefile Project* wizard uncheck *Use default location*,
+set the location of the existing code, and uncheck *Create Hello
+World Source and Makefile example*.
+
+image:cbs_existing_code_makefile.png[Existing code Makefile]
+
+icon:arrow-circle-right[] xref:cbs_launchbar.adoc[Next: Launch Bar]

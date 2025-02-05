@@ -114,7 +114,7 @@ public class Elf implements AutoCloseable {
 		public static final int EM_SPARC32PLUS = 18;
 		public static final int EM_PPC = 20;
 		public static final int EM_PPC64 = 21;
-		/** @since 8.5*/
+		/** @since 9.0*/
 		public static final int EM_V800 = 36;
 		public static final int EM_ARM = 40;
 		public static final int EM_SH = 42;
@@ -159,9 +159,9 @@ public class Elf implements AutoCloseable {
 		public static final int EM_RL78 = 197; /* Renesas RL78 Microcontroller */
 		/** @since 6.0 */
 		public static final int EM_AARCH64 = 183;
-		/** @since 8.5 */
+		/** @since 9.0*/
 		public static final int EM_AVR32 = 185;
-		/** @since 8.5 */
+		/** @since 9.0*/
 		public static final int EM_MICROBLAZE = 189;
 
 		/** @since 7.0 */

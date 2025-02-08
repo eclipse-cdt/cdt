@@ -100,4 +100,8 @@ The CMake and CBS Makefile project launch configurations for local applications 
 
 # Bugs Fixed in this Release
 
-See [GitHub milestones](https://github.com/eclipse-cdt/cdt/milestone/11?closed=1)
+See GitHub milestones:
+- [![12.0.0 M1](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/12)](https://github.com/eclipse-cdt/cdt/milestone/12?closed=1)
+- [![12.0.0 M2](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/13)](https://github.com/eclipse-cdt/cdt/milestone/13?closed=1)
+- [![12.0.0 M3](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/18)](https://github.com/eclipse-cdt/cdt/milestone/18?closed=1)
+- [![12.0.0](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/14)](https://github.com/eclipse-cdt/cdt/milestone/14?closed=1)

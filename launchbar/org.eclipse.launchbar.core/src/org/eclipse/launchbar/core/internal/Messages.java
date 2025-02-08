@@ -21,7 +21,6 @@ public class Messages extends NLS {
 	public static String LaunchBarManager_0;
 	public static String LaunchBarManager_1;
 	public static String LaunchBarManager_2;
-	public static String LocalTarget_name;
 	public static String OK;
 
 	static {

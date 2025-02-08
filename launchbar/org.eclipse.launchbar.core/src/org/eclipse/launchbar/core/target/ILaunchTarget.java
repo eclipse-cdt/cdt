@@ -42,20 +42,9 @@ public interface ILaunchTarget extends IAdaptable {
 	/**
 	 * The id for the target. It is unique for each type.
 	 *
-	 * @return id for the target.
+	 * @return id (name) for the target.
 	 */
 	String getId();
-
-	/**
-	 * The user consumable name of the target.
-	 *
-	 * @deprecated this will be the same as the id
-	 * @return name of the target
-	 */
-	@Deprecated
-	default String getName() {
-		return getId();
-	}
 
 	/**
 	 * The type of the target.

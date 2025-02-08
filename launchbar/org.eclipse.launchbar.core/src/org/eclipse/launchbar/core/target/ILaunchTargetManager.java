@@ -26,6 +26,17 @@ public interface ILaunchTargetManager {
 	 * represents that machine.
 	 */
 	final String localLaunchTargetTypeId = "org.eclipse.launchbar.core.launchTargetType.local"; //$NON-NLS-1$
+	/**
+	 * @since 3.0
+	 */
+	final String localLaunchTargetId = "Local"; //$NON-NLS-1$
+
+	/**
+	 * @since 3.0
+	 */
+	default ILaunchTarget getLocalLaunchTarget() {
+		return getLaunchTarget(localLaunchTargetTypeId, localLaunchTargetId);
+	}
 
 	/**
 	 * The list of all launch targets.

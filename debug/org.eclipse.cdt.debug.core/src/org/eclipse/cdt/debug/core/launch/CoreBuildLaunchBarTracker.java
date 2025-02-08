@@ -143,11 +143,14 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 							if (testConfig != null && !(testConfig instanceof ErrorBuildConfiguration)) {
 								// Match launch mode run/debug.
 								if (testConfig.getLaunchMode().equals(lastMode.getIdentifier())) {
-									// Match toolchain.
-									for (IToolChain tc : tcs) {
-										if (testConfig.getToolChain().equals(tc)) {
-											buildConfig = testConfig;
-											break configs;
+									// Match launch target
+									if (testConfig.getLaunchTarget().equals(lastTarget)) {
+										// Match toolchain.
+										for (IToolChain tc : tcs) {
+											if (testConfig.getToolChain().equals(tc)) {
+												buildConfig = testConfig;
+												break configs;
+											}
 										}
 									}
 								}
@@ -157,7 +160,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 						if (buildConfig == null) {
 							for (IToolChain toolChain : tcs) {
 								buildConfig = configManager.getBuildConfiguration(finalProject, toolChain,
-										mode.getIdentifier(), monitor);
+										mode.getIdentifier(), lastTarget, monitor);
 								if (buildConfig != null) {
 									break;
 								}

@@ -125,7 +125,7 @@ public class CCorePlugin extends Plugin {
 	public static final int STATUS_PDOM_TOO_LARGE = 4;
 
 	/**
-	 * Toolchain not found when inflating a build configuration.
+	 * Toolchain, launch mode or launch target not found when inflating a build configuration.
 	 *
 	 * @since 6.4
 	 */

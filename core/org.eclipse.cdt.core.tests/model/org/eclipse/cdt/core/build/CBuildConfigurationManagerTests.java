@@ -11,6 +11,8 @@
 package org.eclipse.cdt.core.build;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,13 +29,36 @@ import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSetting
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchMode;
+import org.eclipse.launchbar.core.ILaunchBarManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CBuildConfigurationManagerTests extends BaseTestCase5 {
-	protected ICBuildConfigurationManager configManager = CDebugCorePlugin
-			.getService(ICBuildConfigurationManager.class);
+	private IProject project;
+	private IToolChain mockToolchain;
+	private ICBuildConfigurationManager configManager = CDebugCorePlugin.getService(ICBuildConfigurationManager.class);
+	private ILaunchBarManager launchBarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
+	private ILaunchTargetManager launchTargetManager = CDebugCorePlugin.getService(ILaunchTargetManager.class);
+
+	@BeforeEach
+	public void setup() throws Exception {
+		// Create a CMake project
+		project = createCMakeProject();
+		// Setup a toolchain ready to use for creating the valid ICBuildConfiguration
+		mockToolchain = mock(IToolChain.class);
+		when(mockToolchain.getProperty(IToolChain.ATTR_OS)).thenReturn("osDummy");
+		when(mockToolchain.getProperty(IToolChain.ATTR_ARCH)).thenReturn("archDummy");
+		when(mockToolchain.getTypeId()).thenReturn("tc_typeId");
+		when(mockToolchain.getId()).thenReturn("tcId");
+		when(mockToolchain.getBuildConfigNameFragment()).thenReturn("buildConfigName");
+	}
 
 	/**
 	 * Tests that CBuildConfigurationManager.getBuildConfiguration(IProject, IToolChain, String, IProgressMonitor)
@@ -73,10 +98,11 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 	 * IScannerInfoProvider it will be recomputed and return the project's expected IScannerInfoProvider
 	 * (ie: ICBuildConfiguration).
 	 */
+	//	@Disabled("temp for testing")
 	@Test
 	public void testResetCachedScannerInfoProvider() throws Exception {
 		// (1) create a CMake project
-		IProject project = createCMakeProject();
+		//		IProject project = createCMakeProject();
 
 		CMakeBuildConfigurationProvider provider = new CMakeBuildConfigurationProvider();
 		String buildConfigBaseName = "notDefaultName";
@@ -97,16 +123,18 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 				scannerInfoProvider instanceof LanguageSettingsScannerInfoProvider);
 
 		// (3) Setup a toolchain ready to use for creating the valid ICBuildConfiguration
-		IToolChain mockToolchain = mock(IToolChain.class);
-		when(mockToolchain.getProperty(IToolChain.ATTR_OS)).thenReturn("osDummy");
-		when(mockToolchain.getProperty(IToolChain.ATTR_ARCH)).thenReturn("archDummy");
-		when(mockToolchain.getTypeId()).thenReturn("tc_typeId");
-		when(mockToolchain.getId()).thenReturn("tcId");
-		when(mockToolchain.getBuildConfigNameFragment()).thenReturn("buildConfigName");
+		//		IToolChain mockToolchain = mock(IToolChain.class);
+		//		when(mockToolchain.getProperty(IToolChain.ATTR_OS)).thenReturn("osDummy");
+		//		when(mockToolchain.getProperty(IToolChain.ATTR_ARCH)).thenReturn("archDummy");
+		//		when(mockToolchain.getTypeId()).thenReturn("tc_typeId");
+		//		when(mockToolchain.getId()).thenReturn("tcId");
+		//		when(mockToolchain.getBuildConfigNameFragment()).thenReturn("buildConfigName");
 
+		ILaunchTarget launchTarget = launchTargetManager.getLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
+				"Local");
 		ICBuildConfiguration cBuildConfiguration = configManager.getBuildConfiguration(project, mockToolchain,
-				ILaunchManager.RUN_MODE, new NullProgressMonitor());
-		assertThat("The cBuildConfiguration should of type CBuildConfiguration",
+				ILaunchManager.RUN_MODE, launchTarget, new NullProgressMonitor());
+		assertThat("The cBuildConfiguration should be of type CBuildConfiguration",
 				cBuildConfiguration instanceof CBuildConfiguration);
 		CBuildConfiguration cbc = (CBuildConfiguration) cBuildConfiguration;
 		// Set this ICBuildConfiguration as the active build configuration
@@ -118,6 +146,101 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 				scannerInfoProvider instanceof ICBuildConfiguration);
 	}
 
+	/**
+	 * Test org.eclipse.cdt.core.build.ICBuildConfigurationManager.getBuildConfiguration(IProject, IToolChain, String, ILaunchTarget, IProgressMonitor)
+	 *
+	 * The new parameter, ILaunchTarget, was added in 9.0
+	 *
+	 * @throws Exception
+	 */
+	//	@Disabled("temp for testing")
+	@Test
+	public void getBuildConfiguration0() throws Exception {
+		//		IProject project = createCMakeProject();
+		//		IToolChain toolchain = null; // todo: mock this
+		String launchMode = "debug";
+		ILaunchTarget launchTarget = ILaunchTarget.NULL_TARGET;
+		ICBuildConfiguration cBuildConfiguration = configManager.getBuildConfiguration(project, mockToolchain,
+				launchMode, launchTarget, new NullProgressMonitor());
+
+		// Add asserts for expected values
+		assertThat(cBuildConfiguration.getToolChain().getTypeId(), is("tc_typeId"));
+		assertThat(cBuildConfiguration.getToolChain().getId(), is("tcId"));
+		assertThat(cBuildConfiguration.getLaunchMode(), is("debug"));
+		assertThat(cBuildConfiguration.getLaunchTarget(), is(ILaunchTarget.NULL_TARGET));
+	}
+
+	/**
+	 * idea for a test.
+	 * create a new cmake project.
+	 * set active launch mode and set active launch target to specific value
+	 * wait a bit or sync with CoreBuildLaunchBarTracker job.
+	 * check if the CoreBuildLaunchBarTracker.setActiveBuildConfig has set the correct active config.
+	 * TODO: replace sleeps with proper synchronisation
+	 */
+	@Test
+	public void getBuildConfiguration1() throws Exception {
+		// create project
+		// by default, active launchtarget is set to Local
+		// set active launch mode, set active launch target to specific value
+		// See if this causes CoreBuildLaunchBarTracker to be called again
+
+		Job job = getJobByName("Change Build Configurations");
+		//wait for the CoreBuildLaunchBarTracker to finish processing
+		//		job.join();
+		sleep();
+
+		//		ILaunchMode activeLaunchMode = launchBarManager.getActiveLaunchMode();
+		//		ILaunchTarget launchTarget = ILaunchTarget.NULL_TARGET;
+		//		launchBarManager.setActiveLaunchTarget(launchTarget);
+		//
+		//		//wait for the CoreBuildLaunchBarTracker to finish processing
+		//		//		job.join();
+		//		sleep();
+
+		ILaunchMode debugLaunchMode = getDebugLaunchMode();
+		assertThat(debugLaunchMode.getIdentifier(), is("debug"));
+		launchBarManager.setActiveLaunchMode(debugLaunchMode);
+		sleep();
+		assertThat(launchBarManager.getActiveLaunchMode(), is(notNullValue()));
+		assertThat(launchBarManager.getActiveLaunchMode().getIdentifier(), is(debugLaunchMode.getIdentifier()));
+
+		// Adding LT also sets it active
+		ILaunchTarget launchTarget = launchTargetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
+				"id0");
+		assertThat(launchTarget.getId(), is("id0"));
+		//		launchBarManager.setActiveLaunchTarget(launchTarget2);
+		//wait for the CoreBuildLaunchBarTracker to finish processing
+		//		job.join();
+		sleep();
+		assertThat(launchBarManager.getActiveLaunchTarget(), is(notNullValue()));
+		assertThat(launchBarManager.getActiveLaunchTarget().getId(), is("id0"));
+
+		System.out.println("Active launch target id=" + launchBarManager.getActiveLaunchTarget().getId());
+		System.out.println("Active launch mode id=" + launchBarManager.getActiveLaunchMode().getIdentifier());
+		System.out.println();
+
+		IBuildConfiguration buildConfig = project.getActiveBuildConfig();
+		ICBuildConfiguration cBuildConfig = buildConfig.getAdapter(ICBuildConfiguration.class);
+		assertThat(cBuildConfig, is(notNullValue()));
+		// Check the active ICBuildConfiguration has the same launch target we set active previously
+		ILaunchTarget launchTargetCBuildConfig = cBuildConfig.getLaunchTarget();
+		assertThat(launchTargetCBuildConfig, is(notNullValue()));
+		assertThat(launchTargetCBuildConfig.getId(), is(launchTarget.getId()));
+		assertThat(launchTargetCBuildConfig.getTypeId(), is(launchTarget.getTypeId()));
+	}
+
+	private ILaunchMode getDebugLaunchMode() throws CoreException {
+		ILaunchMode[] launchModes = launchBarManager.getLaunchModes();
+		for (int i = 0; i < launchModes.length; i++) {
+			ILaunchMode iLaunchMode = launchModes[i];
+			if (iLaunchMode.getIdentifier().equals("debug")) {
+				return iLaunchMode;
+			}
+		}
+		return null;
+	}
+
 	private IProject createCMakeProject() throws Exception {
 		// Create a  plain Eclipse project
 		IProject project = ResourceHelper.createProject(this.getName());
@@ -127,5 +250,23 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 				new String[] { CProjectNature.C_NATURE_ID, CCProjectNature.CC_NATURE_ID, CMakeNature.ID });
 		project.setDescription(description, null);
 		return project;
+	}
+
+	private void sleep() {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+
+		}
+	}
+
+	private Job getJobByName(String jobName) {
+		Job[] jobs = Job.getJobManager().find(null); // Find all jobs
+		for (Job job : jobs) {
+			if (jobName.equals(job.getName())) {
+				return job;
+			}
+		}
+		return null; // Job not found
 	}
 }

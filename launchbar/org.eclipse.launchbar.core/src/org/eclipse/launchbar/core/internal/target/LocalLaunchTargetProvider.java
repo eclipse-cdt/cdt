@@ -11,7 +11,6 @@
 package org.eclipse.launchbar.core.internal.target;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.launchbar.core.internal.Messages;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetProvider;
@@ -23,9 +22,9 @@ public class LocalLaunchTargetProvider implements ILaunchTargetProvider {
 	@Override
 	public void init(ILaunchTargetManager targetManager) {
 		if (targetManager.getLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
-				Messages.LocalTarget_name) == null) {
+				ILaunchTargetManager.localLaunchTargetId) == null) {
 			ILaunchTarget target = targetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
-					Messages.LocalTarget_name);
+					ILaunchTargetManager.localLaunchTargetId);
 			ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
 			wc.setAttribute(ILaunchTarget.ATTR_OS, Platform.getOS());
 			wc.setAttribute(ILaunchTarget.ATTR_ARCH, Platform.getOSArch());

@@ -1061,7 +1061,8 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private List<IResource> findPathInProject(IPath path, IProject project) {
 		LRUCache<IPath, List<IResource>> cache = threadSafeComputeIfAbsent(project, findPathInProjectCache,
 				key -> new LRUCache<IPath, List<IResource>>(FIND_RESOURCES_CACHE_SIZE), findPathInProjectCacheLock);
-		return threadSafeComputeIfAbsent(path, cache, key -> findPathInFolder(path, project), findPathInFoldertCacheLock);
+		return threadSafeComputeIfAbsent(path, cache, key -> findPathInFolder(path, project),
+				findPathInFoldertCacheLock);
 	}
 
 	/**

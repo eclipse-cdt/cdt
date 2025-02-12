@@ -38,6 +38,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,6 +48,7 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 	private ICBuildConfigurationManager configManager = CDebugCorePlugin.getService(ICBuildConfigurationManager.class);
 	private ILaunchBarManager launchBarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
 	private ILaunchTargetManager launchTargetManager = CDebugCorePlugin.getService(ILaunchTargetManager.class);
+	private ILaunchTarget launchTarget;
 
 	@BeforeEach
 	public void setup() throws Exception {
@@ -168,14 +170,10 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 
 		// Currently active launch target before we change anything is expected to be "Local"
 		assertThat(launchBarManager.getActiveLaunchTarget().getId(), is("Local"));
-		System.out.println("Active launch target id before=" + launchBarManager.getActiveLaunchTarget().getId());
+		// Uncomment following line if debugging tests
+		//		System.out.println("Active launch target id before=" + launchBarManager.getActiveLaunchTarget().getId());
 
-		/*
-		 * Add a new Launch Target, which also sets it as the active launch target, thereby triggering the
-		 * CoreBuildLaunchBarTracker which ends up calling ICBuildConfiguration2.setActive() to set the active Build Configuration.
-		 */
-		ILaunchTarget launchTarget = launchTargetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
-				"id0");
+		launchTarget = launchTargetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId, "id0");
 		assertThat(launchTarget.getId(), is("id0"));
 
 		/*
@@ -201,7 +199,15 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 		assertThat(actualLaunchTarget, is(notNullValue()));
 		assertThat(actualLaunchTarget.getId(), is(launchTarget.getId()));
 		assertThat(actualLaunchTarget.getTypeId(), is(launchTarget.getTypeId()));
-		System.out.println("Active launch target id after=" + launchBarManager.getActiveLaunchTarget().getId());
+		// Uncomment following line if debugging tests
+		//		System.out.println("Active launch target id after=" + launchBarManager.getActiveLaunchTarget().getId());
+	}
+
+	@AfterEach
+	public void removeLaunchTarget() throws Exception {
+		if (launchTarget != null) {
+			launchTargetManager.removeLaunchTarget(launchTarget);
+		}
 	}
 
 	private IProject createCMakeProject() throws Exception {

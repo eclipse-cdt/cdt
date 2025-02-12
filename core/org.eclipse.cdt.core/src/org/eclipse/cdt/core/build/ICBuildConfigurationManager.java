@@ -58,7 +58,6 @@ public interface ICBuildConfigurationManager {
 	 * @return new Platform Build configuration. Not null.
 	 * @throws CoreException Reasons include the reasons given in
 	 * {@link IProject#setDescription(org.eclipse.core.resources.IProjectDescription, IProgressMonitor)}
-	
 	 */
 	IBuildConfiguration createBuildConfiguration(ICBuildConfigurationProvider provider, IProject project,
 			String configName, IProgressMonitor monitor) throws CoreException;

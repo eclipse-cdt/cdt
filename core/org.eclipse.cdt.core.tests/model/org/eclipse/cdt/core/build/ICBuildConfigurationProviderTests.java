@@ -11,15 +11,11 @@
 package org.eclipse.cdt.core.build;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.net.URI;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
@@ -94,27 +90,14 @@ public class ICBuildConfigurationProviderTests extends BaseTestCase5 {
 		 */
 		ICBuildConfiguration cBuildConfiguration = configManager.getBuildConfiguration(project, mockToolchain,
 				ILaunchManager.RUN_MODE, launchTargetManager.getLocalLaunchTarget(), new NullProgressMonitor());
-		assertThat(cBuildConfiguration, is(notNullValue()));
-
-		assertThat(cBuildConfiguration, instanceOf(CBuildConfiguration.class));
-		if (cBuildConfiguration instanceof CBuildConfiguration cbc) {
-			/*
-			 * Note, this extra test uses getName on CBuildConfiguration rather than the API ICBuildConfiguration
-			 */
-			String name = cbc.getName();
-			assertThat(name, is(expectedName));
-		}
-
-		assertThat(cBuildConfiguration, instanceOf(ICBuildConfiguration2.class));
-		if (cBuildConfiguration instanceof ICBuildConfiguration2 cbc2) {
-			/*
-			 * (2) Check last segment of build output directory name is expected.
-			 */
-			URI buildDirectoryURI = cbc2.getBuildDirectoryURI();
-			Path path = Paths.get(buildDirectoryURI);
-			String lastSegment = path.getFileName().toString();
-			assertThat(lastSegment, is(expectedName));
-		}
+		CBuildConfiguration cBuildConfig = (CBuildConfiguration) cBuildConfiguration;
+		assertThat(cBuildConfig.getName(), is(expectedName));
+		/*
+		 * (2) Check last segment of build output directory name is expected.
+		 */
+		Path buildDirectory = cBuildConfig.getBuildDirectory();
+		String lastSegment = buildDirectory.getFileName().toString();
+		assertThat(lastSegment, is(expectedName));
 	}
 
 	private IProject createCustomizedCMakeProject() throws Exception {

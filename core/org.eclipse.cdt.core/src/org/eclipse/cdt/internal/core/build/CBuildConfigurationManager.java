@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -30,7 +29,6 @@ import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager2;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IBuildConfiguration;
@@ -48,6 +46,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -138,7 +137,7 @@ public class CBuildConfigurationManager
 		return null;
 	}
 
-	public ICBuildConfigurationProvider getProvider(IProject project) throws CoreException {
+	public ICBuildConfigurationProvider getProvider(IProject project) {
 		initProviders();
 		for (Provider provider : providers.values()) {
 			if (provider.supports(project)) {
@@ -202,11 +201,7 @@ public class CBuildConfigurationManager
 				ICBuildConfigurationProvider provider = null;
 				if (IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfig.getName())) {
 					configName = ICBuildConfiguration.DEFAULT_NAME;
-					try {
-						provider = getProvider(buildConfig.getProject());
-					} catch (CoreException e) {
-						continue;
-					}
+					provider = getProvider(buildConfig.getProject());
 				} else {
 					String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
 					if (segments.length == 2) {
@@ -304,48 +299,58 @@ public class CBuildConfigurationManager
 
 	@Override
 	public ICBuildConfiguration getBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
-			IProgressMonitor monitor) throws CoreException {
-		// First see if we have one
-		for (IBuildConfiguration config : project.getBuildConfigs()) {
-			ICBuildConfiguration cconfig = getBuildConfiguration(config);
-			if (cconfig != null) {
-				IToolChain tc = cconfig.getToolChain();
-				if (tc != null && tc.equals(toolChain) && launchMode.equals(cconfig.getLaunchMode())) {
-					return cconfig;
+			ILaunchTarget launchTarget, IProgressMonitor monitor) throws CoreException {
+
+		// First check if a matching ICBuildConfiguration exists already
+		ICBuildConfiguration retVal = findCBuildConfiguration(project, toolChain, launchTarget, launchMode, monitor);
+
+		if (retVal == null) {
+			// No existing ICBuildConfiguration, so get ICBuildConfigurationProvider to create one
+			retVal = createCBuildConfig(project, toolChain, launchTarget, launchMode, monitor);
+		}
+		return retVal;
+	}
+
+	private ICBuildConfiguration findCBuildConfiguration(IProject project, IToolChain toolChain,
+			ILaunchTarget launchTarget, String launchMode, IProgressMonitor monitor) throws CoreException {
+		for (IBuildConfiguration buildConfig : project.getBuildConfigs()) {
+			ICBuildConfiguration cBuildConfig = getBuildConfiguration(buildConfig);
+			if (cBuildConfig != null) {
+				IToolChain tc = cBuildConfig.getToolChain();
+				ILaunchTarget lt = cBuildConfig.getLaunchTarget();
+				String lm = cBuildConfig.getLaunchMode();
+				if (tc != null && tc.equals(toolChain) && lt != null && lt.equals(launchTarget) && lm != null
+						&& lm.equals(launchMode)) {
+					return cBuildConfig;
 				}
 			}
 		}
+		return null;
+	}
 
-		// Nope, ask the provider to create one
+	private ICBuildConfiguration createCBuildConfig(IProject project, IToolChain toolChain, ILaunchTarget launchTarget,
+			String launchMode, IProgressMonitor monitor) throws CoreException {
+		ICBuildConfiguration retVal = null;
 		ICBuildConfigurationProvider provider = getProvider(project);
 		if (provider != null) {
 			// The provider will call us back to add in the new one
-			ICBuildConfiguration cconfig = provider.createBuildConfiguration(project, toolChain, launchMode, monitor);
-			if (cconfig != null) {
+			retVal = provider.createCBuildConfiguration(project, toolChain, launchMode, launchTarget, monitor);
+			if (retVal != null) {
 				/*
 				 * The IScannerInfoProvider may be cached with an incorrect value if the ICBuildConfiguration is not
 				 * available at the time it is checked. Now that one has been created, the previous value should be
 				 * forgotten so the new cconfig can be used.
 				 */
 				CCorePlugin.getDefault().resetCachedScannerInfoProvider(project);
+				return retVal;
 			}
-			return cconfig;
-		} else {
-			return null;
+			throw new CoreException(
+					CCorePlugin.createStatus(String.format(Messages.CBuildConfigurationManager_CBuildConfigCreateFail,
+							project.getName(), toolChain.getName(), launchTarget.getId(), launchMode), null));
 		}
-	}
-
-	@Override
-	public ICBuildConfiguration getBuildConfiguration(IProject project, Map<String, String> properties,
-			String launchMode, IProgressMonitor monitor) throws CoreException {
-		IToolChainManager tcManager = CCorePlugin.getService(IToolChainManager.class);
-		Collection<IToolChain> toolchains = tcManager.getToolChainsMatching(properties);
-		if (toolchains.isEmpty()) {
-			return null;
-		}
-
-		IToolChain toolChain = toolchains.iterator().next();
-		return getBuildConfiguration(project, toolChain, launchMode, monitor);
+		throw new CoreException(
+				CCorePlugin.createStatus(String.format(Messages.CBuildConfigurationManager_CBuildConfigProviderNotFound,
+						project.getName(), toolChain.getName(), launchTarget.getId(), launchMode), null));
 	}
 
 	@Override

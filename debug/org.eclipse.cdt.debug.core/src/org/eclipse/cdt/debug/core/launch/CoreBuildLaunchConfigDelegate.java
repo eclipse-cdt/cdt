@@ -11,7 +11,6 @@
 package org.eclipse.cdt.debug.core.launch;
 
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -64,25 +63,6 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 	}
 
 	/**
-	 * @deprecated Use the version that takes the launch config so we can see if it
-	 *             know what toolchain to use.
-	 */
-	@Deprecated
-	protected ICBuildConfiguration getBuildConfiguration(IProject project, String mode, ILaunchTarget target,
-			IProgressMonitor monitor) throws CoreException {
-		// Pick build config based on toolchain for target
-		Map<String, String> properties = new HashMap<>();
-		properties.putAll(target.getAttributes());
-		Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
-		if (!tcs.isEmpty()) {
-			IToolChain toolChain = tcs.iterator().next();
-			return configManager.getBuildConfiguration(project, toolChain, mode, monitor);
-		} else {
-			return null;
-		}
-	}
-
-	/**
 	 * @since 8.3
 	 */
 	protected ICBuildConfiguration getBuildConfiguration(ILaunchConfiguration configuration, String mode,
@@ -93,7 +73,7 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 			String providerId = configuration.getAttribute(ICBuildConfiguration.TOOLCHAIN_TYPE, ""); //$NON-NLS-1$
 			IToolChain toolchain = toolChainManager.getToolChain(providerId, toolchainId);
 			if (toolchain != null) {
-				return configManager.getBuildConfiguration(project, toolchain, mode, monitor);
+				return configManager.getBuildConfiguration(project, toolchain, mode, target, monitor);
 			}
 		}
 
@@ -101,7 +81,8 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 		Map<String, String> properties = new HashMap<>();
 		properties.putAll(target.getAttributes());
 		for (IToolChain toolChain : toolChainManager.getToolChainsMatching(properties)) {
-			ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(project, toolChain, mode, monitor);
+			ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(project, toolChain, mode, target,
+					monitor);
 			if (buildConfig != null) {
 				return buildConfig;
 			}
@@ -129,7 +110,7 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 	/**
 	 * Returns the full path to the binary.
 	 *
-	 * @since 8.8
+	 * @since 9.0
 	 * @param configuration
 	 * @param buildConfig
 	 * @return

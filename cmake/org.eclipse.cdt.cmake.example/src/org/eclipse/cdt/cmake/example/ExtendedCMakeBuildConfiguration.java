@@ -19,6 +19,7 @@ import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * An example CMake build configuration that demonstrates how an ISV can provide their own customisations.
@@ -30,12 +31,8 @@ public class ExtendedCMakeBuildConfiguration extends CMakeBuildConfiguration {
 	}
 
 	public ExtendedCMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			ICMakeToolChainFile toolChainFile, String launchMode) {
-		super(config, name, toolChain, toolChainFile, launchMode);
-	}
-
-	public ExtendedCMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		super(config, name, toolChain);
+			ICMakeToolChainFile toolChainFile, String launchMode, ILaunchTarget launchTarget) {
+		super(config, name, toolChain, toolChainFile, launchMode, launchTarget);
 	}
 
 	@Override

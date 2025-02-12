@@ -64,6 +64,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * @since 2.0
@@ -91,13 +92,9 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 		toolChainFile = manager.getToolChainFileFor(getToolChain());
 	}
 
-	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		this(config, name, toolChain, null, "run"); //$NON-NLS-1$
-	}
-
 	public CMakeBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			ICMakeToolChainFile toolChainFile, String launchMode) {
-		super(config, name, toolChain, launchMode);
+			ICMakeToolChainFile toolChainFile, String launchMode, ILaunchTarget launchTarget) {
+		super(config, name, toolChain, launchMode, launchTarget);
 		this.toolChainFile = toolChainFile;
 	}
 

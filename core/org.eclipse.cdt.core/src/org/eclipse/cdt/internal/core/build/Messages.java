@@ -14,16 +14,19 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.internal.core.build.messages"; //$NON-NLS-1$
-	public static String CBuildConfiguration_CreateJob;
-	public static String CBuildConfiguration_ToolchainMissing;
 	public static String CBuildConfiguration_Location;
 	public static String CBuildConfiguration_RunningScannerInfo;
 	public static String CBuilder_ExceptionWhileBuilding;
 	public static String CBuilder_ExceptionWhileBuilding2;
 	public static String CBuilder_NotConfiguredCorrectly;
 	public static String CBuilder_NotConfiguredCorrectly2;
+	public static String CBuildConfiguration_CBuildConfiguration_LaunchModeMissing;
+	public static String CBuildConfiguration_CBuildConfiguration_LaunchTargetMissing;
+	public static String CBuildConfiguration_CBuildConfiguration_ToolchainMissing;
 	public static String CBuildConfiguration_CommandNotFound;
 	public static String CBuildConfiguration_BuildComplete;
+	public static String CBuildConfigurationManager_CBuildConfigCreateFail;
+	public static String CBuildConfigurationManager_CBuildConfigProviderNotFound;
 	public static String ErrorBuildConfiguration_What;
 	public static String ErrorBuildConfiguration_ErrorWritingToConsole;
 	public static String StandardBuildConfiguration_0;

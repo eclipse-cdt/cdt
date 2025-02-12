@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -71,13 +72,14 @@ public class MesonBuildConfiguration extends CBuildConfiguration {
 		}
 	}
 
-	public MesonBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain) {
-		this(config, name, toolChain, null, "run"); //$NON-NLS-1$
+	public MesonBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, String launchMode,
+			ILaunchTarget launchTarget) throws CoreException {
+		this(config, name, toolChain, null, launchMode, launchTarget);
 	}
 
 	public MesonBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain,
-			IMesonToolChainFile toolChainFile, String launchMode) {
-		super(config, name, toolChain, launchMode);
+			IMesonToolChainFile toolChainFile, String launchMode, ILaunchTarget launchTarget) throws CoreException {
+		super(config, name, toolChain, launchMode, launchTarget);
 
 		this.toolChainFile = toolChainFile;
 		if (toolChainFile != null) {

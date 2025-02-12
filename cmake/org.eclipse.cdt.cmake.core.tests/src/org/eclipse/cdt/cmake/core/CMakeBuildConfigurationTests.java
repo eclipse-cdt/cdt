@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.cmake.core.internal.Activator;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
@@ -34,6 +35,8 @@ import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
+import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +45,10 @@ import org.junit.jupiter.api.Test;
  * See the new interface {@link ICMakeBuildConfiguration}.
  */
 public class CMakeBuildConfigurationTests extends BaseTestCase5 {
+	private static final String LAUNCH_MODE = "run";
+	private static final ILaunchTarget LOCAL_LAUNCH_TARGET = Activator.getService(ILaunchTargetManager.class)
+			.getLocalLaunchTarget();
+
 	private IBuildConfiguration buildConfig;
 	private IToolChain mockToolchain;
 
@@ -68,7 +75,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	@Test
 	public void getCMakePropertiesTestSetGenerator() throws Exception {
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain) {
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET) {
 
 			@Override
 			public ICMakeProperties getCMakeProperties() {
@@ -80,6 +87,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 
 		// Call the new method on ICMakeBuildConfiguration to get the default CMake properties.
 		ICMakeProperties cMakeProperties = cmBuildConfig.getCMakeProperties();
+
 		assertThat(cMakeProperties.getGenerator(), is(CMakeGenerator.WatcomWMake));
 	}
 
@@ -92,7 +100,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	public void getCMakePropertiesTestSetExtraArguments() throws Exception {
 		// Create a C Build Configuration using the default build config and an arbitrary name
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain) {
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET) {
 
 			@Override
 			public ICMakeProperties getCMakeProperties() {
@@ -115,7 +123,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	public void getDefaultProperties() throws Exception {
 		// Create a C Build Configuration using the default build config and an arbitrary name
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain) {
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET) {
 
 			@Override
 			public Map<String, String> getDefaultProperties() {
@@ -133,7 +141,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	public void getDefaultPropertiesTestExtraArgs() throws Exception {
 		// Create a C Build Configuration using the default build config and an arbitrary name
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain) {
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET) {
 			@Override
 			public Map<String, String> getDefaultProperties() {
 				var defs = new HashMap<>(super.getDefaultProperties());
@@ -154,7 +162,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	public void customCMakeGeneratorEntryAuto() throws Exception {
 		// Create a C Build Configuration using the default build config and an arbitrary name
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain) {
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET) {
 			@Override
 			public Map<String, String> getDefaultProperties() {
 				var defs = new HashMap<>(super.getDefaultProperties());
@@ -178,7 +186,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	public void customCMakeGeneratorEntryManual() throws Exception {
 		// Create a C Build Configuration using the default build config and an arbitrary name
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain) {
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET) {
 			@Override
 			public Map<String, String> getDefaultProperties() {
 				var defs = new HashMap<>(super.getDefaultProperties());
@@ -227,7 +235,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	public void targetsAndCommandDefaults() throws Exception {
 		// Create a C Build Configuration using the default build config and an arbitrary name
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain);
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET);
 
 		// Call the new method on ICMakeBuildConfiguration to get the default CMake properties.
 		ICMakeProperties cMakeProperties = cmBuildConfig.getCMakeProperties();
@@ -243,7 +251,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	public void targetsAndCommand() throws Exception {
 		// Create a C Build Configuration using the default build config and an arbitrary name
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain) {
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET) {
 			@Override
 			public Map<String, String> getDefaultProperties() {
 				var defs = new HashMap<>(super.getDefaultProperties());
@@ -271,7 +279,7 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 	public void extraArgumentsParseCorrectly() throws Exception {
 		// Create a C Build Configuration using the default build config and an arbitrary name
 		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
-				mockToolchain) {
+				mockToolchain, null, LAUNCH_MODE, LOCAL_LAUNCH_TARGET) {
 			@Override
 			public Map<String, String> getDefaultProperties() {
 				var defs = new HashMap<>(super.getDefaultProperties());

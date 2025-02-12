@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * A Standard Build Configuration that simply calls a specified command for
@@ -75,9 +76,12 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		setupEnvVars();
 	}
 
-	public StandardBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, String launchMode)
-			throws CoreException {
-		super(config, name, toolChain, launchMode);
+	/**
+	 * @since 9.0
+	 */
+	public StandardBuildConfiguration(IBuildConfiguration config, String name, IToolChain toolChain, String launchMode,
+			ILaunchTarget launchTarget) throws CoreException {
+		super(config, name, toolChain, launchMode, launchTarget);
 		applyProperties();
 		setupEnvVars();
 	}

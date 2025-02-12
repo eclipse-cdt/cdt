@@ -447,4 +447,23 @@
             factoryClass="org.eclipse.cdt.core.resources.tests.TestExclusionFactory">
       </exclusionFactory>
    </extension>
+   <!-- For ICBuildConfigurationProviderTests -->
+   <extension
+         point="org.eclipse.cdt.core.buildConfigProvider">
+      <provider
+            class="org.eclipse.cdt.core.build.ICBuildConfigurationProviderTestsProvider"
+            id="org.eclipse.cdt.core.build.ICBuildConfigurationProviderTests.providerId"
+            natureId="org.eclipse.cdt.core.tests.extendedCmakeNature2">
+      </provider>
+   </extension>
+   <extension
+         id="extendedCmakeNature2"
+         name="extendedCmakeNature2"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run 
+               class="org.eclipse.cdt.core.build.ICBuildConfigurationProviderTestsCMakeNature">
+         </run>
+      </runtime>
+   </extension>
 </plugin>

@@ -10,12 +10,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.build;
 
-import java.util.Map;
-
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.launchbar.core.target.ILaunchTarget;
 
 /**
  * The OSGi service that manages the mapping from platform build configuration
@@ -49,54 +48,44 @@ public interface ICBuildConfigurationManager {
 			throws CoreException;
 
 	/**
-	 * Create a new build configuration to be owned by a provider.
+	 * Create a new Platform Build configuration to be owned by a Core Build config provider.
 	 *
-	 * @param provider
-	 * @param project
-	 * @param configName
+	 * @param provider The project's Core Build config provider.  Must not be null.
+	 * @param project Project in which the Platform Build configuration is created. Must not be null.
+	 * @param configName The Core Build config name to be used as part of the the Platform Build configuration
+	 * name. Must not be null.
 	 * @param monitor
-	 * @return new build configuration
-	 * @throws CoreException
+	 * @return new Platform Build configuration. Not null.
+	 * @throws CoreException Reasons include the reasons given in
+	 * {@link IProject#setDescription(org.eclipse.core.resources.IProjectDescription, IProgressMonitor)}
 	 */
 	IBuildConfiguration createBuildConfiguration(ICBuildConfigurationProvider provider, IProject project,
 			String configName, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Create a new build configuration for a given project using a given
-	 * toolchain and builds for a given launch mode.
+	 * Finds an existing Core Build configuration or creates a new one if one does not exist.
 	 *
-	 * @param project
-	 *            project for the config
-	 * @param toolChain
-	 *            toolchain the build config will use
-	 * @param launchMode
-	 *            launch mode the buld config will build for
-	 * @return new build configuration
-	 * @throws CoreException
-	 * @since 6.1
+	 * The project's ICBuildConfigurationProvider is used to attempt to get an existing configuration or create a new one.
+	 *
+	 * @param project Project to associate this Core Build Configuration to. Must not be null.
+	 * @param toolChain Toolchain to associate with this ICBuildConfiguration. Must not be null.
+	 * @param launchMode Launch mode (eg "debug") to associate with this ICBuildConfiguration. Must not be null.
+	 * @param launchTarget Launch target to associate with this ICBuildConfiguration. Must not be null.
+	 * @param monitor
+	 * @return a Core Build configuration matching the supplied parameters. Not null.
+	 * @throws CoreException Reasons include:
+	 * <ul>
+	 * <li> The project does not exist.</li>
+	 * <li> The project is not open.</li>
+	 * <li> The project's {@link ICBuildConfigurationProvider#getCBuildConfiguration(IBuildConfiguration, String)} fails.</li>
+	 * <li> The project's {@link ICBuildConfigurationProvider} is not found.</li>
+	 * <li> There is a problem accessing the toolchain.</li>
+	 * </ul>
+	 * @since 9.0
+	 * @apiNote This should be renamed to getCBuildConfiguration as it returns a Core Build config.
 	 */
 	ICBuildConfiguration getBuildConfiguration(IProject project, IToolChain toolChain, String launchMode,
-			IProgressMonitor monitor) throws CoreException;
-
-	/**
-	 * Create a new build configuration for a given project using a toolchain with
-	 * the given properties and that builds for a given launch mode.
-	 *
-	 * @deprecated clients really need to pick which toolchain they want a build
-	 *             config for. This method pretty much picks one at random.
-	 * @param project
-	 *            project for the config
-	 * @param properties
-	 *            properties for the toolchain to be selected
-	 * @param launchMode
-	 *            launch mode the buld config will build for
-	 * @return new build configuration
-	 * @throws CoreException
-	 * @since 6.2
-	 */
-	@Deprecated
-	ICBuildConfiguration getBuildConfiguration(IProject project, Map<String, String> properties, String launchMode,
-			IProgressMonitor monitor) throws CoreException;
+			ILaunchTarget launchTarget, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Called by providers to add new build configurations as they are created.

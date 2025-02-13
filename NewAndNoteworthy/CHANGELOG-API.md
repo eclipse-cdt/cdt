@@ -31,6 +31,12 @@ Added method allowing extenders to customize the Core Build output directory nam
 
 ####  org.eclipse.cdt.core.build.CBuildConfiguration
 
+Removed field:
+
+* org.eclipse.cdt.core.build.ICBuildConfiguration.DEFAULT_NAME
+
+This constant was removed because the name "default" is no longer used to name Core Build configurations. Naming now follows the pattern in getCBuildConfigName, described above.
+
 Removed method:
 
 * org.eclipse.cdt.core.build.CBuildConfiguration.setLaunchMode(String)

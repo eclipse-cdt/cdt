@@ -36,12 +36,6 @@ import org.eclipse.launchbar.core.target.ILaunchTarget;
 public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 
 	/**
-	 * CDT doesn't like that the Platform default config name is an empty string.
-	 * It needs a real name for the name of the build directory, for example.
-	 */
-	public static final String DEFAULT_NAME = "default"; //$NON-NLS-1$
-
-	/**
 	 * @since 6.4
 	 */
 	public static final String TOOLCHAIN_TYPE = "cdt.toolChain.type"; //$NON-NLS-1$

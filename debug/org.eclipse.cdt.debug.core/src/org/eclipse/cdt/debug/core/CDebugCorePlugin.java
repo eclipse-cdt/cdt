@@ -118,6 +118,14 @@ public class CDebugCorePlugin extends Plugin {
 	}
 
 	/**
+	 * Resets CoreBuildLaunchBarTracker. Used for testing only.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void resetCoreBuildLaunchBarTracker() {
+		coreBuildLaunchBarTracker.reset();
+	}
+
+	/**
 	 * Returns the workspace instance.
 	 *
 	 * @return the workspace instance

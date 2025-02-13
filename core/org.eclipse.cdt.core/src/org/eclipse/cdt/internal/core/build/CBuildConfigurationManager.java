@@ -96,6 +96,15 @@ public class CBuildConfigurationManager
 	private Map<IBuildConfiguration, ICBuildConfiguration> configs = new HashMap<>();
 	private Set<IBuildConfiguration> noConfigs = new HashSet<>();
 
+	/**
+	 * Resets configs. Used for testing only.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void reset() {
+		configs = new HashMap<>();
+		noConfigs = new HashSet<>();
+	}
+
 	public CBuildConfigurationManager() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
@@ -199,18 +208,13 @@ public class CBuildConfigurationManager
 				IBuildConfiguration buildConfig = iterator.next();
 				String configName = null;
 				ICBuildConfigurationProvider provider = null;
-				if (IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfig.getName())) {
-					configName = ICBuildConfiguration.DEFAULT_NAME;
-					provider = getProvider(buildConfig.getProject());
-				} else {
-					String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
-					if (segments.length == 2) {
-						String providerId = segments[0];
-						configName = segments[1];
-						Provider delegate = getProviderDelegate(providerId);
-						if (delegate != null && delegate.supports(buildConfig.getProject())) {
-							provider = delegate.getProvider();
-						}
+				String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
+				if (segments.length == 2) {
+					String providerId = segments[0];
+					configName = segments[1];
+					Provider delegate = getProviderDelegate(providerId);
+					if (delegate != null && delegate.supports(buildConfig.getProject())) {
+						provider = delegate.getProvider();
 					}
 				}
 
@@ -248,18 +252,13 @@ public class CBuildConfigurationManager
 				if (config == null) {
 					String configName = null;
 					ICBuildConfigurationProvider provider = null;
-					if (IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfig.getName())) {
-						configName = ICBuildConfiguration.DEFAULT_NAME;
-						provider = getProvider(buildConfig.getProject());
-					} else {
-						String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
-						if (segments.length == 2) {
-							String providerId = segments[0];
-							configName = segments[1];
-							Provider delegate = getProviderDelegate(providerId);
-							if (delegate != null && delegate.supports(buildConfig.getProject())) {
-								provider = delegate.getProvider();
-							}
+					String[] segments = buildConfig.getName().split("/"); //$NON-NLS-1$
+					if (segments.length == 2) {
+						String providerId = segments[0];
+						configName = segments[1];
+						Provider delegate = getProviderDelegate(providerId);
+						if (delegate != null && delegate.supports(buildConfig.getProject())) {
+							provider = delegate.getProvider();
 						}
 					}
 

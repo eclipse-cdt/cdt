@@ -199,6 +199,7 @@ public class CBuildConfigurationManager
 				IBuildConfiguration buildConfig = iterator.next();
 				String configName = null;
 				ICBuildConfigurationProvider provider = null;
+				// TODO: moule: IDE-82683-REQ-024 - remove this block
 				if (IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfig.getName())) {
 					configName = ICBuildConfiguration.DEFAULT_NAME;
 					provider = getProvider(buildConfig.getProject());
@@ -248,6 +249,7 @@ public class CBuildConfigurationManager
 				if (config == null) {
 					String configName = null;
 					ICBuildConfigurationProvider provider = null;
+					// TODO: moule: IDE-82683-REQ-024 - remove this block
 					if (IBuildConfiguration.DEFAULT_CONFIG_NAME.equals(buildConfig.getName())) {
 						configName = ICBuildConfiguration.DEFAULT_NAME;
 						provider = getProvider(buildConfig.getProject());

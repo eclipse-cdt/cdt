@@ -39,6 +39,7 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * CDT doesn't like that the Platform default config name is an empty string.
 	 * It needs a real name for the name of the build directory, for example.
 	 */
+	// TODO: moule: IDE-82683-REQ-024 - delete this
 	public static final String DEFAULT_NAME = "default"; //$NON-NLS-1$
 
 	/**

@@ -43,6 +43,7 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 
 	@Override
 	public ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
+		// TODO: moule: IDE-82683-REQ-024 - return null from this block
 		if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
 			IToolChain toolChain = null;
 

@@ -2787,25 +2787,17 @@ public class CEditor extends TextEditor
 	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		IPreferenceStore store = getPreferenceStore();
-		ISourceViewer sourceViewer = new AdaptedSourceViewer(parent, ruler, getOverviewRuler(),
+		AdaptedSourceViewer cSourceViewer = new AdaptedSourceViewer(parent, ruler, getOverviewRuler(),
 				isOverviewRulerVisible(), styles, store);
-
-		CSourceViewer cSourceViewer = null;
-		if (sourceViewer instanceof CSourceViewer) {
-			cSourceViewer = (CSourceViewer) sourceViewer;
-		}
 
 		/*
 		 * This is a performance optimization to reduce the computation of
 		 * the text presentation triggered by {@link #setVisibleDocument(IDocument)}
 		 */
-		if (cSourceViewer != null && isFoldingEnabled()
-				&& (store == null || !store.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS)))
+		if (isFoldingEnabled() && (store == null || !store.getBoolean(PreferenceConstants.EDITOR_SHOW_SEGMENTS)))
 			cSourceViewer.prepareDelayedProjection();
 
-		ProjectionViewer projectionViewer = (ProjectionViewer) sourceViewer;
-
-		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
+		fProjectionSupport = new ProjectionSupport(cSourceViewer, getAnnotationAccess(), getSharedColors());
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.error"); //$NON-NLS-1$
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.ui.workbench.texteditor.warning"); //$NON-NLS-1$
 		fProjectionSupport.addSummarizableAnnotationType("org.eclipse.search.results"); //$NON-NLS-1$
@@ -2816,14 +2808,14 @@ public class CEditor extends TextEditor
 		fProjectionModelUpdater = CUIPlugin.getDefault().getFoldingStructureProviderRegistry()
 				.getCurrentFoldingProvider();
 		if (fProjectionModelUpdater != null)
-			fProjectionModelUpdater.install(this, projectionViewer);
+			fProjectionModelUpdater.install(this, cSourceViewer);
 
 		if (isFoldingEnabled())
-			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
+			cSourceViewer.doOperation(ProjectionViewer.TOGGLE);
 
-		getSourceViewerDecorationSupport(sourceViewer);
+		getSourceViewerDecorationSupport(cSourceViewer);
 
-		return sourceViewer;
+		return cSourceViewer;
 	}
 
 	/** Outliner context menu Id */

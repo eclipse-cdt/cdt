@@ -15,6 +15,9 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 
 	public static String CMakeBuildTab_BuildCommand;
+	public static String CMakeBuildTab_BuildType;
+	public static String CMakeBuildTab_BuildType_Tooltip;
+	public static String CMakeBuildTab_BuildTypeCombo_Tooltip;
 	public static String CMakeBuildTab_AllTarget;
 	public static String CMakeBuildTab_CleanTarget;
 	public static String CMakeBuildTab_Cmake;
@@ -25,6 +28,7 @@ public class Messages extends NLS {
 	public static String CMakeBuildTab_Toolchain;
 	public static String CMakeBuildTab_useDefaultCmakeSettings;
 	public static String CMakeBuildTab_useDefaultCmakeSettingsTip;
+	public static String CMakeBuildTab_UsedForLaunchMode;
 	public static String CMakePreferencePage_Add;
 	public static String CMakePreferencePage_ConfirmRemoveDesc;
 	public static String CMakePreferencePage_ConfirmRemoveTitle;

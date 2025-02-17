@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.cmake.ui.internal;
 
+import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -18,8 +19,11 @@ import org.eclipse.cdt.cmake.core.CMakeBuildConfigurationProvider;
 import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.launch.ui.corebuild.CommonBuildTab;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,6 +39,8 @@ import org.eclipse.swt.widgets.Text;
 
 public class CMakeBuildTab extends CommonBuildTab {
 
+	private static final String[] buildTypes = { "Debug", "Release", "RelWithDebInfo", "MinSizeRel" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
 	private Button useDefaultCmakeSettings;
 	private Combo generatorCombo;
 	private Text cmakeArgsText;
@@ -46,6 +52,9 @@ public class CMakeBuildTab extends CommonBuildTab {
 	private Label buildCommandLabel;
 	private Label allTargetLabel;
 	private Label cleanTargetLabel;
+	private Combo buildTypeCombo;
+	private Label buildTypeLabel;
+	private Label usedForLaunchModeLabel;
 
 	@Override
 	protected String getBuildConfigProviderId() {
@@ -121,6 +130,25 @@ public class CMakeBuildTab extends CommonBuildTab {
 		cleanTargetText = new Text(cmakeGroup, SWT.BORDER);
 		cleanTargetText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		cleanTargetText.addModifyListener(e -> updateLaunchConfigurationDialog());
+
+		Composite buildTypeComp = new Composite(cmakeGroup, SWT.NONE);
+		buildTypeComp.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		buildTypeComp.setLayout(new GridLayout(3, false));
+
+		buildTypeLabel = new Label(buildTypeComp, SWT.NONE);
+		buildTypeLabel.setText(Messages.CMakeBuildTab_BuildType);
+		buildTypeLabel.setToolTipText(Messages.CMakeBuildTab_BuildType_Tooltip);
+
+		buildTypeCombo = new Combo(buildTypeComp, SWT.DROP_DOWN);
+		buildTypeCombo.setItems(buildTypes);
+		buildTypeCombo.setToolTipText(Messages.CMakeBuildTab_BuildTypeCombo_Tooltip);
+		buildTypeCombo.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				updateLaunchConfigurationDialog();
+			}
+		});
+		usedForLaunchModeLabel = new Label(buildTypeComp, SWT.NONE);
 	}
 
 	/**
@@ -148,6 +176,9 @@ public class CMakeBuildTab extends CommonBuildTab {
 		allTargetText.setEnabled(enabled);
 		cleanTargetLabel.setEnabled(enabled);
 		cleanTargetText.setEnabled(enabled);
+		buildTypeLabel.setEnabled(enabled);
+		buildTypeCombo.setEnabled(enabled);
+		usedForLaunchModeLabel.setEnabled(enabled);
 	}
 
 	@Override
@@ -217,6 +248,13 @@ public class CMakeBuildTab extends CommonBuildTab {
 		boolean isDefaultCMakeProperties = useDefaultCmakeSettings.getSelection();
 		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS,
 				Boolean.toString(isDefaultCMakeProperties));
+
+		String buildType = buildTypeCombo.getText().trim();
+		if (!(buildType.isBlank() || isDefaultCMakeProperties)) {
+			buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_BUILD_TYPE, buildType);
+		} else {
+			buildConfig.removeProperty(CMakeBuildConfiguration.CMAKE_BUILD_TYPE);
+		}
 	}
 
 	@Override
@@ -227,6 +265,7 @@ public class CMakeBuildTab extends CommonBuildTab {
 		properties.put(CMakeBuildConfiguration.CMAKE_BUILD_COMMAND, buildCommandText.getText().trim());
 		properties.put(CMakeBuildConfiguration.CMAKE_ALL_TARGET, allTargetText.getText().trim());
 		properties.put(CMakeBuildConfiguration.CMAKE_CLEAN_TARGET, cleanTargetText.getText().trim());
+		properties.put(CMakeBuildConfiguration.CMAKE_BUILD_TYPE, buildTypeCombo.getText().trim());
 	}
 
 	@Override
@@ -252,11 +291,26 @@ public class CMakeBuildTab extends CommonBuildTab {
 		String cleanTarget = properties.getOrDefault(CMakeBuildConfiguration.CMAKE_CLEAN_TARGET,
 				CMakeBuildConfiguration.CMAKE_CLEAN_TARGET_DEFAULT);
 		cleanTargetText.setText(cleanTarget);
+
+		// Default build type: Debug for Debug launch mode, Release for Run and other launch modes.
+		String defaultBuildType = getDefaultBuildType();
+		String buildType = properties.getOrDefault(CMakeBuildConfiguration.CMAKE_BUILD_TYPE, defaultBuildType);
+		buildTypeCombo.setText(buildType);
+
+		ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager()
+				.getLaunchMode(getBuildConfiguration().getLaunchMode());
+		String launchModeLabel = launchMode != null ? launchMode.getLabel() : getBuildConfiguration().getLaunchMode();
+		usedForLaunchModeLabel.setText(MessageFormat.format(Messages.CMakeBuildTab_UsedForLaunchMode, launchModeLabel));
 	}
 
 	@Override
 	public String getName() {
 		return Messages.CMakeBuildTab_Cmake;
+	}
+
+	private String getDefaultBuildType() {
+		return ILaunchManager.DEBUG_MODE.equals(getBuildConfiguration().getLaunchMode()) ? buildTypes[0]
+				: buildTypes[1];
 	}
 
 }

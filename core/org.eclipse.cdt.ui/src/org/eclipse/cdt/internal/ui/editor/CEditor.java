@@ -74,6 +74,7 @@ import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
 import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
 import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.internal.ui.switchtolsp.ISwitchToLsp;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.text.CPairMatcher;
 import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
@@ -111,6 +112,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.jobs.Job;
@@ -2786,8 +2788,10 @@ public class CEditor extends TextEditor
 
 	@Override
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
+		Composite editorComposite = createTryLspBanner(parent);
+
 		IPreferenceStore store = getPreferenceStore();
-		AdaptedSourceViewer cSourceViewer = new AdaptedSourceViewer(parent, ruler, getOverviewRuler(),
+		AdaptedSourceViewer cSourceViewer = new AdaptedSourceViewer(editorComposite, ruler, getOverviewRuler(),
 				isOverviewRulerVisible(), styles, store);
 
 		/*
@@ -2816,6 +2820,29 @@ public class CEditor extends TextEditor
 		getSourceViewerDecorationSupport(cSourceViewer);
 
 		return cSourceViewer;
+	}
+
+	/**
+	 * Wraps {@link ISwitchToLsp#createTryLspEditor(org.eclipse.ui.texteditor.ITextEditor, Composite)}
+	 * with the needed service access + fallback checks.
+	 *
+	 * If the {@link ISwitchToLsp} service doesn't exist, or fails, this method
+	 * is a no-op that simply returns its input.
+	 *
+	 * @see ISwitchToLsp#createTryLspEditor(org.eclipse.ui.texteditor.ITextEditor, Composite)
+	 */
+	private Composite createTryLspBanner(Composite parent) {
+		Composite editorComposite = SafeRunner.run(() -> {
+			ISwitchToLsp switchToLsp = PlatformUI.getWorkbench().getService(ISwitchToLsp.class);
+			if (switchToLsp != null) {
+				return switchToLsp.createTryLspEditor(CEditor.this, parent);
+			}
+			return null;
+		});
+		if (editorComposite == null) {
+			editorComposite = parent;
+		}
+		return editorComposite;
 	}
 
 	/** Outliner context menu Id */

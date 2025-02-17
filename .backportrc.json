@@ -1,9 +1,0 @@
-{
-  "repoOwner": "eclipse-cdt",
-  "repoName": "cdt",
-  "targetBranchChoices": ["cdt_11_6"],
-  "branchLabelMapping": {
-    "^backport-to-(.+)$": "$1"
-  },
-  "multipleCommits": true
-}

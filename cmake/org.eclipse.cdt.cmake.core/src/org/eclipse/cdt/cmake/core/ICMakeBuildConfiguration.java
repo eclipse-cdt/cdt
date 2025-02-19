@@ -71,6 +71,12 @@ public interface ICMakeBuildConfiguration {
 	public static final String CMAKE_CLEAN_TARGET_DEFAULT = "clean"; //$NON-NLS-1$
 
 	/**
+	 * Name of the build type set by user. Default of this value will be set based on Launch Mode
+	 * (i.e. Debug for Debug launch mode, Release for Run and other launch modes)
+	 */
+	public static final String CMAKE_BUILD_TYPE = "cmake.build.type"; //$NON-NLS-1$
+
+	/**
 	 * Converts the {@link ICBuildConfiguration}'s properties, using the keys defined above
 	 * into an {@link ICMakeProperties} that configures the CMake build processes.
 	 * @return A ICMakeProperties object. Must not be null.

@@ -35,6 +35,7 @@ import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -89,6 +90,106 @@ public class CMakeBuildConfigurationTests extends BaseTestCase5 {
 		ICMakeProperties cMakeProperties = cmBuildConfig.getCMakeProperties();
 
 		assertThat(cMakeProperties.getGenerator(), is(CMakeGenerator.WatcomWMake));
+	}
+
+	/**
+	 * Test for IDE_82683_REQ_013 part of #1000
+	 * <br>
+	 * Testing {@link ICMakeProperties#getBuildType()} <br>
+	 * <br>
+	 * This test verify default build type is used in case:
+	 * {@link ICMakeBuildConfiguration#CMAKE_USE_DEFAULT_CMAKE_SETTINGS} is <code>true<code>
+	 */
+	@Test
+	public void getCMakePropertiesTestGetDefaultBuildType() {
+		// CMAKE_USE_DEFAULT_CMAKE_SETTINGS = "true"
+		CMakeBuildConfiguration cmBuildConfig;
+		ICMakeProperties cMakeProperties;
+		// Test for ILaunchManager.RUN_MODE
+		cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName", mockToolchain, null,
+				ILaunchManager.RUN_MODE, LOCAL_LAUNCH_TARGET);
+		cMakeProperties = cmBuildConfig.getCMakeProperties();
+		assertThat(cMakeProperties.getBuildType(), is("Release"));
+
+		// Test for ILaunchManager.DEBUG_MODE
+		cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName", mockToolchain, null,
+				ILaunchManager.DEBUG_MODE, LOCAL_LAUNCH_TARGET);
+		cMakeProperties = cmBuildConfig.getCMakeProperties();
+		assertThat(cMakeProperties.getBuildType(), is("Debug"));
+
+		// Test for ILaunchManager.PROFILE_MODE
+		cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName", mockToolchain, null,
+				ILaunchManager.PROFILE_MODE, LOCAL_LAUNCH_TARGET);
+		cMakeProperties = cmBuildConfig.getCMakeProperties();
+		assertThat(cMakeProperties.getBuildType(), is("Release"));
+	}
+
+	/**
+	 * Test for IDE_82683_REQ_013 part of #1000
+	 * <br>
+	 * This test verify default build type is used in case:
+	 * {@link ICMakeBuildConfiguration#CMAKE_USE_DEFAULT_CMAKE_SETTINGS} is <code>true<code>
+	 */
+	@Test
+	public void getCMakePropertiesLoadISVSelectBuildType_UseDefaultBuildType_1() {
+		ICMakeProperties cMakeProperties;
+		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
+				mockToolchain, null, ILaunchManager.RUN_MODE, LOCAL_LAUNCH_TARGET);
+		// Setup ISV properties for CMakeBuildConfiguration
+		// CMAKE_USE_DEFAULT_CMAKE_SETTINGS = "true"
+		// CMAKE_BUILD_TYPE = "RelWithDebInfo"
+		cmBuildConfig.removeProperty(CMakeBuildConfiguration.CMAKE_BUILD_TYPE);
+		cmBuildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS, "true");
+		cmBuildConfig.setProperty(CMakeBuildConfiguration.CMAKE_BUILD_TYPE, "RelWithDebInfo");
+		// Expected: default build type is used (in this case: "Release" for ILaunchManager.RUN_MODE)
+		cMakeProperties = cmBuildConfig.getCMakeProperties();
+		assertThat(cMakeProperties.getBuildType(), is("Release"));
+	}
+
+	/**
+	 * Test for IDE_82683_REQ_013 part of #1000
+	 * <br>
+	 * This test verify default build type is used in case ISV build type is blank:
+	 * {@link ICMakeBuildConfiguration#CMAKE_USE_DEFAULT_CMAKE_SETTINGS} is <code>false<code> and
+	 * {@link ICMakeBuildConfiguration#CMAKE_BUILD_TYPE} is blank
+	 */
+	@Test
+	public void getCMakePropertiesLoadISVSelectBuildType_ISVBuildTypeIsBlank() {
+		ICMakeProperties cMakeProperties;
+		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
+				mockToolchain, null, ILaunchManager.RUN_MODE, LOCAL_LAUNCH_TARGET);
+		// Setup ISV properties for CMakeBuildConfiguration
+		// CMAKE_USE_DEFAULT_CMAKE_SETTINGS = "false"
+		// CMAKE_BUILD_TYPE = ""
+		cmBuildConfig.removeProperty(CMakeBuildConfiguration.CMAKE_BUILD_TYPE);
+		cmBuildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS, "false");
+		cmBuildConfig.setProperty(CMakeBuildConfiguration.CMAKE_BUILD_TYPE, "");
+		// Expected: "Release" build type is used (in this case: "Release" for ILaunchManager.RUN_MODE)
+		cMakeProperties = cmBuildConfig.getCMakeProperties();
+		assertThat(cMakeProperties.getBuildType(), is("Release"));
+	}
+
+	/**
+	 * Test for IDE_82683_REQ_013 part of #1000
+	 * <br>
+	 * This test verify ISV's selected build type is used in case:
+	 * {@link ICMakeBuildConfiguration#CMAKE_USE_DEFAULT_CMAKE_SETTINGS} is <code>false<code> and
+	 * {@link ICMakeBuildConfiguration#CMAKE_BUILD_TYPE} is NOT blank
+	 */
+	@Test
+	public void getCMakePropertiesLoadISVSelectBuildType_UseISVBuildTypeNotBlank() {
+		ICMakeProperties cMakeProperties;
+		CMakeBuildConfiguration cmBuildConfig = new CMakeBuildConfiguration(buildConfig, "cmBuildConfigName",
+				mockToolchain, null, ILaunchManager.RUN_MODE, LOCAL_LAUNCH_TARGET);
+		// Setup ISV properties for CMakeBuildConfiguration
+		// CMAKE_USE_DEFAULT_CMAKE_SETTINGS = "false"
+		// CMAKE_BUILD_TYPE = "RelWithDebInfo"
+		cmBuildConfig.removeProperty(CMakeBuildConfiguration.CMAKE_BUILD_TYPE);
+		cmBuildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS, "false");
+		cmBuildConfig.setProperty(CMakeBuildConfiguration.CMAKE_BUILD_TYPE, "RelWithDebInfo");
+		// Expected: "RelWithDebInfo" build type is used
+		cMakeProperties = cmBuildConfig.getCMakeProperties();
+		assertThat(cMakeProperties.getBuildType(), is("RelWithDebInfo"));
 	}
 
 	/**

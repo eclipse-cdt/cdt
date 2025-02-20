@@ -77,6 +77,16 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 	}
 
 	/**
+	 * Resets CoreBuildLaunchBarTracker. Used for testing only.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void reset() {
+		lastMode = null;
+		lastDescriptor = null;
+		lastTarget = null;
+	}
+
+	/**
 	 * @since 8.4
 	 */
 	public void dispose() {

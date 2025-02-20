@@ -89,7 +89,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	// called from unit tests to ensure everything is inited
-	LaunchBarManager(boolean doInit) {
+	public LaunchBarManager(boolean doInit) {
 		launchTargetManager = getLaunchTargetManager();
 		launchTargetManager.addListener(this);
 		if (doInit) {
@@ -122,7 +122,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 	}
 
 	// When testing, call this after setting up the mocks.
-	void init() throws CoreException {
+	public void init() throws CoreException {
 		try {
 			// Fetch the desc order before the init messes it up
 			IEclipsePreferences store = getPreferenceStore();
@@ -219,7 +219,7 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 						descriptorTypes.put(typeInfo.getId(), typeInfo);
 						if (configProviders.get(typeInfo.getId()) == null) {
 							// Make sure we initialize the list
-							configProviders.put(typeInfo.getId(), new ArrayList<LaunchConfigProviderInfo>());
+							configProviders.put(typeInfo.getId(), new ArrayList<>());
 						}
 					} else if (elementName.equals("configProvider")) { //$NON-NLS-1$
 						LaunchConfigProviderInfo info = new LaunchConfigProviderInfo(element);

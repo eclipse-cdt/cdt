@@ -37,9 +37,11 @@ public interface ICBuildConfigurationProvider {
 	/**
 	 * Returns the Core Build configuration that owns this Platform Build configuration.
 	 *
-	 * @param buildConfig Platform Build Configuration. Must not be null.
+	 * @param buildConfig Platform Build Configuration. Must not be null. Configs with the name
+	 *   {@link IBuildConfiguration#DEFAULT_CONFIG_NAME} are ignored.
 	 * @param cBuildConfigName Name to give the ICBuildConfiguration. Must not be null.
-	 * @return a Core Build configuration.
+	 * @return a Core Build configuration or null if buildConfig has name
+	 *   {@link IBuildConfiguration#DEFAULT_CONFIG_NAME}.
 	 * @throws CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li> Toolchain is missing,</li>

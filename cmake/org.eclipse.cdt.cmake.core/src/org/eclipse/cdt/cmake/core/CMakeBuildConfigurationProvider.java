@@ -21,12 +21,10 @@ import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.ICBuildConfigurationProvider;
 import org.eclipse.cdt.core.build.IToolChain;
-import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
@@ -76,35 +74,12 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 	@Override
 	public synchronized ICBuildConfiguration getCBuildConfiguration(IBuildConfiguration config, String name)
 			throws CoreException {
-		ILaunchTargetManager launchTargetManager = Activator.getService(ILaunchTargetManager.class);
 		if (config.getName().equals(IBuildConfiguration.DEFAULT_CONFIG_NAME)) {
-			IToolChain toolChain = null;
-
-			// try the toolchain for the local target
-			Map<String, String> properties = new HashMap<>();
-			properties.put(IToolChain.ATTR_OS, Platform.getOS());
-			properties.put(IToolChain.ATTR_ARCH, Platform.getOSArch());
-			IToolChainManager toolChainManager = Activator.getService(IToolChainManager.class);
-			for (IToolChain tc : toolChainManager.getToolChainsMatching(properties)) {
-				toolChain = tc;
-				break;
-			}
-
-			// local didn't work, try and find one that does
-			if (toolChain == null) {
-				for (IToolChain tc : toolChainManager.getToolChainsMatching(new HashMap<>())) {
-					toolChain = tc;
-					break;
-				}
-			}
-
-			if (toolChain != null) {
-				return createCMakeBuildConfiguration(config, name, toolChain, null, "run", //$NON-NLS-1$
-						launchTargetManager.getLocalLaunchTarget());
-			} else {
-				// No valid combinations
-				return null;
-			}
+			/*
+			 * IBuildConfiguration configs with name IBuildConfiguration.DEFAULT_CONFIG_NAME
+			 * are not supported to avoid build output directory being named "default".
+			 */
+			return null;
 		}
 		CMakeBuildConfiguration cmakeConfig = createCMakeBuildConfiguration(config, name);
 		ICMakeToolChainFile tcFile = cmakeConfig.getToolChainFile();
@@ -115,6 +90,7 @@ public class CMakeBuildConfigurationProvider implements ICBuildConfigurationProv
 		}
 		if (tcFile != null && !toolChain.equals(tcFile.getToolChain())) {
 			// toolchain changed
+			ILaunchTargetManager launchTargetManager = Activator.getService(ILaunchTargetManager.class);
 			return createCMakeBuildConfiguration(config, name, tcFile.getToolChain(), tcFile,
 					cmakeConfig.getLaunchMode(), launchTargetManager.getLocalLaunchTarget());
 		} else {

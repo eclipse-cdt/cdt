@@ -36,13 +36,14 @@ Download and run the latest MSYS2 installer by following instructions on the <a 
 When you reach the UCRT64 environment prompt, use the following commands to install individual tools:</p>
 <p />
 <p><table style="border: 1px solid grey; border-collapse: collapse;">
-<tr><th style="border: 1px solid grey; padding: 5px;">Tool</th>   <th style="border: 1px solid grey; padding: 5px;">Installation command</th><tr>
-<tr><td style="border: 1px solid grey; padding: 5px;">clangd</td> <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-clang-tools-extra</tt></td></tr>
-<tr><td style="border: 1px solid grey; padding: 5px;">cmake</td>  <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-cmake</tt></td></tr>
-<tr><td style="border: 1px solid grey; padding: 5px;">gcc</td>    <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-gcc</tt></td></tr>
-<tr><td style="border: 1px solid grey; padding: 5px;">gdb</td>    <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-gdb</tt></td></tr>
-<tr><td style="border: 1px solid grey; padding: 5px;">make</td>   <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S make</tt></td></tr>
-<tr><td style="border: 1px solid grey; padding: 5px;">ninja</td>  <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-ninja</tt></td></tr>
+<tr><th style="border: 1px solid grey; padding: 5px;">Tool</th>   <th style="border: 1px solid grey; padding: 5px;">Installation command</th>                                       <th style="border: 1px solid grey; padding: 5px;">Notes</th><tr>
+<tr><td style="border: 1px solid grey; padding: 5px;">clang</td>  <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-clang</tt></td>             <td style="border: 1px solid grey; padding: 5px;">Provides the <i>LLVM with Clang</i> toolchain</td></tr>
+<tr><td style="border: 1px solid grey; padding: 5px;">clangd</td> <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-clang-tools-extra</tt></td> <td style="border: 1px solid grey; padding: 5px;">Required by the <i>C/C++ Editor (LSP)</i></td></tr>
+<tr><td style="border: 1px solid grey; padding: 5px;">cmake</td>  <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-cmake</tt></td>             <td style="border: 1px solid grey; padding: 5px;">Required for building <i>CMake</i> projects</td></tr>
+<tr><td style="border: 1px solid grey; padding: 5px;">gcc</td>    <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-gcc</tt></td>               <td style="border: 1px solid grey; padding: 5px;">Provides the <i>MinGW GCC</i> toolchain</td></tr>
+<tr><td style="border: 1px solid grey; padding: 5px;">gdb</td>    <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-gdb</tt></td>               <td style="border: 1px solid grey; padding: 5px;">Required for debugging</td></tr>
+<tr><td style="border: 1px solid grey; padding: 5px;">make</td>   <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S make</tt></td>                                    <td style="border: 1px solid grey; padding: 5px;">Required for building <i>Managed Build</i> projects</td></tr>
+<tr><td style="border: 1px solid grey; padding: 5px;">ninja</td>  <td style="border: 1px solid grey; padding: 5px;"><tt>pacman -S mingw-w64-ucrt-x86_64-ninja</tt></td></td>        <td style="border: 1px solid grey; padding: 5px;">Required for building <i>CMake</i> projects</td></tr>
 </table></p>
 </li>
 

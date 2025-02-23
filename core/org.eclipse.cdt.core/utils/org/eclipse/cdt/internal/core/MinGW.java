@@ -42,7 +42,8 @@ public class MinGW {
 	public static final String ENV_MSYS_HOME = "MSYS_HOME"; //$NON-NLS-1$
 	private static final String ENV_PATH = "PATH"; //$NON-NLS-1$
 	private static final Set<String> MSYS2_64BIT_NAMES = Set.of("MSYS2", "MSYS2 64bit"); //$NON-NLS-1$ //$NON-NLS-2$
-	private static final List<String> MSYS2_MINGW_SUBSYSTEMS = List.of("mingw64", "mingw32", "ucrt64"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final List<String> MSYS2_MINGW_SUBSYSTEMS = List.of("ucrt64", "mingw64", "mingw32"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final List<String> MSYS2_MINGW_SUBSYSTEM_SELECTION_TOOLS = List.of("clangd", "clang", "gcc"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 	private static final boolean isWindowsPlatform = Platform.getOS().equals(Platform.OS_WIN32);
 
@@ -109,9 +110,14 @@ public class MinGW {
 						String installLocation = registry.getCurrentUserValue(compKey, "InstallLocation"); //$NON-NLS-1$
 						for (String subsys : MSYS2_MINGW_SUBSYSTEMS) {
 							String mingwLocation = installLocation + "\\" + subsys; //$NON-NLS-1$
-							File gccFile = new File(mingwLocation + "\\bin\\gcc.exe"); //$NON-NLS-1$
-							if (gccFile.canExecute()) {
-								rootValue = mingwLocation;
+							for (String toolName : MSYS2_MINGW_SUBSYSTEM_SELECTION_TOOLS) {
+								File toolFile = new File(mingwLocation + "\\bin\\" + toolName + ".exe"); //$NON-NLS-1$ //$NON-NLS-2$
+								if (toolFile.canExecute()) {
+									rootValue = mingwLocation;
+									break;
+								}
+							}
+							if (null != rootValue) {
 								break;
 							}
 						}

@@ -82,7 +82,7 @@ public class Msys2ToolChainProvider implements IToolChainProvider {
 		String installLocation = registry.getCurrentUserValue(key, "InstallLocation"); //$NON-NLS-1$
 		Path msysPath = Paths.get(installLocation);
 		boolean found = false;
-		for (String variant : List.of("mingw64", "ucrt64")) { //$NON-NLS-1$ //$NON-NLS-2$
+		for (String variant : List.of("ucrt64", "mingw64")) { //$NON-NLS-1$ //$NON-NLS-2$
 			Path gccPath = msysPath.resolve(variant + "\\bin\\gcc.exe"); //$NON-NLS-1$
 			if (Files.exists(gccPath)) {
 				IEnvironmentVariable[] vars = createEnvironmentVariables(msysPath, gccPath.getParent());

@@ -457,12 +457,24 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 			case IEnvironmentVariable.ENVVAR_REPLACE:
 				env.put(name, var.getValue());
 				break;
-			case IEnvironmentVariable.ENVVAR_APPEND:
-				env.put(name, env.get(name) + var.getDelimiter() + var.getValue());
+			case IEnvironmentVariable.ENVVAR_APPEND: {
+				String oldValue = env.get(name);
+				if (oldValue == null) {
+					env.put(name, var.getValue());
+				} else {
+					env.put(name, oldValue + var.getDelimiter() + var.getValue());
+				}
 				break;
-			case IEnvironmentVariable.ENVVAR_PREPEND:
-				env.put(name, var.getValue() + var.getDelimiter() + env.get(name));
+			}
+			case IEnvironmentVariable.ENVVAR_PREPEND: {
+				String oldValue = env.get(name);
+				if (oldValue == null) {
+					env.put(name, var.getValue());
+				} else {
+					env.put(name, var.getValue() + var.getDelimiter() + oldValue);
+				}
 				break;
+			}
 			case IEnvironmentVariable.ENVVAR_REMOVE:
 				env.remove(name);
 				break;

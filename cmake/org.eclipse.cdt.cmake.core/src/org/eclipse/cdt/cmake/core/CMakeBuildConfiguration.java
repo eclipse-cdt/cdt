@@ -237,6 +237,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 			}
 
 			// parse compile_commands.json file
+			getCompileCommandsFile().refreshLocal(IResource.DEPTH_ZERO, monitor);
 			processCompileCommandsFile(console, monitor);
 
 			infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
@@ -346,6 +347,10 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 		}
 	}
 
+	private IFile getCompileCommandsFile() throws CoreException {
+		return getBuildContainer().getFile(new org.eclipse.core.runtime.Path("compile_commands.json")); //$NON-NLS-1$
+	}
+
 	/**
 	 * @param console the console to print the compiler output during built-ins detection to or
 	 *                <code>null</code> if no separate console is to be allocated. Ignored if
@@ -353,7 +358,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 	 * @param monitor the job's progress monitor
 	 */
 	private void processCompileCommandsFile(IConsole console, IProgressMonitor monitor) throws CoreException {
-		IFile file = getBuildContainer().getFile(new org.eclipse.core.runtime.Path("compile_commands.json")); //$NON-NLS-1$
+		IFile file = getCompileCommandsFile();
 		CompileCommandsJsonParser parser = new CompileCommandsJsonParser(
 				new ParseRequest(file, new CMakeIndexerInfoConsumer(this::setScannerInformation),
 						CommandLauncherManager.getInstance().getCommandLauncher(this), console));

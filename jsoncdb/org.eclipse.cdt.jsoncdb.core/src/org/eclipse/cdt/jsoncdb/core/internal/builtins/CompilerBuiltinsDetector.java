@@ -17,10 +17,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ICommandLauncher;
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.resources.IConsole;
 import org.eclipse.cdt.jsoncdb.core.IParserPreferences;
 import org.eclipse.cdt.jsoncdb.core.IParserPreferencesAccess;
@@ -29,6 +32,8 @@ import org.eclipse.cdt.jsoncdb.core.participant.IRawSourceFileInfo;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.IBuiltinsDetectionBehavior;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.IBuiltinsOutputProcessor;
 import org.eclipse.cdt.jsoncdb.core.participant.builtins.OutputSniffer;
+import org.eclipse.cdt.utils.spawner.EnvironmentReader;
+import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -185,25 +190,8 @@ public class CompilerBuiltinsDetector {
 	 *         return {@code null}.
 	 */
 	private String[] getEnvp(IProject project) {
-		var map = new HashMap<String, String>();
-		// The cc.exe from mingw64 (part of Msys2) on Windows needs the bin folder to be on the PATH to be executed.
-		// e.g. 'C:\msys64\mingw64\bin' must be part of the PATH environment variable. That's why we need PATH here:
-		// Fixes CDT #407
-		try {
-			final String path = "PATH"; //$NON-NLS-1$
-			var variables = CCorePlugin.getDefault().getBuildEnvironmentManager()
-					.getVariables(project.getActiveBuildConfig(), true);
-			for (var variable : variables) {
-				if (path.equalsIgnoreCase(variable.getName())) {
-					map.put(path, variable.getValue());
-					break;
-				}
-			}
-		} catch (CoreException e) {
-			Plugin.getDefault().getLog().error(
-					String.format(Messages.CompilerBuiltinsDetector_errmsg_determine_PATH_failed, project.getName()),
-					e);
-		}
+		var map = getProjectEnvp(project);
+
 		// On POSIX (Linux, UNIX) systems reset language variables to default (English)
 		// with UTF-8 encoding since GNU compilers can handle only UTF-8 characters.
 		// Include paths with locale characters will be handled properly regardless
@@ -225,6 +213,44 @@ public class CompilerBuiltinsDetector {
 		}).toArray(String[]::new);
 
 		return envArray;
+	}
+
+	/**
+	 * Return the project's environment. This applies any project specific environment
+	 * to the system environment.
+	 */
+	private HashMap<String, String> getProjectEnvp(IProject project) {
+		var map = new HashMap<String, String>();
+		Properties environmentVariables = EnvironmentReader.getEnvVars();
+		for (String key : environmentVariables.stringPropertyNames()) {
+			String value = environmentVariables.getProperty(key);
+			map.put(key, value);
+		}
+
+		IBuildConfiguration active = null;
+		try {
+			active = project.getActiveBuildConfig();
+			if (active == null) {
+				// unreachable, getActiveBuildConfig is documented as not returning null.
+			} else {
+				var manager = CCorePlugin.getService(ICBuildConfigurationManager.class);
+				ICBuildConfiguration cBuildConfiguration = manager.getBuildConfiguration(active);
+
+				if (cBuildConfiguration != null) {
+					// If this project is Core Build, use its specialisation of getBuildEnvironmentManager
+					// to get the environment.
+					cBuildConfiguration.setBuildEnvironment(map);
+				} else {
+					CCorePlugin.getDefault().getBuildEnvironmentManager().setEnvironment(map, active, true);
+				}
+			}
+		} catch (CoreException e) {
+			Plugin.getDefault().getLog().error(
+					String.format(Messages.CompilerBuiltinsDetector_errmsg_determine_PATH_failed, project.getName()),
+					e);
+		}
+
+		return map;
 	}
 
 	/**

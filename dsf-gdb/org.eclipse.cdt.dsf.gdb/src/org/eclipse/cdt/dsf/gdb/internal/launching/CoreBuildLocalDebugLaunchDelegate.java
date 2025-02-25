@@ -34,6 +34,7 @@ import org.eclipse.cdt.dsf.gdb.launching.ServicesLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
 import org.eclipse.cdt.dsf.gdb.service.command.IGDBControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
+import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -77,6 +78,11 @@ public class CoreBuildLocalDebugLaunchDelegate extends CoreBuildLaunchConfigDele
 		ICBuildConfiguration buildConfig = getBuildConfiguration(configuration, mode, target, monitor);
 
 		Map<String, String> buildEnv = new HashMap<>();
+		Properties environmentVariables = EnvironmentReader.getEnvVars();
+		for (String key : environmentVariables.stringPropertyNames()) {
+			String value = environmentVariables.getProperty(key);
+			buildEnv.put(key, value);
+		}
 		buildConfig.setBuildEnvironment(buildEnv);
 		Properties envProps = new Properties();
 		envProps.putAll(buildEnv);

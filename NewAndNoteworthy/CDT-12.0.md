@@ -14,18 +14,47 @@ CDT's native components will likely work with older versions of glibc too, assum
 
 # Core Build
 
+## Default build system generator for CMake changed to Ninja on all platforms
+
+The default for CMake's  build system generator is now Ninja on all platforms.
+Users who want to use other build system generators can select their desired generator in the build settings.
+
 ## More CMake build settings are now available in the user interface
 
 The CMake build setting GUI has been updated to include more CMake settings, and some of the settings that did not used to do the correct thing have been updated for more consistent behavior.
 The way these settings are saved has been slightly modified, meaning workspaces with CMake projects from before CDT 12 will have their build settings restored to defaults.
 Build settings can be customized by unchecking "Use default CMake settings".
 
-TODO: Before release add the final screenshot for the build settings here. I am not including it now because the UI keeps changing.
 
-## Default build system generator for CMake changed to Ninja on all platforms
+<p align="center"><img src="images/CDT-12.0-build-settings-annotated.png" width="80%"></p>
 
-The default for CMake's  build system generator is now Ninja on all platforms.
-Users who want to use other build system generators can select their desired generator in the build settings.
+The Build Settings tab has the following changes:
+
+(1) "Generator" is now a dropdown to make selection clearer. A custom value can also be set.
+
+(2) "Build all target" was added so it's now possible to change the "--target" value passed to the CMake building stage.
+See [Issue #1046](https://github.com/eclipse-cdt/cdt/issues/1046)
+
+(3) "Build type" was added so it's now possible to change the CMAKE_BUILD_TYPE value passed to the CMake configuring stage, including a custom value.
+See [Issue #1090](https://github.com/eclipse-cdt/cdt/issues/1090)
+
+## Core Build Configuration naming improvements
+
+### Launch Target now used for tracking Core Build configurations
+
+Previously the active launch mode and selected toolchain were used to choose the active Core Build configuration. Now the active launch target is also used. You can see the affect of this in the project's build output directory name. Notice the name of the build directory; "cmake.debug.win32.x86_64.Local" and "cmake.run.win32.x86_64.Local" end with the name "Local" which corresponds to the currently active Launch Target.
+
+<p align="center"><img src="images/CDT-12.0-build-output-directory-uses-launch-target-name.png" width="80%"></p>
+
+See [Issue #1076](https://github.com/eclipse-cdt/cdt/issues/1076)
+
+Additionally, the build output directory name may be customized by ISVs - see [Core Build configuration build output directory name may be customized by ISVs](#core-build-configuration-build-output-directory-name-may-be-customized-by-isvs)
+
+### "Default" name no longer used for Core Build configuration name
+
+Previously the name "default" would appear as one of the project's build directory names. This is no longer used and the name will always follow the pattern described above.
+
+See [Issue #1084](https://github.com/eclipse-cdt/cdt/issues/1084)
 
 # Managed Build
 
@@ -85,6 +114,12 @@ A fully worked example demonstrating the support is now provided in the CDT sour
 This example demonstrates the API, and how to contribute a new project wizard to make such a project.
 
 <p align="center"><img src="images/CDT-12.0-cmake-example-project-for-isvs.png"></p>
+
+## Core Build configuration build output directory name may be customized by ISVs
+
+The name used for the Core Build Configuration build output can now be customized by extending:
+
+[org.eclipse.cdt.core.build.ICBuildConfigurationProvider#getCBuildConfigName](https://github.com/eclipse-cdt/cdt/blob/main/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/build/ICBuildConfigurationProvider.java##L76-L94).
 
 ## Breaking API changes
 

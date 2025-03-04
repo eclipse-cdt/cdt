@@ -71,7 +71,7 @@ There are many third-party addons for CDT to make it more productive.
 * [Sloeber](http://eclipse.baeyens.it/): Eclipse Plugins based on Arduino toolchains or a enhanced Arduino IDE.
 * [SonarQube for Eclipse](https://marketplace.eclipse.org/content/sonarqube-ide): Eclipse plug-in for static analysis for quality and security issues in your C/C++ code directly inside the IDE.
 * [CUTE](https://cute-test.com/): C++ unit testing plug-in
-* [Bracketeer](https://marketplace.eclipse.org/content/bracketeer-cc-cdt): Auto-comments on closing brackets and highlight of matching/mismatching brackets
+* [Bracketeer2](https://marketplace.eclipse.org/content/bracketeer2): Auto-comments on closing brackets and highlight of matching/mismatching brackets
 * And many more in the [Eclipse Marketplace](https://marketplace.eclipse.org/), for example, try the [CDT tag](https://marketplace.eclipse.org/category/free-tagging/cdt)
 
 _Have a tool that you want listed here? Please open a [PR](https://github.com/eclipse-cdt/cdt/pulls)_

@@ -155,4 +155,4 @@ See [Noteworthy issues and PRs](https://github.com/eclipse-cdt/cdt/issues?q=is%3
 
 # Bugs Fixed in this Release
 
-See GitHub milestone [![12.0.0](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/14)](https://github.com/eclipse-cdt/cdt/milestone/14?closed=1)
+See GitHub milestone for CDT [![12.0.0](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/14)](https://github.com/eclipse-cdt/cdt/milestone/14?closed=1) and CDT LSP [![3.0.0](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt-lsp/4)](https://github.com/eclipse-cdt/cdt-lsp/milestone/4?closed=1)

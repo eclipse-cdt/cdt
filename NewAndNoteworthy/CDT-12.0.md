@@ -6,11 +6,31 @@ This is the New & Noteworthy page for CDT 12.0 which is part of Eclipse 2025-03 
 
 # Release Notes
 
+## New and Noteworthy Video
+
+A short video highlighting CDT LSP support and CMake improvements is available on YouTube.
+
+[<p align="center"><img src="images/CDT-12.0-NnN-thumbnail.png" width="80%"></p>](https://youtu.be/FvNHo9bDA7Q)
+
+
+## Support for Windows on Arm natives contributed
+
+CDT 12 includes support for running Eclipse CDT on Windows on ARM machines.
+There are a few parts of CDT written in C to support launching sub-processes, terminals and serial ports, these items now work on Windows on Arm.
+
 ## Minimum version of GLIBC required
 
 The minimum version of GLIBC required is now 2.31.
 This version can be found in Ubuntu 20.04 and later, RHEL 9.0 and later and other distros as well.
 CDT's native components will likely work with older versions of glibc too, assuming they provide the required APIs for Eclipse CDT.
+
+# CDT LSP (clangd support)
+
+CDT 12 includes a banner in the editor to easily try out the new C/C++ editing experience based on CDT LSP and clangd.
+More information about the CDT LSP project can be found in the [project's GitHub page](https://github.com/eclipse-cdt/cdt-lsp?tab=readme-ov-file#readme).
+
+<p align="center"><img src="images/CDT-12.0-try-new-experience.png" width="80%"></p>
+
 
 # Core Build
 
@@ -55,6 +75,10 @@ Additionally, the build output directory name may be customized by ISVs - see [C
 Previously the name "default" would appear as one of the project's build directory names. This is no longer used and the name will always follow the pattern described above.
 
 See [Issue #1084](https://github.com/eclipse-cdt/cdt/issues/1084)
+
+### Improved launch configuration for CMake and other Core Build System projects
+
+The CMake and CBS Makefile project launch configurations for local applications have an improved Main tab and new Arguments, Environment, Debugger, Source, and Common tabs.
 
 # Managed Build
 
@@ -129,14 +153,6 @@ Please see [CHANGELOG-API](CHANGELOG-API.md) for details on the breaking API cha
 
 See [Noteworthy issues and PRs](https://github.com/eclipse-cdt/cdt/issues?q=is%3Aclosed+label%3Anoteworthy+milestone%3A12.0.0) for this release in the issue/PR tracker.
 
-## Improved launch configuration for CMake and other Core Build System projects
-
-The CMake and CBS Makefile project launch configurations for local applications have an improved Main tab and new Arguments, Environment, Debugger, Source, and Common tabs.
-
 # Bugs Fixed in this Release
 
-See GitHub milestones:
-- [![12.0.0 M1](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/12)](https://github.com/eclipse-cdt/cdt/milestone/12?closed=1)
-- [![12.0.0 M2](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/13)](https://github.com/eclipse-cdt/cdt/milestone/13?closed=1)
-- [![12.0.0 M3](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/18)](https://github.com/eclipse-cdt/cdt/milestone/18?closed=1)
-- [![12.0.0](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/14)](https://github.com/eclipse-cdt/cdt/milestone/14?closed=1)
+See GitHub milestone [![12.0.0](https://img.shields.io/github/milestones/issues-total/eclipse-cdt/cdt/14)](https://github.com/eclipse-cdt/cdt/milestone/14?closed=1)

@@ -2461,7 +2461,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	@Override
 	public boolean isNewStyleProject(IProject project) {
-		return isNewStyleProject(getProjectDescription(project, false));
+		return isNewStyleProject(getProjectDescription(project, false, false));
 	}
 
 	@Override

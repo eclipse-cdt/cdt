@@ -423,6 +423,10 @@ public class Spawner extends Process {
 		return (raise(pid, SIG_NOOP) == 0);
 	}
 
+	public PTY pty() {
+		return fPty;
+	}
+
 	private void exec(String[] cmdarray, String[] envp, String dirpath) throws IOException {
 		String command = cmdarray[0];
 		SecurityManager s = System.getSecurityManager();

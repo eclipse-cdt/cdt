@@ -96,6 +96,7 @@ public class CMakeBuildTab extends CommonBuildTab {
 		generatorCombo = new Combo(cmakeGroup, SWT.DROP_DOWN);
 		generatorCombo.setItems(generatorNames);
 		generatorCombo.select(0);
+		generatorCombo.addModifyListener(e -> updateLaunchConfigurationDialog());
 		generatorCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -142,6 +143,7 @@ public class CMakeBuildTab extends CommonBuildTab {
 		buildTypeCombo = new Combo(buildTypeComp, SWT.DROP_DOWN);
 		buildTypeCombo.setItems(buildTypes);
 		buildTypeCombo.setToolTipText(Messages.CMakeBuildTab_BuildTypeCombo_Tooltip);
+		buildTypeCombo.addModifyListener(e -> updateLaunchConfigurationDialog());
 		buildTypeCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {

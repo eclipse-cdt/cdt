@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -624,7 +625,7 @@ public class CommonBuilder extends ACBuilder implements IIncrementalProjectBuild
 	}
 
 	private IConfiguration[] getReferencedConfigs(IBuilder[] builders) {
-		Set<IConfiguration> set = new HashSet<>();
+		Set<IConfiguration> set = new LinkedHashSet<>(); //preserve order
 		for (IBuilder builder : builders) {
 			IConfiguration cfg = builder.getParent().getParent();
 			IConfiguration refs[] = ManagedBuildManager.getReferencedConfigurations(cfg);

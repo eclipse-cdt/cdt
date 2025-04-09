@@ -239,7 +239,8 @@
       vmArguments="-Xms40m -Xmx512M -ea">
     <targlet
         name="CDT"
-        includeAllPlatforms="true">
+        includeAllPlatforms="true"
+        includeBinaryEquivalents="false">
       <requirement
           name="org.eclipse.license.feature.group"/>
       <requirement

@@ -28,6 +28,7 @@ $ECHO $SSH mkdir -p "${DOWNLOAD}/releases/cdt-lsp-latest/"
 $ECHO $SCP ./releng/download/releases/cdt-lsp-latest/* "${SSHUSER}:${DOWNLOAD}/releases/cdt-lsp-latest/"
 $ECHO $SCP ./releng/download/releases/cdt-lsp-2.0/* "${SSHUSER}:${DOWNLOAD}/releases/cdt-lsp-2.0/"
 $ECHO $SCP ./releng/download/releases/cdt-lsp-3.0/* "${SSHUSER}:${DOWNLOAD}/releases/cdt-lsp-3.0/"
+$ECHO $SCP ./releng/download/releases/cdt-lsp-3.1/* "${SSHUSER}:${DOWNLOAD}/releases/cdt-lsp-3.1/"
 
 # Issue #235 - some of the old archived releases had bad composites. For those
 # ones we started maintaining the files here as it was the easiest way to edit

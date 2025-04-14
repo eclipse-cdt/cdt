@@ -1296,44 +1296,6 @@
     </menuContribution>
     <menuContribution
           allPopups="false"
-          locationURI="menu:org.eclipse.ui.run?endof=stepGroup">
-       <command
-             commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand"
-             disabledIcon="icons/dlcl16/instr_step.gif"
-             helpContextId="toggle_instruction_step_mode_action_context"
-             icon="icons/elcl16/instr_step.gif"
-             label="%ToggleInstructionStepModeAction.label"
-             style="toggle"
-             tooltip="%ToggleInstructionStepModeAction.tooltip">
-          <visibleWhen
-                checkEnabled="false">
-             <test
-                   property="org.eclipse.cdt.debug.ui.isCDTDebugging">
-             </test>
-          </visibleWhen>
-       </command>
-    </menuContribution>
-    <menuContribution
-          allPopups="false"
-          locationURI="toolbar:org.eclipse.debug.ui.main.toolbar?after=renderGroup">
-       <command
-             commandId="org.eclipse.cdt.debug.internal.ui.actions.ToggleInstructionStepModeCommand"
-             disabledIcon="icons/dlcl16/instr_step.gif"
-             helpContextId="toggle_instruction_step_mode_action_context"
-             icon="icons/elcl16/instr_step.gif"
-             label="%ToggleInstructionStepModeAction.label"
-             style="toggle"
-             tooltip="%ToggleInstructionStepModeAction.tooltip">
-          <visibleWhen
-                checkEnabled="false">
-             <test
-                   property="org.eclipse.cdt.debug.ui.isCDTDebugging">
-             </test>
-          </visibleWhen>
-       </command>
-    </menuContribution>
-    <menuContribution
-          allPopups="false"
           locationURI="toolbar:org.eclipse.debug.ui.VariableView?after=additions">
        <separator
              name="org.eclipse.cdt.debug.ui.pinGroup"

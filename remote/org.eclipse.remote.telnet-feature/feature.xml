@@ -2,7 +2,7 @@
 <feature
       id="org.eclipse.remote.telnet"
       label="%featureName"
-      version="12.0.0.qualifier"
+      version="12.1.0.qualifier"
       provider-name="%providerName"
       plugin="org.eclipse.remote.telnet.ui"
       license-feature="org.eclipse.license"

@@ -285,17 +285,10 @@ public class ProcessFactory {
 	}
 
 	private ProcessFactory() {
-		hasSpawner = false;
-		String OS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		runtime = Runtime.getRuntime();
 		try {
-			// Spawner does not work for Windows 98 fallback
-			if (OS != null && OS.equals("windows 98")) { //$NON-NLS-1$
-				hasSpawner = false;
-			} else {
-				System.loadLibrary("spawner"); //$NON-NLS-1$
-				hasSpawner = true;
-			}
+			System.loadLibrary("spawner"); //$NON-NLS-1$
+			hasSpawner = true;
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (UnsatisfiedLinkError e) {

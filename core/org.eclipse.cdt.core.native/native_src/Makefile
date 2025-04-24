@@ -38,7 +38,6 @@ ifeq ($(UNAME),Linux)
 LIBS = \
 	$(OS_DIR_WIN32_X86_64)/starter.exe \
 	$(OS_DIR_WIN32_X86_64)/spawner.dll \
-	$(OS_DIR_WIN32_X86_64)/pty.dll \
 	$(OS_DIR_LINUX_X86_64)/libspawner.so \
 	$(OS_DIR_LINUX_X86_64)/libpty.so \
 	$(OS_DIR_LINUX_AARCH64)/libspawner.so \
@@ -68,8 +67,7 @@ LIBS = \
 else
 LIBS = \
 	$(OS_DIR_WIN32_X86_64)/starter.exe \
-	$(OS_DIR_WIN32_X86_64)/spawner.dll \
-	$(OS_DIR_WIN32_X86_64)/pty.dll
+	$(OS_DIR_WIN32_X86_64)/spawner.dll
 endif
 endif
 endif
@@ -87,7 +85,6 @@ MAC_TO_SIGN=$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 	$(OS_DIR_MACOS_AARCH64)/libpty.jnilib
 WIN_TO_SIGN=$(OS_DIR_WIN32_X86_64)/starter.exe \
 	$(OS_DIR_WIN32_X86_64)/spawner.dll \
-	$(OS_DIR_WIN32_X86_64)/pty.dll \
 	$(OS_DIR_WIN32_AARCH64)/starter.exe \
 	$(OS_DIR_WIN32_AARCH64)/spawner.dll
 ### This block of code also exists in native/org.eclipse.cdt.native.serial/native_src/Makefile
@@ -129,14 +126,6 @@ $(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win
 		-DUNICODE \
 		$^ \
 		-Wl,--kill-at --shared
-
-$(OS_DIR_WIN32_X86_64)/pty.dll: win/pty.cpp win/pty_dllmain.cpp  win/util.c
-	mkdir -p $(dir $@) && \
-	$(REPRODUCIBLE_BUILD_WRAPPER) \
-	x86_64-w64-mingw32-g++ $(COMMON_CCFLAGS) -o $@ -Iinclude -Iwin/include -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
-		-DUNICODE \
-		$^ \
-		-Wl,--kill-at --shared -L$(OS_DIR_WIN32_X86_64) -lwinpty -static-libstdc++ -static-libgcc
 
 # Windows aarch64
 $(OS_DIR_WIN32_AARCH64)/starter.exe: win/starter.c win/util.c

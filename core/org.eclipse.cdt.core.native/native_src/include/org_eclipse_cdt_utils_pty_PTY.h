@@ -23,15 +23,6 @@ JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_change_1window_1size(J
 
 /*
  * Class:     org_eclipse_cdt_utils_pty_PTY
- * Method:    exec2
- * Signature:
- * ([Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;[Lorg/eclipse/cdt/utils/spawner/Spawner/IChannel;Ljava/lang/String;IZ)I
- */
-JNIEXPORT jint JNICALL Java_org_eclipse_cdt_utils_pty_PTY_exec2(JNIEnv *, jobject, jobjectArray, jobjectArray, jstring,
-                                                                jobjectArray, jstring, jint, jboolean);
-
-/*
- * Class:     org_eclipse_cdt_utils_pty_PTY
  * Method:    waitFor
  * Signature: (II)I
  */

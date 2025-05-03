@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2023 Nokia and others.
+ * Copyright (c) 2007, 2025 Nokia and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  *     Ling Wang (Nokia) bug 201000
  *     Serge Beauchamp (Freescale Semiconductor) - Bug 421070
  *     Red Hat Inc. - add debuginfo and macro section support
- *     John Dallaway - support DWARF v5 content form data (#443)
+ *     John Dallaway - support DWARF v5 content form data (#443, #1135)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -37,6 +37,7 @@ import org.eclipse.cdt.utils.coff.PE64;
 import org.eclipse.cdt.utils.debug.IDebugEntryRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Section;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -50,7 +51,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	// These are sections that need be parsed to get the source file list.
 	final static String[] DWARF_SectionsToParse = { DWARF_DEBUG_INFO, DWARF_DEBUG_LINE, DWARF_DEBUG_ABBREV,
 			DWARF_DEBUG_STR, // this is optional. Some compilers don't generate it.
-			DWARF_DEBUG_MACRO, DWARF_DEBUG_LINE_STR };
+			DWARF_DEBUG_MACRO, DWARF_DEBUG_LINE_STR, DWARF_DEBUG_STR_OFFSETS };
 
 	final static String[] DWARF_ALT_SectionsToParse = { DWARF_DEBUG_STR, DWARF_DEBUG_MACRO };
 
@@ -368,8 +369,8 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		data.get(dcf_count);
 		List<ContentForm> directoryContentForms = new ArrayList<>();
 		for (int fmt = 0; fmt < dcf_count[0]; fmt++) {
-			ContentForm def = readContentForm(data);
-			directoryContentForms.add(def);
+			ContentForm dcf = readContentForm(data);
+			directoryContentForms.add(dcf);
 		}
 
 		// read directories
@@ -386,7 +387,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 						dir = new Path(cuCompDir).append(path);
 					}
 					directories.add(dir.toString());
-				} // TODO: support other DW_LNCT_path forms
+				} else {
+					ILog.get().warn(String.format("DWARF directory content 0x%x form 0x%x not handled", //$NON-NLS-1$
+							contentForm.lnct, contentForm.form));
+				}
 			}
 		}
 
@@ -395,8 +399,8 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		data.get(fncf_count);
 		List<ContentForm> fileNameContentForms = new ArrayList<>();
 		for (int fmt = 0; fmt < fncf_count[0]; fmt++) {
-			ContentForm fnef = readContentForm(data);
-			fileNameContentForms.add(fnef);
+			ContentForm fncf = readContentForm(data);
+			fileNameContentForms.add(fncf);
 		}
 
 		// read file names
@@ -409,12 +413,17 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 						&& (DwarfConstants.DW_LNCT_path == contentForm.lnct)) {
 					long offset = readOffset(data, offsetSize);
 					filename = getPathInLineStr(offset);
-				} // TODO: support other DW_LNCT_path forms
-				if ((DwarfConstants.DW_FORM_udata == contentForm.form)
+				} else if ((DwarfConstants.DW_FORM_udata == contentForm.form)
 						&& (DwarfConstants.DW_LNCT_directory_index == contentForm.lnct)) {
 					long directory_index = read_unsigned_leb128(data);
 					directory = directories.get((int) directory_index);
-				} // TODO: support other DW_LNCT_directory_index forms
+				} else if ((DwarfConstants.DW_FORM_data16 == contentForm.form)
+						&& (DwarfConstants.DW_LNCT_MD5 == contentForm.lnct)) {
+					data.get(new byte[16]); // skip MD5 digest
+				} else {
+					ILog.get().warn(String.format("DWARF file content 0x%x form 0x%x not handled", //$NON-NLS-1$
+							contentForm.lnct, contentForm.form));
+				}
 			}
 			if ((null != directory) && (null != filename)) {
 				addSourceFile(directory, filename);
@@ -704,8 +713,8 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 	// Override parent: only handle TAG_Compile_Unit.
 	@Override
-	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry,
-			List<Dwarf.AttributeValue> list) {
+	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List<Dwarf.AttributeValue> list)
+			throws IOException {
 		int tag = (int) entry.tag;
 		switch (tag) {
 		case DwarfConstants.DW_TAG_compile_unit:
@@ -720,10 +729,14 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	// Just get the file name of the CU.
 	// Argument "requestor" is ignored.
 	@Override
-	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) {
+	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) throws IOException {
 
 		String cuName, cuCompDir;
 		int stmtList = -1;
+		ByteBuffer strings = dwarfSections.get(DWARF_DEBUG_STR);
+		ByteBuffer offsets = dwarfSections.get(DWARF_DEBUG_STR_OFFSETS);
+		byte offsetSize = (offsets != null) ? readInitialLengthField(offsets).offsetSize : -1;
+		long offsetsBase = -1L;
 
 		cuName = cuCompDir = ""; //$NON-NLS-1$
 
@@ -736,10 +749,29 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					cuName = (String) av.value;
 					break;
 				case DwarfConstants.DW_AT_comp_dir:
-					cuCompDir = (String) av.value;
+					if ((av.attribute.form == DwarfConstants.DW_FORM_strp)
+							|| (av.attribute.form == DwarfConstants.DW_FORM_line_strp)) {
+						cuCompDir = (String) av.value;
+					} else if ((av.attribute.form == DwarfConstants.DW_FORM_strx1) && (offsets != null)
+							&& (offsetsBase != -1L)) {
+						int index = ((Number) av.value).intValue();
+						// read the pointer into .debug_str from .debug_str_offsets
+						long offset = offsetsBase + (index * offsetSize);
+						offsets.position((int) offset);
+						long strp = readOffset(offsets, offsetSize);
+						// read the string from .debug_str
+						strings.position((int) strp);
+						cuCompDir = readString(strings);
+					} else {
+						ILog.get().warn(String.format("DW_AT_comp_dir form 0x%x not handled", av.attribute.form)); //$NON-NLS-1$
+					}
 					break;
 				case DwarfConstants.DW_AT_stmt_list:
 					stmtList = ((Number) av.value).intValue();
+					break;
+				case DwarfConstants.DW_AT_str_offsets_base:
+					// read the base of all offsets into .debug_str_offsets
+					offsetsBase = (offsetSize == 8) ? ((Number) av.value).longValue() : ((Number) av.value).intValue();
 					break;
 				default:
 					break;

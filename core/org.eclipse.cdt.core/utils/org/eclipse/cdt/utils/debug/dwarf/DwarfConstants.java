@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2023 QNX Software Systems and others.
+ * Copyright (c) 2000, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -148,6 +148,8 @@ public class DwarfConstants {
 	public final static int DW_AT_variable_parameter = 0x4b;
 	public final static int DW_AT_virtuality = 0x4c;
 	public final static int DW_AT_vtable_elem_location = 0x4d;
+	/** @since 9.1 */
+	public final static int DW_AT_str_offsets_base = 0x72;
 	public final static int DW_AT_lo_user = 0x2000;
 	public final static int DW_AT_MIPS_fde = 0x2001;
 	public final static int DW_AT_MIPS_loop_begin = 0x2002;
@@ -209,6 +211,8 @@ public class DwarfConstants {
 	 * @since 5.7
 	 */
 	public final static int DW_FORM_flag_present = 0x19;
+	/** @since 9.1 */
+	public final static int DW_FORM_data16 = 0x1e;
 	/**
 	 * @since 8.1
 	 */
@@ -221,6 +225,8 @@ public class DwarfConstants {
 	 * @since 8.3
 	 */
 	public final static int DW_FORM_implicit_const = 0x21;
+	/** @since 9.1 */
+	public final static int DW_FORM_strx1 = 0x25;
 	/* Extensions for Fission. See http://gcc.gnu.org/wiki/DebugFission. */
 	/**
 	 * @since 5.7
@@ -250,6 +256,8 @@ public class DwarfConstants {
 	 * @since 8.3
 	 */
 	public final static int DW_LNCT_directory_index = 0x02; /* Index to directories entry */
+	/** @since 9.1 */
+	public final static int DW_LNCT_MD5 = 0x05; /* MD5 digest */
 
 	/* DWARF location operation encodings. */
 	public final static int DW_OP_addr = 0x03; /* Constant address. */

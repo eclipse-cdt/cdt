@@ -1,44 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.core" version="2">
-    <resource path="utils/org/eclipse/cdt/utils/coff/Coff64.java" type="org.eclipse.cdt.utils.coff.Coff64$SectionHeader">
+    <resource path="utils/org/eclipse/cdt/utils/debug/dwarf/DwarfConstants.java" type="org.eclipse.cdt.utils.debug.dwarf.DwarfConstants">
         <filter id="336658481">
             <message_arguments>
-                <message_argument value="org.eclipse.cdt.utils.coff.Coff64.SectionHeader"/>
-                <message_argument value="STYP_MEM_DISCARDABLE"/>
+                <message_argument value="org.eclipse.cdt.utils.debug.dwarf.DwarfConstants"/>
+                <message_argument value="DW_AT_str_offsets_base"/>
             </message_arguments>
         </filter>
         <filter id="336658481">
             <message_arguments>
-                <message_argument value="org.eclipse.cdt.utils.coff.Coff64.SectionHeader"/>
-                <message_argument value="STYP_MEM_WRITE"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="utils/org/eclipse/cdt/utils/coff/Coff64.java" type="org.eclipse.cdt.utils.coff.Coff64$Symbol">
-        <filter id="336658481">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.utils.coff.Coff64.Symbol"/>
-                <message_argument value="SC_EXTERNAL"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="utils/org/eclipse/cdt/utils/elf/Elf.java" type="org.eclipse.cdt.utils.elf.Elf$ELFhdr">
-        <filter id="336658481">
-            <message_arguments>
-                <message_argument value="org.eclipse.cdt.utils.elf.Elf.ELFhdr"/>
-                <message_argument value="EM_AVR32"/>
+                <message_argument value="org.eclipse.cdt.utils.debug.dwarf.DwarfConstants"/>
+                <message_argument value="DW_FORM_data16"/>
             </message_arguments>
         </filter>
         <filter id="336658481">
             <message_arguments>
-                <message_argument value="org.eclipse.cdt.utils.elf.Elf.ELFhdr"/>
-                <message_argument value="EM_MICROBLAZE"/>
+                <message_argument value="org.eclipse.cdt.utils.debug.dwarf.DwarfConstants"/>
+                <message_argument value="DW_FORM_strx1"/>
             </message_arguments>
         </filter>
         <filter id="336658481">
             <message_arguments>
-                <message_argument value="org.eclipse.cdt.utils.elf.Elf.ELFhdr"/>
-                <message_argument value="EM_V800"/>
+                <message_argument value="org.eclipse.cdt.utils.debug.dwarf.DwarfConstants"/>
+                <message_argument value="DW_LNCT_MD5"/>
             </message_arguments>
         </filter>
     </resource>

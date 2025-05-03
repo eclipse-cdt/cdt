@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 QNX Software Systems and others.
+ * Copyright (c) 2000, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     John Dallaway - Support DW_FORM_line_strp (#198)
  *     John Dallaway - Support DW_FORM_implicit_const (#443)
  *     Alexander Fedorov (ArSysOp) - fix resource leak (#693)
+ *     John Dallaway - Support DW_FORM_strx1 (#1135)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -52,6 +53,7 @@ public class Dwarf implements AutoCloseable {
 	final static String DWARF_DEBUG_LOC = ".debug_loc"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_PUBNAMES = ".debug_pubnames"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_STR = ".debug_str"; //$NON-NLS-1$
+	final static String DWARF_DEBUG_STR_OFFSETS = ".debug_str_offsets"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_FUNCNAMES = ".debug_funcnames"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_TYPENAMES = ".debug_typenames"; //$NON-NLS-1$
 	final static String DWARF_DEBUG_VARNAMES = ".debug_varnames"; //$NON-NLS-1$
@@ -797,6 +799,10 @@ public class Dwarf implements AutoCloseable {
 		}
 			break;
 
+		case DwarfConstants.DW_FORM_strx1:
+			obj = Integer.valueOf(Byte.toUnsignedInt(in.get()));
+			break;
+
 		case DwarfConstants.DW_FORM_ref1:
 			obj = Byte.valueOf(in.get());
 			break;
@@ -859,7 +865,8 @@ public class Dwarf implements AutoCloseable {
 		return obj;
 	}
 
-	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List<AttributeValue> list) {
+	void processDebugInfoEntry(IDebugEntryRequestor requestor, AbbreviationEntry entry, List<AttributeValue> list)
+			throws IOException {
 		int len = list.size();
 		int tag = (int) entry.tag;
 		if (printEnabled)
@@ -1015,7 +1022,7 @@ public class Dwarf implements AutoCloseable {
 		requestor.exitFunction(highPC);
 	}
 
-	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) {
+	void processCompileUnit(IDebugEntryRequestor requestor, List<AttributeValue> list) throws IOException {
 		if (currentCU != null) {
 			requestor.exitCompilationUnit(currentCU.highPC);
 		}

@@ -424,7 +424,7 @@ public class Spawner extends Process {
 	}
 
 	/**
-	 * @since 6.3
+	 * @since 6.4
 	 * @return the current pty instance for this spawner
 	 */
 	public PTY pty() {

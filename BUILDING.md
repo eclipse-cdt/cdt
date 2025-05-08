@@ -28,6 +28,38 @@ The CI build automatically run code cleanliness checks. To run them on your comp
 docker run --rm -it -v $(git rev-parse --show-toplevel):/work -w /work/$(git rev-parse --show-prefix) --cap-add=SYS_PTRACE --security-opt seccomp=unconfined quay.io/eclipse-cdt/cdt-infra:latest releng/scripts/check_code_cleanliness.sh
 ```
 
+#### Diagnosing code cleanliness failures
+
+##### `baseline and build artifacts have same version but different contents`
+
+An error like this:
+
+```
+Error:  Failed to execute goal org.eclipse.tycho:tycho-p2-plugin:4.0.12:p2-metadata (baselinereplace-p2-metadata) on project org.eclipse.cdt.ui: baseline and build artifacts have same version but different contents
+Error:     no-classifier: different
+Error:        org/eclipse/cdt/internal/ui/ImageCombo.class: different
+```
+
+may be caused because a dependency has changed API in a way that the same CDT source compiles to different binary.
+To diagnose such a problem you can compare the disassembled class files to see what changed:
+
+1. Run the check_code_cleanliness locally using docker (see above for command line)
+2. extract the class from the baseline jar (e.g. `core/org.eclipse.cdt.ui/target/baseline/org.eclipse.cdt.ui-9.0.0.202502172234.jar`)
+3. Using javap, disassemble the baseline and compiled class file. e.g:
+  * `javap -c  baseline/osgi.bundle/org/eclipse/cdt/internal/ui/ImageCombo.class > baseline.asm`
+  * `javap -c  classes/org/eclipse/cdt/internal/ui/ImageCombo.class > after.asm`
+4. Compare the the asm files. e.g:
+  * `diff baseline.asm after.asm` will output something like:
+
+```java
+270c270
+<       17: invokespecial #132                // Method org/eclipse/swt/widgets/TypedListener."<init>":(Lorg/eclipse/swt/internal/SWTEventListener;)V
+---
+>       17: invokespecial #132                // Method org/eclipse/swt/widgets/TypedListener."<init>":(Ljava/util/EventListener;)V
+```
+
+5. With the above information you can track down what may have changed. e.g. See https://github.com/eclipse-cdt/cdt/pull/1159#issuecomment-2858751463 for the results of this worked example.
+
 ### Profiles
 
 There are a number of profiles (-P to mvn) to control the behaviour of the build.

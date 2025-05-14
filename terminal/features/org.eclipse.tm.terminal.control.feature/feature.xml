@@ -35,15 +35,9 @@
    </license>
 
    <requires>
+      <import plugin="org.eclipse.tm.terminal.control" version="5.5.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.ui"/>
    </requires>
-
-   <plugin
-         id="org.eclipse.tm.terminal.control"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>

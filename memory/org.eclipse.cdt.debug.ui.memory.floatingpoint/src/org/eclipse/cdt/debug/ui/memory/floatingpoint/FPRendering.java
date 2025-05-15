@@ -1197,8 +1197,6 @@ class CopyAction extends Action {
 		setToolTipText(DebugUIMessages.CopyViewToClipboardAction_tooltip);
 		setImageDescriptor(
 				DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY_VIEW_TO_CLIPBOARD));
-		setHoverImageDescriptor(
-				DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_COPY_VIEW_TO_CLIPBOARD));
 		setDisabledImageDescriptor(
 				DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD));
 	}

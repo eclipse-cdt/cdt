@@ -15,9 +15,9 @@
 package org.eclipse.cdt.debug.internal.ui.views.signals;
 
 import org.eclipse.cdt.debug.ui.CDebugUIPlugin;
-import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -29,7 +29,7 @@ public class SignalsViewColumnPresentation implements IColumnPresentation {
 
 	public static final String ID = PREFIX + "signalsViewColumnPresentationId"; //$NON-NLS-1$
 
-	private static final String COLUMN_ID_NAME = VariableColumnPresentation.COLUMN_VARIABLE_NAME;
+	private static final String COLUMN_ID_NAME = IDebugUIConstants.COLUMN_ID_VARIABLE_VALUE;
 	private static final String COLUMN_ID_PASS = PREFIX + "signalsColumn.pass"; //$NON-NLS-1$
 	private static final String COLUMN_ID_STOP = PREFIX + "signalsColumn.stop"; //$NON-NLS-1$
 	private static final String COLUMN_ID_DESC = PREFIX + "signalsColumn.desc"; //$NON-NLS-1$

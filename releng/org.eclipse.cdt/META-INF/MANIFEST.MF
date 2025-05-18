@@ -5,6 +5,6 @@ Bundle-SymbolicName: org.eclipse.cdt; singleton:=true
 Bundle-Version: 12.1.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.ui.intro;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.ui.cheatsheets;bundle-version="[3.2.0,4.0.0)"
+Require-Bundle: org.eclipse.ui.intro;bundle-version="[3.7.600,4.0.0)",
+ org.eclipse.ui.cheatsheets;bundle-version="[3.8.600,4.0.0)"
 Bundle-ActivationPolicy: lazy

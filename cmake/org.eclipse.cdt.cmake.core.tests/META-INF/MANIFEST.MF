@@ -11,6 +11,6 @@ Import-Package: org.assertj.core.api;version="[3.24.2,4.0.0)",
 Automatic-Module-Name: org.eclipse.cdt.cmake.core.tests
 Bundle-Vendor: %Bundle-Vendor
 Bundle-Copyright: %Bundle-Copyright
-Require-Bundle: org.junit,
+Require-Bundle: org.junit;bundle-version="[4.13.2,5)",
  org.eclipse.cdt.core.tests;bundle-version="[5.4.0,6.0.0)"
 

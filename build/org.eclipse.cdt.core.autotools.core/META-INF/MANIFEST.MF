@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.core.autotools.core;singleton:=true
-Bundle-Version: 1.3.300.qualifier
+Bundle-Version: 1.3.400.qualifier
 Bundle-Activator: org.eclipse.cdt.core.autotools.core.internal.Activator
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.tools.templates.core;bundle-version="2.0.0",
- org.eclipse.tools.templates.freemarker;bundle-version="2.0.0",
- org.eclipse.cdt.core;bundle-version="6.3.1",
- org.eclipse.core.resources;bundle-version="3.12.0",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.tools.templates.core;bundle-version="[2.0.0,3)",
+ org.eclipse.tools.templates.freemarker;bundle-version="[2.0.0,3)",
+ org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
+ org.eclipse.core.resources;bundle-version="[3.22.200,4)",
  org.eclipse.launchbar.core;bundle-version="[3.0.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy

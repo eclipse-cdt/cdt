@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tm.terminal.view.core;singleton:=true
-Bundle-Version: 4.10.400.qualifier
+Bundle-Version: 4.10.500.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.view.core.activator.CoreBundleActivator
 Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.core.expressions;bundle-version="3.4.400",
- org.eclipse.core.runtime;bundle-version="3.8.0"
+Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.100,4)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

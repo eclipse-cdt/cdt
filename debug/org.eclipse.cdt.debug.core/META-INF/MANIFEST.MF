@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.core; singleton:=true
-Bundle-Version: 9.0.0.qualifier
+Bundle-Version: 9.0.100.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.core.CDebugCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -38,13 +38,13 @@ Export-Package: org.eclipse.cdt.debug.core,
    org.eclipse.cdt.dsf.ui,
    org.eclipse.cdt.tests.dsf.gdb",
  org.eclipse.cdt.debug.internal.core.srcfinder;x-internal:=true
-Require-Bundle: org.eclipse.cdt.core;bundle-version="[9.0.0,10.0.0)",
- org.eclipse.core.filesystem;bundle-version="1.2.0",
- org.eclipse.core.resources;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.core.variables;bundle-version="3.2.0",
- org.eclipse.debug.core;bundle-version="[3.2.0,4.0.0)",
- org.eclipse.launchbar.core;bundle-version="2.0.0"
+Require-Bundle: org.eclipse.cdt.core;bundle-version="[9.1.0,10.0.0)",
+ org.eclipse.core.filesystem;bundle-version="[1.11.200,2)",
+ org.eclipse.core.resources;bundle-version="[3.22.200,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.33.100,4.0.0)",
+ org.eclipse.core.variables;bundle-version="[3.6.500,4)",
+ org.eclipse.debug.core;bundle-version="[3.23.0,4.0.0)",
+ org.eclipse.launchbar.core;bundle-version="[3.0.0,4)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.debug.core

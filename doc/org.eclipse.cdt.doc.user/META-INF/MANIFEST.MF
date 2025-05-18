@@ -6,7 +6,7 @@ Bundle-Version: 12.1.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.eclipse.help,
- org.eclipse.ui.cheatsheets,
- org.eclipse.ui.intro,
- org.eclipse.ui.intro.universal
+Require-Bundle: org.eclipse.help;bundle-version="[3.10.500,4)",
+ org.eclipse.ui.cheatsheets;bundle-version="[3.8.600,4)",
+ org.eclipse.ui.intro;bundle-version="[3.7.600,4)",
+ org.eclipse.ui.intro.universal;bundle-version="[3.5.500,4)"

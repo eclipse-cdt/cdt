@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.core;singleton:=true
-Bundle-Version: 4.2.300.qualifier
+Bundle-Version: 4.2.400.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.core.CodanCorePlugin
 Bundle-Vendor: %Bundle-Vendor
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.resources
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.resources;bundle-version="[3.22.200,4)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.cdt.codan.core,

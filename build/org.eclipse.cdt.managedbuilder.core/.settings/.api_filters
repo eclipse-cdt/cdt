@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.cdt.managedbuilder.core" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Suppressing major version bump because re-export of bundle shouldn't really change things. This is because in reality the required version was already as now explicit." id="927989779">
+            <message_arguments>
+                <message_argument value="9.7.200"/>
+                <message_argument value="org.eclipse.cdt.make.core"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/cdt/managedbuilder/makegen/gnu/ManagedBuildGnuToolInfo.java" type="org.eclipse.cdt.managedbuilder.makegen.gnu.ManagedBuildGnuToolInfo">
         <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
             <message_arguments>

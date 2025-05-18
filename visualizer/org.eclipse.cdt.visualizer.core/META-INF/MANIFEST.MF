@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.eclipse.cdt.visualizer.core;singleton:=true
-Bundle-Version: 1.2.200.qualifier
+Bundle-Version: 1.2.300.qualifier
 Bundle-Activator: org.eclipse.cdt.visualizer.core.plugin.CDTVisualizerCorePlugin
 Bundle-Vendor: %provider.name
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.core.resources
+Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.resources;bundle-version="[3.22.200,4)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

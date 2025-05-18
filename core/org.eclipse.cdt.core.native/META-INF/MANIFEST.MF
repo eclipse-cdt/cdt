@@ -10,9 +10,9 @@ Export-Package: org.eclipse.cdt.core;native=split;mandatory:=native,
  org.eclipse.cdt.utils;native=split;mandatory:=native,
  org.eclipse.cdt.utils.pty;version="5.7",
  org.eclipse.cdt.utils.spawner;version="5.7"
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.1.0,4.0.0)",
- com.sun.jna;bundle-version="[5.6.0,6.0.0)";resolution:=optional,
- com.sun.jna.platform;bundle-version="[5.6.0,6.0.0)";resolution:=optional
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4.0.0)",
+ com.sun.jna;bundle-version="[5.17.0,6.0.0)";resolution:=optional,
+ com.sun.jna.platform;bundle-version="[5.17.0,6.0.0)";resolution:=optional
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.core.native

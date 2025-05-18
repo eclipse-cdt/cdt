@@ -6,6 +6,6 @@ Bundle-Vendor: %providerName
 Bundle-Version: 1.0.0.qualifier
 Fragment-Host: org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Require-Bundle: org.junit
+Require-Bundle: org.junit;bundle-version="[4.13.2,5)"
 Automatic-Module-Name: org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests
 Bundle-Localization: fragment

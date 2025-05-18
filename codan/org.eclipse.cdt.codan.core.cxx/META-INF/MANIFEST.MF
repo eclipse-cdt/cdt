@@ -2,13 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.core.cxx;singleton:=true
-Bundle-Version: 3.6.200.qualifier
+Bundle-Version: 3.6.300.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.core.cxx.Activator
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.cdt.core,
- org.eclipse.cdt.codan.core,
- org.eclipse.core.resources,
- org.eclipse.core.filesystem
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
+ org.eclipse.cdt.codan.core;bundle-version="[4.2.300,5)",
+ org.eclipse.core.resources;bundle-version="[3.22.200,4)",
+ org.eclipse.core.filesystem;bundle-version="[1.11.200,2)"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.codan.core.cxx,
  org.eclipse.cdt.codan.core.cxx.externaltool,

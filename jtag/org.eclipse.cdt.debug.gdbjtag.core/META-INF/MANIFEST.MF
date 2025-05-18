@@ -2,17 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.gdbjtag.core;singleton:=true
-Bundle-Version: 10.8.300.qualifier
+Bundle-Version: 10.8.400.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.gdbjtag.core.Activator
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.debug.core,
- org.eclipse.cdt.launch,
- org.eclipse.cdt.debug.core,
- org.eclipse.cdt.core,
- org.eclipse.core.variables,
- org.eclipse.cdt.dsf.gdb,
- org.eclipse.cdt.dsf
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.debug.core;bundle-version="[3.23.0,4)",
+ org.eclipse.cdt.launch;bundle-version="[11.0.0,12)",
+ org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)",
+ org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
+ org.eclipse.core.variables;bundle-version="[3.6.500,4)",
+ org.eclipse.cdt.dsf.gdb;bundle-version="[7.1.500,8)",
+ org.eclipse.cdt.dsf;bundle-version="[2.12.200,3)"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.debug.gdbjtag.core,
  org.eclipse.cdt.debug.gdbjtag.core.dsf.gdb.service,

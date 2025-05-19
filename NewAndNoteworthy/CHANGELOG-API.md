@@ -8,6 +8,16 @@ This section describes API removals that occurred in past releases, and upcoming
 
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
 
+## API Changes in CDT 12.1.
+
+### Migrate tm.terminal.control to eclipse platform
+
+The source for `org.eclipse.tm.terminal.control` has been migrated to the Eclipse Platform GitHub repository.
+The new location of this bundle's source is https://github.com/eclipse-platform/eclipse.platform/tree/master/terminal/plugins/org.eclipse.tm.terminal.control
+It was mirgated to platform in https://github.com/eclipse-platform/eclipse.platform/pull/1851 as part of the work to achieve https://github.com/eclipse-platform/eclipse.platform/pull/1762.
+
+There are no API changes, however future direction of this bundle will now be managed by the Eclipse Platform project.
+
 ## API Changes in CDT 12.0.
 
 ### CDT's Core Build System refactored and improved

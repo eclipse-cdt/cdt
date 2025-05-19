@@ -6,7 +6,7 @@ Bundle-Version: 4.8.300.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.connector.telnet.activator.UIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.equinox.security;bundle-version="[1.4.600,2)",
  org.eclipse.tm.terminal.view.core;bundle-version="[4.10.400,5)";resolution:=optional,
  org.eclipse.tm.terminal.view.ui;bundle-version="[4.11.600,5)";resolution:=optional,

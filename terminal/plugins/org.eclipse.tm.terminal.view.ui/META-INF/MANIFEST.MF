@@ -6,7 +6,7 @@ Bundle-Version: 4.11.700.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.view.ui.activator.UIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)";resolution:=optional,
  org.eclipse.core.variables;bundle-version="[3.6.500,4)",
  org.eclipse.debug.ui;bundle-version="[3.18.800,4)";resolution:=optional,

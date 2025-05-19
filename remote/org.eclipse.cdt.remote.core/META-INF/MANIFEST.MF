@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.cdt.remote.core;singleton:=true
 Bundle-Version: 1.2.300.qualifier
 Bundle-Activator: org.eclipse.cdt.remote.internal.core.Activator
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
  org.eclipse.remote.core;bundle-version="[4.2.300,5)",
  org.eclipse.core.filesystem;bundle-version="[1.11.200,2)"

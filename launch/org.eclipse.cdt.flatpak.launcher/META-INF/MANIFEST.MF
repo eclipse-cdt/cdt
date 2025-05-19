@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.cdt.flatpak.launcher.FlatpakLaunchPlugin
 Bundle-Vendor: %Plugin.vendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.cdt.launch;bundle-version="[11.0.0,12)",
  org.eclipse.debug.core;bundle-version="[3.23.0,4)",
  org.eclipse.debug.ui;bundle-version="[3.18.800,4)",

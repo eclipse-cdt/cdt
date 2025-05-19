@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.cdt.autotools.ui.AutotoolsUIPlugin
 Bundle-Localization: plugin
 Bundle-Vendor: %provider
 Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.cdt.autotools.core;bundle-version="[2.2.400,3)",
  org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)",

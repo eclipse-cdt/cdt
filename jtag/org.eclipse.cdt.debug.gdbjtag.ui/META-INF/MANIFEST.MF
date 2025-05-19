@@ -6,7 +6,7 @@ Bundle-Version: 9.1.200.qualifier
 Bundle-Activator: org.eclipse.cdt.debug.gdbjtag.ui.Activator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.debug.ui;bundle-version="[3.18.800,4)",
  org.eclipse.cdt.launch;bundle-version="[11.0.0,12)",
  org.eclipse.cdt.debug.gdbjtag.core;bundle-version="[10.8.300,11)",

@@ -9,7 +9,7 @@ Import-Package: org.eclipse.cdt.utils.pty;mandatory:=native,
  org.eclipse.cdt.utils.spawner;mandatory:=native
 Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)";resolution:=optional,
- org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.tm.terminal.view.core;bundle-version="[4.10.400,5)";resolution:=optional,
  org.eclipse.tm.terminal.view.ui;bundle-version="[4.11.600,5)";resolution:=optional,
  org.eclipse.tm.terminal.control;bundle-version="[5.5.400,6)",

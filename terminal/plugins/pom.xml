@@ -25,8 +25,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>org.eclipse.tm.terminal.control</module>
-
 		<module>org.eclipse.tm.terminal.connector.local</module>
 		<module>org.eclipse.tm.terminal.connector.process</module>
 		<module>org.eclipse.tm.terminal.connector.remote</module>

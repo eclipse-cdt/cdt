@@ -23,6 +23,13 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
     if [ -z "$plugin" ]; then
         plugin=$(xmllint --xpath 'string(//feature/@id)' $feature_xml)
     fi
+
+    if [ "$plugin" == 'org.eclipse.tm.terminal.control' ]; then
+        # As part of https://github.com/eclipse-cdt/cdt/pull/1166 this bundle
+        # was moved to Eclipse platform, so we cannot run these checks.
+        continue;
+    fi
+
     feature_dir=$(dirname ${feature_xml})
 
     if [ $(find * -name $plugin -type d -not -path */target/* | wc -l) -ne 1 ]; then

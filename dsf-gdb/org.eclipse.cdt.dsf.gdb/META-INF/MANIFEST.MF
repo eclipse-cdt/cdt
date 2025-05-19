@@ -6,7 +6,7 @@ Bundle-SymbolicName: org.eclipse.cdt.dsf.gdb;singleton:=true
 Bundle-Version: 7.1.600.qualifier
 Bundle-Activator: org.eclipse.cdt.dsf.gdb.internal.GdbPlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.cdt.dsf;bundle-version="[2.12.200,3)",
  org.eclipse.debug.core;bundle-version="[3.23.0,4)",
  org.eclipse.cdt.core;bundle-version="[9.1.0,10)",

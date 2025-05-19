@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.cdt.tests.dsf.gdb;singleton:=true
 Bundle-Version: 2.3.100.qualifier
 Bundle-Activator: org.eclipse.cdt.tests.dsf.gdb.launching.TestsPlugin
 Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.cdt.dsf;bundle-version="[2.12.200,3)",
  org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
  org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)",

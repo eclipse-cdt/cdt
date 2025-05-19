@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.build.crossgcc;singleton:=true
 Bundle-Version: 1.3.600.qualifier
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
  org.eclipse.cdt.managedbuilder.core;bundle-version="[9.7.100,10)",
  org.eclipse.cdt.managedbuilder.gnu.ui;bundle-version="[8.7.200,9)",

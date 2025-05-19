@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.eclipse.cdt.testsrunner.tests
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.cdt.testsrunner.test.TestsRunnerTestActivator
 Require-Bundle: org.junit;bundle-version="[4.13.2,5)",
- org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.cdt.core.tests;bundle-version="[5.4.100,6)",
  org.eclipse.cdt.testsrunner;bundle-version="[8.3.300,9)",
  org.eclipse.cdt.testsrunner.boost;bundle-version="[7.2.400,8)",

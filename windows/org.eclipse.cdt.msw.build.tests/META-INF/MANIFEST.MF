@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %providerName
 Automatic-Module-Name: org.eclipse.cdt.msw.build.tests
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)",
  org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
  org.eclipse.cdt.core.tests;bundle-version="[5.4.0,6)",

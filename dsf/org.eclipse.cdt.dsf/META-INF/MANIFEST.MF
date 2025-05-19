@@ -6,7 +6,7 @@ Bundle-SymbolicName: org.eclipse.cdt.dsf;singleton:=true
 Bundle-Version: 2.12.300.qualifier
 Bundle-Activator: org.eclipse.cdt.dsf.internal.DsfPlugin
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.100,4)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.debug.core;bundle-version="[3.23.0,4)",
  org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
  org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)",

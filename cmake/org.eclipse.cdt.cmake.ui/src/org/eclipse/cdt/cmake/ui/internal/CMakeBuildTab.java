@@ -90,10 +90,11 @@ public class CMakeBuildTab extends CommonBuildTab {
 
 		generatorLabel = new Label(cmakeGroup, SWT.NONE);
 		generatorLabel.setText(Messages.CMakeBuildTab_Generator);
-
+		generatorLabel.setToolTipText(Messages.CMakeBuildTab_GeneratorTooltip);
 		CMakeGenerator[] generators = CMakeGenerator.values();
 		String[] generatorNames = Arrays.stream(generators).map(CMakeGenerator::getCMakeName).toArray(String[]::new);
 		generatorCombo = new Combo(cmakeGroup, SWT.DROP_DOWN);
+		generatorCombo.setToolTipText(Messages.CMakeBuildTab_GeneratorComboTooltip);
 		generatorCombo.setItems(generatorNames);
 		generatorCombo.select(0);
 		generatorCombo.addModifyListener(e -> updateLaunchConfigurationDialog());
@@ -106,29 +107,37 @@ public class CMakeBuildTab extends CommonBuildTab {
 
 		cmakeArgsLabel = new Label(cmakeGroup, SWT.NONE);
 		cmakeArgsLabel.setText(Messages.CMakeBuildTab_CMakeArgs);
+		cmakeArgsLabel.setToolTipText(Messages.CMakeBuildTab_cmakeArgsTooltip);
 
 		cmakeArgsText = new Text(cmakeGroup, SWT.BORDER);
+		cmakeArgsText.setToolTipText(Messages.CMakeBuildTab_cmakeArgsTooltip);
 		cmakeArgsText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		cmakeArgsText.addModifyListener(e -> updateLaunchConfigurationDialog());
 
 		buildCommandLabel = new Label(cmakeGroup, SWT.NONE);
 		buildCommandLabel.setText(Messages.CMakeBuildTab_BuildCommand);
+		buildCommandLabel.setToolTipText(Messages.CMakeBuildTab_buildCommandTooltip);
 
 		buildCommandText = new Text(cmakeGroup, SWT.BORDER);
+		buildCommandText.setToolTipText(Messages.CMakeBuildTab_buildCommandTooltip);
 		buildCommandText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		buildCommandText.addModifyListener(e -> updateLaunchConfigurationDialog());
 
 		allTargetLabel = new Label(cmakeGroup, SWT.NONE);
 		allTargetLabel.setText(Messages.CMakeBuildTab_AllTarget);
+		allTargetLabel.setToolTipText(Messages.CMakeBuildTab_allTargetTooltip);
 
 		allTargetText = new Text(cmakeGroup, SWT.BORDER);
+		allTargetText.setToolTipText(Messages.CMakeBuildTab_allTargetTooltip);
 		allTargetText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		allTargetText.addModifyListener(e -> updateLaunchConfigurationDialog());
 
 		cleanTargetLabel = new Label(cmakeGroup, SWT.NONE);
 		cleanTargetLabel.setText(Messages.CMakeBuildTab_CleanTarget);
+		cleanTargetLabel.setToolTipText(Messages.CMakeBuildTab_cleanTargetTooltip);
 
 		cleanTargetText = new Text(cmakeGroup, SWT.BORDER);
+		cleanTargetText.setToolTipText(Messages.CMakeBuildTab_cleanTargetTooltip);
 		cleanTargetText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		cleanTargetText.addModifyListener(e -> updateLaunchConfigurationDialog());
 

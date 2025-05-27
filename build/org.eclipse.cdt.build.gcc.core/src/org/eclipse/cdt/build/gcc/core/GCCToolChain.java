@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2017 QNX Software Systems and others.
+ * Copyright (c) 2015, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -61,6 +61,9 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 
 	public static final String TYPE_ID = "org.eclipse.cdt.build.gcc"; //$NON-NLS-1$
 
+	private static final String CC = "CC"; //$NON-NLS-1$
+	private static final String CXX = "CXX"; //$NON-NLS-1$
+
 	private static Pattern definePattern = Pattern.compile("#define ([^\\s]*)\\s(.*)"); //$NON-NLS-1$
 
 	private final IToolChainProvider provider;
@@ -109,6 +112,19 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 		}
 	}
 
+	/**
+	 * @param provider The toolchain provider which can discover toolchains.
+	 * @param pathToToolChain Path to the filename of the gcc or g++ compiler. It may or may not have an extension.
+	 * @param arch The CPU architecture the toolchain supports.
+	 * @param envVars Environment variables originate from the core build toolchain provider, either "Discovered
+	 *   toolchain" or"User defined toolchain". It is not expected to contain OS system envVars.
+	 *   When the tc is a user defined, it is possible to specify arbitrary environment variables, meaning the user may
+	 *   have already defined CC/CXX. If CC/CXX is already defined then nothing is added. If CC/CXX is not defined,
+	 *   they are added and set to the appropriate compiler path.
+	 *   Other methods of setting the compiler in CMake (eg; CMAKE_&lt;LANG&gt;_COMPILER in CMakeLists.txt or
+	 *   -DCMAKE_TOOLCHAIN_FILE=file) take precedence over these environment variables, so the user is not
+	 *   inhibited by this approach.
+	 */
 	public GCCToolChain(IToolChainProvider provider, Path pathToToolChain, String arch,
 			IEnvironmentVariable[] envVars) {
 		this.provider = provider;
@@ -150,7 +166,110 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			}
 		}
 		this.pathVar = pathVar;
-		this.envVars = envVars;
+
+		this.envVars = addCompilerOverrides(path, envVars);
+	}
+
+	private IEnvironmentVariable[] addCompilerOverrides(Path pathToToolChain, IEnvironmentVariable[] envVars2) {
+		if (pathToToolChain == null) {
+			return envVars2;
+		}
+		List<IEnvironmentVariable> envVarsNew = new ArrayList<>(Arrays.asList(envVars2));
+		for (String type : new String[] { CC, CXX }) {
+			if (isAbsent(type, envVarsNew)) {
+				IPath mapped = mapCompilerPath(IPath.fromPath(pathToToolChain), type);
+				if (mapped != null) {
+					envVarsNew.add(new EnvironmentVariable(type, mapped.toString()));
+				}
+			}
+		}
+		return envVarsNew.toArray(new EnvironmentVariable[0]);
+	}
+
+	private boolean isAbsent(String name, List<IEnvironmentVariable> envVarsNew) {
+		return envVarsNew.stream().noneMatch(ev -> {
+			if (Platform.OS_WIN32.equals(Platform.getOS())) {
+				return ev.getName().equalsIgnoreCase(name);
+			} else {
+				return ev.getName().equals(name);
+			}
+		});
+	}
+
+	/**
+	 * Given a compiler path and a desiredType ("CC" or "CXX"), return the correct path for that type.
+	 * If the path already matches the desired type, return it as-is.
+	 * Otherwise, convert between gcc and g++ while preserving prefixes and extensions.
+	 *
+	 * @param pathToToolChain Path to the filename of the gcc or g++ compiler. It may or may not have an extension.
+	 *   Supports GNU Compiler Collection (GCC) toolchains, eg:
+	 *   <pre>
+	 *   gcc	            g++
+	 *   arm-none-eabi-gcc  arm-none-eabi-g++
+	 *   <pre>
+	 *   Does not support cc or c++. clang and clang++ are supported in {@link ClangToolChain}.
+	 *
+	 * @param desiredType {@link #CC} to convert g++ to gcc, {@link #CXX} to convert gcc to g++.
+	 * @return mapped compiler path to the filename of the desired gcc or g++ compiler.
+	 *   Returns null if desiredType is not recognised. Returns null if originalPath is to an unsupported compiler.
+	 */
+	private IPath mapCompilerPath(IPath pathToToolChain, String desiredType) {
+		if (!CC.equals(desiredType) && !CXX.equals(desiredType)) {
+			// Invalid desired compiler type
+			return null;
+		}
+
+		String compilerType = getGnuCompilerType(pathToToolChain);
+		if (compilerType == null) {
+			// Unsupported compiler type
+			return null;
+		}
+
+		// Already matches desiredType - return original path
+		if (compilerType.equals(desiredType)) {
+			return pathToToolChain;
+		}
+
+		String filename = pathToToolChain.removeFileExtension().lastSegment();
+		String extension = pathToToolChain.getFileExtension();
+		String mappedFilename;
+
+		if (CC.equals(desiredType)) {
+			/*
+			 * Convert g++ compiler to gcc compiler.
+			 * Matches exactly two '+' chars at the end of the string and replaces with "cc".
+			 */
+			mappedFilename = filename.replaceAll("\\+{2}$", "cc"); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			/*
+			 * Convert gcc compiler to g++ compiler
+			 * Matches exactly two 'c' chars at the end of the string and replaces with "++".
+			 */
+			mappedFilename = filename.replaceAll("c{2}$", "++"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		// Reconstruct new path, possibly with extension.
+		IPath mappedPath = pathToToolChain.removeLastSegments(1).append(mappedFilename);
+		return (extension != null) ? mappedPath.addFileExtension(extension) : mappedPath;
+	}
+
+	/**
+	 * Determines if the given path is a gcc or g++ compiler binary.
+	 * @param compilerPath the path to the compiler binary.
+	 * @return "CC" for gcc, "CXX" for g++, otherwise null.
+	 */
+	private String getGnuCompilerType(IPath compilerPath) {
+		if (compilerPath == null || compilerPath.lastSegment() == null) {
+			return null;
+		}
+		String filename = compilerPath.removeFileExtension().lastSegment();
+		if (filename.endsWith("g++")) { //$NON-NLS-1$
+			return CXX;
+		} else if (filename.endsWith("gcc")) { //$NON-NLS-1$
+			return CC;
+		} else {
+			return null;
+		}
 	}
 
 	@Override

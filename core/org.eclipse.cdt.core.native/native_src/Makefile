@@ -126,14 +126,6 @@ $(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win
 		$^ \
 		-Wl,--kill-at --shared
 
-$(OS_DIR_WIN32_X86_64)/pty.dll: win/pty.cpp win/pty_dllmain.cpp  win/util.c
-	mkdir -p $(dir $@) && \
-	$(REPRODUCIBLE_BUILD_WRAPPER) \
-	x86_64-w64-mingw32-g++ $(COMMON_CCFLAGS) -o $@ -Iinclude -Iwin/include -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
-		-DUNICODE \
-		$^ \
-		-Wl,--kill-at --shared -L$(OS_DIR_WIN32_X86_64) -lwinpty -static-libstdc++ -static-libgcc
-
 # Windows aarch64
 $(OS_DIR_WIN32_AARCH64)/starter.exe: win/starter.c win/util.c
 	mkdir -p $(dir $@) && \

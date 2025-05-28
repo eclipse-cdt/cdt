@@ -60,14 +60,26 @@ public class CTextEditChangePreviewViewer implements IChangePreviewViewer {
 
 	private static class CTextEditChangePane extends CompareViewerPane {
 
+		private CompareConfiguration compConfig;
+
 		/**
 		 * @param parent
 		 * @param style
+		 * @param compConfig
 		 */
-		public CTextEditChangePane(Composite parent, int style) {
+		public CTextEditChangePane(Composite parent, int style, CompareConfiguration compConfig) {
 			super(parent, style);
+			this.compConfig = compConfig;
 		}
 
+		@SuppressWarnings("unchecked")
+		@Override
+		public <T> T getAdapter(Class<T> adapter) {
+			if (CompareConfiguration.class.equals(adapter)) {
+				return (T) compConfig;
+			}
+			return super.getAdapter(adapter);
+		}
 	}
 
 	private class CPPMergeViewer extends CMergeViewer {
@@ -257,7 +269,7 @@ public class CTextEditChangePreviewViewer implements IChangePreviewViewer {
 		CompareConfiguration compConfig = new CompareConfiguration();
 		compConfig.setLeftEditable(false);
 		compConfig.setRightEditable(false);
-		viewerPane = new CTextEditChangePane(parent, SWT.BORDER | SWT.FLAT);
+		viewerPane = new CTextEditChangePane(parent, SWT.BORDER | SWT.FLAT, compConfig);
 		viewer = new CPPMergeViewer(viewerPane, SWT.MULTI | SWT.FULL_SELECTION, compConfig);
 		textEditChangeContentProvider = new CTextEditChangePreviewViewerContentProvider();
 		viewer.setContentProvider(textEditChangeContentProvider);

@@ -80,7 +80,11 @@ See [\#Importantlimitations](#important-limitations) If the unresolvedsymbol's d
 
 ### Troubleshooting individual errors
 
-TODO
+#### Indexer shows errors on a project that previously worked
+
+Sometimes it seems that CDT's metadata files can become corrupted and re-indexing the project does not resolve the issue.
+In this case you can try importing the project into a new workspace.
+Alternatively you can do a localized cleanup, wth Eclipse closed, delete `workspace/.metadata/.plugins/org.eclipse.cdt.core/<project name>.*`.
 
 ### Important limitations
 

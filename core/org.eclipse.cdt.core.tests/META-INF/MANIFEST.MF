@@ -57,7 +57,8 @@ Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.core.tests
 Bundle-Localization: plugin
-Import-Package: org.junit.jupiter.api;version="5.9.0",
+Import-Package: org.eclipse.launchbar.core.target,
+ org.junit.jupiter.api;version="5.9.0",
  org.junit.jupiter.params;version="5.9.0",
  org.junit.jupiter.params.provider;version="5.9.0",
  org.mockito;version="[5.12.0,6.0.0]",

@@ -111,6 +111,7 @@ import org.eclipse.ui.part.PluginTransfer;
 import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.views.WorkbenchViewerSetup;
 import org.eclipse.ui.views.framelist.FrameList;
 
 /**
@@ -528,7 +529,9 @@ public class CView extends ViewPart
 	}
 
 	protected ProblemTreeViewer createViewer(Composite parent) {
-		return new RemoteTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		RemoteTreeViewer remoteTreeViewer = new RemoteTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		WorkbenchViewerSetup.setupViewer(remoteTreeViewer);
+		return remoteTreeViewer;
 	}
 
 	protected IContentProvider createContentProvider() {

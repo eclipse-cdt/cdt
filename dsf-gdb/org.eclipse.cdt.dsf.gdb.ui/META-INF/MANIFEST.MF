@@ -26,7 +26,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.cdt.launch;bundle-version="[11.0.0,12)",
  org.eclipse.debug.core;bundle-version="[3.23.0,4)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)",
- org.eclipse.tm.terminal.control;bundle-version="[5.5.400,6)",
+ org.eclipse.tm.terminal.control;bundle-version="[5.6.0,6.0.0)",
  org.eclipse.cdt.native.serial;bundle-version="[12.1.0,13)",
  org.eclipse.launchbar.ui;bundle-version="[2.5.600,3)"
 Bundle-ActivationPolicy: lazy

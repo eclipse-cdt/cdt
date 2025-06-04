@@ -14,7 +14,7 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
  org.eclipse.tm.terminal.view.core;bundle-version="[4.10.400,5)";resolution:=optional,
  org.eclipse.tm.terminal.view.ui;bundle-version="[4.11.600,5)";resolution:=optional,
  org.eclipse.tm.terminal.connector.process;bundle-version="[4.9.200,5)",
- org.eclipse.tm.terminal.control;bundle-version="[5.5.400,6)",
+ org.eclipse.tm.terminal.control;bundle-version="[5.6.0,6.0.0)",
  org.eclipse.ui;bundle-version="[3.207.200,4)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy

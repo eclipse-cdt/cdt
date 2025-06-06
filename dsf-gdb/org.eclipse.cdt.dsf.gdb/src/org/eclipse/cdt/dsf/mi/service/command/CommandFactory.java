@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 QNX Software Systems and others.
+ * Copyright (c) 2000, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,7 @@
  *     Marc Khouzam (Ericsson) - Support for -gdb-version (Bug 455408)
  *     Intel Corporation - Added Reverse Debugging BTrace support
  *     Samuel Hultgren (STMicroelectronics) - Bug 533771
+ *     John Dallaway - Add CLI version command (#1186)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -77,6 +78,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITraceDump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetSubstitutePath;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIVersion;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIAddInferior;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCommands;
@@ -215,6 +217,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowEndianInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceDumpInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIVersionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
@@ -406,6 +409,11 @@ public class CommandFactory {
 	/** @since 5.0 */
 	public ICommand<MIInfo> createCLIUnsetSubstitutePath(ISourceLookupDMContext ctx) {
 		return new CLIUnsetSubstitutePath(ctx);
+	}
+
+	/** @since 7.2 */
+	public ICommand<CLIVersionInfo> createCLIVersion(ICommandControlDMContext ctx) {
+		return new CLIVersion(ctx);
 	}
 
 	/** @since 4.0 */

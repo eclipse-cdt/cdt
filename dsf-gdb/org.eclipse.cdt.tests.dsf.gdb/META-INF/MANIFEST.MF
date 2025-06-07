@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.cdt.gdb;bundle-version="[7.2.300,8)",
  org.eclipse.cdt.dsf.gdb;bundle-version="[7.1.500,8)",
  org.eclipse.core.variables;bundle-version="[3.6.500,4)",
- org.mockito.mockito-core;bundle-version="[5.17.0,6)"
+ org.mockito.mockito-core;bundle-version="[5.18.0,6.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ClassPath: .

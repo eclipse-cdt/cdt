@@ -17,7 +17,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)",
  org.eclipse.cdt.debug.ui;bundle-version="[8.5.700,9)",
  org.eclipse.ui.console;bundle-version="[3.14.300,4)",
- org.eclipse.tm.terminal.control;bundle-version="[5.5.400,6)"
+ org.eclipse.tm.terminal.control;bundle-version="[5.6.0,6.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName

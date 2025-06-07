@@ -51,7 +51,7 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.22.200,4)",
  org.eclipse.cdt.make.core;bundle-version="[8.0.0,9)",
  org.eclipse.cdt.meson.core;bundle-version="[1.2.300,2)",
  org.eclipse.cdt.core.autotools.core;bundle-version="[1.3.300,2)",
- org.mockito.mockito-core;bundle-version="[5.17.0,6)"
+ org.mockito.mockito-core;bundle-version="[5.18.0,6.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-17

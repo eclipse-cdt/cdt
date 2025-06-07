@@ -25,7 +25,7 @@ To build CDT plug-ins you need a standard Maven & Java development environment. 
 The CI build automatically run code cleanliness checks. To run them on your computer it is recommended to use the Docker image, for example like this from the root of the checked out CDT repo:
 
 ```sh
-docker run --rm -it -v $(git rev-parse --show-toplevel):/work -w /work/$(git rev-parse --show-prefix) --cap-add=SYS_PTRACE --security-opt seccomp=unconfined quay.io/eclipse-cdt/cdt-infra:latest releng/scripts/check_code_cleanliness.sh
+docker run --rm -it -v $(git rev-parse --show-toplevel):/work -w /work/$(git rev-parse --show-prefix) quay.io/eclipse-cdt/cdt-infra:latest releng/scripts/check_code_cleanliness.sh
 ```
 
 #### Diagnosing code cleanliness failures

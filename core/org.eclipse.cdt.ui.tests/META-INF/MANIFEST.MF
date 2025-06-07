@@ -39,7 +39,7 @@ Require-Bundle: org.eclipse.jface.text;bundle-version="[3.28.0,4)",
  org.eclipse.ltk.ui.refactoring;bundle-version="[3.13.600,4)",
  org.eclipse.osgi;bundle-version="[3.23.100,4)",
  org.eclipse.e4.core.contexts;bundle-version="[1.13.100,2.0.0)",
- org.mockito.mockito-core;bundle-version="[5.17.0,6)"
+ org.mockito.mockito-core;bundle-version="[5.18.0,6.0.0)"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-17

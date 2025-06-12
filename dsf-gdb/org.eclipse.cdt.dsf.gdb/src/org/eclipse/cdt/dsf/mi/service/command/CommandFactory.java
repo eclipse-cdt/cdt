@@ -32,6 +32,7 @@
  *     Intel Corporation - Added Reverse Debugging BTrace support
  *     Samuel Hultgren (STMicroelectronics) - Bug 533771
  *     John Dallaway - Add CLI version command (#1186)
+ *     John Dallaway - Add CLI address size command (#1191)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -54,6 +55,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAddressSize;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAddressableSize;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICatch;
@@ -206,6 +208,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetUpdateRange;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressableSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
@@ -268,6 +271,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MiSourceFilesInfo;
  * @since 3.0
  */
 public class CommandFactory {
+
+	/** @since 7.2 */
+	public ICommand<CLIAddressSizeInfo> createCLIAddressSize(IMemoryDMContext ctx) {
+		return new CLIAddressSize(ctx);
+	}
 
 	/**
 	 * @since 4.4

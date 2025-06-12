@@ -17,6 +17,25 @@ pipeline {
   stages {
     stage('Upload') {
       steps {
+        script {
+          def jobName = "$CDT_REPO/job/$CDT_BRANCH"
+          def description = "Promoted as $MILESTONE to <a href='https://download.eclipse.org/tools/cdt/$RELEASE_OR_BUILD/$MINOR_VERSION/$MILESTONE'>download.eclipse.org/tools/cdt/$RELEASE_OR_BUILD/$MINOR_VERSION/$MILESTONE</a>"
+          if (params.DRY_RUN) {
+            description = "Dry Run: $description"
+          }
+
+          // TODO: Can we get permission from EF IT to use Jenkins.instance.getItemByFullName
+          // def job = Jenkins.instance.getItemByFullName(jobName)
+          // def build = job?.getBuildByNumber(buildNumber)
+          
+          // if (build) {
+          //     build.setDescription(description)
+          //     build.keepLog(true)
+          // } else {
+          //     echo "Build not found: ${jobName} #${CDT_BUILD_NUMBER}"
+          // }
+          currentBuild.description = "$description from <a href='https://ci.eclipse.org/cdt/job/$CDT_REPO/job/$CDT_BRANCH/$CDT_BUILD_NUMBER'>$CDT_REPO/job/$CDT_BRANCH/$CDT_BUILD_NUMBER</a>"
+        }
         sshagent ( ['projects-storage.eclipse.org-bot-ssh']) {
           sh './releng/scripts/promote-a-build.sh'
         }

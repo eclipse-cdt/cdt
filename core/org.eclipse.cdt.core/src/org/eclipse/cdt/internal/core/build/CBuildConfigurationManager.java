@@ -247,6 +247,12 @@ public class CBuildConfigurationManager
 		ICBuildConfiguration config = null;
 		boolean resetBinaryParser = false;
 		synchronized (configs) {
+			// Due to an unlucky order of events, by a call of BuildConfiguration.getAdapter(ICBuildConfiguration.class)
+			// in a parallel process, buildConfig could have been added to "noConfigs, just before it was added to
+			// "configs". E.g. by CCorePlugin.getScannerInfoProvider() in the Indexer job.
+			if (noConfigs.contains(buildConfig) && configs.containsKey(buildConfig)) {
+				noConfigs.remove(buildConfig);
+			}
 			if (!noConfigs.contains(buildConfig)) {
 				config = configs.get(buildConfig);
 				if (config == null) {

@@ -39,13 +39,6 @@
    </requires>
 
    <plugin
-         id="org.eclipse.tm.terminal.view.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.tm.terminal.view.ui"
          download-size="0"
          install-size="0"

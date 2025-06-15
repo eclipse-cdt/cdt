@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2024 QNX Software Systems and others.
+ * Copyright (c) 2000, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Craig Watson.
  *     Apple Computer - work on performance optimizations
  *     Alexander Fedorov (ArSysOp) - fix resource leak (#693)
+ *     John Dallaway - extend load command support (#1204)
  *******************************************************************************/
 package org.eclipse.cdt.utils.macho;
 
@@ -29,6 +30,7 @@ import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.CPPFilt;
 import org.eclipse.cdt.utils.debug.stabs.StabConstant;
 import org.eclipse.cdt.utils.debug.stabs.StabsReader;
+import org.eclipse.core.runtime.ILog;
 
 /**
  * @since 5.2
@@ -75,6 +77,10 @@ public class MachO64 implements AutoCloseable {
 		public final static int CPU_TYPE_X86_64 = (CPU_TYPE_X86 | CPU_ARCH_ABI64);
 		public final static int CPU_TYPE_MC98000 = 10;
 		public final static int CPU_TYPE_HPPA = 11;
+		/** @since 9.2 */
+		public final static int CPU_TYPE_ARM = 12;
+		/** @since 9.2 */
+		public final static int CPU_TYPE_ARM64 = (CPU_TYPE_ARM | CPU_ARCH_ABI64);
 		public final static int CPU_TYPE_MC88000 = 13;
 		public final static int CPU_TYPE_SPARC = 14;
 		public final static int CPU_TYPE_I860 = 15;
@@ -362,11 +368,27 @@ public class MachO64 implements AutoCloseable {
 		public final static int LC_SEGMENT_64 = 0x19;
 		public final static int LC_ROUTINES_64 = 0x1a;
 		public final static int LC_UUID = 0x1b;
+		/** @since 9.2 */
+		public final static int LC_CODE_SIGNATURE = 0x1d;
+		/** @since 9.2 */
+		public final static int LC_FUNCTION_STARTS = 0x26;
+		/** @since 9.2 */
+		public final static int LC_DATA_IN_CODE = 0x29;
+		/** @since 9.2 */
+		public final static int LC_SOURCE_VERSION = 0x2a;
+		/** @since 9.2 */
+		public final static int LC_BUILD_VERSION = 0x32;
 		/*
 		 * load a dynamically linked shared library that is allowed to be missing
 		 * (all symbols are weak imported).
 		 */
 		public final static int LC_LOAD_WEAK_DYLIB = (0x18 | LC_REQ_DYLD);
+		/** @since 9.2 */
+		public final static int LC_MAIN = (0x28 | LC_REQ_DYLD);
+		/** @since 9.2 */
+		public final static int LC_DYLD_EXPORTS_TRIE = (0x33 | LC_REQ_DYLD);
+		/** @since 9.2 */
+		public final static int LC_DYLD_CHAINED_FIXUPS = (0x34 | LC_REQ_DYLD);
 
 		public int cmd;
 		public int cmdsize;
@@ -1104,6 +1126,12 @@ public class MachO64 implements AutoCloseable {
 		}
 
 		switch (mhdr.cputype) {
+		case MachO64.MachOhdr.CPU_TYPE_ARM:
+			attrib.cpu = "arm"; //$NON-NLS-1$
+			break;
+		case MachO64.MachOhdr.CPU_TYPE_ARM64:
+			attrib.cpu = "aarch64"; //$NON-NLS-1$
+			break;
 		case MachO64.MachOhdr.CPU_TYPE_X86_64:
 			attrib.cpu = "x86_64"; //$NON-NLS-1$
 			break;
@@ -1458,6 +1486,7 @@ public class MachO64 implements AutoCloseable {
 					loadcommands[i] = sscmd;
 					break;
 
+				case LoadCommand.LC_MAIN:
 				case LoadCommand.LC_THREAD:
 				case LoadCommand.LC_UNIXTHREAD:
 					ThreadCommand thcmd = new ThreadCommand();
@@ -1660,6 +1689,7 @@ public class MachO64 implements AutoCloseable {
 					tlhcmd.nhints = efile.readIntE();
 					loadcommands[i] = tlhcmd;
 					break;
+
 				case LoadCommand.LC_UUID:
 					MachUUID uuidCmd = new MachUUID();
 					uuidCmd.cmd = cmd;
@@ -1669,6 +1699,7 @@ public class MachO64 implements AutoCloseable {
 					uuidCmd.uuid = new String(uuid, 0, 16);
 					loadcommands[i] = uuidCmd;
 					break;
+
 				case LoadCommand.LC_PREBIND_CKSUM:
 					PrebindCksumCommand pbccmd = new PrebindCksumCommand();
 					pbccmd.cmd = cmd;
@@ -1677,12 +1708,29 @@ public class MachO64 implements AutoCloseable {
 					loadcommands[i] = pbccmd;
 					break;
 
+				case LoadCommand.LC_BUILD_VERSION:
+				case LoadCommand.LC_CODE_SIGNATURE:
+				case LoadCommand.LC_DATA_IN_CODE:
+				case LoadCommand.LC_DYLD_CHAINED_FIXUPS:
+				case LoadCommand.LC_DYLD_EXPORTS_TRIE:
+				case LoadCommand.LC_FUNCTION_STARTS:
+				case LoadCommand.LC_SOURCE_VERSION:
+					// known load commands we ignore
+					LoadCommand misccmd = new LoadCommand();
+					misccmd.cmd = cmd;
+					misccmd.cmdsize = len;
+					loadcommands[i] = misccmd;
+					efile.skipBytes(len - 8);
+					break;
+
 				default:
-					// fallback, just in case we don't recognize the command
+					// unknown load command
 					UnknownCommand unknowncmd = new UnknownCommand();
 					unknowncmd.cmd = cmd;
-					unknowncmd.cmdsize = 0;
+					unknowncmd.cmdsize = len;
 					loadcommands[i] = unknowncmd;
+					efile.skipBytes(len - 8);
+					ILog.get().warn(String.format("Mach-O load command 0x%x not handled", cmd)); //$NON-NLS-1$
 					break;
 				}
 			}

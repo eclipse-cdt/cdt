@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Copyright (c) 2014, 2024 Contributors to the Eclipse Foundation
+   Copyright (c) 2014, 2025 Contributors to the Eclipse Foundation
 
    This program and the accompanying materials
    are made available under the terms of the Eclipse Public License 2.0
@@ -70,6 +70,16 @@
          id="org.eclipse.cdt.core.linux.aarch64"
          os="linux"
          arch="aarch64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.cdt.core.linux.riscv64"
+         os="linux"
+         arch="riscv64"
          download-size="0"
          install-size="0"
          version="0.0.0"

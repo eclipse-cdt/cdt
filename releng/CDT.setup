@@ -244,8 +244,6 @@
       <requirement
           name="org.eclipse.license.feature.group"/>
       <requirement
-          name="org.eclipse.egit.feature.group"/>
-      <requirement
           name="org.eclipse.equinox.executable.feature.group"/>
       <requirement
           name="org.eclipse.linuxtools.docker.feature.feature.group"/>
@@ -274,8 +272,6 @@
       <repositoryList>
         <repository
             url="https://download.eclipse.org/cbi/updates/license"/>
-        <repository
-            url="https://download.eclipse.org/egit/updates-nightly"/>
         <repository
             url="https://download.eclipse.org/linuxtools/updates-docker-nightly"/>
         <repository

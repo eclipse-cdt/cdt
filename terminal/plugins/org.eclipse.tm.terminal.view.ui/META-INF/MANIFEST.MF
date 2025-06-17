@@ -10,7 +10,6 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)";resolution:=optional,
  org.eclipse.core.variables;bundle-version="[3.6.500,4)",
  org.eclipse.debug.ui;bundle-version="[3.18.800,4)";resolution:=optional,
- org.eclipse.egit.ui;bundle-version="[7.3.0,8)";resolution:=optional,
  org.eclipse.tm.terminal.view.core;bundle-version="[4.10.0,5.0.0)",
  org.eclipse.tm.terminal.control;bundle-version="[5.6.0,6.0.0)",
  org.eclipse.ui;bundle-version="[3.207.200,4)",
@@ -40,6 +39,5 @@ Export-Package: org.eclipse.tm.terminal.view.ui.actions,
  org.eclipse.tm.terminal.view.ui.services,
  org.eclipse.tm.terminal.view.ui.streams,
  org.eclipse.tm.terminal.view.ui.tabs,
- org.eclipse.tm.terminal.view.ui.view,
- org.eclipse.tm.terminal.view.ui.view.showin;x-internal:=true
+ org.eclipse.tm.terminal.view.ui.view
 Automatic-Module-Name: org.eclipse.tm.terminal.view.ui

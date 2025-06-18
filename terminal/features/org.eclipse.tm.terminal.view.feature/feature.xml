@@ -35,14 +35,8 @@
       <import plugin="org.eclipse.ui" version="3.8.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.variables" version="3.2.600" match="greaterOrEqual"/>
       <import plugin="org.eclipse.tm.terminal.view.core" version="4.8.0" match="compatible"/>
+      <import plugin="org.eclipse.tm.terminal.view.ui" version="4.11.0" match="compatible"/>
       <import plugin="org.eclipse.tm.terminal.control" version="5.2.0" match="compatible"/>
    </requires>
-
-   <plugin
-         id="org.eclipse.tm.terminal.view.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>

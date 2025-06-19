@@ -52,6 +52,15 @@
             sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
             type="org.eclipse.cdt.debug.core.localCoreBuildLaunchConfigType">
       </launchDelegate>
+      <launchDelegate
+            delegate="org.eclipse.cdt.dsf.gdb.launching.GdbTargetedLaunchDelegate"
+            id="org.eclipse.cdt.dsf.gdb.coreBuildManualRemoteDebug"
+            modes="debug"
+            name="%coreBuildManualRemoteDebug.name"
+            sourceLocatorId="org.eclipse.cdt.debug.core.sourceLocator"
+            sourcePathComputerId="org.eclipse.cdt.debug.core.sourcePathComputer"
+            type="org.eclipse.cdt.debug.core.GdbManualRemoteCoreBuildLaunchConfigType">
+      </launchDelegate>
    </extension>
    
    <extension
@@ -106,6 +115,14 @@
       </launchTargetType>
    </extension>
    <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            id="org.eclipse.cdt.debug.core.GdbManualRemoteCoreBuildLaunchConfigType"
+            name="%manualRemoteApplicationLaunch.name"
+            public="false">
+      </launchConfigurationType>
+   </extension>
+   <extension
          point="org.eclipse.launchbar.core.launchBarContributions">
       <descriptorType
             class="org.eclipse.cdt.dsf.gdb.internal.launching.GdbRemoteLaunchDescriptorType"
@@ -121,6 +138,12 @@
             supportsNullTarget="true">
            <enablement>
            </enablement>
+      </configProvider>
+      <configProvider
+            class="org.eclipse.cdt.dsf.gdb.internal.launching.CoreBuildGdbManualRemoteLaunchConfigProvider"
+            descriptorType="org.eclipse.cdt.debug.core.coreBuildDescriptorType"
+            priority="10">
+         <enablement></enablement>
       </configProvider>
    </extension>
 </plugin>

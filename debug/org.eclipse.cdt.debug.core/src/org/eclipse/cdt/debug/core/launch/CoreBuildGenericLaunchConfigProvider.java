@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2017 - 2025 QNX Software Systems and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *******************************************************************************/
 package org.eclipse.cdt.debug.core.launch;
 
 import java.util.HashMap;
@@ -42,6 +52,12 @@ public class CoreBuildGenericLaunchConfigProvider extends AbstractLaunchConfigPr
 				.getLaunchConfigurationType(CoreBuildGenericLaunchConfigDelegate.TYPE_ID);
 	}
 
+	private String getTargetConfigKey(ILaunchTarget target) {
+		String os = target.getAttribute(ILaunchTarget.ATTR_OS, EMPTY);
+		String arch = target.getAttribute(ILaunchTarget.ATTR_ARCH, EMPTY);
+		return os + '.' + arch;
+	}
+
 	@Override
 	public ILaunchConfiguration getLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
@@ -54,10 +70,7 @@ public class CoreBuildGenericLaunchConfigProvider extends AbstractLaunchConfigPr
 				configs.put(project, projectConfigs);
 			}
 
-			String os = target.getAttribute(ILaunchTarget.ATTR_OS, EMPTY);
-			String arch = target.getAttribute(ILaunchTarget.ATTR_ARCH, EMPTY);
-			String targetConfig = os + '.' + arch;
-			config = projectConfigs.get(targetConfig);
+			config = projectConfigs.get(getTargetConfigKey(target));
 			if (config == null) {
 				config = createLaunchConfiguration(descriptor, target);
 			}
@@ -141,13 +154,9 @@ public class CoreBuildGenericLaunchConfigProvider extends AbstractLaunchConfigPr
 	@Override
 	public void launchTargetRemoved(ILaunchTarget target) throws CoreException {
 		// Any other targets have the same OS and ARCH?
-		String os = target.getAttribute(ILaunchTarget.ATTR_OS, EMPTY);
-		String arch = target.getAttribute(ILaunchTarget.ATTR_ARCH, EMPTY);
-
 		ILaunchTargetManager targetManager = CDebugCorePlugin.getService(ILaunchTargetManager.class);
 		for (ILaunchTarget t : targetManager.getLaunchTargets()) {
-			if (!target.equals(t) && os.equals(t.getAttribute(ILaunchTarget.ATTR_OS, EMPTY))
-					&& arch.equals(t.getAttribute(ILaunchTarget.ATTR_ARCH, EMPTY))) {
+			if (!target.equals(t) && getTargetConfigKey(target).equals(getTargetConfigKey(t))) {
 				// Yup, nothing to do then
 				return;
 			}
@@ -155,11 +164,10 @@ public class CoreBuildGenericLaunchConfigProvider extends AbstractLaunchConfigPr
 
 		for (Entry<IProject, Map<String, ILaunchConfiguration>> projectEntry : configs.entrySet()) {
 			Map<String, ILaunchConfiguration> projectConfigs = projectEntry.getValue();
-			ILaunchConfiguration config = projectConfigs.get(os);
+			ILaunchConfiguration config = projectConfigs.get(getTargetConfigKey(target));
 			if (config != null) {
 				config.delete();
 			}
 		}
 	}
-
 }

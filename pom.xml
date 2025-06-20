@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Copyright (c) 2011, 2024 Wind River Systems, Inc. and others.
+   Copyright (c) 2011, 2025 Wind River Systems, Inc. and others.
 
    This program and the accompanying materials
    are made available under the terms of the Eclipse Public License 2.0
@@ -129,6 +129,7 @@
 		<module>core/org.eclipse.cdt.core.linux.x86_64</module>
 		<module>core/org.eclipse.cdt.core.linux.aarch64</module>
 		<module>core/org.eclipse.cdt.core.linux.ppc64le</module>
+		<module>core/org.eclipse.cdt.core.linux.riscv64</module>
 		<module>core/org.eclipse.cdt.core.win32</module>
 		<module>core/org.eclipse.cdt.core.win32.x86_64</module>
 		<module>core/org.eclipse.cdt.core.win32.aarch64</module>
@@ -682,6 +683,11 @@
 							<arch>ppc64le</arch>
 						</environment>
 						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>riscv64</arch>
+						</environment>
+						<environment>
 							<os>win32</os>
 							<ws>win32</ws>
 							<arch>x86_64</arch>
@@ -737,6 +743,7 @@
 								<plugin id="org.eclipse.cdt.core.linux.ppc64le"/>
 								<plugin id="org.eclipse.cdt.core.linux.x86_64"/>
 								<plugin id="org.eclipse.cdt.core.linux.aarch64"/>
+								<plugin id="org.eclipse.cdt.core.linux.riscv64"/>
 								<plugin id="org.eclipse.cdt.core.win32.x86_64"/>
 								<plugin id="org.eclipse.cdt.core.win32.aarch64"/>
 								<plugin id="org.eclipse.cdt.doc.user"/>

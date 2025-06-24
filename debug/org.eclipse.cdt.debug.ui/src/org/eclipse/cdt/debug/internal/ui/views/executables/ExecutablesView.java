@@ -62,6 +62,7 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.views.WorkbenchViewerSetup;
 
 /**
  * ExecutablesView displays a list of executable files either in the workspace
@@ -260,8 +261,10 @@ public class ExecutablesView extends ViewPart {
 
 		// Create the two sub viewers.
 		executablesViewer = new ExecutablesViewer(this, sashForm, SWT.FULL_SELECTION | SWT.BORDER | SWT.MULTI);
+		WorkbenchViewerSetup.setupViewer(executablesViewer);
 		focusedViewer = executablesViewer;
 		sourceFilesViewer = new SourceFilesViewer(this, sashForm, SWT.BORDER | SWT.MULTI);
+		WorkbenchViewerSetup.setupViewer(sourceFilesViewer);
 
 		executablesViewer.getTree().addFocusListener(new FocusListener() {
 

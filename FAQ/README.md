@@ -2776,7 +2776,7 @@ Because of way the Linux kernel source code is architected and
 configured, it's a bit subtler than you might think.
 
 
-**Disclaimer: These steps were last updated for Eclipse 2019‑03, CDT 9.7.0, and Linux v5.1-rc4**
+**Disclaimer: These steps were last updated for Eclipse 2025-06 R, CDT 12.1.0, and Linux v6.12.34**
 
 Tip: Increase heap size before starting the index for Linux Kernel. See [How do I increase Heap Size](https://wiki.eclipse.org/FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F)
 
@@ -2784,27 +2784,19 @@ Tip: Increase heap size before starting the index for Linux Kernel. See [How do 
 - Configure and build your kernel to define CONFIG_* and generate autoconf.h.
 - Start up Eclipse.
 - Click **File** -&gt; **New** -&gt; **Project**
-- In the pop-up window, choose **C/C++**-&gt; **C Project**. Click **Next**
-- Fill in a project name like *Linux v5.1*
+- In the pop-up window, choose **C/C++**-&gt; **C/C++ Project**. Click **Next**
+- In the next window, choose **C Managed Build**
+- Fill in a project name like *Linux v6.12*
 - Uncheck the **Use default location** box and type in the root directory of your kernel into the **Location** box.
 - In the **Project type:** pane, click the **Makefile project** and select **Empty Project**
 - On the right side, select **Linux GCC**. Click **Next**
 - Click **Advanced settings...** and a Properties dialog will pop up.
--  Note: At this point, and starting from Eclipse Oxygen, Eclipse will aggressively start indexing your project, which can make Eclipse painfully slow for the rest of the configuration steps below. To mitigate that, temporarily disable indexing now by opening **C/C++ General** section, click on **Indexer**, click on **Enable project-specific settings**, then unmark the **Enable indexer** option.
-- Open the **C/C++ General** selection on the left.
-- Click on **Preprocessor Include Paths**
-- Select **GNU C** in the **Languages** list
-- Select **CDT User Setting Entries** in the **Setting Entries** list
-- Click on **Add...**. Choose **Preprocessor Macros File** from the top left dropdown, **Project Path** from the top right dropdown, and enter "`include/linux/kconfig.h`" into the **File** text box.
-- Also add any other macros files you are using.
-- Click on **Indexer**
-- Checkmark the **Enable project specific settings** box.
-- Uncheck **Index source files not included in the build**
+-  Note: At this point, and starting from Eclipse Oxygen, Eclipse will aggressively start indexing your project, which can make Eclipse painfully slow for the rest of the configuration steps below. To mitigate that, temporarily disable indexing now by opening **C/C++ General** section, click on **Indexer**, click on **Enable project-specific settings**, then unmark the **Enable indexer** option and click on **Apply**.
 - Click on **Paths and Symbols** on the left.
 - Select the **Includes** tab and then select **GNU C**
 - Click **Add...**
 - Click **Workspace...** then select your kernel's `include`, and `include/uapi` directories
-- Do another Add, Workspace and add both `arch/`*architecture*`/include`, and `arch/`**architecture*`/include/uapi` directories. e.g., `arch/powerpc/include` and `arch/powerpc/include/uapi` (The UAPI directories are due to the kernel's user/kernel header split covered [here](http://lwn.net/Articles/507794/) in-detail)
+- Do another Add, Workspace and add both `arch/`*architecture*`/include`, and `arch/`**architecture*`/include/uapi` directories. e.g., `arch/arm64/include` and `arch/arm64/include/uapi` (The UAPI directories are due to the kernel's user/kernel header split covered [here](http://lwn.net/Articles/507794/) in-detail)
 - Click the **# Symbols** tab
 - Click **Add...**
 - Set the name to `__KERNEL__`
@@ -2814,17 +2806,30 @@ Tip: Increase heap size before starting the index for Linux Kernel. See [How do 
 - Select the **Filter** item and click **Edit Filter...**
 - Click **Add Multiple...** and then select all of the `arch/*` directories in your kernel source that will not be used (i.e. all the ones that are not for the architecture you are using)
 - Click **OK** and **OK** again to dismiss that dialog.
+- Click **Apply**
 - Under **C/C++ General**, select **Preprocessor Include Paths, Macros etc.**
+- Click on the **Entries** tab and select **GNU C** in the **Languages** list
+- Select **CDT User Setting Entries** in the **Setting Entries** list
+- Click on **Add...**. Choose **Preprocessor Macros File** from the top left dropdown, **Project Path** from the top right dropdown, and enter "`include/linux/kconfig.h`" into the **File** text box.
+- Also add any other macros files you are using.
 - Click the **Providers** tab and select **CDT GCC Built-in Compiler Settings**
-- Uncheck **Use global provider shared between projects
+- Uncheck **Use global provider shared between projects** if it is checked.
 - Append `-nostdinc` to the curretly-existing **Command to get compiler specs**. The kernel is a *free-standing* environment by ISO C99 definition. That is, it does not want to be polluted, and obviously cannot work with, the "host" header files and libraries.
 - Open a terminal, and type "echo -isystem $(gcc -print-file-name=include/)". Append *the resulting output* to the **Command to get compiler specs** mentioned above. If you're using a cross-toolchain to compile the kernel, use the full path of *that* cross GCC compiler, instead of just typing `gcc` in the command mentioned. Rationale for this step: `-nostdinc` already asked gcc to *not* search the standard system directories for header files. But the Linux Kernel depends on GCC-provided "freestanding environment" headers like *stdarg.h*, *stdbool.h* and so on, which are typically hosted by GCC under */usr/lib/gcc/<arch>/<version>/include*. Thus this step.
+- Click **Apply**
+- Click on **Indexer** under **C/C++ General** on the left
+- Uncheck **Index source files not included in the build**
 - Click **OK** on the Properties dialog.
-- Note: If you temporarily disabled indexing as earlier recommended. This is the right time to re-enable it. Under **C/C++ General**, click on **Indexer**, and mark the **Enable indexer** option.
-- Click **Finish** on the C Project dialog.
+- Check the **Enable indexer** option.
+- Click **Apply and Close** on the bottom right of the C Project dialog.
+- Click on **Finish**
 - The Project will index automatically.
-- On a platter drive indexing will take upwards of 20 minutes to complete, on a SSD indexing will take about 5 minutes to complete.
+- On a platter drive indexing will take upwards of 20 minutes to complete, on a SSD/NVME indexing will take between 2 to 5 minutes to complete.
 
+
+Updated for the latest Eclipse CDT versions by:
+
+* Adam Duskett [mailto:Aduskett@gmail.com Aduskett@gmail.com]
 
 Authored, and continuously updated from Linux v2.6.33 to Linux v5.1, by:
 

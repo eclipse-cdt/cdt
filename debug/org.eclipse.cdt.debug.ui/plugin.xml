@@ -2675,5 +2675,31 @@
            name="%GenericTarget.name">
      </wizard2>
   </extension>
+  
+  <!-- Activity definition that controls the visibility of  Toggle Instruction Step Mode command-->
+  <extension point="org.eclipse.ui.activities">
+   <category
+         id="org.eclipse.cdt.debug.ui.category"
+         name="CDT Debug UI"
+         description="Controls visibility of CDT Debug UI contributions">
+   </category>
+
+   <activity
+         id="org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode"
+         name="Toggle Instruction Step Mode Command"
+         description="Activity to control visibility of Toggle Instruction Step Mode command">
+   </activity>
+
+   <activityPatternBinding
+         activityId="org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode"
+         pattern="org\.eclipse\.cdt\.debug\.ui/org\.eclipse\.cdt\.debug\.internal\.ui\.actions\.ToggleInstructionStepModeCommand">
+   </activityPatternBinding>
+
+   <categoryActivityBinding
+         activityId="org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode"
+         categoryId="org.eclipse.cdt.debug.ui.category">
+   </categoryActivityBinding>
+</extension>
+  
     
 </plugin>

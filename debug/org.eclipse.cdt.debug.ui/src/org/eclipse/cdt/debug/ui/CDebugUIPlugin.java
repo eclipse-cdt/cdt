@@ -16,7 +16,9 @@
 package org.eclipse.cdt.debug.ui;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.internal.ui.CDebugImageDescriptorRegistry;
@@ -61,9 +63,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.progress.WorkbenchJob;
@@ -93,6 +98,10 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	private DisassemblyEditorManager fDisassemblyEditorManager;
 
 	private static IDebuggerConsoleManager fDebuggerConsoleManager;
+
+	private IWorkbenchListener workbenchListener;
+
+	private static final String TISM_ACTIVITY_ID = "org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode"; //$NON-NLS-1$
 
 	/**
 	 * At least one listener must be registered on the DebugPlugin in order
@@ -319,6 +328,28 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				startupInUIThread();
+
+				// We need to enable Toggle Instruction Step Mode only if Debug UI plug-in is loaded.
+				setActivityEnabled(TISM_ACTIVITY_ID, true);
+				// Disable the activity when the platform shuts down.
+				if (PlatformUI.isWorkbenchRunning()) {
+					IWorkbench workbench = PlatformUI.getWorkbench();
+					workbenchListener = new IWorkbenchListener() {
+
+						@Override
+						public boolean preShutdown(IWorkbench workbench, boolean forced) {
+							// Workbench is still alive here – safe to disable activity
+							setActivityEnabled(TISM_ACTIVITY_ID, false);
+							return true;
+						}
+
+						@Override
+						public void postShutdown(IWorkbench workbench) {
+						}
+					};
+					workbench.addWorkbenchListener(workbenchListener);
+				}
+
 				return Status.OK_STATUS;
 			}
 		};
@@ -361,6 +392,11 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		if (fImageDescriptorRegistry != null) {
 			fImageDescriptorRegistry.dispose();
 		}
+
+		if (workbenchListener != null) {
+			PlatformUI.getWorkbench().removeWorkbenchListener(workbenchListener);
+		}
+
 		super.stop(context);
 	}
 
@@ -434,6 +470,27 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 		BundleContext context = plugin.getBundle().getBundleContext();
 		ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
+	}
+
+	private void setActivityEnabled(String activityId, boolean enabled) {
+		if (PlatformUI.isWorkbenchRunning()) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchActivitySupport activitySupport = workbench.getActivitySupport();
+
+			if (activitySupport == null) {
+				return;
+			}
+
+			Set<String> enabledActivities = new HashSet<>(activitySupport.getActivityManager().getEnabledActivityIds());
+
+			if (enabled) {
+				enabledActivities.add(activityId);
+			} else {
+				enabledActivities.remove(activityId);
+			}
+
+			activitySupport.setEnabledActivityIds(enabledActivities);
+		}
 	}
 
 }

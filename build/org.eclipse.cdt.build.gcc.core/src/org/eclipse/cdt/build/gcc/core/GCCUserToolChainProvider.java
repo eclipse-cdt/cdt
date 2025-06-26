@@ -154,6 +154,7 @@ public class GCCUserToolChainProvider implements IUserToolChainProvider {
 		toolChains.add(newtc);
 
 		newtc.addProperty(ID, gcc.getId());
+		newtc.addProperty(TYPE, gcc.getTypeId());
 		newtc.addProperty(ARCH, gcc.getProperty(IToolChain.ATTR_ARCH));
 		newtc.addProperty(PATH, gcc.getPath().toString());
 

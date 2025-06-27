@@ -102,6 +102,7 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 					target.attributes.remove(key);
 				}
 			}
+			target.attributes.put("name", target.getId()); //$NON-NLS-1$
 			target.attributes.flush();
 			return target;
 		} catch (BackingStoreException e) {

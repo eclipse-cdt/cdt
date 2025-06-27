@@ -384,6 +384,8 @@ public class MachO64 implements AutoCloseable {
 		 */
 		public final static int LC_LOAD_WEAK_DYLIB = (0x18 | LC_REQ_DYLD);
 		/** @since 9.2 */
+		public final static int LC_RPATH = (0x1c | LC_REQ_DYLD);
+		/** @since 9.2 */
 		public final static int LC_MAIN = (0x28 | LC_REQ_DYLD);
 		/** @since 9.2 */
 		public final static int LC_DYLD_EXPORTS_TRIE = (0x33 | LC_REQ_DYLD);
@@ -1714,6 +1716,7 @@ public class MachO64 implements AutoCloseable {
 				case LoadCommand.LC_DYLD_CHAINED_FIXUPS:
 				case LoadCommand.LC_DYLD_EXPORTS_TRIE:
 				case LoadCommand.LC_FUNCTION_STARTS:
+				case LoadCommand.LC_RPATH:
 				case LoadCommand.LC_SOURCE_VERSION:
 					// known load commands we ignore
 					LoadCommand misccmd = new LoadCommand();

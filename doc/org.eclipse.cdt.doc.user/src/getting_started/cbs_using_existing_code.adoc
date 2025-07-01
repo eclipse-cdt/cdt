@@ -64,4 +64,4 @@ World Source and Makefile example*.
 
 image:cbs_existing_code_makefile.png[Existing code Makefile]
 
-icon:arrow-circle-right[] xref:cbs_launchbar.adoc[Next: Launch Bar]
+icon:arrow-circle-right[] xref:cbs_launchbar.adoc[Next: Using the Launch Bar]

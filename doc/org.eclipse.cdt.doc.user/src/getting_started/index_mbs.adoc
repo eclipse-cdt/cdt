@@ -28,7 +28,7 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-= Legacy Managed Build System contents
+= Legacy Managed Build System
 
 xref:cdt_w_basic.adoc[Tutorial: Creating a Managed Build System Makefile project]
 

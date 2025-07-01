@@ -28,7 +28,7 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-= Core Build System
+= Using the Core Build System
 
 The Core Build System is the successor of the legacy Managed Build
 System.

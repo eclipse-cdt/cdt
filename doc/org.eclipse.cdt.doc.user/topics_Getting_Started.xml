@@ -21,5 +21,4 @@
               <topic label="Debugging projects" href="getting_started/cdt_w_debug.htm"/>
               <topic label="Importing C/C++ source files into Eclipse" href="getting_started/cdt_w_existing_code.htm"/>
           </topic>
-          <!--topic label="Updating the CDT" href="getting_started/cdt_w_install_cdt.htm"/-->
 </toc>

@@ -29,7 +29,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.terminal.internal.provisional.api.AbstractSettingsPage;
+import org.eclipse.terminal.connector.AbstractSettingsPage;
 import org.eclipse.terminal.view.ui.interfaces.IConfigurationPanel;
 import org.eclipse.terminal.view.ui.interfaces.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.connector.cdtserial.activator.Activator;

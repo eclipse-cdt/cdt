@@ -20,10 +20,10 @@ import java.util.Set;
 
 import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.terminal.internal.provisional.api.ISettingsStore;
-import org.eclipse.terminal.internal.provisional.api.ITerminalControl;
-import org.eclipse.terminal.internal.provisional.api.TerminalState;
-import org.eclipse.terminal.internal.provisional.api.provider.TerminalConnectorImpl;
+import org.eclipse.terminal.connector.ISettingsStore;
+import org.eclipse.terminal.connector.ITerminalControl;
+import org.eclipse.terminal.connector.TerminalState;
+import org.eclipse.terminal.connector.provider.TerminalConnectorImpl;
 import org.eclipse.tm.terminal.connector.cdtserial.activator.Activator;
 import org.eclipse.tm.terminal.connector.cdtserial.nls.Messages;
 

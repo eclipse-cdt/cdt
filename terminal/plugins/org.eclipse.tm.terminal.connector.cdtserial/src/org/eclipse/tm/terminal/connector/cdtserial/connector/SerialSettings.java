@@ -17,7 +17,7 @@ import org.eclipse.cdt.serial.ByteSize;
 import org.eclipse.cdt.serial.Parity;
 import org.eclipse.cdt.serial.StandardBaudRates;
 import org.eclipse.cdt.serial.StopBits;
-import org.eclipse.terminal.internal.provisional.api.ISettingsStore;
+import org.eclipse.terminal.connector.ISettingsStore;
 
 public class SerialSettings {
 

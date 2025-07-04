@@ -7,7 +7,7 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.remote.internal;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.terminal.internal.provisional.api.ISettingsStore;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 
 @SuppressWarnings("restriction")

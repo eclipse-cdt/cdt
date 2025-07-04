@@ -18,19 +18,19 @@ import org.eclipse.cdt.serial.ByteSize;
 import org.eclipse.cdt.serial.Parity;
 import org.eclipse.cdt.serial.StopBits;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
+import org.eclipse.terminal.internal.provisional.api.ISettingsStore;
+import org.eclipse.terminal.internal.provisional.api.ITerminalConnector;
+import org.eclipse.terminal.internal.provisional.api.TerminalConnectorExtension;
+import org.eclipse.terminal.view.core.TerminalServiceFactory;
+import org.eclipse.terminal.view.core.interfaces.ITerminalService;
+import org.eclipse.terminal.view.core.interfaces.ITerminalService.Done;
+import org.eclipse.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
+import org.eclipse.terminal.view.ui.interfaces.IConfigurationPanel;
+import org.eclipse.terminal.view.ui.interfaces.IConfigurationPanelContainer;
+import org.eclipse.terminal.view.ui.internal.SettingsStore;
+import org.eclipse.terminal.view.ui.launcher.AbstractLauncherDelegate;
 import org.eclipse.tm.terminal.connector.cdtserial.connector.SerialSettings;
 import org.eclipse.tm.terminal.connector.cdtserial.controls.SerialConfigPanel;
-import org.eclipse.tm.terminal.view.core.TerminalServiceFactory;
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done;
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
-import org.eclipse.tm.terminal.view.ui.internal.SettingsStore;
-import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 
 public class SerialLauncherDelegate extends AbstractLauncherDelegate {
 

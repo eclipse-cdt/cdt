@@ -133,8 +133,8 @@
       <category name="launchbar"/>
    </feature>
    <!-- Republish the tm terminal control that is now Eclipse Platform to our p2 repository -->
-   <bundle id="org.eclipse.tm.terminal.control" version="0.0.0"/>
-   <bundle id="org.eclipse.tm.terminal.control.source" version="0.0.0"/>
+   <bundle id="org.eclipse.terminal.control" version="0.0.0"/>
+   <bundle id="org.eclipse.terminal.control.source" version="0.0.0"/>
    <feature id="org.eclipse.tm.terminal.control.feature">
       <category name="terminal_main"/>
    </feature>

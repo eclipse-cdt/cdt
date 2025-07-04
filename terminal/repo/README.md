@@ -1,1 +1,0 @@
-The repo is only used when the "only-terminal" profile is activated. See root [README.md](../README.md) for more details.

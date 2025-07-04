@@ -40,7 +40,6 @@ import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 /**
  * Remote launcher delegate implementation.
  */
-@SuppressWarnings("restriction")
 public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	// The Remote terminal connection memento handler
 	private final IMementoHandler mementoHandler = new RemoteMementoHandler();

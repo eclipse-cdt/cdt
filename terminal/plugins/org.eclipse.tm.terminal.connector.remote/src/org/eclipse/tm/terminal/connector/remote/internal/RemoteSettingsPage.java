@@ -26,7 +26,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-@SuppressWarnings("restriction")
 public class RemoteSettingsPage extends AbstractSettingsPage {
 	private final RemoteSettings fTerminalSettings;
 	private RemoteConnectionWidget fRemoteConnectionWidget;

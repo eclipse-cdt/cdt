@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.remote.console;singleton:=true
-Bundle-Version: 1.4.300.qualifier
+Bundle-Version: 1.4.400.qualifier
 Bundle-Activator: org.eclipse.remote.internal.console.Activator
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-17
@@ -26,8 +26,8 @@ Import-Package: org.eclipse.core.commands,
  org.eclipse.swt.events,
  org.eclipse.swt.layout,
  org.eclipse.swt.widgets,
- org.eclipse.tm.internal.terminal.control,
- org.eclipse.tm.internal.terminal.provisional.api,
+ org.eclipse.terminal.connector;version="[1.0.0,2.0.0)",
+ org.eclipse.terminal.control;version="[1.0.0,2.0.0)",
  org.eclipse.ui,
  org.eclipse.ui.console,
  org.eclipse.ui.console.actions,

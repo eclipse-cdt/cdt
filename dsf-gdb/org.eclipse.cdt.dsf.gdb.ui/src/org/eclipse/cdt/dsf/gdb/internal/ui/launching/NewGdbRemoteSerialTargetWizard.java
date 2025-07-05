@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 QNX Software Systems and others.
+ * Copyright (c) 2019, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,6 +42,7 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 	private Text nameText;
 	private Combo portCombo;
 	private Text baudText;
+	private static final String DEFAULT_BAUD_RATE = "115200"; //$NON-NLS-1$
 
 	private class SerialPage extends WizardPage {
 		public SerialPage() {
@@ -54,6 +55,28 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 		public void createControl(Composite parent) {
 			Composite control = new Composite(parent, SWT.NONE);
 			control.setLayout(new GridLayout());
+
+			String targetName = ""; //$NON-NLS-1$
+			String serialPort = ""; //$NON-NLS-1$
+			String[] portNames;
+			String baudRate = DEFAULT_BAUD_RATE;
+			ILaunchTarget launchTarget = getLaunchTarget();
+			try {
+				portNames = SerialPort.list();
+			} catch (IOException e) {
+				GdbUIPlugin.log(e);
+				portNames = new String[0];
+			}
+			if (launchTarget == null) {
+				if (portNames.length > 0) {
+					targetName = portNames[0];
+					serialPort = portNames[0];
+				}
+			} else {
+				targetName = launchTarget.getId();
+				serialPort = launchTarget.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, serialPort);
+				baudRate = launchTarget.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, baudRate);
+			}
 
 			// Target name
 
@@ -77,14 +100,15 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 					nameText.setEnabled(!same);
 				}
 			});
-			sameAsPortname.setSelection(true);
+			sameAsPortname.setSelection(targetName.equals(serialPort));
 
 			Label nameLabel = new Label(nameGroup, SWT.NONE);
 			nameLabel.setText(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_TargetName")); //$NON-NLS-1$
 
 			nameText = new Text(nameGroup, SWT.BORDER);
+			nameText.setText(targetName);
 			nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			nameText.setEnabled(false);
+			nameText.setEnabled(!targetName.equals(serialPort));
 			nameText.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
@@ -105,17 +129,11 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 			portCombo = new Combo(connGroup, SWT.NONE);
 			portCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-			try {
-				String[] portNames = SerialPort.list();
-				for (String portName : portNames) {
-					portCombo.add(portName);
-				}
-				if (portNames.length > 0) {
-					portCombo.select(0);
-					nameText.setText(portCombo.getText());
-				}
-			} catch (IOException e) {
-				GdbUIPlugin.log(e);
+			for (String portName : portNames) {
+				portCombo.add(portName);
+			}
+			if (portNames.length > 0) {
+				portCombo.setText(serialPort);
 			}
 
 			portCombo.addModifyListener(new ModifyListener() {
@@ -133,7 +151,7 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 
 			baudText = new Text(connGroup, SWT.BORDER);
 			baudText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			baudText.setText("115200"); //$NON-NLS-1$
+			baudText.setText(baudRate);
 			baudText.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {

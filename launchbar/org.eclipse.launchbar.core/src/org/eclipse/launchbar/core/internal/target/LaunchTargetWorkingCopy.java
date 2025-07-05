@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 QNX Software Systems and others.
+ * Copyright (c) 2016, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -102,6 +102,7 @@ public class LaunchTargetWorkingCopy extends PlatformObject implements ILaunchTa
 					target.attributes.remove(key);
 				}
 			}
+			target.attributes.put("name", target.getId()); //$NON-NLS-1$
 			target.attributes.flush();
 			return target;
 		} catch (BackingStoreException e) {

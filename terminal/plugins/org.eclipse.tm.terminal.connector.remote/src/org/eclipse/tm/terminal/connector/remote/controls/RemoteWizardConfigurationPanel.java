@@ -19,15 +19,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsPage;
+import org.eclipse.terminal.connector.AbstractSettingsPage;
+import org.eclipse.terminal.connector.ISettingsPage;
+import org.eclipse.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
+import org.eclipse.terminal.view.ui.interfaces.IConfigurationPanelContainer;
+import org.eclipse.terminal.view.ui.panels.AbstractExtendedConfigurationPanel;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 import org.eclipse.tm.terminal.connector.remote.internal.RemoteConnector;
 import org.eclipse.tm.terminal.connector.remote.internal.RemoteSettings;
 import org.eclipse.tm.terminal.connector.remote.internal.RemoteSettingsPage;
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
-import org.eclipse.tm.terminal.view.ui.panels.AbstractExtendedConfigurationPanel;
 
 /**
  * Remote wizard configuration panel implementation.

@@ -20,22 +20,22 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteServicesManager;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
+import org.eclipse.terminal.connector.ISettingsStore;
+import org.eclipse.terminal.connector.ITerminalConnector;
+import org.eclipse.terminal.connector.TerminalConnectorExtension;
+import org.eclipse.terminal.view.core.TerminalServiceFactory;
+import org.eclipse.terminal.view.core.interfaces.ITerminalService;
+import org.eclipse.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
+import org.eclipse.terminal.view.ui.interfaces.IConfigurationPanel;
+import org.eclipse.terminal.view.ui.interfaces.IConfigurationPanelContainer;
+import org.eclipse.terminal.view.ui.interfaces.IMementoHandler;
+import org.eclipse.terminal.view.ui.internal.SettingsStore;
+import org.eclipse.terminal.view.ui.launcher.AbstractLauncherDelegate;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 import org.eclipse.tm.terminal.connector.remote.controls.RemoteWizardConfigurationPanel;
 import org.eclipse.tm.terminal.connector.remote.internal.Activator;
 import org.eclipse.tm.terminal.connector.remote.internal.RemoteSettings;
 import org.eclipse.tm.terminal.connector.remote.nls.Messages;
-import org.eclipse.tm.terminal.view.core.TerminalServiceFactory;
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
-import org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler;
-import org.eclipse.tm.terminal.view.ui.internal.SettingsStore;
-import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 
 /**
  * Remote launcher delegate implementation.

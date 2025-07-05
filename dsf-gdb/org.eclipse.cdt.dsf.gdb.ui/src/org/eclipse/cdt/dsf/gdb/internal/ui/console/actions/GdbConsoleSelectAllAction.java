@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console.actions;
 
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsoleMessages;
 import org.eclipse.jface.action.Action;
-import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
+import org.eclipse.terminal.control.ITerminalViewControl;
 
 /**
  * Action to Select-All the available text from the associated terminal

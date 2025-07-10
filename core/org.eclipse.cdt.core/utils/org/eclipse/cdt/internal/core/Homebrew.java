@@ -44,7 +44,7 @@ public class Homebrew {
 			}
 		}
 		String defaultHomebrewPath = getDefaultHomebrewPath();
-		if (installationExists(defaultHomebrewPath)) {
+		if ((defaultHomebrewPath != null) && installationExists(defaultHomebrewPath)) {
 			return defaultHomebrewPath;
 		}
 		return null;

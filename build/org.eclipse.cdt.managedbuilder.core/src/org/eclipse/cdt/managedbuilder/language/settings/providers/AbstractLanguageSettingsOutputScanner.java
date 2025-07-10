@@ -25,6 +25,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,6 +102,11 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 			FIND_RESOURCES_CACHE_SIZE);
 	private HashMap<IProject, LRUCache<IPath, List<IResource>>> findPathInProjectCache = new HashMap<>();
 
+	private final ReentrantReadWriteLock findContainersForLocationURICacheLock = new ReentrantReadWriteLock();
+	private final ReentrantReadWriteLock findFilesForLocationURICacheLock = new ReentrantReadWriteLock();
+	private final ReentrantReadWriteLock findPathInProjectCacheLock = new ReentrantReadWriteLock();
+	private final ReentrantReadWriteLock findPathInFoldertCacheLock = new ReentrantReadWriteLock();
+
 	//String pathStr, URI baseURI -> URI
 	private static class MappedURIKey {
 		URI baseURI;
@@ -149,6 +156,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private LRUCache<URI, IPath> fileSystemLocationCache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
 	// Caches the result of new File(pathname).exists()
 	private LRUCache<IPath, Boolean> pathExistsCache = new LRUCache<>(FIND_RESOURCES_CACHE_SIZE);
+	private final ReentrantReadWriteLock mappedURICacheLock = new ReentrantReadWriteLock();
+	private final ReentrantReadWriteLock fileSystemLocationCacheLock = new ReentrantReadWriteLock();
+	private final ReentrantReadWriteLock pathExistsCacheLock = new ReentrantReadWriteLock();
 
 	/** @since 8.2 */
 	protected EFSExtensionProvider efsProvider = null;
@@ -792,8 +802,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		}
 		IResource sourceFile = null;
 
-		IResource[] resources = workspaceRootFindFilesForLocationURICache.computeIfAbsent(uri,
-				key -> ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(key));
+		IResource[] resources = threadSafeComputeIfAbsent(uri, workspaceRootFindFilesForLocationURICache,
+				key -> ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(key),
+				findFilesForLocationURICacheLock);
 		for (IResource rc : resources) {
 			if (!checkExistence || rc.isAccessible()) {
 				if (rc.getProject().equals(preferredProject)) {
@@ -815,8 +826,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private IResource findContainerForLocationURI(URI uri, IProject preferredProject, boolean checkExistence) {
 		IResource resource = null;
 
-		IResource[] resources = workspaceRootFindContainersForLocationURICache.computeIfAbsent(uri,
-				key -> ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(key));
+		IResource[] resources = threadSafeComputeIfAbsent(uri, workspaceRootFindContainersForLocationURICache,
+				(key) -> ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(key),
+				findContainersForLocationURICacheLock);
 		for (IResource rc : resources) {
 			if ((rc instanceof IProject || rc instanceof IFolder) && (!checkExistence || rc.isAccessible())) { // treat IWorkspaceRoot as non-workspace path
 				if (rc.getProject().equals(preferredProject)) {
@@ -1011,7 +1023,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	 * @return {@link URI} of the resource
 	 */
 	private URI determineMappedURI(String pathStr, URI baseURI) {
-		return mappedURICache.computeIfAbsent(new MappedURIKey(baseURI, pathStr), key -> {
+		return threadSafeComputeIfAbsent(new MappedURIKey(baseURI, pathStr), mappedURICache, key -> {
 			URI uri = null;
 
 			if (baseURI == null) {
@@ -1040,16 +1052,17 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				uri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
 			}
 			return uri;
-		});
+		}, mappedURICacheLock);
 	}
 
 	/**
 	 * Find all resources in the project which might be represented by relative path passed.
 	 */
 	private List<IResource> findPathInProject(IPath path, IProject project) {
-		LRUCache<IPath, List<IResource>> cache = findPathInProjectCache.computeIfAbsent(project,
-				key -> new LRUCache<>(FIND_RESOURCES_CACHE_SIZE));
-		return cache.computeIfAbsent(path, key -> findPathInFolder(path, project));
+		LRUCache<IPath, List<IResource>> cache = threadSafeComputeIfAbsent(project, findPathInProjectCache,
+				key -> new LRUCache<IPath, List<IResource>>(FIND_RESOURCES_CACHE_SIZE), findPathInProjectCacheLock);
+		return threadSafeComputeIfAbsent(path, cache, key -> findPathInFolder(path, project),
+				findPathInFoldertCacheLock);
 	}
 
 	/**
@@ -1157,8 +1170,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 	private IPath getFilesystemLocation(URI uri) {
 		if (uri == null)
 			return null;
-
-		return fileSystemLocationCache.computeIfAbsent(uri, (k) -> {
+		return threadSafeComputeIfAbsent(uri, fileSystemLocationCache, (k) -> {
 			String pathStr = efsProvider.getMappedPath(uri);
 			URI resUri = org.eclipse.core.filesystem.URIUtil.toURI(pathStr);
 
@@ -1175,7 +1187,7 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 				}
 			}
 			return null;
-		});
+		}, fileSystemLocationCacheLock);
 	}
 
 	/**
@@ -1256,9 +1268,9 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		IPath location = getFilesystemLocation(uri);
 		if (location != null) {
 			String loc = location.toString();
-			boolean exists = pathExistsCache.computeIfAbsent(location, (s) -> {
+			boolean exists = threadSafeComputeIfAbsent(location, pathExistsCache, (s) -> {
 				return new File(loc).exists();
-			});
+			}, pathExistsCacheLock);
 			if (exists) {
 				return optionParser.createEntry(loc, loc, flag);
 			}
@@ -1415,4 +1427,22 @@ public abstract class AbstractLanguageSettingsOutputScanner extends LanguageSett
 		return true;
 	}
 
+	private static <K, V> V threadSafeComputeIfAbsent(K key, HashMap<K, V> cacheMap,
+			Function<? super K, ? extends V> mappingFunction, ReentrantReadWriteLock rwLock) {
+		rwLock.readLock().lock();
+		V value = cacheMap.get(key);
+		rwLock.readLock().unlock();
+		if (value != null) {
+			return value;
+		}
+
+		rwLock.writeLock().lock();
+		value = cacheMap.get(key);
+		if (value == null) {
+			value = cacheMap.computeIfAbsent(key, mappingFunction);
+		}
+		rwLock.writeLock().unlock();
+
+		return value;
+	}
 }

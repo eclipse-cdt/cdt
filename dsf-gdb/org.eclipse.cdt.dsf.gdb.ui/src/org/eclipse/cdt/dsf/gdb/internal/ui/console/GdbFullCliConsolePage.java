@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 import org.eclipse.cdt.debug.internal.ui.views.debuggerconsole.DebuggerConsoleView;
@@ -43,12 +42,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.tm.internal.terminal.control.ITerminalListener;
-import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
-import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.terminal.connector.ITerminalConnector;
+import org.eclipse.terminal.connector.ITerminalControl;
+import org.eclipse.terminal.connector.TerminalState;
+import org.eclipse.terminal.control.ITerminalListener;
+import org.eclipse.terminal.control.ITerminalViewControl;
+import org.eclipse.terminal.control.TerminalTitleRequestor;
+import org.eclipse.terminal.control.TerminalViewControlFactory;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.Page;
 
@@ -158,16 +158,18 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 			}
 
 			@Override
-			public void setTerminalTitle(final String title) {
+			public void setTerminalSelectionChanged() {
 			}
+
+			@Override
+			public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
+			}
+
 		}, fMainComposite, new ITerminalConnector[] {}, useCommonPrefs);
 
 		fTerminalControl.setConnector(new GdbTerminalPageConnector(fGdbTerminalControlConnector, fGdbPty));
 
-		try {
-			fTerminalControl.setEncoding(Charset.defaultCharset().name());
-		} catch (UnsupportedEncodingException e) {
-		}
+		fTerminalControl.setCharset(Charset.defaultCharset());
 		if (fTerminalControl instanceof ITerminalControl) {
 			((ITerminalControl) fTerminalControl).setConnectOnEnterIfClosed(false);
 			((ITerminalControl) fTerminalControl).setVT100LineWrapping(true);

@@ -12,7 +12,7 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.console;
 
 import java.io.OutputStream;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.terminal.connector.ITerminalControl;
 
 /**
  * Interface to connect multiple page terminal controls with their single associated GDB process I/O.

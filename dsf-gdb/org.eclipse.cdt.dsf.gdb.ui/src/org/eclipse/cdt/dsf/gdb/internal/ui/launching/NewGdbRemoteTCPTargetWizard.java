@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 QNX Software Systems and others.
+ * Copyright (c) 2019, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -50,6 +50,16 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 			Composite control = new Composite(parent, SWT.NONE);
 			control.setLayout(new GridLayout());
 
+			String targetName = ""; //$NON-NLS-1$
+			String targetHostName = ""; //$NON-NLS-1$
+			String targetPort = ""; //$NON-NLS-1$
+			ILaunchTarget launchTarget = getLaunchTarget();
+			if (launchTarget != null) {
+				targetName = launchTarget.getId();
+				targetHostName = launchTarget.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, targetHostName);
+				targetPort = launchTarget.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, targetPort);
+			}
+
 			// Target name
 
 			Group nameGroup = new Group(control, SWT.NONE);
@@ -72,14 +82,15 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 					nameText.setEnabled(!same);
 				}
 			});
-			sameAsHostname.setSelection(true);
+			sameAsHostname.setSelection(targetName.equals(targetHostName));
 
 			Label nameLabel = new Label(nameGroup, SWT.NONE);
 			nameLabel.setText(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.TargetName")); //$NON-NLS-1$
 
 			nameText = new Text(nameGroup, SWT.BORDER);
+			nameText.setText(targetName);
 			nameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			nameText.setEnabled(false);
+			nameText.setEnabled(!targetName.equals(targetHostName));
 			nameText.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
@@ -98,6 +109,7 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 			hostLabel.setText(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.HostName")); //$NON-NLS-1$
 
 			hostText = new Text(connGroup, SWT.BORDER);
+			hostText.setText(targetHostName);
 			hostText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 			hostText.addModifyListener(new ModifyListener() {
 				@Override
@@ -113,6 +125,8 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 			portLabel.setText(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.Port")); //$NON-NLS-1$
 
 			portText = new Text(connGroup, SWT.BORDER);
+			portText.setText(targetPort);
+
 			portText.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {

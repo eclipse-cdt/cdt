@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="168">
+<target name="cdt" sequenceNumber="169">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/" />
 			<unit id="org.eclipse.license.feature.group" version="0.0.0" />
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/eclipse/updates/4.36/" />
+			<repository location="https://download.eclipse.org/eclipse/updates/4.37-I-builds/" />
 			<unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0" />
 			<unit id="org.eclipse.jdt.annotation" version="0.0.0" />
 			<unit id="org.eclipse.sdk.feature.group" version="0.0.0" />
@@ -195,7 +195,7 @@
 			</dependencies>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/2025-06/"/>
+			<repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/2025-09/"/>
 			<unit id="org.junit" version="4.13.2.v20240929-1000" />
 			<unit id="org.eclipse.orbit.xml-apis-ext" version="1.0.0.v20240917-0534"/>
 			<unit id="bcpg" version="0.0.0"/>

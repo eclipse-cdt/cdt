@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
+ *     Alexander Fedorov (ArSysOp) - adapt to internal Platform changes
  *******************************************************************************/
 package org.eclipse.cdt.ui.testplugin;
 
@@ -373,7 +374,7 @@ public class EditorTestHelper {
 	}
 
 	private static Accessor getBackgroundThreadAccessor(AbstractReconciler reconciler) {
-		Object backgroundThread = new Accessor(reconciler, AbstractReconciler.class).get("fThread");
+		Object backgroundThread = new Accessor(reconciler, AbstractReconciler.class).get("fWorker");
 		return new Accessor(backgroundThread, backgroundThread.getClass());
 	}
 

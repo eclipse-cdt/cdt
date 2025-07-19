@@ -11,7 +11,7 @@
    <extension-point id="parsers" name="Terminal Parsers" schema="schema/parsers.exsd"/>
 
 <!-- Terminal connector contributions -->
-   <extension point="org.eclipse.tm.terminal.control.connectors">
+   <extension point="org.eclipse.terminal.control.connectors">
       <connector 
             name="%connectionName"
             id="org.eclipse.tm.terminal.connector.remote.RemoteConnector"
@@ -19,7 +19,7 @@
    </extension>
 
 <!-- Terminal launcher delegate contributions -->
-   <extension point="org.eclipse.tm.terminal.view.ui.launcherDelegates">
+   <extension point="org.eclipse.terminal.view.ui.launcherDelegates">
       <delegate
             class="org.eclipse.tm.terminal.connector.remote.launcher.RemoteLauncherDelegate"
             id="org.eclipse.tm.terminal.connector.telnet.launcher.remote"
@@ -36,7 +36,7 @@
    
    <extension point="org.eclipse.ui.preferencePages">
       <page
-            category="org.eclipse.tm.terminal.TerminalPreferencePage"
+            category="org.eclipse.terminal.TerminalPreferencePage"
             class="org.eclipse.tm.terminal.connector.remote.internal.preferences.RemoteTerminalPreferencePage"
             id="org.eclipse.tm.terminal.remote.page"
             name="%RemoteTerminalPage.name">

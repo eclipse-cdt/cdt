@@ -14,9 +14,9 @@ package org.eclipse.tm.terminal.connector.remote.launcher;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.terminal.view.core.ITerminalsConnectorConstants;
+import org.eclipse.terminal.view.ui.IMementoHandler;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler;
 import org.eclipse.ui.IMemento;
 
 /**

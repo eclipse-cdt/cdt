@@ -13,24 +13,24 @@
 package org.eclipse.tm.terminal.connector.cdtserial.launcher;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.cdt.serial.ByteSize;
 import org.eclipse.cdt.serial.Parity;
 import org.eclipse.cdt.serial.StopBits;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.terminal.connector.ISettingsStore;
+import org.eclipse.terminal.connector.ITerminalConnector;
+import org.eclipse.terminal.connector.InMemorySettingsStore;
+import org.eclipse.terminal.connector.TerminalConnectorExtension;
+import org.eclipse.terminal.view.core.ITerminalService;
+import org.eclipse.terminal.view.core.ITerminalsConnectorConstants;
+import org.eclipse.terminal.view.ui.launcher.AbstractLauncherDelegate;
+import org.eclipse.terminal.view.ui.launcher.IConfigurationPanel;
+import org.eclipse.terminal.view.ui.launcher.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.connector.cdtserial.connector.SerialSettings;
 import org.eclipse.tm.terminal.connector.cdtserial.controls.SerialConfigPanel;
-import org.eclipse.tm.terminal.view.core.TerminalServiceFactory;
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done;
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
-import org.eclipse.tm.terminal.view.ui.internal.SettingsStore;
-import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 
 public class SerialLauncherDelegate extends AbstractLauncherDelegate {
 
@@ -45,7 +45,7 @@ public class SerialLauncherDelegate extends AbstractLauncherDelegate {
 	}
 
 	@Override
-	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
+	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) throws CoreException {
 		Assert.isNotNull(properties);
 
 		// Check for the terminal connector id
@@ -63,23 +63,20 @@ public class SerialLauncherDelegate extends AbstractLauncherDelegate {
 		settings.setStopBits((StopBits) properties.get(SerialSettings.STOP_BITS_ATTR));
 
 		// Construct the terminal settings store
-		ISettingsStore store = new SettingsStore();
+		ISettingsStore store = new InMemorySettingsStore();
 		settings.save(store);
 
 		// Construct the terminal connector instance
 		ITerminalConnector connector = TerminalConnectorExtension.makeTerminalConnector(connectorId);
-		if (connector != null) {
-			// Apply default settings
-			connector.setDefaultSettings();
-			// And load the real settings
-			connector.load(store);
-		}
-
+		// Apply default settings
+		connector.setDefaultSettings();
+		// And load the real settings
+		connector.load(store);
 		return connector;
 	}
 
 	@Override
-	public void execute(Map<String, Object> properties, Done done) {
+	public CompletableFuture<?> execute(Map<String, Object> properties) {
 		Assert.isNotNull(properties);
 
 		// Set the terminal tab title
@@ -93,11 +90,8 @@ public class SerialLauncherDelegate extends AbstractLauncherDelegate {
 		}
 
 		// Get the terminal service
-		ITerminalService terminal = TerminalServiceFactory.getService();
-		// If not available, we cannot fulfill this request
-		if (terminal != null) {
-			terminal.openConsole(properties, done);
-		}
+		ITerminalService terminal = getTerminalService();
+		return terminal.openConsole(properties);
 	}
 
 }

@@ -21,12 +21,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
+import org.eclipse.terminal.connector.AbstractSettingsPage;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-@SuppressWarnings("restriction")
 public class RemoteSettingsPage extends AbstractSettingsPage {
 	private final RemoteSettings fTerminalSettings;
 	private RemoteConnectionWidget fRemoteConnectionWidget;

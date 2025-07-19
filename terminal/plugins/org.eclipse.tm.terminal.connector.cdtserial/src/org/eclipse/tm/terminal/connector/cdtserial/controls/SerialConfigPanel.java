@@ -21,17 +21,22 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.terminal.view.core.ITerminalsConnectorConstants;
+import org.eclipse.terminal.view.ui.launcher.AbstractExtendedConfigurationPanel;
+import org.eclipse.terminal.view.ui.launcher.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.connector.cdtserial.connector.SerialConnector;
 import org.eclipse.tm.terminal.connector.cdtserial.connector.SerialSettings;
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
-import org.eclipse.tm.terminal.view.ui.panels.AbstractExtendedConfigurationPanel;
 
 public class SerialConfigPanel extends AbstractExtendedConfigurationPanel {
 
 	private SerialSettings settings;
 	private SerialSettingsPage page;
 
+	/**
+	 *
+	 * @param container
+	 * @since 5
+	 */
 	public SerialConfigPanel(IConfigurationPanelContainer container) {
 		super(container);
 	}

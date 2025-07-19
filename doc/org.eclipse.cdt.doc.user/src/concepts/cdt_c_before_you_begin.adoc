@@ -1,0 +1,129 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Before you begin
+
+Depending on how you obtained the CDT, you might have also received a
+toolchain with a built-in CDT integration. However, if you downloaded
+the CDT from the Eclipse web site, then you will require a toolchain
+before you can build and debug any projects.
+
+The standard CDT supports integration with the GNU toolchain. This
+includes GNU's make, gcc compiler, and gdb debugger utilities. If you
+require a toolchain to build software for your development host, this is
+the best choice to get started.
+
+Each platform that runs the CDT requires different steps to acquire this
+toolchain.
+
+=== Windows
+
+For windows, MinGW and Cygwin are the two main platform choices for
+acquiring the GNU toolchain. It is important to understand the
+difference between them. Cygwin produces executables that use the Cygwin
+POSIX runtime. Note that this runtime is GPL licensed. MinGW produces
+native Windows executables that do not require a separate runtime.
+
+* For *MinGW*, it is recommended to use the MSYS2 software distribution.
+The CDT will automatically detect tools that are installed using the
+MSYS2 package manager. Download and run the latest MSYS2 installer by
+following instructions on the https://www.msys2.org/[MSYS2 Getting
+Started] page. When you reach the UCRT64 environment prompt, use the
+following commands to install individual tools:
++
+[cols="1,5,3"]
+|===
+|Tool|Installation command|Notes
+
+|clang
+|`pacman -S mingw-w64-ucrt-x86_64-clang`
+|Provides the _LLVM with Clang_ toolchain
+
+|clangd
+|`pacman -S mingw-w64-ucrt-x86_64-clang-tools-extra`
+|Required by the _C/{cpp} Editor (LSP)_
+
+|cmake
+|`pacman -S mingw-w64-ucrt-x86_64-cmake`
+|Required for building _CMake_ projects
+
+|gcc
+|`pacman -S mingw-w64-ucrt-x86_64-gcc`
+|Provides the _MinGW GCC_ toolchain
+
+|gdb
+|`pacman -S mingw-w64-ucrt-x86_64-gdb`
+|Required for debugging
+
+|make
+|`pacman -S make`
+|Required for building _Managed Build_ projects
+
+|ninja
+|`pacman -S mingw-w64-ucrt-x86_64-ninja`
+|Required for building _CMake_ projects
+|===
+
+* *Cygwin* can be installed from the Cygwin site at
+https://www.cygwin.com. You need to manually select the gcc, gdb, and
+make packages to install the toolchain. Note that there is a
+https://github.com/eclipse-cdt/cdt/issues/228[known issue] with running
+recent versions of Cygwin gdb under the CDT.
+* The *Windows SDK* provides the Visual {cpp} compiler and header files
+and libraries required to create Windows applications. The CDT Visual
+{cpp} build integration will find these files based on where you installed
+the SDK. No other setup is required. +
+_Note:_ For this release, the integration should be considered beta
+quality. It is not recommended for production use.
+
+=== Linux
+
+All Linux distributions include the GNU toolchain. They may not,
+however, be installed by default. For instructions about installing the
+GNU toolchain for Linux, see the instructions for your particular
+distribution.
+
+=== Mac OS X
+
+The CDT supports the Apple GNU toolchain that is included in with the
+Xcode IDE. It can be downloaded from the Apple's developer site,
+https://developer.apple.com/[https://developer.apple.com]
+
+=== Other Platforms
+
+The GNU toolchain is supported on all platforms that the CDT supports.
+For instructions about installing the GNU toolchain on your platform,
+see your platform vendor.
+
+image:ngref.gif[Related reference,width=143,height=21] +
+* link:../concepts/cdt_o_home.htm[CDT Home] +
+
+image:ngtasks.gif[Related tasks] +
+* link:../tasks/cdt_t_manualbuild.htm[Building Manually]

@@ -12,15 +12,14 @@ package org.eclipse.tm.terminal.connector.remote.internal;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
-import org.eclipse.tm.internal.terminal.provisional.api.NullSettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
-import org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl;
+import org.eclipse.terminal.connector.ISettingsStore;
+import org.eclipse.terminal.connector.ITerminalControl;
+import org.eclipse.terminal.connector.NullSettingsStore;
+import org.eclipse.terminal.connector.TerminalState;
+import org.eclipse.terminal.connector.provider.AbstractTerminalConnector;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 
-@SuppressWarnings("restriction")
-public class RemoteConnector extends TerminalConnectorImpl {
+public class RemoteConnector extends AbstractTerminalConnector {
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;
 	private RemoteConnectionManager fConnection;
@@ -36,13 +35,6 @@ public class RemoteConnector extends TerminalConnectorImpl {
 		fSettings = settings;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#connect(org.eclipse.tm.internal.terminal.
-	 * provisional.api.ITerminalControl)
-	 */
 	@Override
 	public void connect(ITerminalControl control) {
 		super.connect(control);
@@ -51,11 +43,6 @@ public class RemoteConnector extends TerminalConnectorImpl {
 		fConnection.schedule();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#doDisconnect()
-	 */
 	@Override
 	public synchronized void doDisconnect() {
 		fConnection.cancel();
@@ -65,11 +52,6 @@ public class RemoteConnector extends TerminalConnectorImpl {
 		return fInputStream;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#getSettingsSummary()
-	 */
 	@Override
 	public String getSettingsSummary() {
 		return fSettings.getSummary();
@@ -84,11 +66,6 @@ public class RemoteConnector extends TerminalConnectorImpl {
 		return fSettings;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#getTerminalToRemoteStream()
-	 */
 	@Override
 	public OutputStream getTerminalToRemoteStream() {
 		return fOutputStream;
@@ -117,11 +94,6 @@ public class RemoteConnector extends TerminalConnectorImpl {
 		fOutputStream = outputStream;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.tm.internal.terminal.provisional.api.provider.TerminalConnectorImpl#setTerminalSize(int, int)
-	 */
 	@Override
 	public void setTerminalSize(int newWidth, int newHeight) {
 		if (fConnection != null && (newWidth != fWidth || newHeight != fHeight)) {

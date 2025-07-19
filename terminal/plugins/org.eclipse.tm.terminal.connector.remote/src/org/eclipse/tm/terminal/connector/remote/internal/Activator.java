@@ -122,4 +122,5 @@ public class Activator extends Plugin {
 		final ServiceReference<T> ref = context.getServiceReference(service);
 		return ref != null ? context.getService(ref) : null;
 	}
+
 }

@@ -17,7 +17,7 @@ import org.eclipse.cdt.serial.ByteSize;
 import org.eclipse.cdt.serial.Parity;
 import org.eclipse.cdt.serial.StandardBaudRates;
 import org.eclipse.cdt.serial.StopBits;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.terminal.connector.ISettingsStore;
 
 public class SerialSettings {
 
@@ -35,6 +35,7 @@ public class SerialSettings {
 
 	/**
 	 * Load information into the RemoteSettings object.
+	 * @since 5
 	 */
 	public void load(ISettingsStore store) {
 		portName = store.get(PORT_NAME_ATTR, ""); //$NON-NLS-1$
@@ -91,6 +92,7 @@ public class SerialSettings {
 
 	/**
 	 * Extract information from the RemoteSettings object.
+	 * @since 5
 	 */
 	public void save(ISettingsStore store) {
 		store.put(PORT_NAME_ATTR, portName);
@@ -106,14 +108,6 @@ public class SerialSettings {
 
 	public void setPortName(String portName) {
 		this.portName = portName;
-	}
-
-	/**
-	 * @deprecated Use {@link #getBaudRateValue()}
-	 */
-	@Deprecated
-	public BaudRate getBaudRate() {
-		return BaudRate.getClosest(baudRate);
 	}
 
 	/**

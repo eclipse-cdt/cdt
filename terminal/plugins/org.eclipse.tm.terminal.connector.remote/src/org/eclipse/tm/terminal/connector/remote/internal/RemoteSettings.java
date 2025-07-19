@@ -7,10 +7,9 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.connector.remote.internal;
 
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
+import org.eclipse.terminal.connector.ISettingsStore;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 
-@SuppressWarnings("restriction")
 public class RemoteSettings implements IRemoteSettings {
 	protected String connectionTypeId;
 	protected String connectionName;

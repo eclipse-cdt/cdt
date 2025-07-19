@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.remote.internal.console;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
@@ -23,8 +23,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.console.actions.ConsoleAction;
 import org.eclipse.remote.console.actions.IConsoleActionFactory;
 import org.eclipse.remote.core.IRemoteConnection;
@@ -36,12 +34,12 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.tm.internal.terminal.control.ITerminalListener;
-import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
-import org.eclipse.tm.internal.terminal.control.TerminalViewControlFactory;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.terminal.connector.ITerminalConnector;
+import org.eclipse.terminal.connector.TerminalState;
+import org.eclipse.terminal.control.ITerminalListener;
+import org.eclipse.terminal.control.ITerminalViewControl;
+import org.eclipse.terminal.control.TerminalTitleRequestor;
+import org.eclipse.terminal.control.TerminalViewControlFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.actions.CloseConsoleAction;
 import org.eclipse.ui.part.IPageSite;
@@ -76,8 +74,12 @@ public class TerminalConsolePage extends Page implements IAdaptable {
 		}
 
 		@Override
-		public void setTerminalTitle(final String title) {
-			// ignore titles coming from the widget
+		public void setTerminalSelectionChanged() {
+		}
+
+		@Override
+		public void setTerminalTitle(String title, TerminalTitleRequestor requestor) {
+
 		}
 	};
 
@@ -131,15 +133,7 @@ public class TerminalConsolePage extends Page implements IAdaptable {
 		tViewCtrl = TerminalViewControlFactory.makeControl(listener, mainComposite, new ITerminalConnector[] {});
 		tViewCtrl.setConnector(terminalConsole.getTerminalConnector().newPageConnector());
 
-		try {
-			tViewCtrl.setEncoding(encoding);
-		} catch (UnsupportedEncodingException e) {
-			IStatus status = new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					NLS.bind(ConsoleMessages.ENCODING_UNAVAILABLE_1, encoding));
-			Activator.log(status);
-			ErrorDialog.openError(PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-					ConsoleMessages.OPEN_CONSOLE_ERROR, ConsoleMessages.ENCODING_UNAVAILABLE_0, status);
-		}
+		tViewCtrl.setCharset(Charset.forName(encoding));
 		connectTerminalJob.schedule();
 	}
 

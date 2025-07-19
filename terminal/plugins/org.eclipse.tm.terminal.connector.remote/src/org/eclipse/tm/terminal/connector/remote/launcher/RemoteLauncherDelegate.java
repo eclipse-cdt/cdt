@@ -14,33 +14,33 @@ package org.eclipse.tm.terminal.connector.remote.launcher;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.remote.core.IRemoteConnection;
 import org.eclipse.remote.core.IRemoteConnectionType;
 import org.eclipse.remote.core.IRemoteServicesManager;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalConnectorExtension;
+import org.eclipse.terminal.connector.ISettingsStore;
+import org.eclipse.terminal.connector.ITerminalConnector;
+import org.eclipse.terminal.connector.InMemorySettingsStore;
+import org.eclipse.terminal.connector.TerminalConnectorExtension;
+import org.eclipse.terminal.view.core.ITerminalService;
+import org.eclipse.terminal.view.core.ITerminalsConnectorConstants;
+import org.eclipse.terminal.view.ui.IMementoHandler;
+import org.eclipse.terminal.view.ui.launcher.AbstractLauncherDelegate;
+import org.eclipse.terminal.view.ui.launcher.IConfigurationPanel;
+import org.eclipse.terminal.view.ui.launcher.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 import org.eclipse.tm.terminal.connector.remote.controls.RemoteWizardConfigurationPanel;
 import org.eclipse.tm.terminal.connector.remote.internal.Activator;
 import org.eclipse.tm.terminal.connector.remote.internal.RemoteSettings;
 import org.eclipse.tm.terminal.connector.remote.nls.Messages;
-import org.eclipse.tm.terminal.view.core.TerminalServiceFactory;
-import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
-import org.eclipse.tm.terminal.view.core.interfaces.constants.ITerminalsConnectorConstants;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
-import org.eclipse.tm.terminal.view.ui.interfaces.IMementoHandler;
-import org.eclipse.tm.terminal.view.ui.internal.SettingsStore;
-import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
 
 /**
  * Remote launcher delegate implementation.
  */
-@SuppressWarnings("restriction")
 public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	// The Remote terminal connection memento handler
 	private final IMementoHandler mementoHandler = new RemoteMementoHandler();
@@ -65,7 +65,7 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#execute(java.util.Map, org.eclipse.tm.terminal.view.core.interfaces.ITerminalService.Done)
 	 */
 	@Override
-	public void execute(Map<String, Object> properties, ITerminalService.Done done) {
+	public CompletableFuture<?> execute(Map<String, Object> properties) {
 		Assert.isNotNull(properties);
 
 		// Set the terminal tab title
@@ -81,11 +81,9 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 		}
 
 		// Get the terminal service
-		ITerminalService terminal = TerminalServiceFactory.getService();
+		ITerminalService terminal = getTerminalService();
 		// If not available, we cannot fulfill this request
-		if (terminal != null) {
-			terminal.openConsole(properties, done);
-		}
+		return terminal.openConsole(properties);
 	}
 
 	/**
@@ -128,7 +126,7 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 	 * @see org.eclipse.tm.terminal.view.ui.interfaces.ILauncherDelegate#createTerminalConnector(java.util.Map)
 	 */
 	@Override
-	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) {
+	public ITerminalConnector createTerminalConnector(Map<String, Object> properties) throws CoreException {
 		Assert.isNotNull(properties);
 
 		// Check for the terminal connector id
@@ -142,7 +140,7 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 		String connName = (String) properties.get(IRemoteSettings.CONNECTION_NAME);
 
 		// Construct the terminal settings store
-		ISettingsStore store = new SettingsStore();
+		ISettingsStore store = new InMemorySettingsStore();
 
 		// Construct the remote settings
 		RemoteSettings remoteSettings = new RemoteSettings();
@@ -153,12 +151,10 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 
 		// Construct the terminal connector instance
 		ITerminalConnector connector = TerminalConnectorExtension.makeTerminalConnector(connectorId);
-		if (connector != null) {
-			// Apply default settings
-			connector.setDefaultSettings();
-			// And load the real settings
-			connector.load(store);
-		}
+		// Apply default settings
+		connector.setDefaultSettings();
+		// And load the real settings
+		connector.load(store);
 
 		if (!properties.containsKey(ITerminalsConnectorConstants.PROP_ENCODING)) {
 			IRemoteServicesManager svcMgr = Activator.getService(IRemoteServicesManager.class);
@@ -177,4 +173,5 @@ public class RemoteLauncherDelegate extends AbstractLauncherDelegate {
 
 		return connector;
 	}
+
 }

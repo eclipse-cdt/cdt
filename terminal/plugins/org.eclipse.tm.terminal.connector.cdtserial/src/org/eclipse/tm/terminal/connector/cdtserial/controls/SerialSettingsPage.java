@@ -29,13 +29,13 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.tm.internal.terminal.provisional.api.AbstractSettingsPage;
+import org.eclipse.terminal.connector.AbstractSettingsPage;
+import org.eclipse.terminal.view.ui.launcher.IConfigurationPanel;
+import org.eclipse.terminal.view.ui.launcher.IConfigurationPanelContainer;
 import org.eclipse.tm.terminal.connector.cdtserial.activator.Activator;
 import org.eclipse.tm.terminal.connector.cdtserial.connector.SerialConnector;
 import org.eclipse.tm.terminal.connector.cdtserial.connector.SerialSettings;
 import org.eclipse.tm.terminal.connector.cdtserial.nls.Messages;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanel;
-import org.eclipse.tm.terminal.view.ui.interfaces.IConfigurationPanelContainer;
 
 public class SerialSettingsPage extends AbstractSettingsPage {
 
@@ -55,6 +55,12 @@ public class SerialSettingsPage extends AbstractSettingsPage {
 	private Parity parity;
 	private StopBits stopBits;
 
+	/**
+	 *
+	 * @param settings
+	 * @param panel
+	 * @since 5
+	 */
 	public SerialSettingsPage(SerialSettings settings, IConfigurationPanel panel) {
 		this.settings = settings;
 		this.panel = panel;

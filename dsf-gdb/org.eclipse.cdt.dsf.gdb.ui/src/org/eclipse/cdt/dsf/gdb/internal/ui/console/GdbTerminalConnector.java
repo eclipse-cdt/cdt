@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
+import org.eclipse.terminal.connector.ITerminalControl;
 
 /**
  * This class will read from the GDB process output and error streams and will write it to any registered

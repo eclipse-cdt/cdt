@@ -26,7 +26,6 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.cdt.launch;bundle-version="[11.0.0,12)",
  org.eclipse.debug.core;bundle-version="[3.23.0,4)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)",
- org.eclipse.tm.terminal.control;bundle-version="[5.6.0,6.0.0)",
  org.eclipse.cdt.native.serial;bundle-version="[12.2.0,13)",
  org.eclipse.launchbar.ui;bundle-version="[2.5.600,3)"
 Bundle-ActivationPolicy: lazy
@@ -52,3 +51,5 @@ Export-Package: org.eclipse.cdt.dsf.gdb.internal.ui;x-friends:="org.eclipse.cdt.
  org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.commands;x-internal:=true,
  org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch;x-internal:=true
 Automatic-Module-Name: org.eclipse.cdt.dsf.gdb.ui
+Import-Package: org.eclipse.terminal.connector;version="[1.0.0,2.0.0)",
+ org.eclipse.terminal.control;version="[1.0.0,2.0.0)"

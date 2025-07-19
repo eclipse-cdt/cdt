@@ -16,8 +16,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.cdt.ui;bundle-version="[9.0.100,10)",
  org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)",
  org.eclipse.cdt.debug.ui;bundle-version="[8.5.700,9)",
- org.eclipse.ui.console;bundle-version="[3.14.300,4)",
- org.eclipse.tm.terminal.control;bundle-version="[5.6.0,6.0.0)"
+ org.eclipse.ui.console;bundle-version="[3.14.300,4)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
@@ -29,3 +28,4 @@ Export-Package: org.eclipse.cdt.examples.dsf.gdb;x-internal:=true,
  org.eclipse.cdt.examples.dsf.gdb.viewmodel;x-internal:=true
 Automatic-Module-Name: org.eclipse.cdt.examples.dsf.gdb
 Bundle-Localization: plugin
+Import-Package: org.eclipse.terminal.control;version="[1.0.0,2.0.0)"

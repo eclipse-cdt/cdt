@@ -15,7 +15,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.console.ConsoleMessages;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.IConsoleImagesConst;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
+import org.eclipse.terminal.control.ITerminalViewControl;
 
 /**
  * Action to lock the scrolling of the associated terminal

@@ -14,10 +14,10 @@ import java.io.OutputStream;
 
 import org.eclipse.cdt.utils.pty.PTY;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.tm.internal.terminal.provisional.api.ISettingsStore;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalConnector;
-import org.eclipse.tm.internal.terminal.provisional.api.ITerminalControl;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.terminal.connector.ISettingsStore;
+import org.eclipse.terminal.connector.ITerminalConnector;
+import org.eclipse.terminal.connector.ITerminalControl;
+import org.eclipse.terminal.connector.TerminalState;
 
 /**
  * Class that connects the GDB process I/O with the terminal.

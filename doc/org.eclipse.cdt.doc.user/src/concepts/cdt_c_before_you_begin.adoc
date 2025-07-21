@@ -80,7 +80,7 @@ following commands to install individual tools:
 
 |gdb
 |`pacman -S mingw-w64-ucrt-x86_64-gdb`
-|Required for debugging
+|Required for local _C/{cpp} Application_ debugging
 
 |make
 |`pacman -S make`
@@ -110,11 +110,31 @@ however, be installed by default. For instructions about installing the
 GNU toolchain for Linux, see the instructions for your particular
 distribution.
 
-=== Mac OS X
+=== macOS
 
-The CDT supports the Apple GNU toolchain that is included in with the
-Xcode IDE. It can be downloaded from the Apple's developer site,
-https://developer.apple.com/[https://developer.apple.com]
+The CDT supports the _Clang_ toolchain provided by the
+_Xcode Command Line Tools_. It is recommended to use the Homebrew
+software distribution for any additional tools. The CDT will automatically
+detect tools that are installed using the Homebrew package manager.
+Install Homebrew by following instructions on the https://brew.sh/[Homebrew]
+home page. Then use the following commands at a _Terminal_ prompt to install
+individual tools:
+[cols="1,5,4"]
+|===
+|Tool|Installation command|Notes
+
+|cmake
+|`brew install cmake`
+|Required for building _CMake_ projects
+
+|lldb-mi
+|`brew install cdt-project/tools/lldb-mi`
+|Required for local _C/{cpp} Application_ debugging on Apple silicon (you must also install the CDT _C/{cpp} LLDB Debugger Integration_ feature)
+
+|ninja
+|`brew install ninja`
+|Required for building _CMake_ projects
+|===
 
 === Other Platforms
 

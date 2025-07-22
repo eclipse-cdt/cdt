@@ -8,6 +8,10 @@
             id="org.eclipse.cdt.build.gcc.core.gccPathProvider">
       </provider>
       <provider
+            class="org.eclipse.cdt.build.gcc.core.internal.HomebrewToolChainProvider"
+            id="org.eclipse.cdt.build.gcc.core.homebrewProvider">
+      </provider>
+      <provider
             class="org.eclipse.cdt.build.gcc.core.internal.Msys2ToolChainProvider"
             id="org.eclipse.cdt.build.gcc.core.msys2Provider">
       </provider>

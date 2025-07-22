@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2012 QNX Software Systems and others.
+ * Copyright (c) 2004, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     QNX Software Systems - Initial API and implementation
  *     Ken Ryall (Nokia) - Support for breakpoint actions (bug 118308)
  *     Sergey Prigogin (Google)
+ *     John Dallaway - Prefer LLDB local debug delegates on macOS AArch64 (#1175)
  *******************************************************************************/
 package org.eclipse.cdt.debug.core;
 
@@ -92,6 +93,10 @@ public class CDebugCorePlugin extends Plugin {
 
 	public static final String BREAKPOINT_EXTENSION_EXTENSION_POINT_ID = "BreakpointExtension"; //$NON-NLS-1$
 	public static final String BREAKPOINT_EXTENSION_ELEMENT = "breakpointExtension"; //$NON-NLS-1$
+
+	// The preferred launch delegates for local debug sessions on macOS AArch64
+	private static final String PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE_MACOSX_AARCH64 = "org.eclipse.cdt.llvm.dsf.lldb.launch.attachCLaunch"; //$NON-NLS-1$
+	private static final String PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE_MACOSX_AARCH64 = "org.eclipse.cdt.llvm.dsf.lldb.launch.localCLaunch"; //$NON-NLS-1$
 
 	/**
 	 * Dummy source lookup director needed to manage common source containers.
@@ -358,6 +363,9 @@ public class CDebugCorePlugin extends Plugin {
 		// Set the default launch delegates as early as possible, and do it only once (Bug 312997)
 		ILaunchManager launchMgr = DebugPlugin.getDefault().getLaunchManager();
 
+		final boolean isPlatformMacosxAarch64 = Platform.OS_MACOSX.equals(Platform.getOS())
+				&& Platform.ARCH_AARCH64.equals(Platform.getOSArch());
+
 		HashSet<String> debugSet = new HashSet<>();
 		debugSet.add(ILaunchManager.DEBUG_MODE);
 
@@ -365,10 +373,12 @@ public class CDebugCorePlugin extends Plugin {
 				.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_APP);
 		try {
 			if (localCfg.getPreferredDelegate(debugSet) == null) {
+				String preferredLocalDelegate = isPlatformMacosxAarch64
+						? PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE_MACOSX_AARCH64
+						: ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE;
 				ILaunchDelegate[] delegates = localCfg.getDelegates(debugSet);
 				for (ILaunchDelegate delegate : delegates) {
-					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_LOCAL_LAUNCH_DELEGATE
-							.equals(delegate.getId())) {
+					if (preferredLocalDelegate.equals(delegate.getId())) {
 						localCfg.setPreferredDelegate(debugSet, delegate);
 						break;
 					}
@@ -397,10 +407,12 @@ public class CDebugCorePlugin extends Plugin {
 				.getLaunchConfigurationType(ICDTLaunchConfigurationConstants.ID_LAUNCH_C_ATTACH);
 		try {
 			if (attachCfg.getPreferredDelegate(debugSet) == null) {
+				String preferredAttachDelegate = isPlatformMacosxAarch64
+						? PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE_MACOSX_AARCH64
+						: ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE;
 				ILaunchDelegate[] delegates = attachCfg.getDelegates(debugSet);
 				for (ILaunchDelegate delegate : delegates) {
-					if (ICDTLaunchConfigurationConstants.PREFERRED_DEBUG_ATTACH_LAUNCH_DELEGATE
-							.equals(delegate.getId())) {
+					if (preferredAttachDelegate.equals(delegate.getId())) {
 						attachCfg.setPreferredDelegate(debugSet, delegate);
 						break;
 					}

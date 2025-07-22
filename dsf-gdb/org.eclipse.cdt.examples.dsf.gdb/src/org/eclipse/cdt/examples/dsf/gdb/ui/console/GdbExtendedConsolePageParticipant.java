@@ -14,7 +14,7 @@ import org.eclipse.cdt.dsf.gdb.internal.ui.console.GdbBasicCliConsole;
 import org.eclipse.cdt.dsf.gdb.internal.ui.console.GdbFullCliConsolePage;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
+import org.eclipse.terminal.control.ITerminalViewControl;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;

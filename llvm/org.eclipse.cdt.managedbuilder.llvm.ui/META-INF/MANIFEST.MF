@@ -11,7 +11,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)",
  org.eclipse.cdt.managedbuilder.core;bundle-version="[9.7.100,10)",
  org.eclipse.cdt.managedbuilder.gnu.ui;bundle-version="[8.7.200,9)",
- org.eclipse.cdt.core;bundle-version="[9.1.0,10)"
+ org.eclipse.cdt.core;bundle-version="[9.2.0,10)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.cdt.managedbuilder.llvm.makegen;

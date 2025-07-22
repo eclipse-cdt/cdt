@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.remote.console.ITerminalConsole;
 import org.eclipse.remote.core.IRemoteConnection;
-import org.eclipse.tm.internal.terminal.provisional.api.TerminalState;
+import org.eclipse.terminal.connector.TerminalState;
 import org.eclipse.ui.console.AbstractConsole;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;

@@ -72,4 +72,4 @@ Your new project displays in the Project Explorer view.
 Your project may be empty because you have not yet created files for your project.
 You can now start writing the code for your application or importing code from elsewhere.
 
-icon:arrow-circle-right[] xref:new_cbs_makefile_proj.adoc[Next: Creating a Makefile project]
+icon:arrow-circle-right[] xref:new_cbs_makefile_proj.adoc[Next: Creating a Core Build System Makefile project]

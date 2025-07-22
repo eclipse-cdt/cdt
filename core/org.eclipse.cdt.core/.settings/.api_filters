@@ -72,6 +72,12 @@
         <filter id="336658481">
             <message_arguments>
                 <message_argument value="org.eclipse.cdt.utils.macho.MachO64.LoadCommand"/>
+                <message_argument value="LC_RPATH"/>
+            </message_arguments>
+        </filter>
+        <filter id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.cdt.utils.macho.MachO64.LoadCommand"/>
                 <message_argument value="LC_SOURCE_VERSION"/>
             </message_arguments>
         </filter>

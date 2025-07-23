@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *******************************************************************************
+ * Copyright (c) 2011, 2025 Contributors to the Eclipse Foundation
+ * 
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * https://www.eclipse.org/legal/epl-2.0/.
+ * 
+ * SPDX-License-Identifier: EPL-2.0
+ * 
+ * Contributors:
+ *   See git history
+ *******************************************************************************
+-->
 <site>
    <feature id="org.eclipse.cdt">
       <category name="main"/>
@@ -132,9 +146,6 @@
    <feature id="org.eclipse.launchbar.remote.source">
       <category name="launchbar"/>
    </feature>
-   <!-- Republish the tm terminal control that is now Eclipse Platform to our p2 repository -->
-   <bundle id="org.eclipse.tm.terminal.control" version="0.0.0"/>
-   <bundle id="org.eclipse.tm.terminal.control.source" version="0.0.0"/>
    <feature id="org.eclipse.tm.terminal.control.feature">
       <category name="terminal_main"/>
    </feature>
@@ -213,6 +224,8 @@
    <feature id="org.eclipse.remote.proxy.source">
       <category name="remote_sdk"/>
    </feature>
+   <bundle id="org.eclipse.tm.terminal.control" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.control.source" version="0.0.0"/>
    <bundle id="org.eclipse.cdt.util" version="0.0.0"/>
    <bundle id="org.eclipse.cdt.util.source" version="0.0.0"/>
    <bundle id="org.eclipse.cdt.remote.core" version="0.0.0"/>
@@ -222,6 +235,7 @@
    <bundle id="org.yaml.snakeyaml" version="0.0.0"/>
    <bundle id="com.sun.jna" version="0.0.0"/>
    <bundle id="com.sun.jna.platform" version="0.0.0"/>
+   <bundle id="com.sun.xml.bind"/>
    <bundle id="org.apache.commons.commons-io" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.core" version="0.0.0"/>
    <bundle id="org.eclipse.tools.templates.core.source" version="0.0.0"/>

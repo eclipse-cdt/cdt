@@ -34,6 +34,11 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
         # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
         continue;
     fi
+    
+    if [ "$plugin" == 'org.eclipse.tm.terminal.connector.telnet.feature' ]; then
+        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
+        continue;
+    fi
 
     feature_dir=$(dirname ${feature_xml})
 

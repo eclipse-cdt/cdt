@@ -29,6 +29,11 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
         # was moved to Eclipse platform, so we cannot run these checks.
         continue;
     fi
+    
+    if [ "$plugin" == 'org.eclipse.tm.terminal.connector.ssh.feature' ]; then
+        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
+        continue;
+    fi
 
     feature_dir=$(dirname ${feature_xml})
 

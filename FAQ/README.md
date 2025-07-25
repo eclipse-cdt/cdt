@@ -2120,8 +2120,8 @@ understand it better. You can:
 
 In recent versions of macOS and Xcode, Apple's GDB is not provided by
 default. However, it is possible to use the "normal" GDB provided by the
-Free Software Foundation. For easy installation, you can use package
-systems such as [Brew](http://brew.sh/) and
+Free Software Foundation on Intel hardware (x86_64). For easy installation,
+you can use package systems such as [Homebrew](http://brew.sh/) and
 [MacPorts](http://www.macports.org). Once installed, when you start
 debugging with GDB you will see an error message such as:
 
@@ -2139,6 +2139,9 @@ change the command to ggdb instead of gdb.
 For macOS Sierra (10.12), there seems to be additional problems with GDB
 that might make it unusable, see the [GDB bug
 report](https://sourceware.org/bugzilla/show_bug.cgi?id=20266).
+
+GDB does not support local macOS application debugging on Apple silicon
+(AArch64) at present. It is necessary to use the LLDB debugger instead.
 
 #### How do I get the LLDB debugger?
 
@@ -2171,23 +2174,19 @@ releases could be buggy and not as well tested with CDT.
 
   - Other Linux
 
-LLDB is also available on other distributions. To make it work, just
-make sure that the version is at least 3.8 and that lldb-mi is on PATH
-environment variable (or that the debug configuration is pointing to
-it). If LLDB is not available (or too old) on your distribution, it is
-not that difficult to build from source, see [LLDB Build
-documentation](http://lldb.llvm.org/build.html#BuildingLldbOnLinux).
-Make sure you have plenty of free space (\~20GB) if you plan to build
-the whole LLVM+Clang+LLDB.
+The lldb-mi tool was removed from the LLVM repository in 2019 and is no-longer
+present in builds of LLDB from version 10 onwards. If
+lldb-mi is not available (or too old) in your distribution, it is
+not difficult to build it from source, see the
+[lldb-mi README](https://github.com/lldb-tools/lldb-mi/blob/main/README.md).
 
   - macOS
 
-Install Xcode (version 7.3.1 is known to work). The simplest way is to
-get is from the [App Store](http://appstore.com/mac/xcode). Once it is
-installed, lldb-mi will reside somewhere under the Xcode folder (it
-normally is /Applications/Xcode.app/Contents/Developer/usr/bin/lldb-mi).
-CDT will initialize the default LLDB path to this value if it is
-present.
+The lldb-mi tool may be installed using the Homebrew package manager. Install
+Homebrew by following instructions on the [Homebrew](https://brew.sh/) home
+page. Then install lldb-mi with
+
+`brew install eclipse-cdt/tools/lldb-mi`
 
 Note that if you had previous debug configurations with a non-default
 path for LLDB or if you changed the path in the preferences, the path to
@@ -2200,6 +2199,13 @@ the preferences to defaults (if it was modified).
 Debugging on Windows with LLDB is not as mature at this moment and still
 very much in progress. This is very likely to improve in the future
 versions of LLDB (and CDT).
+
+The lldb-mi tool may be installed using the MSYS2 package manager. Install
+MSYS2 by following instructions on the
+[MSYS2 Getting Started](https://www.msys2.org/) page. Then install lldb-mi
+with
+
+`pacman -S mingw-w64-ucrt-x86_64-lldb-mi`
 
 #### How do I install the LLDB debugger integration?
 

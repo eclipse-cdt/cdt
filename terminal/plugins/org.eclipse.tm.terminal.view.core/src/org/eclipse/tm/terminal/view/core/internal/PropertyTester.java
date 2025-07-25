@@ -16,6 +16,7 @@ import org.eclipse.tm.terminal.view.core.TerminalContextPropertiesProviderFactor
 /**
  * Property tester implementation.
  */
+@Deprecated(forRemoval = true)
 public class PropertyTester extends org.eclipse.core.expressions.PropertyTester {
 
 	@Override

@@ -19,6 +19,7 @@ import org.eclipse.tm.terminal.view.core.activator.CoreBundleActivator;
 /**
  * Helper class to handle tracing using the platforms debug capabilities.
  */
+@Deprecated(forRemoval = true)
 public class TraceHandler {
 	/**
 	 * The bundle identifier.

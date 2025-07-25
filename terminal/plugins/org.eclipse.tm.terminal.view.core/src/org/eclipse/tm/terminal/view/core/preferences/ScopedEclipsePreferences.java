@@ -40,6 +40,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * @see IEclipsePreferences.PreferenceChangeEvent
  * @see IEclipsePreferences.IPreferenceChangeListener
  */
+@Deprecated(forRemoval = true)
 public class ScopedEclipsePreferences {
 	/**
 	 * The preferences scope qualifier.

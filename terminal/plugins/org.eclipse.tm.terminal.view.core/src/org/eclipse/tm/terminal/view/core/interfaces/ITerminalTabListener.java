@@ -15,6 +15,7 @@ package org.eclipse.tm.terminal.view.core.interfaces;
  * Listener to implement and to register to get notified about
  * terminal tabs events, like the disposal of a terminal tab.
  */
+@Deprecated(forRemoval = true)
 public interface ITerminalTabListener {
 
 	/**

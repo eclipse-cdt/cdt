@@ -80,7 +80,11 @@ following commands to install individual tools:
 
 |gdb
 |`pacman -S mingw-w64-ucrt-x86_64-gdb`
-|Required for local _C/{cpp} Application_ debugging
+|Required for local _C/{cpp} Application_ debugging using GDB (recommended)
+
+|lldb-mi
+|`pacman -S mingw-w64-ucrt-x86_64-lldb-mi`
+|Required for local _C/{cpp} Application_ debugging using LLDB (experimental)
 
 |make
 |`pacman -S make`
@@ -142,8 +146,10 @@ The GNU toolchain is supported on all platforms that the CDT supports.
 For instructions about installing the GNU toolchain on your platform,
 see your platform vendor.
 
-image:ngref.gif[Related reference,width=143,height=21] +
+image:ngref.gif[Related reference,width=143,height=21]
+
 * link:../concepts/cdt_o_home.htm[CDT Home] +
 
-image:ngtasks.gif[Related tasks] +
+image:ngtasks.gif[Related tasks]
+
 * link:../tasks/cdt_t_manualbuild.htm[Building Manually]

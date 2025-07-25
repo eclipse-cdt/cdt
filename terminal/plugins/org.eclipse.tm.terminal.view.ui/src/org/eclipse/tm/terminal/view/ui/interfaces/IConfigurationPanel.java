@@ -26,6 +26,7 @@ import org.eclipse.tm.terminal.view.ui.panels.AbstractConfigurationPanel;
  * @noimplement This interface is not intended to be implemented by clients.
  * Clients should extend {@link AbstractConfigurationPanel} instead.
  */
+@Deprecated
 public interface IConfigurationPanel extends IMessageProvider {
 
 	/**

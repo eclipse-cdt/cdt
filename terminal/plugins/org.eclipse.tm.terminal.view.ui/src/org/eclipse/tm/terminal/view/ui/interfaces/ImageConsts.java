@@ -18,6 +18,7 @@ package org.eclipse.tm.terminal.view.ui.interfaces;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
 public interface ImageConsts {
 	/**
 	 * The root directory where to load the images from, relative to

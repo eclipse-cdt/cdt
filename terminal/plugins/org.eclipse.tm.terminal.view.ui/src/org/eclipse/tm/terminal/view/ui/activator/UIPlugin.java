@@ -47,6 +47,7 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
+@Deprecated
 public class UIPlugin extends AbstractUIPlugin {
 	// The shared instance
 	private static UIPlugin plugin;
@@ -78,10 +79,7 @@ public class UIPlugin extends AbstractUIPlugin {
 	 * Convenience method which returns the unique identifier of this plug-in.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() != null && getDefault().getBundle() != null) {
-			return getDefault().getBundle().getSymbolicName();
-		}
-		return "org.eclipse.tm.terminal.view.ui"; //$NON-NLS-1$
+		return "org.eclipse.terminal.view.ui"; //$NON-NLS-1$
 	}
 
 	/**

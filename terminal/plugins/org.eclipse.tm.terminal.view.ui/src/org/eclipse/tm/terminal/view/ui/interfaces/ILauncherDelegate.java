@@ -27,6 +27,7 @@ import org.eclipse.tm.terminal.view.ui.launcher.AbstractLauncherDelegate;
  * @noimplement This interface is not intended to be implemented by clients.
  * Clients should extend {@link AbstractLauncherDelegate} instead.
  */
+@Deprecated
 public interface ILauncherDelegate extends IExecutableExtension, IAdaptable {
 
 	/**

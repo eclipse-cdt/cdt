@@ -24,9 +24,8 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
         plugin=$(xmllint --xpath 'string(//feature/@id)' $feature_xml)
     fi
 
-    if [ "$plugin" == 'org.eclipse.tm.terminal.control' ]; then
-        # As part of https://github.com/eclipse-cdt/cdt/pull/1166 this bundle
-        # was moved to Eclipse platform, so we cannot run these checks.
+    if [ "$plugin" == 'org.eclipse.tm.terminal.control.feature' ]; then
+        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
         continue;
     fi
     
@@ -36,6 +35,16 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
     fi
     
     if [ "$plugin" == 'org.eclipse.tm.terminal.connector.telnet.feature' ]; then
+        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
+        continue;
+    fi
+    
+    if [ "$plugin" == 'org.eclipse.tm.terminal.feature' ]; then
+        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
+        continue;
+    fi
+    
+    if [ "$plugin" == 'org.eclipse.tm.terminal.view.feature' ]; then
         # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
         continue;
     fi

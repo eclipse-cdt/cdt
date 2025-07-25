@@ -22,5 +22,4 @@ Automatic-Module-Name: org.eclipse.tm.terminal.connector.cdtserial
 Import-Package: org.eclipse.terminal.connector;version="[1.0.0,2.0.0)",
  org.eclipse.terminal.connector.provider;version="[1.0.0,2.0.0)",
  org.eclipse.terminal.view.core;version="[1.0.0,2.0.0)",
- org.eclipse.terminal.view.core.utils;version="[1.0.0,2.0.0)",
  org.eclipse.terminal.view.ui.launcher;version="[1.0.0,2.0.0)"

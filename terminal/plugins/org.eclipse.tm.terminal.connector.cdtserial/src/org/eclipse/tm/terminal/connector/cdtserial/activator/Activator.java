@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.terminal.view.core.utils.TraceHandler;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -28,8 +27,6 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin {
 	// The shared instance
 	private static Activator plugin;
-	// The trace handler instance
-	private static volatile TraceHandler traceHandler;
 
 	/**
 	 * The constructor
@@ -54,18 +51,6 @@ public class Activator extends AbstractUIPlugin {
 			return getDefault().getBundle().getSymbolicName();
 		}
 		return "org.eclipse.tm.terminal.connector.serial"; //$NON-NLS-1$
-	}
-
-	/**
-	 * Returns the bundles trace handler.
-	 *
-	 * @return The bundles trace handler.
-	 */
-	public static TraceHandler getTraceHandler() {
-		if (traceHandler == null) {
-			traceHandler = new TraceHandler(getUniqueIdentifier());
-		}
-		return traceHandler;
 	}
 
 	@Override

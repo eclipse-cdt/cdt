@@ -11,8 +11,10 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.core;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.core.runtime.ILog;
@@ -29,6 +31,8 @@ import org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener;
 @Deprecated(forRemoval = true)
 public final class TerminalServiceFactory {
 
+	private static final String TM_TERMINAL = ".tm.terminal."; //$NON-NLS-1$
+
 	private static final class ITerminalServiceImplementation
 			implements ITerminalService, org.eclipse.terminal.view.core.ITerminalTabListener {
 
@@ -41,7 +45,7 @@ public final class TerminalServiceFactory {
 				done.done(Status.error("Not running!")); //$NON-NLS-1$
 				return;
 			}
-			delegate.terminateConsole(properties).handle((o, e) -> {
+			delegate.terminateConsole(convert(properties)).handle((o, e) -> {
 				if (e != null) {
 					done.done(Status.error("Operation failed", e)); //$NON-NLS-1$
 				} else {
@@ -58,7 +62,7 @@ public final class TerminalServiceFactory {
 				done.done(Status.error("Not running!")); //$NON-NLS-1$
 				return;
 			}
-			delegate.openConsole(properties).handle((o, e) -> {
+			delegate.openConsole(convert(properties)).handle((o, e) -> {
 				if (e != null) {
 					done.done(Status.error("Operation failed", e)); //$NON-NLS-1$
 				} else {
@@ -76,7 +80,7 @@ public final class TerminalServiceFactory {
 				done.done(Status.error("Not running!")); //$NON-NLS-1$
 				return;
 			}
-			delegate.closeConsole(properties).handle((o, e) -> {
+			delegate.closeConsole(convert(properties)).handle((o, e) -> {
 				if (e != null) {
 					done.done(Status.error("Operation failed", e)); //$NON-NLS-1$
 				} else {
@@ -121,5 +125,28 @@ public final class TerminalServiceFactory {
 		ILog.of(STACK_WALKER.getCallerClass()).warn(
 				"This bundle is using the deprecated terminal API consider migration of your bundle to the new 'org.eclipse.terminal.view.core'"); //$NON-NLS-1$
 		return DELEGATE;
+	}
+
+	private static Map<String, Object> convert(Map<String, Object> properties) {
+		if (properties == null) {
+			return null;
+		}
+		LinkedHashMap<String, Object> enhanced = new LinkedHashMap<>(properties);
+		for (Entry<String, Object> entry : properties.entrySet()) {
+			String key = (String) transform(entry.getKey());
+			Object value = transform(entry.getValue());
+			enhanced.put(key, value);
+		}
+		return enhanced;
+	}
+
+	private static Object transform(Object object) {
+		if (object instanceof String s) {
+			if (s.contains(TM_TERMINAL)) {
+				//like org.eclipse.tm.terminal.view.core...
+				return s.replace(TM_TERMINAL, ".terminal."); //$NON-NLS-1$
+			}
+		}
+		return object;
 	}
 }

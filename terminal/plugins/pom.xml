@@ -25,11 +25,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>org.eclipse.tm.terminal.connector.local</module>
-		<module>org.eclipse.tm.terminal.connector.process</module>
 		<module>org.eclipse.tm.terminal.connector.remote</module>
-		<module>org.eclipse.tm.terminal.connector.ssh</module>
-		<module>org.eclipse.tm.terminal.connector.telnet</module>
 		<module>org.eclipse.tm.terminal.connector.cdtserial</module>
 
 		<module>org.eclipse.tm.terminal.view.core</module>

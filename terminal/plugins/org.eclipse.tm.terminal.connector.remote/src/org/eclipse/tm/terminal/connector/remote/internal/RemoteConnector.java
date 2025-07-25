@@ -19,7 +19,7 @@ import org.eclipse.terminal.connector.TerminalState;
 import org.eclipse.terminal.connector.provider.AbstractTerminalConnector;
 import org.eclipse.tm.terminal.connector.remote.IRemoteSettings;
 
-public class RemoteConnector extends AbstractTerminalConnector {
+public class RemoteConnector extends AbstractTerminalConnector { 
 	private OutputStream fOutputStream;
 	private InputStream fInputStream;
 	private RemoteConnectionManager fConnection;

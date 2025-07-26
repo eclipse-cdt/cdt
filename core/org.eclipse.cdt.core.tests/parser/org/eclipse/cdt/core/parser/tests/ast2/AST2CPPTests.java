@@ -11869,6 +11869,13 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU /* use GNU extensions */);
 	}
 
+	// int var1 alignas(16);
+	// int var2 __attribute__((section(".example"))) alignas(16);
+	// int var3 alignas(16) __attribute__((section(".example")));
+	public void testAlignaAsAfterDeclarator() throws Exception {
+		parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU /* use GNU extensions */);
+	}
+
 	// int operator "" _A(unsigned long long i) { return 1; }
 	// int operator "" _B(long double d) { return 1; }
 	// int operator "" _C(const char* s, unsigned int sz) { return sz; }

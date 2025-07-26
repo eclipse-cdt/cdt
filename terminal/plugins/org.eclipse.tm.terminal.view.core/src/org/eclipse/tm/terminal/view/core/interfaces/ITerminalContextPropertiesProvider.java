@@ -20,6 +20,7 @@ import java.util.Map;
  * for a given context. The context is typically an element from a selection
  * and the inner structure of the element is unknown to the terminal.
  */
+@Deprecated(forRemoval = true)
 public interface ITerminalContextPropertiesProvider {
 
 	/**

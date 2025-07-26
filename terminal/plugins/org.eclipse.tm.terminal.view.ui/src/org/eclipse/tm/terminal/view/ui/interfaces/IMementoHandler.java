@@ -18,6 +18,7 @@ import org.eclipse.ui.IMemento;
 /**
  * Terminal properties memento handler.
  */
+@Deprecated
 public interface IMementoHandler {
 
 	/**

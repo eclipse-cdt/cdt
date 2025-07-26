@@ -16,6 +16,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Externalized strings management.
  */
+@Deprecated(forRemoval = true)
 public class Messages extends NLS {
 
 	// The plug-in resource bundle name

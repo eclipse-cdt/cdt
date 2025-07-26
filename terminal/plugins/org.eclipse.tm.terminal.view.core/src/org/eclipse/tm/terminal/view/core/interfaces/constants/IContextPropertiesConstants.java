@@ -14,6 +14,7 @@ package org.eclipse.tm.terminal.view.core.interfaces.constants;
 /**
  * Defines the terminal context properties constants.
  */
+@Deprecated(forRemoval = true)
 public interface IContextPropertiesConstants {
 
 	/**

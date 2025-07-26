@@ -17,10 +17,11 @@ package org.eclipse.tm.terminal.view.ui.interfaces;
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
+@Deprecated
 public interface IUIConstants {
 	/**
 	 * The view id of the terminals view.
 	 */
-	public static final String ID = "org.eclipse.tm.terminal.view.ui.TerminalsView"; //$NON-NLS-1$
+	public static final String ID = org.eclipse.terminal.view.ui.IUIConstants.ID;
 
 }

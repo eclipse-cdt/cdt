@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 /**
  * Terminal service.
  */
+@Deprecated(forRemoval = true)
 public interface ITerminalService {
 
 	/**
@@ -59,7 +60,7 @@ public interface ITerminalService {
 	/**
 	 * Register the given listener to receive notifications about terminal events.
 	 * Calling this method multiple times with the same listener has no effect.
-
+	
 	 * @param listener The terminal tab listener. Must not be <code>null</code>.
 	 */
 	public void addTerminalTabListener(ITerminalTabListener listener);

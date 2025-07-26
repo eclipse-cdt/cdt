@@ -17,6 +17,7 @@ package org.eclipse.tm.terminal.view.core.interfaces;
  * <p>
  * Listeners are invoked within the monitor processing thread.
  */
+@Deprecated(forRemoval = true)
 public interface ITerminalServiceOutputStreamMonitorListener {
 
 	/**

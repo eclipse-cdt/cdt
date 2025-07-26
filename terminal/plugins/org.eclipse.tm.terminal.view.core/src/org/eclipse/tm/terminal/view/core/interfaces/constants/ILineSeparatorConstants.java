@@ -14,6 +14,7 @@ package org.eclipse.tm.terminal.view.core.interfaces.constants;
 /**
  * Line separator constants.
  */
+@Deprecated(forRemoval = true)
 public interface ILineSeparatorConstants {
 
 	/**

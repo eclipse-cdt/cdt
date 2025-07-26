@@ -35,6 +35,7 @@ import org.eclipse.tm.terminal.view.core.nls.Messages;
 /**
  * Terminal context properties provider factory.
  */
+@Deprecated(forRemoval = true)
 public final class TerminalContextPropertiesProviderFactory {
 	// Flag to remember if the contributions got loaded
 	private static boolean contributionsLoaded = false;

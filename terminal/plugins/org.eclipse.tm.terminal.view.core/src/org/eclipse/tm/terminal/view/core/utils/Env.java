@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * Environment handling utility methods.
  */
+@Deprecated(forRemoval = true)
 public class Env {
 
 	/**

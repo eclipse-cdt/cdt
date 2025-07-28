@@ -224,8 +224,6 @@
    <feature id="org.eclipse.remote.proxy.source">
       <category name="remote_sdk"/>
    </feature>
-   <bundle id="org.eclipse.tm.terminal.control" version="0.0.0"/>
-   <bundle id="org.eclipse.tm.terminal.control.source" version="0.0.0"/>
    <bundle id="org.eclipse.cdt.util" version="0.0.0"/>
    <bundle id="org.eclipse.cdt.util.source" version="0.0.0"/>
    <bundle id="org.eclipse.cdt.remote.core" version="0.0.0"/>
@@ -276,6 +274,26 @@
    <bundle id="org.eclipse.cdt.jsoncdb.nvidia.source">
       <category name="extra-jsoncdb"/>
    </bundle>
+   <!-- These are the "old" bundles for terminal view that we need to keep until dependents in SimRel
+      have moved off them. See https://github.com/eclipse-simrel/simrel.build/pull/955 
+      
+      XXX: org.eclipse.tm.terminal.control and connector.* are actually being consumed from CDT's
+      target platform, which means it is republishing an earlier build's version since CDT has
+      cyclical dependencies and CDT is in its own target platform. -->
+   <bundle id="org.eclipse.tm.terminal.control" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.view.core" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.view.ui" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.connector.process" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.connector.local" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.connector.ssh" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.connector.telnet" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.control.source" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.view.core.source" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.view.ui.source" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.connector.process.source" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.connector.local.source" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.connector.ssh.source" version="0.0.0"/>
+   <bundle id="org.eclipse.tm.terminal.connector.telnet.source" version="0.0.0"/>
    <category-def name="main" label="CDT Main Features"/>
    <category-def name="extra" label="CDT Optional Features"/>
    <category-def name="launchbar" label="LaunchBar"/>

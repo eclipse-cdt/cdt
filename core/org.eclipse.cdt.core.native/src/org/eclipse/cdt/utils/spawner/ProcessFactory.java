@@ -36,6 +36,8 @@ import org.eclipse.core.runtime.Platform;
  */
 public class ProcessFactory {
 
+	private static final boolean DEBUG = Boolean.getBoolean("org.eclipse.cdt.utils.spawner.debug"); //$NON-NLS-1$
+
 	static private ProcessFactory instance;
 	private boolean hasSpawner;
 	private Runtime runtime;
@@ -255,9 +257,9 @@ public class ProcessFactory {
 		}
 
 		public Process start() throws IOException {
-			// Uncomment the next line, set a breakpoint in the last line of debug() method,
-			// when the breakpoint is triggered, inspect the sb variable to see detailed info on what is being launched.
-			// debug();
+			if (DEBUG) {
+				debug();
+			}
 			Process p;
 			if (hasSpawner) {
 				if (use_pty) {
@@ -285,17 +287,10 @@ public class ProcessFactory {
 	}
 
 	private ProcessFactory() {
-		hasSpawner = false;
-		String OS = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
 		runtime = Runtime.getRuntime();
 		try {
-			// Spawner does not work for Windows 98 fallback
-			if (OS != null && OS.equals("windows 98")) { //$NON-NLS-1$
-				hasSpawner = false;
-			} else {
-				System.loadLibrary("spawner"); //$NON-NLS-1$
-				hasSpawner = true;
-			}
+			System.loadLibrary("spawner"); //$NON-NLS-1$
+			hasSpawner = true;
 		} catch (SecurityException e) {
 			e.printStackTrace();
 		} catch (UnsatisfiedLinkError e) {

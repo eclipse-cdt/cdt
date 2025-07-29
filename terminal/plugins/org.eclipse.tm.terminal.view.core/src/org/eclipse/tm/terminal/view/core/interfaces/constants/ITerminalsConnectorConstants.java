@@ -30,7 +30,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_ID = "id"; //$NON-NLS-1$
+	public static final String PROP_ID = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_ID;
 
 	/**
 	 * Property: The unique secondary id of the terminals view to open.
@@ -50,26 +50,26 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SECONDARY_ID = "secondaryId"; //$NON-NLS-1$
+	public static final String PROP_SECONDARY_ID = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SECONDARY_ID;
 
 	/**
 	 * Special value for {@link #PROP_SECONDARY_ID} to indicate reuse of the most recent terminal view
 	 * @since 4.8
 	 */
-	public static final String LAST_ACTIVE_SECONDARY_ID = "last"; //$NON-NLS-1$
+	public static final String LAST_ACTIVE_SECONDARY_ID = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.LAST_ACTIVE_SECONDARY_ID;
 
 	/**
 	 * Special value for {@link #PROP_SECONDARY_ID} to indicate reuse of any terminal view
 	 * @since 4.8
 	 */
-	public static final String ANY_ACTIVE_SECONDARY_ID = "*"; //$NON-NLS-1$
+	public static final String ANY_ACTIVE_SECONDARY_ID = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.ANY_ACTIVE_SECONDARY_ID;
 
 	/**
 	 * Property: The title of the terminal tab to open.
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_TITLE = "title"; //$NON-NLS-1$
+	public static final String PROP_TITLE = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_TITLE;
 
 	/**
 	 * Property: Flag to disable updating the terminal title from ANSI escape sequences.
@@ -77,42 +77,42 @@ public interface ITerminalsConnectorConstants {
 	 * Property Type: {@link Boolean}
 	 * @since 4.10
 	 */
-	public static final String PROP_TITLE_DISABLE_ANSI_TITLE = "titleDisableAnsiTitle"; //$NON-NLS-1$
+	public static final String PROP_TITLE_DISABLE_ANSI_TITLE = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_TITLE_DISABLE_ANSI_TITLE;
 
 	/**
 	 * Property: The encoding of the terminal tab to open.
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_ENCODING = "encoding"; //$NON-NLS-1$
+	public static final String PROP_ENCODING = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_ENCODING;
 
 	/**
 	 * Property: Custom data object to associate with the terminal tab.
 	 * <p>
 	 * Property Type: {@link Object}
 	 */
-	public static final String PROP_DATA = "data"; //$NON-NLS-1$
+	public static final String PROP_DATA = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_DATA;
 
 	/**
 	 * Property: External selection to associate with the terminal tab.
 	 * <p>
 	 * Property Type: {@link org.eclipse.jface.viewers.ISelection}
 	 */
-	public static final String PROP_SELECTION = "selection"; //$NON-NLS-1$
+	public static final String PROP_SELECTION = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SELECTION;
 
 	/**
 	 * Property: Flag to force a new terminal tab.
 	 * <p>
 	 * Property Type: {@link Boolean}
 	 */
-	public static final String PROP_FORCE_NEW = "terminal.forceNew"; //$NON-NLS-1$
+	public static final String PROP_FORCE_NEW = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_FORCE_NEW;
 
 	/**
 	 * Property: Terminal launcher delegate id.
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_DELEGATE_ID = "delegateId"; //$NON-NLS-1$
+	public static final String PROP_DELEGATE_ID = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_DELEGATE_ID;
 
 	/**
 	 * Property: Specific terminal connector type id. Allows clients to
@@ -121,7 +121,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_TERMINAL_CONNECTOR_ID = "tm.terminal.connector.id"; //$NON-NLS-1$
+	public static final String PROP_TERMINAL_CONNECTOR_ID = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_TERMINAL_CONNECTOR_ID;
 
 	// ***** Generic terminals connector properties *****
 
@@ -132,7 +132,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Integer}
 	 */
-	public static final String PROP_TIMEOUT = "timeout"; //$NON-NLS-1$
+	public static final String PROP_TIMEOUT = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_TIMEOUT;
 
 	/**
 	 * Property: Flag to control if a local echo is needed from the terminal widget.
@@ -140,7 +140,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Boolean}
 	 */
-	public static final String PROP_LOCAL_ECHO = "localEcho"; //$NON-NLS-1$
+	public static final String PROP_LOCAL_ECHO = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_LOCAL_ECHO;
 
 	/**
 	 * Property: Data flag to tell the terminal to not reconnect when hitting enter
@@ -148,7 +148,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Boolean}
 	 */
-	public static final String PROP_DATA_NO_RECONNECT = "data.noReconnect"; //$NON-NLS-1$
+	public static final String PROP_DATA_NO_RECONNECT = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_DATA_NO_RECONNECT;
 
 	/**
 	 * Property: The line separator expected by the remote terminal on input streams and
@@ -157,7 +157,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_LINE_SEPARATOR = "lineSeparator"; //$NON-NLS-1$
+	public static final String PROP_LINE_SEPARATOR = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_LINE_SEPARATOR;
 
 	/**
 	 * Property: The list of stdout listeners to attach to the corresponding stream monitor.
@@ -165,7 +165,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link ITerminalServiceOutputStreamMonitorListener} array
 	 */
-	public static final String PROP_STDOUT_LISTENERS = "stdoutListeners"; //$NON-NLS-1$
+	public static final String PROP_STDOUT_LISTENERS = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_STDOUT_LISTENERS;
 
 	/**
 	 * Property: The list of stderr listeners to attach to the corresponding stream monitor.
@@ -173,7 +173,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link ITerminalServiceOutputStreamMonitorListener} array
 	 */
-	public static final String PROP_STDERR_LISTENERS = "stderrListeners"; //$NON-NLS-1$
+	public static final String PROP_STDERR_LISTENERS = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_STDERR_LISTENERS;
 
 	/**
 	 * Property: If set to <code>true</code>, backslashes are translated to
@@ -181,7 +181,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Boolean}
 	 */
-	public static final String PROP_TRANSLATE_BACKSLASHES_ON_PASTE = "translateBackslashesOnPaste"; //$NON-NLS-1$
+	public static final String PROP_TRANSLATE_BACKSLASHES_ON_PASTE = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_TRANSLATE_BACKSLASHES_ON_PASTE;
 
 	// ***** IP based terminals connector properties *****
 
@@ -191,7 +191,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_IP_HOST = "ip.host"; //$NON-NLS-1$
+	public static final String PROP_IP_HOST = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_IP_HOST;
 
 	/**
 	 * Property: Port at which the terminal server is providing the console input and output.
@@ -199,7 +199,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Integer}
 	 */
-	public static final String PROP_IP_PORT = "ip.port"; //$NON-NLS-1$
+	public static final String PROP_IP_PORT = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_IP_PORT;
 
 	/**
 	 * Property: An offset to add to the specified port number.
@@ -207,7 +207,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Integer}
 	 */
-	public static final String PROP_IP_PORT_OFFSET = "ip.port.offset"; //$NON-NLS-1$
+	public static final String PROP_IP_PORT_OFFSET = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_IP_PORT_OFFSET;
 
 	// ***** Process based terminals connector properties *****
 
@@ -217,7 +217,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_PROCESS_PATH = "process.path"; //$NON-NLS-1$
+	public static final String PROP_PROCESS_PATH = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_PROCESS_PATH;
 
 	/**
 	 * Property: Process arguments.
@@ -225,7 +225,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_PROCESS_ARGS = "process.args"; //$NON-NLS-1$
+	public static final String PROP_PROCESS_ARGS = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_PROCESS_ARGS;
 
 	/**
 	 * Property: Process arguments.
@@ -233,7 +233,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_PROCESS_WORKING_DIR = "process.working_dir"; //$NON-NLS-1$
+	public static final String PROP_PROCESS_WORKING_DIR = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_PROCESS_WORKING_DIR;
 
 	/**
 	 * Property: Process environment.
@@ -241,7 +241,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String} array
 	 */
-	public static final String PROP_PROCESS_ENVIRONMENT = "process.environment"; //$NON-NLS-1$
+	public static final String PROP_PROCESS_ENVIRONMENT = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_PROCESS_ENVIRONMENT;
 
 	/**
 	 * Property: Flag to merge process environment with native environment.
@@ -249,7 +249,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Boolean}
 	 */
-	public static final String PROP_PROCESS_MERGE_ENVIRONMENT = "process.environment.merge"; //$NON-NLS-1$
+	public static final String PROP_PROCESS_MERGE_ENVIRONMENT = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_PROCESS_MERGE_ENVIRONMENT;
 
 	/**
 	 * Property: Runtime process instance.
@@ -257,7 +257,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Process}
 	 */
-	public static final String PROP_PROCESS_OBJ = "process"; //$NON-NLS-1$
+	public static final String PROP_PROCESS_OBJ = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_PROCESS_OBJ;
 
 	/**
 	 * Property: Runtime process PTY instance.
@@ -265,7 +265,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link org.eclipse.cdt.utils.pty.PTY}
 	 */
-	public static final String PROP_PTY_OBJ = "pty"; //$NON-NLS-1$
+	public static final String PROP_PTY_OBJ = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_PTY_OBJ;
 
 	// ***** Streams based terminals connector properties *****
 
@@ -275,7 +275,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link OutputStream}
 	 */
-	public static final String PROP_STREAMS_STDIN = "streams.stdin"; //$NON-NLS-1$
+	public static final String PROP_STREAMS_STDIN = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_STREAMS_STDIN;
 
 	/**
 	 * Property: Stdout streams instance.
@@ -283,7 +283,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link InputStream}
 	 */
-	public static final String PROP_STREAMS_STDOUT = "streams.stdout"; //$NON-NLS-1$
+	public static final String PROP_STREAMS_STDOUT = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_STREAMS_STDOUT;
 
 	/**
 	 * Property: Stderr streams instance.
@@ -291,7 +291,7 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link InputStream}
 	 */
-	public static final String PROP_STREAMS_STDERR = "streams.stderr"; //$NON-NLS-1$
+	public static final String PROP_STREAMS_STDERR = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_STREAMS_STDERR;
 
 	// ***** Ssh specific properties *****
 
@@ -300,21 +300,21 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link Integer}
 	 */
-	public static final String PROP_SSH_KEEP_ALIVE = "ssh.keep_alive"; //$NON-NLS-1$
+	public static final String PROP_SSH_KEEP_ALIVE = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SSH_KEEP_ALIVE;
 
 	/**
 	 * Property: Ssh password.
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SSH_PASSWORD = "ssh.password"; //$NON-NLS-1$
+	public static final String PROP_SSH_PASSWORD = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SSH_PASSWORD;
 
 	/**
 	 * Property: Ssh user.
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SSH_USER = "ssh.user"; //$NON-NLS-1$
+	public static final String PROP_SSH_USER = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SSH_USER;
 
 	// ***** Serial specific properties *****
 
@@ -323,42 +323,42 @@ public interface ITerminalsConnectorConstants {
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SERIAL_DEVICE = "serial.device"; //$NON-NLS-1$
+	public static final String PROP_SERIAL_DEVICE = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SERIAL_DEVICE;
 
 	/**
 	 * The baud rate.
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SERIAL_BAUD_RATE = "serial.baudrate"; //$NON-NLS-1$
+	public static final String PROP_SERIAL_BAUD_RATE = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SERIAL_BAUD_RATE;
 
 	/**
 	 * The data bits
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SERIAL_DATA_BITS = "serial.databits"; //$NON-NLS-1$
+	public static final String PROP_SERIAL_DATA_BITS = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SERIAL_DATA_BITS;
 
 	/**
 	 * The parity
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SERIAL_PARITY = "serial.parity"; //$NON-NLS-1$
+	public static final String PROP_SERIAL_PARITY = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SERIAL_PARITY;
 
 	/**
 	 * The stop bits
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SERIAL_STOP_BITS = "serial.stopbits"; //$NON-NLS-1$
+	public static final String PROP_SERIAL_STOP_BITS = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SERIAL_STOP_BITS;
 
 	/**
 	 * The flow control
 	 * <p>
 	 * Property Type: {@link String}
 	 */
-	public static final String PROP_SERIAL_FLOW_CONTROL = "serial.flowcontrol"; //$NON-NLS-1$
+	public static final String PROP_SERIAL_FLOW_CONTROL = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_SERIAL_FLOW_CONTROL;
 
 	// ***** Telnet specific properties *****
 
@@ -368,6 +368,6 @@ public interface ITerminalsConnectorConstants {
 	 * Property Type: {@link String}
 	 * @since 4.2
 	 */
-	public static final String PROP_TELNET_EOL = "telnet.eol"; //$NON-NLS-1$
+	public static final String PROP_TELNET_EOL = org.eclipse.terminal.view.core.ITerminalsConnectorConstants.PROP_TELNET_EOL;
 
 }

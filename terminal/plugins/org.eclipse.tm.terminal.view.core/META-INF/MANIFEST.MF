@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.tm.terminal.view.core;singleton:=true
-Bundle-Version: 4.10.500.qualifier
+Bundle-SymbolicName: org.eclipse.tm.terminal.view.core;singleton:=true;deprecated:="Deprecated in favour of org.eclipse.terminal.view.core."
+Bundle-Version: 4.11.0.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.view.core.activator.CoreBundleActivator
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
@@ -19,4 +19,5 @@ Export-Package: org.eclipse.tm.terminal.view.core,
  org.eclipse.tm.terminal.view.core.preferences,
  org.eclipse.tm.terminal.view.core.tracing,
  org.eclipse.tm.terminal.view.core.utils
+Import-Package: org.eclipse.terminal.view.core;version="1.0.0"
 Automatic-Module-Name: org.eclipse.tm.terminal.view.core

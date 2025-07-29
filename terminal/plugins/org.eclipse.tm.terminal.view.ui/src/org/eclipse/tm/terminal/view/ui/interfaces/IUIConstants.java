@@ -21,6 +21,6 @@ public interface IUIConstants {
 	/**
 	 * The view id of the terminals view.
 	 */
-	public static final String ID = "org.eclipse.tm.terminal.view.ui.TerminalsView"; //$NON-NLS-1$
+	public static final String ID = org.eclipse.terminal.view.ui.IUIConstants.ID;
 
 }

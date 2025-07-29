@@ -22,12 +22,12 @@ public interface IPreferenceKeys {
 	/**
 	 * Preference keys family prefix.
 	 */
-	public final String PREF_TERMINAL = "terminals"; //$NON-NLS-1$
+	public final String PREF_TERMINAL = org.eclipse.terminal.view.ui.IPreferenceKeys.PREF_TERMINAL;
 
 	/**
 	 * Preference key: Remove terminated terminals when a new terminal is created.
 	 */
-	public final String PREF_REMOVE_TERMINATED_TERMINALS = PREF_TERMINAL + ".removeTerminatedTerminals"; //$NON-NLS-1$
+	public final String PREF_REMOVE_TERMINATED_TERMINALS = org.eclipse.terminal.view.ui.IPreferenceKeys.PREF_REMOVE_TERMINATED_TERMINALS;
 
 	// showin preferences
 
@@ -35,36 +35,35 @@ public interface IPreferenceKeys {
 	 * Preference key: Local terminal initial working directory.
 	 * @since 4.1
 	 */
-	public final String PREF_LOCAL_TERMINAL_INITIAL_CWD = PREF_TERMINAL + ".localTerminalInitialCwd"; //$NON-NLS-1$
+	public final String PREF_LOCAL_TERMINAL_INITIAL_CWD = org.eclipse.terminal.view.ui.IPreferenceKeys.PREF_LOCAL_TERMINAL_INITIAL_CWD;
 
 	/**
 	 * Preference value: Local terminal initial working directory is "User home"
 	 * @since 4.1
 	 */
-	public final String PREF_INITIAL_CWD_USER_HOME = "userhome"; //$NON-NLS-1$
+	public final String PREF_INITIAL_CWD_USER_HOME = org.eclipse.terminal.view.ui.IPreferenceKeys.PREF_INITIAL_CWD_USER_HOME;
 
 	/**
 	 * Preference value: Local terminal initial working directory is "Eclipse home"
 	 * @since 4.1
 	 */
-	public final String PREF_INITIAL_CWD_ECLIPSE_HOME = "eclipsehome"; //$NON-NLS-1$
+	public final String PREF_INITIAL_CWD_ECLIPSE_HOME = org.eclipse.terminal.view.ui.IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_HOME;
 
 	/**
 	 * Preference value: Local terminal initial working directory is "Eclipse workspace"
 	 * @since 4.1
 	 */
-	public final String PREF_INITIAL_CWD_ECLIPSE_WS = "eclipsews"; //$NON-NLS-1$
+	public final String PREF_INITIAL_CWD_ECLIPSE_WS = org.eclipse.terminal.view.ui.IPreferenceKeys.PREF_INITIAL_CWD_ECLIPSE_WS;
 
 	/**
 	 * Preference key: Local terminal default shell command on Unix hosts.
 	 * @since 4.1
 	 */
-	public final String PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX = PREF_TERMINAL + ".localTerminalDefaultShellUnix"; //$NON-NLS-1$
+	public final String PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX = org.eclipse.terminal.view.ui.IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX;
 
 	/**
 	 * Preference key: Local terminal default shell command arguments on Unix hosts.
 	 * @since 4.1
 	 */
-	public final String PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS = PREF_TERMINAL
-			+ ".localTerminalDefaultShellUnixArgs"; //$NON-NLS-1$
+	public final String PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS = org.eclipse.terminal.view.ui.IPreferenceKeys.PREF_LOCAL_TERMINAL_DEFAULT_SHELL_UNIX_ARGS;
 }

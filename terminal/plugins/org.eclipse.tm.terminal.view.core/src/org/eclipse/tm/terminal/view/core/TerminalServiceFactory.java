@@ -11,13 +11,16 @@
  *******************************************************************************/
 package org.eclipse.tm.terminal.view.core;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.eclipse.core.runtime.Status;
 import org.eclipse.tm.terminal.view.core.activator.CoreBundleActivator;
 import org.eclipse.tm.terminal.view.core.interfaces.ITerminalService;
-import org.eclipse.tm.terminal.view.core.nls.Messages;
-import org.osgi.framework.Bundle;
+import org.eclipse.tm.terminal.view.core.interfaces.ITerminalTabListener;
 
 /**
  * Terminal service factory implementation.
@@ -25,29 +28,119 @@ import org.osgi.framework.Bundle;
  * Provides access to the terminal service instance.
  */
 public final class TerminalServiceFactory {
-	private static ITerminalService instance = null;
 
-	static {
-		// Tries to instantiate the terminal service implementation
-		// from the o.e.tm.terminal.view.ui bundle
-		Bundle bundle = Platform.getBundle("org.eclipse.tm.terminal.view.ui"); //$NON-NLS-1$
-		if (bundle != null && bundle.getState() != Bundle.UNINSTALLED && bundle.getState() != Bundle.STOPPING) {
-			try {
-				Class<?> clazz = bundle.loadClass("org.eclipse.tm.terminal.view.ui.services.TerminalService"); //$NON-NLS-1$
-				instance = (ITerminalService) clazz.getDeclaredConstructor().newInstance();
-			} catch (Exception e) {
-				if (Platform.inDebugMode()) {
-					Platform.getLog(bundle).log(new Status(IStatus.ERROR, CoreBundleActivator.getUniqueIdentifier(),
-							Messages.TerminalServiceFactory_error_serviceImplLoadFailed, e));
+	private static final String TM_TERMINAL = ".tm.terminal."; //$NON-NLS-1$
+
+	private static final class ITerminalServiceImplementation
+			implements ITerminalService, org.eclipse.terminal.view.core.ITerminalTabListener {
+
+		private List<ITerminalTabListener> listeners = new CopyOnWriteArrayList<>();
+
+		@Override
+		public void terminateConsole(Map<String, Object> properties, Done done) {
+			org.eclipse.terminal.view.core.ITerminalService delegate = CoreBundleActivator.getTerminalService();
+			if (delegate == null) {
+				done.done(Status.error("Not running!")); //$NON-NLS-1$
+				return;
+			}
+			delegate.terminateConsole(convert(properties)).handle((o, e) -> {
+				if (e != null) {
+					done.done(Status.error("Operation failed", e)); //$NON-NLS-1$
+				} else {
+					done.done(Status.OK_STATUS);
 				}
+				return null;
+			});
+		}
+
+		@Override
+		public void openConsole(Map<String, Object> properties, Done done) {
+			org.eclipse.terminal.view.core.ITerminalService delegate = CoreBundleActivator.getTerminalService();
+			if (delegate == null) {
+				done.done(Status.error("Not running!")); //$NON-NLS-1$
+				return;
+			}
+			delegate.openConsole(convert(properties)).handle((o, e) -> {
+				if (e != null) {
+					done.done(Status.error("Operation failed", e)); //$NON-NLS-1$
+				} else {
+					done.done(Status.OK_STATUS);
+				}
+				return null;
+			});
+
+		}
+
+		@Override
+		public void closeConsole(Map<String, Object> properties, Done done) {
+			org.eclipse.terminal.view.core.ITerminalService delegate = CoreBundleActivator.getTerminalService();
+			if (delegate == null) {
+				done.done(Status.error("Not running!")); //$NON-NLS-1$
+				return;
+			}
+			delegate.closeConsole(convert(properties)).handle((o, e) -> {
+				if (e != null) {
+					done.done(Status.error("Operation failed", e)); //$NON-NLS-1$
+				} else {
+					done.done(Status.OK_STATUS);
+				}
+				return null;
+			});
+
+		}
+
+		@Override
+		public void addTerminalTabListener(ITerminalTabListener listener) {
+			if (!listeners.contains(listener)) {
+				if (listeners.add(listener)) {
+					org.eclipse.terminal.view.core.ITerminalService delegate = CoreBundleActivator.getTerminalService();
+					if (delegate == null) {
+						return;
+					}
+					delegate.addTerminalTabListener(this);
+				}
+			}
+		}
+
+		@Override
+		public void removeTerminalTabListener(ITerminalTabListener listener) {
+			listeners.remove(listener);
+		}
+
+		@Override
+		public void terminalTabDisposed(Object source, Object data) {
+			for (ITerminalTabListener listener : listeners) {
+				listener.terminalTabDisposed(source, data);
 			}
 		}
 	}
 
-	/**
-	 * Returns the terminal service instance.
-	 */
+	private static final ITerminalService DELEGATE = new ITerminalServiceImplementation();
+
 	public static ITerminalService getService() {
-		return instance;
+		return DELEGATE;
+	}
+
+	private static Map<String, Object> convert(Map<String, Object> properties) {
+		if (properties == null) {
+			return null;
+		}
+		LinkedHashMap<String, Object> enhanced = new LinkedHashMap<>(properties);
+		for (Entry<String, Object> entry : properties.entrySet()) {
+			String key = (String) transform(entry.getKey());
+			Object value = transform(entry.getValue());
+			enhanced.put(key, value);
+		}
+		return enhanced;
+	}
+
+	private static Object transform(Object object) {
+		if (object instanceof String s) {
+			if (s.contains(TM_TERMINAL)) {
+				//like org.eclipse.tm.terminal.view.core...
+				return s.replace(TM_TERMINAL, ".terminal."); //$NON-NLS-1$
+			}
+		}
+		return object;
 	}
 }

@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.tm.terminal.view.ui;singleton:=true
-Bundle-Version: 4.11.800.qualifier
+Bundle-SymbolicName: org.eclipse.tm.terminal.view.ui;singleton:=true;deprecated:="Deprecated in favour of org.eclipse.terminal.view.core."
+Bundle-Version: 4.12.0.qualifier
 Bundle-Activator: org.eclipse.tm.terminal.view.ui.activator.UIPlugin
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
  org.eclipse.core.resources;bundle-version="[3.22.200,4)";resolution:=optional,
  org.eclipse.core.variables;bundle-version="[3.6.500,4)",
  org.eclipse.debug.ui;bundle-version="[3.18.800,4)";resolution:=optional,
- org.eclipse.tm.terminal.view.core;bundle-version="[4.10.0,5.0.0)",
+ org.eclipse.tm.terminal.view.core;bundle-version="[4.11.0,5.0.0)",
  org.eclipse.tm.terminal.control;bundle-version="[5.6.0,6.0.0)",
  org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.ui.ide;bundle-version="[3.22.600,4)";resolution:=optional,
@@ -40,4 +40,5 @@ Export-Package: org.eclipse.tm.terminal.view.ui.actions,
  org.eclipse.tm.terminal.view.ui.streams,
  org.eclipse.tm.terminal.view.ui.tabs,
  org.eclipse.tm.terminal.view.ui.view
+Import-Package: org.eclipse.terminal.view.ui;version="1.0.0"
 Automatic-Module-Name: org.eclipse.tm.terminal.view.ui

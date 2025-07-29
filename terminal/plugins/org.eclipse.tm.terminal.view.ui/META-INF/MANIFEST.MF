@@ -11,7 +11,6 @@ Require-Bundle: org.eclipse.core.expressions;bundle-version="[3.9.400,4)",
  org.eclipse.core.variables;bundle-version="[3.6.500,4)",
  org.eclipse.debug.ui;bundle-version="[3.18.800,4)";resolution:=optional,
  org.eclipse.tm.terminal.view.core;bundle-version="[4.11.0,5.0.0)",
- org.eclipse.tm.terminal.control;bundle-version="[5.6.0,6.0.0)",
  org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.ui.ide;bundle-version="[3.22.600,4)";resolution:=optional,
  org.eclipse.ui.editors;bundle-version="[3.20.0,4)";resolution:=optional,
@@ -40,5 +39,10 @@ Export-Package: org.eclipse.tm.terminal.view.ui.actions,
  org.eclipse.tm.terminal.view.ui.streams,
  org.eclipse.tm.terminal.view.ui.tabs,
  org.eclipse.tm.terminal.view.ui.view
-Import-Package: org.eclipse.terminal.view.ui;version="1.0.0"
+Import-Package: org.eclipse.terminal.view.ui;version="1.0.0",
+ org.eclipse.tm.internal.terminal.control,
+ org.eclipse.tm.internal.terminal.control.actions,
+ org.eclipse.tm.internal.terminal.provisional.api,
+ org.eclipse.tm.internal.terminal.provisional.api.provider,
+ org.eclipse.tm.terminal.model
 Automatic-Module-Name: org.eclipse.tm.terminal.view.ui

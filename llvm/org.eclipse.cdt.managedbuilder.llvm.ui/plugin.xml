@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
+<!--
+Copyright (c) 2010-2025 Nokia Siemens Networks Oyj and others
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+
+Contributors:
+    Nokia Siemens Networks - initial implementation
+    John Dallaway - add option for clang '-emit-llvm' (#1277)
+-->
 <plugin>
    <extension
          id="org.eclipse.cdt.managedbuilder.llvm.ui.buildDefinitions"
@@ -210,7 +223,7 @@
          <inputType
                buildVariable="BCS"
                dependencyCalculator="org.eclipse.cdt.managedbuilder.llvm.makegen.LlvmDependencyCalculator2"
-               id="cdt.managedbuild.tool.llvm.c.linker.input"
+               id="cdt.managedbuild.tool.llvm.c.linker.input.bc"
                multipleOfType="true"
                primaryInput="true"
                sourceContentType="org.eclipse.cdt.managedbuilder.llvm.ui.llvmBytecode"
@@ -223,6 +236,15 @@
                   kind="additionalinput"
                   paths="$(LIBS)">
             </additionalInput>
+         </inputType>
+         <inputType
+               buildVariable="OBJS"
+               dependencyCalculator="org.eclipse.cdt.managedbuilder.llvm.makegen.LlvmDependencyCalculator2"
+               id="cdt.managedbuild.tool.llvm.c.linker.input.obj"
+               multipleOfType="true"
+               primaryInput="true"
+               sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
+               sources="o">
          </inputType>
          <outputType
                buildVariable="LLVM_BC_EXECUTABLES"
@@ -317,8 +339,9 @@
          <inputType
                buildVariable="BCS"
                dependencyCalculator="org.eclipse.cdt.managedbuilder.llvm.makegen.LlvmDependencyCalculator2"
-               id="cdt.managedbuild.tool.llvm.archiver.input"
+               id="cdt.managedbuild.tool.llvm.archiver.input.bc"
                multipleOfType="true"
+               primaryInput="true"
                sourceContentType="org.eclipse.cdt.managedbuilder.llvm.ui.llvmBytecode"
                sources="bc">
             <additionalInput
@@ -329,6 +352,15 @@
                   kind="additionalinput"
                   paths="$(LIBS)">
             </additionalInput>
+         </inputType>
+         <inputType
+               buildVariable="OBJS"
+               dependencyCalculator="org.eclipse.cdt.managedbuilder.llvm.makegen.LlvmDependencyCalculator2"
+               id="cdt.managedbuild.tool.llvm.archiver.input.obj"
+               multipleOfType="true"
+               primaryInput="true"
+               sourceContentType="org.eclipse.cdt.managedbuilder.core.compiledObjectFile"
+               sources="o">
          </inputType>
          <outputType
                buildVariable="ARCHIVES"
@@ -814,8 +846,16 @@
                category="llvm.c_cpp.compiler.category.optimization"
                id="llvm.c_cpp.compiler.option.optimization.flags"
                name="%Option.Posix.Optimize.Flags"
-               value="-emit-llvm"
                valueType="string">
+         </option>
+         <option
+               category="llvm.c_cpp.compiler.category.optimization"
+               command="-emit-llvm"
+               defaultValue="true"
+               id="llvm.c_cpp.compiler.option.optimization.emit-llvm"
+               name="%Option.Llvm.Clang.EmitLlvm.name"
+               tip="%Option.Llvm.Clang.EmitLlvm.tip"
+               valueType="boolean">
          </option>
          <optionCategory
                id="llvm.c_cpp.compiler.category.debug"
@@ -1047,8 +1087,27 @@
          </option>
          <outputType
                buildVariable="BCS"
-               id="cdt.managedbuild.tool.llvm.c_cpp.compiler.output"
+               id="cdt.managedbuild.tool.llvm.c_cpp.compiler.output.bc"
                outputs="bc">
+            <enablement
+                  type="ALL">
+               <checkOption
+                     optionId="llvm.c_cpp.compiler.option.optimization.emit-llvm"
+                     value="true">
+               </checkOption>
+            </enablement>
+         </outputType>
+         <outputType
+               buildVariable="OBJS"
+               id="cdt.managedbuild.tool.llvm.c_cpp.compiler.output.obj"
+               outputs="o">
+            <enablement
+                  type="ALL">
+               <checkOption
+                     optionId="llvm.c_cpp.compiler.option.optimization.emit-llvm"
+                     value="false">
+               </checkOption>
+            </enablement>
          </outputType>
       </tool>
       <tool

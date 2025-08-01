@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2022 Intel Corporation and others.
+ * Copyright (c) 2006, 2025 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  * IBM Corporation
  * John Dallaway - Handle reduced build step input resource count (bug 366039)
  * John Dallaway - Accommodate extra flags with internal builder (bug 580286)
+ * John Dallaway - Fix handling of multiple primary input types (#1276)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -1110,7 +1112,11 @@ public class BuildDescription implements IBuildDescription {
 			if (resPath == null)
 				resPath = buildRc.getLocation();
 		} else {
-			rcs = (BuildResource[]) action.getPrimaryTypes(true)[0].getResources();
+			List<IBuildResource> rcsList = new LinkedList<>();
+			for (IBuildIOType type : action.getPrimaryTypes(true)) {
+				rcsList.addAll(Arrays.asList(type.getResources()));
+			}
+			rcs = rcsList.toArray(new BuildResource[rcsList.size()]);
 			if (rcs.length == 0)
 				return;
 		}

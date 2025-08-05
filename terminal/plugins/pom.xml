@@ -30,7 +30,5 @@
 
 		<module>org.eclipse.tm.terminal.view.core</module>
 		<module>org.eclipse.tm.terminal.view.ui</module>
-
-		<module>org.eclipse.tm.terminal.test</module>
 	</modules>
 </project>

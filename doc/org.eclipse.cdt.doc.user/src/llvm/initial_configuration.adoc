@@ -1,0 +1,53 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Initial configuration
+
+When you launch an Eclipse workspace with LLVM plug-in for the first
+time, you may need to set paths to LLVM binaries, headers and libraries.
+This is done in Eclipse by navigating to Window -> Preferences -> LLVM.
+Set LLVM installation folder to point where your LLVM binaries are,
+include directory to point where your Clang includes are and library
+path to the directory where your LLVM libraries reside.
+
+If your paths in Preferences and LLVM are correctly set and the plug-in
+is able to find your LLVM binaries, you should have the option to use
+"LLVM with Clang (Linux/MacOSX/Windows)" toolchain and "LLVM with GCC
+(Linux/MacOSX/Windows) toolchain". The toolchains are available in
+project types of 'executable', 'static library' and 'dynamic library' in
+both C and {cpp}.
+
+An alternative way is to set the LLVM binary path to PATH system
+environment variable.
+
+You may also have to include the path to
+Standard {cpp} Library in order to compile {cpp} programs by adding the
+path in LLVM Preferences or appending it to LD_LIBRARY_PATH system
+environment variable.

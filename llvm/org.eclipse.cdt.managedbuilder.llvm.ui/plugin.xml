@@ -5484,13 +5484,6 @@ Contributors:
       </template>
    </extension>
    <extension
-         point="org.eclipse.help.toc">
-      <toc
-            file="help/toc.xml"
-            primary="true">
-      </toc>
-   </extension>
-   <extension
          id="llvmNature"
          name="%extension.name.2"
          point="org.eclipse.core.resources.natures">

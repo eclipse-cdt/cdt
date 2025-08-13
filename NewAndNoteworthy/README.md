@@ -2,6 +2,7 @@
 
 What's new and noteworthy in:
 
+- [CDT 12.2/2025-09](CDT-12.2.md)
 - [CDT 12.1/2025-06](CDT-12.1.md)
 - [CDT 12.0/2025-03](CDT-12.0.md)
 - [CDT 11.6/2024-06](CDT-11.6.md)
@@ -83,7 +84,7 @@ The images should be embedded using the `<img>` tag with (gernally) a width of `
 <p align="center"><img src="images/CDT-10.0-CTAD.jpg" width="50%"></p>
 ```
 
-### Referecing Code
+### Referencing Code
 
 Especially when writing New & Noteworthy entries about API it is useful to link to the file.
 This should be done using a relative path, such as:

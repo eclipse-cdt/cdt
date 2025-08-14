@@ -252,6 +252,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUsingDirective;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPASTInternalScope;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPClassSpecializationScope;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPComputableFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
@@ -3049,13 +3050,20 @@ public class CPPSemantics {
 				}
 				if (ok) {
 					if (fn instanceof IIndexBinding) {
+						int otherIdx = 0;
 						for (ICPPFunction other : result) {
-							if (other == null || other instanceof IIndexBinding)
+							if (other == null)
 								break;
 							if (other.getType().isSameType(ft)) {
+								if (other.isConstexpr() && !(other instanceof ICPPASTFunctionDefinition)
+										&& fn instanceof ICPPComputableFunction) {
+									// If the function is constexpr, prefer the definition since that can be evaluated
+									result[otherIdx] = fn;
+								}
 								ok = false;
 								break;
 							}
+							otherIdx++;
 						}
 					}
 					if (ok) {

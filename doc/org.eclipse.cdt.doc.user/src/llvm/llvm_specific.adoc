@@ -32,30 +32,26 @@ endif::[]
 
 === Project types
 
-==== [#executables]#Executables#
+==== Executables
 
-At the moment the executables built with the default settings of a LLVM
+The executables built with the default settings of an LLVM
 with Clang project are native binaries and can be run and debugged as
-such. However LLVM does also support compiling programs to LLVM bitcode,
-which in turn can be run with lli, which is the LLVM toolchain's
-interpreter/JIT compiler. Unfortunately programs run with lli can not be
+such. However LLVM does also support building programs to LLVM bitcode,
+which in turn can be run with `lli`, which is the LLVM toolchain's
+interpreter/JIT compiler. Unfortunately programs run with `lli` can not be
 efficiently debugged, since the only (usable) debugging information that
 you can get from them is the backtrace. You can, however, compile the
-bitcode versions of your programs, if you will (TODO: even though
+bitcode versions of your programs, if you wish (TODO: even though
 running them from Eclipse doesn't work at the moment).
 
-===== Compiling to LLVM bitcode instead of native binary
+===== Compiling to LLVM bitcode instead of object code
 
-You can compile your programs to LLVM bitcode instead of native binaries
-by unchecking the "Create native binary (-native)" checkbox in your
-project's properties in Properties → C/{cpp} Build → Settings → LLVM
-Linker → General LLVM options. After this Eclipse will not give the
--native flag to llvm-ld, so the product of linking is just linked
-bitcode files (.bc) and a Bash script file with the name of the wanted
-executable. The Bash script will simply run the compiled LLVM bitcode
-file with lli.
+C/{cpp} source files are compiled to native object code by default. You can compile
+your source files to LLVM bitcode instead of object code by checking the _Emit LLVM IR_
+checkbox in the Project Properties dialog on the Properties -> C/{cpp} Build ->
+Settings -> LLVM Clang -> Optimization page.
 
-==== [#libraries]#Shared and static libraries#
+==== Shared and static libraries
 
 The shared and static libraries generated with LLVM plugin are (TODO:
 for now) only LLVM bitcode files linked into one file and therefore

@@ -246,7 +246,7 @@
         <para>For Linux, select "Linux GCC"</para>
       </listitem>
       <listitem>
-        <para>For Mac OS X, select "MacOSX GCC"</para>
+        <para>For macOS, select "macOS GCC"</para>
       </listitem>
       <listitem>
         <para>Do not use "Cross GCC"! Unfortunately this option may be

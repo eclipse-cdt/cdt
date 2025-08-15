@@ -30,24 +30,19 @@ endif::[]
 
 == Initial configuration
 
-When you launch an Eclipse workspace with LLVM plug-in for the first
-time, you may need to set paths to LLVM binaries, headers and libraries.
-This is done in Eclipse by navigating to Window -> Preferences -> LLVM.
-Set LLVM installation folder to point where your LLVM binaries are,
-include directory to point where your Clang includes are and library
-path to the directory where your LLVM libraries reside.
+On Linux and macOS hosts, the LLVM toolchain will typically be installed via the package
+management tool provided by the Linux distribution or as part of the
+_Xcode Command Line Tools_ and will be located on the system `PATH`.
+If your LLVM toolchain is not on the system `PATH` when launching the Eclipse Workbench,
+you may need to add the location of your LLVM binaries to the `PATH` environment variable
+within Eclipse. This is done by navigating to Window -> Preferences ->
+C/{cpp} -> Build -> Environment. Select the `PATH` environment variable and then edit its
+value to point where your LLVM binaries are located.
 
-If your paths in Preferences and LLVM are correctly set and the plug-in
-is able to find your LLVM binaries, you should have the option to use
-"LLVM with Clang (Linux/MacOSX/Windows)" toolchain and "LLVM with GCC
-(Linux/MacOSX/Windows) toolchain". The toolchains are available in
-project types of 'executable', 'static library' and 'dynamic library' in
-both C and {cpp}.
+If your `PATH` environment variable is set correctly, you should see the
+_LLVM with Clang_ and _LLVM with GCC_ toolchains available for selection within the
+CDT project wizard for managed build projects. The toolchains are available for both
+C and {cpp} projects.
 
-An alternative way is to set the LLVM binary path to PATH system
-environment variable.
-
-You may also have to include the path to
-Standard {cpp} Library in order to compile {cpp} programs by adding the
-path in LLVM Preferences or appending it to LD_LIBRARY_PATH system
-environment variable.
+NOTE: Clang is automatically detected when installed on a Microsoft Windows host using
+the MSYS2 package manager. It is not necessary to modify the `PATH`.

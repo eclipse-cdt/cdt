@@ -14,10 +14,6 @@
             file="toc.xml"
             primary="true">
       </toc>
-      <toc
-            file="toc_LLVM.xml"
-            primary="true">
-      </toc>
       <index path="index"/>
    </extension>
 

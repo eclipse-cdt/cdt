@@ -20,5 +20,11 @@
               <topic label="Building a project" href="getting_started/cdt_w_build.htm"/>
               <topic label="Debugging projects" href="getting_started/cdt_w_debug.htm"/>
               <topic label="Importing C/C++ source files into Eclipse" href="getting_started/cdt_w_existing_code.htm"/>
+              <topic label="LLVM with Clang/GCC for Eclipse CDT" href="llvm/user_manual.htm">
+                      <topic label="General information about the plugin" href="llvm/general.htm"/>
+                      <topic label="Initial configuration" href="llvm/initial_configuration.htm"/>
+                      <topic label="LLVM specific information and options" href="llvm/llvm_specific.htm">
+              </topic>
+	</topic>
           </topic>
 </toc>

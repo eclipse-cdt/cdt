@@ -2140,8 +2140,9 @@ For macOS Sierra (10.12), there seems to be additional problems with GDB
 that might make it unusable, see the [GDB bug
 report](https://sourceware.org/bugzilla/show_bug.cgi?id=20266).
 
-GDB does not support local macOS application debugging on Apple silicon
-(AArch64) at present. It is necessary to use the LLDB debugger instead.
+> [!NOTE]
+> GDB does not support local macOS application debugging on Apple silicon
+> (AArch64) at present. It is necessary to use the LLDB debugger instead.
 
 #### How do I get the LLDB debugger?
 
@@ -2209,7 +2210,7 @@ with
 
 #### How do I install the LLDB debugger integration?
 
-1.  Go to Help \> Install new Software
+1.  Go to Help > Install new Software
 2.  Select the CDT update site (9.1 or greater)
 3.  Under **CDT Optional Features**, select **C/C++ LLDB Debugger
     Integration**
@@ -2359,8 +2360,8 @@ setvbuf(stderr, NULL, _IONBF, 0);
 CDT does not come with a compiler, so if you do not have one you will
 need to install one. Follows are options available to you:
 
-- macOS: Install Xcode from the App Store or from Apple Developer web
-site.
+- macOS: Install the _Xcode Command Line Tools_ from the App Store or
+from Apple Developer web site.
 
 - Linux: If not already installed, it should be available in your
 distribution's package system on your installation CDs.

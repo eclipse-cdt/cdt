@@ -30,15 +30,15 @@ endif::[]
 
 == General information
 
-LLVM with Clang/GCC for Eclipse CDT plug-in provides LLVM toolchain with
-Clang or llvm-gcc compiler to compile C/(cpp} programs.
+The LLVM with Clang/GCC for Eclipse CDT plug-in integrates an LLVM toolchain using
+the Clang or llvm-gcc compiler with the CDT managed build system to compile C/(cpp} programs.
 
-http://www.llvm.org[LLVM] is a rather modern toolchain that supports the
+http://www.llvm.org[LLVM] is a modern toolchain that supports the
 compilation of C/(cpp} code (among others) to LLVM virtual machine's
 _bitcode_, which in turn can be compiled to each platform's native
 binary.
 
-The plug-in includes the following tools from the LLVM toolchain:
+The plug-in integrates the following tools from the LLVM toolchain:
 Clang/Clang{plus}{plus}/llvm-gcc/llvm-g{plus}{plus} (C/(cpp} compilers), llvm-ld (linker),
 llvm-ar (archiver), llvm-as (assembler), llc (static compiler) and lli
 (JIT/Interpreter).

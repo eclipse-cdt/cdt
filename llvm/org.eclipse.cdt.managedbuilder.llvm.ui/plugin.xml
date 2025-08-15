@@ -851,7 +851,7 @@ Contributors:
          <option
                category="llvm.c_cpp.compiler.category.optimization"
                command="-emit-llvm"
-               defaultValue="true"
+               defaultValue="false"
                id="llvm.c_cpp.compiler.option.optimization.emit-llvm"
                name="%Option.Llvm.Clang.EmitLlvm.name"
                tip="%Option.Llvm.Clang.EmitLlvm.tip"

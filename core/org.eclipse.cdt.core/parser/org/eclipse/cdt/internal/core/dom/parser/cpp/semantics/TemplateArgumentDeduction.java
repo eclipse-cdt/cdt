@@ -877,6 +877,9 @@ public class TemplateArgumentDeduction {
 				}
 			}
 			IValue sval = a.getNonTypeValue();
+			tval = CPPTemplates.instantiateValue(tval, InstantiationContext.forDeduction(fDeducedArgs),
+					IntegralValue.MAX_RECURSION_DEPTH);
+
 			return tval.equals(sval);
 		}
 

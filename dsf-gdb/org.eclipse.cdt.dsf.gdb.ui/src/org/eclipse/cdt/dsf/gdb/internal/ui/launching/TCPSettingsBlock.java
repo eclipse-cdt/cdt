@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,10 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Intel Corporation - Update for Core Build (#1222)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
-
-import java.util.Observable;
 
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.IDialogFieldListener;
@@ -29,24 +28,16 @@ import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 
-public class TCPSettingsBlock extends Observable {
+public class TCPSettingsBlock extends AbstractSettingsBlock {
 
 	private final static String DEFAULT_HOST_NAME = "localhost"; //$NON-NLS-1$
 
 	private final static String DEFAULT_PORT_NUMBER = "10000"; //$NON-NLS-1$
 
-	private Shell fShell;
-
 	private StringDialogField fHostNameField;
 
 	private StringDialogField fPortNumberField;
-
-	private Control fControl;
-
-	private String fErrorMessage = null;
 
 	public TCPSettingsBlock() {
 		super();
@@ -54,6 +45,7 @@ public class TCPSettingsBlock extends Observable {
 		fPortNumberField = createPortNumberField();
 	}
 
+	@Override
 	public void createBlock(Composite parent) {
 		fShell = parent.getShell();
 		Composite comp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_BOTH);
@@ -70,24 +62,19 @@ public class TCPSettingsBlock extends Observable {
 		setControl(comp);
 	}
 
-	protected Shell getShell() {
-		return fShell;
-	}
-
-	public void dispose() {
-		deleteObservers();
-	}
-
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		initializeHostName(configuration);
 		initializePortNumber(configuration);
 	}
 
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, DEFAULT_HOST_NAME);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, DEFAULT_PORT_NUMBER);
 	}
 
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fHostNameField != null)
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, fHostNameField.getText().trim());
@@ -138,6 +125,7 @@ public class TCPSettingsBlock extends Observable {
 			try {
 				fHostNameField.setText(
 						configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, DEFAULT_HOST_NAME));
+				initializeField(configuration, fHostNameField, (Composite) fControl);
 			} catch (CoreException e) {
 			}
 		}
@@ -148,25 +136,14 @@ public class TCPSettingsBlock extends Observable {
 			try {
 				fPortNumberField.setText(
 						configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, DEFAULT_PORT_NUMBER));
+				initializeField(configuration, fPortNumberField, (Composite) fControl);
 			} catch (CoreException e) {
 			}
 		}
 	}
 
-	public Control getControl() {
-		return fControl;
-	}
-
-	protected void setControl(Control control) {
-		fControl = control;
-	}
-
-	public boolean isValid(ILaunchConfiguration configuration) {
-		updateErrorMessage();
-		return (getErrorMessage() == null);
-	}
-
-	private void updateErrorMessage() {
+	@Override
+	protected void updateErrorMessage() {
 		setErrorMessage(null);
 		if (fHostNameField != null && fPortNumberField != null) {
 			if (fHostNameField.getText().trim().length() == 0)
@@ -178,14 +155,6 @@ public class TCPSettingsBlock extends Observable {
 			else if (!portNumberIsValid(fPortNumberField.getText().trim()))
 				setErrorMessage(LaunchUIMessages.getString("TCPSettingsBlock.5")); //$NON-NLS-1$
 		}
-	}
-
-	public String getErrorMessage() {
-		return fErrorMessage;
-	}
-
-	private void setErrorMessage(String string) {
-		fErrorMessage = string;
 	}
 
 	private boolean hostNameIsValid(String hostName) {

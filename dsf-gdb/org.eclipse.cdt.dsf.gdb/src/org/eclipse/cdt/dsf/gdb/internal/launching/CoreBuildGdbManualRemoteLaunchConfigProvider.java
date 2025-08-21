@@ -41,7 +41,7 @@ import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 public class CoreBuildGdbManualRemoteLaunchConfigProvider extends AbstractLaunchConfigProvider {
 
-	private static final String TYPE_ID = "org.eclipse.cdt.debug.core.GdbManualRemoteCoreBuildLaunchConfigType"; //$NON-NLS-1$
+	public static final String TYPE_ID = "org.eclipse.cdt.debug.core.GdbManualRemoteCoreBuildLaunchConfigType"; //$NON-NLS-1$
 	private static final String EMPTY = ""; //$NON-NLS-1$
 
 	private Map<IProject, Map<String, ILaunchConfiguration>> configs = new HashMap<>();

@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 /**
  * CLI 'version' command to report the debugger version where the MI -gdb-version command is not available
  *
- * @since 7.2
+ * @since 7.3
  */
 public class CLIVersion extends CLICommand<CLIVersionInfo> {
 

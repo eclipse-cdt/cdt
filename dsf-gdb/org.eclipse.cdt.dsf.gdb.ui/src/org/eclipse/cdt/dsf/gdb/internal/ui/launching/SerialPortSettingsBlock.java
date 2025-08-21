@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012 QNX Software Systems and others.
+ * Copyright (c) 2000, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,10 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     Intel Corporation - Update for Core Build (#1222)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
-
-import java.util.Observable;
 
 import org.eclipse.cdt.debug.internal.ui.dialogfields.ComboDialogField;
 import org.eclipse.cdt.debug.internal.ui.dialogfields.DialogField;
@@ -31,16 +30,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 
-public class SerialPortSettingsBlock extends Observable {
+public class SerialPortSettingsBlock extends AbstractSettingsBlock {
 
 	private final static String DEFAULT_ASYNC_DEVICE = "/dev/ttyS0"; //$NON-NLS-1$
 
 	private final static String DEFAULT_ASYNC_DEVICE_SPEED = "115200"; //$NON-NLS-1$
-
-	private Shell fShell;
 
 	private StringDialogField fDeviceField;
 
@@ -51,9 +46,6 @@ public class SerialPortSettingsBlock extends Observable {
 			"1500000", "2000000", "2500000", "3000000", "3500000", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			"4000000" //$NON-NLS-1$
 	};
-	private Control fControl;
-
-	private String fErrorMessage = null;
 
 	public SerialPortSettingsBlock() {
 		super();
@@ -61,6 +53,7 @@ public class SerialPortSettingsBlock extends Observable {
 		fSpeedField = createSpeedField();
 	}
 
+	@Override
 	public void createBlock(Composite parent) {
 		fShell = parent.getShell();
 		Composite comp = ControlFactory.createCompositeEx(parent, 2, GridData.FILL_BOTH);
@@ -76,24 +69,19 @@ public class SerialPortSettingsBlock extends Observable {
 		setControl(comp);
 	}
 
-	protected Shell getShell() {
-		return fShell;
-	}
-
-	public void dispose() {
-		deleteObservers();
-	}
-
+	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		initializeDevice(configuration);
 		initializeSpeed(configuration);
 	}
 
+	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, DEFAULT_ASYNC_DEVICE);
 		configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, DEFAULT_ASYNC_DEVICE_SPEED);
 	}
 
+	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fDeviceField != null)
 			configuration.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, fDeviceField.getText().trim());
@@ -147,6 +135,7 @@ public class SerialPortSettingsBlock extends Observable {
 			try {
 				fDeviceField.setText(
 						configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, DEFAULT_ASYNC_DEVICE));
+				initializeField(configuration, fDeviceField, (Composite) fControl);
 			} catch (CoreException e) {
 			}
 		}
@@ -158,6 +147,7 @@ public class SerialPortSettingsBlock extends Observable {
 			try {
 				index = getSpeedItemIndex(configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED,
 						DEFAULT_ASYNC_DEVICE_SPEED));
+				initializeField(configuration, fSpeedField, (Composite) fControl);
 			} catch (CoreException e) {
 			}
 			fSpeedField.selectItem(index);
@@ -175,20 +165,8 @@ public class SerialPortSettingsBlock extends Observable {
 		return 0;
 	}
 
-	public Control getControl() {
-		return fControl;
-	}
-
-	protected void setControl(Control control) {
-		fControl = control;
-	}
-
-	public boolean isValid(ILaunchConfiguration configuration) {
-		updateErrorMessage();
-		return (getErrorMessage() == null);
-	}
-
-	private void updateErrorMessage() {
+	@Override
+	protected void updateErrorMessage() {
 		setErrorMessage(null);
 		if (fDeviceField != null && fSpeedField != null) {
 			if (fDeviceField.getText().trim().length() == 0)
@@ -198,14 +176,6 @@ public class SerialPortSettingsBlock extends Observable {
 			else if (fSpeedField.getSelectionIndex() < 0)
 				setErrorMessage(LaunchUIMessages.getString("SerialPortSettingsBlock.4")); //$NON-NLS-1$
 		}
-	}
-
-	public String getErrorMessage() {
-		return fErrorMessage;
-	}
-
-	private void setErrorMessage(String string) {
-		fErrorMessage = string;
 	}
 
 	private boolean deviceIsValid(String hostName) {

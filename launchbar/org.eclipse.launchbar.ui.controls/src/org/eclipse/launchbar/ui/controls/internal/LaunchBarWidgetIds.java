@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 QNX Software Systems and others.
+ * Copyright (c) 2017, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,9 +15,13 @@ public interface LaunchBarWidgetIds {
 	public static final String ID = "org.eclipse.swtbot.widget.key"; //$NON-NLS-1$
 
 	public static final String CONFIG_SELECTOR = "org.eclipse.launchbar.selector.config"; //$NON-NLS-1$
+	public static final String TARGET_SELECTOR = "org.eclipse.launchbar.selector.target"; //$NON-NLS-1$
 
 	public static final String POPUP = "org.eclipse.launchbar.popup"; //$NON-NLS-1$
 	public static final String EDIT = "org.eclipse.launchbar.edit"; //$NON-NLS-1$
 	public static final String NEW = "org.eclipse.launchbar.new"; //$NON-NLS-1$
+	public static final String TARGET_POPUP = "org.eclipse.launchbar.target.popup"; //$NON-NLS-1$
+	public static final String TARGET_EDIT = "org.eclipse.launchbar.target.edit"; //$NON-NLS-1$
+	public static final String TARGET_NEW = "org.eclipse.launchbar.target.new"; //$NON-NLS-1$
 
 }

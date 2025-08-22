@@ -53,6 +53,7 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 			super(NewGdbRemoteTCPTargetWizard.class.getName());
 			setTitle(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_Title")); //$NON-NLS-1$
 			setDescription(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_Desc")); //$NON-NLS-1$
+			setWindowTitle(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_WindowTitle")); //$NON-NLS-1$
 		}
 
 		@Override

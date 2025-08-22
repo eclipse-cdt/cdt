@@ -61,6 +61,8 @@ public abstract class CSelector extends Composite {
 	private Label currentIcon;
 	private Label currentLabel;
 	private Shell popup;
+	private String popupID = LaunchBarWidgetIds.POPUP;
+	private String editID = LaunchBarWidgetIds.EDIT;
 	private LaunchBarListViewer listViewer;
 	private Job delayJob;
 	private MouseListener mouseListener = new MouseAdapter() {
@@ -148,6 +150,12 @@ public abstract class CSelector extends Composite {
 			gc.drawRoundRectangle(0, 0, size.x - 1, size.y - 1, arc, arc);
 		});
 		addMouseListener(mouseListener);
+	}
+
+	public CSelector(Composite parent, int style, String popupID, String editID) {
+		this(parent, style);
+		this.popupID = popupID;
+		this.editID = editID;
 	}
 
 	private boolean isPopUpInFocus() {
@@ -252,7 +260,7 @@ public abstract class CSelector extends Composite {
 		arrow.addMouseListener(mouseListener);
 		if (editable) {
 			final EditButton editButton = new EditButton(buttonComposite, SWT.NONE);
-			editButton.setData(LaunchBarWidgetIds.ID, LaunchBarWidgetIds.EDIT);
+			editButton.setData(LaunchBarWidgetIds.ID, editID);
 			editButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true));
 			editButton.setBackground(getBackground());
 			editButton.addSelectionListener(new SelectionAdapter() {
@@ -289,7 +297,7 @@ public abstract class CSelector extends Composite {
 			popup.dispose();
 		}
 		popup = new Shell(getShell(), SWT.TOOL | SWT.ON_TOP | SWT.RESIZE);
-		popup.setData(LaunchBarWidgetIds.ID, LaunchBarWidgetIds.POPUP);
+		popup.setData(LaunchBarWidgetIds.ID, popupID);
 		popup.setLayout(GridLayoutFactory.fillDefaults().spacing(0, 0).create());
 		popup.setBackground(getBackground());
 		listViewer = new LaunchBarListViewer(popup);

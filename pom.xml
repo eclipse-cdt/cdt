@@ -298,6 +298,7 @@
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.tests</module>
 		<module>dsf-gdb/org.eclipse.cdt.tests.dsf.gdb</module>
 		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.tests</module>
+		<module>dsf-gdb/org.eclipse.cdt.dsf.gdb.ui.tests</module>
 		<module>jtag/org.eclipse.cdt.debug.gdbjtag.core.tests</module>
 		<module>memory/org.eclipse.cdt.debug.core.memory.tests</module>
 		<module>remote/org.eclipse.tm.terminal.connector.remote.feature</module>

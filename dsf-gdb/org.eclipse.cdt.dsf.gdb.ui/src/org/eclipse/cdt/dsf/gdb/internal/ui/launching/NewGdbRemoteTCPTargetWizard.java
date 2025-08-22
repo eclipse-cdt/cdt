@@ -48,6 +48,7 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 			super(NewGdbRemoteTCPTargetWizard.class.getName());
 			setTitle(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.Title")); //$NON-NLS-1$
 			setDescription(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.Desc")); //$NON-NLS-1$
+			setWindowTitle(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.WindowTitle")); //$NON-NLS-1$
 		}
 
 		@Override

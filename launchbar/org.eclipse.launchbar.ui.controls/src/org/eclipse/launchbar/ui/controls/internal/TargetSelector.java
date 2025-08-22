@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 QNX Software Systems and others.
+ * Copyright (c) 2014, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,7 +54,8 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 	private static final ILaunchTarget[] noTargets = new ILaunchTarget[] { ILaunchTarget.NULL_TARGET };
 
 	public TargetSelector(Composite parent, int style) {
-		super(parent, style);
+		super(parent, style, LaunchBarWidgetIds.TARGET_POPUP, LaunchBarWidgetIds.TARGET_EDIT);
+		setData(LaunchBarWidgetIds.ID, LaunchBarWidgetIds.TARGET_SELECTOR);
 
 		targetManager.addListener(this);
 
@@ -162,6 +163,7 @@ public class TargetSelector extends CSelector implements ILaunchTargetListener {
 	@Override
 	public void createActionArea(final Composite parent) {
 		final Composite createButton = new Composite(parent, SWT.BORDER);
+		createButton.setData(LaunchBarWidgetIds.ID, LaunchBarWidgetIds.TARGET_NEW);
 		GridDataFactory.fillDefaults().grab(true, false).applyTo(createButton);
 		GridLayoutFactory.fillDefaults().margins(7, 7).applyTo(createButton);
 		createButton.setBackground(getBackground());

@@ -10,7 +10,8 @@
               <topic label="Launch Bar" href="getting_started/cbs_launchbar.htm"/>
               <topic label="Building a project" href="getting_started/cbs_build_project.htm"/>
               <topic label="Running a project" href="getting_started/cbs_run_project.htm"/>
-              <topic label="Debugging a project" href="getting_started/cbs_debug_project.htm"/>
+              <topic label="Debugging a local target" href="getting_started/cbs_debug_project.htm"/>
+              <topic label="Debugging a remote target" href="getting_started/cbs_debug_remote.htm"/>
           </topic>
 	  <topic label="Legacy Managed Build System" href="getting_started/index_mbs.htm">
               <topic label="Creating a Managed Build System Makefile project" href="getting_started/cdt_w_basic.htm"/>

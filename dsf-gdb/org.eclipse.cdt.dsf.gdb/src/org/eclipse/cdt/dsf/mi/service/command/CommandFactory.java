@@ -272,7 +272,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MiSourceFilesInfo;
  */
 public class CommandFactory {
 
-	/** @since 7.2 */
+	/** @since 7.3 */
 	public ICommand<CLIAddressSizeInfo> createCLIAddressSize(IMemoryDMContext ctx) {
 		return new CLIAddressSize(ctx);
 	}
@@ -419,7 +419,7 @@ public class CommandFactory {
 		return new CLIUnsetSubstitutePath(ctx);
 	}
 
-	/** @since 7.2 */
+	/** @since 7.3 */
 	public ICommand<CLIVersionInfo> createCLIVersion(ICommandControlDMContext ctx) {
 		return new CLIVersion(ctx);
 	}

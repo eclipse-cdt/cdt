@@ -28,7 +28,7 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Debugging a project
+== Debugging a local target
 
 Debugging a CBS project is done via the xref:cbs_launchbar.adoc[Launch Bar]. Make
 sure the launch bar is installed and enabled.
@@ -79,3 +79,5 @@ On the *Source* tab extra paths outside the project folder can be
 defined to look for source code.
 
 image:cbs_launch_config_tab_debug.png[Launch configuration debug tab]
+
+icon:arrow-circle-right[] xref:cbs_debug_remote.adoc[Next: Debugging a remote target]

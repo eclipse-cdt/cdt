@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 /**
  * CLI command to report address size where the MI expression evaluator is not available
  *
- * @since 7.2
+ * @since 7.3
  */
 public class CLIAddressSize extends MIInterpreterExecConsole<CLIAddressSizeInfo> {
 

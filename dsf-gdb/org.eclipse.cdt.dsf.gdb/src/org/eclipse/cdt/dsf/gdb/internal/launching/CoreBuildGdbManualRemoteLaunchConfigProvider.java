@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GDBRemoteSerialLaunchTargetProvider;
@@ -26,12 +25,11 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.AbstractLaunchConfigProvider;
 import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ProjectLaunchDescriptor;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
-import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.eclipse.launchbar.core.target.LaunchTargetUtils;
 
 /*
  * TODO: Refactor this and CoreBuildLocalLaunchConfigProvider and
@@ -62,39 +60,42 @@ public class CoreBuildGdbManualRemoteLaunchConfigProvider extends AbstractLaunch
 		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(TYPE_ID);
 	}
 
+	private String getNameSuffix(ILaunchTarget target) {
+		String suffix = target.getId();
+		String targetTypeId = target.getTypeId();
+		if (targetTypeId.equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID)) {
+			suffix += " TCP"; //$NON-NLS-1$
+		}
+		if (targetTypeId.equals(GDBRemoteSerialLaunchTargetProvider.TYPE_ID)) {
+			suffix += " Serial"; //$NON-NLS-1$
+		}
+		return LaunchTargetUtils.sanitizeLaunchConfigurationName(suffix);
+	}
+
+	/**
+	 * Create a name for the launch configuration. We assume the name is unique.
+	 * If a launch configuration with the name already exists, it will be in the
+	 * configs Map, an no new one will be created.
+	 *
+	 * @param descriptor
+	 * @param target
+	 * @return
+	 */
+	private String launchConfigName(ILaunchDescriptor descriptor, ILaunchTarget target) {
+		String name = descriptor.getName() + " " + getNameSuffix(target); //$NON-NLS-1$
+		return name;
+	}
+
 	@Override
 	protected ILaunchConfiguration createLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target)
 			throws CoreException {
-		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		String targetTypeId = target.getTypeId();
-		String prefix = descriptor.getName() + " " + target.getId(); //$NON-NLS-1$
-		if (targetTypeId.equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID)) {
-			prefix = prefix + " TCP"; //$NON-NLS-1$
-		} else if (targetTypeId.equals(GDBRemoteSerialLaunchTargetProvider.TYPE_ID)) {
-			prefix = prefix + " Serial"; //$NON-NLS-1$
-		}
-		String name = launchManager.generateLaunchConfigurationName(prefix);
+		String name = launchConfigName(descriptor, target);
 		ILaunchConfigurationType type = getLaunchConfigurationType(descriptor, target);
 		ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
 
 		populateLaunchConfiguration(descriptor, target, workingCopy);
 
 		return workingCopy.doSave();
-	}
-
-	private String getTargetConfigKey(ILaunchTarget target) {
-		String targetTypeId = target.getTypeId();
-		if (targetTypeId.equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID)) {
-			String host = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, EMPTY);
-			String port = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, EMPTY);
-			return host + '.' + port;
-		}
-		if (targetTypeId.equals(GDBRemoteSerialLaunchTargetProvider.TYPE_ID)) {
-			String serialPort = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, EMPTY);
-			String baudRate = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, EMPTY);
-			return serialPort + '.' + baudRate;
-		}
-		return target.getId(); // Fallback to target ID if no specific attributes are set
 	}
 
 	@Override
@@ -109,12 +110,56 @@ public class CoreBuildGdbManualRemoteLaunchConfigProvider extends AbstractLaunch
 				configs.put(project, projectConfigs);
 			}
 
-			config = projectConfigs.get(getTargetConfigKey(target));
+			config = projectConfigs.get(launchConfigName(descriptor, target));
 			if (config == null) {
 				config = createLaunchConfiguration(descriptor, target);
+			} else {
+				updateLaunchConfiguration(config, target);
 			}
 		}
 		return config;
+	}
+
+	/**
+	 * Update the given launch configuration to match the given target's attributes.
+	 *
+	 * @param config the launch configuration to update
+	 * @param target the launch target to get attributes from
+	 * @throws CoreException if unable to update the launch configuration
+	 */
+	@Override
+	protected void updateLaunchConfiguration(ILaunchConfiguration config, ILaunchTarget target) throws CoreException {
+
+		ILaunchConfigurationWorkingCopy workingCopy = config.getWorkingCopy();
+
+		String targetTypeId = target.getTypeId();
+		if (targetTypeId.equals(GDBRemoteTCPLaunchTargetProvider.TYPE_ID)) {
+			String targetHost = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, EMPTY);
+			String targetPort = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, EMPTY);
+			String configHost = workingCopy.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, EMPTY);
+			String configPort = workingCopy.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, EMPTY);
+			if (!configHost.equals(targetHost)) {
+				workingCopy.setAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, targetHost);
+			}
+			if (!configPort.equals(targetPort)) {
+				workingCopy.setAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, targetPort);
+			}
+		}
+		if (targetTypeId.equals(GDBRemoteSerialLaunchTargetProvider.TYPE_ID)) {
+			String targetSerialPort = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, EMPTY);
+			String targetBaudRate = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, EMPTY);
+			String configSerialPort = workingCopy.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, EMPTY);
+			String configBaudRate = workingCopy.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, EMPTY);
+			if (!configSerialPort.equals(targetSerialPort)) {
+				workingCopy.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, targetSerialPort);
+			}
+			if (!configBaudRate.equals(targetBaudRate)) {
+				workingCopy.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, targetBaudRate);
+			}
+		}
+		if (workingCopy.isDirty()) {
+			workingCopy.doSave();
+		}
 	}
 
 	@Override
@@ -161,21 +206,7 @@ public class CoreBuildGdbManualRemoteLaunchConfigProvider extends AbstractLaunch
 				projectConfigs = new HashMap<>();
 				configs.put(project, projectConfigs);
 			}
-			boolean isTCP = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_REMOTE_TCP, true);
-			if (isTCP) {
-				// For TCP connections, we use host and port as the key
-				String host = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, EMPTY);
-				String port = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, EMPTY);
-				String targetConfig = host + '.' + port;
-				projectConfigs.put(targetConfig, configuration);
-				return true;
-			} else {
-				// For Serial connections, we use serial port and baud rate as the key
-				String serialPort = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, EMPTY);
-				String baudRate = configuration.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, EMPTY);
-				String targetConfig = serialPort + '.' + baudRate;
-				projectConfigs.put(targetConfig, configuration);
-			}
+			projectConfigs.put(configuration.getName(), configuration);
 			return true;
 		}
 		return false;
@@ -213,22 +244,18 @@ public class CoreBuildGdbManualRemoteLaunchConfigProvider extends AbstractLaunch
 
 	@Override
 	public void launchTargetRemoved(ILaunchTarget target) throws CoreException {
-		// Any other targets have the same host/port or device/baud-rate?
-		ILaunchTargetManager targetManager = CDebugCorePlugin.getService(ILaunchTargetManager.class);
-		for (ILaunchTarget t : targetManager.getLaunchTargets()) {
-			if (!target.equals(t) && getTargetConfigKey(target).equals(getTargetConfigKey(t))) {
-				// Yup, nothing to do then
-				return;
-			}
-		}
 
+		// Remove all launch configurations that were created for the given target.
 		for (Entry<IProject, Map<String, ILaunchConfiguration>> projectEntry : configs.entrySet()) {
 			Map<String, ILaunchConfiguration> projectConfigs = projectEntry.getValue();
-			ILaunchConfiguration config = projectConfigs.get(getTargetConfigKey(target));
-			if (config != null) {
-				config.delete();
+
+			for (Entry<String, ILaunchConfiguration> entry : projectConfigs.entrySet()) {
+				ILaunchConfiguration config = entry.getValue();
+				if (config.getName().endsWith(" " + getNameSuffix(target))) { //$NON-NLS-1$
+					projectConfigs.remove(entry.getKey());
+					config.delete();
+				}
 			}
 		}
-
 	}
 }

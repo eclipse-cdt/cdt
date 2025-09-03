@@ -23,7 +23,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * ~"lldb version 20.1.2\n"
  * ^done
  *
- * @since 7.2
+ * @since 7.3
  */
 public class CLIVersionInfo extends MIInfo {
 

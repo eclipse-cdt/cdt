@@ -752,4 +752,16 @@
          </action>
       </viewContribution>
     </extension>
+    <extension
+          point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+       <launchConfigurationTabGroup
+             class="org.eclipse.cdt.dsf.gdb.internal.ui.launching.GdbManualRemoteLaunchConfigurationTabGroup"
+             description="Gdb Remote TCP tab group"
+             id="org.eclipse.cdt.dsf.gdb.ui.launchConfigurationTabGroup.GdbRemoteTCP"
+             type="org.eclipse.cdt.debug.core.GdbManualRemoteCoreBuildLaunchConfigType">
+          <launchMode
+                mode="debug">
+          </launchMode>
+       </launchConfigurationTabGroup>
+    </extension>
 </plugin>

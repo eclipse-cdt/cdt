@@ -165,7 +165,7 @@
         <repository
             url="https://download.eclipse.org/tools/cdt/builds/12.1/cdt-12.1.0-rc1/"/>
         <repository
-            url="https://download.eclipse.org/tools/cdt/releases/cdt-lsp-3.1/cdt-lsp-3.1.0/"/>
+            url="https://download.eclipse.org/tools/cdt/releases/cdt-lsp-3.2/cdt-lsp-3.2.0/"/>
       </repositoryList>
     </targlet>
   </setupTask>

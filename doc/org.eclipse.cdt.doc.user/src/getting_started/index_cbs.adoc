@@ -28,9 +28,9 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-= Core Build System contents
+= Core Build System
 
-xref:core_build_system.adoc[Core Build System]
+xref:core_build_system.adoc[Using the Core Build System]
 
 xref:new_cmake_proj.adoc[Creating a CMake project]
 
@@ -38,7 +38,7 @@ xref:new_cbs_makefile_proj.adoc[Creating a Core Build System Makefile project]
 
 xref:cbs_using_existing_code.adoc[Using existing code]
 
-xref:cbs_launchbar.adoc[Launch Bar]
+xref:cbs_launchbar.adoc[Using the Launch Bar]
 
 xref:cbs_build_project.adoc[Building a project]
 

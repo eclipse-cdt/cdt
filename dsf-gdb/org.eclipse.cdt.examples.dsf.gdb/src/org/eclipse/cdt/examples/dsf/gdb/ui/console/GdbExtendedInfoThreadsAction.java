@@ -11,7 +11,7 @@
 package org.eclipse.cdt.examples.dsf.gdb.ui.console;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.tm.internal.terminal.control.ITerminalViewControl;
+import org.eclipse.terminal.control.ITerminalViewControl;
 
 /**
  * Action to requests threads info from the full GDB console

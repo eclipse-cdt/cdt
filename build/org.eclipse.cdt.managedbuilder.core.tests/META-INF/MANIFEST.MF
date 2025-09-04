@@ -12,16 +12,16 @@ Export-Package: org.eclipse.cdt.managedbuilder.core.tests,
  org.eclipse.cdt.managedbuilder.testplugin,
  org.eclipse.cdt.managedbuilder.tests.suite,
  org.eclipse.cdt.projectmodel.tests
-Require-Bundle: org.eclipse.core.runtime,
- org.junit,
- org.eclipse.core.resources,
- org.eclipse.ui,
- org.eclipse.ui.ide,
- org.eclipse.cdt.core,
- org.eclipse.cdt.managedbuilder.core,
- org.eclipse.cdt.managedbuilder.gnu.ui,
- org.eclipse.cdt.core.tests;bundle-version="5.0.0",
- org.eclipse.cdt.ui
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
+ org.junit;bundle-version="[4.13.2,5)",
+ org.eclipse.core.resources;bundle-version="[3.22.200,4)",
+ org.eclipse.ui;bundle-version="[3.207.200,4)",
+ org.eclipse.ui.ide;bundle-version="[3.22.600,4)",
+ org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
+ org.eclipse.cdt.managedbuilder.core;bundle-version="[9.7.100,10)",
+ org.eclipse.cdt.managedbuilder.gnu.ui;bundle-version="[8.7.200,9)",
+ org.eclipse.cdt.core.tests;bundle-version="[5.4.100,6)",
+ org.eclipse.cdt.ui;bundle-version="[9.0.100,10)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.eclipse.cdt.managedbuilder.core.tests

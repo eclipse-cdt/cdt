@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.gdb.ui;singleton:=true
-Bundle-Version: 7.2.100.qualifier
+Bundle-Version: 7.2.200.qualifier
 Bundle-Activator: org.eclipse.cdt.gdb.ui.internal.Activator
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.6.0",
- org.eclipse.ui;bundle-version="3.6.0",
- org.eclipse.cdt.debug.ui;bundle-version="7.0.0"
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
+ org.eclipse.ui;bundle-version="[3.207.200,4)",
+ org.eclipse.cdt.debug.ui;bundle-version="[8.5.700,9)"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Vendor: %providerName

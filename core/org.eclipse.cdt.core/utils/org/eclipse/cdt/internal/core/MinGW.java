@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2024 Andrew Gvozdev and others.
+ * Copyright (c) 2012, 2025 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -371,7 +371,7 @@ public class MinGW {
 	}
 
 	/**
-	 * Check if MinGW is available in the path.
+	 * Check if MinGW is available in the specified path or via known installation hints.
 	 *
 	 * @param envPath
 	 *            - list of directories to search for MinGW separated by path
@@ -380,7 +380,7 @@ public class MinGW {
 	 * @return {@code true} if MinGW is available, {@code false} otherwise.
 	 */
 	public static boolean isAvailable(String envPath) {
-		return isWindowsPlatform && findMingwInPath(envPath) != null;
+		return isWindowsPlatform && findMinGWRoot(envPath, null) != null;
 	}
 
 	/**

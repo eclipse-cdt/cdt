@@ -69,5 +69,6 @@ exit_code=0
 check aarch64 aarch64 2.31 libc.so.6 ld-linux-aarch64.so.1 || exit_code=1
 check x86_64 x86_64 2.31 libc.so.6 || exit_code=1
 check ppc64le powerpc64le 2.31 libc.so.6 || exit_code=1
+check riscv64 riscv64 2.27 libc.so.6 ld-linux-riscv64-lp64d.so.1 || exit_code=1
 
 exit ${exit_code}

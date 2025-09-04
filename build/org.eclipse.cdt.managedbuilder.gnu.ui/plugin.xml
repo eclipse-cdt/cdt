@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-Copyright (c) 2005, 2024 Intel Corporation and others
+Copyright (c) 2005, 2025 Intel Corporation and others
 This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ Contributors:
     John Dallaway - extend optimization options (#828)
     John Dallaway - add archiver other objects option (#653)
     John Dallaway - extend language standard options (#944)
+    John Dallaway - use macOS environment variable supplier (#1175)
 -->
 <plugin>
    <!-- Managed Make Builder Tool Specifications -->
@@ -2270,6 +2271,7 @@ Contributors:
       </toolChain>
       <toolChain
             archList="all"
+            configurationEnvironmentSupplier="org.eclipse.cdt.managedbuilder.gnu.macos.MacosEnvironmentVariableSupplier"
             id="cdt.managedbuild.toolchain.gnu.macosx.base"
             languageSettingsProviders="org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser;org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"
             name="%ToolChainName.Macosx"

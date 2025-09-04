@@ -28,7 +28,7 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-= Legacy Managed Build System contents
+= Legacy Managed Build System
 
 xref:cdt_w_basic.adoc[Tutorial: Creating a Managed Build System Makefile project]
 
@@ -43,3 +43,5 @@ xref:cdt_w_build.adoc[Building a project]
 xref:cdt_w_debug.adoc[Debugging a project]
 
 xref:cdt_w_existing_code.adoc[Importing your C/{cpp} source files into Eclipse]
+
+xref:../llvm/user_manual.adoc[LLVM with Clang/GCC for Eclipse CDT]

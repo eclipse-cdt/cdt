@@ -423,6 +423,14 @@ public class Spawner extends Process {
 		return (raise(pid, SIG_NOOP) == 0);
 	}
 
+	/**
+	 * @since 6.4
+	 * @return the current pty instance for this spawner
+	 */
+	public PTY pty() {
+		return fPty;
+	}
+
 	private void exec(String[] cmdarray, String[] envp, String dirpath) throws IOException {
 		String command = cmdarray[0];
 		SecurityManager s = System.getSecurityManager();

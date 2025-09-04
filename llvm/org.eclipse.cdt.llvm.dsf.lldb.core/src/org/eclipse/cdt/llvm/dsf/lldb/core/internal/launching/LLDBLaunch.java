@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Ericsson.
+ * Copyright (c) 2016, 2025 Ericsson and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,6 +7,9 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
+ * Contributors:
+ *     Ericsson - Initial implementation
+ *     John Dallaway - Tolerate lldb-mi installations without lldb (#1186)
  *******************************************************************************/
 
 package org.eclipse.cdt.llvm.dsf.lldb.core.internal.launching;
@@ -161,7 +164,11 @@ public class LLDBLaunch extends GdbLaunch {
 			lastSegment = lastSegment.replace(ILLDBConstants.LLDB_MI_EXECUTABLE_NAME,
 					ILLDBConstants.LLDB_EXECUTABLE_NAME);
 		}
+		boolean isLldbMiAbsolute = lldbMiPath.isAbsolute() && lldbMiPath.toFile().exists();
 		lldbMiPath = lldbMiPath.removeLastSegments(1).append(lastSegment);
+		if (isLldbMiAbsolute && !lldbMiPath.toFile().exists()) {
+			return; // lldb is not found in the containing folder of lldb-mi
+		}
 
 		String cmd = lldbMiPath + " --version"; //$NON-NLS-1$
 

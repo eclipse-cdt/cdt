@@ -28,7 +28,7 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Launch Bar
+== Using the Launch Bar
 
 Core Build System (CBS) projects rely on the *Launch Bar*. Make sure
 the _LaunchBar UI_ feature is installed and enabled. In the global

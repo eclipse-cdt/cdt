@@ -16,9 +16,8 @@
 <feature
       id="org.eclipse.tm.terminal.control.feature"
       label="%featureName"
-      version="12.0.0.qualifier"
+      version="12.2.0.qualifier"
       provider-name="%providerName"
-      plugin="org.eclipse.tm.terminal.control"
       license-feature="org.eclipse.license"
       license-feature-version="0.0.0">
 
@@ -35,15 +34,7 @@
    </license>
 
    <requires>
-      <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.terminal.control" />
    </requires>
-
-   <plugin
-         id="org.eclipse.tm.terminal.control"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>

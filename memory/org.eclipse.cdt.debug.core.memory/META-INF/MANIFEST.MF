@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.cdt.debug.core.memory
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.cdt.debug.core.memory
-Bundle-Version: 0.2.100.qualifier
+Bundle-Version: 0.2.200.qualifier
 Bundle-Name: %Bundle-Name
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Require-Bundle: org.eclipse.core.runtime;bundle-version="3.17.0",
- org.eclipse.debug.core;bundle-version="3.15.0",
- org.eclipse.equinox.common;bundle-version="3.11.0"
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
+ org.eclipse.debug.core;bundle-version="[3.23.0,4)",
+ org.eclipse.equinox.common;bundle-version="[3.20.100,4)"
 Export-Package: org.eclipse.cdt.debug.core.memory.transport;x-friends:="org.eclipse.cdt.debug.ui.memory.transport",
  org.eclipse.cdt.debug.internal.core.memory.transport;x-friends:="org.eclipse.cdt.debug.ui.memory.transport"

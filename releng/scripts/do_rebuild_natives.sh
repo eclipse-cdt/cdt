@@ -26,7 +26,7 @@ fi
 for p in native/org.eclipse.cdt.native.serial core/org.eclipse.cdt.core.native; do
     echo "Rebuilding $p JNI headers to make sure they match source"
     logfile=jni-headers-${p//\//-}.log
-    if ! ${MVN:-mvn} -B -V process-resources -DuseSimrelRepo -P jniheaders -f $p >${logfile} 2>&1; then
+    if ! ${MVN:-mvn} -B -V process-resources -P jniheaders -f $p >${logfile} 2>&1; then
         echo "Rebuilding of $p JNI headers failed. The log (${logfile}) is part of the artifacts of the build"
         exit 1
     fi

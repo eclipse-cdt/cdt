@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.cdt.dsf.gdb" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Suppressing major version bump because re-export of bundle shouldn't really change things. This is because in reality the required version was already as now explicit." id="927989779">
+            <message_arguments>
+                <message_argument value="7.1.600"/>
+                <message_argument value="org.eclipse.launchbar.core"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

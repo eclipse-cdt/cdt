@@ -1302,6 +1302,7 @@
              disabledIcon="icons/dlcl16/instr_step.gif"
              helpContextId="toggle_instruction_step_mode_action_context"
              icon="icons/elcl16/instr_step.gif"
+             id="main.run.menu:org.eclipse.cdt.debug.ui.ToggleInstructionStepModeCommand"
              label="%ToggleInstructionStepModeAction.label"
              style="toggle"
              tooltip="%ToggleInstructionStepModeAction.tooltip">
@@ -1321,6 +1322,7 @@
              disabledIcon="icons/dlcl16/instr_step.gif"
              helpContextId="toggle_instruction_step_mode_action_context"
              icon="icons/elcl16/instr_step.gif"
+             id="main.toolbar:org.eclipse.cdt.debug.ui.ToggleInstructionStepModeCommand"
              label="%ToggleInstructionStepModeAction.label"
              style="toggle"
              tooltip="%ToggleInstructionStepModeAction.tooltip">
@@ -2675,5 +2677,35 @@
            name="%GenericTarget.name">
      </wizard2>
   </extension>
+  
+  <!-- Activity definition that controls the visibility of  Toggle Instruction Step Mode command-->
+  <extension point="org.eclipse.ui.activities">
+   <category
+         id="org.eclipse.cdt.debug.ui.category"
+         name="%org.eclipse.cdt.debug.ui.category.name"
+         description="%org.eclipse.cdt.debug.ui.category.description">
+   </category>
+
+   <activity
+         id="org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode"
+         name="%org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode.name"
+         description="%org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode.description">
+   </activity>
+
+   <activityPatternBinding
+         activityId="org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode"
+         pattern="org\.eclipse\.cdt\.debug\.ui/main\.toolbar:org\.eclipse\.cdt\.debug\.ui\.ToggleInstructionStepModeCommand">
+   </activityPatternBinding>
+   <activityPatternBinding
+         activityId="org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode"
+         pattern="org\.eclipse\.cdt\.debug\.ui/main\.run\.menu:org\.eclipse\.cdt\.debug\.ui\.ToggleInstructionStepModeCommand">
+   </activityPatternBinding>
+
+   <categoryActivityBinding
+         activityId="org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode"
+         categoryId="org.eclipse.cdt.debug.ui.category">
+   </categoryActivityBinding>
+</extension>
+  
     
 </plugin>

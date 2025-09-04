@@ -5,8 +5,8 @@ Bundle-SymbolicName: org.eclipse.launchbar.core.tests;singleton:=true
 Bundle-Version: 1.0.100.qualifier
 Fragment-Host: org.eclipse.launchbar.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Require-Bundle: org.junit;bundle-version="4.12.0",
- org.mockito.mockito-core
+Require-Bundle: org.junit;bundle-version="[4.13.2,5)",
+ org.mockito.mockito-core;bundle-version="[5.18.0,6.0.0)"
 Automatic-Module-Name: org.eclipse.launchbar.core.tests
 Bundle-Localization: fragment
 Bundle-Vendor: %providerName

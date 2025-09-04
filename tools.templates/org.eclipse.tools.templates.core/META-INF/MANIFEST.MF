@@ -3,9 +3,9 @@ Automatic-Module-Name: org.eclipse.tools.templates.core
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.tools.templates.core
-Bundle-Version: 2.0.100.qualifier
-Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.core.resources
+Bundle-Version: 2.0.200.qualifier
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
+ org.eclipse.core.resources;bundle-version="[3.22.200,4)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tools.templates.core

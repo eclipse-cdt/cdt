@@ -19,10 +19,16 @@ public class Messages extends NLS {
 	public static String CMakeBuildTab_BuildType_Tooltip;
 	public static String CMakeBuildTab_BuildTypeCombo_Tooltip;
 	public static String CMakeBuildTab_AllTarget;
+	public static String CMakeBuildTab_allTargetTooltip;
+	public static String CMakeBuildTab_buildCommandTooltip;
 	public static String CMakeBuildTab_CleanTarget;
 	public static String CMakeBuildTab_Cmake;
 	public static String CMakeBuildTab_CMakeArgs;
+	public static String CMakeBuildTab_cleanTargetTooltip;
+	public static String CMakeBuildTab_cmakeArgsTooltip;
 	public static String CMakeBuildTab_Generator;
+	public static String CMakeBuildTab_GeneratorComboTooltip;
+	public static String CMakeBuildTab_GeneratorTooltip;
 	public static String CMakeBuildTab_NoneAvailable;
 	public static String CMakeBuildTab_Settings;
 	public static String CMakeBuildTab_Toolchain;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Nokia Siemens Networks Oyj, Finland.
+ * Copyright (c) 2010, 2025 Nokia Siemens Networks Oyj, Finland.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,23 +13,28 @@
  *      Leo Hippelainen - Initial implementation
  *      Petri Tuononen - Initial implementation
  *      Marc-Andre Laperle (Ericsson)
+ *      John Dallaway - Improve LLVM tools installation detection (#1175)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.llvm.ui;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
+import org.eclipse.cdt.internal.core.Homebrew;
 import org.eclipse.cdt.internal.core.MinGW;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.envvar.IBuildEnvironmentVariable;
 import org.eclipse.cdt.managedbuilder.envvar.IConfigurationEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.cdt.managedbuilder.gnu.cygwin.GnuCygwinConfigurationEnvironmentSupplier;
+import org.eclipse.cdt.managedbuilder.gnu.macos.MacosEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.gnu.mingw.MingwEnvironmentVariableSupplier;
 import org.eclipse.cdt.managedbuilder.llvm.ui.preferences.LlvmPreferenceStore;
 import org.eclipse.cdt.managedbuilder.llvm.util.Separators;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Contains LLVM environment variables.
@@ -40,7 +45,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	// toggle for preference changes
 	private static boolean preferencesChanged = true;
 	// LLVM environment variable data structure
-	private static HashMap<String, LlvmBuildEnvironmentVariable> llvmEnvironmentVariables = new HashMap<>(6);
+	private static HashMap<String, LlvmBuildEnvironmentVariable> llvmEnvironmentVariables = new HashMap<>(7);
 	// Environment variables for HashMap usage
 	private static final String ENV_VAR_NAME_LLVM_BIN = "LLVM_BIN_PATH"; //$NON-NLS-1$
 	private static final String ENV_VAR_NAME_LLVMINTERP = "LLVMINTERP"; //$NON-NLS-1$
@@ -48,11 +53,14 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	private static final String ENV_VAR_NAME_INCLUDE_PATH = "INCLUDE_PATH"; //$NON-NLS-1$
 	private static final String ENV_VAR_NAME_LIBRARY_PATH = "LLVM_LIB_SEARCH_PATH"; //$NON-NLS-1$
 	private static final String ENV_VAR_NAME_LIBRARIES = "LIBRARIES"; //$NON-NLS-1$
+	private static final List<String> LLVM_BIN_SELECTION_TOOLS = List.of("llvm-ar", "clang"); //$NON-NLS-1$ //$NON-NLS-2$
+
+	private static boolean isInitialized = false;
 
 	/**
 	 * Initializes llvm environment variable paths from the system environment variables.
 	 */
-	public static void initializePaths() { //TODO: Is this actually called anywhere?
+	public static void initializePaths() {
 		// get bin path
 		String binPath = getBinPath();
 		// set LLVM bin path environment variable
@@ -66,16 +74,12 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 					// try to find mingw or cygwin path from PATH environment variable
 					IBuildEnvironmentVariable envPath = llvmEnvironmentVariables.get(ENV_VAR_NAME_PATH);
 					IBuildEnvironmentVariable mingwPath = null, cygwinPath = null;
-					// if path is empty
-					if (envPath == null) {
-						// try to find mingw path from MingwEnvironmentVariableSupplier
-						IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = new MingwEnvironmentVariableSupplier();
-						mingwPath = mingwEnvironmentVariables.getVariable(ENV_VAR_NAME_PATH, null, null);
-						// try to find cygwin path from GnuCygwinConfigurationEnvironmentSupplier
-						IConfigurationEnvironmentVariableSupplier cygwinEnvironmentVariables = new GnuCygwinConfigurationEnvironmentSupplier();
-						cygwinPath = cygwinEnvironmentVariables.getVariable(ENV_VAR_NAME_PATH, null, null);
-
-					}
+					// try to find mingw path from MingwEnvironmentVariableSupplier
+					IConfigurationEnvironmentVariableSupplier mingwEnvironmentVariables = new MingwEnvironmentVariableSupplier();
+					mingwPath = mingwEnvironmentVariables.getVariable(ENV_VAR_NAME_PATH, null, null);
+					// try to find cygwin path from GnuCygwinConfigurationEnvironmentSupplier
+					IConfigurationEnvironmentVariableSupplier cygwinEnvironmentVariables = new GnuCygwinConfigurationEnvironmentSupplier();
+					cygwinPath = cygwinEnvironmentVariables.getVariable(ENV_VAR_NAME_PATH, null, null);
 					// if mingw found
 					if (mingwPath != null) {
 						//form full path
@@ -89,6 +93,14 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 				} catch (Exception e) {
 					//TODO: Emit proper error message and enter it to Eclipse error log.
 					e.printStackTrace();
+				}
+			} else if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+				// use MacosEnvironmentVariableSupplier to find PATH
+				IBuildEnvironmentVariable macosPath = new MacosEnvironmentVariableSupplier()
+						.getVariable(ENV_VAR_NAME_PATH, null, null);
+				if (macosPath != null) {
+					setLlvmEnvironmentVariable(Homebrew.ENV_HOMEBREW_HOME, Homebrew.getHomebrewHome());
+					pathStr += File.pathSeparator + macosPath.getValue();
 				}
 			}
 			//initialize environment variable cache values
@@ -268,7 +280,7 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 			llvmPath = llvmPath + Separators.getFileSeparator() + subPath;
 		}
 		// Return a full path for LLVM executable if it's valid, otherwise null.
-		return getBinDirIfLlvm_ar(llvmPath);
+		return getBinDirIfLlvm(llvmPath);
 	}
 
 	/**
@@ -276,23 +288,24 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 	 * as a parameter is found and executable exists in that path.
 	 *
 	 * @param binPathTemp User provided bin directory path
-	 * @return bin path where llvm-ar is located if executable exists
+	 * @return bin path where LLVM is located if executable exists
 	 */
-	private static String getBinDirIfLlvm_ar(String binPathTemp) {
+	private static String getBinDirIfLlvm(String binPathTemp) {
 		//if given directory is found
 		if (new Path(binPathTemp).toFile().isDirectory()) {
-			String llvm_executable = "llvm-ar"; //$NON-NLS-1$
-			File arFileFullPath = null;
-			// If OS is Windows -> add .exe to the executable name.
-			if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) { //$NON-NLS-1$//$NON-NLS-2$
-				llvm_executable = llvm_executable + ".exe"; //$NON-NLS-1$
-			}
-			// Form full executable path
-			arFileFullPath = new File(binPathTemp, llvm_executable);
-			// Check if file exists -> proper LLVM installation exists.
-			if (arFileFullPath.isFile()) {
-				// Return path where llvm-ar exists.
-				return binPathTemp;
+			for (String llvm_executable : LLVM_BIN_SELECTION_TOOLS) {
+				File arFileFullPath = null;
+				// If OS is Windows -> add .exe to the executable name.
+				if (System.getProperty("os.name").toLowerCase().indexOf("win") >= 0) { //$NON-NLS-1$//$NON-NLS-2$
+					llvm_executable = llvm_executable + ".exe"; //$NON-NLS-1$
+				}
+				// Form full executable path
+				arFileFullPath = new File(binPathTemp, llvm_executable);
+				// Check if file exists -> proper LLVM installation exists.
+				if (arFileFullPath.isFile()) {
+					// Return path where LLVM executable exists.
+					return binPathTemp;
+				}
 			}
 		}
 		return null;
@@ -436,15 +449,24 @@ public class LlvmEnvironmentVariableSupplier implements IConfigurationEnvironmen
 		return ""; //$NON-NLS-1$
 	}
 
+	private static synchronized void init() {
+		if (!isInitialized) {
+			initializePaths();
+			isInitialized = true;
+		}
+	}
+
 	@Override
 	public IBuildEnvironmentVariable getVariable(String variableName, IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
+		init();
 		return llvmEnvironmentVariables.get(variableName);
 	}
 
 	@Override
 	public IBuildEnvironmentVariable[] getVariables(IConfiguration configuration,
 			IEnvironmentVariableProvider provider) {
+		init();
 		return llvmEnvironmentVariables.values().toArray(new IBuildEnvironmentVariable[0]);
 	}
 }

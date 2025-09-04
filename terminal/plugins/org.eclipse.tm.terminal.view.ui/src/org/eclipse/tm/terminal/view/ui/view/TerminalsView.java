@@ -60,7 +60,6 @@ import org.eclipse.tm.terminal.view.ui.nls.Messages;
 import org.eclipse.tm.terminal.view.ui.tabs.TabFolderManager;
 import org.eclipse.tm.terminal.view.ui.tabs.TabFolderMenuHandler;
 import org.eclipse.tm.terminal.view.ui.tabs.TabFolderToolbarHandler;
-import org.eclipse.tm.terminal.view.ui.view.showin.GitShowInContextHandler;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IViewSite;
@@ -622,21 +621,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 			// Get the selection from the context
 			ISelection selection = context.getSelection();
 
-			// If the selection is not set or empty, look at the input element of
-			// the show in context.
-			if (!(selection instanceof IStructuredSelection) || selection.isEmpty()) {
-				Object input = context.getInput();
-				// If coming from the EGit repository viewer, the input element is
-				// org.eclipse.egit.ui.internal.history.HistoryPageInput
-				if ("org.eclipse.egit.ui.internal.history.HistoryPageInput".equals(input.getClass().getName())) { //$NON-NLS-1$
-					Bundle bundle = Platform.getBundle("org.eclipse.egit.ui"); //$NON-NLS-1$
-					if (bundle != null && bundle.getState() != Bundle.UNINSTALLED
-							&& bundle.getState() != Bundle.STOPPING) {
-						selection = GitShowInContextHandler.getSelection(input);
-					}
-				}
-			}
-
 			// The selection must contain elements that can be adapted to IResource, File or IPath
 			if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 				boolean isValid = true;
@@ -706,15 +690,6 @@ public class TerminalsView extends ViewPart implements ITerminalsView, IShowInTa
 						continue;
 					}
 
-					// The EGit repository view can also set a RepositoryTreeNode (and subclasses)
-					// "org.eclipse.egit.ui.internal.repository.tree...."
-					if (element.getClass().getName().startsWith("org.eclipse.egit.ui.internal.repository.tree")) { //$NON-NLS-1$
-						bundle = Platform.getBundle("org.eclipse.egit.ui"); //$NON-NLS-1$
-						if (bundle != null && bundle.getState() != Bundle.UNINSTALLED
-								&& bundle.getState() != Bundle.STOPPING) {
-							adapted = GitShowInContextHandler.getPath(element);
-						}
-					}
 					if (adapted != null) {
 						if (!elements.contains(adapted))
 							elements.add(adapted);

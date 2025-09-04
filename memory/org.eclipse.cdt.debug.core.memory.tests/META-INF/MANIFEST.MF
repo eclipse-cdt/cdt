@@ -7,4 +7,4 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: %Bundle-Vendor
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Fragment-Host: org.eclipse.cdt.debug.core.memory;bundle-version="0.1.0"
-Require-Bundle: org.junit;bundle-version="4.13.0"
+Require-Bundle: org.junit;bundle-version="[4.13.0,5)"

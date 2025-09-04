@@ -2,12 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.launchbar.remote.core;singleton:=true
-Bundle-Version: 1.2.100.qualifier
+Bundle-Version: 1.2.200.qualifier
 Bundle-Activator: org.eclipse.launchbar.remote.core.internal.Activator
-Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
- org.eclipse.launchbar.core;bundle-version="2.0.0",
- org.eclipse.remote.core;bundle-version="2.0.0"
+Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
+ org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
+ org.eclipse.launchbar.core;bundle-version="[3.0.0,4)",
+ org.eclipse.remote.core;bundle-version="[4.2.300,5)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.launchbar.remote.core,

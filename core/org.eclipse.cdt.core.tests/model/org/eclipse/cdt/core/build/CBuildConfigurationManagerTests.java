@@ -11,11 +11,14 @@
 package org.eclipse.cdt.core.build;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
 import org.eclipse.cdt.cmake.core.CMakeBuildConfigurationProvider;
 import org.eclipse.cdt.cmake.core.CMakeNature;
 import org.eclipse.cdt.core.CCProjectNature;
@@ -26,6 +29,7 @@ import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchBarTracker;
+import org.eclipse.cdt.internal.core.build.CBuildConfigurationManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsScannerInfoProvider;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
@@ -137,6 +141,41 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 		scannerInfoProvider = CCorePlugin.getDefault().getScannerInfoProvider(project);
 		assertThat("scannerInfoProvider expected to be ICBuildConfiguration",
 				scannerInfoProvider instanceof ICBuildConfiguration);
+	}
+
+	/**
+	 * Test {@link CBuildConfigurationManager#getBuildConfiguration(IBuildConfiguration buildConfig)}
+	 * IBuildConfigurations with a valid ICBuildConfiguration counterpart will be removed from
+	 * the CBuildConfigurationManager.noConfigs Set.
+	 */
+	@Test
+	public void testNoConfigs() throws Exception {
+		// create a CMake project; performed in setup()
+
+		// Create a new IBuildConfiguration.
+		CMakeBuildConfigurationProvider provider = new CMakeBuildConfigurationProvider();
+		String buildConfigBaseName = "testNoConfigs";
+		IBuildConfiguration buildConfiguration = configManager.createBuildConfiguration(provider, project,
+				buildConfigBaseName, new NullProgressMonitor());
+
+		// Create a new ICBuildConfiguration.
+		String buildConfigName = provider.getId() + "/" + buildConfigBaseName;
+		ILaunchTarget launchTarget = launchTargetManager.getLocalLaunchTarget();
+		ICBuildConfiguration cBuildConfig = new CMakeBuildConfiguration(buildConfiguration, buildConfigName,
+				mockToolchain, null, ILaunchManager.RUN_MODE, launchTarget);
+
+		// Try to get ICBuildConfiguration, before the IBuildConfiguration/ICBuildConfiguration pair was
+		// added to the build configuration manager. Such a getAdapter() call could happen in a parallel
+		// process. It will fail and buildConfiguration will be placed in configManager.noConfigs
+		ICBuildConfiguration cbConfig = buildConfiguration.getAdapter(ICBuildConfiguration.class);
+		assertThat(cbConfig, is(nullValue()));
+
+		// Register the IBuildConfiguration/ICBuildConfiguration pair.
+		configManager.addBuildConfiguration(buildConfiguration, cBuildConfig);
+
+		// Get the ICBuildconfiguration counterpart
+		cbConfig = buildConfiguration.getAdapter(ICBuildConfiguration.class);
+		assertThat(cbConfig, equalTo(cBuildConfig));
 	}
 
 	/**

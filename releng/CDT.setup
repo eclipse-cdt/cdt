@@ -163,9 +163,9 @@
       <repositoryList
           name="CDT Latest Released">
         <repository
-            url="https://download.eclipse.org/tools/cdt/releases/11.6/cdt-11.6.1/"/>
+            url="https://download.eclipse.org/tools/cdt/builds/12.1/cdt-12.1.0-rc1/"/>
         <repository
-            url="https://download.eclipse.org/tools/cdt/releases/cdt-lsp-2.0/cdt-lsp-2.0.0/"/>
+            url="https://download.eclipse.org/tools/cdt/releases/cdt-lsp-3.1/cdt-lsp-3.1.0/"/>
       </repositoryList>
     </targlet>
   </setupTask>
@@ -244,8 +244,6 @@
       <requirement
           name="org.eclipse.license.feature.group"/>
       <requirement
-          name="org.eclipse.egit.feature.group"/>
-      <requirement
           name="org.eclipse.equinox.executable.feature.group"/>
       <requirement
           name="org.eclipse.linuxtools.docker.feature.feature.group"/>
@@ -274,8 +272,6 @@
       <repositoryList>
         <repository
             url="https://download.eclipse.org/cbi/updates/license"/>
-        <repository
-            url="https://download.eclipse.org/egit/updates-nightly"/>
         <repository
             url="https://download.eclipse.org/linuxtools/updates-docker-nightly"/>
         <repository

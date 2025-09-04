@@ -1,5 +1,5 @@
 #*******************************************************************************
-# Copyright (c) 2002, 2024 QNX Software Systems and others.
+# Copyright (c) 2002, 2025 QNX Software Systems and others.
 #
 # This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License 2.0
@@ -12,8 +12,9 @@
 #     QNX Software Systems - initial API and implementation
 #     Alex Blewitt - MacOSX with a 64-bit vm 
 #     Tue Ton - support for Windows on Arm64
+#     Tue Ton - support for Linux riscv64
 #*******************************************************************************/
-SHELL=/bin/bash -o pipefail
+SHELL=/usr/bin/env -S bash -o pipefail
 ifeq ($(JAVA_HOME),)
 $(error Please define JAVA_HOME)
 endif
@@ -32,6 +33,7 @@ LIBS = \
 	$(OS_DIR)/linux/x86_64/libserial.so \
 	$(OS_DIR)/linux/aarch64/libserial.so \
 	$(OS_DIR)/linux/ppc64le/libserial.so \
+	$(OS_DIR)/linux/riscv64/libserial.so \
 	$(OS_DIR)/macosx/x86_64/libserial.jnilib \
 	$(OS_DIR)/macosx/aarch64/libserial.jnilib
 else
@@ -103,6 +105,10 @@ $(OS_DIR)/linux/aarch64/libserial.so:	serial.c
 $(OS_DIR)/linux/ppc64le/libserial.so:	serial.c
 	mkdir -p $(dir $@)
 	powerpc64le-linux-gnu-gcc $(COMMON_CFLAGS) -m64 -mcpu=power8 $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ serial.c
+
+$(OS_DIR)/linux/riscv64/libserial.so:	serial.c
+	mkdir -p $(dir $@) && \
+	riscv64-linux-gnu-gcc $(COMMON_CFLAGS) $(CFLAGS) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux $(LDFLAGS) -shared -o $@ $^
 
 $(OS_DIR)/macosx/x86_64/libserial.jnilib:	serial.c
 	mkdir -p $(dir $@) && \

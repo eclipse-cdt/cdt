@@ -1,5 +1,5 @@
 #*******************************************************************************
-# Copyright (c) 2002, 2015, 2024 QNX Software Systems and others.
+# Copyright (c) 2002, 2015, 2025 QNX Software Systems and others.
 #
 # This program and the accompanying materials
 # are made available under the terms of the Eclipse Public License 2.0
@@ -12,8 +12,9 @@
 #     QNX Software Systems - initial API and implementation
 #     Torbjörn Svensson - Bug 521515 - Adopted jenkins build
 #     Tue Ton - support for Windows on Arm64
+#     Tue Ton - support for Linux riscv64
 #*******************************************************************************/
-SHELL=/bin/bash -o pipefail
+SHELL=/usr/bin/env -S bash -o pipefail
 ifeq ($(JAVA_HOME),)
 $(error JAVA_HOME not set in environment)
 endif
@@ -25,6 +26,7 @@ OS_DIR_WIN32_AARCH64 := ../../org.eclipse.cdt.core.win32.aarch64/os/win32/aarch6
 OS_DIR_LINUX_X86_64 := ../../org.eclipse.cdt.core.linux.x86_64/os/linux/x86_64
 OS_DIR_LINUX_AARCH64 := ../../org.eclipse.cdt.core.linux.aarch64/os/linux/aarch64
 OS_DIR_LINUX_PPC64LE := ../../org.eclipse.cdt.core.linux.ppc64le/os/linux/ppc64le
+OS_DIR_LINUX_RISCV64 := ../../org.eclipse.cdt.core.linux.riscv64/os/linux/riscv64
 OS_DIR_MACOS_X86_64 := ../../org.eclipse.cdt.core.macosx/os/macosx/x86_64
 OS_DIR_MACOS_AARCH64 := ../../org.eclipse.cdt.core.macosx/os/macosx/aarch64
 
@@ -43,6 +45,8 @@ LIBS = \
 	$(OS_DIR_LINUX_AARCH64)/libpty.so \
 	$(OS_DIR_LINUX_PPC64LE)/libspawner.so \
 	$(OS_DIR_LINUX_PPC64LE)/libpty.so \
+	$(OS_DIR_LINUX_RISCV64)/libspawner.so \
+	$(OS_DIR_LINUX_RISCV64)/libpty.so \
 	$(OS_DIR_MACOS_X86_64)/libspawner.jnilib \
 	$(OS_DIR_MACOS_X86_64)/libpty.jnilib \
 	$(OS_DIR_MACOS_AARCH64)/libspawner.jnilib \
@@ -192,6 +196,21 @@ $(OS_DIR_LINUX_PPC64LE)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c
 $(OS_DIR_LINUX_PPC64LE)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
 	mkdir -p $(dir $@) && \
 	powerpc64le-linux-gnu-gcc -m64 -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
+		-D_REENTRANT -D_GNU_SOURCE \
+		$^ \
+		-shared -lc
+
+# Linux riscv64
+$(OS_DIR_LINUX_RISCV64)/libspawner.so: unix/spawner.c unix/io.c unix/exec_unix.c unix/exec_pty.c unix/openpty.c unix/pfind.c
+	mkdir -p $(dir $@) && \
+	riscv64-linux-gnu-gcc $(COMMON_CFLAGS) -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
+		-D_REENTRANT -D_GNU_SOURCE \
+		$^ \
+		-shared -lc
+
+$(OS_DIR_LINUX_RISCV64)/libpty.so: unix/openpty.c unix/pty.c unix/ptyio.c
+	mkdir -p $(dir $@) && \
+	riscv64-linux-gnu-gcc $(COMMON_CFLAGS) -o $@ -Wl,-soname,$(notdir $@) -Iinclude -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux -fpic \
 		-D_REENTRANT -D_GNU_SOURCE \
 		$^ \
 		-shared -lc

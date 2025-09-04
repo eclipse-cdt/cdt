@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 QNX Software Systems and others.
+ * Copyright (c) 2000, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,8 @@
  *     Marc Khouzam (Ericsson) - Support for -gdb-version (Bug 455408)
  *     Intel Corporation - Added Reverse Debugging BTrace support
  *     Samuel Hultgren (STMicroelectronics) - Bug 533771
+ *     John Dallaway - Add CLI version command (#1186)
+ *     John Dallaway - Add CLI address size command (#1191)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command;
@@ -53,6 +55,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceRecordDMContext;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIExecutionDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAddressSize;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAddressableSize;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIAttach;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLICatch;
@@ -77,6 +80,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.CLITrace;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLITraceDump;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetEnv;
 import org.eclipse.cdt.dsf.mi.service.command.commands.CLIUnsetSubstitutePath;
+import org.eclipse.cdt.dsf.mi.service.command.commands.CLIVersion;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIAddInferior;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakAfter;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIBreakCommands;
@@ -204,6 +208,7 @@ import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarSetUpdateRange;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowAttributes;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarShowFormat;
 import org.eclipse.cdt.dsf.mi.service.command.commands.MIVarUpdate;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIAddressableSizeInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLICatchInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoBreakInfo;
@@ -215,6 +220,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.CLIShowEndianInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLIThreadInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceDumpInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.CLITraceInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIVersionInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
@@ -265,6 +271,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MiSourceFilesInfo;
  * @since 3.0
  */
 public class CommandFactory {
+
+	/** @since 7.2 */
+	public ICommand<CLIAddressSizeInfo> createCLIAddressSize(IMemoryDMContext ctx) {
+		return new CLIAddressSize(ctx);
+	}
 
 	/**
 	 * @since 4.4
@@ -406,6 +417,11 @@ public class CommandFactory {
 	/** @since 5.0 */
 	public ICommand<MIInfo> createCLIUnsetSubstitutePath(ISourceLookupDMContext ctx) {
 		return new CLIUnsetSubstitutePath(ctx);
+	}
+
+	/** @since 7.2 */
+	public ICommand<CLIVersionInfo> createCLIVersion(ICommandControlDMContext ctx) {
+		return new CLIVersion(ctx);
 	}
 
 	/** @since 4.0 */

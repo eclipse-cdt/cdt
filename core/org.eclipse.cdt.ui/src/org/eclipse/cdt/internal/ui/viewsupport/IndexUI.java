@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2016, 2025 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,11 +48,13 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPSpecialization;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.index.IIndex;
@@ -174,6 +176,10 @@ public class IndexUI {
 			return binding instanceof ICPPFunctionTemplate && binding instanceof ICPPMethod;
 		case ICElement.C_TEMPLATE_VARIABLE:
 			return binding instanceof ICPPTemplateParameter;
+		case ICElement.C_DEDUCTION_GUIDE:
+			return binding instanceof ICPPDeductionGuide && !(binding instanceof ICPPTemplateDefinition);
+		case ICElement.C_DEDUCTION_GUIDE_TEMPLATE:
+			return binding instanceof ICPPDeductionGuide && binding instanceof ICPPTemplateDefinition;
 		}
 		return false;
 	}

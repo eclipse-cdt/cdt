@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 QnX Software Systems and others.
+ * Copyright (c) 2005, 2016, 2025 QnX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,11 @@ public class FunctionTemplateDeclaration extends FunctionDeclaration implements 
 	protected Template fTemplate;
 
 	public FunctionTemplateDeclaration(ICElement parent, String name) {
-		super(parent, name, ICElement.C_TEMPLATE_FUNCTION_DECLARATION);
+		this(parent, name, ICElement.C_TEMPLATE_FUNCTION_DECLARATION);
+	}
+
+	public FunctionTemplateDeclaration(ICElement parent, String name, int type) {
+		super(parent, name, type);
 		fTemplate = new Template(name);
 	}
 

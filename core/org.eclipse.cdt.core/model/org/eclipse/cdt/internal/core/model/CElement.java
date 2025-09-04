@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -337,6 +337,10 @@ public abstract class CElement extends PlatformObject implements ICElement {
 			return "C_FUNCTION"; //$NON-NLS-1$
 		case C_FUNCTION_DECLARATION:
 			return "C_FUNCTION_DECLARATION"; //$NON-NLS-1$
+		case C_DEDUCTION_GUIDE:
+			return "C_DEDUCTION_GUIDE"; //$NON-NLS-1$
+		case C_DEDUCTION_GUIDE_TEMPLATE:
+			return "C_DEDUCTION_GUIDE_TEMPLATE"; //$NON-NLS-1$
 		case C_VARIABLE:
 			return "C_VARIABLE"; //$NON-NLS-1$
 		case C_VARIABLE_DECLARATION:

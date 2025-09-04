@@ -591,6 +591,26 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		assertSame(R3.getTemplateDefinition(), A4);
 	}
 
+	// template <typename T> constexpr bool consume_r1() { return true; }
+	// template <class T1, bool EN = true> class A { };
+	// template <class T1> class A <T1, (bool)consume_r1<T1>()> { };
+	// A<int> a1; // uses specialisation
+	public void testPrimitiveMatchingSpecializations() throws Exception {
+		IASTTranslationUnit tu = parse(getAboveComment(), CPP);
+		NameCollector col = new NameCollector();
+		tu.accept(col);
+
+		ICPPClassTemplate A1 = (ICPPClassTemplate) col.getName(4).resolveBinding();
+		ICPPClassTemplate A2 = (ICPPClassTemplate) col.getName(6).resolveBinding();
+
+		assertTrue(A2 instanceof ICPPClassTemplatePartialSpecialization);
+		assertSame(((ICPPClassTemplatePartialSpecialization) A2).getPrimaryClassTemplate(), A1);
+
+		ICPPTemplateInstance R1 = (ICPPTemplateInstance) col.getName(12).resolveBinding();
+
+		assertSame(R1.getTemplateDefinition(), A2);
+	}
+
 	// template <class T> void f(T);
 	// template <class T> void f(T*);
 	// template <> void f(int);       //ok

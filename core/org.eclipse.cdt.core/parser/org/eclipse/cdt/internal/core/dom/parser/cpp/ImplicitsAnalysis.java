@@ -30,6 +30,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPBase;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
@@ -86,6 +87,8 @@ final class ImplicitsAnalysis {
 		IASTDeclaration[] members = compositeTypeSpecifier.getMembers();
 		char[] name = compositeTypeSpecifier.getName().getLookupKey();
 		for (IASTDeclaration member : members) {
+			if (member instanceof ICPPASTTemplateDeclaration)
+				member = ((ICPPASTTemplateDeclaration) member).getDeclaration();
 			IASTDeclarator dcltor = null;
 			IASTDeclSpecifier spec = null;
 			if (member instanceof IASTSimpleDeclaration) {

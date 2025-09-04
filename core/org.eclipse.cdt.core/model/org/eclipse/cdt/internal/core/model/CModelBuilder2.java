@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2006, 2014, 2025 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Anton Leherbauer (Wind River Systems) - initial API and implementation
  *     Markus Schorn (Wind River Systems)
+ *     Igor V. Kovalenko
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
@@ -545,13 +546,11 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 			return createTypeDef(parent, declSpecifier, declarator);
 		}
 		IASTDeclarator typeRelevant = ASTQueries.findTypeRelevantDeclarator(declarator);
-		if (typeRelevant instanceof ICPPASTDeductionGuide) {
-			// TODO [cmodel] deduction guide
-			return null;
-		} else if (typeRelevant instanceof IASTFunctionDeclarator) {
-			return createFunctionDeclaration(parent, declSpecifier, (IASTFunctionDeclarator) typeRelevant, isTemplate);
+		if (typeRelevant instanceof IASTFunctionDeclarator functionDeclarator) {
+			return createFunctionDeclarationOrDeductionGuide(parent, declSpecifier, functionDeclarator, isTemplate);
+		} else {
+			return createVariable(parent, declSpecifier, declarator, isTemplate);
 		}
-		return createVariable(parent, declSpecifier, declarator, isTemplate);
 	}
 
 	private void createNamespace(Parent parent, ICPPASTNamespaceDefinition declaration)
@@ -1082,8 +1081,9 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		return element;
 	}
 
-	private FunctionDeclaration createFunctionDeclaration(Parent parent, IASTDeclSpecifier declSpecifier,
-			IASTFunctionDeclarator declarator, boolean isTemplate) throws CModelException {
+	private FunctionDeclaration createFunctionDeclarationOrDeductionGuide(Parent parent,
+			IASTDeclSpecifier declSpecifier, IASTFunctionDeclarator declarator, boolean isTemplate)
+			throws CModelException {
 		IASTDeclarator nestedDeclarator = declarator;
 		while (nestedDeclarator.getNestedDeclarator() != null) {
 			nestedDeclarator = nestedDeclarator.getNestedDeclarator();
@@ -1131,10 +1131,18 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				methodElement.setConstructor(functionName.equals(parent.getElementName()));
 				methodElement.setDestructor(functionName.charAt(0) == '~');
 			} else {
-				if (isTemplate) {
-					element = new FunctionTemplateDeclaration(parent, functionName);
+				if (declarator instanceof ICPPASTDeductionGuide) {
+					if (isTemplate) {
+						element = new DeductionGuideTemplate(parent, functionName);
+					} else {
+						element = new DeductionGuide(parent, functionName);
+					}
 				} else {
-					element = new FunctionDeclaration(parent, functionName);
+					if (isTemplate) {
+						element = new FunctionTemplateDeclaration(parent, functionName);
+					} else {
+						element = new FunctionDeclaration(parent, functionName);
+					}
 				}
 				element.setParameterTypes(parameterTypes);
 				element.setReturnType(returnType);

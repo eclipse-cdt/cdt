@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2024 IBM Corporation and others.
+ * Copyright (c) 2003, 2024, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -238,6 +238,8 @@ public class CElementLabelComposer {
 		case ICElement.C_FUNCTION_DECLARATION:
 		case ICElement.C_TEMPLATE_FUNCTION:
 		case ICElement.C_TEMPLATE_FUNCTION_DECLARATION:
+		case ICElement.C_DEDUCTION_GUIDE:
+		case ICElement.C_DEDUCTION_GUIDE_TEMPLATE:
 			appendFunctionLabel((IFunctionDeclaration) element, flags);
 			break;
 		case ICElement.C_FIELD:

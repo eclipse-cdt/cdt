@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2024 IBM Corporation and others.
+ * Copyright (c) 2005, 2024, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -349,6 +349,10 @@ public class CElementImageProvider {
 
 		case ICElement.ASM_LABEL:
 			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LABEL);
+
+		case ICElement.C_DEDUCTION_GUIDE:
+		case ICElement.C_DEDUCTION_GUIDE_TEMPLATE:
+			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_DEDUCTION_GUIDE);
 		}
 		return null;
 	}
@@ -406,7 +410,7 @@ public class CElementImageProvider {
 	public ImageDescriptor getBaseImageDescriptor(ICElement celement, int renderFlags) {
 		// Allow contributed languages to provide icons for their extensions to the ICElement hierarchy
 		if (celement instanceof IContributedCElement)
-			return ((IContributedCElement) celement).getAdapter(ImageDescriptor.class);
+			return celement.getAdapter(ImageDescriptor.class);
 
 		int type = celement.getElementType();
 		switch (type) {
@@ -558,6 +562,10 @@ public class CElementImageProvider {
 			} else {
 				return null;
 			}
+
+		case ICElement.C_DEDUCTION_GUIDE:
+		case ICElement.C_DEDUCTION_GUIDE_TEMPLATE:
+			return getDeductionGuideImageDescriptor();
 
 		default:
 			return getImageDescriptor(type);
@@ -741,4 +749,7 @@ public class CElementImageProvider {
 		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_KEYWORD);
 	}
 
+	public static ImageDescriptor getDeductionGuideImageDescriptor() {
+		return getImageDescriptor(ICElement.C_DEDUCTION_GUIDE);
+	}
 }

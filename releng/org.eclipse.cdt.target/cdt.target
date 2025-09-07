@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="cdt" sequenceNumber="169">
+<target name="cdt" sequenceNumber="170">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/cbi/updates/license/" />
@@ -85,19 +85,19 @@
 				<dependency>
 					<groupId>org.apache.commons</groupId>
 					<artifactId>commons-compress</artifactId>
-					<version>1.27.1</version>
+					<version>1.28.0</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>
 					<groupId>commons-io</groupId>
 					<artifactId>commons-io</artifactId>
-					<version>2.19.0</version>
+					<version>2.20.0</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>
 					<groupId>org.assertj</groupId>
 					<artifactId>assertj-core</artifactId>
-					<version>3.27.3</version>
+					<version>3.27.4</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>
@@ -109,19 +109,19 @@
 				<dependency>
 					<groupId>org.junit.jupiter</groupId>
 					<artifactId>junit-jupiter-api</artifactId>
-					<version>5.12.2</version>
+					<version>5.13.4</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>
 					<groupId>org.junit.jupiter</groupId>
 					<artifactId>junit-jupiter-engine</artifactId>
-					<version>5.12.2</version>
+					<version>5.13.4</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>
 					<groupId>org.mockito</groupId>
 					<artifactId>mockito-core</artifactId>
-					<version>5.18.0</version>
+					<version>5.19.0</version>
 					<type>jar</type>
 				</dependency>
 				<dependency>

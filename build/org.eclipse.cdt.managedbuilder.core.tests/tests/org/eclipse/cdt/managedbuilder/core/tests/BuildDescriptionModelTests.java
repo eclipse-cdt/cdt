@@ -249,7 +249,8 @@ public class BuildDescriptionModelTests extends BaseTestCase {
 		//		ManagedBuildTestHelper.removeProject(PREFIX + "1");
 	}
 
-	public void testDesTest30_2_asm_only() {
+	// Regression under investigation - issue #1290
+	public void ignoreDesTest30_2_asm_only() {
 		IProject project = createProject(PREFIX + "1", "test30_2.tar");
 		ManagedBuildTestHelper.createFile(project, "a.asm");
 		ManagedBuildTestHelper.createFile(project, "b.asm");

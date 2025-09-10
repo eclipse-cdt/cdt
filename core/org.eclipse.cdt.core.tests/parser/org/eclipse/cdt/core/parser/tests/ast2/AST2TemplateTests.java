@@ -11801,4 +11801,116 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	public void testAllowAggregateInitializationInTemplateBody() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}
+
+	//  // pattern from gdb custom allocator
+	//  template<typename T>
+	//  struct ConversionTraits {
+	//    template<typename U>
+	//    struct ConverterImpl {
+	//      static constexpr int value = 42;
+	//    };
+	//  };
+	//  template<typename T>
+	//  struct Derived : public T {
+	//    using T::T; // does not introduce name T, pulls constructors of T
+	//    template<typename U>
+	//    struct Converter {
+	//      typedef ConversionTraits<T> traits;
+	//      typedef typename traits::template ConverterImpl<U> conversion;
+	//    };
+	//  };
+	//
+	//  template<typename T> class In {};
+	//  template<typename T> class Out {};
+	//
+	//  static constexpr auto conversion_value
+	//    = Derived<In<int>>::Converter<Out<double>>::conversion::value;
+	public void testUsingDeclaratorPullDependentBaseConstructors() throws Exception {
+		parseAndCheckImplicitNameBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("conversion_value", 42);
+	}
+
+	//  template<typename T>
+	//  struct ConversionTraits {
+	//    template<typename U>
+	//    struct ConverterImpl {
+	//      static constexpr int value = 42;
+	//    };
+	//  };
+	//
+	//  template<int I, typename T>
+	//  struct Derived : public Derived<I - 1, T> {
+	//    using Base = Derived<I - 1, T>;
+	//    using Base::Base; // does not introduce name Base, pulls constructors of Derived<I - 1, T>
+	//  };
+	//
+	//  template<typename T>
+	//  struct Derived<-1, T> {
+	//    template<typename U>
+	//    struct Converter {
+	//      typedef ConversionTraits<T> traits;
+	//      typedef typename traits::template ConverterImpl<U> conversion;
+	//    };
+	//  };
+	//
+	//  template<typename T> class In {};
+	//  template<typename T> class Out {};
+	//
+	//  static constexpr auto conversion_value
+	//    = Derived<17, In<int>>::Converter<Out<double>>::conversion::value;
+	//
+	//  static_assert(conversion_value == 42);
+	public void testUsingDeclaratorPullDependentTemplateBaseConstructors() throws Exception {
+		parseAndCheckImplicitNameBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("conversion_value", 42);
+	}
+
+	//  template<typename T>
+	//  struct ConversionTraits {
+	//    template<typename U>
+	//    struct ConverterImpl {
+	//      static constexpr int value = 42;
+	//    };
+	//  };
+	//
+	//  template<typename T>
+	//  class DerivedInstantiator;
+	//
+	//  template<int I, typename T>
+	//  struct Derived : public Derived<I - 1, T> {
+	//    using Base = Derived<I - 1, T>;
+	//    using Base::Base; // does not introduce name Derived, pulls constructors of Derived<I - 1, T>
+	//  };
+	//
+	//  template<typename T>
+	//  struct Derived<-1, DerivedInstantiator<T>> {
+	//    template<typename U>
+	//    struct Converter {
+	//      typedef ConversionTraits<T> traits;
+	//      typedef typename traits::template ConverterImpl<U> conversion;
+	//    };
+	//  };
+	//
+	//  static constexpr int DEPTH = 17;
+	//
+	//  template<typename T>
+	//  struct DerivedInstantiator : public Derived<DEPTH, DerivedInstantiator<T>> {
+	//    using Derived = Derived<DEPTH, DerivedInstantiator>; // name Derived now means type of direct base class, not Derived template class
+	//    using Derived::Derived; // does not introduce name Derived, pulls constructors of Derived<I - 1, T>
+	//  };
+	//
+	//  template<typename T> class In {};
+	//  template<typename T> class Out {};
+	//
+	//  static constexpr auto conversion_value
+	//    = DerivedInstantiator<In<int>>::Converter<Out<double>>::conversion::value;
+	//
+	//  static_assert(conversion_value == 42);
+	public void testUsingDeclaratorPullRenamedDependentTemplateBaseConstructors() throws Exception {
+		parseAndCheckImplicitNameBindings();
+		BindingAssertionHelper helper = getAssertionHelper();
+		helper.assertVariableValue("conversion_value", 42);
+	}
 }

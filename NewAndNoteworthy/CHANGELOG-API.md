@@ -8,6 +8,15 @@ This section describes API removals that occurred in past releases, and upcoming
 
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
 
+## API Changes in CDT 12.2.
+
+### Migrate Terminal bundles to Eclipse Platform
+
+Most of the rest of the terminal has now been migrated to Eclipse Platform.
+Eclipse Platform renamed the bundles and features, the main feature is `org.eclipse.terminal.feature` and the new namespace for the bundles is `org.eclipse.terminal`.
+Old `org.eclipse.tm.*` features have been updated to point to Eclipse Platform and in a future version checking for updates on most `org.eclipse.tm.*` features will update to `org.eclipse.terminal.feature`.
+ISVs who are using `org.eclipse.tm.terminal` need to update to `org.eclipse.terminal` namespace or continue to use older version of `org.eclipse.tm.terminal` (If ISVs continue to use older `org.eclipse.tm.terminal` bundles and features that should work for the forseeable future, but no new fixes on that namespace will be applied. In addition users may end up with two terminal views, one for the org.eclipse.terminal and one for org.eclipse.tm.terminal, depending on what is installed.)
+
 ## API Changes in CDT 12.1.
 
 ### Migrate tm.terminal.control to eclipse platform

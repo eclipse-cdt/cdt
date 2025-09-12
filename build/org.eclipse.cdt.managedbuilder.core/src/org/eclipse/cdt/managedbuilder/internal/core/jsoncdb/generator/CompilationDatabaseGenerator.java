@@ -14,11 +14,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
@@ -69,8 +71,9 @@ public final class CompilationDatabaseGenerator {
 	/**
 	 * Checked on each build
 	 * Used before we look up the environment
+	 * Map of compiler name (as calculated by {@link #getCompilerName(String)}) to the absolute path of the compiler.
 	 */
-	private Map<ITool, String> toolMap = new HashMap<>();
+	private Map<String, String> toolMap = new HashMap<>();
 	private IProject project;
 	private IConfiguration configuration;
 	private ICSourceEntry[] srcEntries;
@@ -229,18 +232,19 @@ public final class CompilationDatabaseGenerator {
 						outputLocation + "", inputStrings, sourceLocation, outputLocation); //$NON-NLS-1$
 
 				IBuildMacroProvider provider = ManagedBuildManager.getBuildMacroProvider();
-				String compilerName = CompilationDatabaseGenerator.getCompilerName(tool);
 				String commandLine = cmdLInfo.getCommandLine();
-				commandLine = commandLine.replace(compilerName, "").trim(); //$NON-NLS-1$
-				String compilerPath = findCompilerInPath(tool, config);
+				String compilerName = CompilationDatabaseGenerator.getCompilerName(commandLine);
+				String compilerArguments = getCompilerArgs(commandLine);
+				String compilerPath = findCompilerInPath(config, compilerName);
 				String resolvedOptionFileContents;
 				if (compilerPath != null && !compilerPath.isEmpty()) {
-					resolvedOptionFileContents = provider.resolveValueToMakefileFormat(compilerPath + " " + commandLine, //$NON-NLS-1$
+					resolvedOptionFileContents = provider.resolveValueToMakefileFormat(
+							compilerPath + " " + compilerArguments, //$NON-NLS-1$
 							"", " ", //$NON-NLS-1$//$NON-NLS-2$
 							IBuildMacroProvider.CONTEXT_FILE,
 							new FileContextData(sourceLocation, outputLocation, null, tool));
 				} else {
-					resolvedOptionFileContents = provider.resolveValueToMakefileFormat(commandLine, "", " ", //$NON-NLS-1$//$NON-NLS-2$
+					resolvedOptionFileContents = provider.resolveValueToMakefileFormat(compilerArguments, "", " ", //$NON-NLS-1$//$NON-NLS-2$
 							IBuildMacroProvider.CONTEXT_FILE,
 							new FileContextData(sourceLocation, outputLocation, null, tool));
 
@@ -438,15 +442,15 @@ public final class CompilationDatabaseGenerator {
 
 	}
 
-	private String findCompilerInPath(ITool tool, IConfiguration config) {
-		if (toolMap.containsKey(tool)) {
-			return "\"" + toolMap.get(tool) + "\""; //$NON-NLS-1$//$NON-NLS-2$
+	private String findCompilerInPath(IConfiguration config, String compilerName) {
+		String cacheKey = compilerName;
+		if (toolMap.containsKey(cacheKey)) {
+			return "\"" + toolMap.get(cacheKey) + "\""; //$NON-NLS-1$//$NON-NLS-2$
 		}
-		String compilerName = CompilationDatabaseGenerator.getCompilerName(tool);
 		File pathToCompiler = new File(compilerName);
 
 		if (pathToCompiler.isAbsolute()) {
-			toolMap.put(tool, compilerName);
+			toolMap.put(cacheKey, compilerName);
 			return "\"" + compilerName + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		ICConfigurationDescription cfg = ManagedBuildManager.getDescriptionForConfiguration(config);
@@ -458,7 +462,7 @@ public final class CompilationDatabaseGenerator {
 				IPath resolvedPath = PathUtil.findProgramLocation(compilerName, variable.getValue());
 				if (resolvedPath != null) {
 					String path = resolvedPath.toString();
-					toolMap.put(tool, path);
+					toolMap.put(cacheKey, path);
 					return "\"" + path + "\""; //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					return null; // Only one PATH so can exit early
@@ -469,13 +473,32 @@ public final class CompilationDatabaseGenerator {
 		return null;
 	}
 
-	private static String getCompilerName(ITool tool) {
-		String compilerCommand = tool.getToolCommand();
-		String[] arguments = CommandLineUtil.argumentsToArray(compilerCommand);
+	private static String getCompilerName(String commandLine) {
+		String[] arguments = CommandLineUtil.argumentsToArray(commandLine);
 		if (arguments.length == 0) {
 			return ""; //$NON-NLS-1$
 		}
 		return arguments[0];
+	}
+
+	private static String getCompilerArgs(String commandLine) {
+		String[] arguments = CommandLineUtil.argumentsToArray(commandLine);
+		if (arguments.length <= 1) {
+			return ""; //$NON-NLS-1$
+		}
+		List<String> argsList = Arrays.asList(arguments).subList(1, arguments.length);
+		return escArgsForCompileCommand(argsList);
+	}
+
+	private static String escArgsForCompileCommand(final List<String> args) {
+		return args.stream().map(arg -> {
+			if (arg.contains(" ") || arg.contains("\"") || arg.contains("\\")) { //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+				String escaped = arg.replace("\\", "\\\\").replace("\"", "\\\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$//$NON-NLS-4$
+				return "\"" + escaped + "\""; //$NON-NLS-1$//$NON-NLS-2$
+			} else {
+				return arg;
+			}
+		}).collect(Collectors.joining(" ")); //$NON-NLS-1$
 	}
 
 }

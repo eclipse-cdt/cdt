@@ -22,6 +22,14 @@ The _Memory_ view is now populated correctly when debugging using LLDB. The _LLD
 
 # API Changes, current and planned
 
+## Migrate Terminal bundles to Eclipse Platform
+
+Most of the rest of the terminal has now been migrated to Eclipse Platform.
+For users this does not change anything (other than fresh development, bug fixes, improved icons and much more).
+For ISVs there is a new namespace to use `org.eclipse.terminal` and follow future developments in [Eclipse Platform](https://github.com/eclipse-platform/) project.
+
+Read more in the [API changelog for 12.2](https://github.com/eclipse-cdt/cdt/blob/main/NewAndNoteworthy/CHANGELOG-API.md#api-changes-in-cdt-122) and see announcements in [Eclipse Platform's news](https://eclipse.dev/eclipse/markdown/?f=news/4.37/platform_isv.md)
+
 ## Breaking API changes
 
 Please see [CHANGELOG-API](CHANGELOG-API.md) for details on the breaking API changes in this release as well as future planned API changes.

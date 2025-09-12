@@ -13,7 +13,7 @@ package org.eclipse.launchbar.core.target;
 import java.util.regex.Pattern;
 
 /**
- * @since 3.0
+ * @since 3.1
  */
 public class LaunchTargetUtils {
 	/**
@@ -23,6 +23,14 @@ public class LaunchTargetUtils {
 	 */
 	private static final Pattern INVALID_NAME_PATTERN = Pattern
 			.compile("[^\\pL\\pM\\p{Nd}\\p{Nl}\\p{Pc}[\\p{InEnclosedAlphanumerics}&&\\p{So}]]"); //$NON-NLS-1$
+	/**
+	 * Disallowed characters for launch configuration names
+	 * '@' and '&' are disallowed because they corrupt menu items.
+	 * Copied from  org.eclipse.debug.internal.core.LaunchConfigurationManager
+	 * @since 3.1
+	 */
+	private static final char[] DISALLOWED_CONFIG_NAME_CHARS = new char[] { '@', '&', '\\', '/', ':', '*', '?', '"',
+			'<', '>', '|', '\0' };
 
 	private LaunchTargetUtils() {
 		// empty
@@ -44,5 +52,21 @@ public class LaunchTargetUtils {
 	 */
 	public static String sanitizeName(String name) {
 		return INVALID_NAME_PATTERN.matcher(name).replaceAll("_"); //$NON-NLS-1$
+	}
+
+	/**
+	 * Replace launch configuration name disallowed characters with underscores.
+	 * Copied from  org.eclipse.debug.internal.core.LaunchConfigurationManager
+	 * LaunchManager.isValidLaunchConfigurationName() can be used to verify a name.
+	 *
+	 * @param name the name to sanitize.
+	 * @since 3.1
+	 */
+	public static String sanitizeLaunchConfigurationName(String name) {
+		//blanket replace all invalid chars
+		for (char element : DISALLOWED_CONFIG_NAME_CHARS) {
+			name = name.replace(element, '_');
+		}
+		return name;
 	}
 }

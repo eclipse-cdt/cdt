@@ -1,0 +1,79 @@
+////
+Copyright (c) 2000, 2025 Contributors to the Eclipse Foundation
+This program and the accompanying materials
+are made available under the terms of the Eclipse Public License 2.0
+which accompanies this distribution, and is available at
+https://www.eclipse.org/legal/epl-2.0/
+
+SPDX-License-Identifier: EPL-2.0
+////
+
+// pull in shared headers, footers, etc
+:docinfo: shared
+
+// support image rendering and table of contents within GitHub
+ifdef::env-github[]
+:imagesdir: ../../images
+:toc:
+:toc-placement!:
+endif::[]
+
+// enable support for button, menu and keyboard macros
+:experimental:
+
+// Until ENDOFHEADER the content must match adoc-headers.txt for consistency,
+// this is checked by the build in do_generate_asciidoc.sh, which also ensures
+// that the checked in html is up to date.
+// do_generate_asciidoc.sh can also be used to apply this header to all the
+// adoc files.
+// ENDOFHEADER
+
+== Debugging a remote target
+
+Debugging a CBS project is done via the xref:cbs_launchbar.adoc[Launch Bar]. Make
+sure the launch bar is installed and enabled.
+
+A new remote target must be added to the launch bar.
+
+. Select launch mode *Debug*.
+. Unfold the launch target selector by pressing the "v" symbol.
+. Select *New Launch Target...*
+
+image:cbs_new_debug_launchtarget.png[Create new launch target]
+
+=== Remote TCP target
+
+Select target type *GDB Remote TCP* and click *Next >*.
+
+image:cbs_select_remote_tcp.png[Select GDB Remote TCP]
+
+Enter the connection details, and click *Finish*.
+
+image:cbs_connection_tcp.png[TCP connection details]
+
+When the remote target is selected in the launch bar, the launch
+configuration Debugger tab has an extra sub tab *Connection*.  The
+Connection tab inherited the values from launch target. The fields are
+disabled for editing. Changing host name or port number must be done
+in the launch target. Note that the launch target can be used for
+multiple launch configurations.
+
+image:cbs_launch_config_tcp.png[Launch configuration debug tab TCP]
+
+Build and launch the project.
+
+
+=== Remote Serial target
+
+Create a new launch target of type *GDB Remote Serial*.
+
+image:cbs_select_remote_serial.png[Select GDB Remote Serial]
+
+Enter the connection details, and click *Finish*.
+
+image:cbs_connection_serial.png[Serial connection details]
+
+As with a TCP remote target, in the launch configuration the
+the fields for the connection parameters are not editable.
+
+image:cbs_launch_config_serial.png[Launch configuration debug tab Serial]

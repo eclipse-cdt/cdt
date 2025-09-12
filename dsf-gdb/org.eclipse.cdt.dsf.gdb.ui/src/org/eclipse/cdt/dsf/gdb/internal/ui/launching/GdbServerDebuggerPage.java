@@ -206,6 +206,7 @@ public class GdbServerDebuggerPage extends GdbDebuggerPage {
 		initializeRemoteTimeout(configuration);
 		connectionTypeChanged0();
 		setInitializing(false);
+		fTCPBlock.initializeField(configuration, fConnectionField, fConnectionStack);
 	}
 
 	private void initializeRemoteTimeout(ILaunchConfiguration configuration) {

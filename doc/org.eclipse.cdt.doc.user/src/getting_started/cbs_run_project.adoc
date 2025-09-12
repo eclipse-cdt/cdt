@@ -64,4 +64,4 @@ On the *Environment* tab you define optional environment variables.
 
 image:cbs_launch_config_tab_main.png[Launch configuration main tab]
 
-icon:arrow-circle-right[] xref:cbs_debug_project.adoc[Next: Debugging a project]
+icon:arrow-circle-right[] xref:cbs_debug_project.adoc[Next: Debugging a local target]

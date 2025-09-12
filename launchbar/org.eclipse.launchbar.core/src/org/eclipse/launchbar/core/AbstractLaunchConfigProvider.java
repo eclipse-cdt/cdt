@@ -43,6 +43,33 @@ public abstract class AbstractLaunchConfigProvider implements ILaunchConfigurati
 		return workingCopy.doSave();
 	}
 
+	/**
+	 * Update an existing launch configuration to match the target's attributes.
+	 *
+	 * @param config the launch configuration to update
+	 * @param target the launch target to get attributes from
+	 * @throws CoreException if unable to update the launch configuration
+	 * @since 3.1
+	 */
+	protected void updateLaunchConfiguration(ILaunchConfiguration config, ILaunchTarget target) throws CoreException {
+
+		ILaunchConfigurationWorkingCopy workingCopy = config.getWorkingCopy();
+
+		// Leave our breadcrumb
+
+		if (workingCopy.isDirty()) {
+			workingCopy.doSave();
+		}
+	}
+
+	/**
+	 * Populate the newly created launch configuration with the target's attributes.
+	 *
+	 * @param descriptor the launch descriptor
+	 * @param target     the launch target
+	 * @return the launch configuration type
+	 * @throws CoreException if unable to get the launch configuration type
+	 */
 	protected void populateLaunchConfiguration(ILaunchDescriptor descriptor, ILaunchTarget target,
 			ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
 		// Leave our breadcrumb

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.ILog;
 /**
  * Parses the result of the CLI command "p/x sizeof(void*)"
  *
- * @since 7.2
+ * @since 7.3
  */
 public class CLIAddressSizeInfo extends MIInfo {
 

@@ -44,4 +44,6 @@ xref:cbs_build_project.adoc[Building a project]
 
 xref:cbs_run_project.adoc[Running a project]
 
-xref:cbs_debug_project.adoc[Debugging a project]
+xref:cbs_debug_project.adoc[Debugging a local target]
+
+xref:cbs_debug_remote.adoc[Debugging a remote target]

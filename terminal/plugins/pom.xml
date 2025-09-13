@@ -29,6 +29,5 @@
 		<module>org.eclipse.tm.terminal.connector.cdtserial</module>
 
 		<module>org.eclipse.tm.terminal.view.core</module>
-		<module>org.eclipse.tm.terminal.view.ui</module>
 	</modules>
 </project>

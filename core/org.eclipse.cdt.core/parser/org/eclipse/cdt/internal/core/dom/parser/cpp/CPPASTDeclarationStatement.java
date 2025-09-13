@@ -24,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDeclarationStatement;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
 
 /**
  * @author jcamelon
@@ -130,9 +131,15 @@ public class CPPASTDeclarationStatement extends ASTNode
 
 	@Override
 	public ICPPExecution getExecution() {
-		if (declaration instanceof ICPPExecutionOwner) {
-			ICPPExecutionOwner execOwner = (ICPPExecutionOwner) declaration;
-			return new ExecDeclarationStatement(execOwner.getExecution());
+		if (declaration instanceof ICPPExecutionOwner execOwner) {
+			ICPPExecution execution = execOwner.getExecution();
+			if (execution instanceof ExecReturn) {
+				// CPPASTStaticAssertionDeclaration simulates error handling via ExecReturn
+				// with conditional expression which must be executed as is to return problem value
+				return execution;
+			} else {
+				return new ExecDeclarationStatement(execution);
+			}
 		}
 		return null;
 	}

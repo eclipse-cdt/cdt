@@ -49,11 +49,10 @@ public class ExecIf implements ICPPExecution {
 	public ICPPExecution executeForFunctionCall(ActivationRecord record, ConstexprEvaluationContext context) {
 		EvalUtil.executeStatement(initStmtExec, record, context);
 		if (conditionSatisfied(record, context)) {
-			return EvalUtil.executeStatement(thenClauseExec, record, context);
-		} else if (elseClauseExec != null) {
-			return EvalUtil.executeStatement(elseClauseExec, record, context);
+			return thenClauseExec != null ? EvalUtil.executeStatement(thenClauseExec, record, context) : null;
+		} else {
+			return elseClauseExec != null ? EvalUtil.executeStatement(elseClauseExec, record, context) : null;
 		}
-		return null;
 	}
 
 	@Override
@@ -76,12 +75,12 @@ public class ExecIf implements ICPPExecution {
 				 * might have side effects so it needs to be preserved in the instantiated
 				 * execution even if one of its branch has become null
 				 */
-				newThenClauseExec = thenClauseExec.instantiate(context, maxDepth);
+				newThenClauseExec = thenClauseExec != null ? thenClauseExec.instantiate(context, maxDepth) : null;
 			} else {
 				newElseClauseExec = elseClauseExec != null ? elseClauseExec.instantiate(context, maxDepth) : null;
 			}
 		} else {
-			newThenClauseExec = thenClauseExec.instantiate(context, maxDepth);
+			newThenClauseExec = thenClauseExec != null ? thenClauseExec.instantiate(context, maxDepth) : null;
 			newElseClauseExec = elseClauseExec != null ? elseClauseExec.instantiate(context, maxDepth) : null;
 		}
 

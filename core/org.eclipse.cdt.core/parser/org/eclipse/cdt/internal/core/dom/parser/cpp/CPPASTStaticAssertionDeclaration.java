@@ -13,19 +13,31 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
+import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
+import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
 
 public class CPPASTStaticAssertionDeclaration extends ASTNode
-		implements ICPPASTStaticAssertDeclaration, IASTAmbiguityParent {
+		implements ICPPASTStaticAssertDeclaration, IASTAmbiguityParent, ICPPExecutionOwner {
 
 	private IASTExpression fCondition;
 	private final ICPPASTLiteralExpression fMessage;
+
+	public static final ICPPEvaluation STATIC_ASSERT_FAILED = new EvalFixed(ProblemType.STATIC_ASSERT_FAILED, PRVALUE,
+			IntegralValue.STATIC_ASSERT_FAILED_ERROR);
 
 	/**
 	 * Constructor for C++17 static_assert with only a condition.
@@ -100,5 +112,22 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode
 			other.setParent(child.getParent());
 			other.setPropertyInParent(child.getPropertyInParent());
 		}
+	}
+
+	@Override
+	public ICPPExecution getExecution() {
+		// Naturally this would be compilation error; simulate executing this statement via return with evaluation problem.
+		// If no evaluation of condition is available, treat it as unsatisfied condition too.
+		final ICPPEvaluation conditionExprEval = getCondition() instanceof ICPPASTExpression conditionExpr
+				? conditionExpr.getEvaluation()
+				: CPPASTLiteralExpression.INT_ZERO.getEvaluation();
+
+		ICPPEvaluation conditionalEval = new EvalConditional(conditionExprEval, null, STATIC_ASSERT_FAILED, false,
+				false, (IBinding) null);
+
+		//		ICPPExecution constexprIfExecution = new ExecIf(true, null, conditionExprEval, null, null,
+		//				new ExecReturn(STATIC_ASSERT_FAILED));
+
+		return new ExecReturn(conditionalEval);
 	}
 }

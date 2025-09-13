@@ -1,3 +1,0 @@
-org.eclipse.tm.terminal.view.ui/debugmode = 0
-org.eclipse.tm.terminal.view.ui/trace/outputStreamMonitor = false
-org.eclipse.tm.terminal.view.ui/trace/launchTerminalCommandHandler = false

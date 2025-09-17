@@ -104,6 +104,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
@@ -11912,5 +11913,33 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		parseAndCheckImplicitNameBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableValue("conversion_value", 42);
+	}
+
+	//	template<typename T>
+	//	constexpr bool if_false(T t) {
+	//	    if (t)
+	//	        static_assert(false);
+	//	    else
+	//	        return true;
+	//	}
+	//	template<typename T>
+	//	constexpr bool if_true(T t) {
+	//	    if (t)
+	//	        return true;
+	//	    else
+	//	        static_assert(false);
+	//	}
+	//	static constexpr auto value_if_false = if_false(true);
+	//	static constexpr auto value_if_true = if_true(false);
+	public void testIfThenElseClauseStaticAssert() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+
+		// initial value must be available, but it's value is wrong because static_assert() is not supported (yet)
+		CPPVariable valueIfFalse = helper.assertNonProblem("value_if_false");
+		assertEquals(IntegralValue.STATIC_ASSERT_FAILED_ERROR, valueIfFalse.getInitialValue());
+
+		// initial value must be available, but it's value is wrong because static_assert() is not supported (yet)
+		CPPVariable valueIfTrue = helper.assertNonProblem("value_if_true");
+		assertEquals(IntegralValue.STATIC_ASSERT_FAILED_ERROR, valueIfTrue.getInitialValue());
 	}
 }

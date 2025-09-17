@@ -132,6 +132,8 @@ public class ParserMessages {
 			return "ISemanticProblem.TYPE_CANNOT_DEDUCE_DECLTYPE_AUTO_TYPE";
 		case ISemanticProblem.TYPE_AUTO_FOR_VIRTUAL_METHOD:
 			return "ISemanticProblem.TYPE_AUTO_FOR_VIRTUAL_METHOD";
+		case ISemanticProblem.TYPE_STATIC_ASSERT_FAILED:
+			return "ISemanticProblem.TYPE_STATIC_ASSERT_FAILED";
 		}
 		return null;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2015, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,9 +21,13 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
@@ -154,6 +158,49 @@ public class CPPASTCompositeTypeSpecifier extends CPPASTBaseDeclSpecifier implem
 
 	@Override
 	public final void addDeclaration(IASTDeclaration decl) {
+		// [C++20] 6.5.4.2 Class members [class.qual]
+		//   (2) In a lookup in which function names are not ignored
+		//       and the nested-name-specifier nominates a class C:
+		//   (2.1) if the name specified after the nested-name-specifier,
+		//         when looked up in C, is the injected-class-name of C (11.1), or
+		//   (2.2) in a using-declarator of a using-declaration (9.9) that is a member-declaration,
+		//         if the name specified after the nested-name-specifier is the same as the
+		//         identifier or the simple-template-id's template-name in the last component
+		//         of the nested-name-specifier,
+		//       the name is instead considered to name the constructor of class C.
+		//       ...
+		//       Such a constructor name shall be used only in the declarator-id of
+		//       a declaration that names a constructor or in a using-declaration.
+		//
+		// AST2TemplateTests.testInheritedConstructor_489710() has the following code fragment:
+		//	 template <int I, typename T>
+		//	 struct B : public B<I - 1, T> {
+		//     ...
+		//	   using Base = B<I - 1, T>;
+		//	   using Base::Base;
+		//     ...
+		//	 };
+		//
+		// Here, while resolving ambiguities finds CPPASTAmbiguousTemplateArgument of first member 'using Base = B<I - 1, T>'
+		// declaration name lookup for 'I' in 'struct B' scope causes cache population of CPPClassScope of 'struct B'.
+		// Cache population finds second member 'using Base::Base' declaration but at that point it is not possible
+		// to tell whether this member using-declaration nominates a class because first using declaration still contains
+		// unresolved ambiguous template argument. The needed typedef is found but mapped type is deferred class
+		// which yields ProblemBinding.
+		//
+		// To fix this detect if using-declaration potentially names a constructor and return CPPASTAmbiguousUsingDeclaration
+		// wrapping real declaration. This will be skipped while populating 'struct B' class scope and resolved after
+		// first 'using Base = B<...>' member declaration ambiguities are resolved. Cache will be populated after resolution is complete.
+
+		if (decl instanceof ICPPASTUsingDeclaration using && using.getName() instanceof ICPPASTQualifiedName qName) {
+			final ICPPASTNameSpecifier[] qualifier = qName.getQualifier();
+			if (qualifier.length > 0 && qualifier[qualifier.length - 1] instanceof IASTName segmentName) {
+				if (CharArrayUtils.equals(segmentName.getSimpleID(), qName.getLastName().getSimpleID())) {
+					decl = new CPPASTAmbiguousUsingDeclaration(decl);
+				}
+			}
+		}
+
 		addMemberDeclaration(decl);
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2015, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -498,6 +498,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add(Keywords.CHAR32_T);
 		KEYWORDS_CPP.add(Keywords.CLASS);
 		KEYWORDS_CPP.add(Keywords.COMPL);
+		KEYWORDS_CPP.add(Keywords.CONCEPT);
 		KEYWORDS_CPP.add(Keywords.CONST);
 		KEYWORDS_CPP.add(Keywords.CONSTEXPR);
 		KEYWORDS_CPP.add(Keywords.CONST_CAST);
@@ -539,6 +540,7 @@ public class KeywordSets {
 		KEYWORDS_CPP.add(Keywords.PUBLIC);
 		KEYWORDS_CPP.add(Keywords.REGISTER);
 		KEYWORDS_CPP.add(Keywords.REINTERPRET_CAST);
+		KEYWORDS_CPP.add(Keywords.REQUIRES);
 		KEYWORDS_CPP.add(Keywords.RESTRICT);
 		KEYWORDS_CPP.add(Keywords.RETURN);
 		KEYWORDS_CPP.add(Keywords.SHORT);

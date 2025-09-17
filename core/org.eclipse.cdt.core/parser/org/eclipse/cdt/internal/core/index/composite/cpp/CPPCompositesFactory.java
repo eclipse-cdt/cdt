@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2016, 2025 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecializationSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConcept;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumScope;
@@ -766,6 +767,8 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 				} else if (binding instanceof ICPPVariableTemplate) {
 					ICPPVariable def = (ICPPVariable) findOneBinding(binding);
 					return new CompositeCPPVariableTemplate(this, def);
+				} else if (binding instanceof ICPPConcept concept) {
+					return new CompositeCPPConcept(this, concept);
 				} else {
 					throw new CompositingNotImplementedError(
 							"Composite binding unavailable for " + binding + " " + binding.getClass()); //$NON-NLS-1$ //$NON-NLS-2$

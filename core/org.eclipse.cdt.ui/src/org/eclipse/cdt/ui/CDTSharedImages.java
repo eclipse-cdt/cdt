@@ -67,6 +67,8 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_PROTECTED_METHOD = "icons/obj16/method_protected_obj.gif"; //$NON-NLS-1$
 	/** @since 9.1 */
 	public static final String IMG_OBJS_DEDUCTION_GUIDE = "icons/obj16/deduction_guide_obj.gif"; //$NON-NLS-1$
+	/** @since 9.1 */
+	public static final String IMG_OBJS_CONCEPT = "icons/obj16/concept_obj.gif"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_PRIVATE_METHOD = "icons/obj16/method_private_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PUBLIC_FIELD = "icons/obj16/field_public_obj.gif"; //$NON-NLS-1$

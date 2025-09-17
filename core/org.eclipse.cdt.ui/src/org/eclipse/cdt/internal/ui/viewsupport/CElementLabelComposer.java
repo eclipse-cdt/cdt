@@ -247,6 +247,7 @@ public class CElementLabelComposer {
 			break;
 		case ICElement.C_VARIABLE:
 		case ICElement.C_VARIABLE_DECLARATION:
+		case ICElement.C_CONCEPT:
 			appendVariableLabel((IVariableDeclaration) element, flags);
 			break;
 		case ICElement.C_ENUMERATOR:

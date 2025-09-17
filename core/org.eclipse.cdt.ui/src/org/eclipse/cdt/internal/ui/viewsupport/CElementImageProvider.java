@@ -353,6 +353,9 @@ public class CElementImageProvider {
 		case ICElement.C_DEDUCTION_GUIDE:
 		case ICElement.C_DEDUCTION_GUIDE_TEMPLATE:
 			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_DEDUCTION_GUIDE);
+
+		case ICElement.C_CONCEPT:
+			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CONCEPT);
 		}
 		return null;
 	}
@@ -567,6 +570,9 @@ public class CElementImageProvider {
 		case ICElement.C_DEDUCTION_GUIDE_TEMPLATE:
 			return getDeductionGuideImageDescriptor();
 
+		case ICElement.C_CONCEPT:
+			return getConceptImageDescriptor();
+
 		default:
 			return getImageDescriptor(type);
 		}
@@ -751,5 +757,9 @@ public class CElementImageProvider {
 
 	public static ImageDescriptor getDeductionGuideImageDescriptor() {
 		return getImageDescriptor(ICElement.C_DEDUCTION_GUIDE);
+	}
+
+	public static ImageDescriptor getConceptImageDescriptor() {
+		return getImageDescriptor(ICElement.C_CONCEPT);
 	}
 }

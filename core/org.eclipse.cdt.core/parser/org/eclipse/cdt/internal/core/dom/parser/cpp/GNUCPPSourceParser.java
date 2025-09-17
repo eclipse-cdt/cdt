@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2019 IBM Corporation and others.
+ * Copyright (c) 2002, 2019, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -88,6 +88,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConceptDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
@@ -211,6 +212,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private final boolean supportGCCStyleDesignators;
 	private final boolean supportFoldExpression;
 	private final boolean supportChar8TypeLiterals;
+	private final boolean supportConcepts;
 
 	private final IIndex index;
 	protected ICPPASTTranslationUnit translationUnit;
@@ -250,6 +252,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		additionalNumericalSuffixes = scanner.getAdditionalNumericLiteralSuffixes();
 		supportFoldExpression = true;
 		supportChar8TypeLiterals = scanner.getMacroDefinitions().containsKey("__cpp_char8_t"); //$NON-NLS-1$
+		supportConcepts = scanner.getMacroDefinitions().containsKey("__cpp_concepts"); //$NON-NLS-1$
 	}
 
 	@Override
@@ -1011,7 +1014,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	private ICPPASTExpression expression(final ExprKind kind, final BinaryExprCtx ctx, IASTInitializerClause expr,
 			ITemplateIdStrategy strat) throws EndOfFileException, BacktrackException {
 		final boolean allowComma = kind == ExprKind.eExpression;
-		boolean allowAssignment = kind != ExprKind.eConstant;
+		boolean allowAssignment = (kind != ExprKind.eConstant && kind != ExprKind.eRequiresClauseExpression);
+		final boolean primaryExpressionOnly = (kind == ExprKind.eRequiresClauseExpression);
 
 		if (allowAssignment && LT(1) == IToken.t_throw) {
 			return throwExpression();
@@ -1025,7 +1029,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 		IToken variantMark = mark();
 		if (expr == null) {
-			Object e = castExpressionForBinaryExpression(strat, ctx);
+			Object e = castOrPrimaryExpressionForBinaryExpression(strat, ctx, primaryExpressionOnly);
 			if (e instanceof IASTExpression) {
 				expr = (IASTExpression) e;
 			} else {
@@ -1211,7 +1215,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 							stopWithNextOperator = true;
 					} else {
 						// Could be ellipsis of any right fold expression or ellipsis of binary left fold expression
-						Object e = castExpressionForBinaryExpression(strat, ctx);
+						Object e = castOrPrimaryExpressionForBinaryExpression(strat, ctx, primaryExpressionOnly);
 
 						if (e instanceof IASTExpression) {
 							expr = (IASTExpression) e;
@@ -1376,6 +1380,15 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		return super.buildExpression(leftChain, expr);
+	}
+
+	public Object castOrPrimaryExpressionForBinaryExpression(ITemplateIdStrategy s, final BinaryExprCtx ctx,
+			boolean primaryExpressionOnly) throws EndOfFileException, BacktrackException {
+		if (primaryExpressionOnly) {
+			return primaryExpression(CastExprCtx.eDirectlyInBExpr, s);
+		} else {
+			return castExpressionForBinaryExpression(s, ctx);
+		}
 	}
 
 	public Object castExpressionForBinaryExpression(ITemplateIdStrategy s, final BinaryExprCtx ctx)
@@ -2321,6 +2334,9 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		case IToken.tLBRACKET:
 			return lambdaExpression();
 
+		case IToken.t_requires:
+			return constraintExpression();
+
 		default:
 			IToken la = LA(1);
 			int startingOffset = la.getOffset();
@@ -2633,6 +2649,35 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return setRange(aliasDeclaration, offset, endOffset);
 	}
 
+	/**
+	 * constraint-declaration
+	 *	constraint identifier attribute-specifier-seq? = constraint-expression ;
+	 *
+	 * @throws EndOfFileException
+	 */
+	private ICPPASTConceptDefinition conceptDefinition(final int offset) throws EndOfFileException, BacktrackException {
+		IToken identifierToken = consume();
+		IASTName name = buildName(-1, identifierToken, false);
+
+		consume(IToken.tASSIGN);
+
+		IASTExpression constraintExpression = constraintExpression();
+
+		int endOffset;
+		switch (LT(1)) {
+		case IToken.tSEMI:
+		case IToken.tEOC:
+			endOffset = consume().getEndOffset();
+			break;
+		default:
+			throw backtrack;
+		}
+
+		ICPPASTConceptDefinition conceptDefinition = getNodeFactory().newConcept(name, constraintExpression);
+
+		return setRange(conceptDefinition, offset, endOffset);
+	}
+
 	private ICPPASTUsingDeclaration usingDeclaration(final int offset) throws EndOfFileException, BacktrackException {
 		boolean typeName = false;
 		if (LT(1) == IToken.t_typename) {
@@ -2770,14 +2815,36 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		if (LT(1) != IToken.tEOC) {
 			consume(IToken.tGT, IToken.tGT_in_SHIFTR);
 		}
-		IASTDeclaration d = declaration(option);
+
+		// TODO: add to list of constraints
+		IASTExpression requiresClause = requiresClause();
+		//		if (requiresClause != null) {
+		//			int endOffset = calculateEndOffset(requiresClause);
+		//		}
+
+		IASTDeclaration d;
+
+		if (LT(1) == IToken.t_concept) {
+			// concept declaration
+			int conceptOffset = consume().getEndOffset();
+			d = conceptDefinition(conceptOffset);
+		} else {
+			d = declaration(option);
+		}
+
 		ICPPASTTemplateDeclaration templateDecl = getNodeFactory().newTemplateDeclaration(d);
 		setRange(templateDecl, offset, calculateEndOffset(d));
 		templateDecl.setExported(exported);
+		if (requiresClause != null) {
+			// TODO: add to templateDecl
+			//templateDecl.addConstraintExpression(requiresClause);
+		}
 		for (int i = 0; i < parms.size(); ++i) {
 			ICPPASTTemplateParameter parm = parms.get(i);
 			templateDecl.addTemplateParameter(parm);
 		}
+		// TODO: C++20 13.5.3 Constrained declarations [temp.constr.decl]
+		// build and assign associated constraints for template declaration here
 		return templateDecl;
 	}
 
@@ -2837,6 +2904,54 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 
 			result.add(templateParameter());
 		}
+	}
+
+	ICPPASTSimpleTypeTemplateParameter typeConstraint() throws EndOfFileException, BacktrackException {
+		final int startOffset = LA(1).getOffset();
+
+		boolean parameterPack = false;
+		IASTName typeConstraintName = qualifiedName();
+
+		int endOffset = calculateEndOffset(typeConstraintName);
+		if (LT(1) == IToken.tELLIPSIS) {
+			parameterPack = true;
+			endOffset = consume().getOffset();
+		}
+
+		final IASTName identifierName;
+		if (LT(1) == IToken.tIDENTIFIER) { // optional identifier
+			identifierName = identifier();
+			endOffset = calculateEndOffset(identifierName);
+		} else {
+			identifierName = getNodeFactory().newName();
+			setRange(identifierName, endOffset, endOffset);
+		}
+
+		IASTTypeId defaultValue = null;
+		if (LT(1) == IToken.tASSIGN) { // optional = type-id
+			if (parameterPack)
+				throw backtrack;
+			consume();
+			defaultValue = typeId(DeclarationOptions.TYPEID); // type-id
+			endOffset = calculateEndOffset(defaultValue);
+		}
+
+		// Check if followed by comma
+		switch (LT(1)) {
+		case IToken.tGT:
+		case IToken.tEOC:
+		case IToken.tGT_in_SHIFTR:
+		case IToken.tCOMMA:
+			ICPPASTSimpleTypeTemplateParameter tpar = getNodeFactory().newSimpleTypeTemplateParameter(
+					ICPPASTSimpleTypeTemplateParameter.st_typename, identifierName, defaultValue);
+			IASTExpression constraintExpression = synthesizeConstraintExpression(typeConstraintName, identifierName);
+			tpar.addConstraintExpression(constraintExpression);
+			tpar.setIsParameterPack(parameterPack);
+			setRange(tpar, startOffset, endOffset);
+			return tpar;
+		}
+
+		return null;
 	}
 
 	private ICPPASTTemplateParameter templateParameter() throws EndOfFileException, BacktrackException {
@@ -2937,8 +3052,117 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			return tpar;
 		}
 
-		// Try non-type template parameter
-		return parameterDeclaration();
+		// Try non-type template parameter or type-constraint
+
+		// could be non-type template parameter or type-constraint
+		IToken typeConstraintEnd = null;
+
+		ICPPASTSimpleTypeTemplateParameter typeConstraint = null;
+
+		if (supportConcepts && LA(1).getType() == IToken.tIDENTIFIER) {
+			try {
+				typeConstraint = typeConstraint();
+				if (typeConstraint != null) {
+					typeConstraintEnd = mark();
+				}
+			} catch (BacktrackException bt) {
+			}
+			// still could be non-type template parameter
+			backup(start);
+		}
+
+		ICPPASTParameterDeclaration nonTypeParameter = null;
+
+		try {
+			nonTypeParameter = parameterDeclaration();
+		} catch (BacktrackException bt) {
+		}
+
+		if (nonTypeParameter == null && typeConstraint == null) {
+			throw backtrack;
+		} else if (nonTypeParameter == null) {
+			// No non-type parameter
+			backup(typeConstraintEnd);
+			return typeConstraint;
+		} else if (typeConstraint == null) {
+			// No type-constraint or non-type parameter is longer
+			return nonTypeParameter;
+		} else {
+			int typeConstraintEndOffset = calculateEndOffset(typeConstraint);
+			int nonTypeParameterEndOffset = calculateEndOffset(nonTypeParameter);
+			if (typeConstraintEndOffset == nonTypeParameterEndOffset) {
+				// Ambiguous
+				CPPASTAmbiguousTypeConstraintVsNonTypeTemplateArgument ambiguity = new CPPASTAmbiguousTypeConstraintVsNonTypeTemplateArgument();
+
+				ambiguity.addTypeConstraint(typeConstraint);
+				ambiguity.addNonTypeParameter(nonTypeParameter);
+
+				return ambiguity;
+			} else if (nonTypeParameterEndOffset > typeConstraintEndOffset) {
+				// Non-type parameter is longer
+				return nonTypeParameter;
+			} else {
+				// Type-constraint is longer
+				backup(typeConstraintEnd);
+				return typeConstraint;
+			}
+		}
+	}
+
+	IASTIdExpression synthesizeConstraintExpression(IASTName typeConstraintName, IASTName identifierName)
+			throws BacktrackException {
+		// synthesize requires clause: conceptName<identifierName>
+		IASTName templateParameterName = identifierName == null ? getNodeFactory().newName(CharArrayUtils.EMPTY)
+				: identifierName.copy();
+		// place synthesized template parameter reference immediately after identifier name so it can be resolved by name lookup
+		((ASTNode) templateParameterName).setOffsetAndLength(calculateEndOffset(identifierName), 0);
+
+		IASTDeclSpecifier declSpecifier = buildNamedTypeSpecifier(templateParameterName, false,
+				IASTDeclSpecifier.sc_unspecified, 0, 0, 0);
+		ICPPASTDeclarator declarator = getNodeFactory().newDeclarator(null);
+		setDeclaratorID(declarator, false, getNodeFactory().newName(), null);
+
+		IASTTypeId typeId = getNodeFactory().newTypeId(declSpecifier, declarator);
+		setRange(typeId, templateParameterName);
+
+		ICPPASTNameSpecifier[] qualifier = null;
+		if (typeConstraintName instanceof ICPPASTQualifiedName qualifiedName) {
+			qualifier = qualifiedName.getQualifier();
+			typeConstraintName = typeConstraintName.getLastName();
+		}
+
+		List<IASTNode> constraintTemplateArgs = new ArrayList<>(2);
+		constraintTemplateArgs.add(typeId);
+
+		if (typeConstraintName instanceof ICPPASTTemplateId templateId) {
+			typeConstraintName = templateId.getTemplateName();
+			ArrayUtil.addAll(constraintTemplateArgs, templateId.getTemplateArguments());
+		}
+
+		// TODO: check if dedicated ICPPASTConceptId is better
+		ICPPASTName conceptId = buildTemplateID(typeConstraintName, calculateEndOffset(identifierName),
+				constraintTemplateArgs);
+
+		if (qualifier != null) {
+			ICPPASTQualifiedName qname = getNodeFactory().newQualifiedName(null);
+			for (ICPPASTNameSpecifier specifier : qualifier) {
+				if (specifier instanceof ICPPASTName segment) {
+					qname.addName(segment.copy());
+				} else {
+					// No decltype-specifiers in type-constraint
+					throwBacktrack(specifier);
+				}
+			}
+			qname.addName(conceptId);
+			conceptId = qname;
+		}
+
+		setRange(conceptId, templateParameterName);
+
+		IASTIdExpression constraintExpression = getNodeFactory().newIdExpression(conceptId);
+		setRange(constraintExpression, templateParameterName);
+
+		return constraintExpression;
 	}
 
 	/**
@@ -4865,7 +5089,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				final IToken cand2End = LA(1);
 				if (cand1End == cand2End) {
 					CPPASTAmbiguousDeclarator result = new CPPASTAmbiguousDeclarator(cand1, cand2);
-					((ASTNode) result).setOffsetAndLength((ASTNode) cand1);
+					result.setOffsetAndLength((ASTNode) cand1);
 					return result;
 				}
 				// use the longer variant
@@ -5132,6 +5356,42 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		return fc;
 	}
 
+	protected IASTExpression requiresExpression() throws EndOfFileException, BacktrackException {
+		final int offset = consume(IToken.t_requires).getOffset();
+
+		// TODO: dedicated ICPPASTConstraintExpression which looks like lambda but has no introducer and only used to check the constraint
+		ICPPASTLambdaExpression lambdaExpr = getNodeFactory().newLambdaExpression();
+
+		if (LT(1) == IToken.tLPAREN) {
+			ICPPASTFunctionDeclarator dtor = functionDeclarator((IASTName) null, (IASTDeclSpecifier) null, true);
+			lambdaExpr.setDeclarator(dtor);
+			if (LT(1) == IToken.tEOC)
+				return setRange(lambdaExpr, offset, calculateEndOffset(dtor));
+		}
+
+		IASTCompoundStatement body = functionBody();
+		lambdaExpr.setBody(body);
+		return setRange(lambdaExpr, offset, calculateEndOffset(body));
+	}
+
+	protected IASTExpression constraintExpression() throws EndOfFileException, BacktrackException {
+		// TODO: add proper ICPPASTRequiresExpression
+		if (LTcatchEOF(1) == IToken.t_requires) {
+			return requiresExpression();
+		} else {
+			return expression(ExprKind.eRequiresClauseExpression, BinaryExprCtx.eNotInTemplateID, null, null);
+		}
+	}
+
+	protected IASTExpression requiresClause() throws EndOfFileException, BacktrackException {
+		if (LTcatchEOF(1) == IToken.t_requires) {
+			consume();
+			return constraintExpression();
+		}
+
+		return null;
+	}
+
 	/**
 	 * Parse a function declarator starting with the left parenthesis.
 	 */
@@ -5277,6 +5537,14 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				endOffset = getEndOffset();
 			}
 			fc.setNoexceptExpression((ICPPASTExpression) expression);
+		}
+
+		// requires-clause goes last
+		// TODO: add to list of constraints
+		IASTExpression optionalRequiresClause = requiresClause();
+		if (optionalRequiresClause != null) {
+			fc.addConstraintExpression(optionalRequiresClause);
+			endOffset = calculateEndOffset(optionalRequiresClause);
 		}
 
 		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());

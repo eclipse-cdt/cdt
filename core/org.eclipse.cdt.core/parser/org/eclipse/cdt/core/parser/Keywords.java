@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2015, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -57,6 +57,8 @@ public class Keywords {
 	public static final String CHAR32_T = "char32_t";
 	public static final String CLASS = "class";
 	public static final String COMPL = "compl";
+	/** @since 9.3 */
+	public static final String CONCEPT = "concept";
 	public static final String CONST = "const";
 	/** @since 5.4 */
 	public static final String CONSTEXPR = "constexpr";
@@ -106,6 +108,8 @@ public class Keywords {
 	public static final String REGISTER = "register";
 	public static final String REINTERPRET_CAST = "reinterpret_cast";
 	public static final String RESTRICT = "restrict";
+	/** @since 9.3 */
+	public static final String REQUIRES = "requires";
 	public static final String RETURN = "return";
 	public static final String SHORT = "short";
 	public static final String SIGNED = "signed";
@@ -167,6 +171,8 @@ public class Keywords {
 	public static final char[] cCHAR32_T = CHAR32_T.toCharArray();
 	public static final char[] cCLASS = "class".toCharArray();
 	public static final char[] cCOMPL = "compl".toCharArray();
+	/** @since 9.3 */
+	public static final char[] cCONCEPT = "concept".toCharArray();
 	public static final char[] cCONST = "const".toCharArray();
 	/** @since 5.4 */
 	public static final char[] cCONSTEXPR = "constexpr".toCharArray();
@@ -215,6 +221,8 @@ public class Keywords {
 	public static final char[] cREGISTER = "register".toCharArray();
 	public static final char[] cREINTERPRET_CAST = "reinterpret_cast".toCharArray();
 	public static final char[] cRESTRICT = "restrict".toCharArray();
+	/** @since 9.3 */
+	public static final char[] cREQUIRES = "requires".toCharArray();
 	public static final char[] cRETURN = "return".toCharArray();
 	public static final char[] cSHORT = "short".toCharArray();
 	public static final char[] cSIGNED = "signed".toCharArray();
@@ -397,10 +405,6 @@ public class Keywords {
 		ckeywords.put(Keywords.c_BOOL, IToken.t__Bool);
 		ckeywords.put(Keywords.c_COMPLEX, IToken.t__Complex);
 		ckeywords.put(Keywords.c_IMAGINARY, IToken.t__Imaginary);
-	}
-
-	private static void addCpp20(CharArrayIntMap cppkeywords) {
-		cppkeywords.put(Keywords.cCHAR8_T, IToken.t_char8_t);
 	}
 
 	private static void addCpp(CharArrayIntMap cppkeywords) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2016, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -158,6 +158,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		Map<String, String> map = getStdMap();
 		map.put("__cpp_impl_three_way_comparison", "201907L");
 		map.put("__cpp_char8_t", "201811L");
+		map.put("__cpp_concepts", "201907L");
 		return map;
 	}
 

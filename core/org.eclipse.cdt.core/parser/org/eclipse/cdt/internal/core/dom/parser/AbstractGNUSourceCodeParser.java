@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2015, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -186,7 +186,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	}
 
 	protected static enum ExprKind {
-		eExpression, eAssignment, eConstant
+		eExpression, eAssignment, eConstant, eRequiresClauseExpression
 	}
 
 	protected static final int DEFAULT_DESIGNATOR_LIST_SIZE = 4;

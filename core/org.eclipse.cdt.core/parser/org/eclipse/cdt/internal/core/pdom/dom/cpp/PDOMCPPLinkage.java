@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 QNX Software Systems and others.
+ * Copyright (c) 2005, 2016, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,6 +59,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplatePartialSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConcept;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
@@ -889,6 +890,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 					(ICPPAliasTemplateInstance) binding);
 		} else if (binding instanceof ITypedef) {
 			pdomBinding = new PDOMCPPTypedef(this, parent, (ITypedef) binding);
+		} else if (binding instanceof ICPPConcept concept) {
+			pdomBinding = new PDOMCPPConcept(this, parent, concept);
 		}
 
 		if (pdomBinding != null) {
@@ -1421,6 +1424,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return new PDOMCPPDeductionGuide(this, record);
 		case CPP_DEDUCTION_GUIDE_TEMPLATE:
 			return new PDOMCPPDeductionGuideTemplate(this, record);
+		case CPP_CONCEPT:
+			return new PDOMCPPConcept(this, record);
 		}
 		assert false : "nodeid= " + nodeType; //$NON-NLS-1$
 		return null;

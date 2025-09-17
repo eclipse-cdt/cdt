@@ -57,6 +57,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAliasDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConceptDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTElaboratedTypeSpecifier;
@@ -451,6 +452,13 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 		} else if (declaration instanceof ICPPASTTemplateDeclaration) {
 			// strange: template decl inside template decl
 			createTemplateDeclaration(parent, (ICPPASTTemplateDeclaration) declaration);
+		} else if (declaration instanceof ICPPASTConceptDefinition conceptDefinition) {
+			Concept concept = createConcept(parent, conceptDefinition);
+			String[] parameterTypes = ASTStringUtil
+					.getTemplateParameterArray(templateDeclaration.getTemplateParameters());
+			concept.setTemplateParameterTypes(parameterTypes);
+			// set the body position
+			setBodyPosition(concept, templateDeclaration);
 		} else if (declaration instanceof IASTProblemDeclaration) {
 			// ignore problem declarations (or create special elements for debugging?)
 		} else {
@@ -462,7 +470,7 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 	 * Handle extern "C" and related kinds.
 	 *
 	 * @param parent
-	 * @param declaration
+	 * @param definition
 	 * @throws CModelException
 	 * @throws DOMException
 	 */
@@ -905,6 +913,31 @@ public class CModelBuilder2 implements IContributedModelBuilder {
 				setBodyPosition(info, specifier.getParent());
 			}
 		}
+		return element;
+	}
+
+	private Concept createConcept(Parent parent, ICPPASTConceptDefinition conceptDefinition) throws CModelException {
+		final IASTName astName = conceptDefinition.getName();
+		if (astName == null) {
+			return null;
+		}
+		final String variableName = ASTStringUtil.getSimpleName(astName);
+
+		final SourceManipulationInfo info;
+
+		Concept element = new Concept(parent, variableName);
+		setIndex(element);
+		VariableInfo varInfo = (VariableInfo) getElementInfo(element);
+		varInfo.setTypeName(Keywords.CONCEPT);
+		info = varInfo;
+
+		element.setActive(conceptDefinition.isActive());
+		// TODO [cmodel] correctly resolve isStatic
+		// add to parent
+		parent.addChild(element);
+
+		// set positions
+		setIdentifierPosition(info, astName);
 		return element;
 	}
 

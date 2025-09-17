@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 Symbian Software Systems and others.
+ * Copyright (c) 2007, 2016, 2025 Symbian Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -79,4 +79,5 @@ public interface IIndexCPPBindingConstants {
 	int CPP_ALIAS_TEMPLATE_SPECIALIZATION = IIndexBindingConstants.LAST_CONSTANT + 62;
 	int CPP_DEDUCTION_GUIDE = IIndexBindingConstants.LAST_CONSTANT + 63;
 	int CPP_DEDUCTION_GUIDE_TEMPLATE = IIndexBindingConstants.LAST_CONSTANT + 64;
+	int CPP_CONCEPT = IIndexBindingConstants.LAST_CONSTANT + 65;
 }

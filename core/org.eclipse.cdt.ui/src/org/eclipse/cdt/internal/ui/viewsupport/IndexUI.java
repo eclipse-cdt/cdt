@@ -48,6 +48,7 @@ import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConcept;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeductionGuide;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
@@ -180,6 +181,8 @@ public class IndexUI {
 			return binding instanceof ICPPDeductionGuide && !(binding instanceof ICPPTemplateDefinition);
 		case ICElement.C_DEDUCTION_GUIDE_TEMPLATE:
 			return binding instanceof ICPPDeductionGuide && binding instanceof ICPPTemplateDefinition;
+		case ICElement.C_CONCEPT:
+			return binding instanceof ICPPConcept;
 		}
 		return false;
 	}

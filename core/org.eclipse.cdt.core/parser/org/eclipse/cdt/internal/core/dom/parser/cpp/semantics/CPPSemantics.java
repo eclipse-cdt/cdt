@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2023 IBM Corporation and others.
+ * Copyright (c) 2004, 2023, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -111,6 +111,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConceptDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConversionName;
@@ -2220,7 +2221,9 @@ public class CPPSemantics {
 			}
 		} else if (node instanceof ICPPASTTemplateParameter) {
 			IASTName name = CPPTemplates.getTemplateParameterName((ICPPASTTemplateParameter) node);
-			ASTInternal.addName(scope, name);
+			if (name != null) { // Could be null if node is ASTAmbiguousNode
+				ASTInternal.addName(scope, name);
+			}
 			return;
 		}
 		if (declaration == null || declaration instanceof ASTAmbiguousNode) {
@@ -2349,6 +2352,9 @@ public class CPPSemantics {
 			default:
 				break;
 			}
+		} else if (declaration instanceof ICPPASTConceptDefinition constraintDecl) {
+			IASTName name = constraintDecl.getName();
+			ASTInternal.addName(scope, name);
 		}
 	}
 

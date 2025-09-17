@@ -262,6 +262,12 @@ public interface ICElement extends IAdaptable {
 	static final int C_DEDUCTION_GUIDE_TEMPLATE = 97;
 
 	/**
+	 * a C++ concept.
+	 * @since 9.3
+	 */
+	static final int C_CONCEPT = 98;
+
+	/**
 	 * @deprecated use {@link IMethodDeclaration#isConstructor()}
 	 * @noreference This field is not intended to be referenced by clients.
 	 */

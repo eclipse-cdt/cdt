@@ -23,7 +23,11 @@ public class VariableTemplate extends Variable implements ITemplate {
 	protected String[] templateParameterTypes;
 
 	public VariableTemplate(ICElement parent, String name) {
-		super(parent, name, ICElement.C_TEMPLATE_VARIABLE);
+		this(parent, name, ICElement.C_TEMPLATE_VARIABLE);
+	}
+
+	public VariableTemplate(ICElement parent, String name, int kind) {
+		super(parent, name, kind);
 		templateParameterTypes = fgEmptyList;
 	}
 

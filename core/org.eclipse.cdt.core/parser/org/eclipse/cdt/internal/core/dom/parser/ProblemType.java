@@ -35,6 +35,7 @@ public class ProblemType implements IProblemType, ISerializableType {
 	public static final IType RECURSION_IN_LOOKUP = new ProblemType(BINDING_RECURSION_IN_LOOKUP);
 	public static final IType UNKNOWN_FOR_EXPRESSION = new ProblemType(TYPE_UNKNOWN_FOR_EXPRESSION);
 	public static final IType UNRESOLVED_NAME = new ProblemType(TYPE_UNRESOLVED_NAME);
+	public static final IType STATIC_ASSERT_FAILED = new ProblemType(TYPE_STATIC_ASSERT_FAILED);
 
 	private final int fID;
 

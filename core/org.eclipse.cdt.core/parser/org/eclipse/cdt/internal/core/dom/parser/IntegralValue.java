@@ -51,6 +51,9 @@ public class IntegralValue implements IValue {
 	// IntegralValue.ERROR indicates that an error, such as a substitution failure, occurred during evaluation.
 	public static final IntegralValue ERROR = new IntegralValue("<error>".toCharArray()); //$NON-NLS-1$
 
+	public static final IntegralValue STATIC_ASSERT_FAILED_ERROR = new IntegralValue(
+			"<static assert failed>".toCharArray()); //$NON-NLS-1$
+
 	public static final IntegralValue NOT_INITIALIZED = new IntegralValue("<__>".toCharArray()); //$NON-NLS-1$
 
 	private static final char UNIQUE_CHAR = '_';

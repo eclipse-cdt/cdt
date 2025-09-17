@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2015, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,13 +25,11 @@ import static org.eclipse.cdt.core.parser.util.ArrayUtil.trim;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType.VOID;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
-import java.util.Arrays;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -43,7 +41,6 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.ISemanticProblem;
 import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNameSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
@@ -146,58 +143,6 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 			implicits[i++] = m;
 			addBinding(m);
 		}
-
-		markInheritedConstructorsSourceBases(compTypeSpec);
-	}
-
-	/**
-	 * Marks bases that serve as sources of inherited constructors.
-	 */
-	private void markInheritedConstructorsSourceBases(ICPPASTCompositeTypeSpecifier compositeTypeSpec) {
-		ICPPBase[] bases = getClassType().getBases();
-		if (bases.length == 0)
-			return;
-		IASTDeclaration[] members = compositeTypeSpec.getMembers();
-		for (IASTDeclaration member : members) {
-			if (member instanceof ICPPASTUsingDeclaration) {
-				IASTName name = ((ICPPASTUsingDeclaration) member).getName();
-				if (!(name instanceof ICPPASTQualifiedName))
-					continue;
-				ICPPASTQualifiedName qName = (ICPPASTQualifiedName) name;
-				ICPPASTNameSpecifier[] qualifier = qName.getQualifier();
-				if (qualifier.length == 0)
-					continue;
-				IBinding parent = qualifier[qualifier.length - 1].resolveBinding();
-				if (!(parent instanceof IType) || parent instanceof IProblemBinding)
-					continue;
-				if (isConstructorNameForType(qName.getLastName().getSimpleID(), (IType) parent)) {
-					IType type = SemanticUtil.getNestedType((IType) parent, TDEF);
-					for (ICPPBase base : bases) {
-						IType baseClass = base.getBaseClassType();
-						if (type.isSameType(baseClass)) {
-							if (base instanceof CPPBaseClause) {
-								((CPPBaseClause) base).setInheritedConstructorsSource(true);
-							} else {
-								CCorePlugin.log(IStatus.ERROR, "Unexpected type of base (" //$NON-NLS-1$
-										+ base.getClass().getSimpleName() + ") for '" //$NON-NLS-1$
-										+ compositeTypeSpec.getRawSignature() + "'"); //$NON-NLS-1$
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private static boolean isConstructorNameForType(char[] lastName, IType type) {
-		while (type instanceof IBinding) {
-			if (Arrays.equals(((IBinding) type).getNameCharArray(), lastName))
-				return true;
-			if (!(type instanceof ITypedef))
-				break;
-			type = ((ITypedef) type).getType();
-		}
-		return false;
 	}
 
 	@Override
@@ -255,7 +200,65 @@ public class CPPClassScope extends CPPScope implements ICPPClassScope {
 				addConstructor(name);
 				return;
 			}
+		} else if (parent.getParent() instanceof ICPPASTUsingDeclaration usingDeclaration
+				&& parent instanceof ICPPASTQualifiedName qName) {
+
+			// In addition to normal class scope population procedure this method will be called after
+			// ambiguity resolution for CPPASTAmbiguousUsingDeclaration to handle nominated base class constructors.
+
+			// [C++20] 9.9 The using declaration [namespace.udecl]
+			//   3) In a using-declaration used as a member-declaration, each using-declarator shall either
+			//      name an enumerator or have a nested-name-specifier naming a base class of the class being defined.
+			//      If a using-declarator names a constructor, its nested-name-specifier shall name a direct base class
+			//      of the class being defined
+
+			// [C++20] 6.5.4.2 Class members [class.qual]
+			//   (2) In a lookup in which function names are not ignored
+			//       and the nested-name-specifier nominates a class C:
+			//   (2.1) if the name specified after the nested-name-specifier,
+			//         when looked up in C, is the injected-class-name of C (11.1), or
+			//   (2.2) in a using-declarator of a using-declaration (9.9) that is a member-declaration,
+			//         if the name specified after the nested-name-specifier is the same as the
+			//         identifier or the simple-template-id's template-name in the last component
+			//         of the nested-name-specifier,
+			//       the name is instead considered to name the constructor of class C.
+			//       ...
+			//       Such a constructor name shall be used only in the declarator-id of
+			//       a declaration that names a constructor or in a using-declaration.
+
+			final ICPPASTNameSpecifier[] qualifier = qName.getQualifier();
+			final char[] lastName = name.getSimpleID();
+
+			if (usingDeclaration.getPropertyInParent() == IASTCompositeTypeSpecifier.MEMBER_DECLARATION
+					&& qualifier.length > 0 && qualifier[qualifier.length - 1] instanceof IASTName lastSegmentName
+					&& CharArrayUtils.equals(lastSegmentName.getSimpleID(), lastName)) {
+				ICPPBase[] bases = getClassType().getBases();
+				if (bases.length > 0) {
+					IBinding nominatedBinding = lastSegmentName.resolveBinding();
+					if (nominatedBinding instanceof IType nominatedType
+							&& !(nominatedType instanceof IProblemBinding)) {
+						IType type = SemanticUtil.getNestedType(nominatedType, TDEF);
+						for (ICPPBase base : bases) {
+							IType baseClass = base.getBaseClassType();
+							if (type.isSameType(baseClass)) {
+								// Member using-declaration names direct base class constructor
+								// Mark nominated base class as inherited constructors source and skip adding to scope
+								if (base instanceof CPPBaseClause baseClause) {
+									baseClause.setInheritedConstructorsSource(true);
+								} else {
+									ICPPASTCompositeTypeSpecifier compTypeSpec = (ICPPASTCompositeTypeSpecifier) getPhysicalNode();
+									CCorePlugin.log(IStatus.ERROR, "Unexpected type of base (" //$NON-NLS-1$
+											+ base.getClass().getSimpleName() + ") for '" //$NON-NLS-1$
+											+ compTypeSpec.getRawSignature() + "'"); //$NON-NLS-1$
+								}
+								return;
+							}
+						}
+					}
+				}
+			}
 		}
+
 		super.addName(name, adlOnly);
 	}
 

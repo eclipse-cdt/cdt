@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.core.dom.parser.cpp;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeTemplateParameter;
@@ -29,6 +30,25 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 	private IASTTypeId fTypeId;
 	private boolean fUsesKeywordClass;
 	private boolean fIsParameterPack;
+
+	private class TypeConstraintOwner extends CPPASTConstraintOwner {
+		@Override
+		public TypeConstraintOwner copy() {
+			return copy(CopyStyle.withoutLocations);
+		}
+
+		@Override
+		public TypeConstraintOwner copy(CopyStyle style) {
+			TypeConstraintOwner copy = new TypeConstraintOwner();
+			return copy(copy, style);
+		}
+
+		protected <T extends TypeConstraintOwner> T copy(T copy, CopyStyle style) {
+			return super.copy(copy, style);
+		}
+	}
+
+	private TypeConstraintOwner fTypeConstraintOwner = null;
 
 	public CPPASTSimpleTypeTemplateParameter() {
 	}
@@ -51,6 +71,10 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 		copy.fIsParameterPack = fIsParameterPack;
 		copy.setName(fName == null ? null : fName.copy(style));
 		copy.setDefaultType(fTypeId == null ? null : fTypeId.copy(style));
+		if (fTypeConstraintOwner != null) {
+			copy.fTypeConstraintOwner = fTypeConstraintOwner.copy(style);
+			copy.fTypeConstraintOwner.setParent(copy);
+		}
 		return copy(copy, style);
 	}
 
@@ -123,6 +147,8 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 			return false;
 		if (fTypeId != null && !fTypeId.accept(action))
 			return false;
+		if (fTypeConstraintOwner != null && !fTypeConstraintOwner.accept(action))
+			return false;
 
 		if (action.shouldVisitTemplateParameters && action.leave(this) == ASTVisitor.PROCESS_ABORT)
 			return false;
@@ -140,5 +166,22 @@ public class CPPASTSimpleTypeTemplateParameter extends ASTNode implements ICPPAS
 	@Override
 	public String toString() {
 		return getName().toString();
+	}
+
+	@Override
+	public IASTExpression[] getConstraintExpressions() {
+		if (fTypeConstraintOwner == null) {
+			return IASTExpression.EMPTY_EXPRESSION_ARRAY;
+		}
+		return fTypeConstraintOwner.getConstraintExpressions();
+	}
+
+	@Override
+	public void addConstraintExpression(IASTExpression constraintExpression) {
+		if (fTypeConstraintOwner == null) {
+			fTypeConstraintOwner = new TypeConstraintOwner();
+			fTypeConstraintOwner.setParent(this);
+		}
+		fTypeConstraintOwner.addConstraintExpression(constraintExpression);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2016, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,6 +60,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 	private static final Image VARIABLE_LOCAL_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_LOCAL_VARIABLE);
 	private static final Image ENUMERATOR_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_ENUMERATOR);
 	private static final Image MACRO_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_MACRO);
+	private static final Image CONCEPT_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_CONCEPT);
 	private static final Image UNKNOWN_TYPE_ICON = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_UNKNOWN_TYPE);
 
 	private int fFlags;
@@ -236,6 +237,9 @@ public class TypeInfoLabelProvider extends LabelProvider {
 
 		case ICElement.C_VARIABLE_LOCAL:
 			return VARIABLE_LOCAL_ICON;
+
+		case ICElement.C_CONCEPT:
+			return CONCEPT_ICON;
 
 		default:
 			return UNKNOWN_TYPE_ICON;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2014, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,7 +29,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface ICPPASTFunctionDeclarator extends IASTStandardFunctionDeclarator, ICPPASTDeclarator {
+public interface ICPPASTFunctionDeclarator
+		extends IASTStandardFunctionDeclarator, ICPPASTDeclarator, ICPPASTConstraintOwner {
 	/**
 	 * @since 5.9
 	 */

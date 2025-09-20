@@ -48,15 +48,18 @@ import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_shiftRightAss
 import static org.eclipse.cdt.core.dom.ast.IASTBinaryExpression.op_threewaycomparison;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.LVALUE;
 import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
+import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.XVALUE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.glvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueType;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.prvalueTypeWithResolvedTypedefs;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExpressionTypes.typeFromFunctionCall;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.ALLCVQ;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.CVTYPE;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
 import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
 
 import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
@@ -84,6 +87,8 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.InstantiationContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalUtil.Pair;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -213,6 +218,21 @@ public class EvalBinary extends CPPDependentEvaluation {
 					fOverloadCall = createOperatorOverloadEvaluation(overload, arg1, arg2);
 				}
 				return fOverloadCall.getValue();
+			}
+		}
+
+		boolean isWithAssignment = isBinaryOperationWithAssignment(fOperator);
+		if (fOperator == op_assign || isWithAssignment) {
+
+			IType targetType = fArg1.getType();
+			ValueCategory targetCategory = fArg1.getValueCategory();
+
+			IType sourceType = isWithAssignment ? getCommonType() : fArg2.getType();
+			ValueCategory sourceCategory = isWithAssignment ? XVALUE : fArg2.getValueCategory();
+
+			IType type = computeTypeForAssignment(targetType, targetCategory, sourceType, sourceCategory);
+			if (!SemanticUtil.isValidType(type)) {
+				return IntegralValue.ERROR;
 			}
 		}
 
@@ -354,11 +374,53 @@ public class EvalBinary extends CPPDependentEvaluation {
 		return null;
 	}
 
+	private static IType computeTypeForAssignment(IType targetType, ValueCategory targetCategory, IType sourceType,
+			ValueCategory sourceCategory) {
+		if (targetCategory != LVALUE) {
+			return ProblemType.ASSIGNMENT_TO_RVALUE;
+		}
+
+		IType targetNested = SemanticUtil.getNestedType(targetType, TDEF | REF);
+		if (TypeTraits.isFunction(targetNested) || SemanticUtil.isConst(targetNested)) {
+			// assignment to non-modifiable lvalue or function type
+			return ProblemType.ASSIGNMENT_TO_NON_MODIFIABLE_LVALUE;
+		}
+
+		// [expr.ass]/3 If the right operand is an expression, it is implicitly converted (7.3)
+		//              to the cv-unqualified type of the left operand.
+
+		Cost cost = null;
+		try {
+			IType targetT = SemanticUtil.getNestedType(targetType, TDEF | REF | ALLCVQ);
+			cost = Conversions.checkImplicitConversionSequence(targetT, sourceType, XVALUE, UDCMode.ALLOWED,
+					Context.ORDINARY, false);
+		} catch (DOMException e) {
+		}
+
+		if (cost == null || !cost.converts()) {
+			return ProblemType.NO_CONVERSION_FOR_EXPRESSION;
+		}
+
+		return targetType;
+	}
+
 	public IType computeType() {
 		// Check for overloaded operator.
 		ICPPFunction o = getOverload();
 		if (o != null)
 			return typeFromFunctionCall(o);
+
+		boolean isWithAssignment = isBinaryOperationWithAssignment(fOperator);
+		if (fOperator == op_assign || isWithAssignment) {
+
+			IType targetType = fArg1.getType();
+			ValueCategory targetCategory = fArg1.getValueCategory();
+
+			IType sourceType = isWithAssignment ? getCommonType() : fArg2.getType();
+			ValueCategory sourceCategory = isWithAssignment ? XVALUE : fArg2.getValueCategory();
+
+			return computeTypeForAssignment(targetType, targetCategory, sourceType, sourceCategory);
+		}
 
 		switch (fOperator) {
 		case op_lessEqual:

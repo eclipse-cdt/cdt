@@ -9549,11 +9549,9 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	}
 	public void testBuiltinOperators_294543b() throws Exception {
 		String code = getAboveComment();
-		parseAndCheckBindings(code);
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
 		IFunction fA = bh.assertNonProblem("f(A)", 1);
-		IFunction f = bh.assertNonProblem("f(a= 1)", 1);
-		assertSame(fA, f);
+		bh.assertProblem("f(a= 1)", "f", IProblemBinding.SEMANTIC_NAME_NOT_FOUND);
 	}
 
 	//	struct A {

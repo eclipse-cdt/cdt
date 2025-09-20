@@ -60,6 +60,15 @@ public interface ISemanticProblem {
 	/** @since 9.3 */
 	int TYPE_STATIC_ASSERT_FAILED = 10010;
 
+	/** @since 9.3 */
+	int TYPE_ASSIGNMENT_TO_RVALUE = 10011;
+
+	/** @since 9.3 */
+	int TYPE_ASSIGNMENT_TO_NON_MODIFIABLE_LVALUE = 10012;
+
+	/** @since 9.3 */
+	int TYPE_NO_CONVERSION_FOR_EXPRESSION = 10013;
+
 	/**
 	 * Returns the ID of the problem.
 	 */

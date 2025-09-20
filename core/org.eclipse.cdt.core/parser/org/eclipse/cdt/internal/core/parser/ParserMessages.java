@@ -134,6 +134,12 @@ public class ParserMessages {
 			return "ISemanticProblem.TYPE_AUTO_FOR_VIRTUAL_METHOD";
 		case ISemanticProblem.TYPE_STATIC_ASSERT_FAILED:
 			return "ISemanticProblem.TYPE_STATIC_ASSERT_FAILED";
+		case ISemanticProblem.TYPE_ASSIGNMENT_TO_RVALUE:
+			return "ISemanticProblem.TYPE_ASSIGNMENT_TO_RVALUE";
+		case ISemanticProblem.TYPE_ASSIGNMENT_TO_NON_MODIFIABLE_LVALUE:
+			return "ISemanticProblem.TYPE_ASSIGNMENT_TO_NON_MODIFIABLE_LVALUE";
+		case ISemanticProblem.TYPE_NO_CONVERSION_FOR_EXPRESSION:
+			return "ISemanticProblem.TYPE_NO_CONVERSION_FOR_EXPRESSION";
 		}
 		return null;
 	}

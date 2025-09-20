@@ -291,8 +291,8 @@ public class ValueFactory {
 	}
 
 	public static IValue evaluateBinaryTypeIdExpression(IASTBinaryTypeIdExpression.Operator operator, IType type1,
-			IType type2) {
-		IValue val = applyBinaryTypeIdOperator(operator, type1, type2);
+			IType type2, IBinding pointOfDefinition) {
+		IValue val = applyBinaryTypeIdOperator(operator, type1, type2, pointOfDefinition);
 		if (isInvalidValue(val))
 			return IntegralValue.UNKNOWN;
 		return val;
@@ -397,7 +397,7 @@ public class ValueFactory {
 			IType t2 = ast.createType(typeIdExp.getOperand2());
 			if (CPPTemplates.isDependentType(t1) || CPPTemplates.isDependentType(t2))
 				return null;
-			return applyBinaryTypeIdOperator(typeIdExp.getOperator(), t1, t2);
+			return applyBinaryTypeIdOperator(typeIdExp.getOperator(), t1, t2, null);
 		}
 		if (exp instanceof final ICPPASTNaryTypeIdExpression typeIdExp) {
 			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
@@ -617,6 +617,7 @@ public class ValueFactory {
 				return IntegralValue.create(num == 0 ? 1 : 0);
 			}
 		}
+
 		return IntegralValue.UNKNOWN;
 	}
 
@@ -647,7 +648,7 @@ public class ValueFactory {
 	}
 
 	private static IValue applyBinaryTypeIdOperator(IASTBinaryTypeIdExpression.Operator operator, IType type1,
-			IType type2) {
+			IType type2, IBinding pointOfDefinition) {
 		switch (operator) {
 		case __is_base_of:
 			type1 = SemanticUtil.getNestedType(type1, TDEF);
@@ -658,16 +659,17 @@ public class ValueFactory {
 			}
 			return IntegralValue.create(0);
 		case __is_assignable:
-			return IntegralValue.UNKNOWN; // TODO: Implement.
+		case __is_trivially_assignable:
 		case __is_nothrow_assignable:
-			return IntegralValue.UNKNOWN; // TODO: Implement.
+			boolean checkTrivial = (operator == IASTBinaryTypeIdExpression.Operator.__is_trivially_assignable);
+			boolean checkNothrow = (operator == IASTBinaryTypeIdExpression.Operator.__is_nothrow_assignable);
+			return IntegralValue.create(
+					TypeTraits.isAssignable(type1, type2, pointOfDefinition, checkTrivial, checkNothrow) ? 1 : 0);
 		case __is_same:
 			if (type1.isSameType(type2)) {
 				return IntegralValue.create(1);
 			}
 			return IntegralValue.create(0);
-		case __is_trivially_assignable:
-			return IntegralValue.UNKNOWN; // TODO: Implement.
 		}
 		return IntegralValue.UNKNOWN;
 	}
@@ -677,17 +679,16 @@ public class ValueFactory {
 		switch (operator) {
 		case __is_constructible:
 		case __is_trivially_constructible:
+		case __is_nothrow_constructible:
 			if (operands.length == 0) {
 				return IntegralValue.UNKNOWN;
 			}
 			boolean checkTrivial = (operator == Operator.__is_trivially_constructible);
+			boolean checkNothrow = (operator == Operator.__is_nothrow_constructible);
 			IType typeToConstruct = operands[0];
 			IType[] argumentTypes = Arrays.copyOfRange(operands, 1, operands.length);
-			return IntegralValue.create(
-					TypeTraits.isConstructible(typeToConstruct, argumentTypes, pointOfDefinition, checkTrivial) ? 1
-							: 0);
-		case __is_nothrow_constructible:
-			return IntegralValue.UNKNOWN; // TODO: Implement
+			return IntegralValue.create(TypeTraits.isConstructible(typeToConstruct, argumentTypes, pointOfDefinition,
+					checkTrivial, checkNothrow) ? 1 : 0);
 		}
 		return IntegralValue.UNKNOWN;
 	}

@@ -20,6 +20,7 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IArrayType;
@@ -49,10 +50,12 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClosureType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPImplicitConstructor;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPUnaryTypeTransformation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.MethodKind;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalFunction;
 
 /**
@@ -578,9 +581,13 @@ public class TypeTraits {
 	 *
 	 * If 'checkTrivial' is true, additionally checks if 'typeToConstruct'
 	 * is trivially constructible from said argument types.
+	 *
+	 * If 'checkNothrow' is true, additionally check if type constructor expression
+	 * (equivalent of variable definition for is_constructible below)
+	 * is known not to throw any exceptions.
 	 */
 	public static boolean isConstructible(IType typeToConstruct, IType[] argumentTypes, IBinding pointOfDefinition,
-			boolean checkTrivial) {
+			boolean checkTrivial, boolean checkNothrow) {
 		IType type = SemanticUtil.getSimplifiedType(typeToConstruct);
 		if (!(type instanceof ICPPClassType)) {
 			return true;
@@ -603,7 +610,85 @@ public class TypeTraits {
 		if (checkTrivial && !((ICPPMethod) constructor).isImplicit()) {
 			return false;
 		}
+		if (checkNothrow) {
+			if (!EvalUtil.evaluateNoexceptSpecifier(constructor.getType().getNoexceptSpecifier()))
+				return false;
+		}
 		return true;
+	}
+
+	private static IType prepareRValueReferenceForIsAssignable(IType type) {
+		if (type instanceof ICPPInternalBinding binding && binding.getDefinition() == null) {
+			// undefined
+			return null;
+		}
+
+		IType refT = SemanticUtil.getNestedType(type, TDEF | CVTYPE);
+
+		// result of declval() is a cast expression to rvalue reference to object type
+
+		if (SemanticUtil.isVoidType(refT)) {
+			// cannot form a reference to void
+			return null;
+		} else if (refT instanceof ICPPReferenceType) {
+			// Reference collapsing (&& && -> &&) or (& && -> &)
+			return type;
+		} else {
+			return new CPPReferenceType(type, true);
+		}
+	}
+
+	/**
+	 * Returns true if 'target' is constructible from argument
+	 * of type 'source', as defined in [meta.unary.prop].
+	 *
+	 * If 'checkTrivial' is true, additionally checks if 'typeToConstruct'
+	 * is trivially constructible from said argument type.
+	 */
+	public static boolean isAssignable(IType targetX, IType sourceX, IBinding pointOfDefinition, boolean checkTrivial,
+			boolean checkNothrow) {
+
+		final IType target = prepareRValueReferenceForIsAssignable(targetX);
+
+		if (target == null) {
+			return false;
+		}
+
+		final IType source = prepareRValueReferenceForIsAssignable(sourceX);
+
+		if (source == null) {
+			return false;
+		}
+
+		ValueCategory targetCategory = ExpressionTypes.valueCategoryFromReturnType(target);
+		ValueCategory sourceCategory = ExpressionTypes.valueCategoryFromReturnType(source);
+
+		ICPPEvaluation assignEval = new EvalFixed(target, targetCategory, IntegralValue.UNKNOWN);
+		ICPPEvaluation argEval = new EvalFixed(source, sourceCategory, IntegralValue.UNKNOWN);
+
+		EvalBinary exprAssignment = new EvalBinary(IASTBinaryExpression.op_assign, assignEval, argEval,
+				pointOfDefinition);
+
+		ICPPFunction assignmentOverload = exprAssignment.getOverload();
+		if (assignmentOverload != null) {
+			if (checkTrivial) {
+				if (assignmentOverload instanceof ICPPMethod cppMethod) {
+					// TODO check that conversions are trivial as well
+					return cppMethod.isImplicit();
+				} else {
+					return false;
+				}
+			}
+			if (checkNothrow) {
+				if (!EvalUtil.evaluateNoexceptSpecifier(assignmentOverload.getType().getNoexceptSpecifier()))
+					return false;
+			}
+			return true;
+		} else {
+			// fail if built-in assignment cannot be performed, expect IProblemType;
+			IType exprType = exprAssignment.getType();
+			return SemanticUtil.isValidType(exprType);
+		}
 	}
 
 	public static boolean isFunction(IType type) {

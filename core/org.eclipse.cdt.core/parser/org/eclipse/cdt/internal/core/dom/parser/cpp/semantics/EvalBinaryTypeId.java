@@ -95,7 +95,7 @@ public class EvalBinaryTypeId extends CPPDependentEvaluation {
 		if (isValueDependent())
 			return DependentValue.create(this);
 
-		return ValueFactory.evaluateBinaryTypeIdExpression(fOperator, fType1, fType2);
+		return ValueFactory.evaluateBinaryTypeIdExpression(fOperator, fType1, fType2, getTemplateDefinition());
 	}
 
 	@Override

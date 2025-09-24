@@ -57,6 +57,9 @@ public interface ISemanticProblem {
 	/** @since 6.9 */
 	int TYPE_CANNOT_DEDUCE_STRUCTURED_BINDING_TYPE = 10009;
 
+	/** @since 9.3 */
+	int TYPE_STATIC_ASSERT_FAILED = 10010;
+
 	/**
 	 * Returns the ID of the problem.
 	 */

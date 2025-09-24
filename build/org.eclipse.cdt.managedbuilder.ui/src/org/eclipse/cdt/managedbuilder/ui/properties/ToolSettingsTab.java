@@ -543,6 +543,9 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		}
 		IOption op1[] = src.getOptions();
 		IOption op2[] = dst.getOptions();
+		if (op1.length != op2.length) {
+			return;
+		}
 		for (int i = 0; i < op1.length; i++) {
 			setOption(op1[i], op2[i], dst, res);
 		}

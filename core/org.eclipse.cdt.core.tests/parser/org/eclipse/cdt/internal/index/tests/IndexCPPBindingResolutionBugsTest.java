@@ -1447,4 +1447,18 @@ public abstract class IndexCPPBindingResolutionBugsTest extends IndexBindingReso
 	public void testStructNameIntroducedInNamespace() throws Exception {
 		checkBindings();
 	}
+
+	// constexpr int getNum(int) { return 3; }
+	// constexpr int getNum(long) { return 6; }
+
+	// constexpr int getNum(int);
+	// constexpr int getNum(long);
+	// constexpr int v3 = getNum((int)0);
+	// constexpr int v6 = getNum((long)0);
+	public void testFuncDefnFromIndex() throws Exception {
+		ICPPVariable v3 = getBindingFromASTName("v3 ", 2, ICPPVariable.class);
+		ICPPVariable v6 = getBindingFromASTName("v6 ", 2, ICPPVariable.class);
+		assertEquals(3, v3.getInitialValue().numberValue().intValue());
+		assertEquals(6, v6.getInitialValue().numberValue().intValue());
+	}
 }

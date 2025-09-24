@@ -639,7 +639,7 @@
    <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
-       file-names="ciso646,climits,clocale,cmath,codecvt,complex,csetjmp,csignal,cstdarg,cstdbool,cstddef"/>
+       file-names="ciso646,climits,clocale,cmath,codecvt,compare,complex,concepts,csetjmp,csignal,cstdarg,cstdbool,cstddef"/>
    </extension> 
    <extension point="org.eclipse.core.contenttype.contentTypes"> 
       <file-association 

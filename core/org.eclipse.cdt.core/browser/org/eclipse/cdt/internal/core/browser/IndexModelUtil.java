@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 QNX Software Systems and others.
+ * Copyright (c) 2006, 2015, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPAliasTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPConcept;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespaceAlias;
 import org.eclipse.cdt.core.index.IIndexMacroContainer;
@@ -89,6 +90,10 @@ public class IndexModelUtil {
 				break;
 			case ICElement.C_ENUMERATOR:
 				if (binding instanceof IEnumerator)
+					return true;
+				break;
+			case ICElement.C_CONCEPT:
+				if (binding instanceof ICPPConcept)
 					return true;
 				break;
 			}
@@ -151,6 +156,9 @@ public class IndexModelUtil {
 		}
 		if (binding instanceof IParameter) {
 			elementType = ICElement.C_VARIABLE_LOCAL;
+		}
+		if (binding instanceof ICPPConcept) {
+			elementType = ICElement.C_CONCEPT;
 		}
 		return elementType;
 	}

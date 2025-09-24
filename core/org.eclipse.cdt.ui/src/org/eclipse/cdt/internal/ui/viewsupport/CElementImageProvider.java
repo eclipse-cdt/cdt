@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2024 IBM Corporation and others.
+ * Copyright (c) 2005, 2024, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -349,6 +349,9 @@ public class CElementImageProvider {
 
 		case ICElement.ASM_LABEL:
 			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_LABEL);
+
+		case ICElement.C_CONCEPT:
+			return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_CONCEPT);
 		}
 		return null;
 	}
@@ -559,6 +562,9 @@ public class CElementImageProvider {
 				return null;
 			}
 
+		case ICElement.C_CONCEPT:
+			return getConceptImageDescriptor();
+
 		default:
 			return getImageDescriptor(type);
 		}
@@ -741,4 +747,7 @@ public class CElementImageProvider {
 		return CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_OBJS_KEYWORD);
 	}
 
+	public static ImageDescriptor getConceptImageDescriptor() {
+		return getImageDescriptor(ICElement.C_CONCEPT);
+	}
 }

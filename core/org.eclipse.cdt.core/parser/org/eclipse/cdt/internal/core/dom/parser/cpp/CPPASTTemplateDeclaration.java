@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2013, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -157,6 +157,13 @@ public class CPPASTTemplateDeclaration extends ASTNode
 			other.setParent(child.getParent());
 			other.setPropertyInParent(child.getPropertyInParent());
 			declaration = (IASTDeclaration) other;
+		}
+		for (int i = 0; i < parameters.length; ++i) {
+			if (child == parameters[i]) {
+				other.setPropertyInParent(child.getPropertyInParent());
+				other.setParent(child.getParent());
+				parameters[i] = (ICPPASTTemplateParameter) other;
+			}
 		}
 	}
 

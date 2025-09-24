@@ -1,6 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 Institute for Software, HSR Hochschule fuer Technik
- * Rapperswil, University of applied sciences.
+ * Copyright (c) 2015, 2016, 2025 Institute for Software, HSR Hochschule fuer Technik
+ * Rapperswil, University of applied sciences, and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0

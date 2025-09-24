@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2016, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -202,6 +202,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 	private static final String SETTINGS_SHOW_VARIABLES = "show_variables"; //$NON-NLS-1$
 	private static final String SETTINGS_SHOW_ENUMERATORS = "show_enumerators"; //$NON-NLS-1$
 	private static final String SETTINGS_SHOW_MACROS = "show_macros"; //$NON-NLS-1$
+	private static final String SETTINGS_SHOW_CONCEPTS = "show_concepts"; //$NON-NLS-1$
 	private static final String SETTINGS_SHOW_LOWLEVEL = "show_lowlevel"; //$NON-NLS-1$
 
 	private static final TypeInfoLabelProvider fElementRenderer = new TypeInfoLabelProvider(
@@ -214,7 +215,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 
 	private static final int[] ALL_TYPES = { ICElement.C_NAMESPACE, ICElement.C_CLASS, ICElement.C_STRUCT,
 			ICElement.C_TYPEDEF, ICElement.C_ENUMERATION, ICElement.C_UNION, ICElement.C_FUNCTION, ICElement.C_VARIABLE,
-			ICElement.C_ENUMERATOR, ICElement.C_MACRO };
+			ICElement.C_ENUMERATOR, ICElement.C_MACRO, ICElement.C_CONCEPT };
 
 	// the filter matcher contains state information, must not be static
 	private final TypeFilterMatcher fFilterMatcher = new TypeFilterMatcher();
@@ -365,6 +366,9 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		case ICElement.C_MACRO:
 			name = TypeInfoMessages.TypeSelectionDialog_filterMacros;
 			break;
+		case ICElement.C_CONCEPT:
+			name = TypeInfoMessages.TypeSelectionDialog_filterConcepts;
+			break;
 		default:
 			return;
 		}
@@ -509,6 +513,8 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_ENUMERATOR)));
 		section.put(SETTINGS_SHOW_MACROS,
 				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_MACRO)));
+		section.put(SETTINGS_SHOW_CONCEPTS,
+				fFilterMatcher.getVisibleTypes().contains(Integer.valueOf(ICElement.C_CONCEPT)));
 		section.put(SETTINGS_SHOW_LOWLEVEL, fFilterMatcher.getShowLowLevelTypes());
 	}
 
@@ -526,6 +532,7 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		section.put(SETTINGS_SHOW_VARIABLES, true);
 		section.put(SETTINGS_SHOW_ENUMERATORS, true);
 		section.put(SETTINGS_SHOW_MACROS, true);
+		section.put(SETTINGS_SHOW_CONCEPTS, true);
 		section.put(SETTINGS_SHOW_LOWLEVEL, false);
 	}
 
@@ -593,6 +600,11 @@ public class TypeSelectionDialog extends TwoPaneElementSelector {
 		}
 		if (section.getBoolean(SETTINGS_SHOW_MACROS)) {
 			Integer typeObject = ICElement.C_MACRO;
+			if (fKnownTypes.contains(typeObject))
+				fFilterMatcher.getVisibleTypes().add(typeObject);
+		}
+		if (section.getBoolean(SETTINGS_SHOW_CONCEPTS)) {
+			Integer typeObject = ICElement.C_CONCEPT;
 			if (fKnownTypes.contains(typeObject))
 				fFilterMatcher.getVisibleTypes().add(typeObject);
 		}

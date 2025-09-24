@@ -12,15 +12,18 @@ package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GDBRemoteSerialLaunchTargetProvider;
 import org.eclipse.cdt.serial.SerialPort;
+import org.eclipse.cdt.serial.StandardBaudRates;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
+import org.eclipse.launchbar.core.target.LaunchTargetUtils;
 import org.eclipse.launchbar.ui.target.LaunchTargetWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -41,8 +44,9 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 	private Button sameAsPortname;
 	private Text nameText;
 	private Combo portCombo;
-	private Text baudText;
-	private static final String DEFAULT_BAUD_RATE = "115200"; //$NON-NLS-1$
+	private Combo baudCombo;
+	private static List<String> existingLaunchTargetNames = LaunchTargetUtils.getExistingLaunchTargetNames();
+	private String originalName = ""; //$NON-NLS-1$
 
 	private class SerialPage extends WizardPage {
 		public SerialPage() {
@@ -59,7 +63,7 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 			String targetName = ""; //$NON-NLS-1$
 			String serialPort = ""; //$NON-NLS-1$
 			String[] portNames;
-			String baudRate = DEFAULT_BAUD_RATE;
+			String baudRate = String.valueOf(StandardBaudRates.getDefault());
 			ILaunchTarget launchTarget = getLaunchTarget();
 			try {
 				portNames = SerialPort.list();
@@ -67,13 +71,11 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 				GdbUIPlugin.log(e);
 				portNames = new String[0];
 			}
-			if (launchTarget == null) {
-				if (portNames.length > 0) {
-					targetName = portNames[0];
-					serialPort = portNames[0];
-				}
-			} else {
+			// When it's a new launch target, we start with empty strings.
+			// Choosing the first port found as a default name has a big chance of a duplicate name error.
+			if (launchTarget != null) {
 				targetName = launchTarget.getId();
+				originalName = targetName;
 				serialPort = launchTarget.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, serialPort);
 				baudRate = launchTarget.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, baudRate);
 			}
@@ -126,15 +128,11 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 			Label portLabel = new Label(connGroup, SWT.NONE);
 			portLabel.setText(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_SerialPort")); //$NON-NLS-1$
 
-			portCombo = new Combo(connGroup, SWT.NONE);
+			portCombo = new Combo(connGroup, SWT.DROP_DOWN);
 			portCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-			for (String portName : portNames) {
-				portCombo.add(portName);
-			}
-			if (portNames.length > 0) {
-				portCombo.setText(serialPort);
-			}
+			portCombo.setItems(portNames);
+			portCombo.setText(serialPort);
 
 			portCombo.addModifyListener(new ModifyListener() {
 				@Override
@@ -149,10 +147,13 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 			Label baudLabel = new Label(connGroup, SWT.NONE);
 			baudLabel.setText(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_BaudRate")); //$NON-NLS-1$
 
-			baudText = new Text(connGroup, SWT.BORDER);
-			baudText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			baudText.setText(baudRate);
-			baudText.addModifyListener(new ModifyListener() {
+			baudCombo = new Combo(connGroup, SWT.DROP_DOWN);
+			baudCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+			baudCombo.setItems(StandardBaudRates.asStringArray());
+			baudCombo.setText(baudRate);
+
+			baudCombo.addModifyListener(new ModifyListener() {
 				@Override
 				public void modifyText(ModifyEvent e) {
 					validatePage();
@@ -160,14 +161,13 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 			});
 
 			setControl(control);
-			validatePage();
 		}
 
 		private void validatePage() {
 			setPageComplete(false);
 
 			String port = portCombo.getText();
-			if (port.isEmpty()) {
+			if (port.isBlank()) {
 				setErrorMessage(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_NoSerialPort")); //$NON-NLS-1$
 				return;
 			}
@@ -184,8 +184,8 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 				setErrorMessage(e.getLocalizedMessage());
 				return;
 			}
-			String baud = baudText.getText();
-			if (baud.isEmpty()) {
+			String baud = baudCombo.getText();
+			if (baud.isBlank()) {
 				setErrorMessage(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_NoBaudRate")); //$NON-NLS-1$
 				return;
 			}
@@ -197,13 +197,27 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 				return;
 			}
 
-			if (nameText.getText().isEmpty()) {
+			if (nameText.getText().isBlank()) {
 				setErrorMessage(LaunchUIMessages.getString("NewGDBRemoteSerialTargetWizard_NoTargetName")); //$NON-NLS-1$
+				return;
+			}
+
+			if (!originalName.equals(nameText.getText().trim())
+					&& existingLaunchTargetNames.contains(nameText.getText().trim())) {
+				setErrorMessage(LaunchUIMessages.getString("NewGdbRemoteSerialTargetWizard_DuplicateName")); //$NON-NLS-1$
 				return;
 			}
 
 			setErrorMessage(null);
 			setPageComplete(true);
+		}
+
+		@Override
+		public boolean isPageComplete() {
+			// Disable Finish button at start, when fields are empty.
+			return portCombo != null && !portCombo.getText().isBlank() && baudCombo != null
+					&& !baudCombo.getText().isBlank() && nameText != null && !nameText.getText().isBlank()
+					&& getErrorMessage() == null;
 		}
 	}
 
@@ -226,10 +240,23 @@ public class NewGdbRemoteSerialTargetWizard extends LaunchTargetWizard {
 		ILaunchTargetWorkingCopy wc = target.getWorkingCopy();
 		wc.setId(id);
 		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, portCombo.getText());
-		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, baudText.getText());
+		wc.setAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV_SPEED, baudCombo.getText());
 		wc.save();
 
 		return true;
 	}
 
+	@Override
+	public boolean canDelete() {
+		return true;
+	}
+
+	@Override
+	public void performDelete() {
+		ILaunchTargetManager manager = GdbUIPlugin.getService(ILaunchTargetManager.class);
+		ILaunchTarget target = getLaunchTarget();
+		if (target != null) {
+			manager.removeLaunchTarget(target);
+		}
+	}
 }

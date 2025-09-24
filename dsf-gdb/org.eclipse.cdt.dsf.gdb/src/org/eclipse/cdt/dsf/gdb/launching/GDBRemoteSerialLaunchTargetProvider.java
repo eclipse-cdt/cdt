@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 QNX Software Systems and others.
+ * Copyright (c) 2019, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,15 +10,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.launching;
 
-import java.io.IOException;
-
-import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
-import org.eclipse.cdt.serial.SerialPort;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetProvider;
 import org.eclipse.launchbar.core.target.TargetStatus;
-import org.eclipse.launchbar.core.target.TargetStatus.Code;
 
 /**
  * @since 5.7
@@ -34,21 +29,10 @@ public class GDBRemoteSerialLaunchTargetProvider implements ILaunchTargetProvide
 
 	@Override
 	public TargetStatus getStatus(ILaunchTarget target) {
-		String device = target.getAttribute(IGDBLaunchConfigurationConstants.ATTR_DEV, ""); //$NON-NLS-1$
-		if (device.isEmpty()) {
-			return new TargetStatus(Code.ERROR, LaunchMessages.getString("GDBRemoteSerialLaunchTargetProvider_NoPort")); //$NON-NLS-1$
-		}
-		try {
-			for (String port : SerialPort.list()) {
-				if (device.equals(port)) {
-					return TargetStatus.OK_STATUS;
-				}
-			}
-			return new TargetStatus(Code.ERROR,
-					String.format(LaunchMessages.getString("GDBRemoteSerialLaunchTargetProvider_NotFound"), device)); //$NON-NLS-1$
-		} catch (IOException e) {
-			return new TargetStatus(Code.ERROR, e.getLocalizedMessage());
-		}
+		// The launch target wizard NewGdbRemoteSerialTargetWizard ensures attributes are properly set.
+		// The user is allowed to enter a custom device name. To be flexible, we do not validate the device name here.
+		// This method is also called on a target that was removed from the manager after the user deleted it. Validation
+		// would fail with an IllegalStateException, because the node is removed from the preferences.
+		return TargetStatus.OK_STATUS;
 	}
-
 }

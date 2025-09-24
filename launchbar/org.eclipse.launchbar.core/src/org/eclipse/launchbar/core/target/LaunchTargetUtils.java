@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2025 Renesas Electronics Europe.
+ * Copyright (c) 2025 Renesas Electronics Europe and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.launchbar.core.target;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.eclipse.launchbar.core.internal.Activator;
 
 /**
  * @since 3.1
@@ -68,5 +74,20 @@ public class LaunchTargetUtils {
 			name = name.replace(element, '_');
 		}
 		return name;
+	}
+
+	/**
+	 * Get the names of all existing launch targets.
+	 *
+	 * @return List of existing launch target names. If the launch target manager service is not available, an empty list is returned.
+	 * @since 3.1
+	 */
+	public static List<String> getExistingLaunchTargetNames() {
+		List<String> retVal = new ArrayList<>();
+		ILaunchTargetManager manager = Activator.getService(ILaunchTargetManager.class);
+		if (manager != null) {
+			retVal = Arrays.stream(manager.getLaunchTargets()).map(ILaunchTarget::getId).collect(Collectors.toList());
+		}
+		return retVal;
 	}
 }

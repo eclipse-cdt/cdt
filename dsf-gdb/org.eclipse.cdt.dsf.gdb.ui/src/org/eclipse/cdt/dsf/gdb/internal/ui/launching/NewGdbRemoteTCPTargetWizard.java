@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.launching;
 
+import java.util.List;
+
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.internal.ui.GdbUIPlugin;
 import org.eclipse.cdt.dsf.gdb.launching.GDBRemoteTCPLaunchTargetProvider;
@@ -17,6 +19,7 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 import org.eclipse.launchbar.core.target.ILaunchTargetWorkingCopy;
+import org.eclipse.launchbar.core.target.LaunchTargetUtils;
 import org.eclipse.launchbar.ui.target.LaunchTargetWizard;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -37,6 +40,8 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 	private Text nameText;
 	private Text hostText;
 	private Text portText;
+	private static List<String> existingLaunchTargetNames = LaunchTargetUtils.getExistingLaunchTargetNames();
+	private String originalName = ""; //$NON-NLS-1$
 
 	private class TCPPage extends WizardPage {
 		public TCPPage() {
@@ -56,6 +61,7 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 			ILaunchTarget launchTarget = getLaunchTarget();
 			if (launchTarget != null) {
 				targetName = launchTarget.getId();
+				originalName = targetName;
 				targetHostName = launchTarget.getAttribute(IGDBLaunchConfigurationConstants.ATTR_HOST, targetHostName);
 				targetPort = launchTarget.getAttribute(IGDBLaunchConfigurationConstants.ATTR_PORT, targetPort);
 			}
@@ -135,19 +141,18 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 			});
 
 			setControl(control);
-			validatePage();
 		}
 
 		private void validatePage() {
 			setPageComplete(false);
 
-			if (hostText.getText().isEmpty()) {
+			if (hostText.getText().isBlank()) {
 				setErrorMessage(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.NoHost")); //$NON-NLS-1$
 				return;
 			}
 
 			String port = portText.getText();
-			if (port.isEmpty()) {
+			if (port.isBlank()) {
 				setErrorMessage(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.NoPort")); //$NON-NLS-1$
 				return;
 			}
@@ -159,13 +164,27 @@ public class NewGdbRemoteTCPTargetWizard extends LaunchTargetWizard {
 				return;
 			}
 
-			if (nameText.getText().isEmpty()) {
+			if (nameText.getText().isBlank()) {
 				setErrorMessage(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.NoName")); //$NON-NLS-1$
+				return;
+			}
+
+			if (!originalName.equals(nameText.getText().trim())
+					&& existingLaunchTargetNames.contains(nameText.getText().trim())) {
+				setErrorMessage(LaunchUIMessages.getString("NewGdbRemoteTCPTargetWizard.DuplicateName")); //$NON-NLS-1$
 				return;
 			}
 
 			setErrorMessage(null);
 			setPageComplete(true);
+		}
+
+		@Override
+		public boolean isPageComplete() {
+			// Disable Finish button at start, when fields are empty.
+			return hostText != null && !hostText.getText().isBlank() && portText != null
+					&& !portText.getText().isBlank() && nameText != null && !nameText.getText().isBlank()
+					&& getErrorMessage() == null;
 		}
 	}
 

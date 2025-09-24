@@ -572,4 +572,26 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
 	}
+
+	//	[[attr]] __attribute__((__visibility__("default"))) [[attr2]] __attribute__((__section__(".foo"))) int i;
+	public void testMixedAttributeSpecifiers() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
+		List<IASTAttributeSpecifier> specifiers = getAttributeSpecifiers(tu);
+		assertEquals(4, specifiers.size());
+		IASTAttributeSpecifier simpleDeclarationAttribute1 = specifiers.get(0);
+		IASTNode parent1 = simpleDeclarationAttribute1.getParent();
+		assertInstance(parent1, IASTSimpleDeclaration.class);
+		IASTAttributeSpecifier simpleDeclarationAttribute2 = specifiers.get(1);
+		IASTNode parent2 = simpleDeclarationAttribute2.getParent();
+		assertInstance(parent2, IASTSimpleDeclaration.class);
+		IASTAttributeSpecifier simpleDeclarationAttribute3 = specifiers.get(2);
+		IASTNode parent3 = simpleDeclarationAttribute3.getParent();
+		assertInstance(parent3, IASTSimpleDeclaration.class);
+		IASTAttributeSpecifier simpleDeclarationAttribute4 = specifiers.get(3);
+		IASTNode parent4 = simpleDeclarationAttribute4.getParent();
+		assertInstance(parent4, IASTSimpleDeclaration.class);
+		assertSame(parent1, parent2);
+		assertSame(parent1, parent3);
+		assertSame(parent1, parent4);
+	}
 }

@@ -2958,11 +2958,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	@Override
 	protected IASTDeclaration declaration(DeclarationOptions option) throws EndOfFileException, BacktrackException {
 		// Allow GNU-style attributes both before standard attribute / alignment specifiers, and after.
-		List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers,
-				supportDeclspecSpecifiers);
-		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
-		attributes = CollectionUtils.merge(attributes,
-				__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
+		List<IASTAttributeSpecifier> attributes = anyAttributes(supportAttributeSpecifiers, supportDeclspecSpecifiers);
 
 		switch (LT(1)) {
 		case IToken.t_asm:
@@ -3129,8 +3125,16 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 	@Override
 	protected List<IASTAttributeSpecifier> anyAttributes(boolean allowAttrib, boolean allowDeclspec)
 			throws BacktrackException, EndOfFileException {
-		List<IASTAttributeSpecifier> attributes = super.anyAttributes(allowAttrib, allowDeclspec);
-		attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+		boolean maybeMore;
+		List<IASTAttributeSpecifier> attributes = null;
+		do {
+			maybeMore = false;
+			List<IASTAttributeSpecifier> anyAttributes = super.anyAttributes(allowAttrib, allowDeclspec);
+			List<IASTAttributeSpecifier> languageAttributes = attributeSpecifierSeq();
+			maybeMore = anyAttributes != null || languageAttributes != null;
+			attributes = CollectionUtils.merge(attributes, anyAttributes);
+			attributes = CollectionUtils.merge(attributes, languageAttributes);
+		} while (maybeMore);
 		return attributes;
 	}
 
@@ -3985,7 +3989,8 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				throwBacktrack(LA(1));
 			}
 
-			attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+			attributes = CollectionUtils.merge(attributes,
+					anyAttributes(supportAttributeSpecifiers, supportDeclspecSpecifiers));
 
 			if (result != null) {
 				configureDeclSpec(result, storageClass, options);
@@ -5027,6 +5032,10 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 				setDeclaratorID(result, hasEllipsis, declaratorName, nestedDeclarator);
 				break loop;
 
+			case IToken.t_alignas:
+				attributes = CollectionUtils.merge(attributes, attributeSpecifierSeq());
+				break;
+
 			case IToken.tCOLON:
 				if (!option.fAllowBitField || nestedDeclarator != null)
 					break loop; // no backtrack because typeid can be followed by colon
@@ -5050,7 +5059,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 			}
 		}
 		attributes = CollectionUtils.merge(attributes,
-				__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers));
+				anyAttributes(supportAttributeSpecifiers, supportDeclspecSpecifiers));
 
 		if (result == null) {
 			result = getNodeFactory().newDeclarator(null);

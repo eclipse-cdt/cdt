@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 Andrew Gvozdev and others.
+ * Copyright (c) 2010, 2016, 2025 Andrew Gvozdev and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -65,6 +65,8 @@ public class CDTSharedImages {
 	public static final String IMG_OBJS_FUNCTION = "icons/obj16/function_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PUBLIC_METHOD = "icons/obj16/method_public_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PROTECTED_METHOD = "icons/obj16/method_protected_obj.gif"; //$NON-NLS-1$
+	/** @since 9.1 */
+	public static final String IMG_OBJS_DEDUCTION_GUIDE = "icons/obj16/deduction_guide_obj.gif"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_PRIVATE_METHOD = "icons/obj16/method_private_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_PUBLIC_FIELD = "icons/obj16/field_public_obj.gif"; //$NON-NLS-1$

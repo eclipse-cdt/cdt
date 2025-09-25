@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2014 IBM Corporation and others.
+ * Copyright (c) 2002, 2014, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,8 +24,7 @@ public class FunctionDeclaration extends SourceManipulation implements IFunction
 	protected String returnType;
 
 	public FunctionDeclaration(ICElement parent, String name) {
-		super(parent, name, ICElement.C_FUNCTION_DECLARATION);
-		fParameterTypes = fgEmptyStrings;
+		this(parent, name, ICElement.C_FUNCTION_DECLARATION);
 	}
 
 	public FunctionDeclaration(ICElement parent, String name, int type) {

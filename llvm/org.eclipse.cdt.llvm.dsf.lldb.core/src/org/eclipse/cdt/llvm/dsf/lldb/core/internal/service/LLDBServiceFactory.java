@@ -11,6 +11,7 @@
  * Contributors:
  *     Ericsson - Initial implementation
  *     John Dallaway - Use LLDB memory service (#1191)
+ *     John Dallaway - Use LLDB breakpoints synchronizer service (#1319)
  *******************************************************************************/
 
 package org.eclipse.cdt.llvm.dsf.lldb.core.internal.service;
@@ -21,6 +22,7 @@ import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.gdb.service.GdbDebugServicesFactory;
+import org.eclipse.cdt.dsf.mi.service.MIBreakpointsSynchronizer;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.llvm.dsf.lldb.core.internal.service.commands.LLDBCommandFactory;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -65,6 +67,11 @@ public class LLDBServiceFactory extends GdbDebugServicesFactory {
 	@Override
 	protected IMemory createMemoryService(DsfSession session) {
 		return new LLDBMemory(session);
+	}
+
+	@Override
+	protected MIBreakpointsSynchronizer createBreakpointsSynchronizerService(DsfSession session) {
+		return new LLDBBreakpointsSynchronizer(session);
 	}
 
 }

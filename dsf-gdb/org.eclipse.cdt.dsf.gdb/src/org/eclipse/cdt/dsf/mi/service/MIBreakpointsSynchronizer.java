@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2018 Mentor Graphics and others.
+ * Copyright (c) 2012, 2025 Mentor Graphics and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
  *      Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
  *      Jonah Graham (Kichwa Coders) - Bug 530377 - Corruption of state due to fast events from GDB
  *      Umair Sair (Siemens) - Bug 571161 - MIBreakpointsSynchronizer is broken in certain scenarios
+ *      John Dallaway - Allow override of breakpoint condition modified check (#1319)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service;
@@ -222,7 +223,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		getSession().addServiceEventListener(this, null);
 
 		// Register this service
-		register(new String[] { MIBreakpointsSynchronizer.class.getName() }, new Hashtable<String, String>());
+		register(new String[] { MIBreakpointsSynchronizer.class.getName() }, new Hashtable<>());
 
 		rm.done();
 	}
@@ -746,6 +747,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		});
 	}
 
+	/** @since 7.3 */
+	protected boolean isTargetBreakpointConditionModified(MIBreakpoint miBpt, String condition) {
+		return !condition.equals(miBpt.getCondition());
+	}
+
 	private void targetBreakpointModified(IBreakpointsTargetDMContext bpTargetDMC, ICBreakpoint plBpt,
 			MIBreakpoint miBpt) {
 		Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointsService().getBreakpointMap(bpTargetDMC);
@@ -755,7 +761,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 			if (plBpt.isEnabled() != miBpt.isEnabled()) {
 				plBpt.setEnabled(miBpt.isEnabled());
 			}
-			if (!plBpt.getCondition().equals(miBpt.getCondition())) {
+			if (isTargetBreakpointConditionModified(miBpt, plBpt.getCondition())) {
 				plBpt.setCondition(miBpt.getCondition());
 			}
 			// oldData can be null for notifications of breakpoints that are inserted using DSF but

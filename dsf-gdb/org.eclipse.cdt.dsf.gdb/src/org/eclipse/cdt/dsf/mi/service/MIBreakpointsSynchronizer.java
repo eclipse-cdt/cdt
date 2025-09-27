@@ -222,7 +222,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		getSession().addServiceEventListener(this, null);
 
 		// Register this service
-		register(new String[] { MIBreakpointsSynchronizer.class.getName() }, new Hashtable<String, String>());
+		register(new String[] { MIBreakpointsSynchronizer.class.getName() }, new Hashtable<>());
 
 		rm.done();
 	}
@@ -746,6 +746,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		});
 	}
 
+	/** @since 7.3 */
+	protected boolean isTargetBreakpointConditionModified(MIBreakpoint miBpt, String condition) {
+		return !condition.equals(miBpt.getCondition());
+	}
+
 	private void targetBreakpointModified(IBreakpointsTargetDMContext bpTargetDMC, ICBreakpoint plBpt,
 			MIBreakpoint miBpt) {
 		Map<String, MIBreakpointDMData> contextBreakpoints = getBreakpointsService().getBreakpointMap(bpTargetDMC);
@@ -755,7 +760,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 			if (plBpt.isEnabled() != miBpt.isEnabled()) {
 				plBpt.setEnabled(miBpt.isEnabled());
 			}
-			if (!plBpt.getCondition().equals(miBpt.getCondition())) {
+			if (isTargetBreakpointConditionModified(miBpt, plBpt.getCondition())) {
 				plBpt.setCondition(miBpt.getCondition());
 			}
 			// oldData can be null for notifications of breakpoints that are inserted using DSF but

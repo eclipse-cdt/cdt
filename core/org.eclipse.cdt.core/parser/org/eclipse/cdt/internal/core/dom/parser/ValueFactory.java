@@ -72,6 +72,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNaryTypeIdExpression.Operator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleTypeConstructorExpression;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTypeId;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
@@ -397,6 +398,19 @@ public class ValueFactory {
 			if (CPPTemplates.isDependentType(t1) || CPPTemplates.isDependentType(t2))
 				return null;
 			return applyBinaryTypeIdOperator(typeIdExp.getOperator(), t1, t2);
+		}
+		if (exp instanceof final ICPPASTNaryTypeIdExpression typeIdExp) {
+			ASTTranslationUnit ast = (ASTTranslationUnit) exp.getTranslationUnit();
+			ICPPASTTypeId[] operands = typeIdExp.getOperands();
+			IType[] types = new IType[operands.length];
+			for (int i = 0; i < operands.length; ++i) {
+				IType type = ast.createType(operands[i]);
+				if (CPPTemplates.isDependentType(type)) {
+					return null;
+				}
+				types[i] = type;
+			}
+			return applyNaryTypeIdOperator(typeIdExp.getOperator(), types, null);
 		}
 		return IntegralValue.UNKNOWN;
 	}

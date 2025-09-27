@@ -11983,4 +11983,56 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		CPPVariable valueCallsAssertsFalse = helper.assertNonProblem("value_calls_asserts_false");
 		assertEquals(IntegralValue.STATIC_ASSERT_FAILED_ERROR, valueCallsAssertsFalse.getInitialValue());
 	}
+
+	//	struct true_type {
+	//	  static constexpr bool v = true;
+	//	};
+	//
+	//	struct false_type {
+	//	  static constexpr bool v = false;
+	//	};
+	//
+	//	template<bool, typename T = void>
+	//	struct enable_if {};
+	//
+	//	template<typename T>
+	//	struct enable_if<true, T> {
+	//	  typedef T type;
+	//	};
+	//
+	//	template<bool Cond, typename T = void>
+	//	using enable_if_t = typename enable_if<Cond, T>::type;
+	//
+	//	template<typename T, typename... Args>
+	//	inline constexpr bool is_constructible_v = __is_constructible(T, Args...);
+	//
+	//	template <class E>
+	//	struct initializer_list {
+	//	  E* array;
+	//	  unsigned long len;
+	//	};
+	//
+	//	template<typename T>
+	//	class C
+	//	{
+	//	public:
+	//	    template<typename... Args>
+	//	    static constexpr
+	//	    enable_if_t<is_constructible_v<T, Args...>, bool>
+	//	    f(Args&&...) {
+	//	        return true;
+	//	    }
+	//	    template<typename U, typename... Args>
+	//	    static constexpr
+	//	    enable_if_t<is_constructible_v<T, initializer_list<U>&, Args...>, bool>
+	//	    f(initializer_list<U>, Args&&...) {
+	//	        return false;
+	//	    }
+	//	};
+	//
+	//	constexpr bool selected_method_empty_args = C<int>::f();
+	public void testVariableTemplateNaryTypeIdInitializer() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertVariableValue("selected_method_empty_args", 1);
+	}
 }

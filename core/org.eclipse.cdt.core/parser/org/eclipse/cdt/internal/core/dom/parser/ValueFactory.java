@@ -464,7 +464,8 @@ public class ValueFactory {
 			return IntegralValue.create(
 					!(type instanceof ICPPClassType) || TypeTraits.hasTrivialCopyCtor((ICPPClassType) type) ? 1 : 0);
 		case op_has_trivial_destructor:
-			break; // TODO(sprigogin): Implement
+			return IntegralValue.create(
+					!(type instanceof ICPPClassType) || TypeTraits.hasTrivialDestructor((ICPPClassType) type) ? 1 : 0);
 		case op_has_unique_object_representations:
 			break; // TODO: Implement
 		case op_has_virtual_destructor:

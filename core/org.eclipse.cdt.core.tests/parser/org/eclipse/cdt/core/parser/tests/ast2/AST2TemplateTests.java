@@ -12035,4 +12035,72 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 		BindingAssertionHelper bh = getAssertionHelper();
 		bh.assertVariableValue("selected_method_empty_args", 1);
 	}
+
+	//	namespace std {
+	//
+	//	template<typename _Tp, typename _Up = _Tp&&> _Up __declval(int);
+	//	template<typename _Tp> _Tp __declval(long);
+	//	template<typename _Tp> auto declval() noexcept -> decltype(__declval<_Tp>(0));
+	//
+	//	struct true_type {
+	//	  static constexpr bool value = true;
+	//	};
+	//
+	//	struct false_type {
+	//	  static constexpr bool value = false;
+	//	};
+	//
+	//	template<typename _Tp, typename _Up>
+	//	class __is_assignable_helper
+	//	{
+	//	  template<typename _Tp1, typename _Up1,
+	//	          typename = decltype(declval<_Tp1>() = declval<_Up1>())>
+	//	   static true_type
+	//	   __test(int);
+	//
+	//	  template<typename, typename>
+	//	   static false_type
+	//	   __test(...);
+	//
+	//	public:
+	//	  typedef decltype(__test<_Tp, _Up>(0)) type;
+	//	};
+	//
+	//	template<typename _Tp, typename _Up>
+	//	 struct is_assignable : public __is_assignable_helper<_Tp, _Up>::type {
+	//	};
+	//
+	//	} // namespace std
+	//
+	//	constexpr int is_assignable_int_int = std::is_assignable<int, int>::value;
+	public void testStdDeclvalIsAssignable() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertVariableValue("is_assignable_int_int", 0);
+	}
+
+	//	namespace N {
+	//
+	//	template<typename _Tp, typename _Up = _Tp&&> _Up __declval(int);
+	//	template<typename _Tp> _Tp __declval(long);
+	//	template<typename _Tp> auto declval() noexcept -> decltype(__declval<_Tp>(0));
+	//
+	//	template<typename T, typename U, typename = decltype(declval<T>() = declval<U>())>
+	//	constexpr bool check(int) {
+	//	  return true;
+	//	}
+	//
+	//	template<typename, typename>
+	//	constexpr bool check(...) {
+	//	  return false;
+	//	}
+	//
+	//	} // namespace N
+	//
+	//	constexpr int bad_assignment = N::check<int, int>(0);
+	//	constexpr int good_assignment = N::check<int&, int>(0);
+	public void testAssignmentInDecltype() throws Exception {
+		BindingAssertionHelper bh = getAssertionHelper();
+		bh.assertVariableValue("bad_assignment", 0);
+		bh.assertVariableValue("good_assignment", 1);
+	}
 }

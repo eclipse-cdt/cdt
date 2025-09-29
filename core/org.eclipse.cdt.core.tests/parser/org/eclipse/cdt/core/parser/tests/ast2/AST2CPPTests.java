@@ -148,6 +148,7 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.util.AttributeUtil;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.eclipse.cdt.internal.core.dom.parser.CompositeValue;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
@@ -162,6 +163,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -9554,6 +9556,80 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		assertSame(fA, f);
 	}
 
+	//	struct A {
+	//		operator long& ();
+	//	};
+	//	void f(long);
+	//	void f(A);
+	//	void test() {
+	//		A a;
+	//		int i;
+	//		f(i = a);   // A converts to long&, builtin assignment to i used, f(long) called
+	//	}
+	public void testBuiltinOperators_294543c() throws Exception {
+		BindingAssertionHelper bh = new AST2AssertionHelper(getAboveComment(), true);
+
+		// verify f(long) is called
+
+		IFunction fLong = bh.assertNonProblem("f(long)", 1);
+		IFunction fCalled = bh.assertNonProblem("f(i = a)", 1);
+		assertSame(fLong, fCalled);
+
+		// verify f argument does not use any overload (i.e. builtin assignment is used)
+
+		IASTName nameF = bh.findName("i = a", "i");
+		ICPPASTBinaryExpression expF = (ICPPASTBinaryExpression) nameF.getParent().getParent();
+		IASTImplicitName[] implicitNamesF = expF.getImplicitNames();
+		assertEquals(0, implicitNamesF.length);
+	}
+
+	//	struct A {
+	//	    operator int() const;
+	//	    const A& operator=(int) const;
+	//	};
+	//
+	//	int f(A);
+	//	int f(char);
+	//
+	//	int g(long);
+	//
+	//	void test() {
+	//	    A a;
+	//	    f(a = 2); // OK, uses const assignment overload, calls f(A)
+	//	    g(a = 3); // OK, uses const assignment overload, converts to int, calls g(long)
+	//	}
+	public void testBuiltinOperators_294543d() throws Exception {
+		BindingAssertionHelper bh = new AST2AssertionHelper(getAboveComment(), true);
+
+		// verify both f and g arguments are using const assignment operator overload
+
+		ICPPMethod assignmentOperator = bh.assertNonProblem("const A& operator=(int) const", "operator=",
+				ICPPMethod.class);
+
+		IASTName nameF = bh.findName("a = 2", "a");
+		ICPPASTBinaryExpression expF = (ICPPASTBinaryExpression) nameF.getParent().getParent();
+		IASTImplicitName[] implicitNamesF = expF.getImplicitNames();
+		assertEquals(1, implicitNamesF.length);
+		assertSame(assignmentOperator, implicitNamesF[0].getBinding());
+
+		IASTName nameG = bh.findName("a = 3", "a");
+		ICPPASTBinaryExpression expG = (ICPPASTBinaryExpression) nameG.getParent().getParent();
+		IASTImplicitName[] implicitNamesG = expG.getImplicitNames();
+		assertSame(assignmentOperator, implicitNamesG[0].getBinding());
+
+		// verify f(A) is called
+
+		IFunction fA = bh.assertNonProblem("f(A)", 1);
+		IFunction fCalled = bh.assertNonProblem("f(a = 2)", 1);
+		assertSame(fA, fCalled);
+
+		// verify g(long) is called
+
+		IFunction gLong = bh.assertNonProblem("g(long)", 1);
+		IFunction gCalled = bh.assertNonProblem("g(a = 3)", 1);
+		assertSame(gLong, gCalled);
+	}
+
 	//	struct X {};
 	//	struct Y : X {};
 	//	struct A {
@@ -14006,5 +14082,123 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	};
 	public void testSimpleDeclarationOfFunction() throws Exception {
 		parseAndCheckImplicitNameBindings();
+	}
+
+	//	struct S {};
+	//
+	//	class T {
+	//	public:
+	//      T& operator=(const S&);
+	//	private:
+	//      T& operator=(const T&);
+	//	};
+	//
+	//	class U {
+	//	public:
+	//      U& operator=(const U&) = delete;
+	//	};
+	//
+	//	struct E {
+	//		int n;
+	//	};
+	//
+	//  struct Incomplete;
+	//
+	//	bool results[] = {
+	//	/*  0 */ false == __is_assignable(void, void),
+	//	/*  1 */ false == __is_assignable(const void, void),
+	//	/*  2 */ false == __is_assignable(void, const void),
+	//	/*  3 */ false == __is_assignable(const void, const void),
+	//
+	//	/*  4 */ false == __is_assignable(void*, void*),
+	//	/*  5 */ false == __is_assignable(const void*, void*),
+	//	/*  6 */ false == __is_assignable(void*, const void*),
+	//	/*  7 */ false == __is_assignable(const void*, const void*),
+	//
+	//	/*  8 */ true == __is_assignable(void*&, void*),
+	//	/*  9 */ false == __is_assignable(void*&, const void*),
+	//	/* 10 */ true == __is_assignable(void*&, int*),
+	//	/* 11 */ false == __is_assignable(void*&, const int*),
+	//
+	//	/* 12 */ false == __is_assignable(void*, int*),
+	//	/* 13 */ false == __is_assignable(int*, int*),
+	//
+	//	/* 14 */ false == __is_assignable(int, void),
+	//	/* 15 */ false == __is_assignable(void, int),
+	//
+	//	/* 16 */ false == __is_assignable(int, Incomplete),
+	//	/* 17 */ false == __is_assignable(int&, Incomplete),
+	//	/* 18 */ false == __is_assignable(Incomplete, int),
+	//	/* 19 */ false == __is_assignable(Incomplete, Incomplete),
+	//
+	//	/* 20 */ false == __is_assignable(int, int),
+	//	/* 21 */ false == __is_assignable(int, int&),
+	//	/* 22 */ true == __is_assignable(int&, int),
+	//	/* 23 */ true == __is_assignable(int&, int&),
+	//	/* 24 */ true == __is_assignable(int&, int&&),
+	//	/* 25 */ true == __is_assignable(int&, const int),
+	//	/* 26 */ true == __is_assignable(int&, const int&),
+	//	/* 27 */ true == __is_assignable(int&, const int&&),
+	//	/* 28 */ false == __is_assignable(int&&, int),
+	//	/* 29 */ false == __is_assignable(int&&, int&),
+	//	/* 30 */ false == __is_assignable(int&&, int&&),
+	//	/* 31 */ false == __is_assignable(int&&, const int),
+	//	/* 32 */ false == __is_assignable(int&&, const int&),
+	//	/* 33 */ false == __is_assignable(int&&, const int&&),
+	//
+	//	/* 34 */ false == __is_assignable(int, double),
+	//	/* 35 */ true == __is_assignable(int&, double),
+	//	/* 36 */ false == __is_assignable(int&&, double),
+	//	/* 37 */ false == __is_assignable(const int, double),
+	//	/* 38 */ false == __is_assignable(const int&, double),
+	//	/* 39 */ false == __is_assignable(const int&&, double),
+	//
+	//	/* 40 */ true == __is_assignable(S, S),
+	//	/* 41 */ true == __is_assignable(S, S&),
+	//	/* 42 */ true == __is_assignable(S, S&&),
+	//	/* 43 */ true == __is_assignable(S, const S),
+	//	/* 44 */ true == __is_assignable(S, const S&),
+	//	/* 45 */ true == __is_assignable(S, const S&&),
+	//	/* 46 */ true == __is_assignable(S&, S),
+	//	/* 47 */ true == __is_assignable(S&, S&),
+	//	/* 48 */ true == __is_assignable(S&, S&&),
+	//	/* 49 */ true == __is_assignable(S&, const S),
+	//	/* 50 */ true == __is_assignable(S&, const S&),
+	//	/* 51 */ true == __is_assignable(S&, const S&&),
+	//	/* 52 */ false == __is_assignable(const S, S),
+	//	/* 53 */ false == __is_assignable(const S, S&),
+	//	/* 54 */ false == __is_assignable(const S, S&&),
+	//	/* 55 */ false == __is_assignable(const S&, S),
+	//	/* 56 */ false == __is_assignable(const S&, S&),
+	//	/* 57 */ false == __is_assignable(const S&, S&&),
+	//	/* 58 */ false == __is_assignable(const S&&, S),
+	//	/* 59 */ false == __is_assignable(const S&&, S&),
+	//	/* 60 */ false == __is_assignable(const S&&, S&&),
+	//
+	//	/* 61 */ false == __is_assignable(S, T),
+	//	/* 62 */ true == __is_assignable(T, S),
+	//
+	//	/* 63 */ true == __is_trivially_assignable(S&, S&),
+	//	/* 64 */ false == __is_trivially_assignable(T&, T&),
+	//	/* 65 */ true == __is_trivially_assignable(E&, E&),
+	//	};
+	//
+	public void testIsAssignable() throws Exception {
+		//parseAndCheckBindings(getAboveComment(), CPP, ScannerKind.GNU /* use GNU extensions */);
+		BindingAssertionHelper helper = getAssertionHelper(CPP, ScannerKind.GNU /* use GNU extensions */);
+
+		ICPPVariable varResults = helper.assertNonProblem("results", 7);
+		ICPPEvaluation[] results = assertInstance(varResults.getInitialValue(), CompositeValue.class).getAllSubValues();
+
+		IValue TrueValue = IntegralValue.create(1);
+
+		int failures = 0;
+		for (int i = 0; i < results.length; ++i) {
+			if (results[i].getValue() != TrueValue) {
+				++failures;
+			}
+		}
+
+		assertEquals("Failed evaluations", 0, failures);
 	}
 }

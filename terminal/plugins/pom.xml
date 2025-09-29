@@ -27,7 +27,5 @@
 	<modules>
 		<module>org.eclipse.tm.terminal.connector.remote</module>
 		<module>org.eclipse.tm.terminal.connector.cdtserial</module>
-
-		<module>org.eclipse.tm.terminal.view.core</module>
 	</modules>
 </project>

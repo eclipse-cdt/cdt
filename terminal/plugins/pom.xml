@@ -25,7 +25,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>org.eclipse.tm.terminal.connector.remote</module>
 		<module>org.eclipse.tm.terminal.connector.cdtserial</module>
 	</modules>
 </project>

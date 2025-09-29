@@ -243,6 +243,7 @@
 		<module>remote/org.eclipse.remote.jsch.core</module>
 		<module>remote/org.eclipse.remote.jsch.ui</module>
 		<module>remote/org.eclipse.remote.ui</module>
+		<module>remote/org.eclipse.tm.terminal.connector.remote</module>
 		<!-- Proxy bundles -->
 		<module>remote/org.eclipse.remote.proxy.core</module>
 		<module>remote/org.eclipse.remote.proxy.ui</module>

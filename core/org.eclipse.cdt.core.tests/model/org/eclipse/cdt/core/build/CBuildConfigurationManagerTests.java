@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2024 Renesas Electronics Europe.
+ * Copyright (c) 2024, 2025 Renesas Electronics Europe and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -154,21 +154,25 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 
 		// Create a new IBuildConfiguration.
 		CMakeBuildConfigurationProvider provider = new CMakeBuildConfigurationProvider();
-		String buildConfigBaseName = "testNoConfigs";
+		// Caution: name must not be the same as the project name.
+		String buildConfigBaseName = "testNoConfigs_new";
 		IBuildConfiguration buildConfiguration = configManager.createBuildConfiguration(provider, project,
 				buildConfigBaseName, new NullProgressMonitor());
-
-		// Create a new ICBuildConfiguration.
-		String buildConfigName = provider.getId() + "/" + buildConfigBaseName;
-		ILaunchTarget launchTarget = launchTargetManager.getLocalLaunchTarget();
-		ICBuildConfiguration cBuildConfig = new CMakeBuildConfiguration(buildConfiguration, buildConfigName,
-				mockToolchain, null, ILaunchManager.RUN_MODE, launchTarget);
 
 		// Try to get ICBuildConfiguration, before the IBuildConfiguration/ICBuildConfiguration pair was
 		// added to the build configuration manager. Such a getAdapter() call could happen in a parallel
 		// process. It will fail and buildConfiguration will be placed in configManager.noConfigs
 		ICBuildConfiguration cbConfig = buildConfiguration.getAdapter(ICBuildConfiguration.class);
 		assertThat(cbConfig, is(nullValue()));
+
+		// Create a new ICBuildConfiguration.
+		// Note creation must be done after the above getAdapter() call, because the creation of the
+		// ICBuildConfiguration can trigger an addBuildConfiguration() call (how?). Running getAdapter()
+		// after may or may not return null, depending on timing, making this test flaky.
+		String buildConfigName = provider.getId() + "/" + buildConfigBaseName;
+		ILaunchTarget launchTarget = launchTargetManager.getLocalLaunchTarget();
+		ICBuildConfiguration cBuildConfig = new CMakeBuildConfiguration(buildConfiguration, buildConfigName,
+				mockToolchain, null, ILaunchManager.RUN_MODE, launchTarget);
 
 		// Register the IBuildConfiguration/ICBuildConfiguration pair.
 		configManager.addBuildConfiguration(buildConfiguration, cBuildConfig);

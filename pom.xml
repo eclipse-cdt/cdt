@@ -150,6 +150,7 @@
 
 		<module>debug/org.eclipse.cdt.gdb</module>
 		<module>debug/org.eclipse.cdt.gdb.ui</module>
+		<module>debug/org.eclipse.tm.terminal.connector.cdtserial</module>
 		<module>debug/org.eclipse.cdt.gdb-feature</module>
 		<module>debug/org.eclipse.cdt.gnu.debug-feature</module>
 

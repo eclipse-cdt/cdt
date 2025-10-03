@@ -420,11 +420,11 @@
           relativePathPattern="memory/.*"/>
     </workingSet>
     <workingSet
-        name="CDT Native">
+        name="CDT Serial">
       <predicate
           xsi:type="predicates:RepositoryPredicate"
           project="org.eclipse.cdt"
-          relativePathPattern="native/.*"/>
+          relativePathPattern="serial/.*"/>
     </workingSet>
     <workingSet
         name="CDT Releng">

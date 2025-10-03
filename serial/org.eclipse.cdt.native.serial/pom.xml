@@ -86,7 +86,7 @@
 											<arg value="-v" />
 											<arg value="${project.basedir}/../..:/work" />
 											<arg value="-w" />
-											<arg value="/work/native/org.eclipse.cdt.native.serial" />
+											<arg value="/work/serial/org.eclipse.cdt.native.serial" />
 											<arg value="quay.io/eclipse-cdt/cdt-infra:latest" />
 											<arg value="make" />
 											<arg value="-C" />

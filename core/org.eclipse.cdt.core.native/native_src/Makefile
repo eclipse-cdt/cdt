@@ -87,7 +87,7 @@ WIN_TO_SIGN=$(OS_DIR_WIN32_X86_64)/starter.exe \
 	$(OS_DIR_WIN32_X86_64)/spawner.dll \
 	$(OS_DIR_WIN32_AARCH64)/starter.exe \
 	$(OS_DIR_WIN32_AARCH64)/spawner.dll
-### This block of code also exists in native/org.eclipse.cdt.native.serial/native_src/Makefile
+### This block of code also exists in serial/org.eclipse.cdt.native.serial/native_src/Makefile
 TMPDIR := $(shell mktemp -d -t production-XXXXXXXXXX)
 .PHONY: production
 production: $(MAC_TO_SIGN) $(WIN_TO_SIGN)

@@ -91,12 +91,12 @@ Especially when writing New & Noteworthy entries about API it is useful to link 
 This should be done using a relative path, such as:
 
 ```md
-The [SerialPort](../native/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java) supports arbitrary baud rates.
+The [SerialPort](../serial/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java) supports arbitrary baud rates.
 ```
 
 which renders like this:
 
-The [SerialPort](../native/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java) supports arbitrary baud rates.
+The [SerialPort](../serial/org.eclipse.cdt.native.serial/src/org/eclipse/cdt/serial/SerialPort.java) supports arbitrary baud rates.
 
 ### API Changes and Improvements
 

@@ -104,7 +104,7 @@ as access to Eclipse key signing server is needed to sign the jars.
 #### jniheaders
 
 The `jniheaders` profile can be used on the `core/org.eclipse.cdt.core.native` and
-`native/org.eclipse.cdt.native.serial` to rebuild the header files for JNI natives.
+`serial/org.eclipse.cdt.native.serial` to rebuild the header files for JNI natives.
 See also `native` property below.
 
 ### Properties
@@ -177,7 +177,7 @@ Therefore to build all the natives using docker add `-Dnative=docker` to your ma
 
 To build only the native libraries `mvn process-resources` can be used on the individual bundles with the simrel target platform, e.g.:
 
-- Serial library: `mvn process-resources -Dnative=docker  -DuseSimrelRepo -f native/org.eclipse.cdt.native.serial`
+- Serial library: `mvn process-resources -Dnative=docker  -DuseSimrelRepo -f serial/org.eclipse.cdt.native.serial`
 - Core library: `mvn process-resources -Dnative=docker  -DuseSimrelRepo -f core/org.eclipse.cdt.core.native`
 
 However, the challenge is that dll files on Windows have a timestamp in them. To have reproducible builds, we need to have a reproducible timestamp. As [Microsoft](https://devblogs.microsoft.com/oldnewthing/20180103-00/?p=97705) has moved away from using a timestamp to rather use a hash of the source files as the value, we therefore hash the source files used by the library and the header files for the Java API and use that as the value.

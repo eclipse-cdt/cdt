@@ -199,7 +199,8 @@
 		<module>memory/org.eclipse.cdt.debug.ui.memory.transport</module>
 		<module>memory/org.eclipse.cdt.debug.ui.memory-feature</module>
 
-		<module>native/org.eclipse.cdt.native.serial</module>
+		<module>serial/org.eclipse.cdt.native.serial</module>
+		<module>serial/org.eclipse.tm.terminal.connector.cdtserial</module>
 
 		<module>remote/org.eclipse.cdt.remote.core</module>
 

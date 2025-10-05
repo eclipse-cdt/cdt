@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2014 IBM Corporation and others.
+ * Copyright (c) 2004, 2014, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecDeclarationStatement;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecStaticAssert;
 
 /**
  * @author jcamelon
@@ -133,9 +133,8 @@ public class CPPASTDeclarationStatement extends ASTNode
 	public ICPPExecution getExecution() {
 		if (declaration instanceof ICPPExecutionOwner execOwner) {
 			ICPPExecution execution = execOwner.getExecution();
-			if (execution instanceof ExecReturn) {
-				// CPPASTStaticAssertionDeclaration simulates error handling via ExecReturn
-				// with conditional expression which must be executed as is to return problem value
+			if (execution instanceof ExecStaticAssert) {
+				// CPPASTStaticAssertionDeclaration simulates error handling via ExecStaticAssert
 				return execution;
 			} else {
 				return new ExecDeclarationStatement(execution);

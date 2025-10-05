@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2014, 2025 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,7 +52,7 @@ public interface ITypeMarshalBuffer {
 			EXEC_DECLARATION_STATEMENT = 0x05, EXEC_DECLARATOR = 0x06, EXEC_DEFAULT = 0x07,
 			EXEC_SIMPLE_DECLARATION = 0x08, EXEC_RETURN = 0x09, EXEC_EXPRESSION_STATEMENT = 0x0A, EXEC_IF = 0x0B,
 			EXEC_WHILE = 0x0C, EXEC_DO = 0x0D, EXEC_FOR = 0x0E, EXEC_RANGE_BASED_FOR = 0x0F, EXEC_SWITCH = 0x10,
-			EXEC_CONSTRUCTOR_CHAIN = 0x11, EXEC_INCOMPLETE = 0x12, EXEC_BUILTIN = 0x13;
+			EXEC_CONSTRUCTOR_CHAIN = 0x11, EXEC_INCOMPLETE = 0x12, EXEC_BUILTIN = 0x13, EXEC_STATIC_ASSERT = 0x14;
 	// Can add more executions up to 0x1C, after that it will collide with TypeMarshalBuffer.UNSTORABLE_TYPE.
 
 	static final short KIND_MASK = 0x001F;

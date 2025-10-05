@@ -162,6 +162,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIncomplete;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecRangeBasedFor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSimpleDeclaration;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecStaticAssert;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecSwitch;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecWhile;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.InitializerListType;
@@ -1797,6 +1798,8 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			return ExecIncomplete.unmarshal(firstBytes, buffer);
 		case ITypeMarshalBuffer.EXEC_BUILTIN:
 			return ExecBuiltin.unmarshal(firstBytes, buffer);
+		case ITypeMarshalBuffer.EXEC_STATIC_ASSERT:
+			return ExecStaticAssert.unmarshal(firstBytes, buffer);
 		}
 		throw new CoreException(CCorePlugin.createStatus("Cannot unmarshal an execution, first bytes=" + firstBytes)); //$NON-NLS-1$
 	}

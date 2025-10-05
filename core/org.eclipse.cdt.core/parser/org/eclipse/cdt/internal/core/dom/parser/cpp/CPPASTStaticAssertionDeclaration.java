@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Wind River Systems, Inc. and others.
+ * Copyright (c) 2009, 2013, 2025 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import static org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory.PRVALUE;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
@@ -26,9 +25,8 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguityParent;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.ProblemType;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecReturn;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecStaticAssert;
 
 public class CPPASTStaticAssertionDeclaration extends ASTNode
 		implements ICPPASTStaticAssertDeclaration, IASTAmbiguityParent, ICPPExecutionOwner {
@@ -116,18 +114,12 @@ public class CPPASTStaticAssertionDeclaration extends ASTNode
 
 	@Override
 	public ICPPExecution getExecution() {
-		// Naturally this would be compilation error; simulate executing this statement via return with evaluation problem.
+		// Naturally this would be compilation error; simulate executing this statement via ExecStaticAssert.
 		// If no evaluation of condition is available, treat it as unsatisfied condition too.
 		final ICPPEvaluation conditionExprEval = getCondition() instanceof ICPPASTExpression conditionExpr
 				? conditionExpr.getEvaluation()
-				: CPPASTLiteralExpression.INT_ZERO.getEvaluation();
+				: ExecStaticAssert.FAILED;
 
-		ICPPEvaluation conditionalEval = new EvalConditional(conditionExprEval, null, STATIC_ASSERT_FAILED, false,
-				false, (IBinding) null);
-
-		//		ICPPExecution constexprIfExecution = new ExecIf(true, null, conditionExprEval, null, null,
-		//				new ExecReturn(STATIC_ASSERT_FAILED));
-
-		return new ExecReturn(conditionalEval);
+		return new ExecStaticAssert(conditionExprEval);
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
+* Copyright (c) 2016, 2025 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -84,16 +84,19 @@ public class EvalUtil {
 			ConstexprEvaluationContext context) {
 		if (exec instanceof ExecExpressionStatement || exec instanceof ExecDeclarationStatement
 				|| exec instanceof ExecCase || exec instanceof ExecDefault) {
-			exec.executeForFunctionCall(record, context.recordStep());
+			ICPPExecution result = exec.executeForFunctionCall(record, context.recordStep());
+			if (result instanceof ExecStaticAssert) {
+				return result; // propagate failed static assert to caller
+			}
 			return null;
 		}
 
 		if (exec instanceof ExecCompoundStatement || exec instanceof ExecWhile || exec instanceof ExecFor
 				|| exec instanceof ExecRangeBasedFor || exec instanceof ExecDo || exec instanceof ExecIf
-				|| exec instanceof ExecSwitch) {
+				|| exec instanceof ExecSwitch || exec instanceof ExecStaticAssert) {
 			ICPPExecution innerResult = exec.executeForFunctionCall(record, context.recordStep());
 			if (innerResult instanceof ExecReturn || innerResult instanceof ExecBreak
-					|| innerResult instanceof ExecContinue) {
+					|| innerResult instanceof ExecContinue || innerResult instanceof ExecStaticAssert) {
 				return innerResult;
 			} else if (innerResult != null) {
 				return ExecIncomplete.INSTANCE;

@@ -167,6 +167,12 @@ class AggregateInitialization {
 						if (cost.compareTo(worstCost) > 0) {
 							worstCost = cost;
 						}
+
+						if (fIndex > fInitializers.length) {
+							// Already checked default-initialization, short-circuit now
+							// as worst cost will no longer change
+							break;
+						}
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2016, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -257,6 +257,11 @@ public interface ICPPNodeFactory extends INodeFactory {
 	 * @since 8.2
 	 */
 	public ICPPASTDeductionGuide newDeductionGuide();
+
+	/**
+	 * @since 9.3
+	 */
+	public ICPPASTConceptDefinition newConcept(IASTName name, IASTExpression expr);
 
 	public ICPPASTLinkageSpecification newLinkageSpecification(String literal);
 

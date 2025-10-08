@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2015, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -49,7 +49,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.ExecIncomplete;
 /**
  * C++ specific declarator.
  */
-public class CPPASTDeclarator extends CPPASTAttributeOwner
+public class CPPASTDeclarator extends CPPASTConstraintOwner
 		implements ICPPASTDeclarator, IASTImplicitNameOwner, ICPPExecutionOwner {
 	private IASTInitializer initializer;
 	private IASTName name;
@@ -198,6 +198,9 @@ public class CPPASTDeclarator extends CPPASTAttributeOwner
 		}
 
 		if (!acceptByAttributeSpecifiers(action))
+			return false;
+
+		if (!acceptByConstraints(action))
 			return false;
 
 		if (nested == null && name != null) {

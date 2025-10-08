@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2015, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -126,6 +126,8 @@ public interface IToken {
 	/** @since 5.2 */
 	int t_char32_t = 5203;
 	int t_class = 65;
+	/** @since 9.3 */
+	int t_concept = 9001;
 	int t_const = 67;
 
 	/** @since 5.4 */
@@ -166,6 +168,8 @@ public interface IToken {
 	int t_public = 100;
 	int t_register = 101;
 	int t_reinterpret_cast = 102;
+	/** @since 9.3 */
+	int t_requires = 9002;
 	int t_return = 103;
 	int t_short = 104;
 	int t_sizeof = 105;

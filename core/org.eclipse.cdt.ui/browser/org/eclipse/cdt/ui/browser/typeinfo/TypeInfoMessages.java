@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 QNX Software Systems and others.
+ * Copyright (c) 2004, 2010, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -42,6 +42,8 @@ public final class TypeInfoMessages extends NLS {
 	/** @since 5.3 */
 	public static String TypeSelectionDialog_filterEnumerators;
 	public static String TypeSelectionDialog_filterMacros;
+	/** @since 9.1 */
+	public static String TypeSelectionDialog_filterConcepts;
 	public static String TypeSelectionDialog_filterLowLevelTypes;
 	public static String TypeInfoLabelProvider_globalScope;
 	public static String TypeInfoLabelProvider_dash;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 QNX Software Systems and others.
+ * Copyright (c) 2000, 2014, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -248,6 +248,12 @@ public interface ICElement extends IAdaptable {
 	 * @since 7.3
 	 */
 	static final int C_PRAGMA = 95;
+
+	/**
+	 * a C++ concept.
+	 * @since 9.3
+	 */
+	static final int C_CONCEPT = 96;
 
 	/**
 	 * @deprecated use {@link IMethodDeclaration#isConstructor()}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2015, 2025 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -101,6 +101,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
 	private static final char[] CPP_IMPL_THREE_WAY_COMPARISON = "__cpp_impl_three_way_comparison".toCharArray(); //$NON-NLS-1$
 	private static final char[] CPP_CHAR8_T = "__cpp_char8_t".toCharArray(); //$NON-NLS-1$
+	private static final char[] CPP_CONCEPTS_T = "__cpp_concepts".toCharArray(); //$NON-NLS-1$
 
 	// Standard built-ins
 	private static final ObjectStyleMacro __CDT_PARSER__ = new ObjectStyleMacro("__CDT_PARSER__".toCharArray(), //$NON-NLS-1$
@@ -359,6 +360,10 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 		if (fMacroDictionary.containsKey(CPP_IMPL_THREE_WAY_COMPARISON)) {
 			fLexOptions.fSupportThreeWayComparisonOperator = true;
+		}
+		if (fMacroDictionary.containsKey(CPP_CONCEPTS_T)) {
+			fKeywords.put(Keywords.cCONCEPT, IToken.t_concept);
+			fKeywords.put(Keywords.cREQUIRES, IToken.t_requires);
 		}
 
 		ILocationCtx ctx = fLocationMap.pushTranslationUnit(fRootContent.getFileLocation(), fRootContent.getSource());

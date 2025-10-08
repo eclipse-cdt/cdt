@@ -104,6 +104,7 @@ import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPReferenceType;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPVariable;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPDeferredClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInternalUnknownScope;
@@ -11780,5 +11781,74 @@ public class AST2TemplateTests extends AST2CPPTestBase {
 	//	};
 	public void testAllowAggregateInitializationInTemplateBody() throws Exception {
 		parseAndCheckImplicitNameBindings();
+	}
+
+	//	template<typename T>
+	//	constexpr bool if_false(T t) {
+	//	    if (t)
+	//	        static_assert(false);
+	//	    else
+	//	        return true;
+	//	}
+	//	template<typename T>
+	//	constexpr bool if_true(T t) {
+	//	    if (t)
+	//	        return true;
+	//	    else
+	//	        static_assert(false);
+	//	}
+	//	static constexpr auto value_if_false = if_false(true);
+	//	static constexpr auto value_if_true = if_true(false);
+	public void testIfThenElseClauseStaticAssert() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+
+		// initial value must be available, but it's value is wrong because static_assert() is not supported (yet)
+		CPPVariable valueIfFalse = helper.assertNonProblem("value_if_false");
+		assertEquals(IntegralValue.STATIC_ASSERT_FAILED_ERROR, valueIfFalse.getInitialValue());
+
+		// initial value must be available, but it's value is wrong because static_assert() is not supported (yet)
+		CPPVariable valueIfTrue = helper.assertNonProblem("value_if_true");
+		assertEquals(IntegralValue.STATIC_ASSERT_FAILED_ERROR, valueIfTrue.getInitialValue());
+	}
+
+	//	constexpr bool asserts_true() {
+	//	    static_assert(true);
+	//	    return true;
+	//	}
+	//
+	//	constexpr bool calls_asserts_true() {
+	//	    asserts_true();
+	//	    return true;
+	//	}
+	//
+	//	constexpr bool asserts_false() {
+	//	    static_assert(false);
+	//	    return true;
+	//	}
+	//
+	//	constexpr bool calls_asserts_false() {
+	//	    asserts_false();
+	//	    return true;
+	//	}
+	//
+	//	static constexpr auto value_asserts_true = asserts_true();
+	//	static constexpr auto value_calls_asserts_true = calls_asserts_true();
+	//	static constexpr auto value_asserts_false = asserts_false();
+	//	static constexpr auto value_calls_asserts_false = calls_asserts_false();
+	public void testStaticAssertInCompoundStatement() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper();
+
+		// initial value must be available and equal 1but it's value is wrong because static_assert() is not supported (yet)
+		helper.assertVariableValue("value_asserts_true", 1);
+		helper.assertVariableValue("value_calls_asserts_true", 1);
+
+		// initial value must be available, and should be problem value
+		CPPVariable valueAssertsFalse = helper.assertNonProblem("value_asserts_false");
+		assertEquals(IntegralValue.STATIC_ASSERT_FAILED_ERROR, valueAssertsFalse.getInitialValue());
+		//assertEquals(IntegralValue.ERROR, valueAssertsFalse.getInitialValue());
+
+		// initial value must be available, and should be problem value
+		CPPVariable valueCallsAssertsFalse = helper.assertNonProblem("value_calls_asserts_false");
+		assertEquals(IntegralValue.STATIC_ASSERT_FAILED_ERROR, valueCallsAssertsFalse.getInitialValue());
 	}
 }

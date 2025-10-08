@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012, 2016 Wind River Systems, Inc. and others.
+ * Copyright (c) 2012, 2016, 2025 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -379,6 +379,8 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 						returnValueEval = returnValueEval.computeForFunctionCall(record, context.recordStep());
 					}
 					return returnValueEval;
+				} else if (bodyExec == ExecStaticAssert.FAILED_INSTANCE) {
+					return ExecStaticAssert.FAILED;
 				} else if (bodyExec == ExecIncomplete.INSTANCE) {
 					return EvalFixed.INCOMPLETE;
 				}

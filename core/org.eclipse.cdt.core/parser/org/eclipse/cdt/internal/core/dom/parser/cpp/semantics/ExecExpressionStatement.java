@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
+* Copyright (c) 2016, 2025 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -39,6 +39,8 @@ public class ExecExpressionStatement implements ICPPExecution {
 		ICPPEvaluation newExprEval = exprEval.computeForFunctionCall(record, context);
 		if (newExprEval == exprEval) {
 			return this;
+		} else if (newExprEval == ExecStaticAssert.FAILED) {
+			return ExecStaticAssert.FAILED_INSTANCE; // propagate failed static assert to caller
 		}
 		return new ExecExpressionStatement(newExprEval);
 	}

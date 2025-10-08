@@ -16,6 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileReader;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -220,4 +223,27 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
 		assertFalse(app.getFile("Debug/compile_commands.json").exists());
 	}
+
+	@Test
+	public void testGetCompilerArgsWithSpacesAndQuotes() {
+		String[] commandLine = { "gcc", "My file.c", "-o", "My file.o", "-DNAME=\"My Value\"",
+				"C:\\Program Files\\Lib" };
+		List<String> argsList = Arrays.asList(commandLine).subList(1, commandLine.length);
+		String result = escapeArgsForCompileCommand(argsList);
+		String expected = "\"My file.c\" -o \"My file.o\" \"-DNAME=\\\"My Value\\\"\" \"C:\\\\Program Files\\\\Lib\"";
+
+		assertEquals(expected, result);
+	}
+
+	private static String escapeArgsForCompileCommand(List<String> args) {
+		return args.stream().map(arg -> {
+			if (arg.contains(" ") || arg.contains("\"") || arg.contains("\\")) {
+				String escaped = arg.replace("\\", "\\\\").replace("\"", "\\\"");
+				return "\"" + escaped + "\"";
+			} else {
+				return arg;
+			}
+		}).collect(Collectors.joining(" "));
+	}
+
 }

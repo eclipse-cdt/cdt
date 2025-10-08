@@ -103,4 +103,11 @@ All public API classes and interfaces must have meaningful javadoc header, as we
 
 See [Eclipse Version Numbering Guildlines](https://wiki.eclipse.org/Version_Numbering)
 
+## Special Review Process
 
+There are occassionally PRs that improve CDT in areas where there is not enough current Eclipse CDT committer experience to provide detailed reviews.
+Therefore the Eclipse CDT project adopted (in [Oct 2023 call](https://hackmd.io/@jonahgraham/cdt-call-october-11-2023) and reaffirmed in [Oct 2025 call](https://github.com/eclipse-cdt/cdt/discussions/1340)) that such if the code looks correct and it is sufficiently tested it is ok to accept these changes.
+
+Examples of previous times this policy has been adopted include [PR #587](https://github.com/eclipse-cdt/cdt/pull/587#issuecomment-1871507053), [PR #581](https://github.com/eclipse-cdt/cdt/pull/581#pullrequestreview-1798433846) and others, particularly in the [language support category](https://github.com/eclipse-cdt/cdt/pulls?q=is%3Apr+is%3Aclosed+label%3Alanguage+).
+
+This policy can be referenced by a CDT committer/reviewer in the approval process.

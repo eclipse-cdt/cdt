@@ -57,6 +57,15 @@ public interface ISemanticProblem {
 	/** @since 6.9 */
 	int TYPE_CANNOT_DEDUCE_STRUCTURED_BINDING_TYPE = 10009;
 
+	/** @since 9.3 */
+	int TYPE_ASSIGNMENT_TO_RVALUE = 10011;
+
+	/** @since 9.3 */
+	int TYPE_ASSIGNMENT_TO_NON_MODIFIABLE_LVALUE = 10012;
+
+	/** @since 9.3 */
+	int TYPE_NO_CONVERSION_FOR_EXPRESSION = 10013;
+
 	/**
 	 * Returns the ID of the problem.
 	 */

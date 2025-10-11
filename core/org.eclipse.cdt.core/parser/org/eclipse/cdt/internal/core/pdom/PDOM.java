@@ -1343,6 +1343,11 @@ public class PDOM extends PlatformObject implements IPDOM {
 		return new PDOMInclude[0];
 	}
 
+	public boolean hasFileForLocation(int linkageId, IIndexFileLocation location) throws CoreException {
+		PDOMFile pdomFile = getFile(linkageId, location, null);
+		return pdomFile != null;
+	}
+
 	private PDOMFile adaptFile(IIndexFragmentFile file) throws CoreException {
 		if (file.getIndexFragment() == this && file instanceof PDOMFile) {
 			return (PDOMFile) file;

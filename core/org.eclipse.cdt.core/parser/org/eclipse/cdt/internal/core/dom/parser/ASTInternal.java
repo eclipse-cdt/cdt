@@ -202,8 +202,12 @@ public class ASTInternal {
 	}
 
 	private static IASTNode resolveConflict(IASTNode n1, IASTNode n2) {
-		if (n1 == null)
+		if (n1 == n2) {
+			// No need to dig deeper
+			return n1;
+		} else if (n1 == null) {
 			return n2;
+		}
 
 		IASTFileLocation loc1 = n1.getFileLocation();
 		if (loc1 == null)

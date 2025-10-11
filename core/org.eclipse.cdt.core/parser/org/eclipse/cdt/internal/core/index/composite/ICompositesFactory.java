@@ -54,4 +54,12 @@ public interface ICompositesFactory {
 	 * Converts values.
 	 */
 	public IValue getCompositeValue(IValue v);
+
+	/**
+	 * Compares bindings
+	 * @param lhs
+	 * @param rhs
+	 * @return
+	 */
+	public int compareCompositeBindings(IIndexFragmentBinding lhs, IIndexFragmentBinding rhs);
 }

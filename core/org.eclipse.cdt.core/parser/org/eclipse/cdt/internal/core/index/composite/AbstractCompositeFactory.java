@@ -104,6 +104,11 @@ public abstract class AbstractCompositeFactory implements ICompositesFactory {
 		return ts.toArray(new IIndexFragmentBinding[ts.size()]);
 	}
 
+	@Override
+	public int compareCompositeBindings(IIndexFragmentBinding lhs, IIndexFragmentBinding rhs) {
+		return fragmentComparator.compare(lhs, rhs);
+	}
+
 	/**
 	 * Convenience method for finding a binding with a definition (in the specified index
 	 * context) which is equivalent to the specified binding. If no definition is found,

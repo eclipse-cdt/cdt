@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -46,11 +48,13 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.index.composite.CompositingNotImplementedError;
 import org.eclipse.cdt.internal.core.index.composite.ICompositesFactory;
 import org.eclipse.cdt.internal.core.index.composite.c.CCompositesFactory;
 import org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory;
+import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -162,8 +166,67 @@ public class CIndex implements IIndex {
 		}
 	}
 
+	private static class BindingAndLocationComparator implements Comparator<IIndexName> {
+		@Override
+		public int compare(IIndexName f1, IIndexName f2) {
+			if (f1.equals(f2)) {
+				return 0;
+			}
+			try {
+				IIndexFile file1 = f1.getFile();
+				IIndexFile file2 = f2.getFile();
+				if (file1 != null && file2 != null) {
+					return file1.getLocation().getURI().compareTo(file2.getLocation().getURI());
+				}
+			} catch (CoreException e) {
+			}
+			return -1;
+		}
+	}
+
 	@Override
 	public IIndexName[] findNames(IBinding binding, int flags) throws CoreException {
+		ArrayList<IIndexName> result = new ArrayList<>();
+		PDOMNode pdomNode = binding.getAdapter(PDOMNode.class);
+		// collect names for this binding in all index fragments
+		if (!(SPECIALCASE_SINGLES && fFragments.length == 1)
+				&& pdomNode instanceof final IIndexFragmentBinding foreignIndexFragmeintBinding
+				&& foreignIndexFragmeintBinding.isFileLocal()) {
+			// same name in header file included from multiple projects will have multiple
+			// distinct fragment bindings private to index fragments belonging to projects
+
+			// 1. extract all fragment bindings with same name from all index fragments
+
+			ILinkage linkage = foreignIndexFragmeintBinding.getLinkage();
+			IIndexFragmentBinding[][] allBindings = findAllBindingsForLinkage(linkage, binding.getNameCharArray(),
+					false, IndexFilter.ALL, new NullProgressMonitor());
+
+			// 2. pick ones comparing equal to search argument and get names for each
+
+			ICompositesFactory factory = getCompositesFactory(linkage.getLinkageID());
+			for (IIndexFragmentBinding[] parts : allBindings) {
+				if (parts == null) {
+					continue;
+				}
+				for (IIndexFragmentBinding part : parts) {
+					if (part == null) {
+						continue;
+					}
+					if (factory.compareCompositeBindings(foreignIndexFragmeintBinding, part) == 0) {
+						// found another fragment binding which looks like search argument
+						ArrayUtil.addAll(result, findNamesForBinding(part, flags));
+					}
+				}
+			}
+		} else {
+			ArrayUtil.addAll(result, findNamesForBinding(binding, flags));
+		}
+
+		// return all found names
+		return result.toArray(new IIndexName[result.size()]);
+	}
+
+	private IIndexName[] findNamesForBinding(IBinding binding, int flags) throws CoreException {
 		ArrayList<IIndexFragmentName> result = new ArrayList<>();
 		if (binding instanceof ICPPUsingDeclaration) {
 			IBinding[] bindings = ((ICPPUsingDeclaration) binding).getDelegates();
@@ -212,7 +275,16 @@ public class CIndex implements IIndex {
 
 	@Override
 	public IIndexName[] findDeclarations(IBinding binding) throws CoreException {
-		return findNames(binding, FIND_DECLARATIONS_DEFINITIONS);
+		IIndexName[] names = findNames(binding, FIND_DECLARATIONS_DEFINITIONS);
+
+		// callers expect single entry per file if it is included multiple times, deduplicate by file location
+
+		TreeSet<IIndexName> ts = new TreeSet<>(new BindingAndLocationComparator());
+		for (IIndexName name : names) {
+			ts.add(name);
+		}
+
+		return ts.toArray(new IIndexName[ts.size()]);
 	}
 
 	@Override
@@ -652,25 +724,33 @@ public class CIndex implements IIndex {
 			List<IIndexBinding[]> result = new ArrayList<>();
 			ILinkage[] linkages = Linkage.getIndexerLinkages();
 			for (ILinkage linkage : linkages) {
-				if (filter.acceptLinkage(linkage)) {
-					IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fFragments.length][];
-					for (int i = 0; i < fFragments.length; i++) {
-						try {
-							IBinding[] part = fFragments[i].findBindings(name, filescope,
-									retargetFilter(linkage, filter), monitor);
-							fragmentBindings[i] = new IIndexFragmentBinding[part.length];
-							System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
-						} catch (CoreException e) {
-							CCorePlugin.log(e);
-							fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
-						}
-					}
-					ICompositesFactory factory = getCompositesFactory(linkage.getLinkageID());
-					result.add(factory.getCompositeBindings(fragmentBindings));
-				}
+				IIndexFragmentBinding[][] fragmentBindings = findAllBindingsForLinkage(linkage, name, filescope, filter,
+						monitor);
+				ICompositesFactory factory = getCompositesFactory(linkage.getLinkageID());
+				result.add(factory.getCompositeBindings(fragmentBindings));
 			}
 			return flatten(result);
 		}
+	}
+
+	private IIndexFragmentBinding[][] findAllBindingsForLinkage(ILinkage linkage, char[] name, boolean filescope,
+			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
+		if (!filter.acceptLinkage(linkage)) {
+			return new IIndexFragmentBinding[0][];
+		}
+
+		IIndexFragmentBinding[][] fragmentBindings = new IIndexFragmentBinding[fFragments.length][];
+		for (int i = 0; i < fFragments.length; i++) {
+			try {
+				IBinding[] part = fFragments[i].findBindings(name, filescope, retargetFilter(linkage, filter), monitor);
+				fragmentBindings[i] = new IIndexFragmentBinding[part.length];
+				System.arraycopy(part, 0, fragmentBindings[i], 0, part.length);
+			} catch (CoreException e) {
+				CCorePlugin.log(e);
+				fragmentBindings[i] = IIndexFragmentBinding.EMPTY_INDEX_BINDING_ARRAY;
+			}
+		}
+		return fragmentBindings;
 	}
 
 	@Override

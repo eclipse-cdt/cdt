@@ -1300,7 +1300,10 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			IIndexBinding ib = (IIndexBinding) binding;
 			// Don't adapt file local bindings from other fragments to this one.
 			if (ib.isFileLocal()) {
-				return null;
+				if (!getPDOM().hasFileForLocation(ib.getLinkage().getLinkageID(), ib.getLocalToFile().getLocation())) {
+					// location not indexed here
+					return null;
+				}
 			}
 		}
 
@@ -1602,6 +1605,11 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 				if (node != null) {
 					file = wpdom.getFileForASTNode(getLinkageID(), node);
 				}
+			} else if (binding instanceof ITypedef) {
+				IASTNode node = ASTInternal.getDeclaredInOneFileOnly(binding);
+				if (node != null) {
+					file = wpdom.getFileForASTNode(getLinkageID(), node);
+				}
 			} else if (binding instanceof ICPPNamespaceAlias) {
 				IASTNode node = ASTInternal.getDeclaredInSourceFileOnly(getPDOM(), binding, false, glob);
 				if (node != null) {
@@ -1610,6 +1618,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			}
 			if (file == null && !(binding instanceof IIndexBinding)) {
 				IBinding owner = binding.getOwner();
+				// TODO: maybe do the same for anonymous class type?
 				if (owner instanceof ICPPNamespace && owner.getNameCharArray().length == 0) {
 					IASTNode node = ASTInternal.getDefinitionOfBinding(binding);
 					if (node != null) {

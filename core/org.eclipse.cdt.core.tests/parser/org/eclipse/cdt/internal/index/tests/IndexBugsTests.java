@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -1571,6 +1573,109 @@ public class IndexBugsTests extends BaseTestCase {
 			assertEquals(1, bindings.length);
 			IIndexName[] decls = fIndex.findNames(bindings[0], IIndex.FIND_ALL_OCCURRENCES);
 			assertEquals(2, decls.length);
+		} finally {
+			fIndex.releaseReadLock();
+		}
+	}
+
+	//	// h1.h
+	//	typedef struct {
+	//	  int ts1;
+	//	} ts;
+	//
+	//	using tu = struct {
+	//	  int tu1;
+	//	};
+	//
+	//	struct A {
+	//	  int a1;
+	//	};
+
+	//	// h2.h
+	//	typedef struct {
+	//	  int ts2;
+	//	} ts;
+	//
+	//	using tu = struct {
+	//	  int tu2;
+	//	};
+	//
+	//	struct A {
+	//	  int a2;
+	//	};
+
+	//	// s1.cpp
+	//	#include "h1.h"
+	//	int test1() {
+	//	  ts t;
+	//	  t.ts1 = 1;
+	//	  tu u;
+	//	  u.tu1 = 2;
+	//	  A a;
+	//	  a.a1 = 3;
+	//	  return u.u1 + a.a1;
+	//	}
+
+	//	// s2.cpp
+	//	#include "h2.h"
+	//	int test2() {
+	//	  ts t;
+	//	  t.ts2 = 4;
+	//	  tu u;
+	//	  u.tu2 = 5;
+	//	  A a;
+	//	  a.a2 = 6;
+	//	  return u.u2 + a.a2;
+	//	}
+	public void testUnrelatedTypedefInHeader_Bug214146() throws Exception {
+		String[] contents = getContentsForTest(4);
+		final IIndexManager indexManager = CCorePlugin.getIndexManager();
+		IFile h1h = TestSourceReader.createFile(fCProject.getProject(), "h1.h", contents[0]);
+		IFile h2h = TestSourceReader.createFile(fCProject.getProject(), "h2.h", contents[1]);
+		IFile s1cpp = TestSourceReader.createFile(fCProject.getProject(), "s1.cpp", contents[2]);
+		IFile s2cpp = TestSourceReader.createFile(fCProject.getProject(), "s2.cpp", contents[3]);
+		indexManager.reindex(fCProject);
+		waitForIndexer();
+		fIndex.acquireReadLock();
+		try {
+			BindingAssertionHelper h1Helper = new BindingAssertionHelper(h1h, contents[0], fIndex);
+			ITypedef typedef1h = h1Helper.assertNonProblem("ts;", 2, ITypedef.class);
+			ITypedef alias1h = h1Helper.assertNonProblem("tu =", 2, ITypedef.class);
+			ICPPClassType class1h = h1Helper.assertNonProblem("A", 1, ICPPClassType.class);
+
+			BindingAssertionHelper h2Helper = new BindingAssertionHelper(h2h, contents[1], fIndex);
+			ITypedef typedef2h = h2Helper.assertNonProblem("ts;", 2, ITypedef.class);
+			ITypedef alias2h = h2Helper.assertNonProblem("tu =", 2, ITypedef.class);
+			ICPPClassType class2h = h2Helper.assertNonProblem("A", 1, ICPPClassType.class);
+
+			assertNotEquals(typedef1h, typedef2h);
+			assertNotEquals(alias1h, alias2h);
+			assertNotEquals(class1h, class2h);
+
+			BindingAssertionHelper s1Helper = new BindingAssertionHelper(s1cpp, contents[2], fIndex);
+			ITypedef typedef1binding = s1Helper.assertNonProblem("ts t;", 2, ITypedef.class);
+			s1Helper.assertNonProblem("ts1 = 1;", 3, ICPPVariable.class);
+			ITypedef alias1binding = s1Helper.assertNonProblem("tu u;", 2, ITypedef.class);
+			s1Helper.assertNonProblem("tu1 = 2;", 3, ICPPVariable.class);
+			ICPPClassType a1binding = s1Helper.assertNonProblem("A a;", 1, ICPPClassType.class);
+			s1Helper.assertNonProblem("a1 = 3;", 2, ICPPVariable.class);
+
+			BindingAssertionHelper s2Helper = new BindingAssertionHelper(s2cpp, contents[3], fIndex);
+			ITypedef typedef2binding = s2Helper.assertNonProblem("ts t;", 2, ITypedef.class);
+			s2Helper.assertNonProblem("ts2 = 4;", 3, ICPPVariable.class);
+			ITypedef alias2binding = s2Helper.assertNonProblem("tu u;", 2, ITypedef.class);
+			s2Helper.assertNonProblem("tu2 = 5;", 3, ICPPVariable.class);
+			ICPPClassType a2binding = s2Helper.assertNonProblem("A a;", 1, ICPPClassType.class);
+			s2Helper.assertNonProblem("a2 = 6;", 2, ICPPVariable.class);
+
+			// typedefs must be unique
+			assertNotEquals(typedef1binding, typedef2binding);
+
+			// aliases must be unique
+			assertNotEquals(alias1binding, alias2binding);
+
+			// class should be the same since CDT indexer adopts class redeclaration from different TU
+			assertEquals(a1binding, a2binding);
 		} finally {
 			fIndex.releaseReadLock();
 		}

@@ -56,6 +56,18 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
         # early copyright year.
         feature_start_year=2015
         ;;
+    remote/org.eclipse.tm.terminal.connector.remote.feature/feature.xml)
+        # The git history does not show the proper start year for cmake because of https://github.com/eclipse-cdt/cdt/pull/1360
+        # Note, we can't simply use --follow because that causes other features to have a too
+        # early copyright year.
+        feature_start_year=2015
+        ;;
+    serial/org.eclipse.tm.terminal.connector.cdtserial.feature/feature.xml)
+        # The git history does not show the proper start year for cmake because of https://github.com/eclipse-cdt/cdt/pull/1360
+        # Note, we can't simply use --follow because that causes other features to have a too
+        # early copyright year.
+        feature_start_year=2018
+        ;;
     *)
         feature_start_year=$(git log --reverse --format='%ad' --date="format:%Y" -- $feature_xml $plugin_dir | head -1)
         ;;

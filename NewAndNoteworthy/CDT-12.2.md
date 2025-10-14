@@ -20,6 +20,12 @@ The _LLVM with Clang_ toolchain description for CDT managed build now supports c
 
 The _Memory_ view is now populated correctly when debugging using LLDB. The _LLDB-MI Debug Process Launcher_ is selected by default when creating local _C/C++ Application_ debug configurations for macOS on Apple silicon (AArch64). A new Homebrew _tap_ allows for easy installation of the `lldb-mi` tool on macOS. Refer to the [Before you begin](https://github.com/eclipse-cdt/cdt/blob/main/doc/org.eclipse.cdt.doc.user/src/concepts/cdt_c_before_you_begin.adoc#macos) help page for updated tool installation instructions and to the [CDT FAQ](https://github.com/eclipse-cdt/cdt/blob/main/FAQ/README.md#how-do-i-install-the-lldb-debugger-integration) for LLDB integration setup details.
 
+## Instruction Stepping Mode Button
+
+The instruction stpping mode button is now hidden by default from the Main toolbar and the Run menu.
+The button's visiblity is controlled with Eclipse Activities (id `org.eclipse.cdt.debug.ui.activity.toggleInstructionStepMode`) and should automatically display when an active C/C++ debug session is activate.
+For ISVs that would like to make the button visible at all times they should enable the associated activity.
+
 # API Changes, current and planned
 
 ## Migrate Terminal bundles to Eclipse Platform

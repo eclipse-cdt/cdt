@@ -25,18 +25,8 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>org.eclipse.tm.terminal.control.feature</module>
-
-		<module>org.eclipse.tm.terminal.connector.local.feature</module>
 		<module>org.eclipse.tm.terminal.connector.remote.feature</module>
-		<module>org.eclipse.tm.terminal.connector.ssh.feature</module>
-		<module>org.eclipse.tm.terminal.connector.telnet.feature</module>
 		<module>org.eclipse.tm.terminal.connector.cdtserial.feature</module>
-
-		<module>org.eclipse.tm.terminal.view.feature</module>
-
-		<module>org.eclipse.tm.terminal.feature</module>
-
 	</modules>
 
 </project>

@@ -8,6 +8,14 @@ This section describes API removals that occurred in past releases, and upcoming
 
 Below is the detailed descriptions of API changes and mitigation efforts API consumers need to take.
 
+## API Changes in CDT 12.3.
+
+### Migrate Terminal features to Eclipse Platform
+
+As most of the terminal bundles have been migrated to Eclipse Platform, the Eclipse TM Terminal features will now upgrade to Eclipse Terminal Feature.
+Using a p2.inf file in org.eclipse.terminal.feature, that feature advertises as providing an update path for all of org.eclipse.tm.terminal features (except cdtserial and remote).
+See [Eclipse Platform PR#2199](https://github.com/eclipse-platform/eclipse.platform/pull/2199) for further details.
+
 ## API Changes in CDT 12.2.
 
 ### Migrate Terminal bundles to Eclipse Platform

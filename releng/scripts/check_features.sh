@@ -24,31 +24,6 @@ git ls-files -- \*/feature.xml | while read feature_xml; do
         plugin=$(xmllint --xpath 'string(//feature/@id)' $feature_xml)
     fi
 
-    if [ "$plugin" == 'org.eclipse.tm.terminal.control.feature' ]; then
-        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
-        continue;
-    fi
-    
-    if [ "$plugin" == 'org.eclipse.tm.terminal.connector.ssh.feature' ]; then
-        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
-        continue;
-    fi
-    
-    if [ "$plugin" == 'org.eclipse.tm.terminal.connector.telnet.feature' ]; then
-        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
-        continue;
-    fi
-    
-    if [ "$plugin" == 'org.eclipse.tm.terminal.feature' ]; then
-        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
-        continue;
-    fi
-    
-    if [ "$plugin" == 'org.eclipse.tm.terminal.view.feature' ]; then
-        # this never contained about mappings and we moved the plugin to platform that does not contain mappings as well
-        continue;
-    fi
-
     feature_dir=$(dirname ${feature_xml})
 
     if [ $(find * -name $plugin -type d -not -path */target/* | wc -l) -ne 1 ]; then

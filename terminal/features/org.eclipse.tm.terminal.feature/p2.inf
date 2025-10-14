@@ -1,5 +1,0 @@
-update.id=org.eclipse.tcf.te.terminals.feature.feature.group
-update.range=(0,$version$)
-provides.99.namespace=org.eclipse.equinox.p2.iu
-provides.99.name=org.eclipse.tcf.te.terminals.feature.feature.group
-provides.99.version=$version$

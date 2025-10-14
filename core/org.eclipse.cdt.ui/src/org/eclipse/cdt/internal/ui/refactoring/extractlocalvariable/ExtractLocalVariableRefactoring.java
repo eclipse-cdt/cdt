@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Google and others.
+ * Copyright (c) 2008, 2024 Google and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     Tom Ball (Google) - Initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
+ *     Taiming Wang - Name recommendation improvement
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.extractlocalvariable;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -28,11 +30,14 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTForStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -55,6 +60,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTEqualsInitializer;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPScope.CPPScopeProblem;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringDescriptor;
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
@@ -90,6 +96,70 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 	private IASTExpression target;
 	private final VariableNameInformation info;
 	private NodeContainer container;
+
+	/*
+	 * Retrieve variable names that are initialized by the to-be-extracted expression for reuse.
+	 */
+	private static final class LocalVariableWithIdenticalExpressionFinder extends ASTVisitor {
+		private ArrayList<String> usedNames;
+
+		private IASTNode expression;
+
+		private Boolean ifStopOnFirstMatch;
+
+		public LocalVariableWithIdenticalExpressionFinder(IASTNode expression, Boolean ifStopOnFirstMatch) {
+			usedNames = new ArrayList<>();
+			this.expression = expression;
+			this.ifStopOnFirstMatch = ifStopOnFirstMatch;
+			super.shouldVisitDeclarators = true;
+		}
+
+		public String getUsedName() {
+			return this.usedNames.get(0);
+		}
+
+		public void setUsedName(String usedName) {
+			this.usedNames.add(usedName);
+		}
+
+		@Override
+		public int visit(IASTDeclarator node) {
+			IASTInitializer initializer = node.getInitializer();
+			if (initializer != null) {
+				if (initializer.getRawSignature().equals("= " + this.expression.getRawSignature())) { //$NON-NLS-1$
+					setUsedName(node.getName().getRawSignature());
+					if (this.ifStopOnFirstMatch.booleanValue())
+						throw new AbortSearchException();
+				}
+			}
+			return super.visit(node);
+		}
+	}
+
+	/**
+	 * Retrieves a used name in the whole compilation unit that is assigned with the same
+	 * expression.
+	 *
+	 * @param selected the selected node
+	 *
+	 * @return a used variable name for recommending new names.
+	 */
+	private String getUsedNameForIdenticalExpressionInCu(IASTNode selected) {
+		IASTNode surroundingBlock = selected;
+		surroundingBlock = ASTQueries.findAncestorWithType(surroundingBlock, IASTTranslationUnit.class);
+		if (surroundingBlock == null) {
+			return null;
+		}
+		LocalVariableWithIdenticalExpressionFinder localVariableWithIdenticalExpressionFinder = new LocalVariableWithIdenticalExpressionFinder(
+				selected, Boolean.TRUE);
+		String usedNameForIdenticalExpressionInCu = null;
+		try {
+			surroundingBlock.accept(localVariableWithIdenticalExpressionFinder);
+		} catch (AbortSearchException e) {
+			usedNameForIdenticalExpressionInCu = localVariableWithIdenticalExpressionFinder.getUsedName();
+		}
+		return usedNameForIdenticalExpressionInCu;
+	}
 
 	public ExtractLocalVariableRefactoring(ICElement element, ISelection selection, ICProject project) {
 		super(element, selection, project);
@@ -134,7 +204,7 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		NodeHelper.findMethodContext(container.getNodesToWrite().get(0), refactoringContext, sm);
 		sm.worked(1);
 
-		info.setName(guessTempName());
+		info.setName(guessTempNameWithContext());
 		sm.done();
 
 		return initStatus;
@@ -238,6 +308,14 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		return container;
 	}
 
+	private static String getBaseNameFromReceiver(IASTName receiver) {
+		if (receiver != null) {
+			String receiverStr = receiver.toString();
+			return ConvertLoopOperation.modifyBaseName(receiverStr);
+		}
+		return "element"; //$NON-NLS-1$
+	}
+
 	private boolean isNodeInsideSelection(IASTNode node) {
 		return node.isPartOfTranslationUnitFile() && SelectionHelper.isNodeInsideRegion(node, selectedRegion);
 	}
@@ -315,10 +393,198 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		}
 	}
 
+	public String guessTempNameWithContext() {
+		String[] proposals = guessTempNamesWithContext();
+		if (proposals.length == 0) {
+			return info.getName();
+		} else {
+			String name = proposals[0];
+			return name;
+		}
+	}
+
 	private String[] getPrefixes() {
 		// In Future we could use user preferences to define the prefixes
-		String[] prefixes = { "get", "is" }; //$NON-NLS-1$//$NON-NLS-2$
+		String[] prefixes = { "get", "is", "to", "create", "load", "find", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$
+				"build", "generate", "prepare", "parse", "current", "resolve", "retrieve", "make", "add", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$//$NON-NLS-5$//$NON-NLS-6$//$NON-NLS-7$//$NON-NLS-8$//$NON-NLS-9$
+				"extract", "select", "allocate", "write" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
 		return prefixes;
+	}
+
+	/**
+	 * @return proposed variable names based on context (may be empty, but not null). The first proposal should be
+	 *         used as "best guess" (if it exists).
+	 */
+	public String[] guessTempNamesWithContext() {
+
+		final List<String> guessedTempNames = new ArrayList<>();
+		final List<String> usedNames = new ArrayList<>();
+		IASTFunctionDefinition funcDef = ASTQueries.findAncestorWithType(target, IASTFunctionDefinition.class);
+		final IScope scope;
+		if (funcDef != null && funcDef.getBody() instanceof IASTCompoundStatement) {
+			IASTCompoundStatement body = (IASTCompoundStatement) funcDef.getBody();
+			scope = body.getScope();
+		} else {
+			scope = null;
+		}
+
+		if (target != null) {
+
+			target.accept(new ASTVisitor() {
+				{
+					shouldVisitNames = true;
+					shouldVisitExpressions = true;
+				}
+
+				@Override
+				public int visit(IASTName name) {
+					addTempName(name.getLastName().toString());
+					return super.visit(name);
+				}
+
+				@Override
+				public int visit(IASTExpression expression) {
+					// If the expression starts with a function call with a name, we should only
+					// need to guess this name
+					if (expression == target && expression instanceof IASTFunctionCallExpression) {
+						String usedNameForIdenticalExpressionInCu = getUsedNameForIdenticalExpressionInCu(expression);
+						IASTFunctionCallExpression functionCallExpression = (IASTFunctionCallExpression) expression;
+						IASTExpression functionNameExpression = functionCallExpression.getFunctionNameExpression();
+						if (functionNameExpression instanceof IASTFieldReference) {
+							IASTFieldReference fieldReference = (IASTFieldReference) functionNameExpression;
+							IASTExpression fieldOwner = fieldReference.getFieldOwner();
+							IASTName field = fieldReference.getFieldName();
+
+							IASTInitializerClause[] arguments = functionCallExpression.getArguments();
+							Boolean hasFunctionCalls = false;
+							for (IASTInitializerClause argument : arguments) {
+								if (argument instanceof IASTFunctionCallExpression) {
+									hasFunctionCalls = true;
+								}
+							}
+							if ((arguments.length > 1 || hasFunctionCalls || target.getRawSignature().length() >= 30)
+									&& usedNameForIdenticalExpressionInCu != null) {
+								addTempName(usedNameForIdenticalExpressionInCu);
+							} else if (fieldOwner instanceof IASTIdExpression) {
+								String name = field.getLastName().toString();
+								if (name.equals("begin") || name.equals("end") || name.equals("get")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+									IASTIdExpression idExpression = (IASTIdExpression) fieldOwner;
+									String modifiedName = getBaseNameFromReceiver(idExpression.getName().getLastName());
+									if (!modifiedName.equals("element")) //$NON-NLS-1$
+										addTempName(modifiedName);
+								}
+							} else {
+								addTempName(field.getLastName().toString());
+							}
+
+						}
+
+						if (functionNameExpression instanceof IASTIdExpression) {
+							IASTIdExpression idExpression = (IASTIdExpression) functionNameExpression;
+
+							if (idExpression.getName() != null) {
+								IASTInitializerClause[] arguments = functionCallExpression.getArguments();
+								Boolean hasFunctionCalls = false;
+								for (IASTInitializerClause argument : arguments) {
+									if (argument instanceof IASTFunctionCallExpression) {
+										hasFunctionCalls = true;
+									}
+								}
+								if ((arguments.length > 1 || hasFunctionCalls
+										|| target.getRawSignature().length() >= 30)
+										&& usedNameForIdenticalExpressionInCu != null) {
+									addTempName(usedNameForIdenticalExpressionInCu);
+								} else {
+									addTempName(idExpression.getName().getLastName().toString());
+								}
+								if (guessedTempNames.size() > 0) {
+									return PROCESS_ABORT;
+								}
+							}
+						}
+					}
+
+					else if (expression instanceof IASTLiteralExpression) {
+						IASTLiteralExpression literal = (IASTLiteralExpression) expression;
+						String name = null;
+						switch (literal.getKind()) {
+						case IASTLiteralExpression.lk_char_constant:
+							name = "c"; //$NON-NLS-1$
+							break;
+						case IASTLiteralExpression.lk_float_constant:
+							name = "f"; //$NON-NLS-1$
+							break;
+						case IASTLiteralExpression.lk_integer_constant:
+							name = "i"; //$NON-NLS-1$
+							break;
+						case IASTLiteralExpression.lk_string_literal:
+							name = literal.toString();
+							break;
+						case IASTLiteralExpression.lk_false:
+						case IASTLiteralExpression.lk_true:
+							name = "b"; //$NON-NLS-1$
+							break;
+						}
+						if (name != null) {
+							addTempName(name);
+						}
+					} else if (expression instanceof IASTFieldReference) {
+						String usedNameForIdenticalExpressionInCu = getUsedNameForIdenticalExpressionInCu(expression);
+						if (target.getRawSignature().length() >= 10 && usedNameForIdenticalExpressionInCu != null) {
+							addTempName(usedNameForIdenticalExpressionInCu);
+						} else {
+							addTempName(((IASTFieldReference) expression).getFieldName().getLastName().toString());
+						}
+
+					} else if (expression instanceof IASTArraySubscriptExpression) {
+						IASTArraySubscriptExpression astSubscriptExpression = (IASTArraySubscriptExpression) expression;
+						IASTExpression arrayExpression = astSubscriptExpression.getArrayExpression();
+						if (arrayExpression instanceof IASTIdExpression) {
+							IASTIdExpression idExpression = (IASTIdExpression) arrayExpression;
+							String modifiedName = getBaseNameFromReceiver(idExpression.getName().getLastName());
+							if (!modifiedName.equals("element")) //$NON-NLS-1$
+								addTempName(modifiedName);
+						}
+
+					}
+					return super.visit(expression);
+				}
+
+				private void addTempName(String name) {
+					name = trimPrefixes(name);
+
+					IPreferencesService preferences = Platform.getPreferencesService();
+					int capitalization = preferences.getInt(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.NAME_STYLE_VARIABLE_CAPITALIZATION,
+							PreferenceConstants.NAME_STYLE_CAPITALIZATION_LOWER_CAMEL_CASE, null);
+					String wordDelimiter = preferences.getString(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.NAME_STYLE_VARIABLE_WORD_DELIMITER, "", null); //$NON-NLS-1$
+					String prefix = preferences.getString(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.NAME_STYLE_VARIABLE_PREFIX, "", null); //$NON-NLS-1$
+					String suffix = preferences.getString(CUIPlugin.PLUGIN_ID,
+							PreferenceConstants.NAME_STYLE_VARIABLE_SUFFIX, "", null); //$NON-NLS-1$
+					NameComposer composer = new NameComposer(capitalization, wordDelimiter, prefix, suffix);
+					name = composer.compose(name);
+
+					if (name.length() > 0) {
+						if (nameAvailable(name, guessedTempNames, scope)) {
+							guessedTempNames.add(name);
+						} else {
+							usedNames.add(name);
+						}
+					}
+				}
+			});
+
+		}
+		if (guessedTempNames.isEmpty()) {
+			String name = makeTempName(usedNames, scope);
+			if (name != null) {
+				guessedTempNames.add(name);
+			}
+		}
+		return guessedTempNames.toArray(new String[guessedTempNames.size()]);
 	}
 
 	/**
@@ -469,7 +735,17 @@ public class ExtractLocalVariableRefactoring extends CRefactoring {
 		}
 		if (scope != null) {
 			IBinding[] bindings = scope.find(name);
-			return bindings == null || bindings.length == 0;
+			if (bindings == null || bindings.length == 0) {
+				return true;
+			} else {
+				if (bindings.length == 1) {
+					IBinding binding = bindings[0];
+					if (binding instanceof CPPScopeProblem) {
+						return true;
+					}
+				}
+				return false;
+			}
 		}
 		return true; // No name references found
 	}

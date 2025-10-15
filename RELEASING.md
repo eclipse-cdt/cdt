@@ -80,7 +80,7 @@ find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i s/12.2.0.qualifier/12.3.0.
 - Update Marketplace entries:
     - https://marketplace.eclipse.org/content/complete-eclipse-cc-ide/edit (Complete C/C++ IDE)
     - https://marketplace.eclipse.org/content/eclipse-cc-ide/edit (CDT)
-    - https://marketplace.eclipse.org/content/tm-terminal/edit (Terminal)
+    - https://marketplace.eclipse.org/content/eclipse-terminal/edit (Terminal) -- TODO hand ownership to Eclipse Platform
 - Publish the GitHub release page and create a discussion for it.
 - Forward the discussion email to cdt-dev
 - Update cdt.aggrcon with the final URL for the release

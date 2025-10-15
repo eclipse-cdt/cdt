@@ -77,7 +77,6 @@ jobs:
         path: |
           event.json
           */*/target/surefire-reports/*.xml
-          terminal/plugins/org.eclipse.tm.terminal.test/target/surefire-reports/*.xml
     - name: Prepare Docs for upload
       if: (success() || failure()) && steps.filter.outputs.docs
       run: |

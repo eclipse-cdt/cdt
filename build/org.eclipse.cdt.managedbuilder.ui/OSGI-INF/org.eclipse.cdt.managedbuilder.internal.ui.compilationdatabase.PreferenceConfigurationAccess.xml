@@ -5,6 +5,6 @@
    </service>
    <reference cardinality="0..1" field="enable" interface="org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.GenerateCDBEnable" name="enable"/>
    <reference cardinality="1..1" field="metadata" interface="org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.PreferencesMetadata" name="metadata"/>
-   <reference cardinality="1..1" field="workspace" interface="org.eclipse.core.resources.IWorkspace" name="workspace"/>
+   <reference cardinality="1..1" field="workspace" interface="IWorkspace" name="workspace"/>
    <implementation class="org.eclipse.cdt.managedbuilder.internal.ui.compilationdatabase.PreferenceConfigurationAccess"/>
 </scr:component>

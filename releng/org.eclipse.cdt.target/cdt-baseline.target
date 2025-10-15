@@ -39,13 +39,7 @@
       <unit id="org.eclipse.remote.serial.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.remote.telnet.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.tm.terminal.connector.cdtserial.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.tm.terminal.connector.local.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.tm.terminal.connector.remote.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.tm.terminal.connector.ssh.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.tm.terminal.connector.telnet.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.tm.terminal.control.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.tm.terminal.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.tm.terminal.view.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.tools.templates.core" version="0.0.0"/>
       <unit id="org.eclipse.tools.templates.freemarker" version="0.0.0"/>
       <unit id="org.eclipse.tools.templates.ui" version="0.0.0"/>

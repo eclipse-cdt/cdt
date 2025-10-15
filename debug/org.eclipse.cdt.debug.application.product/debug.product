@@ -228,7 +228,7 @@ United States, other countries, or both.
       <feature id="org.eclipse.cdt.testsrunner.feature" installMode="root"/>
       <feature id="org.eclipse.launchbar" installMode="root"/>
       <feature id="org.eclipse.launchbar.remote" installMode="root"/>
-      <feature id="org.eclipse.tm.terminal.feature" installMode="root"/>
+      <feature id="org.eclipse.terminal.feature" installMode="root"/>
       <feature id="org.eclipse.tm.terminal.connector.cdtserial.feature" installMode="root"/>
    </features>
 

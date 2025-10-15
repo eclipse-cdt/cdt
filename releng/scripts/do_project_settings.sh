@@ -99,12 +99,6 @@ git ls-files  -- \*\*/.project ":!$COREPROJECT/.project" | while read i ; do
                 '-es@compilers.p.build.bin.includes=0@compilers.p.build.bin.includes=1@' \
                 $d/.settings/org.eclipse.pde.prefs
         fi
-        if echo $i | grep 'org.eclipse.tm.terminal.view.ui' > /dev/null; then
-            # Special case, see comment in org.eclipse.tm.terminal.view.ui/plugin.xml
-            sed -i \
-                '-es@compilers.p.unknown-identifier=0@compilers.p.unknown-identifier=1@' \
-                $d/.settings/org.eclipse.pde.prefs
-        fi
         if echo $i | grep 'org.eclipse.cdt.codan.ui.cxx' > /dev/null; then
             # Special case, see comment in org.eclipse.cdt.codan.ui.cxx/plugin.xml
             sed -i \

@@ -32,7 +32,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.tm.terminal.control.feature"/>
+      <import feature="org.eclipse.terminal.feature"/>
    </requires>
 
    <plugin

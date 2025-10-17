@@ -5162,7 +5162,7 @@
     <template
           icon="icons/cdt_logo_48.png"
           id="org.eclipse.cdt.ui.managed.c"
-          label="C Managed Build"
+          label="Classic C Project"
           wizard="org.eclipse.cdt.internal.ui.wizards.CProjectWizard2">
        <description>
           A C Project build using the CDT&apos;s managed build system.
@@ -5170,17 +5170,23 @@
        <tagReference
              id="org.eclipse.cdt.ui.cdtTag">
        </tagReference>
+       <tagReference
+             id="org.eclipse.cdt.make.ui.tag">
+       </tagReference>
     </template>
     <template
           icon="icons/cdt_logo_48.png"
           id="org.eclipse.cdt.ui.managed.cpp"
-          label="C++ Managed Build"
+          label="Classic C++ Project"
           wizard="org.eclipse.cdt.internal.ui.wizards.CCProjectWizard2">
        <description>
           A C++ Project build using the CDT&apos;s managed build system.
        </description>
        <tagReference
              id="org.eclipse.cdt.ui.cdtTag">
+       </tagReference>
+       <tagReference
+             id="org.eclipse.cdt.make.ui.tag">
        </tagReference>
     </template>
  </extension>

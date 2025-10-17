@@ -28,22 +28,21 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-= Classic C/{cpp} projects
+= Using the Managed Build System
 
-xref:managed_build_system.adoc[Using the Managed Build System]
+*Classic C/{cpp}* projects are based on the Managed Build System.
+Managed Build projects can generate a Makefile based on GUI controlled
+build configurations.
 
-xref:cdt_w_basic.adoc[Tutorial: Creating a Classic C/{cpp} project]
+These are some key features of Classic C/{cpp} projects:
 
-xref:cdt_w_import.adoc[Tutorial: Importing an existing project]
+* Makefile generation by GUI controlled build configurations.
+* The user can simply add source files, and the Makefile generation
+  will automatically include them.
+* Multiple build configurations, default _Release_ and _Debug_.
+* A mode in which Makefile generation is disabled.
+  For writing your own Makefile or using existing code.
+* The LaunchBar is not needed.
 
-xref:cdt_w_newcpp.adoc[Creating your {cpp} file]
 
-xref:cdt_w_newmake.adoc[Creating a makefile]
-
-xref:cdt_w_build.adoc[Building a project]
-
-xref:cdt_w_debug.adoc[Debugging a project]
-
-xref:cdt_w_existing_code.adoc[Importing your C/{cpp} source files into Eclipse]
-
-xref:../llvm/user_manual.adoc[LLVM with Clang/GCC for Eclipse CDT]
+icon:arrow-circle-right[] xref:cdt_w_basic.adoc[Next: Creating a Classic C/{cpp} project] 

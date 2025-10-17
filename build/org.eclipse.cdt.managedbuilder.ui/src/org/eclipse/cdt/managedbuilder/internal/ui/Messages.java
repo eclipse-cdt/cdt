@@ -18,6 +18,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	public static String AbstractCWizard_0;
+	public static String AbstractCWizard_1;
 	public static String AbstractPrefPage_0;
 	public static String ArtifactTab_0;
 	public static String ArtifactTab_1;

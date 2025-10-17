@@ -30,7 +30,7 @@ public class StdBuildWizard extends AbstractCWizard {
 	/**
 	 * @since 5.1
 	 */
-	public static final String EMPTY_PROJECT = Messages.AbstractCWizard_0;
+	public static final String EMPTY_PROJECT = Messages.AbstractCWizard_1;
 
 	@Override
 	public EntryDescriptor[] createItems(boolean supportedOnly, IWizard wizard) {

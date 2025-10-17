@@ -626,7 +626,7 @@
     <template
           icon="icons/cdt_logo_48.png"
           id="org.eclipse.cdt.make.ui.template"
-          label="Makefile Project"
+          label="Core Makefile Project"
           wizard="org.eclipse.cdt.make.internal.ui.wizards.NewMakefileProjectWizard">
        <description>
           Create a Makefile project using CDT&apos;s new Core Build System. Over existing content or a new project with optional Hello World example.

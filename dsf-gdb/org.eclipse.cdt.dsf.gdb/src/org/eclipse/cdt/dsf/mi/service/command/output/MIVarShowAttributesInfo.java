@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 QNX Software Systems and others.
+ * Copyright (c) 2000, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
+ *     John Dallaway - Accommodate LLDB-MI result record format (#1363)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -29,7 +30,7 @@ public class MIVarShowAttributesInfo extends MIInfo {
 				MIResult[] results = rr.getMIResults();
 				for (int i = 0; i < results.length; i++) {
 					String var = results[i].getVariable();
-					if (var.equals("attr")) { //$NON-NLS-1$
+					if (var.equals("attr") || var.equals("status")) { //$NON-NLS-1$ //$NON-NLS-2$
 						MIValue value = results[i].getMIValue();
 						if (value instanceof MIConst) {
 							attr = ((MIConst) value).getString();

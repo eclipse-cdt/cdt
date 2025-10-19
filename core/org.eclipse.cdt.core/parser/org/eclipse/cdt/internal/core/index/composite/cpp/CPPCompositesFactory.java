@@ -101,6 +101,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalCompoundStatem
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConditional;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalConstructor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFixed;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFoldExpression;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionCall;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.EvalID;
@@ -566,6 +567,31 @@ public class CPPCompositesFactory extends AbstractCompositeFactory {
 			IType a2 = getCompositeType(a);
 			if (a != a2 || templateDefinition != compositeTemplateDefinition)
 				e = new EvalUnaryTypeID(e.getOperator(), a2, compositeTemplateDefinition);
+			return e;
+		}
+		if (eval instanceof EvalFoldExpression e) {
+			ICPPEvaluation init = e.getInitExpression();
+			ICPPEvaluation init2 = getCompositeEvaluation(init);
+
+			boolean anyChanged = init != init2 || templateDefinition != compositeTemplateDefinition;
+
+			ICPPEvaluation[] evals = e.getExpansionPatterns();
+			ICPPEvaluation[] packEvals = getCompositeEvaluationArray(evals);
+
+			if (!anyChanged) {
+				for (int i = 0; i < evals.length; ++i) {
+					if (evals[i] != packEvals[i]) {
+						anyChanged = true;
+						break;
+					}
+				}
+			}
+
+			if (anyChanged) {
+				e = new EvalFoldExpression(e.getOperator(), e.getIsComma(), e.getIsLeftFold(), packEvals, init2,
+						compositeTemplateDefinition);
+			}
+
 			return e;
 		}
 

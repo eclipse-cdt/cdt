@@ -68,6 +68,18 @@ public class EvalFoldExpression extends CPPDependentEvaluation {
 		return fOperator;
 	}
 
+	public boolean getIsComma() {
+		return fIsComma;
+	}
+
+	public boolean getIsLeftFold() {
+		return fIsLeftFold;
+	}
+
+	public ICPPEvaluation[] getExpansionPatterns() {
+		return fPackEvals;
+	}
+
 	public ICPPEvaluation getInitExpression() {
 		return fInitEval;
 	}

@@ -1415,6 +1415,7 @@ public class PDOM extends PlatformObject implements IPDOM {
 	public IIndexFragmentBinding[] findBindings(char[] name, boolean filescope, boolean isCaseSensitive,
 			IndexFilter filter, IProgressMonitor monitor) throws CoreException {
 		ArrayList<IIndexFragmentBinding> result = new ArrayList<>();
+		HashSet<PDOMBinding> uniqueNodes = new HashSet<>();
 		try {
 			for (PDOMLinkage linkage : getLinkageList()) {
 				if (filter.acceptLinkage(linkage)) {
@@ -1422,7 +1423,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 						PDOMBinding[] bindings = linkage.getBindingsViaCache(name, monitor);
 						for (PDOMBinding binding : bindings) {
 							if (filter.acceptBinding(binding)) {
-								result.add(binding);
+								if (uniqueNodes.add(binding)) {
+									result.add(binding);
+								}
 							}
 						}
 					}
@@ -1443,7 +1446,9 @@ public class PDOM extends PlatformObject implements IPDOM {
 
 						PDOMBinding[] bindings = visitor.getBindings();
 						for (PDOMBinding binding : bindings) {
-							result.add(binding);
+							if (uniqueNodes.add(binding)) {
+								result.add(binding);
+							}
 						}
 					}
 				}

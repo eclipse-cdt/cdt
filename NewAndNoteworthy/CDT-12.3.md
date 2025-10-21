@@ -6,6 +6,25 @@ This is the New & Noteworthy page for CDT 12.3 which is part of Eclipse 2025-12 
 
 # Release Notes
 
+## CMake toolchain selection is respected
+
+[See Issue #1140](https://github.com/eclipse-cdt/cdt/issues/1140)
+
+When you choose a **GCC** or **Clang** toolchain for a CMake project in **Launch Bar → Launch Configuration → Build Settings**, that selection is now honoured during builds.
+
+The environment variables `CC` (C compiler) and `CXX` (C++ compiler) are set to the chosen compiler in the process that runs CMake. During **configure**, CMake reads these and maps them to `CMAKE_C_COMPILER` and `CMAKE_CXX_COMPILER`.
+
+### Precedence
+
+- If `CC`/`CXX` are already defined in the system environment (e.g., `gcc`/`g++`) but a **Clang** toolchain is selected in Build Settings, the Build Settings selection **overrides** the system environment and Clang is used.
+
+- Explicit CMake cache variables take precedence over Build Settings `CC`/`CXX` environment variables. If you pass `-D CMAKE_C_COMPILER=clang -D CMAKE_CXX_COMPILER=clang++` in **Additional CMake arguments** while the Build Settings toolchain is set to GCC, the build will use **Clang**.
+
+> Note: CMake chooses compilers at the first configure of a build directory. If you change toolchains, re-configure with a clean cache or a new build directory.
+
+More information: [CMake FAQ - Using a different compiler](https://gitlab.kitware.com/cmake/community/-/wikis/FAQ#how-do-i-use-a-different-compiler).
+
+
 ## Gdb Remote launch targets for Core Build projects.
 
 Core Build CMake and Makefile projects now support the Gdb Remote TCP and Serial launch targets.

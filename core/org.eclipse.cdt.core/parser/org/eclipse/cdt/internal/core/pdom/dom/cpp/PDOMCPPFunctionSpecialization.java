@@ -310,12 +310,6 @@ class PDOMCPPFunctionSpecialization extends PDOMCPPSpecialization
 	}
 
 	@Override
-	public int pdomCompareTo(PDOMBinding other) {
-		int cmp = super.pdomCompareTo(other);
-		return cmp == 0 ? PDOMCPPFunction.compareSignatures(this, other) : cmp;
-	}
-
-	@Override
 	public IType[] getExceptionSpecification() {
 		try {
 			final long rec = getPDOM().getDB().getRecPtr(record + EXCEPTION_SPEC);

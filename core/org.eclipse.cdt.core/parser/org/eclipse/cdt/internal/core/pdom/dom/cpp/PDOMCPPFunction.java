@@ -34,7 +34,6 @@ import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -402,28 +401,6 @@ class PDOMCPPFunction extends PDOMCPPBinding implements ICPPFunction, IPDOMOverl
 	@Override
 	public Object clone() {
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public int pdomCompareTo(PDOMBinding other) {
-		int cmp = super.pdomCompareTo(other);
-		return cmp == 0 ? compareSignatures(this, other) : cmp;
-	}
-
-	protected static int compareSignatures(IPDOMOverloader a, Object b) {
-		if (b instanceof IPDOMOverloader) {
-			IPDOMOverloader bb = (IPDOMOverloader) b;
-			try {
-				int mySM = a.getSignatureHash();
-				int otherSM = bb.getSignatureHash();
-				return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
-			} catch (CoreException e) {
-				CCorePlugin.log(e);
-			}
-		} else {
-			assert false;
-		}
-		return 0;
 	}
 
 	@Override

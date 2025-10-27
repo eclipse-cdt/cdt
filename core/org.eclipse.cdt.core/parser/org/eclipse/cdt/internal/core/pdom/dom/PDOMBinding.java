@@ -396,6 +396,9 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 				IString s0 = b0.getDBName(), s1 = b1.getDBName();
 				cmp = s0.compare(s1, true);
 				if (cmp == 0) {
+					cmp = compareSignatures(b0, b1);
+				}
+				if (cmp == 0) {
 					long l1 = b0.getLocalToFileRec();
 					long l2 = b1.getLocalToFileRec();
 					if (l1 != l2) {
@@ -413,6 +416,23 @@ public abstract class PDOMBinding extends PDOMNamedNode implements IPDOMBinding 
 			CCorePlugin.log(e);
 			return -1;
 		}
+	}
+
+	protected static int compareSignatures(PDOMBinding a, PDOMBinding b) {
+		try {
+			final IPDOMOverloader bo0 = a instanceof final IPDOMOverloader xa ? xa : null;
+			final IPDOMOverloader bo1 = b instanceof final IPDOMOverloader xb ? xb : null;
+			if (bo0 == null || bo1 == null) {
+				return bo0 == bo1 ? 0 : (bo0 == null ? -1 : 1);
+			} else {
+				int mySM = bo0.getSignatureHash();
+				int otherSM = bo1.getSignatureHash();
+				return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
+			}
+		} catch (CoreException e) {
+			CCorePlugin.log(e);
+		}
+		return 0;
 	}
 
 	/**

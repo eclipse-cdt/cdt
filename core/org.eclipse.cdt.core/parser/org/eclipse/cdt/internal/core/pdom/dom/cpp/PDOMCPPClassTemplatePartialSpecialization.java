@@ -28,7 +28,6 @@ import org.eclipse.cdt.internal.core.index.IIndexCPPBindingConstants;
 import org.eclipse.cdt.internal.core.index.IndexCPPSignatureUtil;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.cdt.internal.core.pdom.dom.IPDOMOverloader;
-import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMLinkage;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.runtime.CoreException;
@@ -124,27 +123,6 @@ class PDOMCPPClassTemplatePartialSpecialization extends PDOMCPPClassTemplate
 			CCorePlugin.log("Failed to load template arguments for " + getName(), e); //$NON-NLS-1$
 			return ICPPTemplateArgument.EMPTY_ARGUMENTS;
 		}
-	}
-
-	@Override
-	public int pdomCompareTo(PDOMBinding other) {
-		int cmp = super.pdomCompareTo(other);
-		if (cmp == 0) {
-			if (other instanceof PDOMCPPClassTemplatePartialSpecialization) {
-				try {
-					PDOMCPPClassTemplatePartialSpecialization otherSpec = (PDOMCPPClassTemplatePartialSpecialization) other;
-					int mySM = getSignatureHash();
-					int otherSM = otherSpec.getSignatureHash();
-					return mySM == otherSM ? 0 : mySM < otherSM ? -1 : 1;
-				} catch (CoreException e) {
-					CCorePlugin.log("Comparison failure for " + getName(), e); //$NON-NLS-1$
-				}
-			} else {
-				assert false;
-				CCorePlugin.log(new AssertionError("Assertion failure for " + getName())); //$NON-NLS-1$
-			}
-		}
-		return cmp;
 	}
 
 	@Override

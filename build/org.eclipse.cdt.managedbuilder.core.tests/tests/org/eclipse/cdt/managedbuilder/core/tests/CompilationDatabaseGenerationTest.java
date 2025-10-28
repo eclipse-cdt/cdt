@@ -33,7 +33,9 @@ import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -244,6 +246,49 @@ public class CompilationDatabaseGenerationTest extends AbstractBuilderTest {
 				return arg;
 			}
 		}).collect(Collectors.joining(" "));
+	}
+
+	@Test
+	public void testCompileCommandsDirectory() throws Exception {
+		setWorkspace("regressions");
+		final IProject app = loadProject("helloworldC");
+		IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(app);
+		IManagedProject mProj = info.getManagedProject();
+		IConfiguration cfg = mProj.getConfigurations()[0];
+		IToolChain toolChain = cfg.getToolChain();
+		IBuilder builder = toolChain.getBuilder();
+		setGenerateFileOptionEnabled(true);
+		app.build(IncrementalProjectBuilder.FULL_BUILD, null);
+
+		IFile commandsFile = app.getFile("Debug/compile_commands.json");
+
+		if (commandsFile.exists()) {
+			try (FileReader reader = new FileReader(commandsFile.getLocation().toFile())) {
+				Gson gson = new Gson();
+				JsonArray jsonArray = gson.fromJson(reader, JsonArray.class);
+				IPath buildDir = ManagedBuildManager.getBuildFullPath(cfg, builder);
+
+				IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(buildDir);
+				String workspacePath = rc != null ? rc.getLocation().toOSString() : buildDir.toOSString();
+
+				java.nio.file.Path workspaceNormalized = java.nio.file.Paths.get(workspacePath).normalize();
+
+				for (JsonElement element : jsonArray) {
+					CompilationDatabaseInformation compileCommand = gson.fromJson(element,
+							CompilationDatabaseInformation.class);
+
+					String directory = compileCommand.directory();
+					assertNotNull("Directory field should not be null", directory);
+					assertFalse(directory.isEmpty(), "Directory field should not be empty");
+
+					java.nio.file.Path directoryNormalized = java.nio.file.Paths.get(directory).normalize();
+
+					assertTrue(directoryNormalized.startsWith(workspaceNormalized),
+							"Directory should start with workspace path.\nExpected prefix: " + workspaceNormalized
+									+ "\nBut got: " + directoryNormalized);
+				}
+			}
+		}
 	}
 
 }

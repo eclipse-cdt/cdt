@@ -202,7 +202,9 @@ abstract public class CPPScope implements ICPPASTInternalScope {
 						IBinding[] bindings = lookup.isPrefixLookup()
 								? index.findBindingsForContentAssist(nchars, true, filter, null)
 								: index.findBindings(nchars, filter, null);
-						if (fileSet != null) {
+						// if using promiscuous binding resolution, allow finding local bindings in index
+						// to help refactoring with typedefs and using declarations which are now local bindings
+						if (fileSet != null && !CPPSemantics.isUsingPromiscuousBindingResolution()) {
 							bindings = fileSet.filterFileLocalBindings(bindings);
 						}
 						result = ArrayUtil.addAll(IBinding.class, result, bindings);

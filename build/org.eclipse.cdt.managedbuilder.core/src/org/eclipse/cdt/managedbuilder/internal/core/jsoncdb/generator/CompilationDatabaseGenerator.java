@@ -28,6 +28,7 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
+import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
@@ -164,6 +165,10 @@ public final class CompilationDatabaseGenerator {
 		List<CompilationDatabaseInformation> objList = new ArrayList<>();
 		for (IResource resource : getFileList()) {
 
+			IPath buildDir = getFullBuildDirectory(config);
+			if (buildDir == null) {
+				buildDir = resource.getProject().getLocation();
+			}
 			IPath moduleRelativePath = resource.getParent().getProjectRelativePath();
 			String relativePath = moduleRelativePath.toString();
 			IFolder folder = project.getFolder(config.getName());
@@ -249,8 +254,8 @@ public final class CompilationDatabaseGenerator {
 							new FileContextData(sourceLocation, outputLocation, null, tool));
 
 				}
-				objList.add(new CompilationDatabaseInformation(project.getLocation().toString(),
-						resolvedOptionFileContents, resource.getLocation().toString()));
+				objList.add(new CompilationDatabaseInformation(buildDir.toString(), resolvedOptionFileContents,
+						resource.getLocation().toString()));
 			}
 
 		}
@@ -499,6 +504,28 @@ public final class CompilationDatabaseGenerator {
 				return arg;
 			}
 		}).collect(Collectors.joining(" ")); //$NON-NLS-1$
+	}
+
+	public static IPath getFullBuildDirectory(IConfiguration config) {
+		if (config == null) {
+			throw new IllegalArgumentException("Configuration cannot be null"); //$NON-NLS-1$
+		}
+
+		IBuilder builder = config.getBuilder();
+		IPath buildDir = ManagedBuildManager.getBuildFullPath(config, builder);
+		IPath fullBuildPath = null;
+
+		if (buildDir != null) {
+			IResource rc = ResourcesPlugin.getWorkspace().getRoot().findMember(buildDir);
+
+			if (rc != null && rc.getLocation() != null) {
+				fullBuildPath = rc.getLocation();
+			} else if (buildDir.toFile().isAbsolute()) {
+				fullBuildPath = buildDir;
+			}
+		}
+
+		return fullBuildPath;
 	}
 
 }

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarationStatement;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -27,31 +29,19 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcases related to recovery from invalid syntax.
  */
 public class FaultToleranceTests extends AST2TestBase {
 
-	public static TestSuite suite() {
-		return suite(FaultToleranceTests.class);
-	}
-
-	public FaultToleranceTests() {
-		super();
-	}
-
-	public FaultToleranceTests(String name) {
-		super(name);
-	}
-
 	// typedef int tint;
 	// struct X {
 	//    int a;
 	// }
 	// tint b;
+	@Test
 	public void testCompositeTypeWithoutSemi() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -67,6 +57,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//    int a;
 	// } c
 	// tint b;
+	@Test
 	public void testCompositeTypeWithDtorWithoutSemi() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -82,6 +73,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	// typedef int tint;
 	// int a
 	// tint b;
+	@Test
 	public void testVariableWithoutSemi() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -96,6 +88,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	// typedef int tint;
 	// int a()
 	// tint b;
+	@Test
 	public void testPrototypeWithoutSemi() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -111,6 +104,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//   int a= 1
 	// 	 f()
 	// }
+	@Test
 	public void testExpressionWithoutSemi_314593() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -127,6 +121,7 @@ public class FaultToleranceTests extends AST2TestBase {
 
 	// struct X {
 	//   int a;
+	@Test
 	public void testIncompleteCompositeType() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -140,6 +135,7 @@ public class FaultToleranceTests extends AST2TestBase {
 
 	// void func() {
 	//   int a;
+	@Test
 	public void testIncompleteFunctionDefinition() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -153,6 +149,7 @@ public class FaultToleranceTests extends AST2TestBase {
 
 	// namespace ns {
 	//   int a;
+	@Test
 	public void testIncompleteNamespace() throws Exception {
 		final String comment = getAboveComment();
 		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, ScannerKind.STD, false);
@@ -164,6 +161,7 @@ public class FaultToleranceTests extends AST2TestBase {
 
 	// extern "C" {
 	//   int a;
+	@Test
 	public void testIncompleteLinkageSpec() throws Exception {
 		final String comment = getAboveComment();
 		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, ScannerKind.STD, false);
@@ -176,6 +174,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	// void test() {
 	//    int a= offsetof(struct mystruct, singlechar);
 	// }
+	@Test
 	public void testRangeOfProblemNode_Bug238151() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -191,6 +190,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//       return -1;
 	//    int v;
 	// }
+	@Test
 	public void testProblemInIfExpression_Bug100321() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -206,6 +206,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	// _MYMACRO_ myType foo();
 	// _MYMACRO_ myType foo() {}
 	// extern void foo2() _MYMACRO_;
+	@Test
 	public void testUndefinedMacrosInFunctionDeclarations_Bug234085() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -236,6 +237,7 @@ public class FaultToleranceTests extends AST2TestBase {
 
 	// enum _T { I J, K }; // missing comma
 	// int i;
+	@Test
 	public void testEnumProblem() throws Exception {
 		final String comment = getAboveComment();
 		for (ParserLanguage lang : ParserLanguage.values()) {
@@ -252,6 +254,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//    enum _T { I J, K }; // missing comma
 	//    int i;
 	// };
+	@Test
 	public void testEnumError_Bug72685() throws Exception {
 		final String comment = getAboveComment();
 		IASTTranslationUnit tu = parse(comment, ParserLanguage.CPP, ScannerKind.STD, false);
@@ -268,6 +271,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//	XX(
 	//	);
 	//	int d;
+	@Test
 	public void testErrorRecovery_273759() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C, ScannerKind.STD, false);
 		IASTSimpleDeclaration s = getDeclaration(tu, 0);
@@ -311,6 +315,7 @@ public class FaultToleranceTests extends AST2TestBase {
 	//	    TINT* f28(TINT* p) {
 	//	    TINT* f29(TINT* p) {
 	//	    }
+	@Test
 	public void testPerformanceIssue_364108() throws Exception {
 		final String comment = getAboveComment();
 		parse(comment, ParserLanguage.CPP, ScannerKind.STD, false);

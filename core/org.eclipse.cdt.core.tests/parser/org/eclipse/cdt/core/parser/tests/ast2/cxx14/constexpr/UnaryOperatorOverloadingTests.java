@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class UnaryOperatorOverloadingTests extends TestBase {
 	public static class NonIndexingTests extends UnaryOperatorOverloadingTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends UnaryOperatorOverloadingTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -53,6 +45,7 @@ public abstract class UnaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPrefixIncrementAsMemberFunction() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -80,6 +73,7 @@ public abstract class UnaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPrefixIncrementAsNonMemberFunction() throws Exception {
 		assertEvaluationEquals(6);
 	}

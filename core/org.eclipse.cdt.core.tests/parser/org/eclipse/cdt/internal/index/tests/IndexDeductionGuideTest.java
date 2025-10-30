@@ -18,8 +18,7 @@ import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.double_;
 import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.int_;
 
 import org.eclipse.cdt.core.dom.ast.IVariable;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * AST tests for C++17 deduction guides via PDOM.
@@ -29,19 +28,11 @@ public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTest
 		public IndexDeductionGuideTestSingleProject() {
 			setStrategy(new SinglePDOMTestStrategy(true /* cpp */));
 		}
-
-		public static TestSuite suite() {
-			return suite(IndexDeductionGuideTestSingleProject.class);
-		}
 	}
 
 	public static class IndexDeductionGuideTestSingleProjectReindexed extends IndexDeductionGuideTest {
 		public IndexDeductionGuideTestSingleProjectReindexed() {
 			setStrategy(new SinglePDOMReindexedTestStrategy(true /* cpp */));
-		}
-
-		public static TestSuite suite() {
-			return suite(IndexDeductionGuideTestSingleProjectReindexed.class);
 		}
 	}
 
@@ -49,16 +40,6 @@ public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTest
 		public IndexDeductionGuideTestProjectWithDepProj() {
 			setStrategy(new ReferencedProject(true /* cpp */));
 		}
-
-		public static TestSuite suite() {
-			return suite(IndexDeductionGuideTestProjectWithDepProj.class);
-		}
-	}
-
-	public static void addTests(TestSuite suite) {
-		suite.addTest(IndexDeductionGuideTestSingleProject.suite());
-		suite.addTest(IndexDeductionGuideTestSingleProjectReindexed.suite());
-		suite.addTest(IndexDeductionGuideTestProjectWithDepProj.suite());
 	}
 
 	//  template<typename T> struct S {
@@ -86,6 +67,7 @@ public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTest
 	//  }
 	//
 	//  constexpr size_t value = sizeof(ddouble.value);
+	@Test
 	public void testDeductionGuideBasicHeader() throws Exception {
 		assertType(getBindingFromASTName("dchar = S", 5), char_);
 		assertType(getBindingFromASTName("dint = S", 4), double_);
@@ -135,6 +117,7 @@ public abstract class IndexDeductionGuideTest extends IndexBindingResolutionTest
 	//	  Unrelated(_KeyInUnrelated)
 	//	    -> Unrelated<_KeyInUnrelated, Dependent<_KeyInUnrelated>>;
 	//	}
+	@Test
 	public void testDeductionGuideTemplateIssue438() throws Exception {
 		getBindingFromASTName("Base<int>::result_type; // test marker", 22);
 	}

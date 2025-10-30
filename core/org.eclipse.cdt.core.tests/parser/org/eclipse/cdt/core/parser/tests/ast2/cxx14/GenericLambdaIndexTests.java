@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes;
 import org.eclipse.cdt.internal.index.tests.IndexBindingResolutionTestBase;
+import org.junit.jupiter.api.Test;
 
 /**
  * Index tests for C++14 generic lambdas.
@@ -26,6 +29,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 
 	//	auto three = Identity(3);
 	//	auto hello = Identity("hello");
+	@Test
 	public void testBasicCall() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("three", CommonCPPTypes.int_);
@@ -47,6 +51,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 	//		g(Identity);   // error: ambiguous
 	//		h(Identity);   // ok: calls #1
 	//	}
+	@Test
 	public void testConversionToFunctionPointer() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertNonProblem("f1(Id", "f1");
@@ -76,6 +81,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 	//	    waldo(foo(L(42, 'x')));
 	//	    waldo(bar(L(42, 'x', 42.0f)));
 	//	}
+	@Test
 	public void testVariadicAutoParameter() throws Exception {
 		checkBindings();
 	}
@@ -105,6 +111,7 @@ public class GenericLambdaIndexTests extends IndexBindingResolutionTestBase {
 	//	int main() {
 	//		waldo(q());
 	//	}
+	@Test
 	public void testNestedGenericLambdas() throws Exception {
 		checkBindings();
 	}

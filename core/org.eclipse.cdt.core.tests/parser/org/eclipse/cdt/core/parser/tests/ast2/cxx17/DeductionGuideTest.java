@@ -16,6 +16,7 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx17;
 import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.char_;
 import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.double_;
 import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.int_;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
@@ -23,6 +24,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
+import org.junit.jupiter.api.Test;
 
 /**
  * AST tests for C++17 deduction guides.
@@ -52,6 +54,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//    S init{ddouble};
 	//    S convert(ddouble);
 	//  }
+	@Test
 	public void testDeductionGuideBasic() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		assertType(bh.assertNonProblem("dchar = S", 5), char_);
@@ -84,6 +87,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//    double dv = S<double>(1).value;
 	//    int iv = S(1).value;
 	//  }
+	@Test
 	public void testDeductionGuideWithDefaultTemplateArg() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		assertType(bh.assertNonProblem("dchar = S", 5), char_);
@@ -106,6 +110,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//    S init{ddouble};
 	//    S convert(ddouble);
 	//  }
+	@Test
 	public void testDeductionGuideWithTemplateDeclaration() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 
@@ -130,6 +135,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//
 	//  UniquePtr dp{new auto(2.0)};
 	//  auto da = dp;
+	@Test
 	public void testMinimal() throws Exception {
 		parseAndCheckBindings(ScannerKind.STD);
 	}
@@ -145,6 +151,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//  S() -> S<int>;
 	//
 	//  S s2;
+	@Test
 	public void testDeduceFromEmptyInitializer() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		IVariable varSInt = bh.assertNonProblem("sInt", 4);
@@ -164,6 +171,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//  S(int i) -> S<double>;
 	//
 	//  auto v = S(1);
+	@Test
 	public void testViaFunctionSetFromConstructors() throws Exception {
 		parseAndCheckBindings(ScannerKind.STD);
 	}
@@ -171,6 +179,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//  template<class T> struct S{};
 	//
 	//  S* pointer;
+	@Test
 	public void testNoDeductionForPointer() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		IType pointedType = ((IPointerType) ((IVariable) bh.assertNonProblem("pointer")).getType()).getType();
@@ -181,6 +190,7 @@ public class DeductionGuideTest extends AST2CPPTestBase {
 	//  template<class T> struct S;
 	//
 	//  S* pointer;
+	@Test
 	public void testNoDeductionForPointerNoDefinition() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper(ParserLanguage.CPP, ScannerKind.STD);
 		IType pointedType = ((IPointerType) ((IVariable) bh.assertNonProblem("pointer")).getType()).getType();

@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.StringWriter;
 import java.io.Writer;
 
@@ -33,15 +36,9 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CASTFunctionDefinition;
 import org.eclipse.cdt.internal.core.dom.parser.c.CFunction;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.junit.jupiter.api.Test;
 
 public class GCCCompleteParseExtensionsTest extends AST2TestBase {
-
-	public GCCCompleteParseExtensionsTest() {
-	}
-
-	public GCCCompleteParseExtensionsTest(String name) {
-		super(name);
-	}
 
 	private IASTTranslationUnit parseGCC(String code) throws ParserException {
 		IASTTranslationUnit tu = parse(code, ParserLanguage.C, ScannerKind.GNU, true);
@@ -67,10 +64,12 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		return tu;
 	}
 
+	@Test
 	public void testBug39695() throws Exception {
 		parseGCC("int a = __alignof__ (int);").getDeclarations();
 	}
 
+	@Test
 	public void testBug39684() throws Exception {
 		IASTDeclaration bar = parseGCC("typeof(foo(1)) bar () { return foo(1); }").getDeclarations()[0];
 		assertTrue(bar instanceof CASTFunctionDefinition);
@@ -82,6 +81,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		//		assertEquals(simpleTypeSpec.getType(), IASTGCCSimpleTypeSpecifier.Type.TYPEOF);
 	}
 
+	@Test
 	public void testBug39698A() throws Exception {
 		IASTDeclaration[] decls = parseGPP("int a=0; \n int b=1; \n int c = a <? b;").getDeclarations();
 		assertEquals(ASTStringUtil.getExpressionString(
@@ -90,6 +90,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 				"a <? b");
 	}
 
+	@Test
 	public void testBug39698B() throws Exception {
 		IASTDeclaration[] decls = parseGPP("int a=0; \n int b=1; \n int c = a >? b;").getDeclarations();
 		assertEquals(ASTStringUtil.getExpressionString(
@@ -98,11 +99,13 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 				"a >? b");
 	}
 
+	@Test
 	public void testPredefinedSymbol_bug69791() throws Exception {
 		parseGPP("typedef __builtin_va_list __gnuc_va_list; \n").getDeclarations();
 		parseGCC("typedef __builtin_va_list __gnuc_va_list; \n").getDeclarations();
 	}
 
+	@Test
 	public void testBug39697() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("__asm__( \"CODE\" );\n");
@@ -137,6 +140,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 				.isRestrict());
 	}
 
+	@Test
 	public void testBug73954A() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("void f(){							\n");
@@ -177,6 +181,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGCC(writer.toString());
 	}
 
+	@Test
 	public void testBug39686() throws Exception {
 		Writer code = new StringWriter();
 		code.write("__complex__ double x; // complex double\n");
@@ -188,6 +193,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGCC(code.toString());
 	}
 
+	@Test
 	public void testBug39551B() throws Exception {
 		//this used to be 99.99 * __I__, but I don't know where the __I__ came from, its not in C99, nor in GCC
 		IASTDeclaration decl = parseGCC("_Imaginary double id = 99.99 * 1i;").getDeclarations()[0];
@@ -196,6 +202,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		//		assertTrue(((IASTSimpleTypeSpecifier)variable.getAbstractDeclaration().getTypeSpecifier()).isImaginary());
 	}
 
+	@Test
 	public void testBug39681() throws Exception {
 		Writer code = new StringWriter();
 		code.write("double\n");
@@ -207,6 +214,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGCC(code.toString());
 	}
 
+	@Test
 	public void testBug39677() throws Exception {
 		parseGPP("class B { public: B(); int a;}; B::B() : a(({ 1; })) {}");
 		Writer writer = new StringWriter();
@@ -236,6 +244,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGPP(writer.toString()); // TODO Devin raised bug 93980
 	}
 
+	@Test
 	public void testBug75401() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define va_list  __builtin_va_list            \n");
@@ -253,6 +262,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGPP(writer.toString());
 	}
 
+	@Test
 	public void testBug73954B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define foo(x)                                            \\\n");
@@ -267,10 +277,12 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGCC(writer.toString());
 	}
 
+	@Test
 	public void testGNUExternalTemplate_bug71603() throws Exception {
 		parseGPP("template <typename T> \n class A {}; \n extern template class A<int>; \n").getDeclarations();
 	}
 
+	@Test
 	public void testBug74190_g_assert_1() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void log( int );               \n");
@@ -285,6 +297,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGPP(writer.toString());
 	}
 
+	@Test
 	public void testBug74190_g_return_if_fail() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void f() {                     \n");
@@ -297,6 +310,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		parseGPP(writer.toString());
 	}
 
+	@Test
 	public void testBug95635() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("void f(){                         \n");
@@ -386,6 +400,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	// void test() {
 	//    int a= __builtin_offsetof(struct S, m);
 	// };
+	@Test
 	public void test__builtinOffsetof_Bug265001() throws Exception {
 		// gcc with __GNUC__ >= 4 defines:
 		// #define offsetof(type, field) __builtin_offsetof(type, field)
@@ -399,6 +414,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	// void test() {
 	//    int a= __offsetof__(1);
 	// };
+	@Test
 	public void test__offsetof__Bug265001() throws Exception {
 		// gcc with __GNUC__ < 4 defines:
 		//		#define offsetof(type, field)					\
@@ -427,12 +443,14 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	//		b= __is_polymorphic (int);
 	//		b= __is_union (int);
 	//	}
+	@Test
 	public void testTypeTraits_Bug342683() throws Exception {
 		parseGPP(getAboveComment());
 	}
 
 	// __int128 a;
 	// unsigned __int128 b;
+	@Test
 	public void test__int128() throws Exception {
 		String code = getAboveComment();
 		parseGCC(code);
@@ -440,6 +458,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	}
 
 	// __float128 f;
+	@Test
 	public void test__float128() throws Exception {
 		String code = getAboveComment();
 		parseGCC(code);
@@ -447,6 +466,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	}
 
 	// _Decimal32 x;
+	@Test
 	public void test_Decimal32() throws Exception {
 		String code = getAboveComment();
 		parseGCC(code);
@@ -454,6 +474,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	}
 
 	// _Decimal64 x;
+	@Test
 	public void test_Decimal64() throws Exception {
 		String code = getAboveComment();
 		parseGCC(code);
@@ -461,6 +482,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	}
 
 	// _Decimal128 x;
+	@Test
 	public void test_Decimal128() throws Exception {
 		String code = getAboveComment();
 		parseGCC(code);
@@ -469,6 +491,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 
 	//	struct waldo {
 	//	} __attribute__((__aligned__((1))));
+	@Test
 	public void test__attribute__aligned_bug400204() throws Exception {
 		String code = getAboveComment();
 		parseGCC(code);
@@ -478,6 +501,7 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 	// void test() {
 	//   !__builtin_add_overflow_p(1,2,3);
 	// }
+	@Test
 	public void testIntegerOverflowBuiltin_bug271() throws Exception {
 		String code = getAboveComment();
 		parseGCC(code);

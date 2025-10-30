@@ -26,6 +26,8 @@ import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.referenceToI
 import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.rvalueReferenceTo;
 import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.rvalueReferenceToInt;
 import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.volatileOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -38,6 +40,7 @@ import org.eclipse.cdt.internal.core.dom.parser.FloatingPointValue;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPStructuredBindingComposite;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPEvaluation;
+import org.junit.jupiter.api.Test;
 
 public class StructuredBindingTests extends AST2CPPTestBase {
 
@@ -48,6 +51,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//auto [f1, s1] = S{1, 2};
 	//auto f2 = f1;
 	//auto s2 = s1;
+	@Test
 	public void testFromTemporary() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -69,6 +73,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  return {1, 2};
 	//}
 	//auto [f, s] = createS();
+	@Test
 	public void testFromReturnValue() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -85,6 +90,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  return {1, 2};
 	//}
 	//auto [f, s]{createS()};
+	@Test
 	public void testBracedInitialization() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -101,6 +107,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  return {1, 2};
 	//}
 	//auto [f, s](createS());
+	@Test
 	public void testCopyInitialization() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -117,6 +124,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  char fifth;
 	//};
 	//auto [f, s, t, fo, fif] = S{1, 2, 1.5f, 3.1415, '*'};
+	@Test
 	public void testWithManyInitializers() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -135,6 +143,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  static double sd;
 	//};
 	//auto [b] = Sub{1};
+	@Test
 	public void testWithBaseClass() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -145,6 +154,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//auto f() -> int(&)[2];
 	//auto [x, y] = f();
 	//auto & [xr, yr] = f();
+	@Test
 	public void testStandardExample1() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -159,6 +169,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//};
 	//S createS();
 	//auto const [x, y] = createS();
+	@Test
 	public void testStandardExample2() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -169,6 +180,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 
 	//int arr[]{1, 2, 3};
 	//auto [f, s, t] = arr;
+	@Test
 	public void testFromArray() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -182,6 +194,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  int i;
 	//} s{};
 	//auto && [f] = s;
+	@Test
 	public void testForwardingReferenceWithLvalue() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -193,6 +206,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  int i;
 	//} s{};
 	//auto && [f] = static_cast<S&&>(s);
+	@Test
 	public void testForwardingReferenceWithXvalue() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -204,6 +218,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  int i;
 	//};
 	//auto && [f] = S{};
+	@Test
 	public void testForwardingReferenceWithRvalue() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -221,6 +236,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  struct tuple_size;
 	//}
 	//auto [f, s] = S{};
+	@Test
 	public void testUnspecializedTupleSizeTemplate() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -270,6 +286,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  };
 	//}
 	//auto [f, s] = S{};
+	@Test
 	public void testFromTupleLikeDecompositionWithMemberGet() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -319,6 +336,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  };
 	//}
 	//auto [f, s] = S{};
+	@Test
 	public void testFromTupleLikeDecompositionWithInheritedTupleElementType() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -348,6 +366,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//S volatile sVolatile{1};
 	//auto & [lrefLVolatilearg] = sVolatile;
 	//auto && [frefLVolatilearg] = sVolatile;
+	@Test
 	public void testResultingTypes() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -382,6 +401,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//    return field2;
 	//  }
 	//};
+	@Test
 	public void testThisDecomposition() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -398,6 +418,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//  return S{1, 2.0};
 	//}
 	//auto [f, s] = createS();
+	@Test
 	public void testIVariablePropertiesOfImplicitNameForInitializer() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -419,6 +440,7 @@ public class StructuredBindingTests extends AST2CPPTestBase {
 	//void f() {
 	//  auto& [x] = x.y;
 	//}
+	@Test
 	public void testInvalidReferenceToIntroducedName() throws Exception {
 		BindingAssertionHelper ba = getAssertionHelper();
 		ba.assertProblem("x.y;", 1);

@@ -17,6 +17,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,6 +65,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.osgi.framework.Bundle;
 
 /**
@@ -79,16 +87,14 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		this.strategy = strategy;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void setUpStrategy() throws Exception {
 		strategy.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDowntrategy() throws Exception {
 		strategy.tearDown();
-		super.tearDown();
 	}
 
 	protected IASTName findName(String section, int offset, int len, boolean preferImplicitName) {
@@ -159,13 +165,13 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 			len += section.length() - offset;
 
 		IASTName name = findName(section, offset, len);
-		assertNotNull("Name not found for \"" + section + "\"", name);
+		assertNotNull(name, "Name not found for \"" + section + "\"");
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"",
-				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull(binding, "No binding for " + name.getRawSignature());
+		assertFalse(IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()),
+				"Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"");
 		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
@@ -194,13 +200,13 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 			len += section.length() - offset;
 
 		IASTName name = findImplicitName(section, offset, len);
-		assertNotNull("Name not found for \"" + section + "\"", name);
+		assertNotNull(name, "Name not found for \"" + section + "\"");
 		assertEquals(section.substring(offset, offset + len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"",
-				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull(binding, "No binding for " + name.getRawSignature());
+		assertFalse(IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()),
+				"Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"");
 		assertInstance(binding, clazz, cs);
 		return clazz.cast(binding);
 	}
@@ -224,13 +230,13 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 			len += section.length() - offset;
 
 		IASTName name = findName(section, offset, len);
-		assertNotNull("Name not found for \"" + section + "\"", name);
+		assertNotNull(name, "Name not found for \"" + section + "\"");
 		assertEquals(section.substring(offset, offset + len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"",
-				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull(binding, "No binding for " + name.getRawSignature());
+		assertFalse(IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()),
+				"Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"");
 		return (T) binding;
 	}
 
@@ -252,13 +258,13 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 			len += section.length();
 
 		IASTName name = findImplicitName(section, 0, len);
-		assertNotNull("Name not found for \"" + section + "\"", name);
+		assertNotNull(name, "Name not found for \"" + section + "\"");
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertFalse("Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"",
-				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull(binding, "No binding for " + name.getRawSignature());
+		assertFalse(IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()),
+				"Binding is a ProblemBinding for name \"" + name.getRawSignature() + "\"");
 		return (T) binding;
 	}
 
@@ -270,13 +276,13 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 	 */
 	protected IBinding getProblemFromASTName(String section, int len) {
 		IASTName name = findName(section, 0, len);
-		assertNotNull("Name not found for \"" + section + "\"", name);
+		assertNotNull(name, "Name not found for \"" + section + "\"");
 		assertEquals(section.substring(0, len), name.getRawSignature());
 
 		IBinding binding = name.resolveBinding();
-		assertNotNull("No binding for " + name.getRawSignature(), binding);
-		assertTrue("Binding is not a ProblemBinding for name \"" + name.getRawSignature() + "\"",
-				IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()));
+		assertNotNull(binding, "No binding for " + name.getRawSignature());
+		assertTrue(IProblemBinding.class.isAssignableFrom(name.resolveBinding().getClass()),
+				"Binding is not a ProblemBinding for name \"" + name.getRawSignature() + "\"");
 		return name.resolveBinding();
 	}
 
@@ -319,15 +325,6 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 		assertTrue(ICPPClassType.class.isInstance((ft.getParameterTypes()[index])));
 		assertEquals(compositeTypeKey, ((ICPPClassType) ft.getParameterTypes()[index]).getKey());
 		assertEquals(qn, ASTTypeUtil.getQualifiedName((ICPPClassType) ft.getParameterTypes()[index]));
-	}
-
-	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
-		assertNotNull("Expected " + clazz.getName() + " but got null", o);
-		assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), clazz.isInstance(o));
-		for (Class c : cs) {
-			assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
-		}
-		return clazz.cast(o);
 	}
 
 	protected String readTaggedComment(final String tag) throws IOException {
@@ -1002,7 +999,7 @@ public abstract class IndexBindingResolutionTestBase extends SemanticTestBase {
 	protected static void assertSameType(IType first, IType second) {
 		assertNotNull(first);
 		assertNotNull(second);
-		assertTrue("Expected types to be the same, but first was: '" + first.toString() + "' and second was: '" + second
-				+ "'", first.isSameType(second));
+		assertTrue(first.isSameType(second), "Expected types to be the same, but first was: '" + first.toString()
+				+ "' and second was: '" + second + "'");
 	}
 }

@@ -14,19 +14,17 @@
 
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.pdom.indexer.TodoTaskParser;
 import org.eclipse.cdt.internal.core.pdom.indexer.TodoTaskParser.Task;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class TaskParserTest extends AST2TestBase {
 
-	public static TestSuite suite() {
-		return suite(TaskParserTest.class);
-	}
-
+	@Test
 	public void testTaskParser() throws Exception {
 		final char[][] taskTags = new char[][] { "TODO".toCharArray(), "TODO(my name):".toCharArray(),
 				"FIXME".toCharArray() };

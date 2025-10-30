@@ -10,6 +10,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.lang.reflect.Field;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -26,7 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IProblemBinding;
 import org.eclipse.cdt.core.dom.ast.IProblemType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator;
 import org.eclipse.cdt.internal.core.dom.parser.SizeofCalculator.SizeAndAlignment;
@@ -35,20 +42,13 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 /**
  * Common base class for AST2 and index tests.
  */
-public abstract class SemanticTestBase extends BaseTestCase {
-	public SemanticTestBase() {
-		super();
-	}
-
-	public SemanticTestBase(String name) {
-		super(name);
-	}
+public abstract class SemanticTestBase extends BaseTestCase5 {
 
 	protected static void assertSameType(IType expected, IType actual) {
 		assertNotNull(expected);
 		assertNotNull(actual);
-		assertTrue("Expected same types, but the types were: '" + ASTTypeUtil.getType(expected, false) + "' and '"
-				+ ASTTypeUtil.getType(actual, false) + "'", expected.isSameType(actual));
+		assertTrue(expected.isSameType(actual), "Expected same types, but the types were: '"
+				+ ASTTypeUtil.getType(expected, false) + "' and '" + ASTTypeUtil.getType(actual, false) + "'");
 	}
 
 	protected static void assertType(IVariable variable, IType expectedType) {
@@ -81,7 +81,7 @@ public abstract class SemanticTestBase extends BaseTestCase {
 			if (len <= 0)
 				len = section.length() + len;
 			IBinding binding = binding(section, len);
-			assertTrue("Non-ProblemBinding for name: " + section.substring(0, len), binding instanceof IProblemBinding);
+			assertTrue(binding instanceof IProblemBinding, "Non-ProblemBinding for name: " + section.substring(0, len));
 			return (IProblemBinding) binding;
 		}
 
@@ -93,7 +93,7 @@ public abstract class SemanticTestBase extends BaseTestCase {
 
 		public IProblemBinding assertProblem(String context, String name) {
 			IBinding binding = binding(context, name);
-			assertTrue("Non-ProblemBinding for name: " + name, binding instanceof IProblemBinding);
+			assertTrue(binding instanceof IProblemBinding, "Non-ProblemBinding for name: " + name);
 			return (IProblemBinding) binding;
 		}
 
@@ -167,7 +167,7 @@ public abstract class SemanticTestBase extends BaseTestCase {
 		public IASTImplicitName assertImplicitName(String section, int len, Class<?> bindingClass) {
 			IASTName name = findImplicitName(section, len);
 			final String selection = section.substring(0, len);
-			assertNotNull("Did not find \"" + selection + "\"", name);
+			assertNotNull(name, "Did not find \"" + selection + "\"");
 
 			assertInstance(name, IASTImplicitName.class);
 			IASTImplicitNameOwner owner = (IASTImplicitNameOwner) name.getParent();
@@ -195,7 +195,7 @@ public abstract class SemanticTestBase extends BaseTestCase {
 		public void assertNoImplicitName(String section, int len) {
 			IASTName name = findImplicitName(section, len);
 			final String selection = section.substring(0, len);
-			assertNull("found name \"" + selection + "\"", name);
+			assertNull(name, "found name \"" + selection + "\"");
 		}
 
 		public IASTImplicitName[] getImplicitNames(String section) {
@@ -225,7 +225,7 @@ public abstract class SemanticTestBase extends BaseTestCase {
 
 		public IASTName findName(String section, int len) {
 			final int offset = contents.indexOf(section);
-			assertTrue("Section \"" + section + "\" not found", offset >= 0);
+			assertTrue(offset >= 0, "Section \"" + section + "\" not found");
 			IASTNodeSelector selector = tu.getNodeSelector(null);
 			return selector.findName(offset, len);
 		}
@@ -235,9 +235,9 @@ public abstract class SemanticTestBase extends BaseTestCase {
 				context = contents;
 			}
 			int offset = contents.indexOf(context);
-			assertTrue("Context \"" + context + "\" not found", offset >= 0);
+			assertTrue(offset >= 0, "Context \"" + context + "\" not found");
 			int nameOffset = context.indexOf(name);
-			assertTrue("Name \"" + name + "\" not found", nameOffset >= 0);
+			assertTrue(nameOffset >= 0, "Name \"" + name + "\" not found");
 			IASTNodeSelector selector = tu.getNodeSelector(null);
 			return selector.findName(offset + nameOffset, name.length());
 		}
@@ -258,9 +258,9 @@ public abstract class SemanticTestBase extends BaseTestCase {
 				context = contents;
 			}
 			int offset = contents.indexOf(context);
-			assertTrue("Context \"" + context + "\" not found", offset >= 0);
+			assertTrue(offset >= 0, "Context \"" + context + "\" not found");
 			int nodeOffset = context.indexOf(nodeText);
-			assertTrue("Node \"" + nodeText + "\" not found", nodeOffset >= 0);
+			assertTrue(nodeOffset >= 0, "Node \"" + nodeText + "\" not found");
 			IASTNodeSelector selector = tu.getNodeSelector(null);
 			IASTNode node = selector.findNode(offset + nodeOffset, nodeText.length());
 			return assertType(node, cs);
@@ -292,7 +292,7 @@ public abstract class SemanticTestBase extends BaseTestCase {
 			if (len <= 0)
 				len += section.length();
 			IBinding binding = binding(section, len);
-			assertTrue("ProblemBinding for name: " + section.substring(0, len), !(binding instanceof IProblemBinding));
+			assertTrue(!(binding instanceof IProblemBinding), "ProblemBinding for name: " + section.substring(0, len));
 			return assertType(binding, cs);
 		}
 
@@ -302,7 +302,7 @@ public abstract class SemanticTestBase extends BaseTestCase {
 
 		public <T extends IBinding> T assertNonProblem(String context, String name, Class... cs) {
 			IBinding binding = binding(context, name);
-			assertTrue("ProblemBinding for name: " + name, !(binding instanceof IProblemBinding));
+			assertTrue(!(binding instanceof IProblemBinding), "ProblemBinding for name: " + name);
 			return assertType(binding, cs);
 		}
 
@@ -318,7 +318,7 @@ public abstract class SemanticTestBase extends BaseTestCase {
 
 		public void assertVariableValue(String variableName, long expectedValue) {
 			IVariable var = assertNonProblem(variableName);
-			BaseTestCase.assertVariableValue(var, expectedValue);
+			BaseTestCase5.assertVariableValue(var, expectedValue);
 		}
 
 		public <T, U extends T> U assertType(T obj, Class... cs) {
@@ -331,22 +331,22 @@ public abstract class SemanticTestBase extends BaseTestCase {
 		private IBinding binding(String section, int len) {
 			IASTName astName = findName(section, len);
 			final String selection = section.substring(0, len);
-			assertNotNull("No AST name for \"" + selection + "\"", astName);
+			assertNotNull(astName, "No AST name for \"" + selection + "\"");
 			assertEquals(selection, astName.getRawSignature());
 
 			IBinding binding = astName.resolveBinding();
-			assertNotNull("No binding for " + astName.getRawSignature(), binding);
+			assertNotNull(binding, "No binding for " + astName.getRawSignature());
 
 			return astName.resolveBinding();
 		}
 
 		private IBinding binding(String context, String name) {
 			IASTName astName = findName(context, name);
-			assertNotNull("No AST name for \"" + name + "\"", astName);
+			assertNotNull(astName, "No AST name for \"" + name + "\"");
 			assertEquals(name, astName.getRawSignature());
 
 			IBinding binding = astName.resolveBinding();
-			assertNotNull("No binding for " + astName.getRawSignature(), binding);
+			assertNotNull(binding, "No binding for " + astName.getRawSignature());
 
 			return astName.resolveBinding();
 		}

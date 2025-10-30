@@ -17,6 +17,8 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
@@ -28,19 +30,14 @@ import org.eclipse.cdt.core.dom.ast.IParameter;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author aniefer
  */
 public class GCCTests extends AST2TestBase {
 
-	public GCCTests() {
-	}
-
-	public GCCTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testGCC20000113() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct x {                           \n");
@@ -87,6 +84,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, c, 4);
 	}
 
+	@Test
 	public void testGCC20000205() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("static int f(int a) {             \n");
@@ -112,6 +110,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, a, 3);
 	}
 
+	@Test
 	public void testGCC20000217() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("unsigned short int showbug(unsigned short int * a,    \n");
@@ -146,6 +145,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, y, 2);
 	}
 
+	@Test
 	public void testGCC20000224() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int loop_1 = 100;                         \n");
@@ -183,6 +183,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, counter, 3);
 	}
 
+	@Test
 	public void testGCC20000225() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int main() {                        \n");
@@ -213,6 +214,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, i, 4);
 	}
 
+	@Test
 	public void testGCC20000227() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("static const unsigned char f[] = \"\\0\\377\";        \n");
@@ -239,6 +241,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, g, 5);
 	}
 
+	@Test
 	public void testGCC20000313() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("unsigned int buggy(unsigned int *param) {             \n");
@@ -279,6 +282,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, borrow2, 2);
 	}
 
+	@Test
 	public void testGCC20000314_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int main() {                                       \n");
@@ -302,6 +306,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, winds, 6);
 	}
 
+	@Test
 	public void testGCC20000314_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef unsigned long long uint64;                \n");
@@ -336,6 +341,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, f, 2);
 	}
 
+	@Test
 	public void testGCC20000403() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("extern unsigned long aa[], bb[];                                   \n");
@@ -384,6 +390,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, b2, 3);
 	}
 
+	@Test
 	public void testGCC20000412_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("short int i = -1;                                               \n");
@@ -414,6 +421,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, wordptr, 2);
 	}
 
+	@Test
 	public void testGCC20000412_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(int a, int *y) {                   \n");
@@ -443,6 +451,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, x, 2);
 	}
 
+	@Test
 	public void testGCC20000412_3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef struct {                         \n");
@@ -491,6 +500,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, py, 3);
 	}
 
+	@Test
 	public void testGCC20000412_4() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("void f(int i, int j, int radius, int width, int N) { \n");
@@ -546,6 +556,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, i2, 5);
 	}
 
+	@Test
 	public void testGCC20000412_5() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int main(void) {                                        \n");
@@ -572,6 +583,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, lastglob, 3);
 	}
 
+	@Test
 	public void testGCC20000419() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct foo { int a, b, c; };                          \n");
@@ -621,6 +633,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, f, 2);
 	}
 
+	@Test
 	public void testGCC20000503() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("unsigned long sub(int a) {                          \n");
@@ -642,6 +655,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, a, 3);
 	}
 
+	@Test
 	public void testGCC20000511() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(int value, int expect) {                      \n");
@@ -696,6 +710,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, e, 15);
 	}
 
+	@Test
 	public void testGCC20000603() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct s1 { double d; };                                \n");
@@ -736,6 +751,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, a, 4);
 	}
 
+	@Test
 	public void testGCC20000605_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct F { int i; };                                    \n");
@@ -775,6 +791,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, y, 3);
 	}
 
+	@Test
 	public void testGCC20000605_3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct F { int x; int y; };                             \n");
@@ -812,6 +829,7 @@ public class GCCTests extends AST2TestBase {
 		assertInstances(collector, die, 2);
 	}
 
+	@Test
 	public void testGCCenum_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("enum foo { FOO, BAR };                                  \n");

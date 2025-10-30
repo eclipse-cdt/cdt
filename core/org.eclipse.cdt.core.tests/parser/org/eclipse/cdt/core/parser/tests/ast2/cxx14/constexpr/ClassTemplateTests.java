@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class ClassTemplateTests extends TestBase {
 	public static class NonIndexingTests extends ClassTemplateTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends ClassTemplateTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -48,6 +40,7 @@ public abstract class ClassTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testInstantiationOfClassTemplate() throws Exception {
 		assertEvaluationEquals(25);
 	}
@@ -65,6 +58,7 @@ public abstract class ClassTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testInstantiationOfClassTemplateWithNontypeTemplateParameter1() throws Exception {
 		assertEvaluationEquals(35);
 	}
@@ -83,6 +77,7 @@ public abstract class ClassTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testInstantiationOfClassTemplateWithNontypeTemplateParameter2() throws Exception {
 		assertEvaluationEquals(35);
 	}
@@ -103,6 +98,7 @@ public abstract class ClassTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testAliasTemplate1() throws Exception {
 		assertEvaluationEquals(17);
 	}
@@ -122,6 +118,7 @@ public abstract class ClassTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testInstantiationOfBaseClassTemplate1() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -141,6 +138,7 @@ public abstract class ClassTemplateTests extends TestBase {
 	//		return s.get();
 	//	}
 	//	constexpr int x = f();
+	@Test
 	public void testInstantiationOfBaseClassTemplate2() throws Exception {
 		assertEvaluationEquals(30);
 	}
@@ -157,6 +155,7 @@ public abstract class ClassTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testTemplateArgumentInMemberInitializerList() throws Exception {
 		assertEvaluationEquals(10);
 	}

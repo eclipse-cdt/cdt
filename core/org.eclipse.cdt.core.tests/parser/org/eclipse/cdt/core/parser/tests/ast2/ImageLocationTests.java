@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTImageLocation;
@@ -20,8 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author jcamelon
@@ -32,18 +34,8 @@ public class ImageLocationTests extends AST2TestBase {
 	private static final int MACRO = IASTImageLocation.MACRO_DEFINITION;
 	private static final int MACRO_ARG = IASTImageLocation.ARGUMENT_TO_MACRO_EXPANSION;
 
-	public static Test suite() {
-		return suite(ImageLocationTests.class);
-	}
-
-	public ImageLocationTests() {
-	}
-
-	public ImageLocationTests(String name) {
-		setName(name);
-	}
-
 	// int a;
+	@Test
 	public void testFileLocation() throws Exception {
 		String code = getContents(1)[0].toString();
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -58,6 +50,7 @@ public class ImageLocationTests extends AST2TestBase {
 	// #define F() result2
 	// int M;
 	// int F();
+	@Test
 	public void testMacroLocation() throws Exception {
 		String code = getContents(1)[0].toString();
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -76,6 +69,7 @@ public class ImageLocationTests extends AST2TestBase {
 	// #define M result
 	// #define F() M
 	// int F();
+	@Test
 	public void testIndirectMacroLocation() throws Exception {
 		String code = getContents(1)[0].toString();
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -90,6 +84,7 @@ public class ImageLocationTests extends AST2TestBase {
 	// #define F(x) x
 	// int F(result2);
 	// int F(M);
+	@Test
 	public void testMacroArgumentLocation() throws Exception {
 		String code = getContents(1)[0].toString();
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);

@@ -1,6 +1,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -9,15 +10,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunctionTemplate;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.junit.jupiter.api.Test;
 
 public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
-
-	public AST2TemplateLValueRValueTests() {
-	}
-
-	public AST2TemplateLValueRValueTests(String name) {
-		super(name);
-	}
 
 	//	class clazz {
 	//	};
@@ -46,6 +41,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_lvalue_rvalue_caller_templateLvalue_templateRvalue_function() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -86,6 +82,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_lvalueTypedef_rvalueTypedef_caller_templateLvalue_templateRvalue_function() throws Exception {
 		parseAndCheckBindings();
 
@@ -128,6 +125,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_lvalueTypedefRef_rvalueTypedefRef_caller_templateLvalue_templateRvalue_function()
 			throws Exception {
 		parseAndCheckBindings();
@@ -170,6 +168,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_lvalueTypedefRef_rvalueTypedefRef_caller_templateTpedefLvalue_templateRvalue_function()
 			throws Exception {
 		parseAndCheckBindings();
@@ -204,6 +203,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	  int c;
 	//	  demo(c);
 	//	}
+	@Test
 	public void test_lvalue_rvalue_caller_templateLvalue_templateRvalue_lvalue_function() throws Exception {
 		parseAndCheckBindings();
 
@@ -225,6 +225,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	  clazz c;
 	//	  demo(c);
 	//	}
+	@Test
 	public void test_lvalue_caller_rvalue_function() throws Exception {
 		parseAndCheckBindingsForOneProblem();
 	}
@@ -241,6 +242,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	  clazz c;
 	//	  demo(c);
 	//	}
+	@Test
 	public void test_lvalue_caller_lvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -267,6 +269,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_lvalue_rvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -287,6 +290,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	  clazz c;
 	//	  demo(c);
 	//	}
+	@Test
 	public void test_lvalue_caller_templateRvalue_lvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -312,6 +316,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_templateRvalue_lvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -332,6 +337,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_lvalue_function() throws Exception {
 		parseAndCheckBindingsForOneProblem();
 	}
@@ -352,6 +358,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_rvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -372,6 +379,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_templateLvalue_function() throws Exception {
 		parseAndCheckBindingsForOneProblem();
 	}
@@ -393,6 +401,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_templateRvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -414,6 +423,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo<clazz>(getClazz());
 	//	}
+	@Test
 	public void test_templatedRvalue_caller__templateRvalue_lvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -433,6 +443,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo<clazz>(c);
 	//	}
+	@Test
 	public void test_templatedLvalue_caller__templateRvalue_lvalue_function() throws Exception {
 		parseAndCheckBindingsForProblem();
 	}
@@ -452,6 +463,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo(c);
 	//	}
+	@Test
 	public void test_lvalue_caller_templateLvalue_lvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -476,6 +488,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_templateLvalue_lvalue_function() throws Exception {
 		parseAndCheckBindingsForOneProblem();
 	}
@@ -500,6 +513,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo<clazz>(getClazz());
 	//	}
+	@Test
 	public void test_templatedRvalue_caller_templatedLValue_lvalAST2TemplateRValueRValueTestsue_function()
 			throws Exception {
 		parseAndCheckBindingsForProblem();
@@ -520,6 +534,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo<clazz>(c);
 	//	}
+	@Test
 	public void test_templatedLvalue_caller_templatedLValue_lvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -539,6 +554,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo(c);
 	//	}
+	@Test
 	public void test_lvalue_caller_templatedRvalue_rvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -563,6 +579,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_templatedRvalue_rvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -587,6 +604,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo<clazz>(getClazz());
 	//	}
+	@Test
 	public void test_templatedRvalue_caller_templatedRvalue_rvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -606,6 +624,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo<clazz>(c);
 	//	}
+	@Test
 	public void test_templatedLvalue_caller_templatedRvalue_rvalue_function() throws Exception {
 		parseAndCheckBindingsForProblem();
 	}
@@ -625,6 +644,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo(c);
 	//	}
+	@Test
 	public void test_lvalue_caller_templatedLvalue_rvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -649,6 +669,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_templatedLvalue_rvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -673,6 +694,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo<clazz>(getClazz());
 	//	}
+	@Test
 	public void test_templatedRvalue_caller_templatedLvalue_rvalue_function() throws Exception {
 		parseAndCheckBindingsForProblem();
 	}
@@ -692,6 +714,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo<clazz>(c);
 	//	}
+	@Test
 	public void test_templatedLvalue_caller_templatedLvalue_rvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -712,6 +735,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo(c);
 	//	}
+	@Test
 	public void test_lvalue_caller_templatedLvalue_templatedRvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -737,6 +761,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo(getClazz());
 	//	}
+	@Test
 	public void test_rvalue_caller_templatedLvalue_templatedRvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -762,6 +787,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo<clazz>(getClazz());
 	//	}
+	@Test
 	public void test_templatedRvalue_caller_templatedLvalue_templatedRvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -782,6 +808,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo<clazz>(c);
 	//	}
+	@Test
 	public void test_templatedLvalue_caller_templatedLvalue_templatedRvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -803,6 +830,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo<clazz>(getClazz());
 	//	}
+	@Test
 	public void test_templatedRvalue_caller_templatedLvalue_function() throws Exception {
 		parseAndCheckBindingsForProblem();
 	}
@@ -824,6 +852,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//	{
 	//	  demo<clazz>(getClazz());
 	//	}
+	@Test
 	public void test_templatedRvalue_caller_templatedRvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -840,6 +869,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo<clazz>(c);
 	//	}
+	@Test
 	public void test_templatedLvalue_caller_templatedLvalue_function() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -856,6 +886,7 @@ public class AST2TemplateLValueRValueTests extends AST2CPPTestBase {
 	//    clazz c;
 	//	  demo<clazz>(c);
 	//	}
+	@Test
 	public void test_templatedLvalue_caller_templatedRvalue_function() throws Exception {
 		parseAndCheckBindingsForProblem();
 	}

@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class MemberFunctionTests extends TestBase {
 	public static class NonIndexingTests extends MemberFunctionTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends MemberFunctionTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -46,6 +38,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testMemberFunctionCall() throws Exception {
 		assertEvaluationEquals(4);
 	}
@@ -63,6 +56,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testMemberFunctionWithImplicitThis() throws Exception {
 		assertEvaluationEquals(8);
 	}
@@ -81,6 +75,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testExternallyDefinedMemberFunction() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -100,6 +95,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPlusEqualsWithinMemberFunction() throws Exception {
 		assertEvaluationEquals(50);
 	}
@@ -116,6 +112,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testMemberAccessThroughThisPointer() throws Exception {
 		assertEvaluationEquals(40);
 	}
@@ -137,6 +134,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testNestedMemberFunctionCallsWithImplicitThis() throws Exception {
 		assertEvaluationEquals(8);
 	}
@@ -155,6 +153,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	constexpr int f() { return s.getY(); }
 
 	//	constexpr int x = f();
+	@Test
 	public void testGlobalMemberFunctionCallFromConstexprFunction() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -171,6 +170,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	constexpr S s{3, 5};
 
 	//	constexpr int x = s.getY();
+	@Test
 	public void testGlobalMemberFunctionCallFromGlobalConstexpr() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -191,6 +191,7 @@ public abstract class MemberFunctionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testManualAddMemberFunction() throws Exception {
 		assertEvaluationEquals(15);
 	}

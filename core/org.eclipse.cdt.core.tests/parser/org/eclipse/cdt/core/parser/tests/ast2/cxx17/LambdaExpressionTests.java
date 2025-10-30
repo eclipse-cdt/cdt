@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx17;
 
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
+import org.junit.jupiter.api.Test;
 
 /**
  * AST tests for C++17 lambda changes.
@@ -25,6 +26,7 @@ public class LambdaExpressionTests extends AST2CPPTestBase {
 	// 		[*this] { }();
 	// 	}
 	// };
+	@Test
 	public void testLambdaCaptures_535196_1() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -36,6 +38,7 @@ public class LambdaExpressionTests extends AST2CPPTestBase {
 	// 		[*this] { bar(); }();
 	// 	}
 	// };
+	@Test
 	public void testLambdaCaptures_535196_2() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -47,6 +50,7 @@ public class LambdaExpressionTests extends AST2CPPTestBase {
 	// 		[m = 3, *this] { bar(m); }();
 	// 	}
 	// };
+	@Test
 	public void testLambdaCaptures_535196_3() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -55,6 +59,7 @@ public class LambdaExpressionTests extends AST2CPPTestBase {
 	//	auto f = []() constexpr {return 2;};
 	//	return 0;
 	//}
+	@Test
 	public void testLambdaConstexpr_560483() throws Exception {
 		parseAndCheckBindings();
 	}

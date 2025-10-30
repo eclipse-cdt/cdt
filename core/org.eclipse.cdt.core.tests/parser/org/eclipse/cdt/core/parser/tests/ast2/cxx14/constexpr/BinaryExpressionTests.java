@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class BinaryExpressionTests extends TestBase {
 	public static class NonIndexingTests extends BinaryExpressionTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends BinaryExpressionTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -40,6 +32,7 @@ public abstract class BinaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testSimpleBooleanValues() throws Exception {
 		assertEvaluationEquals(false);
 	}
@@ -51,6 +44,7 @@ public abstract class BinaryExpressionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testAssignmentReturnsLValue() throws Exception {
 		assertEvaluationEquals(4);
 	}
@@ -62,6 +56,7 @@ public abstract class BinaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = addTwice(2, 5);
+	@Test
 	public void testBinaryExpressionSequence() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -75,6 +70,7 @@ public abstract class BinaryExpressionTests extends TestBase {
 	//	constexpr BooleanConvertible variable{true};
 
 	//	constexpr bool actual = variable && variable;
+	@Test
 	public void testContextualConversionInAnd_506972() throws Exception {
 		assertEvaluationEquals(true);
 	}
@@ -88,6 +84,7 @@ public abstract class BinaryExpressionTests extends TestBase {
 	//	constexpr BooleanConvertible variable{true};
 
 	//	constexpr bool actual = variable || variable;
+	@Test
 	public void testContextualConversionInOr_506972() throws Exception {
 		assertEvaluationEquals(true);
 	}

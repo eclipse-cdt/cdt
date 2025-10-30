@@ -15,21 +15,9 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class ASTCPPSpecDefectTests extends AST2TestBase {
-
-	public ASTCPPSpecDefectTests() {
-	}
-
-	public ASTCPPSpecDefectTests(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(ASTCPPSpecDefectTests.class);
-	}
 
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -55,6 +43,7 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 	//	void test() {
 	//		fp(f0);
 	//	}
+	@Test
 	public void test33_ADLForOverloadSet_324842() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -64,6 +53,7 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 	//	struct A {
 	//	  friend A operator + <>(A&);
 	//	};
+	@Test
 	public void test38_templateArgForOperator() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -72,6 +62,7 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 	//	template <class T1, class ...Z> class S<T1, const Z&...> {}; // #2
 	//	template <class T1, class T2> class S<T1, const T2&> {};; // #3
 	//	S<int, const int&> s; // both #2 and #3 match; #3 is more specialized
+	@Test
 	public void test692_partialOrdering() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -79,6 +70,7 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 	//	auto f(int x, int y) -> decltype(x < y ? x : y) {
 	//		return x < y ? x : y;
 	//	}
+	@Test
 	public void testUnparenthesizedConditionalExpressionInTrailingReturnType_544818() throws Exception {
 		parseAndCheckBindings();
 	}

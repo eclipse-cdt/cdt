@@ -15,6 +15,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -30,8 +34,7 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * For testing PDOM binding resolution
@@ -42,25 +45,12 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(false));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTest.class);
-		}
 	}
 
 	public static class ProjectWithDepProjTest extends IndexCBindingResolutionBugsTest {
 		public ProjectWithDepProjTest() {
 			setStrategy(new ReferencedProject(false));
 		}
-
-		public static TestSuite suite() {
-			return suite(ProjectWithDepProjTest.class);
-		}
-	}
-
-	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProjectTest.suite());
-		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	// #include <stdio.h>
@@ -79,6 +69,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//	    }
 	//	    return 0;
 	//	}
+	@Test
 	public void testBug175267() throws DOMException {
 		IBinding b0 = getBindingFromASTName("func1()", 5);
 		assertTrue(b0 instanceof IFunction);
@@ -97,6 +88,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//	int main(void) {
 	//      void* v= func1;
 	//	}
+	@Test
 	public void testBug181735() throws DOMException {
 		IBinding b0 = getBindingFromASTName("func1;", 5);
 		assertTrue(b0 instanceof IFunction);
@@ -112,6 +104,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//    usertype ut;
 	//    func(ut);
 	// }
+	@Test
 	public void testFuncWithTypedefForAnonymousStruct_190730() throws Exception {
 		IBinding b0 = getBindingFromASTName("func(", 4);
 		assertTrue(b0 instanceof IFunction);
@@ -134,6 +127,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//    userEnum ut;
 	//    func(ut);
 	// }
+	@Test
 	public void testFuncWithTypedefForAnonymousEnum_190730() throws Exception {
 		IBinding b0 = getBindingFromASTName("func(", 4);
 		assertTrue(b0 instanceof IFunction);
@@ -151,6 +145,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 
 	// // don't include header
 	// char globalVar;
+	@Test
 	public void testAstIndexConflictVariable_Bug195127() throws Exception {
 		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("globalVar;", 9);
@@ -165,6 +160,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 
 	// // don't include header
 	// char globalFunc();
+	@Test
 	public void testAstIndexConflictFunction_Bug195127() throws Exception {
 		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("globalFunc(", 10);
@@ -184,6 +180,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//    char member;
 	//    int additionalMember;
 	// };
+	@Test
 	public void testAstIndexConflictStruct_Bug195127() throws Exception {
 		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("astruct", 7);
@@ -213,6 +210,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	// enum anenum {
 	//    eItem0, eItem1
 	// };
+	@Test
 	public void testAstIndexConflictEnumerator_Bug195127() throws Exception {
 		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("anenum", 6);
@@ -226,6 +224,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 
 	// // don't include header
 	// typedef char atypedef;
+	@Test
 	public void testAstIndexConflictTypedef_Bug195127() throws Exception {
 		fakeFailForMultiProject();
 		IBinding b0 = getBindingFromASTName("atypedef;", 8);
@@ -245,6 +244,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	// void func(struct st_20070703* x) {
 	//    x->member= 0;
 	// }
+	@Test
 	public void testAstIndexStructFwdDecl_Bug195227() throws Exception {
 		IBinding b0 = getBindingFromASTName("member=", 6);
 		assertTrue(b0 instanceof IField);
@@ -262,6 +262,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	// enum anenum;
 	// void func(struct astruct a, enum anenum b) {
 	// }
+	@Test
 	public void testAstIndexFwdDecl_Bug195227() throws Exception {
 		IBinding b0 = getBindingFromASTName("astruct;", 7);
 		IBinding b1 = getBindingFromASTName("anenum;", 6);
@@ -297,6 +298,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	// typedef enum {
 	//    ei
 	// } t_enum;
+	@Test
 	public void testIsSameAnonymousType_Bug193962() throws DOMException {
 		// struct
 		IBinding tdAST = getBindingFromASTName("t_struct;", 8);
@@ -355,6 +357,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//    struct outer x;
 	//    x.var1=1;
 	// }
+	@Test
 	public void testAnonymousUnion_Bug216791() throws DOMException {
 		// struct
 		IBinding b = getBindingFromASTName("var1=", 4);
@@ -376,6 +379,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//    union outer x;
 	//    x.var1=1;
 	// }
+	@Test
 	public void testAnonymousStruct_Bug216791() throws DOMException {
 		// struct
 		IBinding b = getBindingFromASTName("var1=", 4);
@@ -396,6 +400,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	// int main(void) {
 	//    return myFunc(0);
 	// }
+	@Test
 	public void testKRStyleFunction_Bug216791() throws DOMException {
 		// struct
 		IBinding b = getBindingFromASTName("myFunc(", 6);
@@ -416,6 +421,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//	void setValue(S *pSelf, int value) {
 	//		pSelf->value = value;
 	//	}
+	@Test
 	public void testOpaqueStruct_Bug262719() throws Exception {
 		IBinding b = getBindingFromASTName("value =", 5);
 		assertTrue(b instanceof IField);
@@ -476,6 +482,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 	//          0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 	//	}
+	@Test
 	public void testFunctionsWithManyParameters_Bug319186() throws Exception {
 		getBindingFromASTName("f255", 0);
 		getBindingFromASTName("f256", 0);
@@ -488,6 +495,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//	struct B b = {
 	//			.f = 3.1
 	//	};
+	@Test
 	public void testDesignatedInitializer_Bug210019() throws Exception {
 		IField f = getBindingFromASTName("f", 0);
 	}
@@ -500,6 +508,7 @@ public abstract class IndexCBindingResolutionBugsTest extends IndexBindingResolu
 	//		struct S *i;
 	//		f(&i->data);
 	//	}
+	@Test
 	public void testBug394151() throws Exception {
 		IParameter f = getBindingFromASTName("f(", 1);
 	}

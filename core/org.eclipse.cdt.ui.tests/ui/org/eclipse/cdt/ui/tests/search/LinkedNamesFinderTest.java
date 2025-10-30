@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.search;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -24,9 +27,9 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.ui.search.LinkedNamesFinder;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.jface.text.IRegion;
+import org.junit.jupiter.api.Test;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestSuite;
 
 /**
  * Tests for LinkedNamesFinder class.
@@ -40,17 +43,6 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	}
 
 	static final RegionComparator REGION_COMPARATOR = new RegionComparator();
-
-	public LinkedNamesFinderTest() {
-	}
-
-	public LinkedNamesFinderTest(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(LinkedNamesFinderTest.class);
-	}
 
 	@Override
 	protected CharSequence[] getContents(int sections) throws IOException {
@@ -87,6 +79,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//
 	//	void A::m(int x) {}
 	//	void A::m(int x, int y) {}
+	@Test
 	public void testMethodParameter() throws Exception {
 		String code = getAboveComment();
 		IRegion[] regions = getLinkedRegions(code, "x);", 1, true);
@@ -105,6 +98,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//	A::A() {}
 	//	A::A(int x) {}
 	//	A::~A() {}
+	@Test
 	public void testClass() throws Exception {
 		String code = getAboveComment();
 		IRegion[] regions = getLinkedRegions(code, "A {", 1, true);
@@ -140,6 +134,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//	public:
 	//    void m(int c);
 	//	};
+	@Test
 	public void testVirtualMethod() throws Exception {
 		String code = getAboveComment();
 		IRegion[] regions = getLinkedRegions(code, "m(int c)", 1, true);
@@ -156,6 +151,7 @@ public class LinkedNamesFinderTest extends AST2TestBase {
 	//	#define GUARD //2
 	//	// This is a GUARD test
 	//	#endif // GUARD
+	@Test
 	public void testIncludeGuards() throws Exception {
 		String code = getAboveComment();
 		IRegion[] regions = getLinkedRegions(code, "GUARD //1", 5, true);

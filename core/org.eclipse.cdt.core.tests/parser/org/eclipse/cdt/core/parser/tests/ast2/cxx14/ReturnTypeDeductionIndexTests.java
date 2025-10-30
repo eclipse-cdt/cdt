@@ -12,6 +12,7 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 
 import org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes;
 import org.eclipse.cdt.internal.index.tests.IndexBindingResolutionTestBase;
+import org.junit.jupiter.api.Test;
 
 public class ReturnTypeDeductionIndexTests extends IndexBindingResolutionTestBase {
 	public ReturnTypeDeductionIndexTests() {
@@ -24,6 +25,7 @@ public class ReturnTypeDeductionIndexTests extends IndexBindingResolutionTestBas
 	//	auto A::f() { return 42; }
 
 	//	auto waldo = A().f();
+	@Test
 	public void testOutOfLineMethod1() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);

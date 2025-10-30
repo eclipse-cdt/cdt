@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariable;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for header files included in multiple variants.
@@ -32,10 +35,6 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 
 	public IndexMultiVariantHeaderTest() {
 		setStrategy(new SinglePDOMTestNamedFilesStrategy(true));
-	}
-
-	public static TestSuite suite() {
-		return suite(IndexMultiVariantHeaderTest.class);
 	}
 
 	// test.h
@@ -57,6 +56,7 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 	//
 	//	#include "test.h"
 	//	void func(3)() {}
+	@Test
 	public void testExampleFromBug197989_Comment0() throws Exception {
 		IFunction f1 = getBindingFromASTName("func(1)", 7, IFunction.class);
 		assertEquals("foo1", f1.getName());
@@ -108,6 +108,7 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 	//	void test() {
 	//	  f2(NULL, 1);
 	//	}
+	@Test
 	public void testExampleFromBug197989_Comment73() throws Exception {
 		getBindingFromASTName("f1(NULL)", 2, ICPPFunction.class);
 		getBindingFromASTName("f2(NULL, 1)", 2, ICPPFunction.class);
@@ -136,6 +137,7 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 	//	  y = 0;
 	//	  z = 0;
 	//	}
+	@Test
 	public void testSignificantMacroDetection() throws Exception {
 		getBindingFromASTName("x = 0", 1, ICPPVariable.class);
 		getBindingFromASTName("y = 0", 1, ICPPVariable.class);
@@ -155,6 +157,7 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 
 	//	a.cpp *
 	//	#include "a.h"
+	@Test
 	public void testSignificantMacroDetection_367753a() throws Exception {
 		IASTName includeName = findName("a.h", 0);
 		IASTPreprocessorIncludeStatement inc = (IASTPreprocessorIncludeStatement) includeName.getParent();
@@ -179,6 +182,7 @@ public class IndexMultiVariantHeaderTest extends IndexBindingResolutionTestBase 
 
 	//	a.cpp *
 	//	#include "a.h"
+	@Test
 	public void testSignificantMacroDetection_367753b() throws Exception {
 		IASTName includeName = findName("a.h", 0);
 		IASTPreprocessorIncludeStatement inc = (IASTPreprocessorIncludeStatement) includeName.getParent();

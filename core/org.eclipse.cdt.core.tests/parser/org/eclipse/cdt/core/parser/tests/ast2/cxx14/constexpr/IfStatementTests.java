@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class IfStatementTests extends TestBase {
 	public static class NonIndexingTests extends IfStatementTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends IfStatementTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -42,6 +34,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSimpleIfTrueBranch() throws Exception {
 		assertEvaluationEquals(1);
 	}
@@ -54,6 +47,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSimpleIfFalseBranch() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -67,6 +61,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testIfElseTrueBranch() throws Exception {
 		assertEvaluationEquals(1);
 	}
@@ -80,6 +75,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSimpleIfElseFalseBranch() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -95,6 +91,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testNestedIfTrueBranch() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -110,6 +107,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testNestedIfFalseBranch() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -121,6 +119,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testIfStatementWithNonCompoundThenClause() throws Exception {
 		assertEvaluationEquals(1);
 	}
@@ -133,6 +132,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testIfStatementWithNonCompoundElseClause() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -148,6 +148,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testIfStatementWithNonReturnClauses() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -162,6 +163,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testIfStatementWithNonReturnClausesAndNonCompoundElseClause() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -175,6 +177,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(1);
+	@Test
 	public void testDeclarationInIfStatementCondition1() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -188,6 +191,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(0);
+	@Test
 	public void testDeclarationInIfStatementCondition2() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -204,6 +208,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(1);
+	@Test
 	public void testDeclarationInIfStatementCondition3() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -220,6 +225,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(1);
+	@Test
 	public void testInitStatementInIfStatementCondition1() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -236,6 +242,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(1);
+	@Test
 	public void testInitStatementInIfStatementCondition2() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -252,6 +259,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testInitStatementInIfStatementCondition3() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -269,6 +277,7 @@ public abstract class IfStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(1);
+	@Test
 	public void testEmptyInitStatementInIfStatementCondition1() throws Exception {
 		assertEvaluationEquals(7);
 	}

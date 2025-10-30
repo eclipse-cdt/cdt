@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.BitSet;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -25,25 +31,12 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcases for inactive code in ast.
  */
 public class ASTInactiveCodeTests extends AST2TestBase {
-
-	public static TestSuite suite() {
-		return suite(ASTInactiveCodeTests.class);
-	}
-
-	public ASTInactiveCodeTests() {
-		super();
-	}
-
-	public ASTInactiveCodeTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected void configureScanner(IScanner scanner) {
@@ -67,6 +60,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	   int a6;
 	//	#endif
 	//	int a7;
+	@Test
 	public void testIfBranches() throws Exception {
 		String codeTmpl = getAboveComment();
 		for (int i = 0; i < (1 << 4); i++) {
@@ -139,6 +133,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	   int a6;
 	//	#endif
 	//	int a7;
+	@Test
 	public void testIfdefBranches() throws Exception {
 		String codeTmpl = getAboveComment();
 		for (int i = 0; i < (1 << 4); i++) {
@@ -166,6 +161,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	   int a6;
 	//	#endif
 	//	int a7;
+	@Test
 	public void testIfndefBranches() throws Exception {
 		String codeTmpl = getAboveComment();
 		for (int i = 0; i < (1 << 4); i++) {
@@ -194,6 +190,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	#endif
 	//	int a7;
 	// };
+	@Test
 	public void testStructs() throws Exception {
 		String codeTmpl = getAboveComment();
 		for (int i = 0; i < (1 << 4); i++) {
@@ -222,6 +219,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	#endif
 	//	int a7;
 	// };
+	@Test
 	public void testExternC() throws Exception {
 		String codeTmpl = getAboveComment();
 		for (int i = 0; i < (1 << 4); i++) {
@@ -247,6 +245,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	#endif
 	//	int a7;
 	// }
+	@Test
 	public void testNamespace() throws Exception {
 		String codeTmpl = getAboveComment();
 		for (int i = 0; i < (1 << 4); i++) {
@@ -260,6 +259,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//    int f(TInt);
 	//    int g(value);
 	// #endif
+	@Test
 	public void testAmbiguity() throws Exception {
 		String code = getAboveComment();
 		IASTTranslationUnit tu = parseAndCheckBindings(code, ParserLanguage.CPP);
@@ -279,6 +279,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//    int b; // 1
 	// #endif
 	// int b; // 2
+	@Test
 	public void testDuplicateDefinition() throws Exception {
 		String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
@@ -307,6 +308,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//   int b;
 	// };
 	// #endif
+	@Test
 	public void testInactiveClosingBrace() throws Exception {
 		String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
@@ -332,6 +334,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//      int d;
 	//   #endif
 	// };
+	@Test
 	public void testOpenBraceInActiveBranch() throws Exception {
 		String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
@@ -362,6 +365,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//    int c;
 	// #endif
 	// int d;
+	@Test
 	public void testOpenBraceInInactiveBranch() throws Exception {
 		String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);
@@ -392,6 +396,7 @@ public class ASTInactiveCodeTests extends AST2TestBase {
 	//	   #endif
 	//	 }
 	//	 #endif
+	@Test
 	public void testUnexpectedBranchesInInactiveCode() throws Exception {
 		String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, false);

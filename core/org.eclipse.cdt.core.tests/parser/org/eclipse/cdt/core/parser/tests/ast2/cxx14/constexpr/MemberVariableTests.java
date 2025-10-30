@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class MemberVariableTests extends TestBase {
 	public static class NonIndexingTests extends MemberVariableTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends MemberVariableTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -42,6 +34,7 @@ public abstract class MemberVariableTests extends TestBase {
 	// }
 
 	//	constexpr auto x = f();
+	@Test
 	public void testIncrementOnCompositeValues() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -55,6 +48,7 @@ public abstract class MemberVariableTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testMemberAccessWithConstObject() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -66,6 +60,7 @@ public abstract class MemberVariableTests extends TestBase {
 	//  constexpr int f() { return s.y; }
 
 	//	constexpr auto x = f();
+	@Test
 	public void testGlobalMemberAccessFromConstexprFunction() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -76,6 +71,7 @@ public abstract class MemberVariableTests extends TestBase {
 	//	constexpr S s{5, 6};
 
 	//	constexpr auto x = s.y;
+	@Test
 	public void testGlobalMemberAccessFromGlobalConstexpr() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -94,6 +90,7 @@ public abstract class MemberVariableTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testFieldDependsOnOtherField() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -112,6 +109,7 @@ public abstract class MemberVariableTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testMemberInitializationWithoutUserDefinedCtor() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -124,6 +122,7 @@ public abstract class MemberVariableTests extends TestBase {
 	//    }
 
 	//    constexpr int x = f();
+	@Test
 	public void testAccessOfStaticField() throws Exception {
 		assertEvaluationEquals(5);
 	}

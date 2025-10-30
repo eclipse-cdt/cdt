@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpressionList;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -41,8 +44,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcases for non-gnu language extensions.
@@ -52,18 +54,6 @@ public class LanguageExtensionsTest extends AST2TestBase {
 	protected static final int SIZEOF_EXTENSION = 0x1;
 	protected static final int FUNCTION_STYLE_ASM = 0x2;
 	protected static final int SLASH_PERCENT_COMMENT = 0x4;
-
-	public static TestSuite suite() {
-		return suite(LanguageExtensionsTest.class);
-	}
-
-	public LanguageExtensionsTest() {
-		super();
-	}
-
-	public LanguageExtensionsTest(String name) {
-		super(name);
-	}
 
 	private IASTTranslationUnit parse(ISourceCodeParser parser) {
 		IASTTranslationUnit tu = parser.parse();
@@ -131,6 +121,7 @@ public class LanguageExtensionsTest extends AST2TestBase {
 
 	// parclass ExampleClass {
 	// };
+	@Test
 	public void testPOP_parclass() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), POPCPPScannerExtensionConfiguration.getInstance(),
 				POPCPPParserExtensionConfiguration.getInstance());
@@ -140,6 +131,7 @@ public class LanguageExtensionsTest extends AST2TestBase {
 	// parclass Table {
 	//    void sort([in, out, size=n] int *data, int n);
 	// };
+	@Test
 	public void testPOP_marshallingData() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), POPCPPScannerExtensionConfiguration.getInstance(),
 				POPCPPParserExtensionConfiguration.getInstance());
@@ -154,6 +146,7 @@ public class LanguageExtensionsTest extends AST2TestBase {
 	//    		od.memory(100,60);
 	//    		od.protocol("socket http"); };
 	//    };
+	@Test
 	public void testPOP_objectDescriptor() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), POPCPPScannerExtensionConfiguration.getInstance(),
 				POPCPPParserExtensionConfiguration.getInstance());
@@ -164,6 +157,7 @@ public class LanguageExtensionsTest extends AST2TestBase {
 
 	// @pack(Stack, Queue, List)
 	// int a();
+	@Test
 	public void testPOP_packDirective() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), POPCPPScannerExtensionConfiguration.getInstance(),
 				POPCPPParserExtensionConfiguration.getInstance());
@@ -175,6 +169,7 @@ public class LanguageExtensionsTest extends AST2TestBase {
 	// sizeof(int, 1);
 	// sizeof(int, 2, 2);
 	// }
+	@Test
 	public void testSizeofExtension() throws Exception {
 		IASTTranslationUnit tu = parseCWithExtension(getAboveComment(), SIZEOF_EXTENSION);
 		IASTFunctionDefinition fdef = getDeclaration(tu, 0);
@@ -207,6 +202,7 @@ public class LanguageExtensionsTest extends AST2TestBase {
 	//  asm a4() {
 	//     assembler code here
 	//  }
+	@Test
 	public void testFunctionStyleAssembler() throws Exception {
 		IASTTranslationUnit tu = parseCWithExtension(getAboveComment(), FUNCTION_STYLE_ASM);
 		IASTFunctionDefinition fdef = getDeclaration(tu, 0);
@@ -223,6 +219,7 @@ public class LanguageExtensionsTest extends AST2TestBase {
 
 	// /% a comment %/
 	// int a;
+	@Test
 	public void testSlashPercentComment() throws Exception {
 		IASTTranslationUnit tu = parseCWithExtension(getAboveComment(), SLASH_PERCENT_COMMENT);
 

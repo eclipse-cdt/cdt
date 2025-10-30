@@ -13,9 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx17;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.index.tests.IndexBindingResolutionTestBase;
+import org.junit.jupiter.api.Test;
 
 public class TemplateAutoIndexTests extends IndexBindingResolutionTestBase {
 	public TemplateAutoIndexTests() {
@@ -43,6 +46,7 @@ public class TemplateAutoIndexTests extends IndexBindingResolutionTestBase {
 	//
 	//	using A = call_helper<&Something::foo>::type;
 	//	auto waldo = A::call();
+	@Test
 	public void testTemplateAutoIndex() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable variable = helper.assertNonProblem("waldo");

@@ -9,15 +9,9 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx17;
 
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class CXX17ExtensionsTests extends AST2CPPTestBase {
-
-	public static TestSuite suite() {
-		return suite(CXX17ExtensionsTests.class);
-	}
-
 	//	struct Base {
 	//		  int foo;
 	//		};
@@ -28,6 +22,7 @@ public class CXX17ExtensionsTests extends AST2CPPTestBase {
 	//		int main() {
 	//		  MyStruct test = { {0}, 9 };
 	//		}
+	@Test
 	public void testAggregateInitializationOfBaseClass_549367() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}

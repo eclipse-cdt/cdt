@@ -15,6 +15,11 @@
 
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,21 +63,9 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTTokenList;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class AST2CPPAttributeTests extends AST2TestBase {
-
-	public AST2CPPAttributeTests() {
-	}
-
-	public AST2CPPAttributeTests(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(AST2CPPAttributeTests.class);
-	}
 
 	private IASTTranslationUnit parseAndCheckBindings() throws Exception {
 		String code = getAboveComment();
@@ -154,18 +147,21 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	auto t = []() mutable throw(char const *) [[attr]] { throw "exception"; };
+	@Test
 	public void testAttributedLambda() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTFunctionDeclarator.class);
 	}
 
 	//	int * arr = new int[1][[attr]]{2};
+	@Test
 	public void testAttributedNewArrayExpression() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTArrayModifier.class);
 	}
 
 	//	int (* matrix) = new int[2][[attr1]][2][[attr2]];
+	@Test
 	public void testAttributedMultidimensionalNewArrayExpression() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		List<IASTAttributeSpecifier> specifiers = getAttributeSpecifiers(tu);
@@ -180,6 +176,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() {
 	//	  [[attr]] label:;
 	//	}
+	@Test
 	public void testAttributeInLabeledStatement() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTLabelStatement.class);
@@ -192,6 +189,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	    ;
 	//	  }
 	//	}
+	@Test
 	public void testAttributedSwitchLabels() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		List<IASTAttributeSpecifier> specifiers = getAttributeSpecifiers(tu);
@@ -202,6 +200,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	  int i{0};
 	//	  [[attr]] i++;
 	//	}
+	@Test
 	public void testAttributedExpressionStatement() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTExpressionStatement.class);
@@ -210,6 +209,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() {
 	//	  [[attr]] {}
 	//	}
+	@Test
 	public void testAttributedCompoundStatement() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTCompoundStatement.class);
@@ -218,6 +218,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() {
 	//	  [[attr]] if(false);
 	//	}
+	@Test
 	public void testAttributedSelectionStatement() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTIfStatement.class);
@@ -226,6 +227,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() {
 	//	  [[attr]] while(false);
 	//	}
+	@Test
 	public void testAttributedIterationStatement() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTWhileStatement.class);
@@ -234,6 +236,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() {
 	//	  [[attr]] return;
 	// }
+	@Test
 	public void testAttributedJumpStatement() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTReturnStatement.class);
@@ -242,6 +245,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() {
 	//	  [[attr]] try{} catch(...) {}
 	//	}
+	@Test
 	public void testAttributedTryBlockStatement() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTTryBlockStatement.class);
@@ -250,6 +254,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() {
 	//	  if([[attr]]int i{0});
 	//	}
+	@Test
 	public void testAttributedConditionWithInitializer() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTSimpleDeclaration.class);
@@ -259,18 +264,21 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	  int a[1]{0};
 	//	  for([[attr]]auto i : a){}
 	//	}
+	@Test
 	public void testAttributedForRangeDeclaration() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTSimpleDeclaration.class);
 	}
 
 	//	using number [[attr]] = int;
+	@Test
 	public void testAttributedAliasDeclaration() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTAliasDeclaration.class);
 	}
 
 	//	enum [[attr]] e {};
+	@Test
 	public void testAttributedEnumDeclaration() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTEnumerationSpecifier.class);
@@ -278,6 +286,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 
 	//	namespace NS{}
 	//	[[attr]] using namespace NS;
+	@Test
 	public void testAttributedUsingDirective() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTUsingDirective.class);
@@ -286,6 +295,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void foo() throw(char const *) [[noreturn]] -> void {
 	//	  throw "exception";
 	//	}
+	@Test
 	public void testTrailingNoreturnFunctionDefinition() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
@@ -294,60 +304,70 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	[[noreturn]] void foo() throw(char const *) {
 	//	  throw "exception";
 	//	}
+	@Test
 	public void testLeadingNoreturnFunctionDefinition() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDefinition.class);
 	}
 
 	//	void foo() throw(char const *) [[noreturn]];
+	@Test
 	public void testTrailingNoReturnFunctionDeclaration() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
 	}
 
 	//	[[noreturn]] void foo() throw(char const *);
+	@Test
 	public void testLeadingNoReturnFunctionDeclaration() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTSimpleDeclaration.class);
 	}
 
 	//	class [[attr]] C{};
+	@Test
 	public void testAttributedClass() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTCompositeTypeSpecifier.class);
 	}
 
 	//	void f() { try { } catch ([[attr]] int& id) {} }
+	@Test
 	public void testAttributedExceptionDeclaration() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTSimpleDeclaration.class);
 	}
 
 	//	struct [[attr]] S;
+	@Test
 	public void testAttributedElaboratedTypeSpecifier() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTElaboratedTypeSpecifier.class);
 	}
 
 	//	static int [[int_attr]] v;
+	@Test
 	public void testAttributedDeclSpecifier() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTSimpleDeclSpecifier.class);
 	}
 
 	//auto [[maybe_unused]] variable;
+	@Test
 	public void testAttributeAutoDeclSpecifer() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTSimpleDeclSpecifier.class);
 	}
 
 	//	const volatile unsigned long int [[attr]] cvuli;
+	@Test
 	public void testAttributedTypeSpecifier() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTSimpleDeclSpecifier.class);
 	}
 
 	//	int * [[pointer_attribute]] * [[pointer_attribute]] ipp;
+	@Test
 	public void testAttributedPtrOperators() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		List<IASTAttributeSpecifier> specifiers = getAttributeSpecifiers(tu);
@@ -360,42 +380,49 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	int & [[ref_attribute]] iRef;
+	@Test
 	public void testAttributedRefOperator() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTReferenceOperator.class);
 	}
 
 	//	int && [[rvalue_ref_attribute]] iRvalueRef;
+	@Test
 	public void testAttributedRvalueRefOperator() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTReferenceOperator.class);
 	}
 
 	//	void foo() [[function_attr]];
+	@Test
 	public void testAttributedFunctionDeclaration() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
 	}
 
 	//	int ipp [[declarator_attr]];
+	@Test
 	public void testAttributedDeclarator() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTDeclarator.class);
 	}
 
 	//	int iArr[5] [[arr_attr]];
+	@Test
 	public void testAttributedArrayDeclarator() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTArrayModifier.class);
 	}
 
 	//	[[attr]] int i;
+	@Test
 	public void testAttributedSimpleDeclaration() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTSimpleDeclaration.class);
 	}
 
 	//	[[attr]] void bar(){}
+	@Test
 	public void testAttributedFunctionDefinition() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDefinition.class);
@@ -404,6 +431,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	struct S {
 	//	  [[ctor_attr]] S() = delete;
 	//	};
+	@Test
 	public void testDeletedCtor() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDefinition.class);
@@ -412,6 +440,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	struct S {
 	//	  [[dtor_attr]] ~S() = default;
 	//	};
+	@Test
 	public void testDefaultedDtor() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDefinition.class);
@@ -420,18 +449,21 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	void bar() {
 	//	  [[attr]] int i;
 	//	}
+	@Test
 	public void testAttributedSimpleDeclarationInStatement() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTSimpleDeclaration.class);
 	}
 
 	//	[[]] int i;
+	@Test
 	public void testEmptyAttributeSpecifier() throws Exception {
 		IASTAttribute[] attributes = getAttributes();
 		assertEquals(IASTAttribute.EMPTY_ATTRIBUTE_ARRAY, attributes);
 	}
 
 	//	[[attr]] [[attr2]] [[attr3]] int i;
+	@Test
 	public void testMultipleSequentialAttributeSpecifiers() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings();
 		List<IASTAttributeSpecifier> specifiers = getAttributeSpecifiers(tu);
@@ -450,6 +482,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	[[attr1, attr2]] int i;
+	@Test
 	public void testMultipleAttributes() throws Exception {
 		IASTAttribute[] attributes = getAttributes();
 		assertEquals(2, attributes.length);
@@ -460,6 +493,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	[[attribute ...]] int i;
+	@Test
 	public void testPackExpansionAttribute() throws Exception {
 		IASTAttribute[] attributes = getAttributes();
 		assertEquals(1, attributes.length);
@@ -469,6 +503,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	[[scope::attribute]] int i;
+	@Test
 	public void testScopedAttribute() throws Exception {
 		IASTAttribute[] attributes = getAttributes();
 		assertEquals(1, attributes.length);
@@ -479,6 +514,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	[[attr()]] int i;
+	@Test
 	public void testAttributeWithEmptyArgument() throws Exception {
 		IASTAttribute[] attributes = getAttributes();
 		assertEquals(1, attributes.length);
@@ -489,6 +525,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	[[attr(this(is){[my]}(argument[with]{some},parentheses))]] int i;
+	@Test
 	public void testAttributeWithBalancedArgument() throws Exception {
 		IASTAttribute[] attributes = getAttributes();
 		assertEquals(1, attributes.length);
@@ -501,6 +538,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	[[attr(class)]] int i;
+	@Test
 	public void testAttributeWithKeywordArgument() throws Exception {
 		IASTAttribute[] attributes = getAttributes();
 		assertEquals(1, attributes.length);
@@ -514,18 +552,21 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//	struct S __attribute__((__packed__)) {};
+	@Test
 	public void testGCCAttributedStruct() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTCompositeTypeSpecifier.class);
 	}
 
 	//	int a __attribute__ ((aligned ((64))));
+	@Test
 	public void testGCCAttributedVariableDeclarator_bug391572() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTDeclarator.class);
 	}
 
 	//	int a __attribute__ (());
+	@Test
 	public void testEmptyGCCAttribute() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTDeclarator.class);
@@ -534,6 +575,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	struct S {
 	//	  void foo() override __attribute__((attr));
 	//	};
+	@Test
 	public void testGCCAttributeAfterOverride_bug413615() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTFunctionDeclarator.class);
@@ -542,6 +584,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	//	enum E {
 	//		value1 [[attr1]], value2 [[attr2]] = 1
 	//	};
+	@Test
 	public void testAttributedEnumerator_Bug535269() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), IASTEnumerator.class, IASTEnumerator.class);
@@ -549,6 +592,7 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 
 	//void f([[attr1]] int [[attr2]] p) {
 	//}
+	@Test
 	public void testAttributedFunctionParameter_Bug535275() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTParameterDeclaration.class,
@@ -556,24 +600,28 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 	}
 
 	//namespace [[attr]] NS {}
+	@Test
 	public void testAttributedNamedNamespace_Bug535274() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
 	}
 
 	//namespace [[attr]] {}
+	@Test
 	public void testAttributedUnnamedNamespace_Bug535274() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
 	}
 
 	//namespace NS __attribute__((__visibility__("default"))) {}
+	@Test
 	public void testGnuAndCppMixedAttributedNamedNamespace_Bug535274() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		checkAttributeRelations(getAttributeSpecifiers(tu), ICPPASTNamespaceDefinition.class);
 	}
 
 	//	[[attr]] __attribute__((__visibility__("default"))) [[attr2]] __attribute__((__section__(".foo"))) int i;
+	@Test
 	public void testMixedAttributeSpecifiers() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP, ScannerKind.GNU);
 		List<IASTAttributeSpecifier> specifiers = getAttributeSpecifiers(tu);

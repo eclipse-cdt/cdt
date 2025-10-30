@@ -12,27 +12,18 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class PointerTests extends TestBase {
 	public static class NonIndexingTests extends PointerTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends PointerTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -44,6 +35,7 @@ public abstract class PointerTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testPointerArithmeticsPostFixIncr() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -57,6 +49,7 @@ public abstract class PointerTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testPointerArithmeticsPostFixDecr() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -69,6 +62,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testDereferencingOfPointerToInvalidMemoryShouldFail() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -80,6 +74,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerArithmeticInDeclaration() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -92,6 +87,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSubtractionOfPointersToSameArrayShouldYieldDistance() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -104,6 +100,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerAddition() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -116,6 +113,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerAdditionAndAssignment() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -128,6 +126,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerSubtraction() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -140,6 +139,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerSubtractionAndAssignment() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -152,6 +152,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerDeclarationFromPointer() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -165,6 +166,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointersHaveSeparatePositions() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -177,6 +179,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerAdditionInDeclaration() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -189,6 +192,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerSubtractionInDeclaration() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -201,6 +205,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testDereferencingOnePastTheEndPointerIsInvalid() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -214,6 +219,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testDereferencingIncrementedOnePastTheEndAndThenDecrementedBackInRageAgainPointerIsValid()
 			throws Exception {
 		assertEvaluationEquals(11);
@@ -228,6 +234,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testDereferencingIncrementedTWOPastTheEndAndThenDecrementedBackInRageAgainPointerIsInvalid()
 			throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
@@ -241,6 +248,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerWithNegativePositionIsInvalid() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -254,6 +262,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerThatOnceHasNegativePositionStaysInvalid() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -265,6 +274,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerDeclaredOnePastTheEndIsInvalid() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -277,6 +287,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerDeclaredOnePastTheEndAndThenDecrementedBackInRageAgainIsValid() throws Exception {
 		assertEvaluationEquals(11);
 	}
@@ -289,6 +300,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerDeclaredTwoPastTheEndAndThenDecrementedBackInRageAgainStaysInvalid() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -300,6 +312,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerDeclaredWithNegativePositionIsInvalid() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -312,6 +325,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerDelcaredWithNegativePositionStaysInvalid() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -325,6 +339,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testPointerAssignment() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -337,6 +352,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testPointerValueAssignment() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -352,6 +368,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testPointerToStructMember() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -364,6 +381,7 @@ public abstract class PointerTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testPointer() throws Exception {
 		assertEvaluationEquals(6);
 	}

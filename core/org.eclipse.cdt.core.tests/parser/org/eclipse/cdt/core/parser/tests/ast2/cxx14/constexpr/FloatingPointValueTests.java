@@ -11,7 +11,7 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class FloatingPointValueTests extends TestBase {
 	public static class NonIndexingTests extends FloatingPointValueTests {
@@ -19,47 +19,46 @@ public abstract class FloatingPointValueTests extends TestBase {
 			setStrategy(new NonIndexingTestStrategy());
 		}
 
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends FloatingPointValueTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
-		}
 	}
 
 	// 	constexpr auto x = 2.5;
+	@Test
 	public void testDoubleLiteral() throws Exception {
 		assertEvaluationEquals(2.5);
 	}
 
 	//	constexpr auto x = -2.5;
+	@Test
 	public void testNegativeDoubleLiteral() throws Exception {
 		assertEvaluationEquals(-2.5);
 	}
 
 	//  constexpr auto x = .5f;
+	@Test
 	public void testFloatLiteral() throws Exception {
 		assertEvaluationEquals(0.5);
 	}
 
 	//	constexpr auto x = 2.l;
+	@Test
 	public void testLongDoubleLiteral() throws Exception {
 		assertEvaluationEquals(2.0);
 	}
 
 	//	constexpr auto x = 123.456e-67;
+	@Test
 	public void testDoubleLiteralWithScientificNotation() throws Exception {
 		assertEvaluationEquals(123.456e-67);
 	}
 
 	//	constexpr auto x = .1E4f;
+	@Test
 	public void testFloatLiteralWithScientificNotation() throws Exception {
 		assertEvaluationEquals(.1E4f);
 	}
@@ -71,6 +70,7 @@ public abstract class FloatingPointValueTests extends TestBase {
 	//	}
 
 	//	constexpr double x = f();
+	@Test
 	public void testBinaryOperationsWithFloatingPointNumbers() throws Exception {
 		assertEvaluationEquals(22.7);
 	}
@@ -82,6 +82,7 @@ public abstract class FloatingPointValueTests extends TestBase {
 	//	}
 
 	//	constexpr bool x = f();
+	@Test
 	public void testComparisonBetweenFloatingPointValueAndIntegralValue1() throws Exception {
 		assertEvaluationEquals(true);
 	}
@@ -93,11 +94,13 @@ public abstract class FloatingPointValueTests extends TestBase {
 	//	}
 
 	//	constexpr bool x = f();
+	@Test
 	public void testComparisonBetweenFloatingPointValueAndIntegralValue2() throws Exception {
 		assertEvaluationEquals(false);
 	}
 
 	//	constexpr auto x = float{} + float();
+	@Test
 	public void testFloatDefaultValue() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -108,11 +111,13 @@ public abstract class FloatingPointValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testFloatValueInitialization() throws Exception {
 		assertEvaluationEquals(0);
 	}
 
 	//	constexpr auto x = double{} + double();
+	@Test
 	public void testDoubleDefaultValue() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -123,6 +128,7 @@ public abstract class FloatingPointValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testDoubleValueInitialization() throws Exception {
 		assertEvaluationEquals(0);
 	}

@@ -15,22 +15,19 @@ import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPPointerType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPQualifierType;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class CXX20CharacterTypes extends AST2CPPTestBase {
 
-	public static TestSuite suite() {
-		return suite(CXX20CharacterTypes.class);
-	}
-
 	//	char  test_char;
 	//	char8_t  test_char8_t;
+	@Test
 	public void testCxx20CharacterTypes() throws Exception {
 		parseAndCheckBindings(ScannerKind.STDCPP20);
 	}
 
 	// auto u8 = u8"";
+	@Test
 	public void testStringLiteralPrefixChar8t() throws Exception {
 		IType eChar8 = createStringType(Kind.eChar8);
 

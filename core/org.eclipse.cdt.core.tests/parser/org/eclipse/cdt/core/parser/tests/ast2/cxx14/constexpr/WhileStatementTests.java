@@ -12,27 +12,18 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class WhileStatementTests extends TestBase {
 	public static class NonIndexingTests extends WhileStatementTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends WhileStatementTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -46,6 +37,7 @@ public abstract class WhileStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testWhileLoopWithConditionalExpression() throws Exception {
 		assertEvaluationEquals(55);
 	}
@@ -60,6 +52,7 @@ public abstract class WhileStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testEvalShouldAbortOnWhileWitInfiniteLoop() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -74,6 +67,7 @@ public abstract class WhileStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testReturnInWhileStatement() throws Exception {
 		assertEvaluationEquals(42);
 	}
@@ -86,6 +80,7 @@ public abstract class WhileStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testWhileLoopWithNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(55);
 	}
@@ -98,6 +93,7 @@ public abstract class WhileStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testWhileLoopWithReturnInNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(42);
 	}
@@ -114,6 +110,7 @@ public abstract class WhileStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(4);
+	@Test
 	public void testDeclarationInWhileStatementCondition1() throws Exception {
 		assertEvaluationEquals(30);
 	}

@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class FunctionTemplateTests extends TestBase {
 	public static class NonIndexingTests extends FunctionTemplateTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends FunctionTemplateTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -40,6 +32,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = add(5.5, 6.3);
+	@Test
 	public void testImplicitTemplateInstantiation() throws Exception {
 		assertEvaluationEquals(11.8);
 	}
@@ -57,6 +50,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f<Integer>();
+	@Test
 	public void testExplicitTemplateInstantiation() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -68,6 +62,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f<5>();
+	@Test
 	public void testTemplateWithNonTypeTemplateParameter() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -82,6 +77,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = sum(1,2,3,4,5);
+	@Test
 	public void testVariadicTemplate() throws Exception {
 		assertEvaluationEquals(15);
 	}
@@ -92,6 +88,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = count(1,2,3,4,5);
+	@Test
 	public void testParameterPackSizeof() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -116,6 +113,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = fac(Integer{5});
+	@Test
 	public void testTemplateInstantiationOfForLoop() throws Exception {
 		assertEvaluationEquals(120);
 	}
@@ -141,6 +139,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(Integer{10});
+	@Test
 	public void testTemplateInstantiationOfDoWhileLoop() throws Exception {
 		assertEvaluationEquals(55);
 	}
@@ -152,6 +151,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = add(5.5, 6.3);
+	@Test
 	public void testNullStatementInFunctionTemplate() throws Exception {
 		assertEvaluationEquals(11.8);
 	}
@@ -178,6 +178,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = fac(Integer{5});
+	@Test
 	public void testTemplateInstantiationOfWhileLoop() throws Exception {
 		assertEvaluationEquals(120);
 	}
@@ -191,6 +192,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = div(11.5, 2.0);
+	@Test
 	public void testTemplateInstantiationOfIfStatement() throws Exception {
 		assertEvaluationEquals(5.75);
 	}
@@ -203,6 +205,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = count(1, 0.5, 3.4, 5, 2.2);
+	@Test
 	public void testVariadicTemplateWithVaryingTypes() throws Exception {
 		assertEvaluationEquals(14);
 	}
@@ -217,6 +220,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr long long x = sum(1,2,3,4,5);
+	@Test
 	public void testExpansionOfVariadicTemplateParameterIntoInitializerList() throws Exception {
 		assertEvaluationEquals(15);
 	}
@@ -231,6 +235,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr long long x = sum(1,2,3,4,5);
+	@Test
 	public void testExpressionInVariadicTemplateParameterExpansion1() throws Exception {
 		assertEvaluationEquals(30);
 	}
@@ -247,6 +252,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = sumOfPrimes(0, 4, 9, 11, 19);
+	@Test
 	public void testExpressionInVariadicTemplateParameterExpansion2() throws Exception {
 		assertEvaluationEquals(150);
 	}
@@ -266,6 +272,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = sumOfPrimes(index_sequence<0, 4, 9, 11, 19>{});
+	@Test
 	public void testIndexSequence1() throws Exception {
 		assertEvaluationEquals(150);
 	}
@@ -280,6 +287,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testFunctionTemplateWithArrayParameter1() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -297,6 +305,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testFunctionTemplateWithArrayParameter2() throws Exception {
 		assertEvaluationEquals(8);
 	}
@@ -314,6 +323,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f<10>();
+	@Test
 	public void testInstantiationOfConstructorInFunctionTemplate1() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -331,6 +341,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//		return n.isFloatingPoint();
 	//	}
 	//	constexpr bool x = f<double>();
+	@Test
 	public void testInstantiationOfConstructorInFunctionTemplate2() throws Exception {
 		assertEvaluationEquals(true);
 	}
@@ -356,6 +367,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f<9,2>();
+	@Test
 	public void testInstantiationOfSwitchStatement() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -369,6 +381,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f<int>();
+	@Test
 	public void testInstantiationOfTypedefDeclaration() throws Exception {
 		assertEvaluationEquals(25);
 	}
@@ -382,6 +395,7 @@ public abstract class FunctionTemplateTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f<int>();
+	@Test
 	public void testInstantiationOfAliasDeclaration() throws Exception {
 		assertEvaluationEquals(25);
 	}

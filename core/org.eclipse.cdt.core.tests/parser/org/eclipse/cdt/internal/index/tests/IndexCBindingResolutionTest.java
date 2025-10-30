@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.io.IOException;
 
 import org.eclipse.cdt.core.dom.ast.IBasicType;
@@ -27,8 +31,7 @@ import org.eclipse.cdt.core.dom.ast.IPointerType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IValue;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * For testing PDOM binding C language resolution
@@ -44,10 +47,6 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(false));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTest.class);
-		}
 	}
 
 	public static class ProjectWithDepProjTest extends IndexCBindingResolutionTest {
@@ -55,14 +54,6 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 			setStrategy(new ReferencedProject(false));
 		}
 
-		public static TestSuite suite() {
-			return suite(ProjectWithDepProjTest.class);
-		}
-	}
-
-	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProjectTest.suite());
-		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public IndexCBindingResolutionTest() {
@@ -75,6 +66,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	// void foo() {
 	//    f= g;
 	// }
+	@Test
 	public void testPointerToFunction() throws Exception {
 		IBinding b0 = getBindingFromASTName("f= g;", 1);
 		IBinding b1 = getBindingFromASTName("g;", 1);
@@ -128,6 +120,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	//	  func1(var1); /*func2*/
 	//	  func2(s); /*func3*/
 	//	}
+	@Test
 	public void testSimpleGlobalBindings() throws IOException {
 		IBinding b2 = getBindingFromASTName("S s;", 1);
 		IBinding b3 = getBindingFromASTName("s;", 1);
@@ -159,6 +152,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	//    S *s;
 	//    E *e;
 	// };
+	@Test
 	public void testTypedefA() throws Exception {
 		IBinding b1 = getBindingFromASTName("S {", 1);
 		IBinding b2 = getBindingFromASTName("S;", 1);
@@ -190,6 +184,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	//    S *s;
 	//    E *e;
 	// };
+	@Test
 	public void testTypedefB() throws Exception {
 		IBinding b1 = getBindingFromASTName("S *s", 1);
 		IBinding b2 = getBindingFromASTName("E *e", 1);
@@ -237,6 +232,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	//    b6->u.y = 12;
 	//    b6->z = 13;
 	// }
+	@Test
 	public void testFieldReference() throws Exception {
 		IBinding b01 = getBindingFromASTName("b1;", 2);
 		assertVariable(b01, "b1", ICompositeType.class, "U");
@@ -324,6 +320,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	//			foo3/*j*/(sizeof(struct S));/*8*/       // IASTTypeIdExpression
 	//			foo1/*k*/(*sp);/*9*/                    // IASTUnaryExpression
 	//		}
+	@Test
 	public void testExpressionKindForFunctionCalls() {
 		IBinding b0 = getBindingFromASTName("foo1/*a*/", 4);
 		IBinding b0a = getBindingFromASTName("sp[1]", 2);
@@ -380,6 +377,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	//    u->a= 1;  // since we include the definition, we may use the type.
 	//    v->b= 1;  // since we include the definition, we may use the type.
 	// }
+	@Test
 	public void testTypeDefinitionWithFwdDeclaration() {
 		getBindingFromASTName("a= 1", 1);
 		getBindingFromASTName("b= 1", 1);
@@ -393,6 +391,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	// void ref() {
 	// a; b; c; e0; e2; e3; e4; e5;
 	// }
+	@Test
 	public void testValues() throws Exception {
 		IVariable v = (IVariable) getBindingFromASTName("a;", 1);
 		checkValue(v.getInitialValue(), -4);
@@ -423,6 +422,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	//	extern char TableValue[10];
 
 	//	char TableValue[sizeof TableValue];
+	@Test
 	public void testNameLookupFromArrayModifier_435075() throws Exception {
 		checkBindings();
 	}
@@ -433,6 +433,7 @@ public abstract class IndexCBindingResolutionTest extends IndexBindingResolution
 	//	};
 
 	//	int waldo = a;
+	@Test
 	public void testAnonymousUnion_377409() {
 		checkBindings();
 	}

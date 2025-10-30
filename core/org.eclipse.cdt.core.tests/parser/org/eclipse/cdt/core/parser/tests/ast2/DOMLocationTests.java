@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -74,25 +79,14 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author jcamelon
  */
 public class DOMLocationTests extends AST2TestBase {
 
-	public DOMLocationTests() {
-	}
-
-	public DOMLocationTests(String name) {
-		setName(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(DOMLocationTests.class);
-	}
-
+	@Test
 	public void testBaseCase() throws ParserException {
 		for (ParserLanguage p : ParserLanguage.values()) {
 			IASTTranslationUnit tu = parse("int x;", p); //$NON-NLS-1$
@@ -113,6 +107,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testSimpleDeclaration() throws ParserException {
 		String code = "int xLen5, * yLength8, zLength16( int );"; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -148,6 +143,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testSimpleObjectStyleMacroDefinition() throws Exception {
 		String code = "/* hi */\n#define FOOT 0x01\n\n"; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -164,6 +160,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testSimpleFunctionStyleMacroDefinition() throws Exception {
 		String code = "#define FOOBAH( WOOBAH ) JOHN##WOOBAH\n\n"; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -202,6 +199,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertEquals(length, location.getNodeLength());
 	}
 
+	@Test
 	public void testBug83664() throws Exception {
 		String code = "int foo(x) int x; {\n 	return x;\n   }\n"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.C, ScannerKind.GNU);
@@ -217,6 +215,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(expression, code.indexOf("return ") + "return ".length(), 1); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testBug84343() throws Exception {
 		String code = "class A {}; int f() {\nA * b = 0;\nreturn b;}"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -228,6 +227,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(namedTypeSpec, code.indexOf("\nA") + 1, 1); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug84366() throws Exception {
 		String code = "enum hue { red, blue, green };"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -237,6 +237,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(enumerator, code.indexOf("red"), "red".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testBug84375() throws Exception {
 		String code = "class D { public: int x; };\nclass C : public virtual D {};"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -247,6 +248,7 @@ public class DOMLocationTests extends AST2TestBase {
 
 	}
 
+	@Test
 	public void testBug84357() throws Exception {
 		String code = "class X {	int a;\n};\nint X::  * pmi = &X::a;"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -256,6 +258,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(p, code.indexOf("X::  *"), "X::  *".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testBug84367() throws Exception {
 		String code = "void foo(   int   );"; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -267,6 +270,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testElaboratedTypeSpecifier() throws ParserException {
 		String code = "/* blah */ struct A anA; /* blah */"; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -277,6 +281,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testBug83852() throws Exception {
 		String code = "/* blah */ typedef short jc;  int x = 4;  jc myJc = (jc)x; "; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -310,6 +315,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testBug83853() throws ParserException {
 		String code = "int f() {return (1?0:1);	}"; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -324,6 +330,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testBug84374() throws Exception {
 		String code = "class P1 { public: int x; };\nclass P2 { public: int x; };\nclass B : public P1, public P2 {};\nvoid main() {\nB * b = new B();\n}"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -337,6 +344,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(newExpression, code.indexOf("new B()"), "new B()".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testBug83737() throws Exception {
 		String code = "void f() {  if( a == 0 ) g( a ); else if( a < 0 ) g( a >> 1 ); else if( a > 0 ) g( *(&a + 2) ); }"; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -359,6 +367,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testBug84467() throws Exception {
 		String code = "class D { };\n D d1;\n const D d2;\n void foo() {\n typeid(d1) == typeid(d2);\n }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -374,6 +383,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(exp, code.indexOf("typeid(d2)"), "typeid(d2)".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testBug84576() throws Exception {
 		String code = "namespace A {\n extern \"C\" int g();\n }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -382,6 +392,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(spec, code.indexOf("extern \"C\""), "extern \"C\" int g();".length()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testSimplePreprocessorStatements() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifndef _APPLE_H_\n"); //$NON-NLS-1$
@@ -406,6 +417,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testBug162180() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#include <notfound.h>\n"); //$NON-NLS-1$
@@ -431,6 +443,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertFileLocation(node, code.indexOf(snip), snip.length());
 	}
 
+	@Test
 	public void testBug162180_0() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#include <notfound.h>\n"); //$NON-NLS-1$
@@ -454,6 +467,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void test162180_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define xxx(!) int a\n"); // [0-20]
@@ -477,6 +491,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void test162180_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define ! x\n");
@@ -495,6 +510,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void test162180_3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define nix(x) x\n");
@@ -514,6 +530,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void test162180_4() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#include \"\"\n");
@@ -532,6 +549,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testBug85820() throws Exception {
 		String code = "int *p = (int []){2, 4};"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.C);
@@ -540,6 +558,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(d, code.indexOf("*p = (int []){2, 4}"), "*p = (int []){2, 4}".length()); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	@Test
 	public void testBug86323() throws Exception {
 		String code = "void f() { int i=0;	for (; i<10; i++) {	} }"; //$NON-NLS-1$
 		for (ParserLanguage p : ParserLanguage.values()) {
@@ -550,6 +569,7 @@ public class DOMLocationTests extends AST2TestBase {
 		}
 	}
 
+	@Test
 	public void testBug86698_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct C;\n"); //$NON-NLS-1$
@@ -568,6 +588,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(memInit, buffer.toString().indexOf("c(0)"), "c(0)".length()); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	@Test
 	public void testBug86698_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(int);\n"); //$NON-NLS-1$
@@ -594,6 +615,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(tryblock.getCatchHandlers()[0], code.indexOf("catch"), "catch (...)\n{\n }".length());
 	}
 
+	@Test
 	public void testBug157009_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifndef A\r\n#error X\r\n#else\r\n#error Y\r\n#endif");
@@ -604,6 +626,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(problems[0], buffer.indexOf("X"), "X".length());
 	}
 
+	@Test
 	public void testBug157009_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifndef A\n#error X\n#else\n#error Y\n#endif");
@@ -614,6 +637,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(problems[0], buffer.indexOf("X"), "X".length());
 	}
 
+	@Test
 	public void testBug171520() throws Exception {
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=171520
 		StringBuilder buffer = new StringBuilder();
@@ -633,6 +657,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(expr, buffer.indexOf("sizeof"), "sizeof(int)".length());
 	}
 
+	@Test
 	public void testBug120607() throws Exception {
 		// C/C++ Indexer rejects valid pre-processor directive
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=120607
@@ -658,6 +683,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(problems[2], code, "#invalid");
 	}
 
+	@Test
 	public void testBug527396_1() throws Exception {
 		String code = "void foo() noexcept {}"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -667,6 +693,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testBug527396_2() throws Exception {
 		String code = "void foo() noexcept(false) {}"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -676,6 +703,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testBug527396_3() throws Exception {
 		String code = "void foo() {}"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -685,6 +713,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testBug527396_4() throws Exception {
 		String code = "void foo() noexcept;"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -694,6 +723,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testBug527396_5() throws Exception {
 		String code = "void foo() noexcept(false);"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -703,6 +733,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testBug527396_6() throws Exception {
 		String code = "void foo();"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -712,6 +743,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(declarator, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testSwitchInitStatement_1() throws Exception {
 		String code = "void foo() { switch (int i = 1; i) {} }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -722,6 +754,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testSwitchInitStatement_2() throws Exception {
 		String code = "void foo() { char c = 'a'; switch (; c) {} }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -732,6 +765,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testIfInitStatement_1() throws Exception {
 		String code = "void foo() { if (int i = 1; i == 1) {} }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -742,6 +776,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testIfInitStatement_2() throws Exception {
 		String code = "void foo() { if (; bool b = true) {} }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -752,6 +787,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testConstexprIf_1() throws Exception {
 		String code = "void foo() { if constexpr (true) {} }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -762,6 +798,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testConstexprIf_2() throws Exception {
 		String code = "void foo() { if constexpr (constexpr int i = 1; i == 1) {} }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -772,6 +809,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertSoleLocation(statement, code.indexOf(rawDeclarator), rawDeclarator.length());
 	}
 
+	@Test
 	public void testConstexprIf_3() throws Exception {
 		String code = "void foo() { if constexpr (; constexpr bool b = true) {} }"; //$NON-NLS-1$
 		IASTTranslationUnit tu = parse(code, ParserLanguage.CPP);
@@ -787,6 +825,7 @@ public class DOMLocationTests extends AST2TestBase {
 	//	int integer = one;
 	//	return integer;
 	// }
+	@Test
 	public void testRawSignature_Bug117029() throws Exception {
 		String content = getContents(1)[0].toString();
 		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP);
@@ -796,6 +835,7 @@ public class DOMLocationTests extends AST2TestBase {
 		assertEquals("return integer;", compound.getStatements()[1].getRawSignature());
 	}
 
+	@Test
 	public void testTemplateIdNameLocation_Bug211444() throws Exception {
 		IASTTranslationUnit tu = parse("Foo::template test<T> bar;", ParserLanguage.CPP);
 		NameCollector col = new NameCollector();
@@ -822,6 +862,7 @@ public class DOMLocationTests extends AST2TestBase {
 	//   void func3() final override;
 	//   void func4() override final;
 	// };
+	@Test
 	public void testFunctionDeclaratorLocationContainsVirtualSpecifiers_Bug518628() throws Exception {
 		String testCode = getAboveComment();
 		BindingAssertionHelper assertionHelper = getAssertionHelper(ParserLanguage.CPP);

@@ -12,17 +12,12 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class ConstructorTests extends TestBase {
 	public static class NonIndexingTests extends ConstructorTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
-		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
 		}
 	}
 
@@ -30,18 +25,10 @@ public abstract class ConstructorTests extends TestBase {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
-		}
 	}
 
 	public ConstructorTests() {
 		setStrategy(new NonIndexingTestStrategy());
-	}
-
-	public static TestSuite suite() {
-		return suite(NonIndexingTests.class);
 	}
 
 	//	struct S {
@@ -54,6 +41,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testConstexprConstructorChainInitializers() throws Exception {
 		assertEvaluationEquals(25);
 	}
@@ -68,6 +56,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testConstexprConstructorConstructorBody() throws Exception {
 		assertEvaluationEquals(26);
 	}
@@ -82,6 +71,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testConstexprConstructorCopyConstruction() throws Exception {
 		assertEvaluationEquals(26);
 	}
@@ -96,6 +86,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr auto var = f();
+	@Test
 	public void testIdempotence() throws Exception {
 		// Querying a value a second time should produce the same result.
 		assertEvaluationEquals(26);
@@ -112,6 +103,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testConstexprConstructorDefaultConstruction() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -130,6 +122,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testConstexprConstructorInheritance() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -144,6 +137,7 @@ public abstract class ConstructorTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testInitializationOfCompositeValues() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -162,6 +156,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testNestedConstructorCall() throws Exception {
 		assertEvaluationEquals(4);
 	}
@@ -179,6 +174,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(S{});
+	@Test
 	public void testImplicitConstructorOfLiteralTypeWithImplicitDestructorIsConstexpr() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -197,6 +193,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(S{});
+	@Test
 	public void testImplicitConstructorOfLiteralTypeWithDefaultedDestructorIsConstexpr() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -215,6 +212,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(S{});
+	@Test
 	public void testImplicitConstructorOfLiteralTypeWithUserDefinedDestructorIsNotConstexpr() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -228,6 +226,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(S{});
+	@Test
 	public void testImplicitConstructorOfAggregateTypeIsConstexpr() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -242,6 +241,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(S{});
+	@Test
 	public void testUserDefinedDefaultConstructorIsNotConstexpr() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -257,6 +257,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testCtorCall() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -275,6 +276,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testArgumentEvaluation() throws Exception {
 		assertEvaluationEquals(50);
 	}
@@ -292,6 +294,7 @@ public abstract class ConstructorTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testInitializationOfNestedCompositeValues() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -307,6 +310,7 @@ public abstract class ConstructorTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testAssignmentOfCompositeValues() throws Exception {
 		assertEvaluationEquals(9);
 	}
@@ -326,6 +330,7 @@ public abstract class ConstructorTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testAssignmentOfNestedCompositeValues() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -340,6 +345,7 @@ public abstract class ConstructorTests extends TestBase {
 	// }
 
 	// constexpr auto x = f();
+	@Test
 	public void testStructDefaultInitialization() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -354,6 +360,7 @@ public abstract class ConstructorTests extends TestBase {
 	// }
 
 	// constexpr auto x = f();
+	@Test
 	public void testStructDefaultInitializationOverride() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -372,6 +379,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testNestedStructDefaultInitialization() throws Exception {
 		assertEvaluationEquals(8);
 	}
@@ -390,6 +398,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f().getY();
+	@Test
 	public void testSimpleTypeConstructorExpression2() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -400,6 +409,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	constexpr S s{1,5};
 
 	//	constexpr int x = s.y;
+	@Test
 	public void testInitialValueOfComposite() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -415,6 +425,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testCtorInitializerList() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -430,6 +441,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testCtorConstructorInitializer() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -445,6 +457,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testCtorEqualsInitializer() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -460,6 +473,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testCtorImplicitConversion() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -476,6 +490,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testCtorLvalueCopyConstruction() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -491,6 +506,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testCtorRvalueCopyConstruction() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -510,6 +526,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testNestedStructDefaultInitializationOverride() throws Exception {
 		assertEvaluationEquals(22);
 	}
@@ -520,6 +537,7 @@ public abstract class ConstructorTests extends TestBase {
 	// };
 
 	// constexpr auto x = T(2).member;
+	@Test
 	public void testFundamentalTypeDirectInitializationWithParenthesis() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -536,6 +554,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testInheritedMemberVariable1() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -556,6 +575,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testInheritedMemberVariable2() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -572,6 +592,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testOrderOfFieldInitialization() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -582,6 +603,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	constexpr S waldo{23};
 
 	//	constexpr int x = waldo.value;
+	@Test
 	public void testDirectInitializedVariable_510151() throws Exception {
 		assertEvaluationEquals(23);
 	}
@@ -592,6 +614,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	constexpr S waldo{};
 
 	//	constexpr int x = waldo.value;
+	@Test
 	public void testDirectDefaultInitializedVariable_510151() throws Exception {
 		assertEvaluationEquals(42);
 	}
@@ -602,6 +625,7 @@ public abstract class ConstructorTests extends TestBase {
 	//	constexpr S waldo;
 
 	//	constexpr int x = waldo.value;
+	@Test
 	public void testDefaultInitializedVariable_510151() throws Exception {
 		assertEvaluationEquals(42);
 	}

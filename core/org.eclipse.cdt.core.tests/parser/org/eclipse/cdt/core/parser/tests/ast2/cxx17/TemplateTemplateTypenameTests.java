@@ -14,18 +14,14 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx17;
 
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class TemplateTemplateTypenameTests extends AST2CPPTestBase {
-
-	public static TestSuite suite() {
-		return suite(TemplateTemplateTypenameTests.class);
-	}
 
 	// template<template<typename> typename T>
 	// void f(T<int> param) {
 	// }
+	@Test
 	public void testFunctionTemplateWithTemplateTemplateParameterWithTypenameInsteadOfClass_537217() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -34,6 +30,7 @@ public class TemplateTemplateTypenameTests extends AST2CPPTestBase {
 	// class C {
 	//     U<int> mem;
 	// };
+	@Test
 	public void testClassTemplateWithTemplateTemplateParameterWithTypenameInsteadOfClass_537217() throws Exception {
 		parseAndCheckBindings();
 	}

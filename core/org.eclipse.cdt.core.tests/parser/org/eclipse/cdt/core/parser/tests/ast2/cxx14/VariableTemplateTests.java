@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
@@ -29,16 +33,12 @@ import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
 import org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPClassInstance;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFieldTemplateSpecialization;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class VariableTemplateTests extends AST2CPPTestBase {
 
-	public static TestSuite suite() {
-		return suite(VariableTemplateTests.class);
-	}
-
 	// template<typename T> constexpr T pi = T(3);
+	@Test
 	public void testVariableTemplate() throws Exception {
 		parseAndCheckBindings();
 
@@ -52,6 +52,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// struct S {
 	//   template<typename T> static constexpr T pi = T(3);
 	// };
+	@Test
 	public void testFieldTemplate() throws Exception {
 		parseAndCheckBindings();
 
@@ -65,6 +66,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 
 	// template<typename T> const T c;
 	// template<typename T> const T c = T{};
+	@Test
 	public void testVariableTemplateDeclaration() throws Exception {
 		parseAndCheckBindings();
 
@@ -80,6 +82,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//   template<typename T> static const T c;
 	// };
 	// template<typename T> const T S::c = T{};
+	@Test
 	public void testFieldTemplateDeclaration() throws Exception {
 		parseAndCheckBindings();
 
@@ -95,6 +98,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//
 	// int foo() { return pi<int>/*1*/; }
 	// int bar() { return pi<int>/*2*/; }
+	@Test
 	public void testVariableTemplateUse() throws Exception {
 		parseAndCheckBindings();
 
@@ -115,6 +119,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// };
 	//
 	// int foo() { return S::pi<int>; }
+	@Test
 	public void testFieldTemplateUse() throws Exception {
 		parseAndCheckBindings();
 
@@ -132,6 +137,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// template<> constexpr float pi<float> = 4;
 	//
 	// float f(){ return pi<float>; }
+	@Test
 	public void testVariableTemplateSpecialization() throws Exception {
 		parseAndCheckBindings();
 
@@ -154,6 +160,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// template<> constexpr int S::pi<int> = 4;
 	//
 	// float f(){ return S::pi<int>; }
+	@Test
 	public void testFieldTemplateSpecialization() throws Exception {
 		parseAndCheckBindings();
 
@@ -174,6 +181,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// template<typename T, int I> T c = T(I);
 	// template<int I> float c<float, I> = float(I+1);
 	// float f() { return c<float, 100>; }
+	@Test
 	public void testVariableTemplatePartialSpecialization() throws Exception {
 		parseAndCheckBindings();
 
@@ -194,6 +202,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// };
 	// template<int I> constexpr float S::c<float, I> = float(I+1);
 	// float f() { return S::c<float, 100>; }
+	@Test
 	public void testFieldTemplatePartialSpecialization() throws Exception {
 		parseAndCheckBindings();
 
@@ -213,6 +222,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// template constexpr int pi<int>;
 	//
 	// int f(){ return pi<int>; }
+	@Test
 	public void testVariableTemplateInstantiation() throws Exception {
 		parseAndCheckBindings();
 
@@ -236,6 +246,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// template constexpr double S::pi<double>;
 	//
 	// double f(){ return S::pi<double>; }
+	@Test
 	public void testFieldTemplateInstantiation() throws Exception {
 		parseAndCheckBindings();
 
@@ -260,6 +271,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// template<typename T> struct Vec{ T t; };
 	//
 	// void f(){ once<Vec, int>; }
+	@Test
 	public void testVariableTemplateWithTemplateTemplateParameter() throws Exception {
 		parseAndCheckBindings();
 
@@ -280,6 +292,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	// template<typename T> struct Vec{ T t; };
 	//
 	// void f(){ S<Vec>::once<int>; }
+	@Test
 	public void testFieldTemplateInTemplate() throws Exception {
 		parseAndCheckBindings();
 
@@ -300,6 +313,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//   auto a = Size<>;
 	//   auto b = Size<int, float, double>;
 	// }
+	@Test
 	public void testVariableTemplatePack() throws Exception {
 		parseAndCheckBindings();
 
@@ -333,6 +347,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//	void bar() {
 	//		auto waldo = foo<int>();
 	//	}
+	@Test
 	public void test_bug494216() throws Exception {
 		parseAndCheckBindings();
 
@@ -356,6 +371,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//
 	//	constexpr bool waldo1 = type_in_pack<int, int, char>;
 	//	constexpr bool waldo2 = type_in_pack<int, float, char>;
+	@Test
 	public void testStackOverflow_513429() throws Exception {
 		parseAndCheckBindings();
 
@@ -370,6 +386,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//	auto L = []{ return R{}; };
 	//
 	//	decltype(L<int>()) waldo;
+	@Test
 	public void testLambdaValue_517670() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("waldo", CommonCPPTypes.int_);
@@ -404,6 +421,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//	int main() {
 	//	  function<void> func(0);
 	//	}
+	@Test
 	public void testVariableInstanceInImplicitName() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}

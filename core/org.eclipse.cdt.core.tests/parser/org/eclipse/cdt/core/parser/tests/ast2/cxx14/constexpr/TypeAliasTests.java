@@ -11,16 +11,12 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class TypeAliasTests extends TestBase {
 	public static class NonIndexingTests extends TypeAliasTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
-		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
 		}
 	}
 
@@ -29,9 +25,6 @@ public abstract class TypeAliasTests extends TestBase {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
 
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
-		}
 	}
 
 	//	constexpr int f() {
@@ -42,6 +35,7 @@ public abstract class TypeAliasTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testTypedefDeclaration() throws Exception {
 		assertEvaluationEquals(25);
 	}
@@ -54,6 +48,7 @@ public abstract class TypeAliasTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testAliasDeclaration() throws Exception {
 		assertEvaluationEquals(25);
 	}

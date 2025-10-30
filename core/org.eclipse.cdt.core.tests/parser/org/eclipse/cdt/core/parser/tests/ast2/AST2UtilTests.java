@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -26,18 +28,14 @@ import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.scanner.ExpressionEvaluator;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author dsteffle
  */
 public class AST2UtilTests extends AST2TestBase {
-	public AST2UtilTests() {
-	}
 
-	public AST2UtilTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testSimpleSignature() throws Exception {
 		StringBuilder buff = new StringBuilder();
 		buff.append("int l, m, n=0;\n"); //$NON-NLS-1$
@@ -96,6 +94,7 @@ public class AST2UtilTests extends AST2TestBase {
 				"b + c"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleParameter() throws Exception {
 		StringBuilder buff = new StringBuilder();
 		buff.append("int a(int x);\n"); //$NON-NLS-1$
@@ -164,6 +163,7 @@ public class AST2UtilTests extends AST2TestBase {
 				"(const char * const)"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleCParameterSignature() throws Exception {
 		StringBuilder buff = new StringBuilder();
 		buff.append("int a(int x);\n"); //$NON-NLS-1$
@@ -180,6 +180,7 @@ public class AST2UtilTests extends AST2TestBase {
 		isParameterSignatureEqual(((IASTSimpleDeclaration) d[3]).getDeclarators()[0], "(int[])"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleTypeId() throws Exception {
 		StringBuilder buff = new StringBuilder();
 		buff.append("int x = sizeof( int );\n"); //$NON-NLS-1$
@@ -218,6 +219,7 @@ public class AST2UtilTests extends AST2TestBase {
 				.getInitializer()).getInitializerClause()).getTypeId(), "short int"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKnRC() throws Exception {
 		StringBuilder buff = new StringBuilder();
 		buff.append("int foo(x, y) char x; int y; {}\n"); //$NON-NLS-1$
@@ -232,6 +234,7 @@ public class AST2UtilTests extends AST2TestBase {
 		assertEquals(fooSignature, foo2Signature);
 	}
 
+	@Test
 	public void testParseIntegral() throws Exception {
 		assertEquals(0, ExpressionEvaluator.getNumber("0".toCharArray()));
 		assertEquals(0, ExpressionEvaluator.getNumber("0x0".toCharArray()));

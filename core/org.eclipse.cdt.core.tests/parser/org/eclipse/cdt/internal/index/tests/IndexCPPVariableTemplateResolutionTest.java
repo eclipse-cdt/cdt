@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPField;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFieldTemplate;
@@ -21,18 +23,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPVariableTemplatePartialSpecialization;
 import org.eclipse.cdt.core.index.IIndexBinding;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindingResolutionTestBase {
 
 	public static class SingleProjectTest extends IndexCPPVariableTemplateResolutionTest {
 		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(true));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTest.class);
 		}
 	}
 
@@ -41,14 +38,6 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 			setStrategy(new ReferencedProject(true));
 		}
 
-		public static TestSuite suite() {
-			return suite(ProjectWithDepProjTest.class);
-		}
-	}
-
-	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProjectTest.suite());
-		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public IndexCPPVariableTemplateResolutionTest() {
@@ -58,6 +47,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// template<typename T> constexpr T pi = T(3);
 
 	// int f(){ return pi<int>; };
+	@Test
 	public void testVariableTemplateReference() {
 		checkBindings();
 		ICPPVariableTemplate pi = getBindingFromASTName("pi", 0);
@@ -71,6 +61,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// };
 
 	// int f(){ return S::pi<int>; };
+	@Test
 	public void testFieldTemplateReference() {
 		checkBindings();
 		ICPPFieldTemplate pi = getBindingFromASTName("pi", 0);
@@ -83,6 +74,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// template constexpr int pi<int>;
 
 	// int f(){ return pi<int>; }
+	@Test
 	public void testExplicitVariableInstance() {
 		checkBindings();
 		ICPPVariableTemplate pi = getBindingFromASTName("pi", 0);
@@ -98,6 +90,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// template constexpr double S::pi<double>;
 
 	// double f(){ return S::pi<double>; }
+	@Test
 	public void testExplicitFieldInstance() {
 		checkBindings();
 		ICPPFieldTemplate pi = getBindingFromASTName("pi", 0);
@@ -111,6 +104,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// template<> constexpr int pi<int> = 4;
 
 	// int f(){ return pi<int>; }
+	@Test
 	public void testVariableSpecialization() {
 		checkBindings();
 		ICPPVariableTemplate pi = getBindingFromASTName("pi", 0);
@@ -126,6 +120,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// template<> constexpr double S::pi<double> = 4;
 
 	// double f(){ return S::pi<double>; }
+	@Test
 	public void testFieldSpecialization() {
 		checkBindings();
 		ICPPFieldTemplate pi = getBindingFromASTName("pi", 0);
@@ -140,6 +135,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// };
 
 	// template<> constexpr double S::pi<double> = 4;
+	@Test
 	public void testFieldSpecializationInRef() {
 		checkBindings();
 		ICPPVariableInstance piOfDouble = getBindingFromASTName("pi<double>", 0, ICPPVariableInstance.class,
@@ -150,6 +146,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// template<int I> float c<float, I> = float(I);
 
 	// float f() { return c<float, 100>; }
+	@Test
 	public void testVariableTemplatePartialSpecialization() {
 		checkBindings();
 		ICPPVariableTemplate c = getBindingFromASTName("c", 0);
@@ -167,6 +164,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// template<typename T> T* c<T*> = T(10);
 
 	// float f() { return c<int*>; }
+	@Test
 	public void testVariableTemplatePartialSpecialization2() {
 		checkBindings();
 		ICPPVariableTemplate c = getBindingFromASTName("c", 0);
@@ -186,6 +184,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 	// template<int I> constexpr float S::c<float, I> = float(I);
 
 	// float f() { return S::c<float, 100>; }
+	@Test
 	public void testFieldTemplatePartialSpecialization() {
 		checkBindings();
 		ICPPVariableTemplate c = getBindingFromASTName("c", 0);
@@ -205,6 +204,7 @@ public abstract class IndexCPPVariableTemplateResolutionTest extends IndexBindin
 
 	//  struct A {};
 	//  constexpr bool waldo = templ<A>;
+	@Test
 	public void testStorageOfUninstantiatedValue_bug486671() {
 		checkBindings();
 		IVariable waldo = getBindingFromASTName("waldo", 5);

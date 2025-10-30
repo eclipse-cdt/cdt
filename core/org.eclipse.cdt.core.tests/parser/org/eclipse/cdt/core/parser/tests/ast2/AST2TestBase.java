@@ -19,6 +19,11 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import static org.eclipse.cdt.core.parser.ParserLanguage.CPP;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -92,8 +97,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-
-import junit.framework.AssertionFailedError;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author aniefer
@@ -162,18 +166,9 @@ public abstract class AST2TestBase extends SemanticTestBase {
 		return map;
 	}
 
-	public AST2TestBase() {
-		super();
-	}
-
-	public AST2TestBase(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void localSetUp() throws Exception {
 		sValidateCopy = true;
-		super.setUp();
 	}
 
 	protected IASTTranslationUnit parse(String code, ParserLanguage lang) throws ParserException {
@@ -518,7 +513,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 	protected CharSequence[] getContents(int sections) throws IOException {
 		CTestPlugin plugin = CTestPlugin.getDefault();
 		if (plugin == null)
-			throw new AssertionFailedError("This test must be run as a JUnit plugin test");
+			fail("This test must be run as a JUnit plugin test");
 		return TestSourceReader.getContentsForTest(plugin.getBundle(), "parser", getClass(), getName(), sections);
 	}
 
@@ -593,7 +588,7 @@ public abstract class AST2TestBase extends SemanticTestBase {
 
 	final protected void assertNoProblemBindings(NameCollector col) {
 		for (IASTName n : col.nameList) {
-			assertFalse("ProblemBinding for " + n.getRawSignature(), n.resolveBinding() instanceof IProblemBinding);
+			assertFalse(n.resolveBinding() instanceof IProblemBinding, "ProblemBinding for " + n.getRawSignature());
 		}
 	}
 

@@ -15,6 +15,9 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import static org.eclipse.cdt.core.parser.tests.VisibilityAsserts.assertVisibility;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -22,8 +25,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class AccessControlTests extends AST2TestBase {
 
@@ -45,17 +47,6 @@ public class AccessControlTests extends AST2TestBase {
 			assertNotNull(binding);
 			assertFalse(AccessContext.isAccessible(binding, name));
 		}
-	}
-
-	public AccessControlTests() {
-	}
-
-	public AccessControlTests(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(AccessControlTests.class);
 	}
 
 	private AccessAssertionHelper getAssertionHelper() throws Exception {
@@ -96,6 +87,7 @@ public class AccessControlTests extends AST2TestBase {
 	//    C::E(); //3
 	//    C::F(); //3
 	//	}
+	@Test
 	public void testFriends() throws Exception {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertAccessible("a; //1", 1);
@@ -125,6 +117,7 @@ public class AccessControlTests extends AST2TestBase {
 	//	void test(B x) {
 	//	  x.a = 0;
 	//	}
+	@Test
 	public void testHiddenMember() throws Exception {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertNotAccessible("a = 0", 1);
@@ -142,6 +135,7 @@ public class AccessControlTests extends AST2TestBase {
 	//			}
 	//		};
 	//	};
+	@Test
 	public void testEnclosingAsNamingClass_292232() throws Exception {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertAccessible("Ex a;", 2);
@@ -167,6 +161,7 @@ public class AccessControlTests extends AST2TestBase {
 	//   B* bp;
 	//   bp->mi=5;
 	// }
+	@Test
 	public void testEnclosingAsNamingClass_292232a() throws Exception {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertNotAccessible("mi=3;", 2);
@@ -181,6 +176,7 @@ public class AccessControlTests extends AST2TestBase {
 	//		typedef int Waldo;
 	//	};
 	//	A::Waldo waldo;
+	@Test
 	public void testPrivateTypedef_427730() throws Exception {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertNotAccessible("Waldo waldo", 5);
@@ -193,6 +189,7 @@ public class AccessControlTests extends AST2TestBase {
 	//		typedef B Waldo;
 	//	};
 	//	A::Waldo waldo;
+	@Test
 	public void testPublicTypedefForPrivateMemberClass_427730() throws Exception {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertAccessible("Waldo waldo", 5);
@@ -208,6 +205,7 @@ public class AccessControlTests extends AST2TestBase {
 	//		typedef A::B Waldo;
 	//	};
 	//	C::Waldo waldo;
+	@Test
 	public void testPublicTypedefForFriendClass_427730() throws Exception {
 		AccessAssertionHelper ah = getAssertionHelper();
 		ah.assertAccessible("Waldo waldo", 5);
@@ -219,6 +217,7 @@ public class AccessControlTests extends AST2TestBase {
 	//		using AliasInner = Inner;
 	//		typedef Inner TypedefInner;
 	//	};
+	@Test
 	public void testAccessibilityForAliasedTypeInSameClass_427730() throws Exception {
 		BindingAssertionHelper bh = getAssertionHelper();
 		ICPPClassType outerClass = bh.assertNonProblem("Outer");

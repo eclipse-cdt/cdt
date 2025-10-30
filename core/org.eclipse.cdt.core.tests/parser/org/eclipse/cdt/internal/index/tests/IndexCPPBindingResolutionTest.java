@@ -16,6 +16,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -54,8 +61,7 @@ import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * For testing PDOM binding CPP language resolution
@@ -71,33 +77,16 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(true));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTest.class);
-		}
 	}
 
 	public static class ProjectWithDepProjTest extends IndexCPPBindingResolutionTest {
 		public ProjectWithDepProjTest() {
 			setStrategy(new ReferencedProject(true));
 		}
-
-		public static TestSuite suite() {
-			return suite(ProjectWithDepProjTest.class);
-		}
-	}
-
-	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProjectTest.suite());
-		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public IndexCPPBindingResolutionTest() {
 		setStrategy(new SinglePDOMTestStrategy(true));
-	}
-
-	public static TestSuite suite() {
-		return suite(SingleProjectTest.class);
 	}
 
 	/* Assertion helpers */
@@ -212,6 +201,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//    B b;
 	//    b.p(E1);
 	//  }
+	@Test
 	public void testUsingTypeDeclaration_201177() {
 		IBinding b0 = getBindingFromASTName("B::m", 4);
 		IBinding b1 = getBindingFromASTName("B::n", 4);
@@ -230,6 +220,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// }
 	// m::C c;
 	// m::D d;
+	@Test
 	public void testUsingNamingDirective_177917_1a() {
 		IBinding b0 = getBindingFromASTName("C c", 1);
 		IBinding b1 = getBindingFromASTName("D d", 1);
@@ -243,6 +234,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	// namespace n { class C{}; }
 	// m::C c;
+	@Test
 	public void testUsingNamingDirective_177917_1b() {
 		IBinding b0 = getBindingFromFirstIdentifier("C c");
 	}
@@ -261,6 +253,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// int g(int x) {return 4;}
 	// int g(char x) {return 2;}
 	// int nn= g(f(2));
+	@Test
 	public void testUsingTypeDeclaration_177917_1() {
 		IBinding b1 = getBindingFromASTName("A a", 1);
 		IBinding b2 = getBindingFromASTName("B b", 1);
@@ -277,6 +270,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	// b::A aa;
 	// b::B bb;
+	@Test
 	public void testUsingTypeDeclaration_177917_2() {
 		IBinding b0 = getBindingFromASTName("A aa", 1);
 		IBinding b1 = getBindingFromASTName("B bb", 1);
@@ -324,6 +318,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		fs(1);
 	//		cls c2;
 	//	}
+	@Test
 	public void testUsingOverloadedFunctionDeclaration() {
 		IBinding b;
 		b = getBindingFromASTName("fh()", 2);
@@ -344,6 +339,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// void foo() {
 	//    f= g;
 	// }
+	@Test
 	public void testPointerToFunction() {
 		IBinding b0 = getBindingFromASTName("f= g;", 1);
 		IBinding b1 = getBindingFromASTName("g;", 1);
@@ -386,6 +382,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		((cp->cs).*(cp->method))(cp->cspp);/*3*/
 	//		((&(cp->cs))->*(cp->method))(cp->cspp);/*4*/
 	//	}
+	@Test
 	public void testPointerToMemberFields() throws IOException, DOMException {
 		IBinding b0 = getBindingFromASTName("C *cp", 1);
 		assertClassType((ICPPClassType) b0, "C", ICPPClassType.k_class, 1, 6, 5, 9, 0, 1, 0, 2, 1);
@@ -436,6 +433,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// }
 	// class C2 : public C {}; /*base*/
 	// struct S2 : public S {}; /*base*/
+	@Test
 	public void testSimpleGlobalBindings() throws IOException, DOMException {
 		{
 			IBinding b0 = getBindingFromASTName("C c; ", 1);
@@ -531,6 +529,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//      }
 	//   };
 	//}
+	@Test
 	public void testSingletonQualifiedName() {
 		IBinding b0 = getBindingFromASTName("TopC c", 4);
 		IBinding b1 = getBindingFromASTName("TopS s", 4);
@@ -570,6 +569,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// namespace n3 { c3::s3::u3::S _s10; }
 	// namespace n1 { n2::S _s11; }
 	// namespace n1 { namespace n2 { S _s12; }}
+	@Test
 	public void testQualifiedNamesForStruct() throws DOMException {
 		IBinding b0 = getBindingFromASTName("S _s0;", 1);
 		assertTrue(b0.getScope() instanceof ICPPNamespaceScope);
@@ -637,6 +637,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// namespace n3 { c3::s3::u3::U _u10; }
 	// namespace n1 { n2::U _u11; }
 	// namespace n1 { namespace n2 { U _u12; }}
+	@Test
 	public void testQualifiedNamesForUnion() throws DOMException {
 		IBinding b0 = getBindingFromASTName("U _u0;", 1);
 		assertQNEquals("n1::n2::U", b0);
@@ -682,6 +683,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	  A().p();//5      // calls A::p()&&
 	//	  a.p();//6        // calls A::p()&
 	//  }
+	@Test
 	public void testRankingOfReferenceBindings() throws Exception {
 		ICPPMethod m = getBindingFromImplicitASTName("<< 1;//1", 2);
 		assertNotNull(m);
@@ -722,6 +724,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// namespace n3 { c3::s3::u3::C _c10; }
 	// namespace n1 { n2::C _c11; }
 	// namespace n1 { namespace n2 { C _c12; }}
+	@Test
 	public void testQualifiedNamesForClass() throws DOMException {
 		IBinding b0 = getBindingFromASTName("C _c0;", 1);
 		assertQNEquals("n1::n2::C", b0);
@@ -770,6 +773,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// namespace n3 { c3::s3::u3::Int i10; }
 	// namespace n1 { n2::Int i11; }
 	// namespace n1 { namespace n2 { Int i12; }}
+	@Test
 	public void testQualifiedNamesForTypedef() throws DOMException {
 		IBinding b0 = getBindingFromASTName("Int i0;", 3);
 		assertQNEquals("n1::n2::Int", b0);
@@ -810,6 +814,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	decltype(A::waldo) A::waldo;
 
 	//	A a;
+	@Test
 	public void testDecltype_434150() {
 		checkBindings();
 	}
@@ -824,6 +829,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	 void m1() { e1 = ER1; }
 	//	 static void m2() { e2 = ER2; }
 	// };
+	@Test
 	public void testEnumeratorInClassScope() {
 		IBinding b0 = getBindingFromASTName("E e1", 1);
 		IBinding b1 = getBindingFromASTName("ER1; }", 3);
@@ -840,6 +846,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	 void m1() { e1 = ER1; }
 	//	 static void m2() { e2 = ER2; }
 	// };
+	@Test
 	public void testEnumeratorInStructScope() {
 		IBinding b0 = getBindingFromASTName("E e1", 1);
 		IBinding b1 = getBindingFromASTName("ER1; }", 3);
@@ -856,6 +863,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	 void m1() { e1 = ER1; }
 	//	 static void m2() { e2 = ER2; }
 	// };
+	@Test
 	public void testEnumeratorInUnionScope() {
 		IBinding b0 = getBindingFromASTName("E e1", 1);
 		IBinding b1 = getBindingFromASTName("ER1; }", 3);
@@ -872,6 +880,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	 void f1() { e1 = ER1; }
 	//	 static void f2() { e2 = ER2; }
 	// };
+	@Test
 	public void testEnumeratorInNamespaceScope() {
 		IBinding b0 = getBindingFromASTName("E e1", 1);
 		IBinding b1 = getBindingFromASTName("ER1; }", 3);
@@ -891,6 +900,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	//	int waldo1 = a;
 	//	int waldo2 = N::d;
+	@Test
 	public void testAnonymousUnion_377409() {
 		checkBindings();
 	}
@@ -898,6 +908,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// void foo(int a=2, int b=3);
 
 	// void ref() { foo(); }
+	@Test
 	public void testFunctionDefaultArguments() {
 		IBinding b0 = getBindingFromASTName("foo();", 3);
 	}
@@ -908,6 +919,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// };
 
 	// const TYPE* ns::foo(int a) { return 0; }
+	@Test
 	public void testTypeQualifier() {
 		IBinding b0 = getBindingFromASTName("foo(", 3);
 	}
@@ -921,6 +933,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//    d.foo(4); // also calls long version (int version is hidden)
 	//    // aftodo - does this test make sense?
 	// }
+	@Test
 	public void testMethodHidingInInheritance() {
 		IBinding b0 = getBindingFromASTName("d; /*d*/", 1);
 		IBinding b1 = getBindingFromASTName("foo(55L);", 3);
@@ -940,6 +953,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//       x::y::j++;
 	//    }
 	// };
+	@Test
 	public void testGQualifiedReference() {
 		IBinding b0 = getBindingFromASTName("x::y::i++", 1);
 		assertTrue(ICPPNamespace.class.isInstance(b0));
@@ -982,6 +996,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	/* not applicable */                                 // ICPPASTDeleteExpression
 	//	(new S())->i/*18*/++;                                // ICPPASTNewExpression
 	//}
+	@Test
 	public void testFieldReference() {
 		IBinding b0 = getBindingFromASTName("i/*0*/", 1);
 		IBinding b1 = getBindingFromASTName("i/*1*/", 1);
@@ -1028,6 +1043,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		// ?? foo/*o*/();                       // ICPPASTTypenameExprssion
 	//		// foo/*p*/(MADE_UP_SYMBOL);            // ICPPASTTypenameExprssion
 	//	}
+	@Test
 	public void testExpressionKindForFunctionCalls() {
 		// depends on bug 164470 because resolution takes place during parse.
 		IBinding b0 = getBindingFromASTName("foo/*a*/", 3);
@@ -1113,6 +1129,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		         fni4 = &f;/*20*/ fnlp4 = &f;/*21*/ fnS4 = &f;/*22*/ fnU4 = &f;/*23*/ fnE4 = &f;/*24*/
 	//		fE = &f;/*25*/
 	//	}
+	@Test
 	public void testAddressOfOverloadedFunction() throws DOMException {
 		IBinding b0 = getBindingFromASTName("f;/*0*/", 1);
 		IBinding b1 = getBindingFromASTName("f;/*1*/", 1);
@@ -1153,6 +1170,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	 func(&C::m1);
 	//	 func(&C::m2);
 	// }
+	@Test
 	public void testAddressOfConstMethod_233889() {
 		IBinding fn1 = getBindingFromASTName("func(&C::m1", 4, ICPPFunction.class);
 		IBinding fn2 = getBindingFromASTName("func(&C::m2", 4, ICPPFunction.class);
@@ -1176,6 +1194,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//  void f_const_int(const int const_int) {
 	//     f_int_ptr(&const_int); // error
 	//  }
+	@Test
 	public void testConstIntParameter() {
 		getBindingFromASTName("f_int(i)", 5);
 		getBindingFromASTName("f_int(const_int)", 5);
@@ -1241,6 +1260,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//   f_int_const_ptr_const(const_int_ptr_const);	// ok
 	//   f_int_const_ptr_const(int_const_ptr_const);	// ok
 	// }
+	@Test
 	public void testConstIntPtrParameter() {
 		getBindingFromASTName("f_int_ptr(int_ptr)", 9);
 		getProblemFromASTName("f_int_ptr(const_int_ptr)", 9);
@@ -1293,6 +1313,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// void f(int *const){}	// b1, redef
 	// void f(const int*const){} // b2, redef
 	// void f(int const*const){} // b2, redef
+	@Test
 	public void testConstIntPtrParameterInDefinitionAST() throws CoreException {
 		IBinding binding1 = getBindingFromASTName("f(int*){}", 1);
 		IBinding binding2 = getBindingFromASTName("f(const int*){}", 1);
@@ -1307,6 +1328,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// void f(int&){}		// b1
 	// void f(const int&){}	// b2
 	// void f(int const&){}	// b2, redef
+	@Test
 	public void testConstIntRefParameterInDefinitionAST() throws CoreException {
 		IBinding binding1 = getBindingFromASTName("f(int&){}", 1);
 		IBinding binding2 = getBindingFromASTName("f(const int&){}", 1);
@@ -1340,6 +1362,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//   f(const_int_ptr_const);	// b2
 	//   f(int_const_ptr_const);	// b2
 	// }
+	@Test
 	public void testConstIntPtrParameterInDefinitionAST2() throws CoreException {
 		IBinding binding1 = getBindingFromASTName("f(int*){}", 1);
 		IBinding binding2 = getBindingFromASTName("f(const int*){}", 1);
@@ -1377,6 +1400,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//   f(const_int_ptr_const);	// b2
 	//   f(int_const_ptr_const);	// b2
 	// }
+	@Test
 	public void testConstIntPtrParameterInDefinition() throws CoreException {
 		IBinding binding1 = getBindingFromASTName("f(int*){}", 1);
 		IBinding binding2 = getBindingFromASTName("f(const int*){}", 1);
@@ -1411,6 +1435,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//    u->a= 1;  // since we include the definition, we may use the type.
 	//    v->b= 1;  // since we include the definition, we may use the type.
 	// }
+	@Test
 	public void testTypeDefinitionWithFwdDeclaration() {
 		getBindingFromASTName("a= 1", 1);
 		getBindingFromASTName("b= 1", 1);
@@ -1425,6 +1450,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// void test() {
 	//    a(1);
 	// }
+	@Test
 	public void testLegalConflictWithUsingDeclaration() {
 		getBindingFromASTName("a(1)", 1);
 	}
@@ -1447,6 +1473,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		E e;
 	//		foo(e);
 	//	}
+	@Test
 	public void testUserDefinedConversionOperator_224364() {
 		IBinding ca = getBindingFromASTName("C c;", 1);
 		assertInstance(ca, ICPPClassType.class);
@@ -1468,6 +1495,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// void ref() {
 	// a; b; c; e0; e2; e3; e4; e5;
 	// }
+	@Test
 	public void testValues() {
 		IVariable v = (IVariable) getBindingFromASTName("a;", 1);
 		asserValueEquals(v.getInitialValue(), -4);
@@ -1494,6 +1522,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	using namespace ns1::ns2;
 
 	//	A a;
+	@Test
 	public void testUsingDirectiveWithQualifiedName_269727() {
 		getBindingFromASTName("A a", 1, ICPPClassType.class);
 	}
@@ -1505,6 +1534,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//   int a[1], b[2];
 	//   f(a); f(b);
 	// }
+	@Test
 	public void testArrayTypeWithSize_269926() {
 		IFunction f1 = getBindingFromASTName("f(a)", 1, IFunction.class);
 		IFunction f2 = getBindingFromASTName("f(b)", 1, IFunction.class);
@@ -1536,6 +1566,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	};
 
 	//	// empty file
+	@Test
 	public void testArrayWithOneElement_508254() throws Exception {
 		checkBindings();
 	}
@@ -1554,6 +1585,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	  new B(0);
 	//    B::m(0);
 	//	}
+	@Test
 	public void testNestedClass_284665() {
 		ICPPClassType b0 = getBindingFromASTName("B {", 1, ICPPClassType.class);
 		assertFalse(b0 instanceof IIndexBinding);
@@ -1571,6 +1603,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	void test(A a) {
 	//	  m(a);
 	//	}
+	@Test
 	public void testInlineFriendFunction_284690() {
 		getBindingFromASTName("m(a)", 1, IFunction.class);
 	}
@@ -1608,6 +1641,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		g(a);
 	//		gb(a);
 	//	}
+	@Test
 	public void testInlineNamespace_305980a() {
 		IFunction f = getBindingFromASTName("fa(s)", 2);
 		f = getBindingFromASTName("fb(s)", 2);
@@ -1651,6 +1685,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		g(a);
 	//		gb(a);
 	//	}
+	@Test
 	public void testInlineNamespace_305980am() {
 		IFunction f = getBindingFromASTName("fa(s)", 2);
 		f = getBindingFromASTName("fb(s)", 2);
@@ -1669,6 +1704,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		ns::m::a; //1
 	//		ns::a; //2
 	//	}
+	@Test
 	public void testInlineNamespace_305980b() {
 		IVariable v1 = getBindingFromASTName("a; //1", 1);
 		IVariable v2 = getBindingFromASTName("a; //2", 1);
@@ -1691,6 +1727,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		ns::m::a; //3
 	//		ns::a; //4
 	//	}
+	@Test
 	public void testInlineNamespace_305980bm() {
 		IVariable v1 = getBindingFromASTName("a; //1", 1);
 		IVariable v2 = getBindingFromASTName("a; //2", 1);
@@ -1719,6 +1756,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		::f(1);
 	//      ::g(1);
 	//	}
+	@Test
 	public void testInlineNamespace_305980c() {
 		IFunction ref = getBindingFromASTName("f(1)", 1);
 		assertEquals("void (char)", ASTTypeUtil.getType(ref.getType()));
@@ -1746,6 +1784,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//		::f(1);
 	//      ::g(1);
 	//	}
+	@Test
 	public void testInlineNamespace_305980cm() {
 		IFunction ref = getBindingFromASTName("f(1)", 1);
 		assertEquals("void (char)", ASTTypeUtil.getType(ref.getType()));
@@ -1762,6 +1801,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	    }
 	//	    void regex_match(string);  // Type 'string' could not be resolved
 	//	}
+	@Test
 	public void testInlineNamespaceReopenedWithoutInlineKeyword_483824() {
 		checkBindings();
 	}
@@ -1773,6 +1813,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	namespace alias = ns;
 	//	void alias::fun() {
 	//	}
+	@Test
 	public void testNamespaceAliasAsQualifier_356493a() {
 		IFunction ref = getBindingFromASTName("fun", 0);
 		assertEquals("ns", ref.getOwner().getName());
@@ -1785,6 +1826,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 
 	//	void alias::fun() {
 	//	}
+	@Test
 	public void testNamespaceAliasAsQualifier_356493b() {
 		IFunction ref = getBindingFromASTName("fun", 0);
 		assertEquals("ns", ref.getOwner().getName());
@@ -1802,6 +1844,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	  f(a);
 	//	  g(b);
 	//	}
+	@Test
 	public void testStructClassMismatch_358282() {
 		getBindingFromASTName("f(a)", 1, ICPPFunction.class);
 		getBindingFromASTName("g(b)", 1, ICPPFunction.class);
@@ -1812,6 +1855,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	}
 
 	//	A a;
+	@Test
 	public void testAnonymousNamespace() {
 		getBindingFromFirstIdentifier("A", ICPPClassType.class);
 	}
@@ -1835,6 +1879,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	}
 	//
 	//	}
+	@Test
 	public void testAnonymousNamespaces_392577() {
 		getBindingFromFirstIdentifier("f(str)", ICPPFunction.class);
 	}
@@ -1848,6 +1893,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	    using ::ns::INT;
 	//	}
 	//	}
+	@Test
 	public void testAnonymousNamespaces_418130() {
 		checkBindings();
 	}
@@ -1865,6 +1911,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int test() {
 	//	  foo(1);
 	//	}
+	@Test
 	public void testInheritedConstructor() {
 		checkBindings();
 	}
@@ -1883,6 +1930,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int test() {
 	//	  foo(1);
 	//	}
+	@Test
 	public void testInheritedConstructorFromTemplateInstance() {
 		checkBindings();
 	}
@@ -1901,6 +1949,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int test() {
 	//	  foo(1);
 	//	}
+	@Test
 	public void testInheritedConstructorFromUnknownClass() {
 		checkBindings();
 	}
@@ -1922,6 +1971,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	void test(A<int> a) {
 	//	  foo(a);
 	//	}
+	@Test
 	public void testInheritedTemplateConstructor() {
 		checkBindings();
 	}
@@ -1931,6 +1981,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	}
 
 	//	constexpr int waldo = foo();
+	@Test
 	public void testNameLookupInDefaultArgument_432701() {
 		IVariable waldo = getBindingFromASTName("waldo", 5);
 		assertEquals(42, waldo.getInitialValue().numberValue().longValue());
@@ -1948,6 +1999,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	};
 
 	//	int z;
+	@Test
 	public void testLambdaOwnedByClass_409882() {
 		checkBindings();
 	}
@@ -1957,6 +2009,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	};
 
 	//  // No code in this file.
+	@Test
 	public void testLambdaOwnedByClass_449099() {
 		checkBindings();
 	}
@@ -1964,6 +2017,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	extern char TableValue[10];
 
 	//	char TableValue[sizeof TableValue];
+	@Test
 	public void testNameLookupFromArrayModifier_435075() {
 		checkBindings();
 	}
@@ -1976,6 +2030,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	constexpr S waldo = { nullptr, waldo.a };
 
 	//  // empty file
+	@Test
 	public void testVariableInitializerThatReferencesVariable_508254a() throws Exception {
 		checkBindings();
 	}
@@ -1996,6 +2051,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	};
 
 	//	// empty file
+	@Test
 	public void testVariableInitializerThatReferencesVariable_508254b() throws Exception {
 		checkBindings();
 	}
@@ -2027,6 +2083,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	  c4->m();//4
 	//	  c5->m();//5
 	//	}
+	@Test
 	public void testOverridden_248846() throws Exception {
 		ICPPMethod m0 = getBindingFromFirstIdentifier("m();//0");
 		ICPPMethod m1 = getBindingFromFirstIdentifier("m();//1");
@@ -2085,6 +2142,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(unsigned long long i) { return Ret(); }
 
 	// auto test = 123_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes1() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2093,6 +2151,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(long double i) { return Ret(); }
 
 	// auto test = 12.3_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes2() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2101,6 +2160,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s) { return Ret(); }
 
 	// auto test = 123_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes1a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2109,6 +2169,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s) { return Ret(); }
 
 	// auto test = 12.3_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes2a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2118,6 +2179,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// bool operator "" _X(const char* s) { return false; }
 
 	// auto test = 123_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes1b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2127,6 +2189,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// bool operator "" _X(const char* s) { return false; }
 
 	// auto test = 12.3_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes2b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2135,6 +2198,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123"_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes3() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2143,6 +2207,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const wchar_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = L"123"_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes3a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2151,6 +2216,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char16_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = u"123"_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes3b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2159,6 +2225,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char32_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = U"123"_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes3c() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2167,6 +2234,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// template<char... Chars> Ret operator "" _X() { return Ret(); }
 
 	// auto test = 123_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes4a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2175,6 +2243,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// template<char... Chars> Ret operator "" _X() { return Ret(); }
 
 	// auto test = 123.123_X;
+	@Test
 	public void testUserDefinedLiteralOperatorTypes4b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2183,6 +2252,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123" "123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation1a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2191,6 +2261,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123"_X "123";
+	@Test
 	public void testUserDefinedLiteralConcatenation1b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2199,6 +2270,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s, unsigned sz) { return Ret(); }
 
 	// auto test = u8"123" "123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation2a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2207,6 +2279,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s, unsigned sz) { return Ret(); }
 
 	// auto test = u8"123"_X "123";
+	@Test
 	public void testUserDefinedLiteralConcatenation2b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2215,6 +2288,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123" u8"123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation2c() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2223,6 +2297,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123"_X u8"123";
+	@Test
 	public void testUserDefinedLiteralConcatenation2d() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2231,6 +2306,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const wchar_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = L"123" "123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation3a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2239,6 +2315,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const wchar_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = L"123"_X "123";
+	@Test
 	public void testUserDefinedLiteralConcatenation3b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2247,6 +2324,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const wchar_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123" L"123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation3c() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2255,6 +2333,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const wchar_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123"_X L"123";
+	@Test
 	public void testUserDefinedLiteralConcatenation3d() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2263,6 +2342,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char16_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = u"123" "123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation4a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2271,6 +2351,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char16_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = u"123"_X "123";
+	@Test
 	public void testUserDefinedLiteralConcatenation4b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2279,6 +2360,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char16_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123" u"123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation4c() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2287,6 +2369,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char16_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123"_X u"123";
+	@Test
 	public void testUserDefinedLiteralConcatenation4d() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2295,6 +2378,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char32_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = U"123" "123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation5a() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2303,6 +2387,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char32_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = U"123"_X "123";
+	@Test
 	public void testUserDefinedLiteralConcatenation5b() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2311,6 +2396,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char32_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123" U"123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation5c() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2319,6 +2405,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char32_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123"_X U"123";
+	@Test
 	public void testUserDefinedLiteralConcatenation5d() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2327,6 +2414,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _X(const char32_t* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123"_X U"123"_X;
+	@Test
 	public void testUserDefinedLiteralConcatenation6() throws Exception {
 		assertUserDefinedLiteralType("Ret");
 	}
@@ -2336,6 +2424,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// Ret operator "" _Y(const char* s, unsigned sz) { return Ret(); }
 
 	// auto test = "123"_X "123"_Y;
+	@Test
 	public void testUserDefinedLiteralBadConcat1() throws Exception {
 		IASTProblem[] problems = strategy.getAst(0).getPreprocessorProblems();
 		assertEquals(1, problems.length);
@@ -2348,6 +2437,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// RetB operator "" _X(unsigned long long i) { return RetB(); }
 
 	// auto test = 123_X;
+	@Test
 	public void testUserDefinedLiteralResolution1() throws Exception {
 		assertUserDefinedLiteralType("RetB");
 	}
@@ -2358,6 +2448,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// RetB operator "" _X(long double i) { return RetB(); }
 
 	// auto test = 123.123_X;
+	@Test
 	public void testUserDefinedLiteralResolution2() throws Exception {
 		assertUserDefinedLiteralType("RetB");
 	}
@@ -2368,6 +2459,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	// RetB operator "" _X(const char * c) { return RetB(); }
 
 	// auto test = 123_X;
+	@Test
 	public void testUserDefinedLiteralResolution3() throws Exception {
 		ICPPVariable v = getBindingFromFirstIdentifier("test");
 		assertTrue(v.getType() instanceof IProblemType);
@@ -2385,6 +2477,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int main() {
 	//	    B waldo;
 	//	}
+	@Test
 	public void testFinalOverriderAnalysis_489477() throws Exception {
 		ICPPVariable waldo = getBindingFromFirstIdentifier("waldo");
 		IType type = waldo.getType();
@@ -2398,6 +2491,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	};
 
 	//	B* b;
+	@Test
 	public void testFriendClassDeclaration_508338() throws Exception {
 		getProblemFromFirstIdentifier("B*");
 	}
@@ -2411,6 +2505,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	waldo waldo::instance;
 
 	//	// empty file
+	@Test
 	public void testStaticFieldOfEnclosingType_508254() throws Exception {
 		checkBindings();
 	}
@@ -2420,6 +2515,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	}
 
 	//	// empty file
+	@Test
 	public void testAnonymousStructInAnonymousNamespace_508254() throws Exception {
 		checkBindings();
 	}
@@ -2440,6 +2536,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int main() {
 	//	    Foo a;  // Error: Type 'Foo' could not be resolved
 	//	}
+	@Test
 	public void testDelegatingConstructorCallInConstexprConstructor_509871() throws Exception {
 		checkBindings();
 	}
@@ -2460,6 +2557,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//
 	//	class C {};
 	//	derived<C> waldo = 0;
+	@Test
 	public void testDelegatingConstructorCallInConstexprConstructor_514595() throws Exception {
 		checkBindings();
 	}
@@ -2468,6 +2566,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	const NoneType None = None;
 
 	//	// empty file
+	@Test
 	public void testSelfReferencingVariable_510484() throws Exception {
 		checkBindings();
 	}
@@ -2483,6 +2582,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	void Foo::func() {
 	//		Bar waldo(0, 0);
 	//	}
+	@Test
 	public void testNestedClassDefinedOutOfLine_502999() throws Exception {
 		checkBindings();
 	}
@@ -2549,6 +2649,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	const MyClass MyClass::CONSTANT_NAME26( 26 );
 
 	//	// empty file
+	@Test
 	public void testOOM_529646() throws Exception {
 		checkBindings();
 	}
@@ -2556,6 +2657,7 @@ public abstract class IndexCPPBindingResolutionTest extends IndexBindingResoluti
 	//	int foo() noexcept;
 
 	//	constexpr bool is_noexcept = noexcept(foo());
+	@Test
 	public void testNoexceptOperator_545021() throws Exception {
 		IVariable isNoexcept = getBindingFromASTName("is_noexcept", 11);
 		assertEquals(1, isNoexcept.getInitialValue().numberValue().longValue());

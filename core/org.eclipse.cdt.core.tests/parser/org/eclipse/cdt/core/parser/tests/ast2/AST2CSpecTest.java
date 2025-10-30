@@ -16,23 +16,18 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author dsteffle
  */
 public class AST2CSpecTest extends AST2SpecTestBase {
 
-	public AST2CSpecTest() {
-	}
-
-	public AST2CSpecTest(String name) {
-		super(name);
-	}
-
 	// /* Start Example(C 4-6) */
 	// #ifdef _ _STDC_IEC_559_ _ // FE_UPWARD defined
 	// fesetround(FE_UPWARD);
 	// #endif
+	@Test
 	public void test4s6() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -40,6 +35,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// /* Start Example(C 5.1.1.3-2) */
 	// char i;
 	// int i;
+	@Test
 	public void test5_1_1_3s2() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -49,6 +45,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// char c1, c2;
 	// c1 = c1 + c2;
 	// }
+	@Test
 	public void test5_1_2_3s10() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -59,6 +56,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// double d;
 	// f1 = f2 * d;
 	// }
+	@Test
 	public void test5_1_2_3s11() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -70,6 +68,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// d1 = f = 1;
 	// d2 = (float) 1;
 	// }
+	@Test
 	public void test5_1_2_3s12() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -82,6 +81,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// z = x + x * y; // not equivalent toz = x * (1.0 + y);
 	// y = x / 5.0; // not equivalent toy = x * 0.2;
 	// }
+	@Test
 	public void test5_1_2_3s13() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -95,6 +95,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// a = ((a + 32765) + b);
 	// a = (a + (b + 32765));
 	// }
+	@Test
 	public void test5_1_2_3s14() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -107,12 +108,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// sum = sum * 10 - '0' + (*p++ = getchar());
 	// sum = (((sum * 10) - '0') + ((*(p++)) = (getchar())));
 	// }
+	@Test
 	public void test5_1_2_3s15() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
 
 	// /* Start Example(C 6.2.5-28) */
 	// struct tag (* a[5])(float);
+	@Test
 	public void test6_2_5s28() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -121,6 +124,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int f(int (*)(), double (*)[3]);
 	// int f(int (*)(char *), double (*)[]);
 	// int f(int (*)(char *), double (*)[3]);
+	@Test
 	public void test6_2_7s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -129,6 +133,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// char x='\023';
 	// char y='\0';
 	// char z='\x13';
+	@Test
 	public void test6_4_4_4s12() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -142,6 +147,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int foo() {
 	// int x=(*pf[f1()]) (f2(), f3() + f4());
 	// }
+	@Test
 	public void test6_5_2_2s12() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -159,6 +165,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// vs.i; // volatile int
 	// vs.ci; // volatile const int
 	// }
+	@Test
 	public void test6_5_2_3s7() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -185,6 +192,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// if (sin(u.nf.doublenode) == 0.0)
 	// return 0;
 	// }
+	@Test
 	public void test6_5_2_3s8a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -206,12 +214,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// } u;
 	// return f(&u.s1, &u.s2);
 	// }
+	@Test
 	public void test6_5_2_3s8b() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
 
 	// /* Start Example(C 6.5.2.5-9) */
 	// int *p = (int []){2, 4};
+	@Test
 	public void test6_5_2_5s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -222,6 +232,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int *p;
 	// p = (int [2]){*p};
 	// }
+	@Test
 	public void test6_5_2_5s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -233,6 +244,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// drawline(&(struct point){.x=1, .y=1},
 	// &(struct point){.x=3, .y=4});
 	// }
+	@Test
 	public void test6_5_2_5s11() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, false, 0);
 	}
@@ -241,6 +253,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int f() {
 	// (const float []){1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6};
 	// }
+	@Test
 	public void test6_5_2_5s12() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -251,6 +264,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// (char []){"/tmp/fileXXXXXX"};
 	// (const char []){"/tmp/fileXXXXXX"};
 	// }
+	@Test
 	public void test6_5_2_5s13() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -259,6 +273,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int f() {
 	// (const char []){"abc"} == "abc";
 	// }
+	@Test
 	public void test6_5_2_5s14() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -269,6 +284,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// struct int_list endless_zeros = {0, &endless_zeros};
 	// eval(endless_zeros);
 	// }
+	@Test
 	public void test6_5_2_5s15() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -284,6 +300,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// if (j < 2) goto again;
 	// return p == q && q->i == 1;
 	// }
+	@Test
 	public void test6_5_2_5s16() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -291,6 +308,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// /* Start Example(C 6.5.3.4-5) */
 	// extern void *alloc(size_t);
 	// double *dp = alloc(sizeof *dp);
+	@Test
 	public void test6_5_3_4s5() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -300,6 +318,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int array[5];
 	// int x = sizeof array / sizeof array[0];
 	// }
+	@Test
 	public void test6_5_3_4s6() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -313,6 +332,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// (*p)[2] = 99; // a[1][2] == 99
 	// n = p - a; // n == 1
 	// }
+	@Test
 	public void test6_5_6s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -333,6 +353,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	//		cond ? ip : c_ip;
 	//		cond ? vp : ip;
 	//	}
+	@Test
 	public void test6_5_15s8() throws Exception {
 		BindingAssertionHelper helper = new AST2AssertionHelper(getAboveComment(), ParserLanguage.C);
 		IASTExpression c1 = helper.assertNode("cond ? c_vp : c_ip");
@@ -356,6 +377,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// long l;
 	// l = (c = i);
 	// }
+	@Test
 	public void test6_5_16_1s5() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -369,6 +391,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// *cpp = &c; // valid
 	// *p = 0; // valid
 	// }
+	@Test
 	public void test6_5_16_1s6() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -383,6 +406,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// offsetof(struct s, d);
 	// offsetof(struct ss, d);
 	// }
+	@Test
 	public void test6_7_2_1s17() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -394,6 +418,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// s1 = malloc(sizeof (struct s) + 64);
 	// s2 = malloc(sizeof (struct s) + 46);
 	// }
+	@Test
 	public void test6_7_2_1s18a() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -401,6 +426,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// /* Start Example(C 6.7.2.1-18b) */
 	// struct { int n; double d[8]; } *s1;
 	// struct { int n; double d[5]; } *s2;
+	@Test
 	public void test6_7_2_1s18b() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -414,6 +440,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// if (*cp != burgundy)
 	// return 0;
 	// }
+	@Test
 	public void test6_7_2_2s5() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -424,6 +451,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// struct tnode *left, *right;
 	// };
 	// struct tnode s, *sp;
+	@Test
 	public void test6_7_2_3s9() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -435,6 +463,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// TNODE *left, *right;
 	// };
 	// TNODE s, *sp;
+	@Test
 	public void test6_7_2_3s10() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -443,12 +472,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// struct s2;
 	// struct s1 { struct s2 *s2p; }; // D1
 	// struct s2 { struct s1 *s1p; }; // D2
+	@Test
 	public void test6_7_2_3s11() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
 
 	// /* Start Example(C 6.7.3-10) */
 	// extern const volatile int real_time_clock;
+	@Test
 	public void test6_7_3s10() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -468,6 +499,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// pci = &cs.mem; // valid
 	// pi = a[0]; // invalid: a[0] has type ''const int *''
 	// }
+	@Test
 	public void test6_7_3s11() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -476,6 +508,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int * restrict a;
 	// int * restrict b;
 	// extern int c[];
+	@Test
 	public void test6_7_3_1s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -486,6 +519,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// while (n-- > 0)
 	// *p++ = *q++;
 	// }
+	@Test
 	public void test6_7_3_1s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -502,6 +536,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// f(50, d + 50, d); // valid
 	// f(50, d + 1, d); // undefined behavior
 	// }
+	@Test
 	public void test6_7_3_1s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -513,6 +548,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// for (i = 0; i < n; i++)
 	// p[i] = q[i] + r[i];
 	// }
+	@Test
 	public void test6_7_3_1s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -530,6 +566,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// p2 = q2; // undefined behavior
 	// }
 	// }
+	@Test
 	public void test6_7_3_1s11() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -543,6 +580,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// t.v = malloc(n * sizeof (float));
 	// return t;
 	// }
+	@Test
 	public void test6_7_3_1s12() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, false, 0);
 	}
@@ -561,6 +599,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// {
 	// return is_fahr ? cels(temp) : fahr(temp);
 	// }
+	@Test
 	public void test6_7_4s7() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -570,12 +609,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int *const constant_ptr1;
 	// typedef int *int_ptr;
 	// const int_ptr constant_ptr2;
+	@Test
 	public void test6_7_5_1s4() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
 
 	// /* Start Example(C 6.7.5.2-7) */
 	// float fa[11], *afp[17];
+	@Test
 	public void test6_7_5_2s7() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -583,6 +624,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// /* Start Example(C 6.7.5.2-8) */
 	// extern int *x;
 	// extern int y[];
+	@Test
 	public void test6_7_5_2s8() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -600,6 +642,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// r = c; // compatible, but defined behavior only if
 	// // n == 6 andm == n+1
 	// }
+	@Test
 	public void test6_7_5_2s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -624,24 +667,28 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// extern int (*r)[m]; // invalid: r has linkage and points to VLA
 	// static int (*q)[m] = &B; // valid: q is a static block pointer to VLA
 	// }
+	@Test
 	public void test6_7_5_2s10() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
 
 	// /* Start Example(C 6.7.5.3-16) */
 	// int f(void), *fip(), (*pfi)();
+	@Test
 	public void test6_7_5_3s16() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
 
 	// /* Start Example(C 6.7.5.3-18) */
 	// int (*apfi[3])(int *x, int *y);
+	@Test
 	public void test6_7_5_3s18() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
 
 	// /* Start Example(C 6.7.5.3-19) */
 	// int (*fpfi(int (*)(long), int))(int, ...);
+	@Test
 	public void test6_7_5_3s19() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -663,6 +710,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// // a is a pointer to a VLA with n*m+300 elements
 	// a[i][j] += x;
 	// }
+	@Test
 	public void test6_7_5_3s20() throws Exception {
 		String code = getAboveComment();
 		// no valid c++ code
@@ -678,6 +726,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// void f2(double a[restrict][5]);
 	// void f3(double a[restrict 3][5]);
 	// void f4(double a[restrict static 3][5]);
+	@Test
 	public void test6_7_5_3s21() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -689,6 +738,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// extern KLICKSP *metricp;
 	// range x;
 	// range z, *zp;
+	@Test
 	public void test6_7_7s4() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -696,6 +746,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// /* Start Example(C 6.7.7-5) */
 	// typedef struct s1 { int x; } t1, *tp1;
 	// typedef struct s2 { int x; } t2, *tp2;
+	@Test
 	public void test6_7_7s5() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -705,6 +756,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// void (*signal(int, void (*)(int)))(int);
 	// fv *signal(int, fv *);
 	// pfv signal(int, pfv);
+	@Test
 	public void test6_7_7s7() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -719,6 +771,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// for (int i = 1; i < n; i++)
 	// a[i-1] = b[i];
 	// }
+	@Test
 	public void test6_7_7s8() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -726,12 +779,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// /* Start Example(C 6.7.8-24) */
 	// int i = 3.5;
 	// complex c = 5 + 3 * I;
+	@Test
 	public void test6_7_8s24() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
 
 	// /* Start Example(C 6.7.8-25) */
 	// int x[] = { 1, 3, 5 };
+	@Test
 	public void test6_7_8s25() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -742,6 +797,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// { 2, 4, 6 },
 	// { 3, 5, 7 },
 	// };
+	@Test
 	public void test6_7_8s26a() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -750,6 +806,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int y[4][3] = {
 	// 1, 3, 5, 2, 4, 6, 3, 5, 7
 	// };
+	@Test
 	public void test6_7_8s26b() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -758,12 +815,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int z[4][3] = {
 	// { 1 }, { 2 }, { 3 }, { 4 }
 	// };
+	@Test
 	public void test6_7_8s27() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
 
 	// /* Start Example(C 6.7.8-28) */
 	// struct { int a[3], b; } w[] = { { 1 }, 2 };
+	@Test
 	public void test6_7_8s28() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -791,6 +850,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// { 6 },
 	// }
 	// };
+	@Test
 	public void test6_7_8s29() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -799,6 +859,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// typedef int A[]; // OK - declared with block scope
 	// A a1 = { 1, 2 }, b1 = { 3, 4, 5 };
 	// int a2[] = { 1, 2 }, b2[] = { 3, 4, 5 };
+	@Test
 	public void test6_7_8s31() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -810,6 +871,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// t2[] = { 'a', 'b', 'c' };
 	// char *p = "abc";
 	// }
+	@Test
 	public void test6_7_8s32() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -820,12 +882,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// [member_two] = "member two",
 	// [member_one] = "member one",
 	// };
+	@Test
 	public void test6_7_8s33() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
 
 	// /* Start Example(C 6.7.8-34) */
 	// div_t answer = { .quot = 2, .rem = -1 };
+	@Test
 	public void test6_7_8s34() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 1); // div_t (correctly) cannot be resolved
 	}
@@ -833,6 +897,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// /* Start Example(C 6.7.8-35) */
 	// struct { int a[3], b; } w[] =
 	// { [0].a = {1}, [1].a[0] = 2 };
+	@Test
 	public void test6_7_8s35() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -842,12 +907,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int a[MAX] = {
 	// 1, 3, 5, 7, 9, [MAX-5] = 8, 6, 4, 2, 0
 	// };
+	@Test
 	public void test6_7_8s36() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
 
 	// /* Start Example(C 6.7.8-38) */
 	// union { int any_member; } u = { .any_member = 42 };
+	@Test
 	public void test6_7_8s38() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -857,6 +924,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int f() {
 	// (void)p(0);
 	// }
+	@Test
 	public void test6_8_3s4() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -867,6 +935,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// while (*s++ != '\0')
 	// ;
 	// }
+	@Test
 	public void test6_8_3s5() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -883,6 +952,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// end_loop1: ;
 	// }
 	// }
+	@Test
 	public void test6_8_3s6() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -900,6 +970,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// f(i+1);
 	// }
 	// }
+	@Test
 	public void test6_8_4s7() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -918,6 +989,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// // handle other operations
 	// }
 	// }
+	@Test
 	public void test6_8_6_1s3() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -937,6 +1009,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// }
 	// goto lab4; // invalid: going INTO scope of VLA.
 	// }
+	@Test
 	public void test6_8_6_1s4() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -960,6 +1033,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// int foo() {
 	// g.u2.f3 = f();
 	// }
+	@Test
 	public void test6_8_6_4s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}
@@ -969,6 +1043,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// {
 	// return a > b ? a : b;
 	// }
+	@Test
 	public void test6_9_1s13() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -979,6 +1054,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// (*funcp)();
 	// funcp();
 	// }
+	@Test
 	public void test6_9_1s14() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -999,6 +1075,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// extern int i3; // refers to pre vious, whose linkage is external
 	// extern int i4; // refers to pre vious, whose linkage is external
 	// extern int i5; // refers to pre vious, whose linkage is internal
+	@Test
 	public void test6_9_2s4() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -1012,6 +1089,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// if ('z' - 'a' == 25)
 	// g();
 	// }
+	@Test
 	public void test6_10_1s4() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -1023,6 +1101,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// #define join(c, d) in_between(c hash_hash d)
 	// char p[] = join(x, y); // equivalent to
 	// char p[] = "x ## y";
+	@Test
 	public void test6_10_3_3s4() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -1030,12 +1109,14 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// /* Start Example(C 6.10.3.5-3) */
 	// #define TABSIZE 100
 	// int table[TABSIZE];
+	@Test
 	public void test6_10_3_5s3() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
 
 	// /* Start Example(C 6.10.3.5-4) */
 	// #define max(a, b) ((a) > (b) ? (a) : (b))
+	@Test
 	public void test6_10_3_5s4() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -1059,6 +1140,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 	// char c[2][6] = { str(hello), str() };
 	// }
+	@Test
 	public void test6_10_3_5s5() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -1083,6 +1165,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// char * c = glue(HIGH, LOW);
 	// c = xglue(HIGH, LOW);
 	// }
+	@Test
 	public void test6_10_3_5s6() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -1091,6 +1174,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// #define t(x,y,z) x ## y ## z
 	// int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,),
 	// t(10,,), t(,11,), t(,,12), t(,,) };
+	@Test
 	public void test6_10_3_5s7() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -1103,6 +1187,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// #define FUNC_LIKE2( a )(              \
 	//             	a                    \
 	//                   	)
+	@Test
 	public void test6_10_3_5s8() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -1118,6 +1203,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// showlist(The first, second, and third items.);
 	// report(x>y, "x is %d but y is %d", x, y);
 	// }
+	@Test
 	public void test6_10_3_5s9() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
@@ -1132,6 +1218,7 @@ public class AST2CSpecTest extends AST2SpecTestBase {
 	// };
 	// t f(t (t));
 	// long t;
+	@Test
 	public void test6_7_7s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.C, true, 0);
 	}

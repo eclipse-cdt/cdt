@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class ReferenceTests extends TestBase {
 	public static class NonIndexingTests extends ReferenceTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends ReferenceTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -42,6 +34,7 @@ public abstract class ReferenceTests extends TestBase {
 	//	}
 
 	// constexpr int x = f();
+	@Test
 	public void testSideEffectsOnReferences() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -54,6 +47,7 @@ public abstract class ReferenceTests extends TestBase {
 	//	}
 
 	// constexpr int x = f();
+	@Test
 	public void testAssignmentsOnReferences() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -67,6 +61,7 @@ public abstract class ReferenceTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testSideEffectsOnNestedReferences() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -80,6 +75,7 @@ public abstract class ReferenceTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testAssignmentOnNestedReferences() throws Exception {
 		assertEvaluationEquals(2);
 	}

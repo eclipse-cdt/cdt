@@ -17,8 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IField;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPBasicType;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * For testing resolution of bindings in C++ code with GNU extensions.
@@ -74,25 +73,12 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 		public SingleProjectTest() {
 			setStrategy(new GPPSinglePDOMTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTest.class);
-		}
 	}
 
 	public static class ProjectWithDepProjTest extends IndexGPPBindingResolutionTest {
 		public ProjectWithDepProjTest() {
 			setStrategy(new GPPReferencedProject());
 		}
-
-		public static TestSuite suite() {
-			return suite(ProjectWithDepProjTest.class);
-		}
-	}
-
-	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProjectTest.suite());
-		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	//	struct B {
@@ -102,6 +88,7 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 	//	struct B b = {
 	//	  .f = 3.1
 	//	};
+	@Test
 	public void testDesignatedInitializer() throws Exception {
 		IField f = getBindingFromASTName("f", 0);
 	}
@@ -130,6 +117,7 @@ public abstract class IndexGPPBindingResolutionTest extends IndexBindingResoluti
 	//	typedef underlying_type<e_int>::type int_type;
 	//	typedef underlying_type<e_ulong>::type ulong_type;
 	//	typedef underlying_type<e_long>::type loong_type;
+	@Test
 	public void testUnderlyingTypeBuiltin_bug411196() throws Exception {
 		assertSameType((ITypedef) getBindingFromASTName("short1_type", 0), CPPBasicType.SHORT);
 		assertSameType((ITypedef) getBindingFromASTName("short2_type", 0), CPPBasicType.SHORT);

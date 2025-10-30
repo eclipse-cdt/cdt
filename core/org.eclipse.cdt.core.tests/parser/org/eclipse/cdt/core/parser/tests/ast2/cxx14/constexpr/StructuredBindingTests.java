@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class StructuredBindingTests extends TestBase {
 	public static class NonIndexingTests extends StructuredBindingTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends StructuredBindingTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -41,6 +33,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testBindingFirstElementOfArray() throws Exception {
 		assertEvaluationEquals(8);
 	}
@@ -52,6 +45,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testBindingSecondElementOfArray() throws Exception {
 		assertEvaluationEquals(9);
 	}
@@ -63,6 +57,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testBindingOutOfBoundElementOfArray() throws Exception {
 		assertEvaluationProblem();
 	}
@@ -77,6 +72,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testBindingFirstMemberOfObject() throws Exception {
 		assertEvaluationEquals(42);
 	}
@@ -91,6 +87,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testBindingSecondMemberOfObject() throws Exception {
 		assertEvaluationEquals(5.0);
 	}
@@ -103,6 +100,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	auto [inherited] = s;
 
 	//	auto x = inherited;
+	@Test
 	public void testBindingInheritedMember() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -116,6 +114,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testBindingOutOfBoundElementOfObject() throws Exception {
 		assertEvaluationProblem();
 	}
@@ -126,6 +125,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testUninitializedStructuredBinding() throws Exception {
 		assertEvaluationProblem();
 	}
@@ -163,6 +163,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeObjectWithMemberGet() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -200,6 +201,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeObjectWithFreeGet() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -237,6 +239,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeObjectWithTooFewElements() throws Exception {
 		assertEvaluationProblem();
 	}
@@ -274,6 +277,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeObjectWithTooManyElements() throws Exception {
 		assertEvaluationProblem();
 	}
@@ -311,6 +315,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeValueMemberIsStaticConst() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -348,6 +353,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeValueMemberIsNonConstexpr() throws Exception {
 		assertEvaluationProblem();
 	}
@@ -385,6 +391,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeValueMemberIsNonStatic() throws Exception {
 		assertEvaluationProblem();
 	}
@@ -422,6 +429,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeValueMemberIsNonIntegral() throws Exception {
 		assertEvaluationProblem();
 	}
@@ -462,6 +470,7 @@ public abstract class StructuredBindingTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = foo();
+	@Test
 	public void testBindingOutOfTupleLikeValueMemberWithNonConstexprInitialization() throws Exception {
 		assertEvaluationProblem();
 	}

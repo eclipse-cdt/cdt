@@ -14,14 +14,9 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx17;
 
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class TemplateAutoTests extends AST2CPPTestBase {
-
-	public static TestSuite suite() {
-		return suite(TemplateAutoTests.class);
-	}
 
 	//	template<auto F>
 	//	struct C {
@@ -33,6 +28,7 @@ public class TemplateAutoTests extends AST2CPPTestBase {
 	//	}
 	//
 	//	using A = C<&foo>::T;
+	@Test
 	public void testTemplateNontypeParameterTypeDeductionParsing_519361() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -47,6 +43,7 @@ public class TemplateAutoTests extends AST2CPPTestBase {
 	//		using T = decltype(F);
 	//		using H = Helper<T>;
 	//	};
+	@Test
 	public void testTemplateNontypeParameterTypeDeductionParsing_519361_2() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -72,6 +69,7 @@ public class TemplateAutoTests extends AST2CPPTestBase {
 	//		using A = call_helper<&Something::foo>::type;
 	//		A::call();
 	//	}
+	@Test
 	public void testTemplateNontypeParameterTypeDeductionParsing_519361_3() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -105,6 +103,7 @@ public class TemplateAutoTests extends AST2CPPTestBase {
 	//	    int foo;
 	//	};
 	//	typedef M<W<&B::foo>::type> M2; // typedef #2
+	@Test
 	public void testInstantiationCacheConflict_553141() throws Exception {
 		parseAndCheckBindings();
 	}

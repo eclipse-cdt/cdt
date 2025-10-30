@@ -12,27 +12,18 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class DoWhileStatementTests extends TestBase {
 	public static class NonIndexingTests extends DoWhileStatementTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends DoWhileStatementTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -47,6 +38,7 @@ public abstract class DoWhileStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testDoWhile() throws Exception {
 		assertEvaluationEquals(55);
 	}
@@ -60,6 +52,7 @@ public abstract class DoWhileStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testDoWhileInfiniteLoop() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -73,6 +66,7 @@ public abstract class DoWhileStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testDoWhileReturn() throws Exception {
 		assertEvaluationEquals(42);
 	}
@@ -86,6 +80,7 @@ public abstract class DoWhileStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(10);
+	@Test
 	public void testDoWhileWithNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -99,6 +94,7 @@ public abstract class DoWhileStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(10);
+	@Test
 	public void testDoWhileWithReturnInNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(42);
 	}

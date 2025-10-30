@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.io.IOException;
 
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -28,33 +32,17 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ASTNodeSelectorTest extends AST2TestBase {
-
-	static public TestSuite suite() {
-		return suite(ASTNodeSelectorTest.class);
-	}
 
 	protected String fCode;
 	protected IASTTranslationUnit fTu;
 	protected IASTNodeSelector fSelector;
 
-	public ASTNodeSelectorTest() {
-	}
-
-	public ASTNodeSelectorTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		createTranslationUnit();
-	}
-
-	protected void createTranslationUnit() throws IOException {
+	@BeforeEach
+	public void createTranslationUnit() throws IOException {
 		fCode = getContents(1)[0].toString();
 		FileContent codeReader = FileContent.create("<test-code>", fCode.toCharArray());
 		ScannerInfo scannerInfo = new ScannerInfo();
@@ -66,11 +54,6 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 		fSelector = fTu.getNodeSelector(null);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 	private void testContainedName(int from, int to, String sig) {
 		IASTName name = fSelector.findFirstContainedName(from, to - from);
 		verify(sig, name);
@@ -78,9 +61,9 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 
 	private void verify(String sig, IASTNode node) {
 		if (sig == null) {
-			assertNull("unexpexted selection: " + (node == null ? "" : node.getRawSignature()), node);
+			assertNull(node, "unexpexted selection: " + (node == null ? "" : node.getRawSignature()));
 		} else {
-			assertNotNull("unable to select " + sig, node);
+			assertNotNull(node, "unable to select " + sig);
 			if (node instanceof IASTName) {
 				assertEquals(sig, ((IASTName) node).toString());
 			} else {
@@ -124,6 +107,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	//
 	// #include <test>
 	// int a;
+	@Test
 	public void testInclusion() {
 		int include_start = fCode.indexOf("#include");
 		int name_start = fCode.indexOf("test");
@@ -162,6 +146,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	// void func() {
 	// #include EMPTY TEST_H
 	// }
+	@Test
 	public void testInclusionWithExpansions() {
 		int inclusion_start = fCode.indexOf("#include");
 		int empty_start = fCode.indexOf("EMPTY", inclusion_start);
@@ -227,6 +212,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	// #if  xx == 2
 	// #elif xx == 1
 	// #endif
+	@Test
 	public void testMacroInConditionalExpression() {
 		int x1 = fCode.indexOf("xx");
 		int x2 = fCode.indexOf("xx", x1 + 1);
@@ -268,6 +254,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	// #if !defined(xx)
 	// #elif defined(xx) == 1
 	// #endif
+	@Test
 	public void testMacroInDefinedExpression() {
 		int x1 = fCode.indexOf("xx");
 		int x2 = fCode.indexOf("xx", x1 + 1);
@@ -311,6 +298,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	// #ifdef xx
 	// #endif
 	// #undef xx
+	@Test
 	public void testMacroInConditional() {
 		int x1 = fCode.indexOf("xx");
 		x1 = fCode.indexOf("xx", x1 + 1);
@@ -352,6 +340,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	// #define IMPLICIT 1
 	// #define EXPLICIT IMPLICIT
 	// int a= EXPLICIT;
+	@Test
 	public void testUnreachableImplicitMacro() {
 		int x1 = fCode.indexOf("EXPLICIT;");
 		testContainedName(x1, fCode.length(), "EXPLICIT");
@@ -365,6 +354,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	// #define NESTED 1
 	// #define EXPLICIT(x) x
 	// int a= EXPLICIT(NESTED);
+	@Test
 	public void testReachableNestedMacro() {
 		int x1 = fCode.indexOf("NESTED)");
 		testContainedName(x1, fCode.length(), "NESTED");
@@ -375,6 +365,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	// #define id(x,y) x y
 	// id(int a, =1);
 	// id(int b=, a);
+	@Test
 	public void testImageLocations() {
 		int a1 = fCode.indexOf("a");
 		int a2 = fCode.indexOf("a", a1 + 1);
@@ -403,6 +394,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 	// #define O
 	// #define P()
 	// P()O
+	@Test
 	public void testOrdering() {
 		int x1 = fCode.indexOf("ns::a");
 		int x2 = x1 + "ns::a".length();
@@ -434,6 +426,7 @@ public class ASTNodeSelectorTest extends AST2TestBase {
 
 	// #define MACRO void m
 	// MACRO();
+	@Test
 	public void testEnclosingAMacro() {
 		int x1 = fCode.indexOf("MACRO(");
 		int x2 = x1 + "MACRO(".length();

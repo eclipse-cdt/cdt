@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Index tests involving multiple header and source files.
@@ -26,10 +26,6 @@ public class IndexUpdateMultiFileTest extends IndexBindingResolutionTestBase {
 
 	public IndexUpdateMultiFileTest() {
 		setStrategy(new SinglePDOMTestNamedFilesStrategy(true));
-	}
-
-	public static TestSuite suite() {
-		return suite(IndexUpdateMultiFileTest.class);
 	}
 
 	// A.h
@@ -71,6 +67,7 @@ public class IndexUpdateMultiFileTest extends IndexBindingResolutionTestBase {
 	//	    waldo(new B<E>());
 	//	  }
 	//	};
+	@Test
 	public void testMacroRemoval_450888() throws Exception {
 		checkBindings();
 	}

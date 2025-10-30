@@ -13,36 +13,37 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class IndexCPPBindingResolutionBugsSingleProjectFirstASTTest extends IndexCPPBindingResolutionBugsTest {
 	public IndexCPPBindingResolutionBugsSingleProjectFirstASTTest() {
 		setStrategy(new SinglePDOMTestFirstASTStrategy(true));
 	}
 
-	public static TestSuite suite() {
-		return suite(IndexCPPBindingResolutionBugsSingleProjectFirstASTTest.class);
-	}
-
 	/* Invalid tests for this strategy, they assume that the second file is already indexed. */
 	@Override
+	@Test
 	public void test_208558() {
 	}
 
 	@Override
+	@Test
 	public void test_176708_CCE() {
 	}
 
 	@Override
+	@Test
 	public void testIsSameAnonymousType_193962() {
 	}
 
 	@Override
+	@Test
 	public void testIsSameNestedAnonymousType_193962() {
 	}
 
 	/* For some unknown reason this test is flaky for this strategy. */
 	@Override
+	@Test
 	public void testTemplateArgumentResolution_450888() {
 	}
 }

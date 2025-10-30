@@ -13,24 +13,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPMethod;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.junit.jupiter.api.Test;
 
 /**
  * Directly tests parts of the semantics package
  */
 public class SemanticsTests extends AST2TestBase {
-
-	public SemanticsTests() {
-	}
-
-	public SemanticsTests(String name) {
-		super(name);
-	}
 
 	//	class A {};
 	//	class B {};
@@ -92,6 +88,7 @@ public class SemanticsTests extends AST2TestBase {
 	//      operator A(); // conversion
 	//      operator B(); // conversion
 	//	};
+	@Test
 	public void testConversionOperators() throws Exception {
 		// Test getDeclaredConversionOperators()
 		BindingAssertionHelper ba = new AST2AssertionHelper(getAboveComment(), true);

@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	public static class NonIndexingTests extends BinaryOperatorOverloadingTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends BinaryOperatorOverloadingTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -51,6 +43,7 @@ public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testOverloadedPlusOperatorAsMemberFunction() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -71,6 +64,7 @@ public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testOverloadedMultiplicationOperatorAsMemberFunction() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -91,6 +85,7 @@ public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testOverloadedPlusOperatorAsNonMemberFunction() throws Exception {
 		assertEvaluationEquals(14);
 	}
@@ -112,6 +107,7 @@ public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//  constexpr int x = f();
+	@Test
 	public void testOverloadedOperatorPlusComplex1() throws Exception {
 		assertEvaluationEquals(24);
 	}
@@ -133,6 +129,7 @@ public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//  constexpr int x = f();
+	@Test
 	public void testOverloadedOperatorPlusComplex2() throws Exception {
 		assertEvaluationEquals(24);
 	}
@@ -153,6 +150,7 @@ public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//  constexpr int x = f();
+	@Test
 	public void testOverloadedOperatorPlusComplex3() throws Exception {
 		assertEvaluationEquals(24);
 	}
@@ -172,6 +170,7 @@ public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testOverloadedOperatorEquals() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -195,6 +194,7 @@ public abstract class BinaryOperatorOverloadingTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testOverloadedOperatorAssign() throws Exception {
 		assertEvaluationEquals(10);
 	}

@@ -22,6 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFoldExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
+import org.junit.jupiter.api.Test;
 
 /**
  * AST tests for C++17 fold expressions.
@@ -46,6 +47,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//	static constexpr auto val2 = f2(1, 2., "12");
 	//	static constexpr auto val3 = f3(1, 2., "123");
 	//	static constexpr auto val4 = f4(1, 2., "1234");
+	@Test
 	public void testFoldExpression1() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -70,6 +72,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//	static constexpr auto val3 = f3();
 	//	static constexpr auto val41 = f4(false);
 	//	static constexpr auto val42 = f4(true);
+	@Test
 	public void testFoldExpression2() throws Exception {
 		parseAndCheckBindings();
 		BindingAssertionHelper helper = getAssertionHelper();
@@ -87,6 +90,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//    ((... + tp) + ... + sp);
 	//    (sp + ... + tp);
 	//  }
+	@Test
 	public void testFoldExpressionNested() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -107,6 +111,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//	    ostream<char> out;
 	//	    out << (... + vals) << endl;
 	//	}
+	@Test
 	public void testFoldExpressionInBinaryExpression() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -115,6 +120,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//  void sum(T... vals) {
 	//      bar(... + vals);
 	//  }
+	@Test
 	public void testFoldExpressionRecognition1() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
@@ -127,6 +133,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//  void sum(T... vals) {
 	//      ... + vals;
 	//  }
+	@Test
 	public void testFoldExpressionRecognition2() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
@@ -140,6 +147,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//      (++vals + ...);
 	//      ((2*vals) + ...);
 	//  }
+	@Test
 	public void testFoldExpressionRecognitionSuccess() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
@@ -166,6 +174,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//      (1 * 2 + ... + vals);
 	//      (...);
 	//  }
+	@Test
 	public void testFoldExpressionErrors() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STD, false);
@@ -180,6 +189,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//  void f(T... vals) {
 	//      (... <=> vals);
 	//  }
+	@Test
 	public void testFoldExpressionDisallowedOpToken() throws Exception {
 		final String code = getAboveComment();
 		IASTTranslationUnit tu = parse(code, CPP, ScannerKind.STDCPP20, false);
@@ -202,6 +212,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//  };
 	//
 	//  constexpr bool result = fold_condition<int, double>::value;
+	@Test
 	public void testFoldExpressionInClassTemplateArguments() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableValue("result", 1);
@@ -219,6 +230,7 @@ public class FoldExpressionTests extends AST2CPPTestBase {
 	//  };
 	//
 	//  constexpr bool result = fold_condition<int, double>::value;
+	@Test
 	public void testFoldExpressionInVariableTemplateArguments() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableValue("result", 1);

@@ -12,27 +12,18 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class ForStatementTests extends TestBase {
 	public static class NonIndexingTests extends ForStatementTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends ForStatementTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -45,6 +36,7 @@ public abstract class ForStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testSimpleIndexBasedForLoop() throws Exception {
 		assertEvaluationEquals(55);
 	}
@@ -59,6 +51,7 @@ public abstract class ForStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testReturnInIndexBasedForLoop() throws Exception {
 		assertEvaluationEquals(42);
 	}
@@ -72,6 +65,7 @@ public abstract class ForStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testInfiniteLoopInIndexBasedForLoop() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -86,6 +80,7 @@ public abstract class ForStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testIndexBasedForLoopWithEmptyInitializationStatement() throws Exception {
 		assertEvaluationEquals(45);
 	}
@@ -99,6 +94,7 @@ public abstract class ForStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testIndexBasedForLoopWithEmptyIterationSequence() throws Exception {
 		assertEvaluationEquals(45);
 	}
@@ -111,6 +107,7 @@ public abstract class ForStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testIndexBasedForLoopWithNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(55);
 	}
@@ -123,6 +120,7 @@ public abstract class ForStatementTests extends TestBase {
 	// }
 
 	// constexpr int x = f(10);
+	@Test
 	public void testIndexBasedForLoopWithReturnInNonCompoundBodyStatement() throws Exception {
 		assertEvaluationEquals(42);
 	}
@@ -138,6 +136,7 @@ public abstract class ForStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testIndexBasedForLoopWithContinueStatement() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -155,6 +154,7 @@ public abstract class ForStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testIndexBasedForLoopWithNestedContinueStatement() throws Exception {
 		assertEvaluationEquals(30);
 	}
@@ -172,6 +172,7 @@ public abstract class ForStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testIndexBasedForLoopWithNestedBreakStatement() throws Exception {
 		assertEvaluationEquals(15);
 	}
@@ -188,6 +189,7 @@ public abstract class ForStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testDeclarationInForStatementCondition1() throws Exception {
 		assertEvaluationEquals(30);
 	}
@@ -203,6 +205,7 @@ public abstract class ForStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testInfiniteForLoop() throws Exception {
 		assertEvaluationEquals(12);
 	}
@@ -214,6 +217,7 @@ public abstract class ForStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = fac(5);
+	@Test
 	public void testForLoopWithNullStatementAsBody() throws Exception {
 		assertEvaluationEquals(120);
 	}

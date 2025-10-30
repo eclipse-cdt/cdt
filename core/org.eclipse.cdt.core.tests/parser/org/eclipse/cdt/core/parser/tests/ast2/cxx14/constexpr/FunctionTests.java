@@ -11,33 +11,26 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPFunction;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPExecution;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class FunctionTests extends TestBase {
 	public static class NonIndexingTests extends FunctionTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends FunctionTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -53,6 +46,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testAccessMemberOfCompositeParameter() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -60,6 +54,7 @@ public abstract class FunctionTests extends TestBase {
 	// constexpr int function(int n) { return n > 0 ? n + function(n-1) : n; }
 
 	// constexpr int x = function(10);
+	@Test
 	public void testRecursion() throws Exception {
 		assertEvaluationEquals(55);
 	}
@@ -74,6 +69,7 @@ public abstract class FunctionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testEvaluationOfConstexprFunctionCalls() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -91,6 +87,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testFunctionReturnValueIsCopiedAndNotReferenced() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -105,6 +102,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testPassingIntByValue() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -119,6 +117,7 @@ public abstract class FunctionTests extends TestBase {
 	// }
 
 	//	constexpr auto x = f();
+	@Test
 	public void testPassingIntByReference1() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -134,6 +133,7 @@ public abstract class FunctionTests extends TestBase {
 	// }
 
 	// constexpr auto x = f();
+	@Test
 	public void testPassingIntByReference2() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -151,6 +151,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPassingCompositeByValue() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -166,6 +167,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testPassingCompositeByReference() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -179,6 +181,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testPointerReturnValue() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -192,6 +195,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testReferenceReturnValue() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -208,6 +212,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testSideEffectsOnArrayParameter() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -221,6 +226,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(10);
+	@Test
 	public void testBlockScopeValueLookup1() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -233,6 +239,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(10);
+	@Test
 	public void testBlockScopeValueLookup2() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -241,6 +248,7 @@ public abstract class FunctionTests extends TestBase {
 	//	constexpr int almost = sizeof(foo());
 
 	//	constexpr int x = almost;
+	@Test
 	public void testSizeofCallToRegularFunction() throws Exception {
 		assertEvaluationEquals(1);
 	}
@@ -250,6 +258,7 @@ public abstract class FunctionTests extends TestBase {
 	//	}
 
 	//	int x = f();
+	@Test
 	public void testNonConstexprFunctionDoesntStoreBodyExecution() throws Exception {
 		IASTInitializerClause clause = getLastDeclarationInitializer();
 		IASTFunctionCallExpression funcExpr = (IASTFunctionCallExpression) clause;
@@ -272,12 +281,14 @@ public abstract class FunctionTests extends TestBase {
 	//	    .m(1).m(2).m(3).m(4).m(5).m(6).m(7).m(8).m(9).m(10)
 	//	    .m(11).m(12).m(13).m(14).m(15).m(16).m(17).m(18).m(19).m(20)
 	//	    .m(21).m(22).m(23).m(24).m(25).m(26).m(27).m(28).m(29).m(30);
+	@Test
 	public void testLongCallChain_505606() throws Exception {
 	}
 
 	// auto f = []() constexpr -> int {return 58;};
 
 	// constexpr int x = f();
+	@Test
 	public void testLambdaExpression_560483() throws Exception {
 		assertEvaluationEquals(58);
 	}
@@ -287,6 +298,7 @@ public abstract class FunctionTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testLambdaExpression2_560483() throws Exception {
 		assertEvaluationEquals(58);
 	}

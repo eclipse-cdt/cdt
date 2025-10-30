@@ -15,6 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArraySubscriptExpression;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -58,19 +64,13 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CParameter;
 import org.eclipse.cdt.internal.core.dom.parser.c.CScope;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.ICInternalBinding;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author dsteffle
  */
 public class AST2KnRTests extends AST2TestBase {
-
-	public AST2KnRTests() {
-	}
-
-	public AST2KnRTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testSimpleKRCTest1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(char x);\n"); //$NON-NLS-1$
@@ -113,6 +113,7 @@ public class AST2KnRTests extends AST2TestBase {
 				.getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleKRCTest2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f();\n"); //$NON-NLS-1$
@@ -149,6 +150,7 @@ public class AST2KnRTests extends AST2TestBase {
 				.getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleKRCTest3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int const *f();\n"); //$NON-NLS-1$
@@ -175,6 +177,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(x3, x4);
 	}
 
+	@Test
 	public void testKRC_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int isroot (x, y) /* comment */ \n"); //$NON-NLS-1$
@@ -228,6 +231,7 @@ public class AST2KnRTests extends AST2TestBase {
 				.getBinding(CScope.NAMESPACE_TYPE_OTHER, "y".toCharArray())); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRCWithTypes() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef char c;\n"); //$NON-NLS-1$
@@ -287,6 +291,7 @@ public class AST2KnRTests extends AST2TestBase {
 				.getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRCProblem1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(x) char\n"); //$NON-NLS-1$
@@ -297,6 +302,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertTrue(CVisitor.getProblems(tu).length > 0);
 	}
 
+	@Test
 	public void testKRCProblem2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int i=0;\n"); //$NON-NLS-1$
@@ -308,6 +314,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertTrue(CVisitor.getProblems(tu).length > 0);
 	}
 
+	@Test
 	public void testKRCProblem3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(x) char y;\n"); //$NON-NLS-1$
@@ -344,6 +351,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls.length, 0);
 	}
 
+	@Test
 	public void testKRCProblem4() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(x,y,z) char x,y,z; int a;\n"); //$NON-NLS-1$
@@ -405,6 +413,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls[0], x2);
 	}
 
+	@Test
 	public void testKRCProblem5() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(x) char x,a;\n"); //$NON-NLS-1$
@@ -441,6 +450,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls.length, 0);
 	}
 
+	@Test
 	public void testKRC_monop_cards1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef __STDC__\n"); //$NON-NLS-1$
@@ -493,8 +503,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertTrue(A.getDeclSpecifier() instanceof IASTElaboratedTypeSpecifier);
 		IASTName A_struct_name_2 = ((IASTElaboratedTypeSpecifier) A.getDeclSpecifier()).getName();
 		assertEquals(A_struct_name_2.toString(), "A_struct"); //$NON-NLS-1$
-		assertEquals(((IASTElaboratedTypeSpecifier) A.getDeclSpecifier()).getStorageClass(),
-				IASTDeclSpecifier.sc_typedef);
+		assertEquals(A.getDeclSpecifier().getStorageClass(), IASTDeclSpecifier.sc_typedef);
 		ICompositeType A_struct_type2 = (ICompositeType) A_struct_name_2.resolveBinding();
 		assertEquals(A_struct_type2, A_struct_type1);
 
@@ -577,6 +586,7 @@ public class AST2KnRTests extends AST2TestBase {
 				.getBinding(CScope.NAMESPACE_TYPE_OTHER, "x".toCharArray())); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRC_monop_cards2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int\n"); //$NON-NLS-1$
@@ -603,7 +613,7 @@ public class AST2KnRTests extends AST2TestBase {
 
 		IASTSimpleDeclaration parm_decl = (IASTSimpleDeclaration) ((ICASTKnRFunctionDeclarator) getinp.getDeclarator())
 				.getParameterDeclarations()[0];
-		assertTrue(((IASTSimpleDeclSpecifier) parm_decl.getDeclSpecifier()).isConst());
+		assertTrue(parm_decl.getDeclSpecifier().isConst());
 		assertEquals(((IASTSimpleDeclSpecifier) parm_decl.getDeclSpecifier()).getType(),
 				IASTSimpleDeclSpecifier.t_char);
 		IASTDeclarator prompt = parm_decl.getDeclarators()[0];
@@ -625,6 +635,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(decls[0], prompt2);
 	}
 
+	@Test
 	public void testKRC_getParametersOrder() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(a, b) int b,a;{}\n"); //$NON-NLS-1$
@@ -639,6 +650,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(((CParameter) f_parms[1]).getName(), "b"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRC_Ethereal_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct symbol {\n"); //$NON-NLS-1$
@@ -695,6 +707,7 @@ public class AST2KnRTests extends AST2TestBase {
 		assertEquals(lemp_name3.resolveBinding(), lemp_name4.resolveBinding());
 	}
 
+	@Test
 	public void testBug97447() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("void f(a) int a; {} \n"); //$NON-NLS-1$
@@ -709,6 +722,7 @@ public class AST2KnRTests extends AST2TestBase {
 		IParameter a = (IParameter) col.getName(4).resolveBinding();
 	}
 
+	@Test
 	public void testBug100104() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef int ush;\n"); //$NON-NLS-1$
@@ -747,6 +761,7 @@ public class AST2KnRTests extends AST2TestBase {
 	//  {
 	//  	return 0;
 	//  }
+	@Test
 	public void testBug203050() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.C, ScannerKind.GNU, true);
 		assertTrue(tu.getDeclarations()[0] instanceof IASTSimpleDeclaration);
@@ -773,6 +788,7 @@ public class AST2KnRTests extends AST2TestBase {
 	//    char (*in_char)(void);
 	//    int conv_base;
 	//    {}
+	@Test
 	public void testFunctionPtrParameter_378614() throws Exception {
 		String code = getAboveComment();
 		parseAndCheckBindings(code, ParserLanguage.C, ScannerKind.GNU);

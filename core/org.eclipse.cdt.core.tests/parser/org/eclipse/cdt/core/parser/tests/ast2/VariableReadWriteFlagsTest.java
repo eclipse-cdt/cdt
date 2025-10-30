@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -22,8 +25,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVariableReadWriteFlags;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for CPPVariableReadWriteFlags and CVariableReadWriteFlags classes.
@@ -79,17 +81,6 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 		}
 	}
 
-	public VariableReadWriteFlagsTest() {
-	}
-
-	public VariableReadWriteFlagsTest(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(VariableReadWriteFlagsTest.class);
-	}
-
 	protected AssertionHelper getCAssertionHelper() throws ParserException, IOException {
 		String code = getAboveComment();
 		return new AssertionHelper(code, false);
@@ -110,6 +101,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	  a *= 3;
 	//	  return a + 1;
 	//	}
+	@Test
 	public void testSimpleAccess() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("a = 2", "a", WRITE);
@@ -120,6 +112,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	auto test(int a) {
 	//	  return a <=> 1;
 	//	}
+	@Test
 	public void testThreeWayComparisonAccess() throws Exception {
 		AssertionHelper a = getCPP20AssertionHelper();
 		a.assertReadWriteFlags("a <=> 1", "a", READ);
@@ -143,6 +136,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	template<typename T> void foo(T p) {
 	//	  T f;
 	//	}
+	@Test
 	public void testVariableDeclaration() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("int a", "a", 0);
@@ -160,6 +154,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	  (&a)->x = 1;
 	//	  ap->x = 1;
 	//	};
+	@Test
 	public void testFieldAccess() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("a.x", "a", WRITE);
@@ -177,6 +172,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	  f(&a, b);
 	//	  g(&a, b, c);
 	//	};
+	@Test
 	public void testFunctionCall() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("f(&a, b)", "a");
@@ -200,6 +196,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	  A* y = new A(&a, b, c);
 	//	  A z(&a, b, c);
 	//	};
+	@Test
 	public void testConstructorCall_393068() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("= A(&a, b)", "a");
@@ -233,6 +230,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//	  ap->m();
 	//	  (*ap).m();
 	//	};
+	@Test
 	public void testMethodCall() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("a.m()", "a", READ | WRITE);
@@ -250,6 +248,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//		variadic(waldo);
 	//		variadic(&waldo);
 	//	}
+	@Test
 	public void testVariadicFunctionCall_452416() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("variadic(waldo)", "waldo", READ);
@@ -264,6 +263,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//		a = arr[0];
 	//		return arr[0];
 	//	}
+	@Test
 	public void testArraySubscript() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("arr[0];", "arr", READ);
@@ -279,6 +279,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//         decltype(v) o = 14;
 	//     }
 	//  };
+	@Test
 	public void testDeclType() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("decltype(v) o = 14;", "v", READ);
@@ -295,6 +296,7 @@ public class VariableReadWriteFlagsTest extends AST2TestBase {
 	//  	  g(s, field);
 	//	}
 	//};
+	@Test
 	public void testDependentType() throws Exception {
 		AssertionHelper a = getCPPAssertionHelper();
 		a.assertReadWriteFlags("g(s, field);", "field");

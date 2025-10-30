@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class UnaryExpressionTests extends TestBase {
 	public static class NonIndexingTests extends UnaryExpressionTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends UnaryExpressionTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -41,6 +33,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = doubleIncrement(0);
+	@Test
 	public void testSimpleSequence() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -53,6 +46,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testAssignmentWithPostfixIncrSideEffects() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -65,6 +59,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testAssignmentWithPostfixDecrSideEffects() throws Exception {
 		assertEvaluationEquals(-2);
 	}
@@ -77,6 +72,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testAssignmentWithPrefixDecrSideEffects() throws Exception {
 		assertEvaluationEquals(-2);
 	}
@@ -89,6 +85,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testAssignmentWithPrefixIncrSideEffects() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -99,6 +96,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testPostfixIncrSemantics() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -109,6 +107,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testPostfixDecrSemantics() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -119,6 +118,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testPrefixIncrSemantics() throws Exception {
 		assertEvaluationEquals(1);
 	}
@@ -129,6 +129,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	// }
 
 	// constexpr int x = function();
+	@Test
 	public void testPrefixDecrSemantics() throws Exception {
 		assertEvaluationEquals(-1);
 	}
@@ -140,6 +141,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPrefixIncrementReturnsLvalue() throws Exception {
 		assertEvaluationEquals(4);
 	}
@@ -153,6 +155,7 @@ public abstract class UnaryExpressionTests extends TestBase {
 	//	constexpr BooleanConvertible variable{true};
 
 	//	constexpr bool actual = !variable;
+	@Test
 	public void testContextualConversionInNot_506972() throws Exception {
 		assertEvaluationEquals(false);
 	}

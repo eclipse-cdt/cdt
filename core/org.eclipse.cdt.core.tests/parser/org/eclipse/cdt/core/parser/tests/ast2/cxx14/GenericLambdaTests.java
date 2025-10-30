@@ -10,9 +10,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.eclipse.cdt.core.dom.ast.IFunction;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2CPPTestBase;
 import org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes;
+import org.junit.jupiter.api.Test;
 
 /**
  * AST tests for C++14 generic lambdas.
@@ -21,6 +24,7 @@ public class GenericLambdaTests extends AST2CPPTestBase {
 	//	auto Identity = [](auto a){ return a; };
 	//	auto three = Identity(3);
 	//	auto hello = Identity("hello");
+	@Test
 	public void testBasicCall() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertVariableType("three", CommonCPPTypes.int_);
@@ -43,6 +47,7 @@ public class GenericLambdaTests extends AST2CPPTestBase {
 	//		h(Identity);   // ok: calls #1
 	//		j([](auto* a) -> auto& { return *a; });  // ok
 	//	}
+	@Test
 	public void testConversionToFunctionPointer() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		helper.assertNonProblem("f1(Id", "f1");
@@ -73,6 +78,7 @@ public class GenericLambdaTests extends AST2CPPTestBase {
 	//	    waldo(foo(L(42, 'x')));
 	//	    waldo(bar(L(42, 'x', 42.0f)));
 	//	}
+	@Test
 	public void testVariadicAutoParameter() throws Exception {
 		parseAndCheckBindings();
 	}
@@ -101,6 +107,7 @@ public class GenericLambdaTests extends AST2CPPTestBase {
 	//	int main() {
 	//		waldo(q());
 	//	}
+	@Test
 	public void testNestedGenericLambdas() throws Exception {
 		parseAndCheckBindings();
 	}

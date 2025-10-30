@@ -11,16 +11,12 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class CStringValueTests extends TestBase {
 	public static class NonIndexingTests extends CStringValueTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
-		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
 		}
 	}
 
@@ -28,13 +24,10 @@ public abstract class CStringValueTests extends TestBase {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
-		}
 	}
 
 	//	constexpr auto x = "Hello, World!";
+	@Test
 	public void testWithoutPrefix() throws Exception {
 		assertEvaluationEquals("Hello, World!");
 	}
@@ -42,26 +35,31 @@ public abstract class CStringValueTests extends TestBase {
 	//	constexpr auto y = "Hello, World!";
 
 	//	constexpr auto x = y;
+	@Test
 	public void testStringAssignment() throws Exception {
 		assertEvaluationEquals("Hello, World!");
 	}
 
 	//	constexpr auto x = L"Hello, World!";
+	@Test
 	public void testLPrefix() throws Exception {
 		assertEvaluationEquals("Hello, World!");
 	}
 
 	//	constexpr auto x = u8"Hello, World!";
+	@Test
 	public void testu8Prefix() throws Exception {
 		assertEvaluationEquals("Hello, World!");
 	}
 
 	//	constexpr auto x = u"Hello, World!";
+	@Test
 	public void testuPrefix() throws Exception {
 		assertEvaluationEquals("Hello, World!");
 	}
 
 	//	constexpr auto x = U"Hello, World!";
+	@Test
 	public void testUPrefix() throws Exception {
 		assertEvaluationEquals("Hello, World!");
 	}
@@ -69,12 +67,14 @@ public abstract class CStringValueTests extends TestBase {
 	//constexpr auto x = R"(This is
 	//a "raw" \n\n
 	//	literal\0end)";
+	@Test
 	public void testRawStringLiteral() throws Exception {
 		assertEvaluationEquals("This is\na \"raw\" \\n\\n\n\tliteral\\0end");
 	}
 
 	//constexpr auto x = R"ab(This is)"
 	//a "raw" literal)ab";
+	@Test
 	public void testRawStringLiteralWithDelimiter() throws Exception {
 		assertEvaluationEquals("This is)\"\na \"raw\" literal");
 	}
@@ -82,11 +82,13 @@ public abstract class CStringValueTests extends TestBase {
 	//	constexpr auto x = "line 1\n"
 	//						"line 2\n"
 	//						"line 3";
+	@Test
 	public void testCStringLiteralConcatenation() throws Exception {
 		assertEvaluationEquals("line 1\nline 2\nline 3");
 	}
 
 	//	constexpr auto x = "PI = \u03C0";
+	@Test
 	public void test16bitUnicodeEscapeSequence() throws Exception {
 		assertEvaluationEquals("PI = \u03C0");
 	}
@@ -105,6 +107,7 @@ public abstract class CStringValueTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testCStringParam() throws Exception {
 		assertEvaluationEquals(5);
 	}

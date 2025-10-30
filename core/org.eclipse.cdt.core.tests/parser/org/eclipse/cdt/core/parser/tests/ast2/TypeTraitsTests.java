@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 
 import org.eclipse.cdt.core.dom.ast.IType;
@@ -22,8 +25,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.TypeTraits;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for ClassTypeHelper class.
@@ -31,22 +33,6 @@ import junit.framework.TestSuite;
 public class TypeTraitsTests extends AST2TestBase {
 
 	private boolean fUseClang = false;
-
-	public TypeTraitsTests() {
-	}
-
-	public TypeTraitsTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		fUseClang = false;
-	}
-
-	public static TestSuite suite() {
-		return suite(TypeTraitsTests.class);
-	}
 
 	protected BindingAssertionHelper getAssertionHelper() throws ParserException, IOException {
 		String code = getAboveComment();
@@ -79,6 +65,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	//	public:
 	//	  A a;
 	//	};
+	@Test
 	public void testHasTrivialCopyCtor() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
@@ -107,6 +94,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	//	public:
 	//	  A a;
 	//	};
+	@Test
 	public void testHasTrivialDestructor() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
@@ -148,6 +136,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	//	typedef A* I;
 	//
 	//	typedef A J[0];
+	@Test
 	public void testIsEmpty() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
@@ -188,6 +177,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	//
 	//	class C : public A {
 	//	};
+	@Test
 	public void testIsPolymorphic() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
@@ -235,6 +225,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	//	struct H {
 	//	  int& a;
 	//	};
+	@Test
 	public void testIsStandardLayout() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
@@ -293,6 +284,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	//	struct I {
 	//	  virtual void m();
 	//	};
+	@Test
 	public void testIsTrivial() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		ICPPClassType classA = helper.assertNonProblemOnFirstIdentifier("A {");
@@ -329,6 +321,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	//		G();
 	//		G(const G&);
 	//	} g;
+	@Test
 	public void testIsTriviallyCopyable() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 		IVariable a = helper.assertNonProblemOnFirstIdentifier("a;");
@@ -383,6 +376,7 @@ public class TypeTraitsTests extends AST2TestBase {
 	//	    Test<__is_function(Foo)>::false_var;
 	//	    return 0;
 	//	}
+	@Test
 	public void testIsFunction() throws Exception {
 		fUseClang = true;
 		parseAndCheckBindings(getAboveComment(), ParserLanguage.CPP);

@@ -16,8 +16,8 @@ package org.eclipse.cdt.internal.index.tests;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConceptDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConcept;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * AST tests for C++20 concepts via PDOM.
@@ -27,19 +27,11 @@ public abstract class IndexConceptTest extends IndexBindingResolutionTestBase {
 		public SingleProject() {
 			setStrategy(new SinglePDOMTestStrategy(true /* cpp */));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProject.class);
-		}
 	}
 
 	public static class SingleProjectReindexed extends IndexConceptTest {
 		public SingleProjectReindexed() {
 			setStrategy(new SinglePDOMReindexedTestStrategy(true /* cpp */));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectReindexed.class);
 		}
 	}
 
@@ -47,26 +39,13 @@ public abstract class IndexConceptTest extends IndexBindingResolutionTestBase {
 		public ProjectWithDepProj() {
 			setStrategy(new ReferencedProject(true /* cpp */));
 		}
-
-		public static TestSuite suite() {
-			return suite(ProjectWithDepProj.class);
-		}
-	}
-
-	private static void cxx20SetUp() {
-		TestScannerProvider.sDefinedSymbols.put("__cpp_concepts", "201907L");
 	}
 
 	@Override
-	public void setUp() throws Exception {
-		cxx20SetUp();
-		super.setUp();
-	}
-
-	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProject.suite());
-		suite.addTest(SingleProjectReindexed.suite());
-		suite.addTest(ProjectWithDepProj.suite());
+	@BeforeEach
+	protected void setUpStrategy() throws Exception {
+		TestScannerProvider.sDefinedSymbols.put("__cpp_concepts", "201907L");
+		super.setUpStrategy();
 	}
 
 	//  template<typename T>
@@ -74,6 +53,7 @@ public abstract class IndexConceptTest extends IndexBindingResolutionTestBase {
 
 	//  template<typename T>
 	//  concept B = A<T>;
+	@Test
 	public void testConceptDefinitionFromHeader() throws Exception {
 		checkBindings();
 

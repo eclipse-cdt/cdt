@@ -21,6 +21,7 @@ import static org.eclipse.cdt.core.parser.tests.ast2.CommonCPPTypes.int_;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.internal.index.tests.IndexBindingResolutionTestBase;
+import org.junit.jupiter.api.Test;
 
 public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase {
 	public StructuredBindingIndexTests() {
@@ -32,6 +33,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 	//} s{};
 
 	//auto [z] = s;
+	@Test
 	public void testLocalStructuredBindingFromMemberOfBasicType() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -44,6 +46,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 	//auto [z] = s;
 
 	//auto x = z;
+	@Test
 	public void testExternalStructuredBindingFromMemberOfBasicType() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -58,6 +61,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 
 	//auto [z] = s;
 	//T localT{};
+	@Test
 	public void testLocalStructuredBindingFromMemberOfUserDefinedType() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -79,6 +83,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 
 	//auto x = z;
 	//T localT{};
+	@Test
 	public void testExternalStructuredBindingFromMemberOfUserDefinedType() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -106,6 +111,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 
 	//auto [t, i, d, c] = s;
 	//T localT{};
+	@Test
 	public void testMultipleVariablesInStructuredBindingFromMembers() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -135,6 +141,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 
 	//auto [t, i, d, c] = s;
 	//T localT{};
+	@Test
 	public void testMultipleVariablesDeepBaseStructure() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -156,6 +163,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 	//} s{};
 
 	//auto [i, d] = s;
+	@Test
 	public void testStaticFieldsAreNotConsidered() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -184,6 +192,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 	//}
 
 	//auto [f, s, t] = std::array<int, 3>{1, 2, 3};
+	@Test
 	public void testStandardArray() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -230,6 +239,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 	//}
 
 	//auto [a, b] = std::pair<int, double>{42, 3.14};
+	@Test
 	public void testRecursiveTupleElement() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -267,6 +277,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 	//    auto sum = firstX + secondX;
 	//  }
 	//}
+	@Test
 	public void testStandardArrayInLoop() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 
@@ -286,6 +297,7 @@ public class StructuredBindingIndexTests extends IndexBindingResolutionTestBase 
 	//void X::fun() {
 	//  auto [f, s] = *this;
 	//}
+	@Test
 	public void testBindStarThis() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper();
 

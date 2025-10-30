@@ -15,6 +15,9 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTInitializerClause;
 import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
@@ -30,6 +33,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Emanuel Graf
@@ -37,6 +41,7 @@ import org.eclipse.cdt.core.parser.ParserLanguage;
  */
 public class DOMPreprocessorInformationTest extends AST2TestBase {
 
+	@Test
 	public void testPragma() throws Exception {
 		String msg = "GCC poison printf sprintf fprintf";
 		StringBuilder buffer = new StringBuilder("#pragma " + msg + "\n"); //$NON-NLS-1$
@@ -48,6 +53,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(msg, new String(pragma.getMessage()));
 	}
 
+	@Test
 	public void testElIf() throws Exception {
 		String cond = "2 == 2";
 		StringBuilder buffer = new StringBuilder("#if 1 == 2\n#elif " + cond + "\n#else\n#endif\n"); //$NON-NLS-1$
@@ -59,6 +65,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(cond, new String(pragma.getCondition()));
 	}
 
+	@Test
 	public void testIf() throws Exception {
 		String cond = "2 == 2";
 		StringBuilder buffer = new StringBuilder("#if " + cond + "\n#endif\n"); //$NON-NLS-1$
@@ -70,6 +77,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(cond, new String(pragma.getCondition()));
 	}
 
+	@Test
 	public void testIfDef() throws Exception {
 		String cond = "SYMBOL";
 		StringBuilder buffer = new StringBuilder("#ifdef " + cond + "\n#endif\n"); //$NON-NLS-1$
@@ -81,6 +89,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(cond, new String(pragma.getCondition()));
 	}
 
+	@Test
 	public void testIfnDef() throws Exception {
 		String cond = "SYMBOL";
 		StringBuilder buffer = new StringBuilder("#ifndef " + cond + "\n#endif\n"); //$NON-NLS-1$
@@ -92,6 +101,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(cond, new String(pragma.getCondition()));
 	}
 
+	@Test
 	public void testError() throws Exception {
 		String msg = "Message";
 		StringBuilder buffer = new StringBuilder("#error " + msg + "\n"); //$NON-NLS-1$
@@ -103,6 +113,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(msg, new String(pragma.getMessage()));
 	}
 
+	@Test
 	public void testPragmaWithSpaces() throws Exception {
 		String msg = "GCC poison printf sprintf fprintf";
 		StringBuilder buffer = new StringBuilder("#  pragma  " + msg + " \n"); //$NON-NLS-1$
@@ -114,6 +125,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(msg, new String(pragma.getMessage()));
 	}
 
+	@Test
 	public void testElIfWithSpaces() throws Exception {
 		String cond = "2 == 2";
 		StringBuilder buffer = new StringBuilder("#if 1 == 2\n#  elif  " + cond + " \n#else\n#endif\n"); //$NON-NLS-1$
@@ -125,6 +137,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(cond, new String(pragma.getCondition()));
 	}
 
+	@Test
 	public void testIfWithSpaces() throws Exception {
 		String cond = "2 == 2";
 		StringBuilder buffer = new StringBuilder("#  if  " + cond + " \n#endif\n"); //$NON-NLS-1$
@@ -136,6 +149,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(cond, new String(pragma.getCondition()));
 	}
 
+	@Test
 	public void testIfDefWithSpaces() throws Exception {
 		String cond = "SYMBOL";
 		StringBuilder buffer = new StringBuilder("#  ifdef  " + cond + " \n#endif\n"); //$NON-NLS-1$
@@ -147,6 +161,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(cond, new String(pragma.getCondition()));
 	}
 
+	@Test
 	public void testIfnDefWithSpaces() throws Exception {
 		String cond = "SYMBOL";
 		StringBuilder buffer = new StringBuilder("#  ifndef  " + cond + "\t\n#endif\n"); //$NON-NLS-1$
@@ -158,6 +173,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(cond, new String(pragma.getCondition()));
 	}
 
+	@Test
 	public void testErrorWithSpaces() throws Exception {
 		String msg = "Message";
 		StringBuilder buffer = new StringBuilder("#  error \t" + msg + " \n"); //$NON-NLS-1$
@@ -169,6 +185,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 		assertEquals(msg, new String(pragma.getMessage()));
 	}
 
+	@Test
 	public void testMacroExpansion() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append("#define add(a, b) (a) + (b) \n");
@@ -191,6 +208,7 @@ public class DOMPreprocessorInformationTest extends AST2TestBase {
 	// #ifdef xxx
 	// #elif
 	// #endif
+	@Test
 	public void testElifWithoutCondition_bug185324() throws Exception {
 		CharSequence code = getContents(1)[0];
 		IASTTranslationUnit tu = parse(code.toString(), ParserLanguage.CPP, ScannerKind.STD, false);

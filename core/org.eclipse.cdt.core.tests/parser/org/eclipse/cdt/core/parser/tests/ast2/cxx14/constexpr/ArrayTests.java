@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class ArrayTests extends TestBase {
 	public static class NonIndexingTests extends ArrayTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends ArrayTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -40,6 +32,7 @@ public abstract class ArrayTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testInitializationOfMultiDimensionalArrays() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -51,6 +44,7 @@ public abstract class ArrayTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testAssignmentOfArrays() throws Exception {
 		assertEvaluationEquals(4);
 	}
@@ -62,6 +56,7 @@ public abstract class ArrayTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testAssignmentOfMultiDimensionalArrays() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -72,6 +67,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testGlobalArrayAccessValue() throws Exception {
 		assertEvaluationEquals(1);
 	}
@@ -86,6 +82,7 @@ public abstract class ArrayTests extends TestBase {
 	// }
 
 	// constexpr auto x = f();
+	@Test
 	public void testReferenceToArrayCell() throws Exception {
 		assertEvaluationEquals(25);
 	}
@@ -97,6 +94,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerDereferencingOnArrayName() throws Exception {
 		assertEvaluationEquals(4);
 	}
@@ -116,6 +114,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerToArrayReturnedFromMemberFunction1() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -136,6 +135,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerToArrayReturnedFromMemberFunction2() throws Exception {
 		assertEvaluationEquals(9);
 	}
@@ -164,6 +164,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerToArrayReturnedFromMemberFunction3() throws Exception {
 		assertEvaluationEquals(32);
 	}
@@ -175,6 +176,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testReferenceToArray1() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -187,6 +189,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testReferenceToArray2() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -201,6 +204,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testReferenceToArray3() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -213,6 +217,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPointerArithmeticsOnMultidimensionalArray() throws Exception {
 		assertEvaluationEquals(8);
 	}
@@ -227,6 +232,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPassArrayToFunctionAsPointerAndModifyCell() throws Exception {
 		assertEvaluationEquals(1337);
 	}
@@ -241,6 +247,7 @@ public abstract class ArrayTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testPassMultiDimensionalArrayToFunctionAsPointerAndModifyCell() throws Exception {
 		assertEvaluationEquals(1337);
 	}
@@ -251,6 +258,7 @@ public abstract class ArrayTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testInitializationOfArrays() throws Exception {
 		assertEvaluationEquals(3);
 	}

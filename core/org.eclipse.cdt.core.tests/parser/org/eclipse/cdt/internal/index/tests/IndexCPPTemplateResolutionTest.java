@@ -16,6 +16,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,8 +78,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for exercising resolution of template bindings against IIndex
@@ -83,10 +89,6 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 		public SingleProjectTest() {
 			setStrategy(new SinglePDOMTestStrategy(true));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTest.class);
-		}
 	}
 
 	public static class ProjectWithDepProjTest extends IndexCPPTemplateResolutionTest {
@@ -94,20 +96,12 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 			setStrategy(new ReferencedProject(true));
 		}
 
-		public static TestSuite suite() {
-			return suite(ProjectWithDepProjTest.class);
-		}
-
 		@Override
+		@Test
 		public void testDefaultTemplateArgInHeader_264988() throws Exception {
 			// Not supported across projects (the composite index does not merge
 			// default values of template parameters).
 		}
-	}
-
-	public static void addTests(TestSuite suite) {
-		suite.addTest(SingleProjectTest.suite());
-		suite.addTest(ProjectWithDepProjTest.suite());
 	}
 
 	public IndexCPPTemplateResolutionTest() {
@@ -129,6 +123,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// };
 
 	// void f(Vec<int>::reference r) {}
+	@Test
 	public void testRebindPattern_214017_1() throws Exception {
 		IBinding b0 = getBindingFromASTName("r)", 1);
 		assertInstance(b0, ICPPVariable.class);
@@ -158,6 +153,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// };
 
 	// void f(Vec<int>::reference r) {}
+	@Test
 	public void testRebindPattern_214017_2() throws Exception {
 		IBinding b0 = getBindingFromASTName("r)", 1);
 		assertInstance(b0, ICPPVariable.class);
@@ -198,6 +194,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// };
 
 	// void f(Vec<int>::reference r) {}
+	@Test
 	public void testRebindPattern_214017_3() throws Exception {
 		IBinding b0 = getBindingFromASTName("r)", 1);
 		assertInstance(b0, ICPPVariable.class);
@@ -232,6 +229,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// void test(Vec<int>::reference p) {
 	//   f(p);
 	// }
+	@Test
 	public void testRebindPattern_276610() throws Exception {
 		getBindingFromASTName("f(p)", 1, ICPPFunction.class);
 	}
@@ -267,6 +265,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	   c1.m1("aaa");  // OK
 	//	   c1.m2("aaa");  // problem
 	//  }
+	@Test
 	public void testUnindexedConstructorInstanceImplicitReferenceToDeferred() throws Exception {
 		IBinding b0 = getBindingFromASTName("C1<char> c1", 8);
 		IBinding b1 = getBindingFromASTName("m1(\"aaa\")", 2);
@@ -285,6 +284,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// void bar() {
 	//   X<A>::foo();
 	// }
+	@Test
 	public void testUnindexedMethodInstance() {
 		IBinding b0 = getBindingFromASTName("foo()", 3);
 		assertInstance(b0, ICPPMethod.class);
@@ -299,6 +299,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//   StrT<char> x;
 	//   x.assign("aaa");
 	// }
+	@Test
 	public void testUnindexedMethodInstance2() throws Exception {
 		IBinding b0 = getBindingFromASTName("assign(\"aaa\")", 6);
 		assertInstance(b0, ICPPMethod.class);
@@ -314,6 +315,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// void bar() {
 	//   X<A> xa= new X<A>();
 	// }
+	@Test
 	public void testUnindexedConstructorInstance() {
 		IBinding b0 = getBindingFromImplicitASTName("X<A>()", 4);
 		assertInstance(b0, ICPPConstructor.class);
@@ -340,6 +342,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//     C1< StrT<A> > c1a;
 	//     c1a.m2(*new StrT<A>(new A()));
 	//  }
+	@Test
 	public void testUnindexedConstructorInstanceImplicitReference3() throws Exception {
 		IBinding b0 = getBindingFromASTName("C1< StrT<A> >", 2);
 		IBinding b1 = getBindingFromASTName("StrT<A> > c1a", 7);
@@ -380,6 +383,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	   m1("aaa");  // OK
 	//	   m2("aaa");  // problem
 	//  }
+	@Test
 	public void testUnindexedConstructorInstanceImplicitReference() throws Exception {
 		IBinding b0 = getBindingFromASTName("m1(\"aaa\")", 2);
 		IBinding b1 = getBindingFromASTName("m2(\"aaa\")", 2);
@@ -409,6 +413,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//            // foo -> CPPMethodTemplateSpecialization
 	//            // foo<int,int> -> CPPMethodInstance
 	//    }
+	@Test
 	public void testCPPConstructorTemplateSpecialization() throws Exception {
 		IBinding b0 = getBindingFromASTName("D<int> *var", 1);
 		IBinding b1 = getBindingFromASTName("D<int> *var", 6);
@@ -456,6 +461,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		A<B> a;
 	//		a.f= foo<B>;
 	//	}
+	@Test
 	public void testOverloadedFunctionTemplate() {
 		IBinding b0 = getBindingFromASTName("foo<B>;", 6);
 		assertInstance(b0, ICPPFunction.class);
@@ -472,6 +478,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 
 	//	const char C::c[] = "";
 	//	int x = sizeof(f(C::c));
+	@Test
 	public void testOverloadedFunctionTemplate_407579() throws Exception {
 		checkBindings();
 	}
@@ -502,6 +509,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	  E y;
 	//	  waldo(x, y);
 	//	}
+	@Test
 	public void testOverloadedFunctionTemplate_429624() throws Exception {
 		checkBindings();
 	}
@@ -523,6 +531,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		Foo<A,X> f;
 	//		f.s.foo(*new A());
 	//	}
+	@Test
 	public void testTemplateTemplateParameter() throws Exception {
 		IBinding b0 = getBindingFromASTName("Foo<A,X>", 3);
 		IBinding b1 = getBindingFromASTName("Foo<A,X>", 8);
@@ -580,6 +589,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// X x;
 	// Y y;
 	// Z z;
+	@Test
 	public void testInstanceInheritance() throws Exception {
 		IBinding[] bs = { getBindingFromASTName("X x;", 1), getBindingFromASTName("Y y;", 1),
 				getBindingFromASTName("Z z;", 1) };
@@ -613,6 +623,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void test() {
 	//	  B<int>::a;
 	//	}
+	@Test
 	public void testInstanceInheritance_258745() throws Exception {
 		getBindingFromFirstIdentifier("a", ICPPField.class);
 	}
@@ -627,6 +638,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 
 	//	Derived waldo;
+	@Test
 	public void testMethodOveriddenFromTemplateInstanceBase_480892() throws Exception {
 		IVariable waldo = getBindingFromFirstIdentifier("waldo");
 		IType derived = waldo.getType();
@@ -646,6 +658,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// template<typename T3> class D<A, T3>; // harmless declaration for test purposes
 	// template<typename T3> class D<B, T3> {};
 	// template<typename T3> class D<C, T3> {};
+	@Test
 	public void testClassPartialSpecializations() throws Exception {
 		IBinding b0 = getBindingFromASTName("D<A, T3>", 8);
 		IBinding b1 = getBindingFromASTName("D<B, T3>", 8);
@@ -694,6 +707,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//    B<long>::foo(); // instance not in the referenced pdom
 	//    X<int> x;
 	// }
+	@Test
 	public void testClassImplicitInstantiations_188274() throws Exception {
 		IBinding b2 = getBindingFromASTName("X<int>", 6);
 		assertInstance(b2, ICPPClassType.class);
@@ -738,6 +752,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 
 	// A<B> ab;
+	@Test
 	public void testClassSpecializationMethods() throws Exception {
 		IBinding b0 = getBindingFromASTName("A<B> ab", 4);
 		assertInstance(b0, ICPPClassType.class);
@@ -797,6 +812,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// 	void test() {
 	// 	  waldo(b);
 	// 	}
+	@Test
 	public void testTrailingReturnType_460183() throws Exception {
 		checkBindings();
 	}
@@ -816,6 +832,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//   A<B>::TD foo2= foo;
 	//   A<C>::TD bar2= bar;
 	// }
+	@Test
 	public void testTypedefSpecialization() {
 		IBinding b0 = getBindingFromASTName("TD foo2", 2);
 		IBinding b1 = getBindingFromASTName("TD bar2", 2);
@@ -844,6 +861,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//   C<int> x;
 	//   x.m(1);
 	// }
+	@Test
 	public void testTypedefSpecialization_213861() throws Exception {
 		IBinding b0 = getBindingFromASTName("m(1)", 1);
 		assertInstance(b0, ICPPMethod.class);
@@ -868,6 +886,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//      foo<C3,C2>(*new C3(), *new C2());
 	//      foo<C1,C3>(*new C1(), *new C3());
 	//	}
+	@Test
 	public void testFunctionTemplateSpecializations() throws Exception {
 		IBinding b0 = getBindingFromASTName("foo<C1>(", 3);
 		IBinding b1 = getBindingFromASTName("foo<C2>(", 3);
@@ -895,6 +914,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		foo(a,b); // function instance of function template (0)
 	//		foo(c,a); // function specialization (1)
 	//	}
+	@Test
 	public void testFunctionInstanceSpecializationsParameters() throws Exception {
 		IBinding b0 = getBindingFromASTName("foo(a,b)", 3);
 		assertInstance(b0, ICPPFunction.class);
@@ -999,6 +1019,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		A a;
 	//		foo(a);
 	//  }
+	@Test
 	public void testFunctionInstanceParameters() throws Exception {
 		IBinding b0 = getBindingFromFirstIdentifier("foo(a)");
 		assertInstance(b0, ICPPTemplateInstance.class);
@@ -1040,6 +1061,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	  A a;
 	//	  func(&a, &A::m);
 	//	}
+	@Test
 	public void testFunctionTemplate_245030() throws Exception {
 		ICPPFunction f = getBindingFromFirstIdentifier("func(&a, &A::m)");
 		assertInstance(f, ICPPTemplateInstance.class);
@@ -1061,6 +1083,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void test(const A<int>& a, int b) {
 	//	  func(a, b);
 	//	}
+	@Test
 	public void testFunctionTemplate_319498() throws Exception {
 		ICPPFunction f = getBindingFromFirstIdentifier("func(a, b)");
 		assertInstance(f, ICPPTemplateInstance.class);
@@ -1075,6 +1098,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	  typedef A a;
 	//	  waldo<a>();
 	//	}
+	@Test
 	public void testFunctionTemplateWithTypedef_431945() throws Exception {
 		checkBindings();
 	}
@@ -1095,6 +1119,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// class Foo<A> {};
 	//
 	// Foo<B> b2;
+	@Test
 	public void testClassSpecializations_180738() {
 		IBinding b1a = getBindingFromASTName("Foo<B> b1;", 3);
 		IBinding b1b = getBindingFromASTName("Foo<B> b1;", 6);
@@ -1140,6 +1165,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	Int a,b;
 	//	Int c= left(a,b);
 	//  Int c= left(a,d);
+	@Test
 	public void testSimpleFunctionTemplate() {
 		IBinding b0 = getBindingFromASTName("sanity();", 6);
 		IBinding b1 = getBindingFromASTName("a,b;", 1);
@@ -1155,6 +1181,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// template<typename X1> class D<X1,X1> {};
 
 	// D<A,A> daa;
+	@Test
 	public void testClassPartialSpecializations_199572() throws Exception {
 		IBinding b0 = getBindingFromASTName("D<A,A>", 6);
 		assertInstance(b0, ICPPTemplateInstance.class);
@@ -1182,6 +1209,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// };
 
 	// void f(Vec<int>::reference r) {}
+	@Test
 	public void testTemplateTypedef_214447() throws Exception {
 		IBinding b0 = getBindingFromASTName("r)", 1);
 		assertInstance(b0, ICPPVariable.class);
@@ -1226,6 +1254,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void test() {
 	//	  waldo(f(A()));
 	//	}
+	@Test
 	public void testTemplateArgumentDeduction_507511() throws Exception {
 		checkBindings();
 	}
@@ -1261,6 +1290,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//      C<X> cx;
 	//      foo(cx);
 	//	}
+	@Test
 	public void testUserDefinedConversionOperator_224364() throws Exception {
 		IBinding ca = getBindingFromASTName("C<A>", 4);
 		assertInstance(ca, ICPPClassType.class);
@@ -1293,6 +1323,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//
 	// A<B> ab;
 	// A<C> ac;
+	@Test
 	public void testEnclosingScopes_a() throws Exception {
 		ICPPSpecialization b0 = getBindingFromASTName("A<B>", 4, ICPPSpecialization.class, ICPPClassType.class);
 		ICPPTemplateInstance b1 = getBindingFromASTName("A<C>", 4, ICPPTemplateInstance.class, ICPPClassType.class);
@@ -1323,6 +1354,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//    A<C>::B acb;
 	//    A<D>::B adb;
 	// }
+	@Test
 	public void testEnclosingScopes_b() throws Exception {
 		ICPPClassType b0 = getBindingFromASTName("B acb", 1, ICPPClassType.class);
 		ICPPClassType b1 = getBindingFromASTName("B adb", 1, ICPPClassType.class, ICPPSpecialization.class);
@@ -1357,7 +1389,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 		ICPPClassScope cs1 = assertInstance(s1, ICPPClassScope.class);
 		assertInstance(cs1.getClassType(), ICPPClassType.class);
 		assertInstance(cs1.getClassType(), ICPPTemplateInstance.class);
-		assertTrue(((IType) ((ICPPClassSpecialization) s4.getScopeBinding()).getSpecializedBinding())
+		assertTrue(((ICPPClassSpecialization) s4.getScopeBinding()).getSpecializedBinding()
 				.isSameType((IType) ((IIndexScope) b3.getCompositeScope()).getScopeBinding()));
 	}
 
@@ -1373,6 +1405,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// };
 
 	// X<A>::Y::Z xayz;
+	@Test
 	public void testEnclosingScopes_c() throws Exception {
 		ICPPClassType b0 = getBindingFromASTName("Y::Z x", 1, ICPPClassType.class);
 		ICPPClassType b1 = getBindingFromASTName("Z xayz", 1, ICPPClassType.class);
@@ -1400,6 +1433,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// };
 
 	// X<B,A>::N n;
+	@Test
 	public void testEnclosingScopes_d() throws Exception {
 		ICPPClassType b0 = getBindingFromASTName("N n", 1, ICPPClassType.class, ICPPSpecialization.class);
 		ICPPClassType b1 = assertInstance(((ICPPSpecialization) b0).getSpecializedBinding(), ICPPClassType.class);
@@ -1420,6 +1454,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 
 	//    const SI y= 99;
 	//    A<y> ay;
+	@Test
 	public void testNonTypeTemplateParameter_207840() {
 		ICPPVariable b0 = getBindingFromASTName("y>", 1, ICPPVariable.class);
 		ICPPClassType b1 = getBindingFromASTName("A<y>", 1, ICPPClassType.class, ICPPTemplateDefinition.class);
@@ -1437,6 +1472,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//    A<int> a;
 	//    a.b.t;
 	// }
+	@Test
 	public void testNestedClassTypeSpecializations() throws Exception {
 		ICPPField t2 = getBindingFromASTName("t;", 1, ICPPField.class);
 
@@ -1490,6 +1526,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		VS1::iterator it;
 	//		it->member; // it->member
 	//	}
+	@Test
 	public void testVectorIterator() throws Exception {
 		ICPPField t2 = getBindingFromASTName("member; // it->member", 6, ICPPField.class);
 		ICPPClassType ct = t2.getClassOwner();
@@ -1508,6 +1545,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	struct A::S {};
 
 	//  A::S<int> a;
+	@Test
 	public void testMemberTemplateClass() throws Exception {
 		checkBindings();
 	}
@@ -1532,6 +1570,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		bar(t);
 	//		baz();
 	//	}
+	@Test
 	public void testClassInstanceWithNonTypeArgument_207871() throws Exception {
 		ICPPTemplateInstance c256 = getBindingFromASTName("C<256>", 6, ICPPTemplateInstance.class, ICPPClassType.class);
 		ICPPTemplateParameterMap paramMap = c256.getTemplateParameterMap();
@@ -1553,6 +1592,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	A<B, 'x'>::X x;
 	//	A<B, 'y'>::Y y;
 	//	A<B, 'z'>::Z z;
+	@Test
 	public void testNonTypeCharArgumentDisambiguation() throws Exception {
 		ICPPClassType b2 = getBindingFromASTName("A<B, 'x'>", 9, ICPPClassType.class, ICPPTemplateInstance.class);
 		ICPPClassType b3 = getBindingFromASTName("A<B, 'y'>", 9, ICPPClassType.class, ICPPTemplateInstance.class);
@@ -1581,6 +1621,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//
 	//	A<B, true>::X x; //3 should be an error
 	//	A<B, false>::Y y; //4 should be an error
+	@Test
 	public void testNonTypeBooleanArgumentDisambiguation() throws Exception {
 		ICPPClassType X = getBindingFromASTName("X x; //1", 1, ICPPClassType.class);
 		ICPPClassType Y = getBindingFromASTName("Y y; //2", 1, ICPPClassType.class);
@@ -1604,6 +1645,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//    A<5> a5d;
 	//    A<1> a1;
 	// }
+	@Test
 	public void testConstantPropagationFromHeader() throws Exception {
 		ICPPClassType a5a = getBindingFromASTName("A<FIVE>", 7, ICPPClassType.class, ICPPSpecialization.class);
 		ICPPClassType a5b = getBindingFromASTName("A<CINQ>", 7, ICPPClassType.class, ICPPSpecialization.class);
@@ -1637,6 +1679,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	template <int I>
 	//	inline This<I>::This() : That<I>(I) {
 	//  }
+	@Test
 	public void testParameterReferenceInChainInitializer_a() throws Exception {
 		// These intermediate assertions will not hold until deferred non-type arguments are
 		// correctly modelled
@@ -1667,6 +1710,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	template <typename I>
 	//	inline This<I>::This() : That<I>() {
 	//	}
+	@Test
 	public void testParameterReferenceInChainInitializer_b() throws Exception {
 		ICPPClassType tid = getBindingFromASTName("This<I>::T", 7, ICPPClassType.class);
 		assertFalse(tid instanceof ICPPSpecialization);
@@ -1683,6 +1727,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// };
 
 	// CT<int> v1;
+	@Test
 	public void testUniqueSpecializations_241641() throws Exception {
 		ICPPVariable v1 = getBindingFromASTName("v1", 2, ICPPVariable.class);
 		ICPPVariable v2 = getBindingFromASTName("v1", 2, ICPPVariable.class);
@@ -1702,6 +1747,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// };
 
 	// CT<int> v1;
+	@Test
 	public void testUniqueInstance_241641() throws Exception {
 		IASTName name = findName("v1", 2);
 		ICPPVariable v1 = getBindingFromASTName("v1", 2, ICPPVariable.class);
@@ -1729,6 +1775,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void test() {
 	//     x.method();
 	//  }
+	@Test
 	public void testMethodSpecialization_248927() throws Exception {
 		ICPPMethod m = getBindingFromASTName("method", 6, ICPPMethod.class);
 		assertInstance(m, ICPPSpecialization.class);
@@ -1745,6 +1792,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 
 	//	template<class T> void A<T, int>::foo(T t) {}
+	@Test
 	public void testBug177418() throws Exception {
 		ICPPMethod m = getBindingFromASTName("foo", 3, ICPPMethod.class);
 		ICPPClassType owner = m.getClassOwner();
@@ -1762,6 +1810,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//    this->m(); // 2
 	//    this->f; // 2
 	// };
+	@Test
 	public void testUnknownBindings_264988() throws Exception {
 		ICPPMethod m = getBindingFromASTName("m(); // 1", 1, ICPPMethod.class);
 		assertFalse(m instanceof ICPPUnknownBinding);
@@ -1780,6 +1829,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// void test() {
 	//    XT<> x;
 	// };
+	@Test
 	public void testDefaultTemplateArgInHeader_264988() throws Exception {
 		ICPPTemplateInstance ti = getBindingFromASTName("XT<>", 4, ICPPTemplateInstance.class);
 	}
@@ -1792,6 +1842,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	// template<> void XT<int>::m() {
 	//    TInt t;
 	// }
+	@Test
 	public void testParentScopeOfSpecialization_267013() throws Exception {
 		ITypedef ti = getBindingFromASTName("TInt", 4, ITypedef.class);
 	}
@@ -1862,6 +1913,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	  vector<int> v;
 	//	  f(v.begin());
 	//	}
+	@Test
 	public void testTemplateMetaprogramming_284686() throws Exception {
 		getBindingFromASTName("f(v.begin())", 1, ICPPFunction.class);
 	}
@@ -1881,6 +1933,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		Noder1<int> f;
 	//		Noder2<int> g;
 	//	}
+	@Test
 	public void testInstantiationOfValue_284683() throws Exception {
 		getBindingFromASTName("Noder1<int>", 11, ICPPClassSpecialization.class);
 		getBindingFromASTName("Noder2<int>", 11, ICPPClassSpecialization.class);
@@ -1898,6 +1951,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		CT<X> p;
 	//		p.f.x;
 	//	}
+	@Test
 	public void testTemplateParameterWithoutName_300978() throws Exception {
 		getBindingFromASTName("x;", 1, ICPPField.class);
 		ICPPClassSpecialization ctx = getBindingFromASTName("CT<X>", 5, ICPPClassSpecialization.class);
@@ -1918,6 +1972,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//    f(1);
 	//    g(1);
 	// }
+	@Test
 	public void testExplicitSpecializations_296427() throws Exception {
 		ICPPTemplateInstance inst;
 		inst = getBindingFromASTName("X<int>", 0);
@@ -1940,6 +1995,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		OutStream<char> out;
 	//		out << endl;
 	//	}
+	@Test
 	public void testInstantiationOfEndl_297457() throws Exception {
 		final IBinding reference = getBindingFromASTName("<< endl", 2);
 		assertTrue(reference instanceof ICPPSpecialization);
@@ -1977,6 +2033,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	    a.f(0);
 	//	    return 0;
 	//	}
+	@Test
 	public void testPartialSpecializationsOfClassTemplateSpecializations_332884() throws Exception {
 		final IBinding reference = getBindingFromASTName("f(0)", 1);
 		assertTrue(reference instanceof ICPPSpecialization);
@@ -1995,6 +2052,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//  struct TXT : XT<int> {};
 
 	// TXT x;
+	@Test
 	public void testClassSpecialization_354086() throws Exception {
 		ICPPClassType ct = getBindingFromASTName("TXT", 0, ICPPClassType.class);
 		ICPPMethod[] methods = ct.getAllDeclaredMethods();
@@ -2040,6 +2098,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		c.f(2);
 	//		c.f(2,1);
 	//	}
+	@Test
 	public void testSpecializationOfUsingDeclaration_357293() throws Exception {
 		getBindingFromASTName("f()", 1, ICPPMethod.class);
 		getBindingFromASTName("f(1)", 1, ICPPMethod.class);
@@ -2056,6 +2115,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	template<class T> typename C1<T>::iterator C1<T>::m1() {
 	//		return 0;
 	//	}
+	@Test
 	public void testUsageOfClassTemplateOutsideOfClassBody_357320() throws Exception {
 		getBindingFromASTName("m1", 0, ICPPMethod.class);
 	}
@@ -2069,6 +2129,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	int main() {
 	//	    typedef foo<int>::type type;
 	//	}
+	@Test
 	public void testSpecializationInIndex_367563a() throws Exception {
 		getBindingFromASTName("type type", 4, ITypedef.class);
 	}
@@ -2082,6 +2143,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	int main() {
 	//	    typedef foo<int*>::type type;
 	//	}
+	@Test
 	public void testSpecializationInIndex_367563b() throws Exception {
 		getBindingFromASTName("type type", 4, ITypedef.class);
 	}
@@ -2100,6 +2162,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void test(A<int> a) {
 	//	  waldo(a);
 	//	}
+	@Test
 	public void testSpecializationInIndex_491636() throws Exception {
 		checkBindings();
 	}
@@ -2120,6 +2183,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	    typedef int type;
 	//	};
 	//	typedef foo<remove_const<const int>::type>::type t;
+	@Test
 	public void testCurrentInstanceOfClassTemplatePartialSpec_368404() throws Exception {
 		ITypedef tdef = getBindingFromASTName("type t;", 4, ITypedef.class);
 		assertEquals("int", ASTTypeUtil.getType(tdef, true));
@@ -2169,6 +2233,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 	//
 	//	typedef A<C> type;
+	@Test
 	public void testSfinae_a() throws Exception {
 		checkBindings();
 	}
@@ -2201,6 +2266,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	  A<double>::get();
 	//	  A<int>::get();
 	//	}
+	@Test
 	public void testSfinae_b() throws Exception {
 		checkBindings();
 	}
@@ -2216,6 +2282,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	int waldo(int p);
 	//
 	//	int x = waldo(test<A>(0));
+	@Test
 	public void testSfinaeInNewExpression_430230() throws Exception {
 		checkBindings();
 	}
@@ -2228,6 +2295,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	template<template<class,class> class ListT, class UType, class Alloc, class StringT>
 	//	void CString::split(ListT<UType,Alloc>& out, const StringT& sep, bool keepEmptyElements, bool trimElements, bool emptyBefore) const {
 	//	}
+	@Test
 	public void testMemberOfTemplateTemplateParameter_381824() throws Exception {
 		checkBindings();
 	}
@@ -2240,6 +2308,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	struct my_type{};
 	//
 	//	using foo = my_template<my_type>;
+	@Test
 	public void testTemplateTemplateNonTypeParameterPack_bug538069() throws Exception {
 		checkBindings();
 	}
@@ -2255,6 +2324,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//     TAlias<int> myA;
 	//     myA.t = 42;
 	// }
+	@Test
 	public void testAliasTemplate() throws Exception {
 		checkBindings();
 	}
@@ -2272,6 +2342,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void test() {
 	//	  int x = C<bool>::id;
 	//	}
+	@Test
 	public void testDependentEnumValue_389009() throws Exception {
 		IEnumerator binding = getBindingFromASTName("id;", 2, IEnumerator.class);
 		IValue value = binding.getValue();
@@ -2307,6 +2378,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void foo(C<S> x){
 	//	    bar(x());
 	//	}
+	@Test
 	public void testDependentEnumerator_482421a() throws Exception {
 		checkBindings();
 	}
@@ -2338,6 +2410,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void foo(C<S> x){
 	//	    bar(x());
 	//	}
+	@Test
 	public void testDependentEnumerator_482421b() throws Exception {
 		checkBindings();
 	}
@@ -2407,6 +2480,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	  F<int*> a;
 	//	  f(*a[0]);
 	//	}
+	@Test
 	public void testConstexprFunction_395238_1() throws Exception {
 		checkBindings();
 	}
@@ -2436,6 +2510,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 
 	//	B<bool>::type x;
 	//	B<int*>::type y;
+	@Test
 	public void testConstexprFunction_395238_2() throws Exception {
 		ITypedef td = getBindingFromFirstIdentifier("type x", ITypedef.class);
 		assertEquals("bool", ASTTypeUtil.getType(td.getType()));
@@ -2452,6 +2527,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void test(BinaryPredicate bp) {
 	//	    sort(s, [&bp](const S* a, const S* b){ return bp(*a, *b); });
 	//	}
+	@Test
 	public void testLambdaExpression_395884() throws Exception {
 		checkBindings();
 	}
@@ -2466,6 +2542,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	    S<1> n;
 	//	    f(n.foo(0));
 	//	}
+	@Test
 	public void testDependentExpression_395875() throws Exception {
 		getBindingFromASTName("f(n.foo(0))", 1, ICPPFunction.class);
 	}
@@ -2504,6 +2581,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	int main() {
 	//	    A<has_type<T>::type::value>::type a;
 	//	}
+	@Test
 	public void testIntNullPointerConstant_407808() throws Exception {
 		checkBindings();
 	}
@@ -2526,6 +2604,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	int main() {
 	//	    waldo(foo::cat{});
 	//	}
+	@Test
 	public void testADLForQualifiedName_408296() throws Exception {
 		checkBindings();
 	}
@@ -2543,6 +2622,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	struct outer::inner<waldo<T>> {};
 
 	//	int main() {}
+	@Test
 	public void testRegression_408314() throws Exception {
 		checkBindings();
 	}
@@ -2552,6 +2632,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	template<> struct A<int> { enum { v = 1 }; };
 
 	//	int main() {}
+	@Test
 	public void testSpecializationRedefinition_409444() throws Exception {
 		checkBindings();
 	}
@@ -2567,6 +2648,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 
 	//	List<N>::Base<&N::node> base;
+	@Test
 	public void testDependentTemplateParameterInNestedTemplate_407497() throws Exception {
 		checkBindings();
 	}
@@ -2580,6 +2662,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 
 	//	typedef enclosing<int>::nested<>::type waldo;
+	@Test
 	public void testDependentTemplateParameterInNestedTemplate_399454() throws Exception {
 		checkBindings();
 	}
@@ -2594,6 +2677,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 
 	//	typedef decltype(A<int>::foo<>()) waldo;
+	@Test
 	public void testNPE_407497() throws Exception {
 		checkBindings();
 	}
@@ -2638,6 +2722,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	}
 	//
 	//	static_assert(D<10>(1000000000) == 10, "");
+	@Test
 	public void testOOM_497875() throws Exception {
 		// TODO(sprigogin): Uncomment after http://bugs.eclipse.org/497931 is fixed.
 		//		checkBindings();
@@ -2658,6 +2743,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//      C c;
 	//      c.eof();
 	//  }
+	@Test
 	public void testAmbiguousBaseClassLookup_413406() throws Exception {
 		getProblemFromASTName("eof();", 3);
 	}
@@ -2676,6 +2762,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 	//
 	//	typedef S<>::type T;
+	@Test
 	public void testExplicitSpecializationOfTemplateDeclaredInHeader_401820() throws Exception {
 		IType T = getBindingFromASTName("T", 1);
 		assertEquals("int", ASTTypeUtil.getType(T));
@@ -2699,6 +2786,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	    overloaded c, d;
 	//	    foo(c * d);
 	//	}
+	@Test
 	public void testFriendFunctionOfClassSpecialization_419301a() throws Exception {
 		checkBindings();
 	}
@@ -2721,6 +2809,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	    overloaded c, d;
 	//	    foo(c * d);
 	//	}
+	@Test
 	public void testFriendFunctionOfClassSpecialization_419301b() throws Exception {
 		checkBindings();
 	}
@@ -2737,6 +2826,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void test() {
 	//	  A<B>::get();
 	//	}
+	@Test
 	public void testFriendClassSpecialization_466362() throws Exception {
 		checkBindings();
 	}
@@ -2752,6 +2842,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	}
 
 	//	// empty source file
+	@Test
 	public void testSpecializationOfConstexprFunction_420995() throws Exception {
 		checkBindings();
 	}
@@ -2770,6 +2861,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	}
 
 	//	constexpr int waldo = foo<int>();
+	@Test
 	public void testInstantiationOfReturnExpression_484959() throws Exception {
 		ICPPVariable waldo = getBindingFromFirstIdentifier("waldo");
 		assertVariableValue(waldo, 42);
@@ -2797,6 +2889,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	struct meta<int> {};
 
 	//	int z;
+	@Test
 	public void testEnumerationWithMultipleEnumerators_434467() throws Exception {
 		checkBindings();
 	}
@@ -2824,6 +2917,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void foo() {
 	//	    bar(decl());  // ERROR HERE: Invalid arguments
 	//	}
+	@Test
 	public void testInstantiationOfFunctionInstance_437675() throws Exception {
 		checkBindings();
 	}
@@ -2850,6 +2944,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	class MYCComQIPtr<IUnknown, &IID_IUnknown> : public MYCComPtr<IUnknown> {};
 
 	//	// source file is deliberately empty
+	@Test
 	public void testInfiniteRecursionMarshallingTemplateDefinition_439923() throws Exception {
 		checkBindings();
 	}
@@ -2871,6 +2966,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//  }
 
 	//	// empty source file
+	@Test
 	public void testInfiniteRecursion_516648() throws Exception {
 		checkBindings();
 	}
@@ -2890,6 +2986,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	struct make_int_pack : append<typename make_int_pack<C - 1>::type, C - 1> {};
 	//
 	//	template <> struct make_int_pack<0> : int_pack<> {};
+	@Test
 	public void testRecursiveInheritance_466362() throws Exception {
 		checkBindings();
 	}
@@ -2911,6 +3008,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		Bar<int> var1;
 	//		auto var2 = foo(S());
 	//	}
+	@Test
 	public void testTypeOfUnknownMember_447728() throws Exception {
 		IVariable var1 = getBindingFromASTName("var1", 4);
 		IVariable var2 = getBindingFromASTName("var2", 4);
@@ -2932,6 +3030,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	    allocator<Item>::value_type item;
 	//	    item.waldo = 5;
 	//	}
+	@Test
 	public void testRedeclarationWithUnnamedTemplateParameter_472199() throws Exception {
 		checkBindings();
 	}
@@ -2956,6 +3055,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	typedef Operation< R<1> >::value MYTYPE;
 
 	//	// empty file
+	@Test
 	public void testRecursiveTemplateInstantiation_479138a() throws Exception {
 		// This tests that a template metaprogram whose termination depends on
 		// its inputs being known, doesn't cause a stack overflow when its
@@ -2992,6 +3092,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	typedef Operation< R<1> >::value MYTYPE;
 
 	//	// empty file
+	@Test
 	public void testRecursiveTemplateInstantiation_479138b() throws Exception {
 		// This is similar to 479138a, but the metaprogram additionally has
 		// exponential memory usage when the inputs are unknown and thus
@@ -3016,6 +3117,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 
 	//	// empty file
 	//	// special:allowRecursionBindings
+	@Test
 	public void testRecursiveTemplateInstantiation_479138c() throws Exception {
 		// This tests that a template metaprogram that doesn't terminate at all
 		// (e.g. because the author omitted a base case) doesn't cause a stack overflow.
@@ -3036,6 +3138,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	}
 
 	//	// empty file
+	@Test
 	public void testStackOverflow_462764() throws Exception {
 		checkBindings();
 	}
@@ -3051,6 +3154,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 
 	//	derived<int> waldo;
+	@Test
 	public void testSerializationOfUnknownConstructor_490475() throws Exception {
 		IASTName waldoName = findName("waldo", 5);
 		IVariable waldo = getBindingFromASTName("waldo", 5);
@@ -3074,6 +3178,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void bar() {
 	//	    foo([]{});
 	//	}
+	@Test
 	public void testBracedInitList_490475() throws Exception {
 		checkBindings();
 	}
@@ -3093,6 +3198,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//		auto x = foo(0);
 	//		x.woof();
 	//	}
+	@Test
 	public void testUnqualifiedFunctionCallInTemplate_402498() throws Exception {
 		checkBindings();
 	}
@@ -3107,6 +3213,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	};
 	//
 	//	typedef traits<M<int>>::type waldo;  // ERROR
+	@Test
 	public void testRegression_402498() throws Exception {
 		checkBindings();
 	}
@@ -3158,6 +3265,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void foo(sub_match<Iter> w) {
 	//	    waldo(w);
 	//	}
+	@Test
 	public void testRegression_516338() throws Exception {
 		checkBindings();
 	}
@@ -3171,6 +3279,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	constexpr auto foo = Foo{};
 
 	//	// empty file
+	@Test
 	public void testAssignmentToMemberArrayElement_514363() throws Exception {
 		checkBindings();
 	}
@@ -3185,6 +3294,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	auto waldo = Outer<int>::static_field;
 
 	//	int x = waldo.field;
+	@Test
 	public void testSpecializationOfAnonymousClass_528456() throws Exception {
 		checkBindings();
 	}
@@ -3216,6 +3326,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	struct MessageFunctionPrivate {
 	//	    QFlags<Option> Options{ShowMessageBox, Log};
 	//	};
+	@Test
 	public void testConstexprInitListConstructor_519091() throws Exception {
 		checkBindings();
 	}
@@ -3237,6 +3348,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	void callInCpp1(int i) {
 	//	    apply(i, &consume);
 	//	}
+	@Test
 	public void testClassCastException_533216() throws Exception {
 		checkBindings();
 	}
@@ -3248,6 +3360,7 @@ public abstract class IndexCPPTemplateResolutionTest extends IndexBindingResolut
 	//	auto make_array(Ts... ts) -> array<sizeof...(ts)>;
 
 	//	auto x = make_array(2);
+	@Test
 	public void testRecursion_535548() throws Exception {
 		checkBindings();
 	}

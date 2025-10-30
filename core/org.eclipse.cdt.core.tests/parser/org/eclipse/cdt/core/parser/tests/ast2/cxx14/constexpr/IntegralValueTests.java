@@ -13,17 +13,13 @@ package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class IntegralValueTests extends TestBase {
 	public static class NonIndexingTests extends IntegralValueTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
-		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
 		}
 	}
 
@@ -31,23 +27,21 @@ public abstract class IntegralValueTests extends TestBase {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
 		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
-		}
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void setUpStrategy() throws Exception {
 		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_SHORT__", "2");
 		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_INT__", "4");
 		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_LONG__", "8");
 		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_LONG_LONG__", "8");
 		TestScannerProvider.sDefinedSymbols.put("__SIZEOF_POINTER__", "8");
-		super.setUp();
+		super.setUpStrategy();
 	}
 
 	//	constexpr auto x = int{} + int();
+	@Test
 	public void testIntDefaultValue() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -58,11 +52,13 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testIntValueInitialization() throws Exception {
 		assertEvaluationEquals(0);
 	}
 
 	//	constexpr auto x = long{} + long();
+	@Test
 	public void testLongDefaultValue() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -73,11 +69,13 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testLongValueInitialization() throws Exception {
 		assertEvaluationEquals(0);
 	}
 
 	//	constexpr auto x = short{} + short();
+	@Test
 	public void testShortDefaultValue() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -88,11 +86,13 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testShortValueInitialization() throws Exception {
 		assertEvaluationEquals(0);
 	}
 
 	//	constexpr auto x = bool{} + bool();
+	@Test
 	public void testBooleanDefaulValue() throws Exception {
 		assertEvaluationEquals(false);
 	}
@@ -103,11 +103,13 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testBoolValueInitialization() throws Exception {
 		assertEvaluationEquals(0);
 	}
 
 	//	constexpr auto x = char{} + char();
+	@Test
 	public void testCharDefaultValue() throws Exception {
 		assertEvaluationEquals(0);
 	}
@@ -118,6 +120,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testCharValueInitialization() throws Exception {
 		assertEvaluationEquals('c');
 	}
@@ -128,6 +131,7 @@ public abstract class IntegralValueTests extends TestBase {
 	// }
 
 	// constexpr int x = mul(2, 5);
+	@Test
 	public void testDeclarationWithEqualsInitializerInSequence() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -139,6 +143,7 @@ public abstract class IntegralValueTests extends TestBase {
 	// }
 
 	// constexpr int x = mul(2, 5);
+	@Test
 	public void testDeclarationWithDefaultInitializationInSequence() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -150,6 +155,7 @@ public abstract class IntegralValueTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testDirectInitializationOnFundamentalTypes() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -160,6 +166,7 @@ public abstract class IntegralValueTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testUseOfUninitializedVariableIsError() throws Exception {
 		assertEvaluationEquals(IntegralValue.UNKNOWN);
 	}
@@ -170,6 +177,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testDeclarationWithMultipleDeclarators() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -181,6 +189,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSimpleTypeConstructionInitializerList() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -192,6 +201,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSimpleTypeConstructionConstructorInitializer() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -203,6 +213,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSimpleTypeConstructionEqualsInitializer1() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -214,6 +225,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSimpleTypeConstructionEqualsInitializer2() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -226,6 +238,7 @@ public abstract class IntegralValueTests extends TestBase {
 	// }
 
 	// constexpr int x = f();
+	@Test
 	public void testCopyInitialization() throws Exception {
 		assertEvaluationEquals(7);
 	}
@@ -237,6 +250,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testMultipleDeclaratorsInOneDeclaration() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -246,6 +260,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSimpleTypeConstructorExpression1() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -257,6 +272,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = f();
+	@Test
 	public void testSideEffects2() throws Exception {
 		assertEvaluationEquals(6);
 	}
@@ -264,6 +280,7 @@ public abstract class IntegralValueTests extends TestBase {
 	//  constexpr int x = 2;
 
 	//	constexpr int y = x * 4;
+	@Test
 	public void testAccessGlobalVariableFromGlobalConstexpr() throws Exception {
 		assertEvaluationEquals(8);
 	}
@@ -272,91 +289,109 @@ public abstract class IntegralValueTests extends TestBase {
 	//  constexpr int f() { return x * 4; }
 
 	//	constexpr int y = f();
+	@Test
 	public void testAccessGlobalVariableFromConstexprFunction() throws Exception {
 		assertEvaluationEquals(8);
 	}
 
 	//	constexpr int x = 0x2a;
+	@Test
 	public void testHexLiteral() throws Exception {
 		assertEvaluationEquals(42);
 	}
 
 	// constexpr int x = __builtin_ffs(0) + __builtin_ffs(16);
+	@Test
 	public void testBuiltinFfs() throws Exception {
 		assertEvaluationEquals(5);
 	}
 
 	// constexpr int x = __builtin_ffs(0x100000000);
+	@Test
 	public void testBuiltinFfsNarrowing() throws Exception {
 		assertEvaluationEquals(0);
 	}
 
 	// constexpr int x = __builtin_ffsl(0x100000000);
+	@Test
 	public void testBuiltinFfsl() throws Exception {
 		assertEvaluationEquals(33);
 	}
 
 	// constexpr int x = __builtin_ctz(16);
+	@Test
 	public void testBuiltinCtz() throws Exception {
 		assertEvaluationEquals(4);
 	}
 
 	// constexpr int x = __builtin_popcount(128 + 32 + 8 + 4 + 2);
+	@Test
 	public void testBuiltinPopcount() throws Exception {
 		assertEvaluationEquals(5);
 	}
 
 	// constexpr int x = __builtin_popcountl(0x80000001);
+	@Test
 	public void testBuiltinPopcountHighBitSet() throws Exception {
 		assertEvaluationEquals(2);
 	}
 
 	// constexpr int x = __builtin_popcountl(0x8000000000000001);
+	@Test
 	public void testBuiltinPopcountlHighBitSet() throws Exception {
 		assertEvaluationEquals(2);
 	}
 
 	// constexpr int x = __builtin_popcountll(0x8000000000000001);
+	@Test
 	public void testBuiltinPopcountllHighBitSet() throws Exception {
 		assertEvaluationEquals(2);
 	}
 
 	// constexpr int x = __builtin_parity(128 + 32 + 8 + 4 + 2) + __builtin_parity(64) + __builtin_parity(0);
+	@Test
 	public void testBuiltinParity() throws Exception {
 		assertEvaluationEquals(2);
 	}
 
 	// constexpr int x = __builtin_abs(700) + __builtin_abs(50);
+	@Test
 	public void testBuiltinAbs() throws Exception {
 		assertEvaluationEquals(750);
 	}
 
 	// constexpr int x = __builtin_abs(-1);
+	@Test
 	public void testBuiltinAbsNegativeInput() throws Exception {
 		assertEvaluationEquals(1);
 	}
 
 	// constexpr int x = __builtin_abs(0xFFFFFFFF);
+	@Test
 	public void testBuiltinAbsNarrowing() throws Exception {
 		assertEvaluationEquals(1);
 	}
 
 	// constexpr int x = __builtin_clrsb(0xFFFFFFFF);
+	@Test
 	public void testBuiltinClrsb() throws Exception {
 		assertEvaluationEquals(31);
 	}
 
 	// constexpr int x = __builtin_clrsb(555);
+	@Test
 	public void testBuiltinClrsbPositive() throws Exception {
 		assertEvaluationEquals(21);
 	}
 
 	// constexpr int x = __builtin_clz(0x8000);
+	@Test
 	public void testBuiltinClz() throws Exception {
 		assertEvaluationEquals(16);
 	}
 
 	// constexpr int x = __builtin_clz(-17);
+	@Test
 	public void testBuiltinClzNegative() throws Exception {
 		assertEvaluationEquals(0);
 	}

@@ -12,27 +12,18 @@
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
 import org.eclipse.cdt.internal.core.dom.parser.IntegralValue;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class UserDefinedLiteralTests extends TestBase {
 	public static class NonIndexingTests extends UserDefinedLiteralTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends UserDefinedLiteralTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -41,6 +32,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = 25_min;
+	@Test
 	public void testUserDefinedIntegerLiteral() throws Exception {
 		assertEvaluationEquals(1500);
 	}
@@ -56,6 +48,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = "HAllO"_capitals;
+	@Test
 	public void testUserDefinedStringLiteral() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -74,6 +67,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = 'a'_v;
+	@Test
 	public void testUserDefinedCharacterLiteral() throws Exception {
 		assertEvaluationEquals(true);
 	}
@@ -83,6 +77,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = 100.0_deg;
+	@Test
 	public void testUserDefinedFloatingPointLiteral() throws Exception {
 		assertEvaluationEquals(1.74533);
 	}
@@ -96,6 +91,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr auto x = 20000_l;
+	@Test
 	public void testFallbackToRawLiteralOperator() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -106,6 +102,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = 123.20_l;
+	@Test
 	public void testRawLiteralOperatorTemplate() throws Exception {
 		assertEvaluationEquals(5);
 	}
@@ -118,6 +115,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = 120_l;
+	@Test
 	public void testChoosesCookedLiteralOverRawLiteralOperatorIfAvailable() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -131,6 +129,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = 120_l;
+	@Test
 	public void testChoosesCookedLiteralOverRawLiteralTemplateIfAvailable() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -143,6 +142,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = 120_l;
+	@Test
 	public void testFallsBackToRawLiteralOperatorIfParameterTypeDoesntMatchUnsignedLongLong() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -156,6 +156,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = 120_l;
+	@Test
 	public void testFallsBackToRawLiteralOperatorTemplateIfParameterTypeDoesntMatchUnsignedLongLong() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -168,6 +169,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = 120.0_l;
+	@Test
 	public void testFallsBackToRawLiteralOperatorIfParameterTypeDoesntMatchLongDouble() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -181,6 +183,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = 120.0_l;
+	@Test
 	public void testFallsBackToRawLiteralOperatorTemplateIfParameterTypeDoesntMatchLongDouble() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -190,6 +193,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = "hello"_l;
+	@Test
 	public void testIgnoresRawLiteralOperatorForUserDefinedStringLiterals() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}
@@ -200,6 +204,7 @@ public abstract class UserDefinedLiteralTests extends TestBase {
 	//	}
 
 	//	constexpr int x = "hello"_l;
+	@Test
 	public void testIgnoresRawLiteralOperatorTemplateForUserDefinedStringLiterals() throws Exception {
 		assertEvaluationEquals(IntegralValue.ERROR);
 	}

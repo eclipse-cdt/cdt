@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Index tests involving multiple header and source files.
@@ -26,10 +26,6 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 
 	public IndexMultiFileTest() {
 		setStrategy(new SinglePDOMTestNamedFilesStrategy(true));
-	}
-
-	public static TestSuite suite() {
-		return suite(IndexMultiFileTest.class);
 	}
 
 	// A.h
@@ -56,6 +52,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	void test(A<B*> a, B* b) {
 	//	  a.m(b);
 	//	}
+	@Test
 	public void testAnonymousNamespace_416278() throws Exception {
 		checkBindings();
 	}
@@ -100,6 +97,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	waldo::A a;
 	//	}
 	//	}
+	@Test
 	public void testNamespaceAlias_442117() throws Exception {
 		checkBindings();
 	}
@@ -124,6 +122,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//
 	//	}
 	//	}
+	@Test
 	public void testNamespace_481161() throws Exception {
 		checkBindings();
 	}
@@ -163,6 +162,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	  D<C> x;
 	//	  new A<B, C>(x);
 	//	}
+	@Test
 	public void testExplicitSpecialization_494359() throws Exception {
 		checkBindings();
 	}
@@ -199,6 +199,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	void test(ns::A a) {
 	//	  waldo(a);
 	//	}
+	@Test
 	public void testFriendClassDeclaration_508338() throws Exception {
 		checkBindings();
 	}
@@ -222,6 +223,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	};
 	//	template <typename> struct Waldo;
 	//	Waldo<decltype(0.5 * C<>{})> w;
+	@Test
 	public void testFriendFunctionInHeaderIncludedAtClassScope_509662() throws Exception {
 		checkBindings();
 	}
@@ -246,6 +248,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	struct atomic<T*> {
 	//		void fetch_sub();
 	//	};
+	@Test
 	public void testClassTemplatePartialSpecialization_470726() throws Exception {
 		checkBindings();
 	}
@@ -267,6 +270,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	struct base {};
 	//
 	//	static derived<> waldo;
+	@Test
 	public void testProblemBindingInMemInitList_508254() throws Exception {
 		// This code is invalid, so we don't checkBindings().
 		// If the test gets this far (doesn't throw in setup() during indexing), it passes.
@@ -301,6 +305,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	void func() {
 	//	  waldo(a);
 	//	}
+	@Test
 	public void testFriendFunctionDeclarationInNamespace_513681() throws Exception {
 		checkBindings();
 	}
@@ -343,6 +348,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	// const S Waldo::s = {
 	//   &Base::field
 	// };
+	@Test
 	public void testStackOverflow_514459() throws Exception {
 		checkBindings();
 	}
@@ -361,6 +367,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//test.cpp
 	//	#include "test.hpp"
 	//	C::C() {}
+	@Test
 	public void testAliasTemplateReferencingSameName_518937() throws Exception {
 		checkBindings();
 	}
@@ -381,6 +388,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	#include "h2.h"
 	//	B1 b1;
 	//	B2 b2;
+	@Test
 	public void testClassFirstDeclaredAsFriend_530430() throws Exception {
 		checkBindings();
 	}

@@ -18,12 +18,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 
 public abstract class AST2CPPTestBase extends AST2TestBase {
-	public AST2CPPTestBase() {
-	}
-
-	public AST2CPPTestBase(String name) {
-		super(name);
-	}
 
 	protected IASTTranslationUnit parseAndCheckBindings(String code) throws Exception {
 		return parseAndCheckBindings(code, ScannerKind.STD);

@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,14 +47,6 @@ import org.eclipse.cdt.internal.core.parser.ParserException;
  * @author dsteffle
  */
 public abstract class AST2SpecTestBase extends AST2TestBase {
-	public AST2SpecTestBase() {
-		super();
-	}
-
-	public AST2SpecTestBase(String name) {
-		super(name);
-	}
-
 	/**
 	 * checkSemantics is used to specify whether the example should have semantics checked
 	 * since several spec examples have syntactically correct code ONLY this flag was added

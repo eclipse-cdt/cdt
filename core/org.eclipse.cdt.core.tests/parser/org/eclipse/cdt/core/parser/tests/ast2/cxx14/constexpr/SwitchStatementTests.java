@@ -11,26 +11,18 @@
 *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2.cxx14.constexpr;
 
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public abstract class SwitchStatementTests extends TestBase {
 	public static class NonIndexingTests extends SwitchStatementTests {
 		public NonIndexingTests() {
 			setStrategy(new NonIndexingTestStrategy());
 		}
-
-		public static TestSuite suite() {
-			return suite(NonIndexingTests.class);
-		}
 	}
 
 	public static class SingleProjectTests extends SwitchStatementTests {
 		public SingleProjectTests() {
 			setStrategy(new SinglePDOMTestStrategy(true, false));
-		}
-
-		public static TestSuite suite() {
-			return suite(SingleProjectTests.class);
 		}
 	}
 
@@ -47,6 +39,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchFirstCase() throws Exception {
 		assertEvaluationEquals(1);
 	}
@@ -64,6 +57,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchMiddleCase() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -81,6 +75,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchDefault() throws Exception {
 		assertEvaluationEquals(-1);
 	}
@@ -97,6 +92,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchFallThrough() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -112,6 +108,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchWithOnlyOneClause1() throws Exception {
 		assertEvaluationEquals(10);
 	}
@@ -127,6 +124,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchWithOnlyOneClause2() throws Exception {
 		assertEvaluationEquals(9);
 	}
@@ -148,6 +146,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchBreak() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -167,6 +166,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchNoMatchingCaseAndNoDefault() throws Exception {
 		assertEvaluationEquals(2);
 	}
@@ -194,6 +194,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchCaseConstants() throws Exception {
 		assertEvaluationEquals(20);
 	}
@@ -215,6 +216,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(5);
+	@Test
 	public void testDeclarationInSwitchStatementController() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -232,6 +234,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(BLUE);
+	@Test
 	public void testSwitchOnEnumValue() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -253,6 +256,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f();
+	@Test
 	public void testSwitchWithNestedContinueStatement() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -274,6 +278,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(5);
+	@Test
 	public void testDeclarationInSwitchInitStatement() throws Exception {
 		assertEvaluationEquals(3);
 	}
@@ -295,6 +300,7 @@ public abstract class SwitchStatementTests extends TestBase {
 	//	}
 
 	//	constexpr int x = f(5);
+	@Test
 	public void testDeclarationInSwitchStatementControllerEmptyInit() throws Exception {
 		assertEvaluationEquals(3);
 	}

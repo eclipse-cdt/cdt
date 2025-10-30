@@ -16,6 +16,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -44,31 +49,22 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Examples taken from the c++-specification.
  */
 public class AST2CPPSpecTest extends AST2SpecTestBase {
 
-	public AST2CPPSpecTest() {
-	}
-
-	public AST2CPPSpecTest(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(AST2CPPSpecTest.class);
-	}
-
 	// int x=x+++++y;
+	@Test
 	public void test2_4s5() throws Exception {
 		parseCandCPP(getAboveComment(), false, 0);
 	}
 
 	// int a=12, b=014, c=0XC;
+	@Test
 	public void test2_13_1s1() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -76,6 +72,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// ??=define arraycheck(a,b) a??(b??) ??!??! b??(a??)
 	// // becomes
 	// #define arraycheck(a,b) a[b] || b[a]
+	@Test
 	public void test2_3s2() throws Exception { // TODO exists bug 64993
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -102,6 +99,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef int Int; // declares Int
 	// extern X anotherX; // declares anotherX
 	// using N::d; // declares N::d
+	@Test
 	public void test3_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -115,6 +113,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// C b = a;
 	// b = a;
 	// }
+	@Test
 	public void test3_1s4a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -127,6 +126,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// ~C() { }
 	// };
 	//
+	@Test
 	public void test3_1s4b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -134,6 +134,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct X; // declare X as a struct type
 	// struct X* x1; // use X in pointer formation
 	// X* x2; // use X in pointer formation
+	@Test
 	public void test3_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -146,6 +147,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X::X(int = 0) { }
 	// class D: public X { };
 	// D d2; // X(int) called by D()
+	@Test
 	public void test3_2s5_a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -159,6 +161,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class D: public X { }; // X(int, int) called by D();
 	// // D()'s implicit definition
 	// // violates the ODR
+	@Test
 	public void test3_2s5_b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -169,6 +172,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int i = j, j;
 	// j = 42;
 	// }
+	@Test
 	public void test3_3s2() throws Exception {
 		parseCandCPP(getAboveComment(), true, 0);
 	}
@@ -177,6 +181,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int x = 12;
 	// { int x = x; }
 	// }
+	@Test
 	public void test3_3_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -185,6 +190,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// const int i = 2;
 	// { int i[i]; }
 	// }
+	@Test
 	public void test3_3_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -193,6 +199,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// const int x = 12;
 	// { enum { x = x }; }
 	// }
+	@Test
 	public void test3_3_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -219,6 +226,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// int q(); // error: different return type
 	// }
+	@Test
 	public void test3_3_5s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -236,6 +244,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // 3) scope of namespace A
 	// // 4) global scope, before the definition of A::N::f
 	// }
+	@Test
 	public void test3_4_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -243,6 +252,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// namespace M {
 	// class B { };
 	// }
+	@Test
 	public void test3_4_1s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -265,6 +275,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // 4) scope of namespace M::N
 	// // 5) scope of namespace M
 	// // 6) global scope, before the definition of M::N::X::f
+	@Test
 	public void test3_4_1s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -279,6 +290,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// friend void A::f1(AT); // parameter type is A::AT
 	// friend void A::f2(BT); // parameter type is B::BT
 	// };
+	@Test
 	public void test3_4_1s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -293,6 +305,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	A::n = 42; // OK
 	//	A b; // illformed: A does not name a type
 	//	}
+	@Test
 	public void test3_4_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 	}
@@ -305,6 +318,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int main() {
 	// f(parm); //OK: calls NS::f
 	// }
+	@Test
 	public void test3_4_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -318,6 +332,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X C::arr[number]; // illformed:
 	// // equivalent to: ::X C::arr[C::number];
 	// // not to: C::X C::arr[C::number];
+	@Test
 	public void test3_4_3s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -342,6 +357,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// AB *p;
 	// p->AB::~AB(); // explicitly calls the destructor for A
 	// }
+	@Test
 	public void test3_4_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -395,6 +411,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // S is { Y::h(int), Z::h(double) } and overload
 	// // resolution chooses Z::h(double)
 	// }
+	@Test
 	public void test3_4_3_2s2() throws Exception {
 		String[] problems = { "AB::x", "x", "AB::i", "i" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems); // qualified names are counted double, so 4
@@ -428,6 +445,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// BD::a++; //OK: S is { A::a, A::a }
 	// }
+	@Test
 	public void test3_4_3_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -449,6 +467,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A::b++; //OK: both A and B searched (once), S is { B::b }
 	// B::b++; //OK: b declared directly in B, S is { B::b }
 	// }
+	@Test
 	public void test3_4_3_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -467,6 +486,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int i = C::x; // OK, A::x (of type int)
 	// int j = C::y; // ambiguous, A::y or B::y
 	// }
+	@Test
 	public void test3_4_3_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -479,6 +499,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// void A::f1(int) { } // illformed,
 	// // f1 is not a member of A
+	@Test
 	public void test3_4_3_2s6a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -496,6 +517,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// using namespace A;
 	// using namespace C::D;
 	// void B::f1(int){} // OK, defines A::B::f1(int)
+	@Test
 	public void test3_4_3_2s6b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -528,6 +550,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct Base::Data; // error: cannot introduce a qualified type (7.1.5.3)
 	// struct Base::Datum; // error: Datum undefined
 	// struct Base::Data* pBase; // OK: refers to nested Data
+	@Test
 	public void test3_4_4s3() throws Exception {
 		String[] problems = { "::Glob", "Glob", "Base::Datum", "Datum" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
@@ -543,6 +566,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// extern int i; //3: external linkage
 	// }
 	// }
+	@Test
 	public void test3_5s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -562,6 +586,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// void q() { //
 	// } // some other, unrelated q
+	@Test
 	public void test3_5s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -573,12 +598,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef A B;
 	// extern B b; // illformed
 	// }
+	@Test
 	public void test3_5s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// int main(int argc, char* argv[]) { //
 	// }
+	@Test
 	public void test3_6_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -603,6 +630,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void* q = pb; // OK: pb points to valid memory
 	// pb->f(); //undefined behavior, lifetime of *pb has ended
 	// }
+	@Test
 	public void test3_8s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -627,6 +655,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// c1 = c2; // welldefined
 	// c1.f(); //welldefined; c1 refers to a new object of type C
 	// }
+	@Test
 	public void test3_8s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -639,6 +668,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// B b;
 	// new (&b) T;
 	// } //undefined behavior at block exit
+	@Test
 	public void test3_8s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -652,6 +682,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// b.~B();
 	// new (&b) const B; // undefined behavior
 	// }
+	@Test
 	public void test3_8s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -665,6 +696,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// memcpy(&obj, buf, N); // at this point, each subobject of obj of scalar type
 	// // holds its original value
 	// }
+	@Test
 	public void test3_9s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -676,6 +708,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// memcpy(t1p, t2p, sizeof(T)); // at this point, every subobject of POD type in *t1p contains
 	// // the same value as the corresponding subobject in *t2p
 	// }
+	@Test
 	public void test3_9s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -702,11 +735,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		xp++; //OK: X is complete
 	//		arrp++; //ill-formed: UNKA can't be completed
 	//	}
+	@Test
 	public void test3_9s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// int& f();
+	@Test
 	public void test3_10s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -717,6 +752,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// i = ++i + 1; // the behavior is unspecified
 	// i = i + 1; // the value of i is incremented
 	// }
+	@Test
 	public void test5s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -727,6 +763,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// B* bp = dynamic_cast<B*>(dp); // equivalent to B* bp = dp;
 	// }
+	@Test
 	public void test5_2_7s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -757,6 +794,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // cast from virtual base
 	// E* ep1 = dynamic_cast<E*>(ap); // succeeds
 	// }
+	@Test
 	public void test5_2_7s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -771,6 +809,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typeid(D) == typeid(d2); // yields true
 	// typeid(D) == typeid(const D&); // yields true
 	// }
+	@Test
 	public void test5_2_8s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -782,6 +821,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int foo() {
 	// static_cast<D&>(br); // produces lvalue to the original d object
 	// }
+	@Test
 	public void test5_2_9s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -791,6 +831,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int foo() {
 	// &B::i; // has type int A::*
 	// }
+	@Test
 	public void test5_3_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -798,6 +839,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void test() {
 	//    new (int (*[10])());
 	// };
+	@Test
 	public void test5_3_4s3() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 		IASTFunctionDefinition fdef = getDeclaration(tu, 0);
@@ -818,6 +860,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//    new T[5];
 	//    new (2,f) T[5];
 	// };
+	@Test
 	public void test5_3_4s12() throws Exception {
 		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=236856
 
@@ -860,12 +903,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int n=2;
 	// int x=new float[n][5];
 	// int y=new float[5][n];
+	@Test
 	public void test5_3_4s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// const char* strchr(const char* s, int c);
 	// bool b = noexcept (strchr("abc", 'b'));
+	@Test
 	public void test5_3_7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -878,6 +923,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// return (A*)( p ); // illformed
 	// // static_cast interpretation
 	// }
+	@Test
 	public void test5_4s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -885,6 +931,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int foo() {
 	// (ptr_to_obj->*ptr_to_mfct)(10);
 	// }
+	@Test
 	public void test5_5s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -898,6 +945,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p <= q; // Both converted to const void * before comparison
 	// pi <= pci; // Both converted to const int *const * before comparison
 	// }
+	@Test
 	public void test5_9s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -914,6 +962,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int (D::*pdl)() = pl;
 	// int (D::*pdr)() = pr;
 	// bool x = (pdl == pdr); // false
+	@Test
 	public void test5_10s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -923,6 +972,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int a=0, t=1, c=2;
 	// f(a, (t=3, t+2), c);
 	// }
+	@Test
 	public void test5_18s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -936,6 +986,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int i;
 	// }
 	// }
+	@Test
 	public void test6_4s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -948,6 +999,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int x; // illformed,redeclaration of x
 	// }
 	// }
+	@Test
 	public void test6_4s3() throws Exception {
 		// raised bug 90618
 		// gcc does not report an error, either, so leave it as it is.
@@ -963,6 +1015,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int i;
 	// }
 	// }
+	@Test
 	public void test6_5s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -981,6 +1034,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// i = 0;
 	// }
 	// }
+	@Test
 	public void test6_5_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -992,6 +1046,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// a[i] = i;
 	// int j = i; // j = 42
 	// }
+	@Test
 	public void test6_5_3s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1009,6 +1064,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	// call for a followed by construction
 	//	// again immediately following label ly
 	//	}
+	@Test
 	public void test6_7s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 	}
@@ -1018,6 +1074,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// static int s = foo(2*i); // recursive call - undefined
 	// return i+1;
 	// }
+	@Test
 	public void test6_7s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1031,6 +1088,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// T(f) = { 1, 2 }; // declaration
 	// T(*g)(double(3)); // declaration
 	// }
+	@Test
 	public void test6_8s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -1048,6 +1106,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// T(d),e,f=3; //declaration
 	// extern int h;
 	// T(g)(h,2); //declaration
+	@Test
 	public void test6_8s2() throws Exception { // TODO raised bug 90622
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1071,6 +1130,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // properly since it depends
 	// // on T2 being a typename
 	// }
+	@Test
 	public void test6_8s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1078,12 +1138,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef char* Pc;
 	// void f(const Pc); // void f(char* const) (not const char*)
 	// void g(const int Pc); // void g(const int)
+	@Test
 	public void test7_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// void h(unsigned Pc); // void h(unsigned int)
 	// void k(unsigned int Pc); // void k(unsigned int)
+	@Test
 	public void test7_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1091,6 +1153,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// thread_local int e;
 	// static thread_local int f;
 	// extern thread_local int g;
+	@Test
 	public void test7_1_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1119,6 +1182,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// static int c; // error: inconsistent linkage
 	// extern int d; // d has external linkage
 	// static int d; // error: inconsistent linkage
+	@Test
 	public void test7_1_1s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1132,6 +1196,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// g(a); //error: S is incomplete
 	// f(); //error: S is incomplete
 	// }
+	@Test
 	public void test7_1_1s8a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1140,6 +1205,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// mutable const int* p; // OK
 	// mutable int* const q; // illformed
 	// };
+	@Test
 	public void test7_1_1s8b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1147,6 +1213,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef int MILES, *KLICKSP;
 	// MILES distance;
 	// extern KLICKSP metricp;
+	@Test
 	public void test7_1_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1156,6 +1223,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef int I;
 	// typedef int I;
 	// typedef I I;
+	@Test
 	public void test7_1_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1163,6 +1231,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class complex { //
 	// };
 	// typedef int complex; // error: redefinition
+	@Test
 	public void test7_1_3s3a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1170,6 +1239,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef int complex;
 	// class complex { //
 	// }; // error: redefinition
+	@Test
 	public void test7_1_3s3b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1181,11 +1251,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef struct S T;
 	// S a = T(); // OK
 	// struct T * p; // error
+	@Test
 	public void test7_1_3s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// typedef struct { } *ps, S; // S is the class name for linkage purposes
+	@Test
 	public void test7_1_3s5a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1194,6 +1266,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// S(); //error: requires a return type because S is
 	// // an ordinary member function, not a constructor
 	// } S;
+	@Test
 	public void test7_1_3s5b() throws Exception {
 		IASTTranslationUnit tu = parseWithErrors(getAboveComment(), ParserLanguage.CPP);
 		IASTCompositeTypeSpecifier comp = getCompositeType(tu, 0);
@@ -1215,6 +1288,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	return x * x;
 	//	}
 	//	constexpr pixel large(4);
+	@Test
 	public void test7_1_5s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1233,6 +1307,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int* iq = const_cast<int*>(ciq); // cast required
 	// *iq = 4; // undefined: modifies a const object
 	// }
+	@Test
 	public void test7_1_5_1s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1256,12 +1331,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p->x.i = 99; // wellformed: mutable member can be modified
 	// p->x.j = 99; // undefined: modifies a const member
 	// }
+	@Test
 	public void test7_1_5_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// enum { a, b, c=0 };
 	// enum { d, e, f=e+2 };
+	@Test
 	public void test7_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1270,6 +1347,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// const int x = 12;
 	// { enum { x = x }; }
 	// }
+	@Test
 	public void test7_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1281,6 +1359,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// if (*cp == blue) // ...
 	// return 0;
 	// }
+	@Test
 	public void test7_2s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1302,6 +1381,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(p->left); // OK
 	// // ...
 	// }
+	@Test
 	public void test7_2s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -1314,6 +1394,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void g() { i++; } // Inner::i
 	// }
 	// }
+	@Test
 	public void test7_3_1s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1333,6 +1414,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A::i++; // A::unique::i
 	// j++; // A::unique::j
 	// }
+	@Test
 	public void test7_3_1_1s1() throws Exception {
 		String[] problems = { "i" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
@@ -1342,6 +1424,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f() { //
 	// }
 	// }
+	@Test
 	public void test7_3_1_2s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1359,6 +1442,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// namespace R {
 	// void Q::V::g() {  } // error: R doesn't enclose Q
 	// }
+	@Test
 	public void test7_3_1_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 2);
 	}
@@ -1388,6 +1472,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A::X::f(x); //error: f is not a member of A::X
 	// A::X::Y::g(); // error: g is not a member of A::X::Y
 	// }
+	@Test
 	public void test7_3_1_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 4);
 	}
@@ -1396,6 +1481,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// namespace CWVLN = Company_with_very_long_name;
 	// namespace CWVLN = Company_with_very_long_name; // OK: duplicate
 	// namespace CWVLN = CWVLN;
+	@Test
 	public void test7_3_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1411,6 +1497,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(int) { f('c'); } // calls B::f(char)
 	// void g(int) { g('c'); } // recursively calls D::g(int)
 	// };
+	@Test
 	public void test7_3_3s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1424,6 +1511,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// using B::x; // OK: x is a union member of base B
 	// using C::g; // error: C isn't a base of D2
 	// };
+	@Test
 	public void test7_3_3s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -1438,6 +1526,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// using A::f<double>; // illformed
 	// using A::X<int>; // illformed
 	// };
+	@Test
 	public void test7_3_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1453,6 +1542,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// using X::s; // error: X::s is a class member
 	// // and this is not a member declaration.
 	// }
+	@Test
 	public void test7_3_3s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1470,6 +1560,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X::f(); //calls ::f
 	// X::g(); //calls A::g
 	// }
+	@Test
 	public void test7_3_3s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1494,6 +1585,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// using B::i;
 	// using B::i; // error: double member declaration
 	// };
+	@Test
 	public void test7_3_3s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1516,6 +1608,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // that is, for A::f(int) and A::f(char).
 	// f('a'); //calls f(char)
 	// }
+	@Test
 	public void test7_3_3s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1541,6 +1634,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p->g(1); //calls B::g(int)
 	// p->g('a'); //calls D::g(char)
 	// }
+	@Test
 	public void test7_3_3s12() throws Exception { // raised bug 161562 for that
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1571,6 +1665,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// x = 99; // assigns to A::x
 	// struct x x1; // x1 has class type B::x
 	// }
+	@Test
 	public void test7_3_3s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1593,6 +1688,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(int); // error:
 	// // f(int) conflicts with C::f(int) and B::f(int)
 	// }
+	@Test
 	public void test7_3_3s11() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -1611,6 +1707,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// return d>
 	// x(); // ambiguous: B::x or C::x
 	// }
+	@Test
 	public void test7_3_3s14() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -1628,6 +1725,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// public:
 	// using A::g; // B::g is a public synonym for A::g
 	// };
+	@Test
 	public void test7_3_3s15() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1657,6 +1755,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f4() {
 	// i = 5; // illformed; neither i is visible
 	// }
+	@Test
 	public void test7_3_4s1() throws Exception {
 		String[] problems = { "i", "i" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
@@ -1674,6 +1773,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// using namespace N;
 	// i = 7; // error: both M::i and N::i are visible
 	// }
+	@Test
 	public void test7_3_4s2a() throws Exception {
 		String[] problems = { "i" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
@@ -1699,6 +1799,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int n = j; // D::j hides B::j
 	// }
 	// }
+	@Test
 	public void test7_3_4s2b() throws Exception {
 		String[] problems = { "k" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
@@ -1729,6 +1830,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(1); //error: ambiguous: D::f(int) or E::f(int)?
 	// f('a'); //OK: D::f(char)
 	// }
+	@Test
 	public void test7_3_4s5() throws Exception {
 		String[] problems = { "d1", "f" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
@@ -1738,6 +1840,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// extern "C" {
 	// double sqrt(double); // C linkage
 	// }
+	@Test
 	public void test7_5s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -1753,6 +1856,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void (*pf2)(FUNC*); // the name of the variable pf2 has C++ linkage and
 	// // the type of pf2 is pointer to C++ function that
 	// // takes one parameter of type pointer to C function
+	@Test
 	public void test7_5s4a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1777,6 +1881,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // C function
 	// };
 	// }
+	@Test
 	public void test7_5s4b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1800,12 +1905,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // definition for the function h
 	// // with C language linkage
 	// // A::h and ::h refer to the same function
+	@Test
 	public void test7_5s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// extern "C" double f();
 	// static double f(); // error
+	@Test
 	public void test7_5s7a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1814,11 +1921,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// extern "C" {
 	// int i; // definition
 	// }
+	@Test
 	public void test7_5s7b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// extern "C" static void f(); // error
+	@Test
 	public void test7_5s7c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1829,6 +1938,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int (*p3i)[3];
 	// int *f();
 	// int (*pf)(double);
+	@Test
 	public void test8_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1843,6 +1953,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// S y((int)a); // object declaration
 	// S z = int(a); // object declaration
 	// }
+	@Test
 	public void test8_2s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1853,6 +1964,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// S<int()> x; // typeid
 	// S<int(1)> y; // expression (illformed)
+	@Test
 	public void test8_2s4() throws Exception {
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 		NameCollector col = new NameCollector();
@@ -1872,6 +1984,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// sizeof(int(1)); // expression
 	// // sizeof(int()); // typeid (illformed)
 	// }
+	@Test
 	public void test8_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1881,6 +1994,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// (int(1)); //expression
 	// // (int())1; //typeid (illformed)
 	// }
+	@Test
 	public void test8_2s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1893,6 +2007,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(1); //error: cannot convert 1 to function pointer
 	// f(g); //OK
 	// }
+	@Test
 	public void test8_2s7a() throws Exception { // TODO raised bug 90633
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 1);
@@ -1905,6 +2020,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class C { };
 	// void h(int *(C[10])); // void h(int *(*_fp)(C _parm[10]));
 	// // not: void h(int *C[10]);
+	@Test
 	public void test8_2s7b() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 0);
@@ -1920,11 +2036,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void A::B::f() { } // illformed: the declarator must not be
 	// // qualified with A::
 	// }
+	@Test
 	public void test8_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// int unsigned i;
+	@Test
 	public void test8_3s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1940,6 +2058,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// pc = p;
 	// ppc = &pc;
 	// }
+	@Test
 	public void test8_3_1s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1955,6 +2074,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p = pc; // error
 	// ppc = &p; // error
 	// }
+	@Test
 	public void test8_3_1s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1965,6 +2085,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// *ppc = &ci; // OK, but would make p point to ci ...
 	// *p = 5; // clobber ci
 	// }
+	@Test
 	public void test8_3_1s2c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -1972,6 +2093,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef int& A;
 	// const A aref = 3; // illformed;
 	// // nonconst reference initialized with rvalue
+	@Test
 	public void test8_3_2s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2003,6 +2125,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		link* q = new link;
 	//		h(q);
 	//	}
+	@Test
 	public void test8_3_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2026,6 +2149,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// (obj.*pmf)(7); //call a function member of obj
 	// // with the argument 7
 	// }
+	@Test
 	public void test8_3_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2033,17 +2157,20 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef int A[5], AA[2][3];
 	// typedef const A CA; // type is ''array of 5 const int''
 	// typedef const AA CAA; // type is ''array of 2 array of 3 const int''
+	@Test
 	public void test8_3_4s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// float fa[17], *afp[17];
 	// static int x3d[3][5][7];
+	@Test
 	public void test8_3_4s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// int x[3][5];
+	@Test
 	public void test8_3_4s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2054,6 +2181,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// printf("hello world");
 	// printf("a=%d b=%d", a, b);
 	// }
+	@Test
 	public void test8_3_5s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2063,12 +2191,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// const F f; // illformed:
 	// // not equivalent to: void f() const;
 	// };
+	@Test
 	public void test8_3_5s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// #define FILE int
 	// int fseek(FILE*, long, int);
+	@Test
 	public void test8_3_5s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2077,6 +2207,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// F fv; // OK: equivalent to void fv();
 	// // F fv { } // illformed
 	// void fv() { } // OK: definition of fv
+	@Test
 	public void test8_3_5s7a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2088,6 +2219,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// FIC f; // OK
 	// };
 	// FIC S::*pm = &S::f; // OK
+	@Test
 	public void test8_3_5s7b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2098,12 +2230,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// *fpi(int),
 	// (*pif)(const char*, const char*),
 	// (*fpif(int))(int);
+	@Test
 	public void test8_3_5s9a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// typedef int IFUNC(int);
 	// IFUNC* fpif(int);
+	@Test
 	public void test8_3_5s9b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2112,6 +2246,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f() {
 	// point(1,2); point(1); point();
 	// }
+	@Test
 	public void test8_3_6s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2137,6 +2272,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// f(6); //OK, calls f(6, 7)
 	// }
+	@Test
 	public void test8_3_6s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2151,6 +2287,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// g(); // g(f(::a))
 	// }
 	// }
+	@Test
 	public void test8_3_6s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2163,6 +2300,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// { } // specified in class scope
 	// void C::g(int i = 88, int j) // in this translation unit,
 	// { }
+	@Test
 	public void test8_3_6s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2173,6 +2311,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// extern void g(int x = i); // error
 	// // ...
 	// }
+	@Test
 	public void test8_3_6s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2180,6 +2319,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class A {
 	// void f(A* p = this) { } // error
 	// };
+	@Test
 	public void test8_3_6s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2190,6 +2330,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef int I;
 	// int g(float I, int b = I(2)); // error: parameter I found
 	// int h(int a, int b = sizeof(a)); // error, parameter a used
+	@Test
 	public void test8_3_6s9a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2202,6 +2343,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int mem2(int i = b); // OK; use X::b
 	// static int b;
 	// };
+	@Test
 	public void test8_3_6s9b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2214,6 +2356,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// int (*p1)(int) = &f;
 	// int (*p2)() = &f; // error: type mismatch
+	@Test
 	public void test8_3_6s9c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2231,6 +2374,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// pa->f(); //OK, calls pa->B::f(7)
 	// pb->f(); //error: wrong number of arguments for B::f()
 	// }
+	@Test
 	public void test8_3_6s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2240,6 +2384,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int m = (a > b) ? a : b;
 	// return (m > c) ? m : c;
 	// }
+	@Test
 	public void test8_4s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2257,6 +2402,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//  void g() volatile const& {}
 	//  void h() volatile const&& {}
 	//};
+	@Test
 	public void test8s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2265,6 +2411,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// //printf("a = %d",a);
 	// }
+	@Test
 	public void test8_4s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2276,6 +2423,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// int X::a = 1;
 	// int X::b = a; // X::b = X::a
+	@Test
 	public void test8_5s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2287,11 +2435,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int j;
 	// } b;
 	// } a = { 1, { 2, 3 } };
+	@Test
 	public void test8_5_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// int x[] = { 1, 3, 5 };
+	@Test
 	public void test8_5_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2301,17 +2451,20 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// static int s;
 	// int j;
 	// } a = { 1, 2 };
+	@Test
 	public void test8_5_1s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// char cv[4] = { 'a', 's', 'd', 'f', 0 }; // error
+	@Test
 	public void test8_5_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// struct S { int a; char* b; int c; };
 	// S ss = { 1, "asdf" };
+	@Test
 	public void test8_5_1s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2321,6 +2474,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// S s;
 	// int i;
 	// } a = { { } , 3 };
+	@Test
 	public void test8_5_1s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2329,6 +2483,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// float y[4][3] = {
 	// { 1 }, { 2 }, { 3 }, { 4 }
 	// };
+	@Test
 	public void test8_5_1s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2338,6 +2493,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// { 2, 4, 6 },
 	// { 3, 5, 7 },
 	// };
+	@Test
 	public void test8_5_1s11a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2345,6 +2501,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// float y[4][3] = {
 	// 1, 3, 5, 2, 4, 6, 3, 5, 7
 	// };
+	@Test
 	public void test8_5_1s11b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2359,6 +2516,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// A a;
 	// B b = { 4, a, a };
+	@Test
 	public void test8_5_1s12() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2369,17 +2527,20 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// u c = 1; // error
 	// u d = { 0, "asdf" }; // error
 	// u e = { "asdf" }; // error
+	@Test
 	public void test8_5_1s15() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// char msg[] = "Syntax error on line %s";
+	@Test
 	public void test8_5_2s1() throws Exception {
 		// raised bug 90647
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// 	char cv[4] = "asdf"; // error
+	@Test
 	public void test8_5_2s2() throws Exception {
 		// we do not check the size of an array, which is ok.
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
@@ -2387,6 +2548,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 
 	// int& r1; // error: initializer missing
 	// extern int& r2; // OK
+	@Test
 	public void test8_5_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2414,6 +2576,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f5(b);
 	//		f6(B());
 	//	}
+	@Test
 	public void test8_5_3s5a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2425,6 +2588,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		int i = 2;
 	//		f2(i);    // error: type mismatch and reference not const
 	//	}
+	@Test
 	public void test8_5_3s5b() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper(ParserLanguage.CPP);
 		helper.assertProblem("f1(2", "f1");
@@ -2450,6 +2614,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f4(x);    // bound directly to the result of operator B
 	//		f3(X());  // error: lvalue-to-rvalue conversion applied to result of operator int&
 	//	}
+	@Test
 	public void test8_5_3s5c() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper(ParserLanguage.CPP);
 		helper.assertNonProblem("f1(f", "f1");
@@ -2473,6 +2638,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f2(d);    // error: copying lvalue of related type
 	//		f2(i);
 	//	}
+	@Test
 	public void test8_5_3s5d() throws Exception {
 		BindingAssertionHelper helper = getAssertionHelper(ParserLanguage.CPP);
 		helper.assertNonProblem("f1(2", "f1");
@@ -2495,6 +2661,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int f(Y);
 	// struct S { int a; };
 	// struct S { int a; }; // error, double definition
+	@Test
 	public void test9_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2513,6 +2680,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// stat(ps); //call stat()
 	// // ...
 	// }
+	@Test
 	public void test9_1s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2526,6 +2694,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct s { char* p; }; // define local struct s
 	// struct s; // redeclaration, has no effect
 	// }
+	@Test
 	public void test9_1s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2539,6 +2708,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // ...
 	// friend Vector operator*(Matrix&, Vector&);
 	// };
+	@Test
 	public void test9_1s2c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2549,11 +2719,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct s* p = new struct s; // global s
 	// p->a = s; // local s
 	// }
+	@Test
 	public void test9_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// class A * A;
+	@Test
 	public void test9_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2565,6 +2737,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// tnode *right;
 	// };
 	// tnode s, *sp;
+	@Test
 	public void test9_2s11() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2575,6 +2748,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(T);
 	// };
 	// void X::f(T t = count) { }
+	@Test
 	public void test9_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2589,6 +2763,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// fv S::* pmfv1 = &S::memfunc1;
 	// fv S::* pmfv2 = &S::memfunc2;
 	// fvc S::* pmfv3 = &S::memfunc3;
+	@Test
 	public void test9_3s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2614,6 +2789,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// n1.set("abc",&n2,0);
 	// n2.set("def",0,0);
 	// }
+	@Test
 	public void test9_3_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2622,6 +2798,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void g() const;
 	// void h() const volatile;
 	// };
+	@Test
 	public void test9_3_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2633,6 +2810,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int h() const { return a++; } // error
 	// };
 	// int s::f() const { return a; }
+	@Test
 	public void test9_3_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2651,6 +2829,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// y.f();
 	// y.g(); //error
 	// }
+	@Test
 	public void test9_3_2s4() throws Exception {
 		String[] problems = { "g" };
 		final String code = getAboveComment();
@@ -2670,6 +2849,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// process::reschedule(); // OK: no object necessary
 	// g().reschedule(); // g() is called
 	// }
+	@Test
 	public void test9_4s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2682,6 +2862,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// static int i;
 	// };
 	// int Y::i = g(); // equivalent to Y::g();
+	@Test
 	public void test9_4s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2692,6 +2873,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// process* process::running = get_main();
 	// process* process::run_chain = running;
+	@Test
 	public void test9_4_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2704,6 +2886,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p = "Jennifer";
 	// // ...
 	// }
+	@Test
 	public void test9_5s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2713,6 +2896,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// aa = 1; // error
 	// ptr->aa = 1; // OK
 	// }
+	@Test
 	public void test9_5s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2727,6 +2911,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// if (a.b == t) // shall yield true
 	// {  }
 	// }
+	@Test
 	public void test9_6s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2754,6 +2939,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// };
 	// inner* p = 0; // error: inner not in scope
+	@Test
 	public void test9_7s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2767,6 +2953,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// int enclose::inner::x = 1;
 	// void enclose::inner::f(int i) {  }
+	@Test
 	public void test9_7s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2777,6 +2964,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class I1 {}; // definition of nested class
 	// };
 	// class E::I2 {}; // definition of nested class
+	@Test
 	public void test9_7s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2796,6 +2984,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // ...
 	// }
 	// local* p = 0; // error: local not in scope
+	@Test
 	public void test9_8s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2810,6 +2999,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// Y c; // error
 	// X::Y d; // OK
 	// X::I e; // OK
+	@Test
 	public void test9_9s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2826,6 +3016,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// public:
 	// int c;
 	// };
+	@Test
 	public void test10s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2834,12 +3025,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class B {  };
 	// class C {  };
 	// class D : public A, public B, public C {  };
+	@Test
 	public void test10_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// class X {  };
 	// class Y : public X, public X {  }; // illformed
+	@Test
 	public void test10_1s3a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2850,6 +3043,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class C : public A, public B { void f();  }; // wellformed
 	// class D : public A, public L { void f();  }; // wellformed
 	//
+	@Test
 	public void test10_1s3b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2883,6 +3077,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// pc->h(); //OK
 	// pc->h(1); //OK
 	// }
+	@Test
 	public void test10_2s3a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2895,6 +3090,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// i; //finds U::i in two ways: as W::i and U::i in V
 	// // no ambiguity because U::i is static
 	// }
+	@Test
 	public void test10_2s3b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2910,6 +3106,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class C : public A, public B {
 	// int f() { return A::f() + B::f(); }
 	// };
+	@Test
 	public void test10_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2932,6 +3129,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// e; // OK: only one e (enumerator)
 	// pd->a++; //error, ambiguous: two as in D
 	// }
+	@Test
 	public void test10_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -2946,6 +3144,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// class C : public virtual V, public W { };
 	// class D : public B, public C { void glorp(); };
+	@Test
 	public void test10_2s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2962,6 +3161,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A* pa = &d; // error, ambiguous: C's A or B's A?
 	// V* pv = &d; // OK: only one V subobject
 	// }
+	@Test
 	public void test10_2s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -2980,6 +3180,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// c.f(); //calls B::f, the final overrider
 	// c.C::f(); //calls A::f because of the usingdeclaration
 	// }
+	@Test
 	public void test10_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3021,6 +3222,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // convert the result to B*
 	// dp->vf2(); //illformed: argument mismatch
 	// }
+	@Test
 	public void test10_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3046,6 +3248,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// ap->f(); //calls D::B1::f
 	// dp->f(); //illformed: ambiguous
 	// }
+	@Test
 	public void test10_3s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3064,6 +3267,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct Okay : VB1, VB2 {
 	// void f();
 	// };
+	@Test
 	public void test10_3s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3077,6 +3281,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// VB1a* vb1ap = new Da;
 	// vb1ap->f(); //calls VB2::f
 	// }
+	@Test
 	public void test10_3s11() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3084,6 +3289,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class B { public: virtual void f(); };
 	// class D : public B { public: void f(); };
 	// void D::f() { B::f(); }
+	@Test
 	public void test10_3s12() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3099,6 +3305,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// virtual void draw() = 0; // pure virtual
 	// // ...
 	// };
+	@Test
 	public void test10_4s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3117,6 +3324,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// shape f(); // error
 	// void g(shape); // error
 	// shape& h(shape&); // OK
+	@Test
 	public void test10_4s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3127,6 +3335,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void rotate(int) {}
 	// // ab_circle::draw() is a pure virtual
 	// };
+	@Test
 	public void test10_4s4a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3137,6 +3346,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void rotate(int) {}
 	// void draw(); // a definition is required somewhere
 	// };
+	@Test
 	public void test10_4s4b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3147,6 +3357,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct S {
 	// int a; // S::a is public by default
 	// };
+	@Test
 	public void test11s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3162,6 +3373,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A::BB x; // OK, typedef name A::BB is public
 	// A::B y; // access error, A::B is private
 	// }
+	@Test
 	public void test11s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3176,6 +3388,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A::I g(A::I p = A::x);
 	// A::I g(A::I p) { return 0; }
 	// A::I A::x = 0;
+	@Test
 	public void test11s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3186,6 +3399,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// };
 	// int D::E::m = 1; // OK, no access error on private E
+	@Test
 	public void test11s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3196,6 +3410,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int b; // X::b is public
 	// int c; // X::c is public
 	// };
+	@Test
 	public void test11_1s1a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3209,6 +3424,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// public:
 	// int d; // S::d is public
 	// };
+	@Test
 	public void test11s1b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3218,6 +3434,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// private:
 	// class A { }; // error: cannot change access
 	// };
+	@Test
 	public void test11_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3231,6 +3448,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct D6 : B {  }; // B public by default
 	// class D7 : protected B {  };
 	// struct D8 : protected B {  };
+	@Test
 	public void test11_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3256,6 +3474,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// B* bp2 = (B*)this; // OK with cast
 	// bp2->mi = 3; // OK: access through a pointer to B.
 	// }
+	@Test
 	public void test11_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3271,6 +3490,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p->i = 1; // OK: B* can be implicitly cast to A*,
 	// // and f has access to i in A
 	// }
+	@Test
 	public void test11_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3289,6 +3509,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// friend_set(&obj,10);
 	// obj.member_set(10);
 	// }
+	@Test
 	public void test11_4s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3306,6 +3527,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // to declare members of nested class of X
 	// };
 	// };
+	@Test
 	public void test11_4s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3320,6 +3542,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class Z {
 	// int v[X::a]; // error: X::a is private
 	// };
+	@Test
 	public void test11_4s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3328,6 +3551,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// friend char* X::foo(int);
 	// // ...
 	// };
+	@Test
 	public void test11_4s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3336,6 +3560,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// friend void f() { } // definition of global f, a friend of M,
 	// // not the definition of a member function
 	// };
+	@Test
 	public void test11_4s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3361,6 +3586,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // despite being derived from a friend
 	// }
 	// };
+	@Test
 	public void test11_4s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3381,6 +3607,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X *px; // OK, but ::X is found
 	// Z *pz; // error, no Z is found
 	// }
+	@Test
 	public void test11_4s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3425,6 +3652,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p1->i = 2; // illformed
 	// p2->i = 3; // illformed
 	// }
+	@Test
 	public void test11_5s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3446,6 +3674,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // D::f() is invoked
 	// pd->f(); //error: D::f() is private
 	// }
+	@Test
 	public void test11_6s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3456,6 +3685,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class C : public A, public B {
 	// void f() { W::f(); } // OK
 	// };
+	@Test
 	public void test11_7s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3476,6 +3706,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// return p->y; // error: I::y is private
 	// }
 	// };
+	@Test
 	public void test11_8s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3491,6 +3722,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// C::B *t; // error, C::B is inaccessible
 	// };
 	// };
+	@Test
 	public void test11_8s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3500,6 +3732,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// C(); //declares the constructor
 	// };
 	// C::C() { } // defines the constructor
+	@Test
 	public void test12_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3518,6 +3751,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// << '\
 	// ';
 	// }
+	@Test
 	public void test12_1s15() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3537,6 +3771,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X b = f(X(2));
 	// a = f(a);
 	// }
+	@Test
 	public void test12_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3552,6 +3787,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// C obj1;
 	// const C& cr = C(16)+C(23);
 	// C obj2;
+	@Test
 	public void test12_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3570,6 +3806,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int b = a; // error:
 	// // a.operator X().operator int() not tried
 	// int c = X(a); // OK: a.operator X().operator int()
+	@Test
 	public void test12_3s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3591,6 +3828,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // ...
 	// }
 	// }
+	@Test
 	public void test12_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3608,6 +3846,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// a = 2; // a = X(2)
 	// f(3); // f(X(3))
 	// }
+	@Test
 	public void test12_3_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3625,6 +3864,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// Z* p = new Z(1); // OK: direct initialization syntax used
 	// Z a4 = (Z)1; // OK: explicit cast used
 	// Z a5 = static_cast<Z>(1); // OK: explicit cast used
+	@Test
 	public void test12_3_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3640,6 +3880,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// i = (int)a;
 	// i = a;
 	// }
+	@Test
 	public void test12_3_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3651,6 +3892,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// if (a) { // ...
 	// }
 	// }
+	@Test
 	public void test12_3_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3671,6 +3913,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		B_ptr->B_alias::~B(); //4        // calls B's destructor
 	//		B_ptr->B_alias::~B_alias(); //5  // calls B's destructor
 	//	}
+	@Test
 	public void test12_4s12() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, false, 0);
@@ -3703,6 +3946,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(p);
 	// p->X::~X(); //cleanup
 	// }
+	@Test
 	public void test12_4s13() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3720,6 +3964,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// new D1[i]; // calls ::operator new[](size_t)
 	// new D1; // illformed: ::operator new(size_t) hidden
 	// }
+	@Test
 	public void test12_5s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3734,6 +3979,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void operator delete(void*, size_t);
 	// void operator delete[](void*);
 	// };
+	@Test
 	public void test12_5s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3763,6 +4009,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // copy it into f
 	// complex g = { 1, 2 }; // error; constructor is required
 	// }
+	@Test
 	public void test12_6_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3782,6 +4029,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// float f;
 	// complex c;
 	// } x = { 99, 88.8, 77.7 };
+	@Test
 	public void test12_6_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3791,6 +4039,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct B { };
 	// struct C: public A, public B { C(); };
 	// C::C(): global_A() { } // meminitializer for base A
+	@Test
 	public void test12_6_2s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3799,6 +4048,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct B: public virtual A { };
 	// struct C: public A, public B { C(); };
 	// C::C(): A() { } // illformed: which A?
+	@Test
 	public void test12_6_2s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -3813,6 +4063,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// D::D(int a) : B2(a+1), B1(a+2), c(a+3), b(a+4)
 	// {  }
 	// D d(10);
+	@Test
 	public void test12_6_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3848,6 +4099,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A a(2); // use V(int)
 	// B b(3); // use V()
 	// C c(4); // use V()
+	@Test
 	public void test12_6_2s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3861,6 +4113,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// const int& r;
 	// X(int i): r(a), b(i), i(i), j(this->i) {}
 	// };
+	@Test
 	public void test12_6_2s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3888,6 +4141,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // but base C not yet initialized
 	// i(f()) {} // welldefined: bases are all initialized
 	// };
+	@Test
 	public void test12_6_2s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3905,6 +4159,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// extern X xobj;
 	// int* p3 = &xobj.i; // OK, X is a POD class
 	// X xobj;
+	@Test
 	public void test12_7s1_a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3917,6 +4172,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// Y() : p(&x.j) // undefined, x is not yet constructed
 	// { }
 	// };
+	@Test
 	public void test12_7s1_b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3947,6 +4203,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// v->g(); // v is base of B, the call is welldefined, calls B::g
 	// a->f(); //undefined behavior, a's type not a base of B
 	// }
+	@Test
 	public void test12_7s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3974,6 +4231,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// dynamic_cast<B*>(a); // undefined behavior,
 	// // a has type A*, A not a base of B
 	// }
+	@Test
 	public void test12_7s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3987,6 +4245,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X a(1); // calls X(int);
 	// X b(a, 0); // calls X(const X&, int);
 	// X c = b; // calls X(const X&, int);
+	@Test
 	public void test12_8s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -3997,6 +4256,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X(const X&);
 	// X(X&); //OK
 	// };
+	@Test
 	public void test12_8s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4007,6 +4267,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// const X cx;
 	// X x = cx; // error - X::X(X&) cannot copy cx into x
+	@Test
 	public void test12_8s2c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4018,6 +4279,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void g() {
 	// S a( f() ); // does not instantiate member template
 	// }
+	@Test
 	public void test12_8s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4026,6 +4288,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void h(int (*)()); // redeclaration of h(int())
 	// void h(int x()) { } // definition of h(int())
 	// void h(int (*x)()) { } // illformed: redefinition of h(int())
+	@Test
 	public void test12_8s3d() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 	}
@@ -4033,6 +4296,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct X {
 	// X(const X&, int);
 	// };
+	@Test
 	public void test12_8s4a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4041,6 +4305,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X(const X&, int);
 	// };
 	// X::X(const X& x, int i =0) {  }
+	@Test
 	public void test12_8s4b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4055,6 +4320,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// x = cx; // error:
 	// // X::operator=(X&) cannot assign cx into x
 	// }
+	@Test
 	public void test12_8s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4063,6 +4329,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct A : virtual V { };
 	// struct B : virtual V { };
 	// struct C : B, A { };
+	@Test
 	public void test12_8s13() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4080,6 +4347,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// return t;
 	// }
 	// Thing t2 = f();
+	@Test
 	public void test12_8s15() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4090,6 +4358,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// abs(1); //call abs(int);
 	// abs(1.0); //call abs(double);
 	// }
+	@Test
 	public void test13s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4103,6 +4372,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void g() const; // OK: no static g
 	// void g() const volatile; // OK: no static g
 	// };
+	@Test
 	public void test12_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4112,6 +4382,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(Int i); // OK: redeclaration of f(int)
 	// void f(int i) {  }
 	// void f(Int i) {  } // error: redefinition of f(int)
+	@Test
 	public void test12_1s3a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 	}
@@ -4119,6 +4390,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// enum E { a };
 	// void f(int i) { }
 	// void f(E i) {  }
+	@Test
 	public void test12_1s3b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4131,6 +4403,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int g(char[5][10]); // same as g(char(*)[10]);
 	// int g(char[7][10]); // same as g(char(*)[10]);
 	// int g(char(*)[20]); // different from g(char(*)[10]);
+	@Test
 	public void test12_1s3c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4140,6 +4413,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int f (const int); // redeclaration of f(int)
 	// int f (int) {  } // definition of f(int)
 	// int f (cInt) {  } // error: redefinition of f(int)
+	@Test
 	public void test12_8s3e() throws Exception {
 		String[] problems = { "f" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
@@ -4155,6 +4429,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f (1); // OK: call f(int, int)
 	// f (); // Error: f(int, int) or f()?
 	// }
+	@Test
 	public void test12_8s3f() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4167,6 +4442,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// public:
 	// int f(char*);
 	// };
+	@Test
 	public void test13_2s1a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4186,6 +4462,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// pd->B::f(1); //OK
 	// pd->f("Ben"); //OK, calls D::f
 	// }
+	@Test
 	public void test13_2s1b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4205,6 +4482,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// callee(88, 99); // error: only callee(int) in scope
 	// }
 	// }
+	@Test
 	public void test13_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4220,6 +4498,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// buffer(int s) { p = new char[size = s]; }
 	// // ...
 	// };
+	@Test
 	public void test13_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4235,6 +4514,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // ...
 	// };
 	// T a = 1; // illformed: T(C(1)) not tried
+	@Test
 	public void test13_3_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4249,6 +4529,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// } a;
 	// int i = a(1); // Calls f1 via pointer returned from
 	// // conversion function
+	@Test
 	public void test13_3_1_1_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4268,6 +4549,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // user defined types exist which
 	// // would perform the operation.
 	// }
+	@Test
 	public void test13_3_1_2s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4280,6 +4562,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A a, b;
 	// a + b; // operator+(a,b) chosen over int(a) + int(b)
 	// }
+	@Test
 	public void test13_3_1_2s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4294,6 +4577,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // a conversion to int
 	// float x = a; // ambiguous: both possibilities require conversions,
 	// // and neither is better than the other
+	@Test
 	public void test13_3_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4313,6 +4597,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // &i -> int* is better than &i -> const int*
 	// // and c -> int is better than c -> short
 	// }
+	@Test
 	public void test13_3_3s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4326,6 +4611,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// B b;
 	// f(b); //ambiguous because b -> C via constructor and
 	// // b -> A via constructor or conversion function.
+	@Test
 	public void test13_3_3_1_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4336,6 +4622,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int f(B&);
 	// int i = f(b); // Calls f(B&), an exact match, rather than
 	// // f(A&), a conversion
+	@Test
 	public void test13_3_3_1_4s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4344,6 +4631,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int f(int *);
 	// int i;
 	// int j = f(&i); // Calls f(int *)
+	@Test
 	public void test13_3_3_2s3a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4365,6 +4653,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// a.f(); //CallsX::f() const
 	// b.f(); //Calls X::f()
 	// }
+	@Test
 	public void test13_3_3_2s3b() throws Exception {
 		String[] problems = { "g" };
 		parse(getAboveComment(), ParserLanguage.CPP, problems);
@@ -4377,6 +4666,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int f(float);
 	// int i = f(a); // Calls f(int), because short -> int is
 	// // better than short -> float.
+	@Test
 	public void test13_3_3_2s3c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4388,6 +4678,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int f(A *);
 	// int f(B *);
 	// int i = f(pc); // Calls f(B *)
+	@Test
 	public void test13_3_3_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4401,6 +4692,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int (*p3)(long) = &X::f; // OK
 	// int (X::*p4)(long) = &X::f; // error: mismatch
 	// int (*p6)(long) = &(X::f); // OK
+	@Test
 	public void test13_4s5b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4414,6 +4706,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// complex z = a.operator+(b); // complex z = a+b;
 	// void* p = operator new(sizeof(int)*n);
 	// }
+	@Test
 	public void test13_5s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4437,6 +4730,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// dobj1 = dobj2; // calls implicitlydeclared
 	// // D::operator=(const D&)
 	// }
+	@Test
 	public void test13_5_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4459,6 +4753,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// operator++(b); //explicit call: like ++b;
 	// operator++(b, 0); // explicit call: like b++;
 	// }
+	@Test
 	public void test13_5_7s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4472,6 +4767,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int& ri = i; // error: nonconst reference bound to temporary
 	// const int& cri = i; // OK: const reference bound to temporary
 	// }
+	@Test
 	public void test14_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4479,6 +4775,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<double d> class X; // error
 	// template<double* pd> class Y; // OK
 	// template<double& rd> class Z; // OK
+	@Test
 	public void test14_1s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4491,40 +4788,47 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int v[5];
 	// R<v> y; // OK due to implicit argument conversion
 	// S<v> z; // OK due to both adjustment and conversion
+	@Test
 	public void test14_1s8() throws Exception { // TODO raised bug 90668
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T1, class T2 = int> class A;
 	// template<class T1 = int, class T2> class A;
+	@Test
 	public void test14_1s10a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T1 = int, class T2 = int> class A;
+	@Test
 	public void test14_1s10b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T1 = int, class T2> class B; // error
+	@Test
 	public void test14_1s11() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T = int> class X;
 	// template<class T = int> class X {  }; // error
+	@Test
 	public void test14_1s12() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T, T* p, class U = T> class X {  };
 	// template<class T> void f(T* p = new T);
+	@Test
 	public void test14_1s13() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<int i = (3 > 4) > // OK
 	// class Y {  };
+	@Test
 	public void test14_1s15() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4535,6 +4839,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// Y< X<1> > x3; // OK
 	// // with C++0x this is no longer valid:
 	// // Y<X<6>> 1> > x4; // OK: Y< X< (6>>1) > >
+	@Test
 	public void test14_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4555,6 +4860,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// T::template adjust<100>();
 	// // OK: < starts explicit qualification
 	// }
+	@Test
 	public void test14_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4579,6 +4885,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// v1[3] = 7;
 	// v2[3] = v3.elem(4) = dcomplex(7,8);
 	// }
+	@Test
 	public void test14_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4594,6 +4901,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // OK: even though Y::S is private
 	// };
 	// X<Y::S> y; // error: S not accessible
+	@Test
 	public void test14_3s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4605,6 +4913,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p->A<int>::~A(); // OK: destructor call
 	// q->A<int>::~A<int>(); // OK: destructor call
 	// }
+	@Test
 	public void test14_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4616,6 +4925,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X<S> x3; // error: local type used as templateargument
 	// X<S*> x4; // error: pointer to local type used as templateargument
 	// }
+	@Test
 	public void test14_3_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4626,6 +4936,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typedef int function();
 	// A<function> a; // illformed: would declare A<function>::t
 	// // as a static member function
+	@Test
 	public void test14_3_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4644,6 +4955,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // so c.y.x has type int
 	// // V<int*> within C<A> uses the partial specialization,
 	// // so c.z.x has type long
+	@Test
 	public void test14_3_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4651,6 +4963,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class E, int size> class buffer {  };
 	// buffer<char,2*512> x;
 	// buffer<char,1024> y;
+	@Test
 	public void test14_2s1a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4660,6 +4973,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// list<int,&error_handler2> x2;
 	// list<int,&error_handler2> x3;
 	// list<char,&error_handler2> x4;
+	@Test
 	public void test14_4s1b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4673,6 +4987,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// T& elem(int i) { return v[i]; }
 	// // ...
 	// };
+	@Test
 	public void test14_5_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4682,6 +4997,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f2();
 	// };
 	// template<class T2, class T1> void A<T2,T1>::f1() { } // OK
+	@Test
 	public void test14_5_1s3a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4701,6 +5017,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// if (i<0 || sz<=i) error("Array: range error");
 	// return v[i];
 	// }
+	@Test
 	public void test14_5_1_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4711,6 +5028,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// v1[3] = 7; // Array<int>::operator[]()
 	// v2[3] = dcomplex(7,8); // Array<dcomplex>::operator[]()
 	// }
+	@Test
 	public void test14_5_1_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4721,6 +5039,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A<int>::B* b1; // OK: requires A to be defined but not A::B
 	// template<class T> class A<T>::B { };
 	// A<int>::B b2; // OK: requires A::B to be defined
+	@Test
 	public void test14_5_1_2s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4735,6 +5054,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// // ...
 	// }
+	@Test
 	public void test14_5_2s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4747,6 +5067,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(int i) { f<>(i); } // overriding function that calls
 	// // the template instantiation
 	// };
+	@Test
 	public void test14_5_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4764,6 +5085,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// ip = a.operator int*(); // explicit call to template operator
 	// // A::operator int*()
 	// }
+	@Test
 	public void test14_5_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4772,6 +5094,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// static T s;
 	// };
 	// template<class T> T X<T>::s = 0;
+	@Test
 	public void test14_5_1_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4788,6 +5111,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class P> friend class frd;
 	// // ...
 	// };
+	@Test
 	public void test14_5_4s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4807,6 +5131,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// }
 	// }
+	@Test
 	public void test14_5_4s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -4815,6 +5140,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> friend class B; // OK
 	// template<class T> friend void f(T){  } // OK
 	// };
+	@Test
 	public void test14_5_4s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4825,6 +5151,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// template<class T> struct A { X::Y ab; }; // OK
 	// template<class T> struct A<T*> { X::Y ab; }; // OK
+	@Test
 	public void test14_5_4s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4837,6 +5164,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> friend struct A<T>::B;
 	// template<class T> friend void A<T>::f();
 	// };
+	@Test
 	public void test14_5_4s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4849,6 +5177,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A<char>::B<int*> abcip; // uses #2
 	// A<short>::B<int*> absip; // uses #3
 	// A<char>::B<int> abci; // uses #1
+	@Test
 	public void test14_5_5_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4858,12 +5187,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T1, class T2, int I> class A<T1*, T2, I> { }; // #3
 	// template<class T> class A<int, T*, 5> { }; // #4
 	// template<class T1, class T2, int I> class A<T1, T2*, I> { }; // #5
+	@Test
 	public void test14_5_5s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template <int I, int J> struct B {};
 	// template <int I> struct B<I, I> {}; // OK
+	@Test
 	public void test14_5_5s9b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4877,6 +5208,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// A<int, int*, 1> a2; // uses #2, T is int, I is 1
 	// A<int, char*, 5> a3; // uses #4, T is char
 	// A<int, char*, 1> a4; // uses #5, T1 is int, T2 is char, I is 1
+	@Test
 	public void test14_5_5_1s2a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4887,6 +5219,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T>                   class A<int, T*, 5> { }; // #4
 	// template<class T1, class T2, int I> class A<T1, T2*, I> { }; // #5
 	// A<int*, int*, 2> a5; // ambiguous: matches #3 and #5 : expect problem
+	@Test
 	public void test14_5_5_1s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 1);
 	}
@@ -4896,6 +5229,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<int I>                 class X<I, I, int> { }; // #2
 	// template<int I, int J> void f(X<I, J, int>); // #A
 	// template<int I>        void f(X<I, I, int>); // #B
+	@Test
 	public void test14_5_5_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4927,12 +5261,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// a2.f(); //illformed, no definition of f for A<T,2>
 	// // the primary template is not used here
 	// }
+	@Test
 	public void test14_5_5_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
 	// template<class T> class Array { };
 	// template<class T> void sort(Array<T>&);
+	@Test
 	public void test14_5_6s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4944,6 +5280,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(p); // call
 	// // f<int>(int*)
 	// }
+	@Test
 	public void test14_5_6_1s1a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4955,6 +5292,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(p); // call
 	// // f<int*>(int*)
 	// }
+	@Test
 	public void test14_5_6_1s1b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -4965,6 +5303,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <int I> void f/*2*/(A<I>, A<I+10>);
 	// // Guaranteed to be different
 	// template <int I> void f/*3*/(A<I>, A<I+11>);
+	@Test
 	public void test14_5_6_1s8a() throws Exception {
 		final String content = getAboveComment();
 		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 0);
@@ -4979,6 +5318,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // Illformed, no diagnostic required
 	// template <int I> void f(A<I>, A<I+10>);
 	// template <int I> void f(A<I>, A<I+1+2+3+4>);
+	@Test
 	public void test14_5_6_1s8b() throws Exception {
 		//test is only for syntax, semantics are not checked here.
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
@@ -4996,6 +5336,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		B<A> b;
 	//		b * a; // calls #1a
 	//	}
+	@Test
 	public void test14_5_6_2s3() throws Exception {
 		String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -5024,6 +5365,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// const A<int> z2;
 	// h(z2); // h(const T&) is called because h(A<T>&) is not callable
 	// }
+	@Test
 	public void test14_5_6_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5037,6 +5379,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(ip); //calls #2
 	// g(ip); //calls #4
 	// }
+	@Test
 	public void test14_5_6_2s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5061,6 +5404,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // no visible declarations of B and a8
 	// }
 	// };
+	@Test
 	public void test14_6s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5073,6 +5417,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// typename T::X x; // illformed: finds the data member X
 	// // not the member type X
 	// }
+	@Test
 	public void test14_6s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5083,6 +5428,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(A<T>::B); // illformed: typename required before A<T>::B
 	// typename A::B g(); // OK
 	// };
+	@Test
 	public void test14_6s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5104,6 +5450,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // not instantiated
 	// }
 	// };
+	@Test
 	public void test14_6s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5124,6 +5471,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// // ...
 	// };
+	@Test
 	public void test14_6s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5145,12 +5493,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // by two calls of f(int)
 	// g('a'); //will cause three calls of f(char)
 	// }
+	@Test
 	public void test14_6s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
 
 	// template<class T, T* p, class U = T> class X {  };
 	// template<class T> void f(T* p = new T);
+	@Test
 	public void test14_6_1s3a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5160,6 +5510,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X<T>* p2;
 	// X<int>* p3;
 	// };
+	@Test
 	public void test14_6_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5169,6 +5520,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// Y* p; // meaning Y<int>
 	// Y<char>* q; // meaning Y<char>
 	// };
+	@Test
 	public void test14_6_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5176,6 +5528,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<typename T> class Array {};
 	// template<class T> class X : public Array<T> {  };
 	// template<class T> class Y : public T { };
+	@Test
 	public void test14_6_1s3b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5187,6 +5540,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// };
 	// template<class X> class X; // error: templateparameter redeclared
+	@Test
 	public void test14_6_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5198,6 +5552,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class B> void A<B>::f() {
 	// B b; // A's B, not the template parameter
 	// }
+	@Test
 	public void test14_6_1s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5211,6 +5566,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class C> void N::B<C>::f(C) {
 	// C b; // C is the template parameter, not N::C
 	// }
+	@Test
 	public void test14_6_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5224,6 +5580,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// B b; // A's B
 	// a b; // error: A's a isn't a type name
 	// };
+	@Test
 	public void test14_6_1s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5236,6 +5593,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// pb->j++;
 	// }
 	// };
+	@Test
 	public void test14_6_2s2() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 0);
@@ -5253,6 +5611,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> struct X : B<T> {
 	// A a; // a has type double
 	// };
+	@Test
 	public void test14_6_2s3() throws Exception {
 		final String content = getAboveComment();
 		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 0);
@@ -5278,6 +5637,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// Y* p; // Y<T>
 	// };
 	// Y<A> ya;
+	@Test
 	public void test14_6_2s4() throws Exception {
 		final String content = getAboveComment();
 		parse(content, ParserLanguage.CPP, true, 0);
@@ -5302,6 +5662,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// void g(int); // not in scope at the point of the template
 	// // definition, not considered for the call g(1)
+	@Test
 	public void test14_6_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5321,6 +5682,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // in its namespace (global scope)
 	// b = gcd(3,4); // illformed; gcd is not visible
 	// }
+	@Test
 	public void test14_6_5s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5332,6 +5694,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> T X<T>::s = 0;
 	// X<int> aa;
 	// X<char*> bb;
+	@Test
 	public void test14_7s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5352,6 +5715,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// p->g(); //instantiation of class Z<char> required, and
 	// // instantiation of Z<char>::g() required
 	// }
+	@Test
 	public void test14_7_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5367,12 +5731,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // convert D<char>* to B<char>*
 	// delete ppp; // instantiation of D<double> required
 	// }
+	@Test
 	public void test14_7_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// template<class T> class X;
 	// X<char> ch; // error: definition of X required
+	@Test
 	public void test14_7_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5391,6 +5757,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// static int x;
 	// };
 	// template<> int B<>::x = 1; // specialize for T == int
+	@Test
 	public void test14_7s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5405,6 +5772,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(sr); //instantiation of S<int> allowed but not required
 	// // instantiation of S<float> allowed but not required
 	// };
+	@Test
 	public void test14_7_1s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5426,6 +5794,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int i = m.get("Nicholas");
 	// // ...
 	// }
+	@Test
 	public void test14_7_1s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5438,6 +5807,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(a, b); // default argument z = zdef(T()) instantiated
 	// f(a); //illformed; ydef is not declared
 	// }
+	@Test
 	public void test14_7_1s12() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5448,6 +5818,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // the implicit instantiation of X<T*> which requires
 	// // the implicit instantiation of X<T**> which ...
 	// };
+	@Test
 	public void test14_7_1s14() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5461,6 +5832,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> void f(T&) { }
 	// }
 	// template void N::f<int>(int&);
+	@Test
 	public void test14_7_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5475,6 +5847,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template class N::Y<char*>; // OK: explicit instantiation in namespace N
 	// template void N::Y<double>::mf(); // OK: explicit instantiation
 	// // in namespace N
+	@Test
 	public void test14_7_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5483,6 +5856,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> void sort(Array<T>& v);
 	// // instantiate sort(Array<int>&) - templateargument deduced
 	// template void sort<>(Array<int>&);
+	@Test
 	public void test14_7_2s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5490,6 +5864,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// char* p = 0;
 	// template<class T> T g(T = &p);
 	// template int g<int>(int); // OK even though &p isn't an int.
+	@Test
 	public void test14_7_2s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5499,6 +5874,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> class Array {  };
 	// template<class T> void sort(Array<T>& v) {  }
 	// template<> void sort<char*>(Array<char*>&) ;
+	@Test
 	public void test14_7_3s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5506,6 +5882,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<> class X<int> {  }; // error: X not a template
 	// template<class T> class X;
 	// template<> class X<char*> {  }; // OK: X is a template
+	@Test
 	public void test14_7_3s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5524,6 +5901,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // explicit specialization syntax not used for a member of
 	// // explicitly specialized class template specialization
 	// void A<int>::f(int) {  }
+	@Test
 	public void test14_7_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5538,6 +5916,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<> void sort<String>(Array<String>& v); // error: specialization
 	// // after use of primary template
 	// template<> void sort<>(Array<char*>& v); // OK: sort<char*> not yet used
+	@Test
 	public void test14_7_3s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5552,6 +5931,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// template<> class N::Y<double> {  }; // OK: specialization
 	// // in same namespace
+	@Test
 	public void test14_7_3s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5561,6 +5941,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // explicit specialization for sort(Array<int>&)
 	// // with deduces templateargument of type int
 	// template<> void sort(Array<int>&);
+	@Test
 	public void test14_7_3s11() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5572,6 +5953,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// template<> template<> class A<int>::B<double> { };
 	// template<> template<> void A<char>::B<char>::mf() { };
+	@Test
 	public void test14_7_3s17() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5580,6 +5962,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<> class X<int>;
 	// X<int>* p; // OK: pointer to declared class X<int>
 	// X<int> x; // error: object of incomplete class X<int>
+	@Test
 	public void test14_7_3s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5589,6 +5972,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <> void f(int*); // Ambiguous
 	// template <> void f<int>(int*); // OK
 	// template <> void f(int); // OK
+	@Test
 	public void test14_7_3s12() throws Exception {
 		// gcc does not report the explicit instantiation as ambiguous, so we accept it as well.
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
@@ -5598,6 +5982,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> inline T g(T) {  }
 	// template<> inline void f<>(int) {  } // OK: inline
 	// template<> int g<>(int) {  } // OK: not inline
+	@Test
 	public void test14_7_3s14() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5620,6 +6005,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void A<int>::g<char>(int,char); // X specified as char
 	// // member specialization even if defined in class definition
 	// template<> void A<int>::h(int) { }
+	@Test
 	public void test14_7_3s16() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5637,6 +6023,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class Y> template<>
 	// void A<Y>::B<double>::mf2() { }; // illformed; B<double> is specialized but
 	// // its enclosing class template A is not
+	@Test
 	public void test14_7_3s18() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5651,6 +6038,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(&a); //call f<int>(int*)
 	// f(&b); //call f<char*>(char**)
 	// }
+	@Test
 	public void test14_8s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5667,6 +6055,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int i = convert<int,double>(d); // int convert(double)
 	// char c = convert<char,double>(d); // char convert(double)
 	// }
+	@Test
 	public void test14_8_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5677,6 +6066,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int i = f<int>(5.6); // Y is deduced to be double
 	// int j = f(5.6); // illformed: X cannot be deduced
 	// }
+	@Test
 	public void test14_8_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5690,6 +6080,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // Z is deduced to be double
 	// f("aa",3.0); //error: X cannot be deduced
 	// }
+	@Test
 	public void test14_8_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5703,6 +6094,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// f<Complex>(1); // OK, means f<Complex>(Complex(1))
 	// }
+	@Test
 	public void test14_8_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5723,6 +6115,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f<3>(b); //wellformed because C::f is visible; then
 	// // A::f is found by argument dependent lookup
 	// }
+	@Test
 	public void test14_8_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5737,6 +6130,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int i = convert<int>(d); // call convert<int,double>(double)
 	// int c = convert<char>(d); // call convert<char,double>(double)
 	// }
+	@Test
 	public void test14_8_2s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5757,6 +6151,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // #5: function type is h(int, const int*)
 	// h<const int>(1,0);
 	// }
+	@Test
 	public void test14_8_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5770,6 +6165,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f<int>(); // f<int,double>(0,0)
 	//		f<int,char>(); // f<int,char>(0,0)
 	//	}
+	@Test
 	public void test14_8_2s5() throws Exception {
 		final String content = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
@@ -5793,6 +6189,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	X f(Y, Y); // #2
 	//	X x1, x2;
 	//	X x3 = f(x1, x2); // deduction fails on #1 (cannot add X+X), calls #2
+	@Test
 	public void test14_8_2s8a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -5800,6 +6197,8 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <class T> int f(T[5]);
 	// int I = f<int>(0);
 	// int j = f<void>(0); // invalid array
+	@Test
+	@Disabled("Known failing")
 	public void _test14_8_2s8b() throws Exception {
 		final String content = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
@@ -5809,6 +6208,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 
 	// template <class T> int f(typename T::B*);
 	// int i = f<int>(0);
+	@Test
 	public void test14_8_2s8c() throws Exception {
 		final String content = getAboveComment();
 		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 2);
@@ -5837,6 +6237,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		g<C>(0); // The N member of C is not a non-type
 	//		h<D>(0); // The TT member of D is not a template
 	//	}
+	@Test
 	public void test14_8_2s8d() throws Exception {
 		final String content = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(content, true);
@@ -5848,6 +6249,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 
 	// template <class T> int f(int T::*);
 	// int i = f<int>(0);
+	@Test
 	public void test14_8_2s8e() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 2);
@@ -5859,6 +6261,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	template <class T> int f(S<T, T()>*);
 	//	struct X {};
 	//	int i0 = f<X>(0);
+	@Test
 	public void test14_8_2s8f() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 2);
@@ -5868,6 +6271,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 
 	// template <class T, T*> int f(int);
 	// int i2 = f<int,1>(0); // can't conv 1 to int*
+	@Test
 	public void test14_8_2s8g() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 1);
 	}
@@ -5876,6 +6280,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <signed char> int f(int);
 	// int i1 = f<1>(0); // ambiguous
 	// int i2 = f<1000>(0); // ambiguous
+	@Test
 	public void test14_8_2s9() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 2);
 	}
@@ -5890,6 +6295,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f({1,"asdf"}); // error: T deduced to both int and const char*
 	//		g({1,2,3}); // error: no argument deduced for T
 	//	}
+	@Test
 	public void test14_8_2_1s1a() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -5908,6 +6314,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(x, y, z); // Types is deduced to int, float, const int
 	//		g(x, y, z); // T1 is deduced to int; Types is deduced to float, int
 	//	}
+	@Test
 	public void test14_8_2_1s1b() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -5926,6 +6333,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	int n2 = f(0); // calls f<int>(int&&)
 	//	int n3 = g(i); // error: would call g<int>(const int&&), which
 	//	               // would bind an rvalue reference to an lvalue
+	@Test
 	public void test14_8_2_1s3() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -5943,6 +6351,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	int g(int);
 	//	int g(char);
 	//	int i = f(g); // calls f(int (*)(int))
+	@Test
 	public void test14_8_2_1s7() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -5957,6 +6366,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	int g(int);
 	//	char g(char);
 	//	int i = f(1, g); // calls f(int, int (*)(int))
+	@Test
 	public void test14_8_2_1s8() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -5971,6 +6381,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	char g(char);
 	//	template <class T> T g(T);
 	//	int i = f(1, g); // calls f(int, int (*)(int))
+	@Test
 	public void test14_8_2_1s9() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -5986,6 +6397,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	void test(const int * const * const * p1) {
 	//     test(a); // T is deduced as int, not const int
 	//  }
+	@Test
 	public void test14_8_2_3s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -5995,6 +6407,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	void g() {
 	//		f<int>(1); // calls #1
 	//	}
+	@Test
 	public void test14_8_2_4s11() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6009,6 +6422,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	  g(Tuple<int, float&>()); // calls #3
 	//	  g(Tuple<int>()); // calls #3
 	// }
+	@Test
 	public void test14_8_2_4s12() throws Exception {
 		final String code = getAboveComment();
 		parse(code, ParserLanguage.CPP, true, 0);
@@ -6032,6 +6446,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//  void test() {
 	//	   g({1,2,3}); // error: no argument deduced for T
 	//  }
+	@Test
 	public void test14_8_2_5s5() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6048,6 +6463,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(a,a); //OK: T is A
 	// f(b,b); //OK: T is B
 	// }
+	@Test
 	public void test14_8_2_5s7a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6062,6 +6478,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(g2); //error: T could be char or int
 	//		f(g3); //error: U could be char or float
 	//	}
+	@Test
 	public void test14_8_2_5s7b() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6078,6 +6495,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// f(p); // f(const int *)
 	// }
+	@Test
 	public void test14_8_2_5s7c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6093,6 +6511,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(d); //calls f(B<int>&)
 	// f(d2); //calls f(B<int>&)
 	// }
+	@Test
 	public void test14_8_2_5s7d() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6104,6 +6523,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(i); // calls f<int&>(int&), i.e., #1
 	//		f(0); // calls f<int>(int&&), i.e., #2
 	//	}
+	@Test
 	public void test14_8_2_5s10() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6120,6 +6540,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(v); //error: argument for templateparameter
 	// //T cannot be deduced
 	// }
+	@Test
 	public void test14_8_2_5s14() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6138,6 +6559,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f2<10>(v); //OK
 	// f3(v); //OK: i deduced to be 10
 	// }
+	@Test
 	public void test14_8_2_5s15() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6163,6 +6585,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		g<0>(a1); // OK
 	//		f(a1, a2); // OK
 	//	}
+	@Test
 	public void test14_8_2_5s16a() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6193,6 +6616,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		B<77> b;
 	//		deduce<77> (a.xm, 62, b.ym);
 	//	}
+	@Test
 	public void test14_8_2_5s16b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6210,6 +6634,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		B<1> b;
 	//		g(b); // OK: cv-qualifiers are ignored on template parameter types
 	//	}
+	@Test
 	public void test14_8_2_5s17() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6232,6 +6657,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(&h); // OK: void h(char,int) is a unique match
 	//		f(&foo); // error: type deduction fails because foo is a template
 	//	}
+	@Test
 	public void test14_8_2_5s18() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6248,6 +6674,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(); // error: cannot deduce T
 	//		f<int>(); // OK: call f<int>(5,7)
 	//	}
+	@Test
 	public void test14_8_2_5s19() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6266,6 +6693,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		A<B> ab;
 	//		f(ab); //calls f(A<B>)
 	//	}
+	@Test
 	public void test14_8_2_4s20() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6283,6 +6711,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	Y<int&, float&, double&> y2; // uses partial specialization; T is int&, Types contains float, double
 	//	Y<int, float, double> y3; // uses primary template; Types contains int, float, double
 	//	int fv = f(g); // OK; Types contains int, float
+	@Test
 	public void test14_8_2_4s21() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6296,6 +6725,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//		f(1, 2); // calls #3; non-variadic template #3 is more
 	//		// specialized than the variadic templates #1 and #2
 	//	}
+	@Test
 	public void test14_8_2_5s22() throws Exception {
 		final String code = getAboveComment();
 		BindingAssertionHelper bh = new AST2AssertionHelper(code, true);
@@ -6319,6 +6749,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// char m2 = max(c,d); // max(char a, char b)
 	// int m3 = max(a,c); // error: cannot generate max(int,char)
 	// }
+	@Test
 	public void test14_8_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6331,6 +6762,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// char m2 = max(c,d); // max(char a, char b)
 	// int m3 = max(a,c); // resolved
 	// }
+	@Test
 	public void test14_8_3s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6343,6 +6775,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(bi); // f(bi)
 	// f(di); // f( (B<int>&)di )
 	// }
+	@Test
 	public void test14_8_3s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6356,6 +6789,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(i,c); //#2: f<int>(i,c);
 	// f(i,i); //#2: f<int>(i,char(i))
 	// }
+	@Test
 	public void test14_8_3s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6364,6 +6798,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void g() {
 	//    f("Annemarie"); // call of f<const char*>
 	// }
+	@Test
 	public void test14_8_3s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6380,6 +6815,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// } catch(...) { // handler 1
 	// }
 	// }
+	@Test
 	public void test15s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6402,6 +6838,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // handles exceptions thrown from the ctorinitializer
 	// // and from the constructor function body
 	// }
+	@Test
 	public void test15s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6426,6 +6863,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // handle exceptions of type Overflow here
 	// }
 	// }
+	@Test
 	public void test15_1s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6440,6 +6878,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // other handler
 	// }
 	// }
+	@Test
 	public void test15_1s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6459,6 +6898,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // ...
 	// }
 	// }
+	@Test
 	public void test15_3s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6466,11 +6906,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f() throw(int); // OK
 	// void (*fp)() throw (int); // OK
 	// void g(void pfa() throw(int)); // OK
+	@Test
 	public void test15_4s1a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// typedef int (*pf)() throw(int); // illformed
+	@Test
 	public void test15_4s1b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6486,6 +6928,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	//	  f(a);
 	//	  g(a);
 	//	}
+	@Test
 	public void test15_4s1c() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6498,6 +6941,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(); // illformed
 	// void g() throw (int); // OK
 	// };
+	@Test
 	public void test15_4s3a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6510,6 +6954,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// pf1 = pf2; // OK: pf1 is less restrictive
 	// pf2 = pf1; // error: pf2 is more restrictive
 	// }
+	@Test
 	public void test15_4s3b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6525,6 +6970,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// if (n) throw Z(); // also OK
 	// throw W(); // will call unexpected()
 	// }
+	@Test
 	public void test15_4s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6534,6 +6980,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// // f(); //OK
 	// }
+	@Test
 	public void test15_4s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6553,6 +7000,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // Implicit declaration of D::D(const D&) throw();
 	// // Implicit declaration of D::~D() throw (X,Y);
 	// };
+	@Test
 	public void test15_4s13() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6564,6 +7012,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// #else
 	// #define INCFILE "versN.h"
 	// #endif
+	@Test
 	public void test16_2s8() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6578,6 +7027,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// a = ((a + 32765) + b);
 	// a = (a + (b + 32765));
 	// }
+	@Test
 	public void test18_2_1_5s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6586,6 +7036,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// enum E { z = 16 };
 	// int b[X::z]; // OK
 	// };
+	@Test
 	public void test3_3_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6598,6 +7049,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// f(a);
 	// }
 	// };
+	@Test
 	public void test3_4_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6616,6 +7068,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// F f;
 	// f.A::a = 1; // OK, A::a is a member of F
 	// }
+	@Test
 	public void test3_4_5s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6626,6 +7079,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // may be statically initialized to 0.0 or
 	// // dynamically initialized to 1.0
 	// double d1 = fd(); // may be initialized statically to 1.0
+	@Test
 	public void test3_6_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6637,6 +7091,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// *pcc = &c;
 	// *pc = 'C'; //2: modifies a const object
 	// }
+	@Test
 	public void test4_4s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6649,6 +7104,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int S::* pm = &S::i; // pm refers to mutable member S::i
 	// cs.*pm = 88; // illformed: cs is a const object
 	// }
+	@Test
 	public void test5_5s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6670,6 +7126,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// g(); //okay: name g refers to the same entity
 	// h(); //error: name h found in two namespaces
 	// }
+	@Test
 	public void test7_3_4s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6677,6 +7134,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int a;
 	// const int b = a;
 	// int c = b;
+	@Test
 	public void test8_5s14() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6690,6 +7148,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// struct D2 : D {
 	// void f();
 	// };
+	@Test
 	public void test10_3s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6706,6 +7165,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// B* bp = new D;
 	// delete bp; //1: uses D::operator delete(void*)
 	// }
+	@Test
 	public void test12_5s7a() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6724,6 +7184,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// B* bp = new D[i];
 	// delete[] bp; // undefined behavior
 	// }
+	@Test
 	public void test12_5s7b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6739,6 +7200,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// //operator+ (a,a); // ERROR - global operator hidden by member
 	// a + a; // OK - calls global operator+
 	// }
+	@Test
 	public void test13_3_1_2s10() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6750,6 +7212,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// C<V> value;
 	// // ...
 	// };
+	@Test
 	public void test14_1s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6761,6 +7224,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// T t1 = i; // templateparameters T and i
 	// ::T t2 = ::i; // global namespace members T and i
 	// }
+	@Test
 	public void test14_1s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6772,6 +7236,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X<&s.m> x4; // error: address of nonstatic member
 	// X<&s.s> x5; // error: &S::s must be used
 	// X<&S::s> x6; // OK: address of static member
+	@Test
 	public void test14_3_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6784,6 +7249,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// X<int,"Studebaker"> x1; // error: string literal as template argument
 	// char p[] = "Vivisectionist";
 	// X<int,p> x2; // OK
+	@Test
 	public void test14_3_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6792,6 +7258,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// B<1> b2; // error: temporary would be required for template argument
 	// int c = 1;
 	// B<c> b1; // OK
+	@Test
 	public void test14_3_2s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6810,6 +7277,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void f(int);
 	// template<void (*pf)(int)> struct A {  };
 	// A<&f> a; // selects f(int)
+	@Test
 	public void test14_3_2s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6827,11 +7295,13 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// ac.f('c'); //template
 	// ac.f<>(1); //template
 	// }
+	@Test
 	public void test14_5_2s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0); //should be 0
 	}
 
 	// template<class T1, class T2, int I> class A<T1, T2, I> { }; // error
+	@Test
 	public void test14_5_5s5() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -6845,6 +7315,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> template<class T2>
 	// struct A<T>::C::B<T2*> { };
 	// A<short>::C::B<int*> absip; // uses partial specialization
+	@Test
 	public void test14_5_5s6() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6858,6 +7329,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// }
 	// A<int,int*> a; // uses the partial specialization, which is found through
 	// // the using declaration which refers to the primary template
+	@Test
 	public void test14_5_5s7() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6865,6 +7337,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template<class T> void f();
 	// template<int I> void f(); // OK: overloads the first template
 	// // distinguishable with an explicit template argument list
+	@Test
 	public void test14_5_6_1s4() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6873,6 +7346,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <int I, int J> A<I+J> f/*1*/(A<I>, A<J>); // #1
 	// template <int K, int L> A<K+L> f/*2*/(A<K>, A<L>); // same as #1
 	// template <int I, int J> A<I-J> f/*3*/(A<I>, A<J>); // different from #1
+	@Test
 	public void test14_5_6_1s5() throws Exception {
 		final String content = getAboveComment();
 		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 0);
@@ -6887,6 +7361,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// template <int I> class A;
 	// template <int I, int J> void f/*1*/(A<I+J>); // #1
 	// template <int K, int L> void f/*2*/(A<K+L>); // same as #1
+	@Test
 	public void test14_5_6_1s6() throws Exception {
 		final String content = getAboveComment();
 		IASTTranslationUnit tu = parse(content, ParserLanguage.CPP, true, 0);
@@ -6900,12 +7375,14 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int f(int); // #2
 	// int k = f(1); // uses #2
 	// int l = f<>(1); // uses #1
+	@Test
 	public void test14_8_1s2b() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
 
 	// #define TABSIZE 100
 	// int table[TABSIZE];
+	@Test
 	public void test15_3_5s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6924,6 +7401,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int (&ra)[3] = a; // ra refers to the array a
 	// ra[1] = i; // modifies a[1]
 	// }
+	@Test
 	public void test8_5_3s1() throws Exception { // TODO raised bug 90648
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6936,6 +7414,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// this->A::operator=(s); // wellformed
 	// return *this;
 	// }
+	@Test
 	public void test12s1() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6957,6 +7436,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// // C/B/D/A sublattice is fully constructed
 	// { }
 	// };
+	@Test
 	public void test12_7s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6979,6 +7459,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// class D {
 	// typedef I I; // error, even though no reordering involved
 	// };
+	@Test
 	public void test3_3_6s5() throws Exception { // 90606
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -6993,6 +7474,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// void g() {
 	// (int (*)(int))&f; // cast expression as selector
 	// }
+	@Test
 	public void test13_4s5a() throws Exception { // bug 90674
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -7028,6 +7510,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// };
 	// int ef(D&);
 	// int ff(X&);
+	@Test
 	public void test11_3s2() throws Exception { //bug 92793
 		IASTTranslationUnit tu = parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 		IASTCompositeTypeSpecifier D = getCompositeType(tu, 2);
@@ -7041,6 +7524,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// int b = f(a);
 	// int c(b);
 	// }
+	@Test
 	public void test8_5s2() throws Exception { // 90641
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}
@@ -7053,6 +7537,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// new (int(*p)) int; // newplacement expression
 	// new (int(*[x])); // new typeid
 	// }
+	@Test
 	public void test8_2s3() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, false, 0);
 	}
@@ -7063,6 +7548,7 @@ public class AST2CPPSpecTest extends AST2SpecTestBase {
 	// {
 	// f<int()>(); // int() is a typeid:call the first f()
 	// }
+	@Test
 	public void test14_3s2() throws Exception {
 		parse(getAboveComment(), ParserLanguage.CPP, true, 0);
 	}

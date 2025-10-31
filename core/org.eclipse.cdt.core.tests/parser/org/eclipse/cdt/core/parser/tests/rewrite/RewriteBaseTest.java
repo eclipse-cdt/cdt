@@ -62,11 +62,6 @@ public abstract class RewriteBaseTest extends BaseTestFramework implements ILogL
 		}
 	}
 
-	protected void assertEquals(TestSourceFile file, IFile file2) throws Exception {
-		StringBuilder code = getCodeFromFile(file2);
-		assertEquals(file.getExpectedSource(), TestHelper.unifyNewLines(code.toString()));
-	}
-
 	protected void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
 		for (String fileName : testResourceFiles.keySet()) {
 			TestSourceFile file = testResourceFiles.get(fileName);

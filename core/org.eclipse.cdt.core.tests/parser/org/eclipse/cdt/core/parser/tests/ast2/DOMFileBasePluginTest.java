@@ -17,6 +17,8 @@
  */
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -30,22 +32,21 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author dsteffle
  */
-public abstract class DOMFileBasePluginTest extends TestCase {
+public abstract class DOMFileBasePluginTest {
 	static NullProgressMonitor monitor;
 	static IWorkspace workspace;
 	protected IProject project;
 	static ICProject cPrj;
 	private Class className2;
 
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
-		super.setUp();
 		monitor = new NullProgressMonitor();
 
 		workspace = ResourcesPlugin.getWorkspace();
@@ -55,7 +56,7 @@ public abstract class DOMFileBasePluginTest extends TestCase {
 		assertNotNull(project);
 	}
 
-	@Override
+	@AfterEach
 	protected void tearDown() throws Exception {
 		if (project == null || !project.exists())
 			return;

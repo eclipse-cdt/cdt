@@ -13,16 +13,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.StringWriter;
 import java.io.Writer;
 
 import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author jcamelon
  *
  */
 public class DOMGCCSelectionParseExtensionsTest extends DOMSelectionParseTestBase {
+	@Test
 	public void testBug43021() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("extern int johnc(__const char *__restrict __format, ...);\n"); //$NON-NLS-1$

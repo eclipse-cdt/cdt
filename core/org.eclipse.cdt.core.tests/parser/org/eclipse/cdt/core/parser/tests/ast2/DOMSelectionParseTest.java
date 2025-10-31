@@ -15,6 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.StringWriter;
 import java.io.Writer;
 
@@ -43,11 +49,13 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.model.CProject;
 import org.eclipse.core.resources.IFile;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author dsteffle
  */
 public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
+	@Test
 	public void testBaseCase_VariableReference() throws Exception {
 		String code = "void f() { int x; x=3; }";
 		int offset1 = code.indexOf("x=");
@@ -63,6 +71,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBaseCase_FunctionReference() throws Exception {
 		String code = "int x(){x( );}";
 		int offset1 = code.indexOf("x( ");
@@ -78,6 +87,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBaseCase_Error() throws Exception {
 		String code = "int x() { y( ) }";
 		int offset1 = code.indexOf("y( ");
@@ -85,6 +95,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertNull(parse(code, offset1, offset2, false));
 	}
 
+	@Test
 	public void testBaseCase_FunctionDeclaration() throws Exception {
 		String code = "int x(); void test() {x( );}";
 		int offset1 = code.indexOf("x( )");
@@ -100,6 +111,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBaseCase_FunctionDeclaration2() throws Exception {
 		String code = "int printf( const char *, ... ); ";
 		int offset1 = code.indexOf("printf");
@@ -110,6 +122,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((IASTName) node).toString(), "printf");
 	}
 
+	@Test
 	public void testBaseCase_VariableDeclaration() throws Exception {
 		String code = "int x = 3;";
 		int offset1 = code.indexOf("x");
@@ -121,6 +134,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((IASTName) node).toString(), "x");
 	}
 
+	@Test
 	public void testBaseCase_Parameter() throws Exception {
 		String code = "int main( int argc ) { int x = argc; }";
 		int offset1 = code.indexOf("argc;");
@@ -137,6 +151,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 4);
 	}
 
+	@Test
 	public void testBug57898() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Gonzo {  public: void playHorn(); };\n");
@@ -170,6 +185,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		}
 	}
 
+	@Test
 	public void testConstructorDestructorDeclaration() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Gonzo { Gonzo(); ~Gonzo(); };");
@@ -188,6 +204,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((IASTName) node).toString(), "~Gonzo");
 	}
 
+	@Test
 	public void testBug60264() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace Muppets { int i;	}\n");
@@ -217,6 +234,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 7);
 	}
 
+	@Test
 	public void testBug61613() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Foo {  // ** (A) **\n");
@@ -240,6 +258,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug60038() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Gonzo {\n");
@@ -312,6 +331,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		}
 	}
 
+	@Test
 	public void testMethodReference() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Sample { public:\n");
@@ -334,6 +354,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 9);
 	}
 
+	@Test
 	public void testConstructorDefinition() throws Exception {
 		String code = "class ABC { public: ABC(); }; ABC::ABC(){}";
 		int startIndex = code.indexOf("::ABC") + 2;
@@ -348,6 +369,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug63966() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void foo(int a) {}\n");
@@ -359,6 +381,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		parse(code, startIndex, startIndex + 3);
 	}
 
+	@Test
 	public void testBug66744() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("enum EColours { RED, GREEN, BLUE };      \n");
@@ -369,6 +392,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		parse(code, startIndex, startIndex + 8);
 	}
 
+	@Test
 	public void testBug68527() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct X;\n");
@@ -378,6 +402,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		parse(code, startIndex, startIndex + 1);
 	}
 
+	@Test
 	public void testBug60407() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct ZZZ { int x, y, z; };\n");
@@ -394,6 +419,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		parse(code, startIndex, startIndex + "static_function".length());
 	}
 
+	@Test
 	public void testBug61800() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class B {};\n");
@@ -414,6 +440,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 5);
 	}
 
+	@Test
 	public void testBug68739() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int fprintf( int *, const char *, ... );               \n");
@@ -431,6 +458,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((IASTName) node).toString(), "fprintf");
 	}
 
+	@Test
 	public void testBug72818() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("union Squaw	{	int x;	double u; };\n");
@@ -451,6 +479,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 5);
 	}
 
+	@Test
 	public void test72220() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("const int FOUND_ME = 1;\n");
@@ -474,6 +503,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 8);
 	}
 
+	@Test
 	public void testBug72721() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write(" class ABC { public: ABC(int); };   \n");
@@ -495,6 +525,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug72372() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace B {                                   \n");
@@ -516,6 +547,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 4);
 	}
 
+	@Test
 	public void testBug72372_2() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace A {                                   \n");
@@ -541,6 +573,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 4);
 	}
 
+	@Test
 	public void testBug72713() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Deck{ void initialize(); };   \n");
@@ -559,6 +592,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 10);
 	}
 
+	@Test
 	public void testBug72712() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class B{ public: B(); }; void f(){ B* b; b = new B(); }");
@@ -578,6 +612,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(1, ((ASTNode) decls[0]).getLength());
 	}
 
+	@Test
 	public void testBug72712_2() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A {};                                        \n");
@@ -598,6 +633,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug72814() throws Exception {
 		CPPASTNameBase.sAllowNameComputation = true;
 
@@ -633,6 +669,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		//		assertEquals(((ASTNode) decls[0]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug72710() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Card{\n");
@@ -655,6 +692,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 4);
 	}
 
+	@Test
 	public void testBug75731() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int rank() {\n");
@@ -902,6 +940,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 7);
 	}
 
+	@Test
 	public void testBug77989() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace N {        /* A */\n");
@@ -923,6 +962,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug78435() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int itself;          //A\n");
@@ -942,6 +982,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 6);
 	}
 
+	@Test
 	public void testBug78231A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct Base {\n");
@@ -962,6 +1003,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 4);
 	}
 
+	@Test
 	public void testBug78231B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int Data;\n");
@@ -978,6 +1020,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) node).getOffset(), index);
 	}
 
+	@Test
 	public void testBug64326() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class foo {\n");
@@ -1004,6 +1047,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug92605() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define UINT32 unsigned int\n");
@@ -1029,6 +1073,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 6);
 	}
 
+	@Test
 	public void testBug79877() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int Func2() {\n");
@@ -1059,6 +1104,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		//		assertEquals(matches.size(), 1);
 	}
 
+	@Test
 	public void testBug78114() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Point{			//line C\n");
@@ -1089,6 +1135,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 5);
 	}
 
+	@Test
 	public void testBug73398() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int joo=4;\n");
@@ -1112,6 +1159,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Point{	\n");
@@ -1143,6 +1191,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 9);
 	}
 
+	@Test
 	public void testBug80826() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void swapImpl(int& a, int& b) {/*...*/} // line C\n");
@@ -1169,6 +1218,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 4);
 	}
 
+	@Test
 	public void testBug78389() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A{\n");
@@ -1195,6 +1245,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 7);
 	}
 
+	@Test
 	public void testBug78625() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A{            \n");
@@ -1219,6 +1270,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug78656() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A{\n");
@@ -1244,6 +1296,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 7);
 	}
 
+	@Test
 	public void testBug79965() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int i = 2, half_i = i / 2;\n");
@@ -1263,6 +1316,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug64326A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class foo {\n");
@@ -1291,6 +1345,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug64326B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class foo {\n");
@@ -1319,6 +1374,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug43128A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void foo()\n");
@@ -1343,6 +1399,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug43128B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int\n");
@@ -1365,6 +1422,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 4);
 	}
 
+	@Test
 	public void testBug43128C() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int j;\n");
@@ -1415,6 +1473,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug86504() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class C { };\n");
@@ -1440,6 +1499,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug79811() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("enum E{E0};\n");
@@ -1464,6 +1524,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBugLabelWithMacro() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define UINT32 unsigned int\n");
@@ -1505,6 +1566,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertLocation(code, "test:", 4, decls[0]);
 	}
 
+	@Test
 	public void testBugMethodDef() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class tetrahedron {\n");
@@ -1542,6 +1604,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) refs[0]).getLength(), 8);
 	}
 
+	@Test
 	public void testBug86698A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct C;\n");
@@ -1566,6 +1629,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug86698B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int f(int);\n");
@@ -1602,6 +1666,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 1);
 	}
 
+	@Test
 	public void testBug64181() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("namespace Foo { // ** (A) **\n");
@@ -1631,6 +1696,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[1]).getLength(), 3);
 	}
 
+	@Test
 	public void testBug80823() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("class MyEggImpl {}; // line A\n");
@@ -1651,6 +1717,7 @@ public class DOMSelectionParseTest extends DOMSelectionParseTestBase {
 		assertEquals(((ASTNode) decls[0]).getLength(), 9);
 	}
 
+	@Test
 	public void testBug86993() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define _BEGIN_STD_C extern \"C\" {\n");

@@ -18,20 +18,11 @@ import java.io.StringWriter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class RenameFunctionTests extends RenameTestBase {
 
-	public RenameFunctionTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(RenameFunctionTests.class);
-	}
-
+	@Test
 	public void testFunctionNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -309,6 +300,7 @@ public class RenameFunctionTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testFunctionsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -333,6 +325,7 @@ public class RenameFunctionTests extends RenameTestBase {
 		assertTotalChanges(2, change);
 	}
 
+	@Test
 	public void testFunctionNameConflictsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -417,6 +410,7 @@ public class RenameFunctionTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testMethodNameConflicts1() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -514,6 +508,7 @@ public class RenameFunctionTests extends RenameTestBase {
 						+ "New element: static_method  \n" + "Conflicting element type: Method");
 	}
 
+	@Test
 	public void testMethodNameConflicts2() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -696,6 +691,7 @@ public class RenameFunctionTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testBug72605() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo {               \n");
@@ -713,6 +709,7 @@ public class RenameFunctionTests extends RenameTestBase {
 		assertTotalChanges(2, changes);
 	}
 
+	@Test
 	public void testBug72732() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo {               \n");
@@ -729,6 +726,7 @@ public class RenameFunctionTests extends RenameTestBase {
 		assertTotalChanges(2, changes);
 	}
 
+	@Test
 	public void testBug330123() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{                    \n");

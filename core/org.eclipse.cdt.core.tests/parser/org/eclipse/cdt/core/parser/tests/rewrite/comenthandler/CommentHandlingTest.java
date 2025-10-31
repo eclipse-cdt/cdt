@@ -30,14 +30,17 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteBaseTest;
 import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTester;
+import org.eclipse.cdt.core.parser.tests.rewrite.TestHelper;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.eclipse.jface.text.TextSelection;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * This test tests the behavior of the class ASTCommenter. It checks if the ASTCommenter assigns
@@ -92,26 +95,44 @@ public class CommentHandlingTest extends RewriteBaseTest {
 	private static final String TRAILING_COMMENT_TITLE = "<<<=== Trailing Comment Test Section ===>>>"; //$NON-NLS-1$
 	private static final String FREESTANDING_COMMENT_TITLE = "<<<=== Freestanding Comment Test Section ===>>>"; //$NON-NLS-1$
 
-	public CommentHandlingTest(String name, List<TestSourceFile> files) {
-		super(name, files);
+	public static List<Arguments> loadTests() throws Exception {
+		return RewriteTester.loadTests(CommentHandlingTest.class, "resources/rewrite/CommentHandlingTestSource.rts");
 	}
 
-	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite(CommentHandlingTest.class.getName());
-		suite.addTest(RewriteTester.suite("CommentTests", "resources/rewrite/CommentHandlingTestSource.rts")); //$NON-NLS-1$
-		return suite;
+	@ParameterizedTest
+	@MethodSource("loadTests")
+	protected void test(List<TestSourceFile> testFiles) throws Throwable {
+		loadFiles(testFiles);
+		runTest(testFiles);
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
-		if (fileMap.isEmpty()) {
-			fail("No file for testing"); //$NON-NLS-1$
+	protected void loadFiles(List<TestSourceFile> testFiles) throws Exception {
+		for (TestSourceFile testFile : testFiles) {
+			if (testFile.getSource().length() > 0) {
+				importFile(testFile.getName(), testFile.getSource());
+			}
+			TextSelection sel = testFile.getSelection();
+			if (sel != null) {
+				setFileWithSelection(testFile.getName());
+				setSelection(sel);
+				break;
+			}
 		}
+	}
 
-		for (String fileName : fileMap.keySet()) {
-			TestSourceFile file = fileMap.get(fileName);
-			NodeCommentMap nodeMap = getNodeMapForFile(fileName);
-			assertEquals(buildExpectedResult(file).toString(), buildActualResult(nodeMap).toString());
+	protected void runTest(List<TestSourceFile> testFiles) throws Exception {
+		for (TestSourceFile testFile : testFiles) {
+			NodeCommentMap nodeMap = getNodeMapForFile(testFile.getName());
+			assertEquals(buildExpectedResult(testFile).toString(), buildActualResult(nodeMap).toString());
+		}
+	}
+
+	private void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
+		for (String fileName : testResourceFiles.keySet()) {
+			TestSourceFile file = testResourceFiles.get(fileName);
+			IFile iFile = project.getFile(new Path(fileName));
+			StringBuilder code = getCodeFromFile(iFile);
+			assertEquals(TestHelper.unifyNewLines(file.getExpectedSource()), TestHelper.unifyNewLines(code.toString()));
 		}
 	}
 

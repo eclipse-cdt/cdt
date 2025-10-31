@@ -31,6 +31,8 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author markus.schorn@windriver.com
@@ -38,24 +40,15 @@ import org.eclipse.text.edits.TextEditGroup;
 public abstract class RefactoringTests extends BaseTestFramework {
 	private int fBufferSize;
 
-	public RefactoringTests() {
-	}
-
-	public RefactoringTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void setUpProject() throws Exception {
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		fBufferSize = FileCharSequenceProvider.BUFFER_SIZE;
 		FileCharSequenceProvider.BUFFER_SIZE = 1024 * 4;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@AfterEach
+	protected void tearDownFlush() throws Exception {
 		SavedCodeReaderFactory.getInstance().getCodeReaderCache().flush();
 		FileCharSequenceProvider.BUFFER_SIZE = fBufferSize;
 	}
@@ -156,7 +149,7 @@ public abstract class RefactoringTests extends BaseTestFramework {
 
 	private boolean checkTextEdit(TextEdit edit, int startOffset, int numChars, String newText) {
 		if (edit instanceof MultiTextEdit) {
-			if (checkTextEdits(((MultiTextEdit) edit).getChildren(), startOffset, numChars, newText)) {
+			if (checkTextEdits(edit.getChildren(), startOffset, numChars, newText)) {
 				return true;
 			}
 		} else if (edit instanceof ReplaceEdit) {

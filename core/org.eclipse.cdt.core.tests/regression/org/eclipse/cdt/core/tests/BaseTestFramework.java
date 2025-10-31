@@ -25,7 +25,6 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -34,11 +33,123 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author aniefer
  */
-abstract public class BaseTestFramework extends BaseTestCase {
+abstract public class BaseTestFramework extends BaseTestCase5 {
+
+	public static void assertNotEquals(Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertNotEquals(String msg, Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(String msg, long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertEquals(Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(long expected, long actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, long expected, long actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(double a, double b, double c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, double a, double b, double c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertEquals(float a, float b, float c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, float a, float b, float c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertSame(Object expected, Object actual) {
+		Assertions.assertSame(expected, actual);
+	}
+
+	public static void assertSame(String msg, Object expected, Object actual) {
+		Assertions.assertSame(expected, actual, msg);
+	}
+
+	public static void assertNotSame(Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual);
+	}
+
+	public static void assertNotSame(String msg, Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual, msg);
+	}
+
+	public static void assertNull(Object object) {
+		Assertions.assertNull(object);
+	}
+
+	public static void assertNull(String msg, Object object) {
+		Assertions.assertNull(object, msg);
+	}
+
+	public static void assertNotNull(Object object) {
+		Assertions.assertNotNull(object);
+	}
+
+	public static void assertNotNull(String msg, Object object) {
+		Assertions.assertNotNull(object, msg);
+	}
+
+	public static void assertTrue(boolean n) {
+		Assertions.assertTrue(n);
+	}
+
+	public static void assertTrue(String msg, boolean n) {
+		Assertions.assertTrue(n, msg);
+	}
+
+	public static void assertFalse(boolean n) {
+		Assertions.assertFalse(n);
+	}
+
+	public static void assertFalse(String msg, boolean n) {
+		Assertions.assertFalse(n, msg);
+	}
+
+	public static void fail() {
+		Assertions.fail();
+	}
+
+	public static void fail(String msg) {
+		Assertions.fail(msg);
+	}
+
+	public static void assertArrayEquals() {
+		fail("TODO");
+	}
+
 	protected NullProgressMonitor monitor;
 	protected IWorkspace workspace;
 	protected IProject project;
@@ -46,20 +157,8 @@ abstract public class BaseTestFramework extends BaseTestCase {
 	protected FileManager fileManager;
 	protected boolean indexDisabled = false;
 
-	public BaseTestFramework() {
-		super();
-	}
-
-	/**
-	 * @param name
-	 */
-	public BaseTestFramework(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createProjectBefore() throws Exception {
 		monitor = new NullProgressMonitor();
 		workspace = ResourcesPlugin.getWorkspace();
 		cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
@@ -70,14 +169,13 @@ abstract public class BaseTestFramework extends BaseTestCase {
 		fileManager = new FileManager();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void cleanUpProjectAfter() throws Exception {
 		if (project == null || !project.exists())
 			return;
 
 		project.delete(true, true, monitor);
 		BaseTestCase5.assertWorkspaceIsEmpty();
-		super.tearDown();
 	}
 
 	protected IFile importFile(String fileName, String contents) throws Exception {

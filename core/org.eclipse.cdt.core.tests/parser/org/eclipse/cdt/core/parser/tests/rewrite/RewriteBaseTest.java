@@ -16,17 +16,14 @@ package org.eclipse.cdt.core.parser.tests.rewrite;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.eclipse.cdt.core.tests.BaseTestFramework;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.TextSelection;
+import org.junit.jupiter.api.AfterEach;
 
 /**
  * @author Guido Zgraggen IFS
@@ -34,46 +31,12 @@ import org.eclipse.jface.text.TextSelection;
 public abstract class RewriteBaseTest extends BaseTestFramework implements ILogListener {
 	protected static final NullProgressMonitor NULL_PROGRESS_MONITOR = new NullProgressMonitor();
 
-	protected TreeMap<String, TestSourceFile> fileMap = new TreeMap<>();
 	protected String fileWithSelection;
 	protected TextSelection selection;
-
-	protected RewriteBaseTest(String name) {
-		super(name);
-	}
-
-	public RewriteBaseTest(String name, List<TestSourceFile> files) {
-		super(name);
-		for (TestSourceFile file : files) {
-			fileMap.put(file.getName(), file);
-		}
-	}
-
-	@Override
-	protected abstract void runTest() throws Throwable;
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		for (TestSourceFile testFile : fileMap.values()) {
-			if (testFile.getSource().length() > 0) {
-				importFile(testFile.getName(), testFile.getSource());
-			}
-		}
-	}
 
 	protected void assertEquals(TestSourceFile file, IFile file2) throws Exception {
 		StringBuilder code = getCodeFromFile(file2);
 		assertEquals(file.getExpectedSource(), TestHelper.unifyNewLines(code.toString()));
-	}
-
-	protected void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
-		for (String fileName : testResourceFiles.keySet()) {
-			TestSourceFile file = testResourceFiles.get(fileName);
-			IFile iFile = project.getFile(new Path(fileName));
-			StringBuilder code = getCodeFromFile(iFile);
-			assertEquals(TestHelper.unifyNewLines(file.getExpectedSource()), TestHelper.unifyNewLines(code.toString()));
-		}
 	}
 
 	protected StringBuilder getCodeFromFile(IFile file) throws Exception {
@@ -88,11 +51,10 @@ public abstract class RewriteBaseTest extends BaseTestFramework implements ILogL
 		return code;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void closeAllFiles() throws Exception {
 		System.gc();
 		fileManager.closeAllFiles();
-		super.tearDown();
 	}
 
 	@Override

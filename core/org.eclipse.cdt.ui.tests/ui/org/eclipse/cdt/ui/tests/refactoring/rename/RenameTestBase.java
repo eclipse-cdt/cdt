@@ -33,13 +33,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
 public abstract class RenameTestBase extends RefactoringTests {
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
 
-	protected RenameTestBase(String name) {
-		super(name);
-	}
-
-	protected RenameTestBase() {
-	}
-
 	/**
 	 * @param element the CElement to rename
 	 * @param newName the new name for the element

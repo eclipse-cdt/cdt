@@ -53,18 +53,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModificationStore;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class AppendTests extends ChangeGeneratorTest {
-
-	public static TestSuite suite() {
-		return new TestSuite(AppendTests.class);
-	}
 
 	//int *pi[5];
 
 	//int *pi[5][3];
+	@Test
 	public void testArrayModifier() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -87,6 +83,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//int *values = new int[6];
 
 	//int *values = new int[6][5];
+	@Test
 	public void testArraySizeExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -119,6 +116,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//		beta(b), alpha(a) {
 	//}
 	//
+	@Test
 	public void testCtorChainInitializer() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -147,6 +145,7 @@ public class AppendTests extends ChangeGeneratorTest {
 
 	//void foo(int parameter) throw (int) {
 	//}
+	@Test
 	public void testException() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -177,6 +176,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//	int s = 0, c = 0, h = 0;
 	//	s = 3, h = 5, c = 9;
 	//}
+	@Test
 	public void testExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -207,6 +207,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//	} else if (cond2) {
 	//	}
 	//}
+	@Test
 	public void testNestedElseifStatement() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -237,6 +238,7 @@ public class AppendTests extends ChangeGeneratorTest {
 
 	//void foo(int existing, int newParameter) {
 	//}
+	@Test
 	public void testParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -266,6 +268,7 @@ public class AppendTests extends ChangeGeneratorTest {
 
 	//void foo(int newParameter) {
 	//}
+	@Test
 	public void testParameterToList() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -294,6 +297,7 @@ public class AppendTests extends ChangeGeneratorTest {
 
 	//void foo(int *parameter) {
 	//}
+	@Test
 	public void testPointerToParamter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -325,6 +329,7 @@ public class AppendTests extends ChangeGeneratorTest {
 
 	//void foo(int **parameter) {
 	//}
+	@Test
 	public void testPointerToPointerParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -373,6 +378,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//	int help();
 	//	int exp(int i);
 	//};
+	@Test
 	public void testAddDeclarationBugTest() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -417,6 +423,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//		int j;
 	//	}
 	//}
+	@Test
 	public void testMultilineWhitespaceHandling() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -459,6 +466,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//	for (int i = 0; i < 10; i++) {
 	//	}
 	//}
+	@Test
 	public void testAppendNull() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -491,6 +499,7 @@ public class AppendTests extends ChangeGeneratorTest {
 	//	}
 	//}
 	//
+	@Test
 	public void testSelfInsertion() throws Exception {
 		compareResult(new ASTVisitor() {
 			{

@@ -38,16 +38,11 @@ import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class Bug246129 extends IndexTestBase {
-
-	public static TestSuite suite() {
-		TestSuite suite = suite(Bug246129.class, "_");
-		// suite.addTest(new Bug246129("include ext/../type.h"));
-		return suite;
-	}
+public class Bug246129Test extends IndexTestBase {
 
 	private ICProject fProject;
 	private IFile fSource;
@@ -62,13 +57,8 @@ public class Bug246129 extends IndexTestBase {
 	IIndex fIndex;
 	boolean fFalseFriendsAccepted;
 
-	public Bug246129(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createProject() throws Exception {
 		if (fProject == null) {
 			// Populate workspace
 			fProject = createProject(true, "resources/indexTests/bug246129");
@@ -139,8 +129,8 @@ public class Bug246129 extends IndexTestBase {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		fExternalWrapperHeader.delete();
 		fExternalWrapperIncludeFolder.delete();
 
@@ -152,7 +142,6 @@ public class Bug246129 extends IndexTestBase {
 		ResourceHelper.cleanUp(getName());
 		CProjectHelper.delete(fProject);
 		BaseTestCase5.assertWorkspaceIsEmpty();
-		super.tearDown();
 	}
 
 	private void assertSymbolInIndex(String symbolName) throws Exception {
@@ -160,6 +149,7 @@ public class Bug246129 extends IndexTestBase {
 		assertTrue(bindings.length != 0);
 	}
 
+	@Test
 	public void testIndex() throws Exception {
 		try {
 			fIndex.acquireReadLock();
@@ -211,6 +201,7 @@ public class Bug246129 extends IndexTestBase {
 		assertTrue(bindings.length > 0);
 	}
 
+	@Test
 	public void testAst() throws Exception {
 		ITranslationUnit tu = CoreModel.getDefault().createTranslationUnitFrom(fProject, fSource.getLocation());
 

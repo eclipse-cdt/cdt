@@ -42,35 +42,20 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 public class TeamSharedIndexTest extends IndexTestBase {
-
-	public static TestSuite suite() {
-		return suite(TeamSharedIndexTest.class);
-	}
 
 	private final Collection fProjects = new LinkedList();
 	private static final IIndexManager fPDOMManager = CCorePlugin.getIndexManager();
 
-	public TeamSharedIndexTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		fProjects.clear();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProjects() throws Exception {
 		for (Iterator iterator = fProjects.iterator(); iterator.hasNext();) {
 			ICProject project = (ICProject) iterator.next();
 			CProjectHelper.delete(project);
 		}
-		super.tearDown();
 	}
 
 	private void registerProject(ICProject prj) {
@@ -139,6 +124,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testDefaultExport() throws Exception {
 		String prjName = "__testDefaultExport__";
 		ICProject prj = createProject(prjName);
@@ -173,6 +159,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "c", 1);
 	}
 
+	@Test
 	public void testExportWithFileChange() throws Exception {
 		String prjName = "__testExportWithChange__";
 		ICProject prj = createProject(prjName);
@@ -221,6 +208,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testExportWithFileChangeFake() throws Exception {
 		String prjName = "__testExportWithChangeFake__";
 		ICProject prj = createProject(prjName);
@@ -255,6 +243,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "d", 0);
 	}
 
+	@Test
 	public void testExportWithAddition() throws Exception {
 		String prjName = "__testExportWithAddition__";
 		ICProject prj = createProject(prjName);
@@ -283,6 +272,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "d", 1);
 	}
 
+	@Test
 	public void testExportWithAdditionFake() throws Exception {
 		String prjName = "__testExportWithAdditionFake__";
 		ICProject prj = createProject(prjName);
@@ -318,6 +308,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "d", 0);
 	}
 
+	@Test
 	public void testExportWithRemoval() throws Exception {
 		String prjName = "__testExportWithRemoval__";
 		ICProject prj = createProject(prjName);
@@ -345,6 +336,7 @@ public class TeamSharedIndexTest extends IndexTestBase {
 		checkVariable(prj, "c", 1);
 	}
 
+	@Test
 	public void testExportWithRemovalFake() throws Exception {
 		String prjName = "__testExportWithRemovalFake__";
 		ICProject prj = createProject(prjName);

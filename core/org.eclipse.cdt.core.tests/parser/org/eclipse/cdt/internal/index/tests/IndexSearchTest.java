@@ -37,40 +37,30 @@ import org.eclipse.cdt.internal.core.index.CIndex;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMBinding;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IndexSearchTest extends IndexTestBase {
 	private static final IndexFilter INDEX_FILTER = IndexFilter.ALL_DECLARED;
 
-	public static TestSuite suite() {
-		TestSuite suite = suite(IndexSearchTest.class, "_");
-		return suite;
-	}
-
 	private ICProject fProject;
 	private IIndex fIndex;
 
-	public IndexSearchTest(String name) {
-		super(name);
-	}
-
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void createProject() throws Exception {
 		fProject = createProject(true, "resources/indexTests/search");
 
 		fIndex = CCorePlugin.getIndexManager().getIndex(fProject);
 		fIndex.acquireReadLock();
 	}
 
-	@Override
-	public void tearDown() throws Exception {
+	@AfterEach
+	public void deleteProject() throws Exception {
 		fIndex.releaseReadLock();
 		CProjectHelper.delete(fProject);
 
 		BaseTestCase5.assertWorkspaceIsEmpty();
-		super.tearDown();
 	}
 
 	private void checkIsClass(IIndexBinding binding) {
@@ -99,6 +89,7 @@ public class IndexSearchTest extends IndexTestBase {
 		assertTrue(!(binding instanceof ICPPField));
 	}
 
+	@Test
 	public void testFindClassInNamespace() throws CoreException {
 		String scl = "C160913";
 		Pattern pcl = Pattern.compile(scl);
@@ -148,6 +139,7 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsClass(bindings[0]);
 	}
 
+	@Test
 	public void testFindNamespaceInNamespace() throws CoreException {
 		Pattern pcl = Pattern.compile("C160913");
 		Pattern pns = Pattern.compile("ns160913");
@@ -182,6 +174,7 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsNamespace(bindings[0]);
 	}
 
+	@Test
 	public void testClassInUnnamedNamespace() throws CoreException {
 		Pattern pcl = Pattern.compile("CInUnnamed160913");
 
@@ -197,6 +190,7 @@ public class IndexSearchTest extends IndexTestBase {
 		assertTrue(bindings[0].isFileLocal());
 	}
 
+	@Test
 	public void testFindEnumerator() throws CoreException {
 		Pattern pEnumeration = Pattern.compile("E20061017");
 		Pattern pEnumerator = Pattern.compile("e20061017");
@@ -236,6 +230,7 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsEnumeration(bindings[0]);
 	}
 
+	@Test
 	public void testCaseInsensitivePatternSearch_239669() throws CoreException {
 		IIndexBinding[] bindings;
 
@@ -268,6 +263,7 @@ public class IndexSearchTest extends IndexTestBase {
 		assertEquals(1, bindings.length);
 	}
 
+	@Test
 	public void testFindStatic_161216() throws CoreException {
 		Pattern pFunc = Pattern.compile("staticFunc20061017");
 		Pattern pVar = Pattern.compile("staticVar20061017");
@@ -285,6 +281,7 @@ public class IndexSearchTest extends IndexTestBase {
 		checkIsVariable(bindings[1]);
 	}
 
+	@Test
 	public void testSanityOfMayHaveChildren() throws CoreException {
 		PDOM pdom = (PDOM) ((CIndex) fIndex).getFragments()[0];
 		pdom.accept(new IPDOMVisitor() {

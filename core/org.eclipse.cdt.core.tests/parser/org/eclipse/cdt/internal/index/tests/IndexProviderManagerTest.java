@@ -66,8 +66,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.osgi.service.resolver.VersionRange;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Example usage and test for IIndexProvider
@@ -93,28 +94,21 @@ public class IndexProviderManagerTest extends IndexTestBase {
 
 	final CCorePlugin core = CCorePlugin.getDefault();
 
-	public IndexProviderManagerTest() {
-		super("IndexProviderManagerTest");
-	}
-
-	public static TestSuite suite() {
-		return suite(IndexProviderManagerTest.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void setUpDPT() throws Exception {
 		DPT.enabled = true;
 		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDownDPT() throws Exception {
 		DPT.enabled = false;
 		IndexProviderManager ipm = ((PDOMManager) CCorePlugin.getIndexManager()).getIndexProviderManager();
 		ipm.reset();
 		ipm.startup();
 	}
 
+	@Test
 	public void testProvider_SimpleLifeCycle_200958() throws Exception {
 		for (Class element : DPS)
 			DPT.reset(element);
@@ -145,6 +139,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testProvider_OverDeleteAndAdd() throws Exception {
 		DPT.reset(DP1);
 
@@ -171,6 +166,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testProvider_OverMove() throws Exception {
 		DPT.reset(DP1);
 		List cprojects = new ArrayList();
@@ -204,6 +200,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testVersioning_IncompatibleIgnored() throws Exception {
 		IndexProviderManager ipm = ((PDOMManager) CCorePlugin.getIndexManager()).getIndexProviderManager();
 
@@ -263,6 +260,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testVersioning_NoCompatibleVersionsFound() throws Exception {
 		IndexProviderManager ipm = ((PDOMManager) CCorePlugin.getIndexManager()).getIndexProviderManager();
 
@@ -340,6 +338,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		fail("Fragment matching (id=" + id + ",version=" + version + ") was not present");
 	}
 
+	@Test
 	public void testIndexFactoryConfigurationUsage() throws Exception {
 		IIndex index;
 
@@ -406,6 +405,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testGetProvidedFragments() throws Exception {
 		ICProject cproject = CProjectHelper.createCProject("IndexProviderManagerTest", "bin",
 				IPDOMManager.ID_NO_INDEXER);
@@ -515,6 +515,7 @@ public class IndexProviderManagerTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testProviderUsageFilter() throws Exception {
 		// The provider 'Providers.Counter' is registered 7 times with different usage filters.
 		ICProject cproject = null;

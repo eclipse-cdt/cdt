@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -28,6 +30,9 @@ import org.eclipse.cdt.utils.spawner.EnvironmentReader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
 /**
@@ -38,27 +43,23 @@ import org.osgi.framework.Bundle;
 public class TrilogyPerformanceTest extends IndexTestBase {
 	ICProject cproject;
 
-	public TrilogyPerformanceTest() {
-		super("TrilogyPerformance");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createProject() throws Exception {
 		Bundle b = CTestPlugin.getDefault().getBundle();
 		if (cproject == null) {
 			cproject = createProject(true, "resources/indexTests/trilogy");
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		cproject.getProject().delete(true, new NullProgressMonitor());
-		super.tearDown();
 	}
 
 	// you must have the Windows SDK installed and the INETSDK env var setup
+	@Test
 	public void testIndexTrilogyPerformanceTimes() throws CoreException, InterruptedException {
+		assumeTrue(Platform.getOS().equals(Platform.OS_WIN32), "Test required Windows SDK installed");
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			waitForIndexer(cproject);
 			TestScannerProvider.sIncludes = new String[] { EnvironmentReader.getEnvVar("INETSDK") + "\\Include" };

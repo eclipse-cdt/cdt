@@ -52,7 +52,6 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
@@ -61,10 +60,10 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMNode;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IndexUpdateTests extends IndexTestBase {
 	private static final String EXPLICIT = "explicit";
@@ -83,11 +82,6 @@ public class IndexUpdateTests extends IndexTestBase {
 	private static final String INT = "int";
 	private static final String IMPLICIT = "implicit";
 
-	public static TestSuite suite() {
-		TestSuite suite = suite(IndexUpdateTests.class, "_");
-		return suite;
-	}
-
 	private ICProject fCppProject;
 	private ICProject fCProject;
 	private IIndex fIndex;
@@ -96,13 +90,8 @@ public class IndexUpdateTests extends IndexTestBase {
 	private IFile fHeader;
 	private int fContentUsed;
 
-	public IndexUpdateTests(String name) {
-		super(name);
-	}
-
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void createProject() throws Exception {
 		fCppProject = CProjectHelper.createCCProject("indexUpdateTestsCpp_" + getName(), null,
 				IPDOMManager.ID_FAST_INDEXER);
 		fCProject = CProjectHelper.createCProject("indexUpdateTestsC_" + getName(), null, IPDOMManager.ID_FAST_INDEXER);
@@ -151,8 +140,8 @@ public class IndexUpdateTests extends IndexTestBase {
 		waitUntilFileIsIndexed(fIndex, fFile);
 	}
 
-	@Override
-	public void tearDown() throws Exception {
+	@AfterEach
+	public void deleteProject() throws Exception {
 		fIndex = null;
 		if (fFile != null) {
 			fFile.delete(true, npm());
@@ -163,8 +152,6 @@ public class IndexUpdateTests extends IndexTestBase {
 
 		CProjectHelper.delete(fCProject);
 		CProjectHelper.delete(fCppProject);
-
-		super.tearDown();
 	}
 
 	// int globalVar;
@@ -174,6 +161,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// auto int globalVar;
 
 	// register int globalVar;
+	@Test
 	public void testGlobalCVariable() throws Exception {
 		setupFile(4, false);
 		checkVariable("globalVar", INT, new String[] {});
@@ -254,6 +242,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// short globalVar;
 
 	// register int globalVar;
+	@Test
 	public void testGlobalCppVariable() throws Exception {
 		setupFile(3, true);
 		checkCppVariable("globalVar", INT, new String[] {});
@@ -285,6 +274,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// int globalFunction(char a){};
 
 	// inline int globalFunction(char a){};
+	@Test
 	public void testCFunction() throws Exception {
 		setupFile(4, false);
 		checkFunction("globalFunction", new String[] { INT, INT, INT }, new String[] {});
@@ -325,6 +315,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// int globalFunction(char a){};
 
 	// inline int globalFunction(char a){};
+	@Test
 	public void testCppFunction() throws Exception {
 		setupFile(4, true);
 		checkFunction("globalFunction", new String[] { INT, INT, INT }, new String[] {});
@@ -339,6 +330,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// struct my_struct {int fField;};
 
 	// struct my_struct {short fField;};
+	@Test
 	public void testCField() throws Exception {
 		setupFile(2, false);
 		checkVariable("my_struct::fField", INT, new String[] {});
@@ -359,6 +351,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {private: int fField;};
 
 	// class MyClass {private: static int fField;};
+	@Test
 	public void testCppField() throws Exception {
 		setupFile(7, true);
 		checkCppField("MyClass::fField", INT, new String[] { PRIVATE });
@@ -413,6 +406,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {int method(char a){};};
 
 	// class MyClass {virtual int method(char a) = 0;};
+	@Test
 	public void testCppMethod() throws Exception {
 		setupFile(10, true);
 		checkCppMethod("MyClass::method", new String[] { INT, INT, INT }, new String[] { PRIVATE });
@@ -443,6 +437,7 @@ public class IndexUpdateTests extends IndexTestBase {
 
 	// #include "header.h"
 	// char MyClass::method(int a, int b);
+	@Test
 	public void testFixedCppMethod() throws Exception {
 		setupHeader(3, true);
 		checkCppMethod("MyClass::method", new String[] { INT, INT, INT }, new String[] { PROTECTED });
@@ -481,6 +476,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {protected: MyClass(char a, int b);};
 
 	// class MyClass {private: MyClass(char a, int b);};
+	@Test
 	public void testCppConstructor() throws Exception {
 		setupFile(6, true);
 		checkCppConstructor("MyClass::MyClass", new String[] { "", INT, INT }, new String[] { PRIVATE });
@@ -521,6 +517,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class MyClass {public: MyClass& operator=(const MyClass& rhs) {}};
 
 	// class MyClass {};
+	@Test
 	public void testImplicitMethods() throws Exception {
 		setupFile(5, true);
 		checkImplicitMethods("MyClass", new String[] { IMPLICIT, PUBLIC }, new String[] { IMPLICIT, PUBLIC },
@@ -586,6 +583,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// typedef int myType;
 
 	// typedef short myType;
+	@Test
 	public void testCTypedef() throws Exception {
 		setupFile(2, false);
 		checkTypedef("myType", INT);
@@ -610,6 +608,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// typedef int myType;
 
 	// typedef short myType;
+	@Test
 	public void testCppTypedef() throws Exception {
 		setupFile(2, true);
 		checkTypedef("myType", INT);
@@ -624,6 +623,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// namespace bNs {
 	// }
 	// namespace nsAlias= bNs;
+	@Test
 	public void testNamespaceAlias() throws Exception {
 		setupFile(2, true);
 		checkNamespaceAlias("nsAlias", "aNs");
@@ -652,6 +652,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// typedef int myType;
 
 	// enum myType {};
+	@Test
 	public void testChangingTypePlainC() throws Exception {
 		setupFile(4, false);
 		IBinding binding;
@@ -713,6 +714,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// typedef int myType;
 
 	// enum myType {};
+	@Test
 	public void testChangingTypeCPP() throws Exception {
 		setupFile(4, true);
 		IBinding binding;
@@ -772,6 +774,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// template<template<template<typename I> class T> class V> class CT {};
 
 	// template<typename U> class CT {};
+	@Test
 	public void testClassTemplates() throws Exception {
 		setupFile(7, true);
 		ICPPClassTemplate binding;
@@ -787,7 +790,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertEquals(0, tpars[0].getParameterID());
 			assertEquals("T", tpars[0].getName());
 			assertNull(tpars[0].getDefaultValue());
-			pdomid = ((IAdaptable) tpars[0]).getAdapter(PDOMNode.class).getRecord();
+			pdomid = tpars[0].getAdapter(PDOMNode.class).getRecord();
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -887,7 +890,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertTrue(tpars[0] instanceof ICPPTemplateTypeParameter);
 			assertEquals(0, tpars[0].getParameterID());
 			assertEquals("U", tpars[0].getName());
-			assertEquals(pdomid, ((IAdaptable) tpars[0]).getAdapter(PDOMNode.class).getBindingID());
+			assertEquals(pdomid, tpars[0].getAdapter(PDOMNode.class).getBindingID());
 		} finally {
 			fIndex.releaseReadLock();
 		}
@@ -899,6 +902,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// void test() {
 	//    globalVar= 1;
 	// }
+	@Test
 	public void testChangingSourceBeforeHeader_Bug171834() throws Exception {
 		CModelListener.sSuppressUpdateOfLastRecentlyUsed = false;
 		setupHeader(2, true);
@@ -957,6 +961,7 @@ public class IndexUpdateTests extends IndexTestBase {
 
 	// int globalVar;
 	// void func();
+	@Test
 	public void testExternC() throws Exception {
 		setupFile(5, true);
 		checkExternC(false);
@@ -993,6 +998,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// int global;
 	// struct C {int mem;};
 	// enum E {e0};
+	@Test
 	public void testValuesC() throws Exception {
 		setupFile(3, false);
 		checkValue("global", null);
@@ -1027,6 +1033,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class A {
 	//    public: void foo();
 	// };
+	@Test
 	public void testExceptionSpecification() throws Exception {
 		ICPPMethod method;
 		IType[] exceptionSpec;
@@ -1095,6 +1102,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// int global;
 	// struct C {int mem;};
 	// enum E {e0};
+	@Test
 	public void testValuesCPP() throws Exception {
 		setupFile(3, true);
 		checkValue("global", null);
@@ -1114,6 +1122,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//class B {friend class A;};
 
 	//class B {};
+	@Test
 	public void testFriendClass() throws Exception {
 		setupFile(2, true);
 		assertFriendRemoval("B", "A");
@@ -1123,6 +1132,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class Y {friend char* X::foo(int);};
 
 	// class Y {};
+	@Test
 	public void testFriendMethod() throws Exception {
 		setupFile(2, true);
 		assertFriendRemoval("Y", "X::foo");
@@ -1132,6 +1142,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// void friend_set(X* p, int i) {}
 
 	// class X {};
+	@Test
 	public void testFriendFunction() throws Exception {
 		setupFile(2, true);
 		assertFriendRemoval("X", "friend_set");
@@ -1172,6 +1183,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// typeof(funcTypeDeletion) storeRef;
 	// char funcTypeDeletion(int);		// delete type
 	// typeof(storeRef) useRef;         // use reference
+	@Test
 	public void testTypedeletion_Bug294306() throws Exception {
 		setupHeader(2, true);
 		setupFile(2, true);
@@ -1194,6 +1206,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// void ref() {
 	//   f(1);
 	// }
+	@Test
 	public void testDefaultParam_Bug297438() throws Exception {
 		setupHeader(3, true);
 		setupFile(3, true);
@@ -1223,6 +1236,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// enum class E : short {e1};
 
 	// enum E : int;
+	@Test
 	public void testEnumCPP() throws Exception {
 		setupFile(6, true);
 		checkEnum(false, null, "e0");
@@ -1263,6 +1277,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// class X {};
 
 	// class X {};
+	@Test
 	public void testFileLocalBinding() throws Exception {
 		setupFile(2, true);
 		long id1, id2;
@@ -1296,6 +1311,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// namespace ns {
 	//    namespace m {}
 	// }
+	@Test
 	public void testInlineNamespaces_305980() throws Exception {
 		setupFile(3, true);
 		fIndex.acquireReadLock();
@@ -1350,6 +1366,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//	struct mystruct {
 	//		Adaptiv_T       eAdapt;
 	//	};
+	@Test
 	public void testAnonymousEnum_Bug356057cpp() throws Exception {
 		setupHeader(3, true);
 		setupFile(3, true);
@@ -1392,6 +1409,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//	struct mystruct {
 	//		Adaptiv_T       eAdapt;
 	//	};
+	@Test
 	public void testAnonymousEnum_Bug356057c() throws Exception {
 		setupHeader(3, false);
 		setupFile(3, false);
@@ -1418,6 +1436,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	// struct S {};
 
 	// struct S {S(int){}};
+	@Test
 	public void testImplicitDefaultCtor_Bug359376() throws Exception {
 		setupFile(2, true);
 		fIndex.acquireReadLock();
@@ -1458,6 +1477,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//	struct Derived: Base {
 	//		Derived();
 	//	};
+	@Test
 	public void testBaseClass_Bug391284() throws Exception {
 		setupFile(2, true);
 		fIndex.acquireReadLock();
@@ -1490,6 +1510,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//void foo() {
 	//  bar();
 	//}
+	@Test
 	public void testDependentProjectGetsUpdated_Bug310837() throws Exception {
 		CharSequence[] contents = getContentsForTest(2);
 		List<ICProject> projects = new ArrayList<>();
@@ -1512,7 +1533,7 @@ public class IndexUpdateTests extends IndexTestBase {
 			assertEquals(0, barBinding.length);
 			bIndex.releaseReadLock();
 
-			IFile fileAh = (IFile) ((ITranslationUnit) projectA.findElement(Path.fromOSString("A.h"))).getResource();
+			IFile fileAh = (IFile) projectA.findElement(Path.fromOSString("A.h")).getResource();
 			fileAh = TestSourceReader.createFile(projectA.getSourceRoots()[0].getResource(), Path.fromOSString("A.h"),
 					"void bar(){}\n");
 			TestSourceReader.waitUntilFileIsIndexed(aIndex, fileAh, INDEXER_TIMEOUT_SEC * 1000);

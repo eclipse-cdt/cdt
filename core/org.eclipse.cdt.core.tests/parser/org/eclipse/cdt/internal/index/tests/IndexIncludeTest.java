@@ -48,26 +48,17 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.junit.Assert;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class IndexIncludeTest extends IndexTestBase {
-
-	public static TestSuite suite() {
-		TestSuite suite = suite(IndexIncludeTest.class, "_");
-		return suite;
-	}
 
 	private ICProject fProject;
 	private IIndex fIndex;
 
-	public IndexIncludeTest(String name) {
-		super(name);
-	}
-
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void createProject() throws Exception {
 		fProject = createProject(true, "resources/indexTests/includes");
 		IPathEntry[] entries = new IPathEntry[] {
 				CoreModel.newIncludeEntry(fProject.getPath(), null, fProject.getResource().getLocation()) };
@@ -78,12 +69,12 @@ public class IndexIncludeTest extends IndexTestBase {
 		fIndex = CCorePlugin.getIndexManager().getIndex(fProject);
 	}
 
-	@Override
-	public void tearDown() throws Exception {
+	@AfterEach
+	public void deleteProject() throws Exception {
 		CProjectHelper.delete(fProject);
-		super.tearDown();
 	}
 
+	@Test
 	public void testFastIndexer() throws Exception {
 		CCorePlugin.getIndexManager().setIndexerId(fProject, IPDOMManager.ID_FAST_INDEXER);
 		IndexerPreferences.set(fProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
@@ -155,6 +146,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	// {source20061107}
 	// #include "user20061107.h"
 	// #include <system20061107.h>
+	@Test
 	public void testIncludeProperties() throws Exception {
 		waitForIndexer();
 		TestScannerProvider.sIncludes = new String[] { fProject.getProject().getLocation().toOSString() };
@@ -177,6 +169,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testIncludeProperties_2() throws Exception {
 		TestScannerProvider.sIncludes = new String[] { fProject.getProject().getLocation().toOSString() };
 		TestSourceReader.createFile(fProject.getProject(), "header20061107.h", "");
@@ -198,6 +191,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testInactiveInclude() throws Exception {
 		TestScannerProvider.sIncludes = new String[] { fProject.getProject().getLocation().toOSString() };
 		String content = "#if 0\n#include \"inactive20070213.h\"\n#endif\n";
@@ -218,6 +212,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		}
 	}
 
+	@Test
 	public void testUnresolvedInclude() throws Exception {
 		TestScannerProvider.sIncludes = new String[] { fProject.getProject().getLocation().toOSString() };
 		String content = "#include \"unresolved20070213.h\"\n";
@@ -247,6 +242,7 @@ public class IndexIncludeTest extends IndexTestBase {
 		assertEquals(isSystem, include.isSystemInclude());
 	}
 
+	@Test
 	public void testUpdateOfIncluded() throws Exception {
 		String content1 = "int CONTEXT_20070404(x);\n";
 		String content2 = "int CONTEXT_20070404(y);\n";
@@ -298,6 +294,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	// #include "header1.h"
 	// #include "header2.h"
+	@Test
 	public void testParsingInContext_bug220358() throws Exception {
 		CharSequence[] sources = getContentsForTest(4);
 		IFile h1 = TestSourceReader.createFile(fProject.getProject(), "header1.h", sources[0].toString());
@@ -331,6 +328,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	}
 
 	// #include "resolved20070426.h"
+	@Test
 	public void testFixedContext() throws Exception {
 		TestScannerProvider.sIncludes = new String[] { fProject.getProject().getLocation().toOSString() };
 		String source = getContentsForTest(1)[0].toString();
@@ -413,6 +411,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	// #include "resolved20070427.h"
 	// #include "unesolved20070427.h"
+	@Test
 	public void testUpdateIncludes() throws Exception {
 		waitForIndexer();
 		TestScannerProvider.sIncludes = new String[] { fProject.getProject().getLocation().toOSString() };
@@ -480,6 +479,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	// #include "h1.h"
 
 	// #include "h2.h"
+	@Test
 	public void testMultiVariantHeaderUpdate() throws Exception {
 		waitForIndexer();
 		TestScannerProvider.sIncludes = new String[] { fProject.getProject().getLocation().toOSString() };
@@ -564,6 +564,7 @@ public class IndexIncludeTest extends IndexTestBase {
 	// static const int c = 0;
 	// #endif
 	// #endif // H1_H_
+	@Test
 	public void testPragmaOnceChange() throws Exception {
 		waitForIndexer();
 		TestScannerProvider.sIncludes = new String[] { fProject.getProject().getLocation().toOSString() };
@@ -655,6 +656,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	//	#include "a1.hpp"
 	//	#include "a2.hpp"
+	@Test
 	public void testSignificantMacrosWithPragmeOnceSemantic() throws Exception {
 		waitForIndexer();
 		IProject prj = fProject.getProject();
@@ -685,7 +687,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 			for (int i = 0; i < includes.length; i++) {
 				IIndexFile include = includes[i];
-				outputUnresolvedIncludes(fIndex, include.getLocation(), ultimateTestCppIdx, new HashSet<IIndexFile>());
+				outputUnresolvedIncludes(fIndex, include.getLocation(), ultimateTestCppIdx, new HashSet<>());
 			}
 		} finally {
 			fIndex.releaseReadLock();
@@ -714,6 +716,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 	//	#include "a3.hpp"
 	//	#include "a4.hpp"
+	@Test
 	public void testSignificantMacrosWithPragmeOnceFromIdxSemantic() throws Exception {
 		waitForIndexer();
 		IProject prj = fProject.getProject();
@@ -752,7 +755,7 @@ public class IndexIncludeTest extends IndexTestBase {
 
 			for (int i = 0; i < includes.length; i++) {
 				IIndexFile include = includes[i];
-				outputUnresolvedIncludes(fIndex, include.getLocation(), ultimateTestCppIdx, new HashSet<IIndexFile>());
+				outputUnresolvedIncludes(fIndex, include.getLocation(), ultimateTestCppIdx, new HashSet<>());
 			}
 		} finally {
 			fIndex.releaseReadLock();

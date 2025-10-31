@@ -55,9 +55,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
 
-import junit.framework.Test;
-import junit.framework.TestResult;
-
 /**
  * BaseTestCase for JUnit5.
  */
@@ -322,8 +319,11 @@ public abstract class BaseTestCase5 {
 	/**
 	 * This method is declared as final to help transition to JUnit5 to ensure that
 	 * accidental override of the method is not left in subclasses when migrating.
+	 *
+	 * The return type is a mismatch to JUnit3 so that this bundle does not need
+	 * reference to it.
 	 */
-	final protected static Test suite() {
+	final protected static Object suite() {
 		fail("Test not migrated properly to JUnit5 yet.");
 		return null; // unreachable
 	}
@@ -341,14 +341,6 @@ public abstract class BaseTestCase5 {
 	 * accidental override of the method is not left in subclasses when migrating.
 	 */
 	final protected void runBare() {
-		fail("Test not migrated properly to JUnit5 yet.");
-	}
-
-	/**
-	 * This method is declared as final to help transition to JUnit5 to ensure that
-	 * accidental override of the method is not left in subclasses when migrating.
-	 */
-	final protected void run(TestResult result) {
 		fail("Test not migrated properly to JUnit5 yet.");
 	}
 

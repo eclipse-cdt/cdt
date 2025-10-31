@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileInputStream;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -27,29 +29,14 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author jcamelon
  *
  */
-public abstract class TranslationUnitBaseTest extends TestCase {
-	/**
-	 *
-	 */
-	public TranslationUnitBaseTest() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	/**
-	 * @param name
-	 */
-	public TranslationUnitBaseTest(String name) {
-		super(name);
-		// TODO Auto-generated constructor stub
-	}
+public abstract class TranslationUnitBaseTest {
 
 	protected IWorkspace workspace;
 	protected IWorkspaceRoot root;
@@ -74,7 +61,7 @@ public abstract class TranslationUnitBaseTest extends TestCase {
 	     * Example code test the packages in the project
 	     *  "com.qnx.tools.ide.cdt.core"
 	     */
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
 		/***
 		 * The rest of the tests assume that they have a working workspace
@@ -152,7 +139,7 @@ public abstract class TranslationUnitBaseTest extends TestCase {
 	     *
 	     * Called after every test case method.
 	     */
-	@Override
+	@AfterEach
 	protected void tearDown() {
 		// release resources here and clean-up
 		try {

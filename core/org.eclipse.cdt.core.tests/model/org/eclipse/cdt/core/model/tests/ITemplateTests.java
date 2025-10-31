@@ -18,6 +18,9 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,9 +30,7 @@ import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for testing ITemplate interface
@@ -37,12 +38,6 @@ import junit.framework.TestSuite;
  *
  */
 public class ITemplateTests extends IntegratedCModelTest {
-	/**
-	 * @param name
-	 */
-	public ITemplateTests(String name) {
-		super(name);
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.IntegratedCModelTest#getSourcefileSubdir()
@@ -60,25 +55,6 @@ public class ITemplateTests extends IntegratedCModelTest {
 		return "ITemplate.cpp";
 	}
 
-	/**
-	 * @returns a test suite named after this class
-	 *          containing all its public members named "test*"
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(IStructureTests.class.getName());
-
-		// Interface tests:
-		suite.addTest(new ITemplateTests("testGetChildrenOfTypeTemplate"));
-		suite.addTest(new ITemplateTests("testGetNumberOfTemplateParameters"));
-		suite.addTest(new ITemplateTests("testGetTemplateParameterTypes"));
-		suite.addTest(new ITemplateTests("testGetTemplateSignature"));
-
-		// Language Specification tests:
-		// TBD.
-
-		return suite;
-	}
-
 	public List getTemplateMethods(ITranslationUnit tu) throws CModelException {
 		IStructure myElem = null;
 		try {
@@ -92,53 +68,54 @@ public class ITemplateTests extends IntegratedCModelTest {
 		return list;
 	}
 
+	@Test
 	public void testGetChildrenOfTypeTemplate() throws CModelException {
 		ITranslationUnit tu = getTU();
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
 			String[] myExpectedValues = { "Map" };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_CLASS);
 			String[] myExpectedValues = { "nonVector" };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION);
 			String[] myExpectedValues = { "ArrayOverlay" };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 		{
 			// Method from the TemplateContainer
 			List arrayElements = getTemplateMethods(tu);
 			String[] myExpectedValues = { "fum", "scrum", };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			// This test is no correct there is no guaranty on the order
 			// for this particular case
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 		{
@@ -149,14 +126,14 @@ public class ITemplateTests extends IntegratedCModelTest {
 					//					"nonVector<T>::first",
 					//					"Foo::fum",
 			};
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			// This test is no correct there is no guaranty on the order
 			// for this particular case
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 
 		}
@@ -164,14 +141,14 @@ public class ITemplateTests extends IntegratedCModelTest {
 			// Check the template method
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_METHOD);
 			String[] myExpectedValues = { "nonVector<T>::first", "Foo::fum", };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			// This test is no correct there is no guaranty on the order
 			// for this particular case
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 
 		}
@@ -179,14 +156,14 @@ public class ITemplateTests extends IntegratedCModelTest {
 			// Template function declation
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION);
 			String[] myExpectedValues = { "IsGreaterThan" };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			// This test is no correct there is no guaranty on the order
 			// for this particular case
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 		{
@@ -217,15 +194,16 @@ public class ITemplateTests extends IntegratedCModelTest {
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE);
 			String[] myExpectedValues = { "default_alloc_template<threads,inst>::S_start_free" };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				IVariable myITemplate = (IVariable) arrayElements.get(i);
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], myITemplate.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], myITemplate.getElementName(), "Failed on " + i);
 			}
 		}
 	}
 
+	@Test
 	public void testGetNumberOfTemplateParameters() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();
@@ -239,14 +217,16 @@ public class ITemplateTests extends IntegratedCModelTest {
 		arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_VARIABLE));
 
 		int[] myExpectedNumbers = { 3, 1, 3, 1, 1, 1, 1, 1, 2 };
-		assertEquals(myExpectedNumbers.length, arrayElements.size());
+		assertEquals((long) myExpectedNumbers.length, (long) arrayElements.size());
 		for (int i = 0; i < myExpectedNumbers.length; i++) {
 			ITemplate myTemplate = (ITemplate) arrayElements.get(i);
-			assertNotNull("Failed on " + i, myTemplate);
-			assertEquals("Failed on " + i, myExpectedNumbers[i], myTemplate.getNumberOfTemplateParameters());
+			assertNotNull(myTemplate, "Failed on " + i);
+			assertEquals((long) myExpectedNumbers[i], (long) myTemplate.getNumberOfTemplateParameters(),
+					"Failed on " + i);
 		}
 	}
 
+	@Test
 	public void testGetTemplateParameterTypes() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();
@@ -278,19 +258,20 @@ public class ITemplateTests extends IntegratedCModelTest {
 				{ "X" },
 				//"default_alloc_template::S_start_free"
 				{ "bool", "int" }, };
-		assertEquals(myExpectedValues.length, arrayElements.size());
+		assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 		for (int i = 0; i < myExpectedValues.length; i++) {
 			ITemplate myTemplate = (ITemplate) arrayElements.get(i);
-			assertNotNull("Failed on " + i, myTemplate);
+			assertNotNull(myTemplate, "Failed on " + i);
 			String[] myExpectedParams = myExpectedValues[i];
 			String[] myParams = myTemplate.getTemplateParameterTypes();
-			assertEquals("Failed on " + i, myExpectedParams.length, myParams.length);
+			assertEquals((long) myExpectedParams.length, (long) myParams.length, "Failed on " + i);
 			for (int j = 0; j < myExpectedParams.length; j++) {
-				assertEquals("Failed on " + i + "," + j, myExpectedParams[j], myParams[j]);
+				assertEquals(myExpectedParams[j], myParams[j], "Failed on " + i + "," + j);
 			}
 		}
 	}
 
+	@Test
 	public void testGetTemplateSignature() throws CModelException {
 		ITranslationUnit tu = getTU();
 		ArrayList arrayElements = new ArrayList();
@@ -311,11 +292,11 @@ public class ITemplateTests extends IntegratedCModelTest {
 				// TODO: shouldn't signature indicate const function as well?
 				"IsGreaterThan<X>(X, X) : bool",
 				"default_alloc_template<threads,inst>::S_start_free<bool, int> : char*", };
-		assertEquals(myExpectedValues.length, arrayElements.size());
+		assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 		for (int i = 0; i < myExpectedValues.length; i++) {
 			ITemplate myTemplate = (ITemplate) arrayElements.get(i);
-			assertNotNull("Failed on " + i, myTemplate);
-			assertEquals("Failed on " + i, myExpectedValues[i], myTemplate.getTemplateSignature());
+			assertNotNull(myTemplate, "Failed on " + i);
+			assertEquals(myExpectedValues[i], myTemplate.getTemplateSignature(), "Failed on " + i);
 		}
 	}
 }

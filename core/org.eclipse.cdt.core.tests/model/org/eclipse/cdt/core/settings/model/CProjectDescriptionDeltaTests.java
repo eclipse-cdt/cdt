@@ -13,6 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,13 +33,13 @@ import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializ
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class CProjectDescriptionDeltaTests extends BaseTestCase {
+public class CProjectDescriptionDeltaTests extends BaseTestCase5 {
 
 	private MockListener listener;
 
@@ -69,16 +76,8 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		}
 	}
 
-	public static TestSuite suite() {
-		return suite(CProjectDescriptionDeltaTests.class, "_");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void cleanUp() throws Exception {
 		ResourceHelper.cleanUp(getName());
 	}
 
@@ -106,6 +105,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		return list;
 	}
 
+	@Test
 	public void testDelta_ACTIVE_CFG() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -154,6 +154,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertEquals(cfgDescription1.getName(), newSetting.getActiveConfiguration().getName());
 	}
 
+	@Test
 	public void testDelta_NAME() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -197,6 +198,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertEquals(newName, newSetting.getName());
 	}
 
+	@Test
 	public void testDelta_DESCRIPTION() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -240,6 +242,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_LANGUAGE_ID() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -287,6 +290,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_SOURCE_CONTENT_TYPE() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -333,6 +337,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_SOURCE_EXTENSIONS() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -383,6 +388,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_SETTING_ENTRIES() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -430,6 +436,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertTrue(newSettingEntries.contains(testSettingEntry));
 	}
 
+	@Test
 	public void testDelta_BINARY_PARSER_IDS() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -476,6 +483,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_ERROR_PARSER_IDS() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -521,6 +529,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_EXCLUDE() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -584,6 +593,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_SOURCE_ADDED() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -631,6 +641,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertTrue(newSourceEntries.contains(testSourceEntry));
 	}
 
+	@Test
 	public void testDelta_SOURCE_REMOVED() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -693,6 +704,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_EXTERNAL_SETTINGS_ADDED() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -740,6 +752,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertTrue(newSettingEntries.contains(testSettingEntry));
 	}
 
+	@Test
 	public void testDelta_EXTERNAL_SETTINGS_REMOVED() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -801,6 +814,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_CFG_REF_ADDED() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -849,6 +863,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertEquals(testValue, newReferenceInfo.get(testKey));
 	}
 
+	@Test
 	public void testDelta_CFG_REF_REMOVED() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -879,7 +894,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 			assertNotNull(cfgDescription);
 
 			// Modification CFG_REF_REMOVED
-			cfgDescription.setReferenceInfo(new HashMap<String, String>());
+			cfgDescription.setReferenceInfo(new HashMap<>());
 
 			// Write project description
 			listener.clearNotified();
@@ -911,6 +926,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testDelta_EXT_REF() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -958,6 +974,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertTrue(newBinaryParserIds.contains(testBinaryParserId));
 	}
 
+	@Test
 	public void testDelta_INDEX_CFG() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -1009,6 +1026,7 @@ public class CProjectDescriptionDeltaTests extends BaseTestCase {
 		assertEquals(cfgDescription1.getName(), newSetting.getDefaultSettingConfiguration().getName());
 	}
 
+	@Test
 	public void testDelta_LANGUAGE_SETTINGS_PROVIDERS() throws Exception {
 		String projName = getName();
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();

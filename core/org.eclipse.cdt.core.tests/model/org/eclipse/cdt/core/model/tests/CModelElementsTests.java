@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -47,33 +51,23 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-public class CModelElementsTests extends BaseTestCase {
+public class CModelElementsTests extends BaseTestCase5 {
 	private ICProject fCProject;
 	private IFile headerFile;
 	private IFile includedFile;
 	private NullProgressMonitor monitor;
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(CModelElementsTests.class.getName());
-		suite.addTest(new CModelElementsTests("testCModelElements"));
-		return suite;
-	}
-
-	public CModelElementsTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProject() throws Exception {
 		monitor = new NullProgressMonitor();
 		fCProject = CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER);
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h");
@@ -96,11 +90,12 @@ public class CModelElementsTests extends BaseTestCase {
 		waitForIndexer(fCProject);
 	}
 
-	@Override
-	protected void tearDown() {
+	@AfterEach
+	protected void deleteProject() {
 		CProjectHelper.delete(fCProject);
 	}
 
+	@Test
 	public void testCModelElements() throws CModelException {
 		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
 		//ITranslationUnit included = (ITranslationUnit)CoreModel.getDefault().create(includedFile);

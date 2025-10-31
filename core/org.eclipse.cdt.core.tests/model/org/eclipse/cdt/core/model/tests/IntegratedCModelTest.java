@@ -24,31 +24,22 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author bnicolle
  */
-public abstract class IntegratedCModelTest extends BaseTestCase {
+public abstract class IntegratedCModelTest extends BaseTestCase5 {
 	private ICProject fCProject;
 	private IFile sourceFile;
 	private NullProgressMonitor monitor;
 	private boolean structuralParse = false;
-
-	public IntegratedCModelTest() {
-		super();
-	}
-
-	/**
-	 * @param name
-	 */
-	public IntegratedCModelTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * @return the subdirectory (from the plugin root) containing the required
@@ -61,8 +52,8 @@ public abstract class IntegratedCModelTest extends BaseTestCase {
 	 */
 	abstract public String getSourcefileResource();
 
-	@Override
-	public void setUp() throws Exception {
+	@BeforeEach
+	public void createProject() throws Exception {
 		monitor = new NullProgressMonitor();
 		fCProject = CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER);
 		sourceFile = fCProject.getProject().getFile(getSourcefileResource());
@@ -80,8 +71,8 @@ public abstract class IntegratedCModelTest extends BaseTestCase {
 		waitForIndexer(fCProject);
 	}
 
-	@Override
-	protected void tearDown() {
+	@AfterEach
+	protected void deleteProject() {
 		CProjectHelper.delete(fCProject);
 	}
 

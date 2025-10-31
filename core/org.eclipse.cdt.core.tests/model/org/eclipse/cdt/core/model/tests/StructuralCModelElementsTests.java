@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -47,33 +51,23 @@ import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-public class StructuralCModelElementsTests extends BaseTestCase {
+public class StructuralCModelElementsTests extends BaseTestCase5 {
 	private ICProject fCProject;
 	private IFile headerFile;
 	private IFile includedFile;
 	private NullProgressMonitor monitor;
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(StructuralCModelElementsTests.class.getName());
-		suite.addTest(new StructuralCModelElementsTests("testCModelElements")); //$NON-NLS-1$
-		return suite;
-	}
-
-	public StructuralCModelElementsTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProject() throws Exception {
 		monitor = new NullProgressMonitor();
 		fCProject = CProjectHelper.createCCProject("TestProject1", "bin", IPDOMManager.ID_FAST_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
 		headerFile = fCProject.getProject().getFile("CModelElementsTest.h"); //$NON-NLS-1$
@@ -95,11 +89,12 @@ public class StructuralCModelElementsTests extends BaseTestCase {
 		waitForIndexer(fCProject);
 	}
 
-	@Override
-	protected void tearDown() {
+	@AfterEach
+	protected void deleteProject() {
 		CProjectHelper.delete(fCProject);
 	}
 
+	@Test
 	public void testCModelElements() throws CModelException {
 		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
 		// turn on the structural parse mode

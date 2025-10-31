@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,72 +23,53 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author hamer
  *
  */
 public class StructuralTemplateTests extends ITemplateTests {
-	/**
-	 * @param name
-	 */
-	public StructuralTemplateTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(StructuralTemplateTests.class.getName());
-
-		// Interface tests:
-		suite.addTest(new StructuralTemplateTests("testGetChildrenOfTypeTemplate"));
-		suite.addTest(new StructuralTemplateTests("testGetNumberOfTemplateParameters"));
-		suite.addTest(new StructuralTemplateTests("testGetTemplateParameterTypes"));
-		suite.addTest(new StructuralTemplateTests("testGetTemplateSignature"));
-
-		return suite;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetChildrenOfTypeTemplate()
 	 */
 	@Override
+	@Test
 	public void testGetChildrenOfTypeTemplate() throws CModelException {
 		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_STRUCT);
 			String[] myExpectedValues = { "Map" };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_CLASS);
 			String[] myExpectedValues = { "nonVector" };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 		{
 			List arrayElements = tu.getChildrenOfType(ICElement.C_TEMPLATE_UNION);
 			String[] myExpectedValues = { "ArrayOverlay" };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 		{
@@ -97,12 +81,12 @@ public class StructuralTemplateTests extends ITemplateTests {
 			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION));
 			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION_DECLARATION));
 			String[] myExpectedValues = { "fum", "scrum", "nonVector<T>::first", "Foo::fum", "IsGreaterThan", };
-			assertEquals(myExpectedValues.length, arrayElements.size());
+			assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 			for (int i = 0; i < myExpectedValues.length; i++) {
 				ICElement celement = (ICElement) arrayElements.get(i);
 				ITemplate myITemplate = (ITemplate) celement;
-				assertNotNull("Failed on " + i, myITemplate);
-				assertEquals("Failed on " + i, myExpectedValues[i], celement.getElementName());
+				assertNotNull(myITemplate, "Failed on " + i);
+				assertEquals(myExpectedValues[i], celement.getElementName(), "Failed on " + i);
 			}
 		}
 	}
@@ -111,6 +95,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetNumberOfTemplateParameters()
 	 */
 	@Override
+	@Test
 	public void testGetNumberOfTemplateParameters() throws CModelException {
 		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
@@ -129,11 +114,12 @@ public class StructuralTemplateTests extends ITemplateTests {
 				//			3,1,3,1,1,3
 				3, 1, 3, 1, 1, 1, 1, 1/*,2*/
 		};
-		assertEquals(myExpectedNumbers.length, arrayElements.size());
+		assertEquals((long) myExpectedNumbers.length, (long) arrayElements.size());
 		for (int i = 0; i < myExpectedNumbers.length; i++) {
 			ITemplate myTemplate = (ITemplate) arrayElements.get(i);
-			assertNotNull("Failed on " + i, myTemplate);
-			assertEquals("Failed on " + i, myExpectedNumbers[i], myTemplate.getNumberOfTemplateParameters());
+			assertNotNull(myTemplate, "Failed on " + i);
+			assertEquals((long) myExpectedNumbers[i], (long) myTemplate.getNumberOfTemplateParameters(),
+					"Failed on " + i);
 		}
 	}
 
@@ -141,6 +127,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetTemplateParameterTypes()
 	 */
 	@Override
+	@Test
 	public void testGetTemplateParameterTypes() throws CModelException {
 		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
@@ -176,15 +163,15 @@ public class StructuralTemplateTests extends ITemplateTests {
 				//"default_alloc_template::S_start_free"
 				{"bool", "int"},*/
 		};
-		assertEquals(myExpectedValues.length, arrayElements.size());
+		assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 		for (int i = 0; i < myExpectedValues.length; i++) {
 			ITemplate myTemplate = (ITemplate) arrayElements.get(i);
-			assertNotNull("Failed on " + i, myTemplate);
+			assertNotNull(myTemplate, "Failed on " + i);
 			String[] myExpectedParams = myExpectedValues[i];
 			String[] myParams = myTemplate.getTemplateParameterTypes();
-			assertEquals("Failed on " + i, myExpectedParams.length, myParams.length);
+			assertEquals((long) myExpectedParams.length, (long) myParams.length, "Failed on " + i);
 			for (int j = 0; j < myExpectedParams.length; j++) {
-				assertEquals("Failed on " + i + "," + j, myExpectedParams[j], myParams[j]);
+				assertEquals(myExpectedParams[j], myParams[j], "Failed on " + i + "," + j);
 			}
 		}
 	}
@@ -193,6 +180,7 @@ public class StructuralTemplateTests extends ITemplateTests {
 	 * @see org.eclipse.cdt.core.model.tests.ITemplateTests#testGetTemplateSignature()
 	 */
 	@Override
+	@Test
 	public void testGetTemplateSignature() throws CModelException {
 		setStructuralParse(true);
 		ITranslationUnit tu = getTU();
@@ -213,11 +201,11 @@ public class StructuralTemplateTests extends ITemplateTests {
 				"Foo::fum<Bar>(int) : void", "IsGreaterThan<X>(X, X) : bool",
 				/*"default_alloc_template<threads,inst>::S_start_free<bool, int> : char*",*/
 		};
-		assertEquals(myExpectedValues.length, arrayElements.size());
+		assertEquals((long) myExpectedValues.length, (long) arrayElements.size());
 		for (int i = 0; i < myExpectedValues.length; i++) {
 			ITemplate myTemplate = (ITemplate) arrayElements.get(i);
-			assertNotNull("Failed on " + i, myTemplate);
-			assertEquals("Failed on " + i, myExpectedValues[i], myTemplate.getTemplateSignature());
+			assertNotNull(myTemplate, "Failed on " + i);
+			assertEquals(myExpectedValues[i], myTemplate.getTemplateSignature(), "Failed on " + i);
 		}
 	}
 }

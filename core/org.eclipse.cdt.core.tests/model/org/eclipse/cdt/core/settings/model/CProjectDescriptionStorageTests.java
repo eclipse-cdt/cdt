@@ -14,6 +14,11 @@
 
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -26,7 +31,7 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -43,35 +48,32 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testsuite for the project description storage. This
  * currently tests some of the features of the built-in
  * XmlProjectDescriptionStorage(2)
  */
-public class CProjectDescriptionStorageTests extends BaseTestCase {
+public class CProjectDescriptionStorageTests extends BaseTestCase5 {
 
 	/** CProject on which these tests are based */
 	ICProject cProj;
 
-	public static TestSuite suite() {
-		return suite(CProjectDescriptionStorageTests.class, "_");
-	}
-
 	// resource change listener that will listen for file changes interesting to the tests
 	OurResourceChangeListener resListener;
 
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProject() throws Exception {
 		cProj = CProjectHelper.createNewStyleCProject("CProjDescStorage", IPDOMManager.ID_FAST_INDEXER);
 		resListener = new OurResourceChangeListener();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resListener);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		// Remover our resource change listener
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resListener);
 		// Make the project files writable so they can be deleted...
@@ -92,6 +94,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 * Tests that external modifications to the CProjectDescription file are picked up
 	 * @throws Exception
 	 */
+	@Test
 	public void testExternalCProjDescModification() throws Exception {
 		// Create auto-refresh Thread
 		Job refreshJob = new Job("Auto-Refresh") {
@@ -183,6 +186,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 * (Bug 311189)
 	 * @throws Exception
 	 */
+	@Test
 	public void testExternalCProjDescRemoveAndReplace() throws Exception {
 		// Create auto-refresh Thread
 		Job refreshJob = new Job("Auto-Refresh") {
@@ -249,6 +253,7 @@ public class CProjectDescriptionStorageTests extends BaseTestCase {
 	 * Tests that a read-only project description file is picked up
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadOnlyProjectDescription() throws Exception {
 		enableSetWritableWhenHeadless(true);
 		try {

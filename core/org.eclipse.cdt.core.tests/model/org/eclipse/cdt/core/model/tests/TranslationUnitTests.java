@@ -23,8 +23,8 @@ import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.ExpectedStrings;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Peter Graves
@@ -33,6 +33,7 @@ import junit.framework.TestSuite;
  * There is nothing exotic here, mostly just sanity type tests.
  */
 public class TranslationUnitTests extends TranslationUnitBaseTest {
+
 	/*
 	 * This is a list of elements in the test .c file. It will be used in a
 	 * number of places in the tests
@@ -40,25 +41,19 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	private static final String[] expectedStringList = { "stdio.h", "unistd.h", "func2p", "globalvar", "myenum",
 			"mystruct_t", "mystruct", "myunion", "mytype", "func1", "func2", "main", "func3" };
 
-	public TranslationUnitTests(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return new TestSuite(TranslationUnitTests.class);
-	}
-
 	/***************************************************************************
 	 * Simple sanity test to make sure TranslationUnit.isTranslationUnit returns true
 	 */
+	@Test
 	public void testIsTranslationUnit() throws Exception, FileNotFoundException {
 		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
-		assertNotNull(tu);
+		Assertions.assertNotNull(tu);
 	}
 
 	/***************************************************************************
 	 * Simple sanity tests to make sure TranslationUnit.getChildren seems to basically work.
 	 */
+	@Test
 	public void testGetChildren() throws Exception {
 		ExpectedStrings expectedString = new ExpectedStrings(expectedStringList);
 
@@ -70,13 +65,14 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 				expectedString.foundString(elements[x].getElementName());
 			}
 		}
-		assertTrue("PR:23603 " + expectedString.getMissingString(), expectedString.gotAll());
-		assertTrue(expectedString.getExtraString(), !expectedString.gotExtra());
+		Assertions.assertTrue(expectedString.gotAll(), "PR:23603 " + expectedString.getMissingString());
+		Assertions.assertTrue(!expectedString.gotExtra(), expectedString.getExtraString());
 	}
 
 	/***************************************************************************
 	 * Simple sanity tests for the getElement() call
 	 */
+	@Test
 	public void testGetElement() throws Exception {
 		Deque<String> missing = new ArrayDeque<>();
 		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
@@ -86,8 +82,8 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 			if (myElement == null) {
 				missing.push(expectedStringList[x]);
 			} else {
-				assertTrue("Expected: \"" + expectedStringList[x] + "\". Got:" + myElement.getElementName(),
-						expectedStringList[x].equals(myElement.getElementName()));
+				Assertions.assertTrue(expectedStringList[x].equals(myElement.getElementName()),
+						"Expected: \"" + expectedStringList[x] + "\". Got:" + myElement.getElementName());
 			}
 		}
 		if (!missing.isEmpty()) {
@@ -95,13 +91,14 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 			while (!missing.isEmpty()) {
 				output.append(" ").append(missing.pop());
 			}
-			assertTrue(output.toString(), false);
+			Assertions.assertTrue(false, output.toString());
 		}
 	}
 
 	/***************************************************************************
 	 * Simple sanity tests for the getInclude call
 	 */
+	@Test
 	public void testBug23478A() throws Exception {
 		String includes[] = { "stdio.h", "unistd.h" };
 		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
@@ -109,12 +106,12 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 		for (int x = 0; x < includes.length; x++) {
 			IInclude include = tu.getInclude(includes[x]);
 			if (include == null) {
-				fail("Unable to get include: " + includes[x]);
+				Assertions.fail("Unable to get include: " + includes[x]);
 			} else {
 				// Failed test: Include.getIncludeName() always returns "";
 				// assertTrue
-				assertTrue("PR:23478 Expected: an empty string. Got: " + include.getIncludeName(),
-						includes[x].equals(include.getIncludeName()));
+				Assertions.assertTrue(includes[x].equals(include.getIncludeName()),
+						"PR:23478 Expected: an empty string. Got: " + include.getIncludeName());
 			}
 		}
 	}
@@ -122,6 +119,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	/***************************************************************************
 	 * Simple sanity tests for the getIncludes call
 	 */
+	@Test
 	public void testBug23478B() throws Exception {
 		String headers[] = { "stdio.h", "unistd.h" };
 		ExpectedStrings myExp = new ExpectedStrings(headers);
@@ -133,8 +131,8 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 		}
 		// Failed test: Include.getIncludeName() always returns "";
 		// assertTrue
-		assertTrue(myExp.getMissingString(), myExp.gotAll());
-		assertTrue(myExp.getExtraString(), !myExp.gotExtra());
+		Assertions.assertTrue(myExp.gotAll(), myExp.getMissingString());
+		Assertions.assertTrue(!myExp.gotExtra(), myExp.getExtraString());
 	}
 
 	/***************************************************************************
@@ -170,11 +168,12 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	//		}
 	//	}
 
+	@Test
 	public void testIsValidSourceUnitName() {
-		assertTrue(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.c"));
-		assertFalse(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.h"));
-		assertTrue(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.cc"));
-		assertFalse(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.hh"));
+		Assertions.assertTrue(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.c"));
+		Assertions.assertFalse(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.h"));
+		Assertions.assertTrue(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.cc"));
+		Assertions.assertFalse(CoreModel.isValidSourceUnitName(testProject.getProject(), "test.hh"));
 	}
 
 	// This test is disabled because it fails consistently due to a collision between content types

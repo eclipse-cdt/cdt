@@ -14,6 +14,10 @@
 
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -36,9 +40,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Peter Graves
@@ -47,7 +51,7 @@ import junit.framework.TestSuite;
  * class. There is nothing exotic here, mostly just sanity type tests
  *
  */
-public class BinaryTests extends TestCase {
+public class BinaryTests {
 	IWorkspace workspace;
 	IWorkspaceRoot root;
 	ICProject testProject;
@@ -55,24 +59,7 @@ public class BinaryTests extends TestCase {
 	Path cpath, exepath, libpath, archpath, objpath;
 	NullProgressMonitor monitor;
 
-	/**
-	 * Constructor for BinaryTests
-	 * @param name
-	 */
-	public BinaryTests(String name) {
-		super(name);
-
-	}
-
-	/**
-	 * Sets up the test fixture.
-	 *
-	 * Called before every test case method.
-	 *
-	 * Example code test the packages in the project
-	 *  "com.qnx.tools.ide.cdt.core"
-	 */
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
 		/***
 		 * The tests assume that they have a working workspace
@@ -175,24 +162,17 @@ public class BinaryTests extends TestCase {
 	*
 	* Called after every test case method.
 	*/
-	@Override
+	@AfterEach
 	protected void tearDown() throws CoreException, InterruptedException {
 		System.gc();
 		System.runFinalization();
 		CProjectHelper.delete(testProject);
 	}
 
-	public static TestSuite suite() {
-		return new TestSuite(BinaryTests.class);
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
-
 	/****
 	 * Simple tests to make sure we can get all of a binarys children
 	 */
+	@Test
 	public void testGetChildren() throws CoreException, FileNotFoundException {
 		IBinary myBinary;
 		ICElement[] elements;
@@ -213,32 +193,34 @@ public class BinaryTests extends TestCase {
 			expSyms.foundString(elements[i].getElementName());
 		}
 
-		assertTrue(expSyms.getMissingString(), expSyms.gotAll());
+		assertTrue(expSyms.gotAll(), expSyms.getMissingString());
 		//        assertTrue(expSyms.getExtraString(), !expSyms.gotExtra());
 	}
 
 	/***
 	 * A quick check to make sure the getBSS function works as expected.
 	 */
+	@Test
 	public void testGetBss() throws CModelException {
 		IBinary bigBinary, littleBinary;
 		bigBinary = CProjectHelper.findBinary(testProject, "exebig_g");
 		littleBinary = CProjectHelper.findBinary(testProject, "test_g");
 
-		assertTrue("Expected 432, Got: " + bigBinary.getBSS(), bigBinary.getBSS() == 432);
-		assertTrue("Expected 4, Got: " + littleBinary.getBSS(), littleBinary.getBSS() == 4);
+		assertTrue(bigBinary.getBSS() == 432, "Expected 432, Got: " + bigBinary.getBSS());
+		assertTrue(littleBinary.getBSS() == 4, "Expected 4, Got: " + littleBinary.getBSS());
 	}
 
 	/***
 	 * A quick check to make sure the getBSS function works as expected.
 	 */
+	@Test
 	public void testGetData() throws CModelException {
 		IBinary bigBinary, littleBinary;
 		bigBinary = CProjectHelper.findBinary(testProject, "exebig_g");
 		littleBinary = CProjectHelper.findBinary(testProject, "test_g");
 		/* These two test used to fail due to pr 23602 */
-		assertTrue("Expected 256 Got: " + bigBinary.getData(), bigBinary.getData() == 256);
-		assertTrue("Expected 196, Got: " + littleBinary.getData(), littleBinary.getData() == 196);
+		assertTrue(bigBinary.getData() == 256, "Expected 256 Got: " + bigBinary.getData());
+		assertTrue(littleBinary.getData() == 196, "Expected 196, Got: " + littleBinary.getData());
 	}
 
 	/***
@@ -246,19 +228,21 @@ public class BinaryTests extends TestCase {
 	 * something sane for the most common exe type (x86) and one other (ppc)
 	 * This is not a in depth test at all.
 	 */
+	@Test
 	public void testGetCpu() throws CModelException {
 		IBinary myBinary;
 		myBinary = CProjectHelper.findBinary(testProject, "exebig_g");
 
-		assertTrue("Expected: x86  Got: " + myBinary.getCPU(), myBinary.getCPU().equals("x86"));
+		assertTrue(myBinary.getCPU().equals("x86"), "Expected: x86  Got: " + myBinary.getCPU());
 		myBinary = CProjectHelper.findBinary(testProject, ppcexefile.getLocation().lastSegment());
-		assertTrue("Expected: ppc  Got: " + myBinary.getCPU(), myBinary.getCPU().equals("ppc"));
+		assertTrue(myBinary.getCPU().equals("ppc"), "Expected: ppc  Got: " + myBinary.getCPU());
 
 	}
 
 	/****
 	 * A set of simple tests to make sute getNeededSharedLibs seems to be sane
 	 */
+	@Test
 	public void testGetNeededSharedLibs() throws CModelException {
 		IBinary myBinary;
 		String[] exelibs = { "libsocket.so.2", "libc.so.2" };
@@ -273,8 +257,8 @@ public class BinaryTests extends TestCase {
 		for (x = 0; x < gotlibs.length; x++) {
 			exp.foundString(gotlibs[x]);
 		}
-		assertTrue(exp.getMissingString(), exp.gotAll());
-		assertTrue(exp.getExtraString(), !exp.gotExtra());
+		assertTrue(exp.gotAll(), exp.getMissingString());
+		assertTrue(!exp.gotExtra(), exp.getExtraString());
 
 		exp = new ExpectedStrings(bigexelibs);
 		myBinary = CProjectHelper.findBinary(testProject, "exebig_g");
@@ -282,8 +266,8 @@ public class BinaryTests extends TestCase {
 		for (x = 0; x < gotlibs.length; x++) {
 			exp.foundString(gotlibs[x]);
 		}
-		assertTrue(exp.getMissingString(), exp.gotAll());
-		assertTrue(exp.getExtraString(), !exp.gotExtra());
+		assertTrue(exp.gotAll(), exp.getMissingString());
+		assertTrue(!exp.gotExtra(), exp.getExtraString());
 
 		exp = new ExpectedStrings(bigexelibs);
 		myBinary = CProjectHelper.findBinary(testProject, "libtestlib_g.so");
@@ -291,14 +275,15 @@ public class BinaryTests extends TestCase {
 		for (x = 0; x < gotlibs.length; x++) {
 			exp.foundString(gotlibs[x]);
 		}
-		assertTrue(exp.getMissingString(), exp.gotAll());
-		assertTrue(exp.getExtraString(), !exp.gotExtra());
+		assertTrue(exp.gotAll(), exp.getMissingString());
+		assertTrue(!exp.gotExtra(), exp.getExtraString());
 
 	}
 
 	/****
 	 * Simple tests for the getSoname method;
 	 */
+	@Test
 	public void testGetSoname() throws CModelException {
 		IBinary myBinary;
 		String name;
@@ -308,25 +293,27 @@ public class BinaryTests extends TestCase {
 		myBinary = CProjectHelper.findBinary(testProject, "libtestlib_g.so");
 		name = myBinary.getSoname();
 		assertNotNull(name);
-		assertTrue("Expected: libtestlib_g.so.1  Got: " + name, name.equals("libtestlib_g.so.1"));
+		assertTrue(name.equals("libtestlib_g.so.1"), "Expected: libtestlib_g.so.1  Got: " + name);
 
 	}
 
 	/***
 	 * Simple tests for getText
 	 */
+	@Test
 	public void testGetText() throws CModelException {
 		IBinary bigBinary, littleBinary;
 		bigBinary = CProjectHelper.findBinary(testProject, bigexe.getLocation().lastSegment());
 		littleBinary = CProjectHelper.findBinary(testProject, exefile.getLocation().lastSegment());
 		/* These two asserts used to fail due to pr 23602 */
-		assertTrue("Expected  886, Got: " + bigBinary.getText(), bigBinary.getText() == 886);
-		assertTrue("Expected 1223, Got: " + littleBinary.getText(), littleBinary.getText() == 1223);
+		assertTrue(bigBinary.getText() == 886, "Expected  886, Got: " + bigBinary.getText());
+		assertTrue(littleBinary.getText() == 1223, "Expected 1223, Got: " + littleBinary.getText());
 	}
 
 	/***
 	 * Simple tests for the hadDebug call
 	 */
+	@Test
 	public void testHasDebug() throws CModelException {
 		IBinary myBinary;
 		myBinary = CProjectHelper.findBinary(testProject, "test_g");
@@ -340,6 +327,7 @@ public class BinaryTests extends TestCase {
 	/***
 	 * Sanity - isBinary and isReadonly should always return true;
 	 */
+	@Test
 	public void testisBinRead() throws CModelException {
 		IBinary myBinary;
 		myBinary = CProjectHelper.findBinary(testProject, "test_g");
@@ -351,6 +339,7 @@ public class BinaryTests extends TestCase {
 	/***
 	 * Quick tests to make sure isObject works as expected.
 	 */
+	@Test
 	public void testIsObject() throws CModelException {
 		IBinary myBinary;
 		myBinary = CProjectHelper.findObject(testProject, "exetest.o");
@@ -370,6 +359,7 @@ public class BinaryTests extends TestCase {
 	/***
 	 * Quick tests to make sure isSharedLib works as expected.
 	 */
+	@Test
 	public void testIsSharedLib() throws CModelException {
 		IBinary myBinary;
 
@@ -390,6 +380,7 @@ public class BinaryTests extends TestCase {
 	/***
 	 * Quick tests to make sure isExecutable works as expected.
 	 */
+	@Test
 	public void testIsExecutable() throws InterruptedException, CModelException {
 		IBinary myBinary;
 		myBinary = CProjectHelper.findObject(testProject, "exetest.o");
@@ -410,11 +401,12 @@ public class BinaryTests extends TestCase {
 	 *  Simple sanity test to make sure Binary.isBinary returns true
 	 *
 	 */
+	@Test
 	public void testIsBinary() throws CoreException, FileNotFoundException, Exception {
 		IBinary myBinary;
 
 		myBinary = CProjectHelper.findBinary(testProject, "exebig_g");
-		assertTrue("A Binary", myBinary != null);
+		assertTrue(myBinary != null, "A Binary");
 	}
 
 }

@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,28 +31,20 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class BackwardCompatibilityTests extends BaseTestCase {
+public class BackwardCompatibilityTests extends BaseTestCase5 {
 	private static final String PROJ_NAME_PREFIX = "BackwardCompatibilityTests_";
 	ICProject p1, p2, p3;
 
-	public static TestSuite suite() {
-		return suite(BackwardCompatibilityTests.class, "_");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProjects() throws Exception {
 		try {
 			if (p1 != null) {
 				p1.getProject().delete(true, null);
@@ -65,6 +62,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testPathEntriesForNewStyle() throws Exception {
 		p1 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "a",
 				TestUserAndDiscoveredEntriesCfgDataProvider.PROVIDER_ID, IPDOMManager.ID_NO_INDEXER);
@@ -170,6 +168,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		checkEntriesMatch(expectedResolvedEntries, resolvedentries);
 	}
 
+	@Test
 	public void testCPathEntriesForOldStyle() throws Exception {
 		p2 = CProjectHelper.createCCProject(PROJ_NAME_PREFIX + "b", null, IPDOMManager.ID_NO_INDEXER);
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
@@ -214,6 +213,7 @@ public class BackwardCompatibilityTests extends BaseTestCase {
 		checkCEntriesMatch(expectedOutputEntries, oEntries);
 	}
 
+	@Test
 	public void testICDescriptorGetProjectData() throws Exception {
 		p3 = CProjectHelper.createCCProject(PROJ_NAME_PREFIX + "c", null, IPDOMManager.ID_NO_INDEXER);
 		IProject proj = p3.getProject();

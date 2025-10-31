@@ -14,6 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -23,7 +30,7 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
@@ -35,14 +42,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the {@link ASTCache}.
  */
-public class ASTCacheTests extends BaseTestCase {
+public class ASTCacheTests extends BaseTestCase5 {
 	private final static boolean DEBUG = false;
 
 	private static int fgReconcilerCount;
@@ -93,21 +100,11 @@ public class ASTCacheTests extends BaseTestCase {
 	private ITranslationUnit fTU2;
 	private IIndex fIndex;
 
-	public ASTCacheTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ASTCacheTests.class);
-		return suite;
-	}
-
 	private final String SOURCE1 = "void foo1() {}"; //$NON-NLS-1$
 	private final String SOURCE2 = "void foo2() {}"; //$NON-NLS-1$
 
-	@Override
-	public void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	public void prepareTest() throws Exception {
 		IProgressMonitor npm = new NullProgressMonitor();
 		fProject = createProject("ASTCacheTest");
 		assertNotNull(fProject);
@@ -124,8 +121,8 @@ public class ASTCacheTests extends BaseTestCase {
 		fIndex.acquireReadLock();
 	}
 
-	@Override
-	public void tearDown() throws Exception {
+	@AfterEach
+	public void deleteProject() throws Exception {
 		if (fIndex != null) {
 			fIndex.releaseReadLock();
 		}
@@ -143,6 +140,7 @@ public class ASTCacheTests extends BaseTestCase {
 		return TestSourceReader.createFile(container, new Path(fileName), contents);
 	}
 
+	@Test
 	public void testASTCache() throws Exception {
 		checkActiveElement();
 		checkSingleThreadAccess();

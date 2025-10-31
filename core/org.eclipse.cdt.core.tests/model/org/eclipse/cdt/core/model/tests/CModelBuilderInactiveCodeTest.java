@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IInclude;
@@ -21,29 +25,21 @@ import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-
-import junit.framework.Test;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for C model inactive code parsing.
  */
-public class CModelBuilderInactiveCodeTest extends BaseTestCase {
-
-	public static Test suite() {
-		return suite(CModelBuilderInactiveCodeTest.class, "_");
-	}
+public class CModelBuilderInactiveCodeTest extends BaseTestCase5 {
 
 	private ICProject fCProject;
 	private ITranslationUnit fTU;
 
-	public CModelBuilderInactiveCodeTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createProject() throws Exception {
 		fCProject = CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
 		assertNotNull(fCProject);
 		CProjectHelper.importSourcesFromPlugin(fCProject, CTestPlugin.getDefault().getBundle(), "/resources/cmodel");
@@ -51,12 +47,12 @@ public class CModelBuilderInactiveCodeTest extends BaseTestCase {
 		assertNotNull(fTU);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		CProjectHelper.delete(fCProject);
-		super.tearDown();
 	}
 
+	@Test
 	public void testPreprocessorNodes() throws Exception {
 		ISourceReference e = (ISourceReference) fTU.getElement("include");
 		assertTrue(e instanceof IInclude);

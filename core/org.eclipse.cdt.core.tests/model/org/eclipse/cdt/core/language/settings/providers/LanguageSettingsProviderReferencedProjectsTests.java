@@ -14,6 +14,10 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -30,51 +34,16 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases testing ReferencedProjectsLanguageSettingsProvider functionality
  */
-public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCase {
-	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public LanguageSettingsProviderReferencedProjectsTests(String name) {
-		super(name);
-
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown(); // includes ResourceHelper cleanup
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(LanguageSettingsProviderReferencedProjectsTests.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
+public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCase5 {
 
 	/**
 	 * Helper method to fetch configuration descriptions.
@@ -131,6 +100,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 	/**
 	 * Test that null arguments don't crash the provider.
 	 */
+	@Test
 	public void testNulls() throws Exception {
 		ILanguageSettingsProvider provider = LanguageSettingsManager
 				.getWorkspaceProvider(ReferencedProjectsLanguageSettingsProvider.ID);
@@ -142,6 +112,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 	/**
 	 * Test main functionality of ReferencedProjectsLanguageSettingsProvider.
 	 */
+	@Test
 	public void testReferencedProjectProvider() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
@@ -228,6 +199,7 @@ public class LanguageSettingsProviderReferencedProjectsTests extends BaseTestCas
 	/**
 	 * Test case when projects reference each other recursively.
 	 */
+	@Test
 	public void testRecursiveReferences() throws Exception {
 		// Create model projects that reference each other
 		String projectName = getName();

@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Iterator;
@@ -31,21 +36,19 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.TestPluginLauncher;
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for testing the C Element Delta Builder.
  */
-public class ElementDeltaTests extends TestCase implements IElementChangedListener {
+public class ElementDeltaTests implements IElementChangedListener {
 	private ICProject fCProject;
 	private IFile headerFile;
 	private NullProgressMonitor monitor;
@@ -53,21 +56,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 	private Vector removedElements;
 	private Vector changedElements;
 
-	public static void main(String[] args) {
-		TestPluginLauncher.run(TestPluginLauncher.getLocationFromProperties(), WorkingCopyTests.class, args);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ElementDeltaTests.class.getName());
-		suite.addTest(new ElementDeltaTests("testElementDeltas"));
-		return suite;
-	}
-
-	public ElementDeltaTests(String name) {
-		super(name);
-	}
-
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 
@@ -93,11 +82,12 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		changedElements = new Vector(20);
 	}
 
-	@Override
+	@AfterEach
 	protected void tearDown() {
 		CProjectHelper.delete(fCProject);
 	}
 
+	@Test
 	public void testElementDeltas() throws Exception {
 		//ITranslationUnit tu = new TranslationUnit(fCProject, headerFile);
 		ICElement celement = CoreModel.getDefault().create(headerFile);

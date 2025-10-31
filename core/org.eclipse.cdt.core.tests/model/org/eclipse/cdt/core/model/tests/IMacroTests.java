@@ -17,15 +17,16 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.List;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMacro;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * IMacroTest - Class for testing IMacro
@@ -34,25 +35,6 @@ import junit.framework.TestSuite;
  *
  */
 public class IMacroTests extends IntegratedCModelTest {
-	/**
-	 * @returns a test suite named after this class
-	 *          containing all its public members named "test*"
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(IMacroTests.class.getName());
-		suite.addTest(new IMacroTests("testGetElementName"));
-		// TODO Bug# 38740: suite.addTest( new IMacroTest("testGetIdentifierList"));
-		// TODO Bug# 38740: suite.addTest( new IMacroTest("testGetTokenSequence"));
-		return suite;
-	}
-
-	/**
-	 * @param name
-	 */
-	public IMacroTests(String name) {
-		super(name);
-	}
-
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
 	 */
@@ -69,6 +51,7 @@ public class IMacroTests extends IntegratedCModelTest {
 		return "IMacroTest.h";
 	}
 
+	@Test
 	public void testGetElementName() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List arrayElements = tu.getChildrenOfType(ICElement.C_MACRO);
@@ -81,6 +64,8 @@ public class IMacroTests extends IntegratedCModelTest {
 		}
 	}
 
+	@Test
+	@Disabled("TODO Bug# 38740")
 	public void testGetIdentifierList() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List arrayElements = tu.getChildrenOfType(ICElement.C_MACRO);
@@ -93,6 +78,8 @@ public class IMacroTests extends IntegratedCModelTest {
 		}
 	}
 
+	@Test
+	@Disabled("TODO Bug# 38740")
 	public void testGetTokenSequence() throws CModelException {
 		ITranslationUnit tu = getTU();
 		List arrayElements = tu.getChildrenOfType(ICElement.C_MACRO);

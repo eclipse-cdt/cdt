@@ -13,22 +13,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class ProjectCreationStateTests extends BaseTestCase {
+public class ProjectCreationStateTests extends BaseTestCase5 {
 	private static final String PROJ_NAME_PREFIX = "ProjectCreationStateTests_";
 
 	private IProject p1, p2, p3, p4;
@@ -91,15 +96,6 @@ public class ProjectCreationStateTests extends BaseTestCase {
 
 	}
 
-	public static TestSuite suite() {
-		return suite(ProjectCreationStateTests.class, "_");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		//		p1 = CProjectHelper.createNewStileCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
-	}
-
 	private void initListener(String projName) {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		if (listener != null)
@@ -113,6 +109,7 @@ public class ProjectCreationStateTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testProjectCreatingState() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		String projName = PROJ_NAME_PREFIX + "a";
@@ -179,6 +176,7 @@ public class ProjectCreationStateTests extends BaseTestCase {
 		listener.resetNotified();
 	}
 
+	@Test
 	public void testCreateProjectDescriptionForInexistingDes() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		String projName = PROJ_NAME_PREFIX + "b";
@@ -242,6 +240,7 @@ public class ProjectCreationStateTests extends BaseTestCase {
 		assertTrue(listener.isCreating());
 	}
 
+	@Test
 	public void testCreateProjectDescriptionForCreatingDes() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		String projName = PROJ_NAME_PREFIX + "c";
@@ -302,6 +301,7 @@ public class ProjectCreationStateTests extends BaseTestCase {
 		assertTrue(listener.isCreating());
 	}
 
+	@Test
 	public void testCreateProjectDescriptionForCreatedDes() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 		String projName = PROJ_NAME_PREFIX + "d";
@@ -362,8 +362,8 @@ public class ProjectCreationStateTests extends BaseTestCase {
 		assertFalse(listener.isCreating());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void cleanUp() throws Exception {
 		if (listener != null) {
 			CoreModel.getDefault().getProjectDescriptionManager().removeCProjectDescriptionListener(listener);
 			listener = null;

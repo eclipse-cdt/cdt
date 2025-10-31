@@ -18,27 +18,20 @@
  */
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.LinkedHashMap;
 
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IInclude;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author bnicolle
  *
  */
 public class IIncludeTests extends IntegratedCModelTest {
-
-	/**
-	 * @param string
-	 */
-	public IIncludeTests(String string) {
-		super(string);
-	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
@@ -56,23 +49,11 @@ public class IIncludeTests extends IntegratedCModelTest {
 		return "IIncludeTest.h";
 	}
 
-	/**
-	 * @returns a test suite named after this class
-	 *          containing all its public members named "test*"
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(IIncludeTests.class);
-		return suite;
-	}
-
+	@Test
 	public void testGetIncludeName() throws CModelException {
 		ITranslationUnit tu = getTU();
 		IInclude[] theIncludes = null;
-		try {
-			theIncludes = tu.getIncludes();
-		} catch (CModelException c) {
-			assertNotNull("CModelException thrown", c);
-		}
+		theIncludes = tu.getIncludes();
 
 		LinkedHashMap expectIncludes = new LinkedHashMap();
 		expectIncludes.put("stdio.h", Boolean.TRUE);

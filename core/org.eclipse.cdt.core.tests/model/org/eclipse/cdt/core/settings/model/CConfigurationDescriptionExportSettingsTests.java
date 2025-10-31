@@ -14,6 +14,11 @@
 
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +29,7 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -32,21 +37,16 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for testing exported settings and project references.
  * This functionality is provided by the CfgExportSettingContainerFactory which plugins
  * into the CExternalSettingsManager
  */
-public class CConfigurationDescriptionExportSettingsTests extends BaseTestCase {
+public class CConfigurationDescriptionExportSettingsTests extends BaseTestCase5 {
 
 	CoreModel coreModel = CoreModel.getDefault();
-
-	public static TestSuite suite() {
-		return suite(CConfigurationDescriptionExportSettingsTests.class, "_");
-	}
 
 	// Setting entries 1
 	final ICLanguageSettingEntry entries[] = new ICLanguageSettingEntry[] { new CMacroEntry("a", "b", 0),
@@ -61,6 +61,7 @@ public class CConfigurationDescriptionExportSettingsTests extends BaseTestCase {
 	 * It used to live in the Managedbuild testsuite in ProjectModelTests.java
 	 * but is moved here as it doesn't test any managedbuilder specific functionality
 	 */
+	@Test
 	public void testReferences() throws Exception {
 		final String projectName4 = "test4";
 		final String projectName5 = "test5";
@@ -126,6 +127,7 @@ public class CConfigurationDescriptionExportSettingsTests extends BaseTestCase {
 	 * imported in opposite order
 	 * @throws Exception
 	 */
+	@Test
 	public void testProjectImport() throws Exception {
 		final IProject libProj = ResourceHelper.createCDTProjectWithConfig("libProj");
 		final IProject mainProj = ResourceHelper.createCDTProjectWithConfig("mainProj");
@@ -189,6 +191,7 @@ public class CConfigurationDescriptionExportSettingsTests extends BaseTestCase {
 	 * of references, is correctly picked up in referencing projects.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=312575
 	 */
+	@Test
 	public void testUpdateExportedSettingsActiveCfg() throws Exception {
 		final IProject libProj = ResourceHelper.createCDTProjectWithConfig("libUpdateExtSettings");
 		final IProject mainProj = ResourceHelper.createCDTProjectWithConfig("mainProjUpdateExtSettings");
@@ -249,6 +252,7 @@ public class CConfigurationDescriptionExportSettingsTests extends BaseTestCase {
 	 * Tests that updating the exported settings on a name configuration, without updating the set
 	 * of references, is correctly picked up in referencing projects
 	 */
+	@Test
 	public void testUpdateExportedSettingsNamedConfig() throws Exception {
 		final IProject libProj = ResourceHelper.createCDTProjectWithConfig("libUpdateExpSettingsNamed");
 		final IProject mainProj = ResourceHelper.createCDTProjectWithConfig("mainProjUpdateExpSettingsNamed");
@@ -308,6 +312,7 @@ public class CConfigurationDescriptionExportSettingsTests extends BaseTestCase {
 	 * causes referencing projects to correctly pick up changes to the project exports.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=312575
 	 */
+	@Test
 	public void testExportedSettingsExternalUpdate() throws Exception {
 		final IProject libProj = ResourceHelper.createCDTProjectWithConfig("libProj312575");
 		final IProject mainProj = ResourceHelper.createCDTProjectWithConfig("mainProj312575");

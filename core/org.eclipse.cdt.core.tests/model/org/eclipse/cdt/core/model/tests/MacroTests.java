@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Stack;
 
 import org.eclipse.cdt.core.model.CModelException;
@@ -24,21 +26,13 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.ILineTracker;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author bnicolle
  *
  */
 public class MacroTests extends IntegratedCModelTest {
-	/**
-	 * @param name
-	 */
-	public MacroTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * @see org.eclipse.cdt.internal.core.model.IntegratedCModelTest
@@ -56,15 +50,7 @@ public class MacroTests extends IntegratedCModelTest {
 		return "MacroTests.cpp";
 	}
 
-	/**
-	 * @returns a test suite named after this class
-	 *          containing all its public members named "test*"
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(MacroTests.class);
-		return suite;
-	}
-
+	@Test
 	public void testBug40759() throws CModelException, BadLocationException {
 		/* This is a list of elements in the test .c file. It will be used
 		 * in a number of places in the tests
@@ -102,11 +88,11 @@ public class MacroTests extends IntegratedCModelTest {
 			if (myElement == null)
 				missing.push(expectedStringList[x]);
 			else {
-				assertTrue("Expected:" + expectedStringList[x] + " Got:" + myElement.getElementName(),
-						expectedStringList[x].equals(myElement.getElementName()));
+				assertTrue(expectedStringList[x].equals(myElement.getElementName()),
+						"Expected:" + expectedStringList[x] + " Got:" + myElement.getElementName());
 
-				assertTrue("Expected type for '" + expectedStringList[x] + "':" + expectedTypes[x] + " Got:"
-						+ myElement.getElementType(), expectedTypes[x] == myElement.getElementType());
+				assertTrue(expectedTypes[x] == myElement.getElementType(), "Expected type for '" + expectedStringList[x]
+						+ "':" + expectedTypes[x] + " Got:" + myElement.getElementType());
 
 				int offset = -1;
 				int length = -1;
@@ -117,13 +103,11 @@ public class MacroTests extends IntegratedCModelTest {
 					length = range.getIdLength();
 				}
 
-				assertTrue(
-						"Expected offset for '" + expectedStringList[x] + "':" + expectedOffsets[x] + " Got:" + offset,
-						expectedOffsets[x] == offset);
+				assertTrue(expectedOffsets[x] == offset,
+						"Expected offset for '" + expectedStringList[x] + "':" + expectedOffsets[x] + " Got:" + offset);
 
-				assertTrue(
-						"Expected length for '" + expectedStringList[x] + "':" + expectedLengths[x] + " Got:" + length,
-						expectedLengths[x] == length);
+				assertTrue(expectedLengths[x] == length,
+						"Expected length for '" + expectedStringList[x] + "':" + expectedLengths[x] + " Got:" + length);
 			}
 
 		}
@@ -131,7 +115,7 @@ public class MacroTests extends IntegratedCModelTest {
 			String output = "Could not get elements: ";
 			while (!missing.empty())
 				output += missing.pop() + " ";
-			assertTrue(output, false);
+			assertTrue(false, output);
 		}
 
 	}

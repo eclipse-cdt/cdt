@@ -14,29 +14,25 @@
 
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.eclipse.cdt.core.settings.model.util.PathSettingsContainer;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  */
-public class PathSettingsContainerTests extends BaseTestCase {
+public class PathSettingsContainerTests extends BaseTestCase5 {
 
-	public static TestSuite suite() {
-		return suite(PathSettingsContainerTests.class, "_");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-	}
-
+	@Test
 	public void testPathSettingsContainerCreate() {
 		final PathSettingsContainer root = PathSettingsContainer.createRootContainer();
 		assertNull(root.getValue());
@@ -93,6 +89,7 @@ public class PathSettingsContainerTests extends BaseTestCase {
 		assertSame(child3, root.getChildContainer(level3, true, true));
 	}
 
+	@Test
 	public void testPathSettingsContainerRemove() {
 		final PathSettingsContainer root = PathSettingsContainer.createRootContainer();
 		final IPath level1 = new Path("level1");
@@ -117,6 +114,7 @@ public class PathSettingsContainerTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testPathSettingsContainer_Bug208765() {
 		final PathSettingsContainer root = PathSettingsContainer.createRootContainer();
 		try {

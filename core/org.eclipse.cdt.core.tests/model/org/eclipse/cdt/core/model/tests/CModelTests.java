@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,38 +66,23 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
-
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * This file contains a set of generic tests for the core C model. Nothing
  * exotic, but should be a small sanity set of tests.
  */
-public class CModelTests extends TestCase {
+public class CModelTests {
+
 	IWorkspace workspace;
 	IWorkspaceRoot root;
 	IProject project_c, project_cc;
 	NullProgressMonitor monitor;
 
-	/**
-	 * Constructor for CModelTests.
-	 * @param name
-	 */
-	public CModelTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * Sets up the test fixture.
-	 *
-	 * Called before every test case method.
-	 *
-	 * Example code test the packages in the project
-	 *  "com.qnx.tools.ide.cdt.core"
-	 */
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
 		/***
 		 * The test of the tests assume that they have a working workspace
@@ -118,17 +108,9 @@ public class CModelTests extends TestCase {
 	*
 	* Called after every test case method.
 	*/
-	@Override
+	@AfterEach
 	protected void tearDown() throws CoreException {
 		BaseTestCase5.assertWorkspaceIsEmpty();
-	}
-
-	public static TestSuite suite() {
-		return new TestSuite(CModelTests.class);
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/***
@@ -142,21 +124,22 @@ public class CModelTests extends TestCase {
 	 * @see CProjectHelper#createCProject
 	 * @see CoreModel#addCCNature
 	 */
+	@Test
 	public void testHasNature() throws CoreException {
 		ICProject testProject;
 		testProject = CProjectHelper.createCProject("naturetest", "none", IPDOMManager.ID_NO_INDEXER);
 		if (testProject == null)
 			fail("Unable to create project");
-		assertTrue("hasCNature works", CoreModel.hasCNature(testProject.getProject()));
-		assertTrue("hasCCNature works without ccnature", !(CoreModel.hasCCNature(testProject.getProject())));
+		assertTrue(CoreModel.hasCNature(testProject.getProject()), "hasCNature works");
+		assertTrue(!(CoreModel.hasCCNature(testProject.getProject())), "hasCCNature works without ccnature");
 
 		CCProjectNature.addCCNature(testProject.getProject(), monitor);
-		assertTrue("hasCCNature works", (CoreModel.hasCCNature(testProject.getProject())));
+		assertTrue((CoreModel.hasCCNature(testProject.getProject())), "hasCCNature works");
 
 		CCProjectNature.removeCCNature(testProject.getProject(), monitor);
 		CProjectNature.removeCNature(testProject.getProject(), monitor);
-		assertTrue("hasCNature works without cnature", !CoreModel.hasCNature(testProject.getProject()));
-		assertTrue("hasCCNature works without ccnature or cnature", !(CoreModel.hasCCNature(testProject.getProject())));
+		assertTrue(!CoreModel.hasCNature(testProject.getProject()), "hasCNature works without cnature");
+		assertTrue(!(CoreModel.hasCCNature(testProject.getProject())), "hasCCNature works without ccnature or cnature");
 		try {
 			testProject.getProject().delete(true, true, monitor);
 		} catch (CoreException e) {
@@ -167,6 +150,7 @@ public class CModelTests extends TestCase {
 	 * Simple tests to make sure the models file identification methods seem
 	 * to work as expected.
 	 */
+	@Test
 	public void testFileType() throws CoreException, FileNotFoundException {
 		ICProject testProject;
 		testProject = CProjectHelper.createCProject("filetest", "none", IPDOMManager.ID_NO_INDEXER);
@@ -183,12 +167,12 @@ public class CModelTests extends TestCase {
 		/***
 		 * file should be a binary, executable, not shared or archive
 		 */
-		assertTrue("isBinary", CoreModel.getDefault().isBinary(file));
-		assertTrue("isExecutable", CoreModel.getDefault().isExecutable(file));
-		assertTrue("isSharedLib", !CoreModel.getDefault().isSharedLib(file));
-		assertTrue("isArchive", !CoreModel.getDefault().isArchive(file));
-		assertTrue("isObject", !CoreModel.getDefault().isObject(file));
-		assertTrue("isTranslationUnit", !CoreModel.isTranslationUnit(file));
+		assertTrue(CoreModel.getDefault().isBinary(file), "isBinary");
+		assertTrue(CoreModel.getDefault().isExecutable(file), "isExecutable");
+		assertTrue(!CoreModel.getDefault().isSharedLib(file), "isSharedLib");
+		assertTrue(!CoreModel.getDefault().isArchive(file), "isArchive");
+		assertTrue(!CoreModel.getDefault().isObject(file), "isObject");
+		assertTrue(!CoreModel.isTranslationUnit(file), "isTranslationUnit");
 
 		file = testProject.getProject().getFile("exetest.c");
 		if (!file.exists()) {
@@ -198,12 +182,12 @@ public class CModelTests extends TestCase {
 		/***
 		 * file should be a translation unit
 		 */
-		assertTrue("isBinary", !CoreModel.getDefault().isBinary(file));
-		assertTrue("isExecutable", !CoreModel.getDefault().isExecutable(file));
-		assertTrue("isSharedLib", !CoreModel.getDefault().isSharedLib(file));
-		assertTrue("isArchive", !CoreModel.getDefault().isArchive(file));
-		assertTrue("isObject", !CoreModel.getDefault().isObject(file));
-		assertTrue("isTranslationUnit", CoreModel.isTranslationUnit(file));
+		assertTrue(!CoreModel.getDefault().isBinary(file), "isBinary");
+		assertTrue(!CoreModel.getDefault().isExecutable(file), "isExecutable");
+		assertTrue(!CoreModel.getDefault().isSharedLib(file), "isSharedLib");
+		assertTrue(!CoreModel.getDefault().isArchive(file), "isArchive");
+		assertTrue(!CoreModel.getDefault().isObject(file), "isObject");
+		assertTrue(CoreModel.isTranslationUnit(file), "isTranslationUnit");
 
 		file = testProject.getProject().getFile("exetest.o");
 		if (!file.exists()) {
@@ -215,12 +199,12 @@ public class CModelTests extends TestCase {
 		/***
 		 * file should be a object file unit
 		 */
-		assertTrue("isBinary", CoreModel.getDefault().isBinary(file));
-		assertTrue("isExecutable", !CoreModel.getDefault().isExecutable(file));
-		assertTrue("isSharedLib", !CoreModel.getDefault().isSharedLib(file));
-		assertTrue("isArchive", !CoreModel.getDefault().isArchive(file));
-		assertTrue("isObject", CoreModel.getDefault().isObject(file));
-		assertTrue("isTranslationUnit", !CoreModel.isTranslationUnit(file));
+		assertTrue(CoreModel.getDefault().isBinary(file), "isBinary");
+		assertTrue(!CoreModel.getDefault().isExecutable(file), "isExecutable");
+		assertTrue(!CoreModel.getDefault().isSharedLib(file), "isSharedLib");
+		assertTrue(!CoreModel.getDefault().isArchive(file), "isArchive");
+		assertTrue(CoreModel.getDefault().isObject(file), "isObject");
+		assertTrue(!CoreModel.isTranslationUnit(file), "isTranslationUnit");
 
 		file = testProject.getProject().getFile("liblibtest_g.so");
 		if (!file.exists()) {
@@ -231,12 +215,12 @@ public class CModelTests extends TestCase {
 		/***
 		 * file should be a sharedlib/binary file
 		 */
-		assertTrue("isBinary", CoreModel.getDefault().isBinary(file));
-		assertTrue("isExecutable", !CoreModel.getDefault().isExecutable(file));
-		assertTrue("isSharedLib", CoreModel.getDefault().isSharedLib(file));
-		assertTrue("isArchive", !CoreModel.getDefault().isArchive(file));
-		assertTrue("isObject", !CoreModel.getDefault().isObject(file));
-		assertTrue("isTranslationUnit", !CoreModel.isTranslationUnit(file));
+		assertTrue(CoreModel.getDefault().isBinary(file), "isBinary");
+		assertTrue(!CoreModel.getDefault().isExecutable(file), "isExecutable");
+		assertTrue(CoreModel.getDefault().isSharedLib(file), "isSharedLib");
+		assertTrue(!CoreModel.getDefault().isArchive(file), "isArchive");
+		assertTrue(!CoreModel.getDefault().isObject(file), "isObject");
+		assertTrue(!CoreModel.isTranslationUnit(file), "isTranslationUnit");
 
 		file = testProject.getProject().getFile("liblibtest_g.a");
 		if (!file.exists()) {
@@ -249,13 +233,13 @@ public class CModelTests extends TestCase {
 		/***
 		 * file should be a archive file
 		 */
-		assertTrue("isArchive", CoreModel.getDefault().isArchive(file));
-		assertTrue("isBinary:", !CoreModel.getDefault().isBinary(file));
-		assertTrue("isExecutable", !CoreModel.getDefault().isExecutable(file));
-		assertTrue("isSharedLib", !CoreModel.getDefault().isSharedLib(file));
-		assertTrue("isArchive", CoreModel.getDefault().isArchive(file));
-		assertTrue("isObject", !CoreModel.getDefault().isObject(file));
-		assertTrue("isTranslationUnit", !CoreModel.isTranslationUnit(file));
+		assertTrue(CoreModel.getDefault().isArchive(file), "isArchive");
+		assertTrue(!CoreModel.getDefault().isBinary(file), "isBinary:");
+		assertTrue(!CoreModel.getDefault().isExecutable(file), "isExecutable");
+		assertTrue(!CoreModel.getDefault().isSharedLib(file), "isSharedLib");
+		assertTrue(CoreModel.getDefault().isArchive(file), "isArchive");
+		assertTrue(!CoreModel.getDefault().isObject(file), "isObject");
+		assertTrue(!CoreModel.isTranslationUnit(file), "isTranslationUnit");
 
 		try {
 			testProject.getProject().delete(true, true, monitor);
@@ -266,13 +250,15 @@ public class CModelTests extends TestCase {
 	/****
 	 * Some simple tests for isValidTranslationUnitName
 	 */
+	@Test
 	public void testIsValidTranslationUnitName() throws CoreException {
-		assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName(null, "notcfile"));
-		assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName(null, "not.c.file"));
-		assertTrue("Invalid C file", !CoreModel.isValidTranslationUnitName(null, "not.ca"));
-		assertTrue("Valid C file", CoreModel.isValidTranslationUnitName(null, "areal.c"));
+		assertTrue(!CoreModel.isValidTranslationUnitName(null, "notcfile"), "Invalid C file");
+		assertTrue(!CoreModel.isValidTranslationUnitName(null, "not.c.file"), "Invalid C file");
+		assertTrue(!CoreModel.isValidTranslationUnitName(null, "not.ca"), "Invalid C file");
+		assertTrue(CoreModel.isValidTranslationUnitName(null, "areal.c"), "Valid C file");
 	}
 
+	@Test
 	public void testCElementVisitorLeave() throws Exception {
 		ICProject testProject = null;
 		try {
@@ -324,6 +310,7 @@ public class CModelTests extends TestCase {
 	}
 
 	// bug 275609
+	@Test
 	public void testSourceExclusionFilters_275609() throws Exception {
 		ICProject testProject = null;
 		try {
@@ -345,27 +332,27 @@ public class CModelTests extends TestCase {
 			file2.create(new ByteArrayInputStream(new byte[0]), true, monitor);
 
 			List<ICElement> cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
-			assertEquals(1, cSourceRoots.size());
+			assertEquals((long) 1, (long) cSourceRoots.size());
 			assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
 
 			ISourceRoot sourceRoot = (ISourceRoot) cSourceRoots.get(0);
 
 			List<ICElement> cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
 			cContainers.removeIf(element -> ".settings".equals(element.getElementName()));
-			assertEquals(1, cContainers.size());
+			assertEquals((long) 1, (long) cContainers.size());
 			assertEquals("test", cContainers.get(0).getElementName());
 
 			ICContainer testContainer = (ICContainer) cContainers.get(0);
 
 			List<ICElement> subContainers = testContainer.getChildrenOfType(ICElement.C_CCONTAINER);
-			assertEquals(2, subContainers.size());
+			assertEquals((long) 2, (long) subContainers.size());
 			assertEquals("1", subContainers.get(0).getElementName());
 			assertEquals("2", subContainers.get(1).getElementName());
 			Object[] nonCResources = testContainer.getNonCResources();
-			assertEquals(0, nonCResources.length);
+			assertEquals((long) 0, (long) nonCResources.length);
 
 			List<ICElement> tUnits = testContainer.getChildrenOfType(ICElement.C_UNIT);
-			assertEquals(1, tUnits.size());
+			assertEquals((long) 1, (long) tUnits.size());
 			assertEquals("test0.c", tUnits.get(0).getElementName());
 
 			ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
@@ -384,25 +371,25 @@ public class CModelTests extends TestCase {
 			CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc);
 
 			cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
-			assertEquals(1, cSourceRoots.size());
+			assertEquals((long) 1, (long) cSourceRoots.size());
 			assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
 
 			sourceRoot = (ISourceRoot) cSourceRoots.get(0);
 
 			cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
 			cContainers.removeIf(element -> ".settings".equals(element.getElementName()));
-			assertEquals(1, cContainers.size());
+			assertEquals((long) 1, (long) cContainers.size());
 			assertEquals("test", cContainers.get(0).getElementName());
 
 			testContainer = (ICContainer) cContainers.get(0);
 
 			tUnits = testContainer.getChildrenOfType(ICElement.C_UNIT);
-			assertEquals(0, tUnits.size());
+			assertEquals((long) 0, (long) tUnits.size());
 
 			subContainers = testContainer.getChildrenOfType(ICElement.C_CCONTAINER);
-			assertEquals(0, subContainers.size());
+			assertEquals((long) 0, (long) subContainers.size());
 			nonCResources = testContainer.getNonCResources();
-			assertEquals(3, nonCResources.length);
+			assertEquals((long) 3, (long) nonCResources.length);
 			assertEquals(subFolder1, nonCResources[0]);
 			assertEquals(subFolder2, nonCResources[1]);
 			assertEquals(file0, nonCResources[2]);
@@ -418,6 +405,7 @@ public class CModelTests extends TestCase {
 	}
 
 	// bug 179474
+	@Test
 	public void testSourceExclusionFilters_179474() throws Exception {
 		ICProject testProject = null;
 		try {
@@ -433,24 +421,24 @@ public class CModelTests extends TestCase {
 			fileB.create(new ByteArrayInputStream(new byte[0]), true, monitor);
 
 			List<ICElement> cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
-			assertEquals(1, cSourceRoots.size());
+			assertEquals((long) 1, (long) cSourceRoots.size());
 			assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
 
 			ISourceRoot sourceRoot = (ISourceRoot) cSourceRoots.get(0);
 
 			List<ICElement> cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
 			cContainers.removeIf(element -> ".settings".equals(element.getElementName()));
-			assertEquals(1, cContainers.size());
+			assertEquals((long) 1, (long) cContainers.size());
 			assertEquals(subFolder.getName(), cContainers.get(0).getElementName());
 
 			ICContainer subContainer = (ICContainer) cContainers.get(0);
 
 			List<ICElement> tUnits = subContainer.getChildrenOfType(ICElement.C_UNIT);
-			assertEquals(1, tUnits.size());
+			assertEquals((long) 1, (long) tUnits.size());
 			assertEquals(fileB.getName(), tUnits.get(0).getElementName());
 
 			tUnits = sourceRoot.getChildrenOfType(ICElement.C_UNIT);
-			assertEquals(1, tUnits.size());
+			assertEquals((long) 1, (long) tUnits.size());
 			assertEquals(fileA.getName(), tUnits.get(0).getElementName());
 
 			ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
@@ -469,26 +457,26 @@ public class CModelTests extends TestCase {
 			CoreModel.getDefault().setProjectDescription(testProject.getProject(), prjDesc);
 
 			cSourceRoots = testProject.getChildrenOfType(ICElement.C_CCONTAINER);
-			assertEquals(1, cSourceRoots.size());
+			assertEquals((long) 1, (long) cSourceRoots.size());
 			assertEquals(testProject.getElementName(), cSourceRoots.get(0).getElementName());
 
 			sourceRoot = (ISourceRoot) cSourceRoots.get(0);
 
 			cContainers = sourceRoot.getChildrenOfType(ICElement.C_CCONTAINER);
 			cContainers.removeIf(element -> ".settings".equals(element.getElementName()));
-			assertEquals(1, cContainers.size());
+			assertEquals((long) 1, (long) cContainers.size());
 			assertEquals(subFolder.getName(), cContainers.get(0).getElementName());
 
 			subContainer = (ICContainer) cContainers.get(0);
 
 			tUnits = subContainer.getChildrenOfType(ICElement.C_UNIT);
-			assertEquals(0, tUnits.size());
+			assertEquals((long) 0, (long) tUnits.size());
 
 			tUnits = sourceRoot.getChildrenOfType(ICElement.C_UNIT);
-			assertEquals(0, tUnits.size());
+			assertEquals((long) 0, (long) tUnits.size());
 
 			Object[] nonCResources = subContainer.getNonCResources();
-			assertEquals(1, nonCResources.length);
+			assertEquals((long) 1, (long) nonCResources.length);
 			assertEquals(fileB, nonCResources[0]);
 
 			nonCResources = sourceRoot.getNonCResources();
@@ -504,6 +492,7 @@ public class CModelTests extends TestCase {
 	}
 
 	// bug 294965
+	@Test
 	public void testBinaryInProjectRoot_294965() throws Exception {
 		ICProject testProject;
 		testProject = CProjectHelper.createCProject("bug294965", "none", IPDOMManager.ID_NO_INDEXER);
@@ -545,7 +534,7 @@ public class CModelTests extends TestCase {
 		assertEquals(outputEntry, cfg.getBuildSetting().getOutputDirectories()[0]);
 
 		Object[] nonCResources = testProject.getNonCResources();
-		assertEquals(7, nonCResources.length);
+		assertEquals((long) 7, (long) nonCResources.length);
 
 		try {
 			testProject.getProject().delete(true, true, monitor);
@@ -554,6 +543,7 @@ public class CModelTests extends TestCase {
 	}
 
 	// bug 131165
+	@Test
 	public void testPickUpBinariesInNewFolder_131165() throws Exception {
 		ICProject testProject;
 		testProject = CProjectHelper.createCProject("bug131165", "none", IPDOMManager.ID_NO_INDEXER);
@@ -563,7 +553,7 @@ public class CModelTests extends TestCase {
 		CProjectHelper.addDefaultBinaryParser(testProject.getProject());
 
 		final IBinaryContainer bin = testProject.getBinaryContainer();
-		assertEquals(0, bin.getBinaries().length);
+		assertEquals((long) 0, (long) bin.getBinaries().length);
 
 		final boolean binContainerChanged[] = { false };
 
@@ -614,7 +604,7 @@ public class CModelTests extends TestCase {
 		waiter.join(1000);
 
 		assertTrue(binContainerChanged[0]);
-		assertEquals(2, bin.getBinaries().length);
+		assertEquals((long) 2, (long) bin.getBinaries().length);
 
 		try {
 			testProject.getProject().delete(true, true, monitor);
@@ -640,6 +630,7 @@ public class CModelTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testBinaryContainerDeltaAfterCloseProjDeleteBin_349564() throws Exception {
 		ICProject testProject;
 		testProject = CProjectHelper.createCProject("bug349564", "none", IPDOMManager.ID_NO_INDEXER);
@@ -649,10 +640,10 @@ public class CModelTests extends TestCase {
 		CProjectHelper.addDefaultBinaryParser(testProject.getProject());
 
 		final IBinaryContainer bin = testProject.getBinaryContainer();
-		assertEquals(0, bin.getBinaries().length);
+		assertEquals((long) 0, (long) bin.getBinaries().length);
 		// import with folder structure
 		importSourcesFromPlugin(testProject, CTestPlugin.getDefault().getBundle(), "resources/exe/x86/o");
-		assertEquals(1, bin.getBinaries().length);
+		assertEquals((long) 1, (long) bin.getBinaries().length);
 		IResource resource = bin.getBinaries()[0].getResource();
 
 		final boolean binContainerChanged[] = { false };
@@ -707,7 +698,7 @@ public class CModelTests extends TestCase {
 		// wait for delta notification
 		waiter.join(1000);
 
-		assertEquals(0, testProject.getBinaryContainer().getBinaries().length);
+		assertEquals((long) 0, (long) testProject.getBinaryContainer().getBinaries().length);
 		assertTrue(binContainerChanged[0]);
 
 		try {

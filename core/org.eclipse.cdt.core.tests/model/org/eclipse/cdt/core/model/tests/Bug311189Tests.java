@@ -14,13 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Arrays;
 
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.core.resources.IPathEntryStore;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.model.SourceEntry;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -30,8 +32,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Regression test for Bug 311189.
@@ -39,16 +41,12 @@ import junit.framework.Test;
  * we must ensure that we don't corrupt the set of includes in the incoming
  * project's metadata
  */
-public class Bug311189Tests extends BaseTestCase {
-
-	public static Test suite() {
-		return suite(Bug311189Tests.class, "_");
-	}
+public class Bug311189Tests extends BaseTestCase5 {
 
 	private IProject project;
 
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProject() throws Exception {
 		project = ResourceHelper.createCDTProjectWithConfig("bug311189");
 	}
 
@@ -56,6 +54,7 @@ public class Bug311189Tests extends BaseTestCase {
 	 * If a source folder is deleted and re-created in a separate Job, ensure that we don't
 	 * delete the source folder from the C Model.
 	 */
+	@Test
 	public void testPathSettingLost() throws Exception {
 		IFolder srcFolder = project.getFolder("src");
 		final IPathEntry sourceEntry = new SourceEntry(srcFolder.getFullPath(), new IPath[0]);
@@ -64,7 +63,7 @@ public class Bug311189Tests extends BaseTestCase {
 		srcFolder.create(true, true, null);
 		CoreModel.setRawPathEntries(CoreModel.getDefault().create(project), new IPathEntry[] { sourceEntry }, null);
 		IPathEntry[] rawEntries = CoreModel.getPathEntryStore(project).getRawPathEntries();
-		assertTrue("Path entry unset!", Arrays.asList(rawEntries).contains(sourceEntry));
+		assertTrue(Arrays.asList(rawEntries).contains(sourceEntry), "Path entry unset!");
 
 		try {
 			// None-batched resource change, though we do hold a scheduling rule
@@ -88,7 +87,7 @@ public class Bug311189Tests extends BaseTestCase {
 
 		IPathEntryStore store = CoreModel.getPathEntryStore(project);
 		rawEntries = store.getRawPathEntries();
-		assertTrue("Path entry gone!", Arrays.asList(rawEntries).contains(sourceEntry));
+		assertTrue(Arrays.asList(rawEntries).contains(sourceEntry), "Path entry gone!");
 	}
 
 }

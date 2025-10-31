@@ -14,6 +14,14 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,19 +35,18 @@ import org.eclipse.cdt.core.settings.model.CMacroEntry;
 import org.eclipse.cdt.core.settings.model.CMacroFileEntry;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsExtensionManager;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases testing LanguageSettingsProvider extensions
  */
-public class LanguageSettingsExtensionsTests extends BaseTestCase {
+public class LanguageSettingsExtensionsTests extends BaseTestCase5 {
 	// These should match corresponding entries defined in plugin.xml
 	/*package*/ static final String EXTENSION_BASE_PROVIDER_ID = "org.eclipse.cdt.core.tests.language.settings.base.provider";
 	/*package*/ static final String EXTENSION_BASE_PROVIDER_NAME = "Test Plugin Mock Language Settings Base Provider";
@@ -73,43 +80,9 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	private static final String ATTR_CLASS = LanguageSettingsProvidersSerializer.ATTR_CLASS;
 
 	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public LanguageSettingsExtensionsTests(String name) {
-		super(name);
-
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(LanguageSettingsExtensionsTests.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
-	}
-
-	/**
 	 * Check that regular {@link ICLanguageSettingsProvider} extension defined in plugin.xml is accessible.
 	 */
+	@Test
 	public void testExtension() throws Exception {
 		{
 			// test provider defined as an extension
@@ -118,8 +91,8 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 			for (ILanguageSettingsProvider provider : providers) {
 				ids.add(provider.getId());
 			}
-			assertTrue("extension " + EXTENSION_BASE_PROVIDER_ID + " not found",
-					ids.contains(EXTENSION_BASE_PROVIDER_ID));
+			assertTrue(ids.contains(EXTENSION_BASE_PROVIDER_ID),
+					"extension " + EXTENSION_BASE_PROVIDER_ID + " not found");
 		}
 
 		{
@@ -165,7 +138,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		// retrieve entries from extension point
 		List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, FILE_0, EXTENSION_BASE_PROVIDER_LANG_ID);
 		for (int i = 0; i < entriesExt.size(); i++) {
-			assertEquals("i=" + i, entriesExt.get(i), actual.get(i));
+			assertEquals(entriesExt.get(i), actual.get(i), "i=" + i);
 		}
 		assertEquals(entriesExt.size(), actual.size());
 	}
@@ -173,6 +146,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/**
 	 * Check that subclassed {@link LanguageSettingsBaseProvider} extension defined in plugin.xml is accessible.
 	 */
+	@Test
 	public void testExtensionBaseProviderSubclass() throws Exception {
 		// get test plugin extension provider
 		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager
@@ -199,7 +173,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 		// retrieve entries from extension point
 		List<ICLanguageSettingEntry> actual = provider.getSettingEntries(null, FILE_0, LANG_ID);
 		for (int i = 0; i < entriesExt.size(); i++) {
-			assertEquals("i=" + i, entriesExt.get(i), actual.get(i));
+			assertEquals(entriesExt.get(i), actual.get(i), "i=" + i);
 		}
 		assertEquals(entriesExt.size(), actual.size());
 	}
@@ -207,6 +181,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/**
 	 * Make sure extensions contributed through extension point created with proper ID/name.
 	 */
+	@Test
 	public void testExtensionCustomProvider() throws Exception {
 		// get test plugin extension non-default provider
 		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager
@@ -227,6 +202,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/**
 	 * Basic test for {@link LanguageSettingsBaseProvider}.
 	 */
+	@Test
 	public void testBaseProvider() throws Exception {
 		// define benchmarks
 		List<ICLanguageSettingEntry> entries = new ArrayList<>();
@@ -262,6 +238,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/**
 	 * Test ability to configure {@link LanguageSettingsBaseProvider}.
 	 */
+	@Test
 	public void testBaseProviderConfigure() throws Exception {
 		// sample entries
 		List<ICLanguageSettingEntry> entries = new ArrayList<>();
@@ -311,6 +288,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/**
 	 * {@link LanguageSettingsBaseProvider} is not allowed to be configured twice.
 	 */
+	@Test
 	public void testBaseProviderCantReconfigure() throws Exception {
 		// create LanguageSettingsBaseProvider
 		LanguageSettingsBaseProvider provider = new LanguageSettingsBaseProvider();
@@ -330,6 +308,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/**
 	 * Test {@link LanguageSettingsSerializableProvider} defined via extension point.
 	 */
+	@Test
 	public void testSerializableProvider() throws Exception {
 		// get test plugin extension for serializable provider
 		ILanguageSettingsProvider providerExtCopy = LanguageSettingsManager
@@ -355,6 +334,7 @@ public class LanguageSettingsExtensionsTests extends BaseTestCase {
 	/**
 	 * Test {@link ILanguageSettingsEditableProvider} defined via extension point.
 	 */
+	@Test
 	public void testEditableProvider() throws Exception {
 		// Non-editable providers cannot be copied so they are singletons
 		{

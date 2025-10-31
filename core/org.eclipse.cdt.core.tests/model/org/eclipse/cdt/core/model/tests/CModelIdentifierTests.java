@@ -14,6 +14,9 @@
 
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -27,13 +30,14 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for CModel identifier API.
@@ -43,17 +47,13 @@ import junit.framework.Test;
  *
  * @since 5.0
  */
-public class CModelIdentifierTests extends BaseTestCase {
-
-	public static Test suite() {
-		return BaseTestCase.suite(CModelIdentifierTests.class);
-	}
+public class CModelIdentifierTests extends BaseTestCase5 {
 
 	private ICProject fCProject;
 	private IFile fHeaderFile;
 
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProject() throws Exception {
 		// reusing project setup from CModelElementsTests
 		NullProgressMonitor monitor = new NullProgressMonitor();
 		fCProject = CProjectHelper.createCCProject("CModelIdentifierTests", "bin", IPDOMManager.ID_FAST_INDEXER);
@@ -72,11 +72,12 @@ public class CModelIdentifierTests extends BaseTestCase {
 		waitForIndexer(fCProject);
 	}
 
-	@Override
-	protected void tearDown() {
+	@AfterEach
+	protected void deleteProject() {
 		CProjectHelper.delete(fCProject);
 	}
 
+	@Test
 	public void testIdentifierConsistency() throws Exception {
 		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(fHeaderFile);
 
@@ -109,9 +110,9 @@ public class CModelIdentifierTests extends BaseTestCase {
 		for (int i = 0; i < size; i++) {
 			ICElement expected = (ICElement) elements.get(i);
 			String identifier = (String) identifiers.get(i);
-			assertNotNull("Could not create identifier for element: " + expected, identifier);
+			assertNotNull(identifier, "Could not create identifier for element: " + expected);
 			ICElement actual = CoreModel.create(identifier);
-			assertNotNull("Cannot create element '" + expected + "' from identifier: " + identifier, actual);
+			assertNotNull(actual, "Cannot create element '" + expected + "' from identifier: " + identifier);
 			assertEquals(expected.getElementName(), actual.getElementName());
 			assertEquals(expected.getElementType(), actual.getElementType());
 			assertEquals(expected, actual);

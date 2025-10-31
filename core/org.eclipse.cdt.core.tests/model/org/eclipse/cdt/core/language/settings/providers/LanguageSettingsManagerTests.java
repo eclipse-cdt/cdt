@@ -14,6 +14,13 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +34,7 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.CModelMock;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
 import org.eclipse.cdt.internal.core.settings.model.CConfigurationDescription;
@@ -38,13 +45,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases testing {@link LanguageSettingsManager} utility methods.
  */
-public class LanguageSettingsManagerTests extends BaseTestCase {
+public class LanguageSettingsManagerTests extends BaseTestCase5 {
 	// Those should match ids of plugin extensions defined in plugin.xml
 	private static final String EXTENSION_BASE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_BASE_PROVIDER_ID;
 	private static final String EXTENSION_SERIALIZABLE_PROVIDER_ID = LanguageSettingsExtensionsTests.EXTENSION_SERIALIZABLE_PROVIDER_ID;
@@ -113,45 +120,15 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 		}
 	}
 
-	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public LanguageSettingsManagerTests(String name) {
-		super(name);
-
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDownWorkspaceProviders() throws Exception {
 		LanguageSettingsManager.setWorkspaceProviders(null);
-		super.tearDown(); // includes ResourceHelper cleanup
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(LanguageSettingsManagerTests.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
 	 * Test ILanguageSettingsProvidersKeeper API (getters and setters).
 	 */
+	@Test
 	public void testConfigurationDescription_Providers() throws Exception {
 		// mock configuration description
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
@@ -182,6 +159,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test to ensure uniqueness of ids for providers kept in configuration description.
 	 */
+	@Test
 	public void testConfigurationDescription_ProvidersUniqueId() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
@@ -212,6 +190,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test various cases of ill-defined providers.
 	 */
+	@Test
 	public void testRudeProviders() throws Exception {
 		// mock configuration description
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
@@ -289,6 +268,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test assigning and retrieving providers from a configuration.
 	 */
+	@Test
 	public void testProvider_Basic() throws Exception {
 		final MockConfigurationDescription modelCfgDescription = new MockConfigurationDescription(CFG_ID);
 
@@ -343,6 +323,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test regular functionality with a few providers.
 	 */
+	@Test
 	public void testProvider_Regular() throws Exception {
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
@@ -372,7 +353,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			ICLanguageSettingEntry[] entriesArray = entries1.toArray(new ICLanguageSettingEntry[0]);
 			ICLanguageSettingEntry[] actualArray = actual.toArray(new ICLanguageSettingEntry[0]);
 			for (int i = 0; i < entries1.size(); i++) {
-				assertEquals("i=" + i, entriesArray[i], actualArray[i]);
+				assertEquals(entriesArray[i], actualArray[i], "i=" + i);
 			}
 			assertEquals(entries1.size(), actual.size());
 		}
@@ -386,7 +367,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 			ICLanguageSettingEntry[] entriesArray = entries2.toArray(new ICLanguageSettingEntry[0]);
 			ICLanguageSettingEntry[] actualArray = actual.toArray(new ICLanguageSettingEntry[0]);
 			for (int i = 0; i < entries2.size(); i++) {
-				assertEquals("i=" + i, entriesArray[i], actualArray[i]);
+				assertEquals(entriesArray[i], actualArray[i], "i=" + i);
 			}
 			assertEquals(entries2.size(), actual.size());
 		}
@@ -395,6 +376,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test getting entries from resource hierarchy.
 	 */
+	@Test
 	public void testProvider_ParentFolder() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
@@ -463,6 +445,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test getting entries from resource hierarchy up to default entries.
 	 */
+	@Test
 	public void testProvider_DefaultEntries() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
@@ -511,6 +494,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test ability to get entries by kind.
 	 */
+	@Test
 	public void testEntriesByKind_Regular() throws Exception {
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
@@ -545,6 +529,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test how conflicting entries are resolved.
 	 */
+	@Test
 	public void testEntriesByKind_ConflictingEntries() throws Exception {
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
@@ -569,6 +554,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Check handling of {@link ICSettingEntry#UNDEFINED} flag.
 	 */
+	@Test
 	public void testEntriesByKind_Undefined() throws Exception {
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
@@ -591,6 +577,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Check handling of local vs. system entries, see {@link ICSettingEntry#LOCAL} flag.
 	 */
+	@Test
 	public void testEntriesByKind_LocalAndSystem() throws Exception {
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
@@ -635,6 +622,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test conflicting entries contributed by different providers.
 	 */
+	@Test
 	public void testEntriesByKind_ConflictingProviders() throws Exception {
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
@@ -676,6 +664,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test ability to get entries by kind.
 	 */
+	@Test
 	public void testEntriesByKind_CompositeKind() throws Exception {
 		MockConfigurationDescription cfgDescription = new MockConfigurationDescription(CFG_ID);
 
@@ -708,6 +697,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test ability to serialize providers for a configuration.
 	 */
+	@Test
 	public void testConfigurationDescription_SerializeProviders() throws Exception {
 		// Create model project and accompanied descriptions
 		String projectName = getName();
@@ -772,6 +762,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test a workspace provider basics.
 	 */
+	@Test
 	public void testWorkspaceProvider_Basic() throws Exception {
 		// get workspace provider
 		ILanguageSettingsProvider provider = LanguageSettingsManager
@@ -812,6 +803,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test workspace providers equality.
 	 */
+	@Test
 	public void testWorkspaceProvider_Equals() throws Exception {
 		ILanguageSettingsProvider providerA = LanguageSettingsManager
 				.getWorkspaceProvider(EXTENSION_SERIALIZABLE_PROVIDER_ID);
@@ -823,6 +815,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test ability to replace underlying raw provider.
 	 */
+	@Test
 	public void testWorkspaceProvider_ReplaceRawProvider() throws Exception {
 		// get sample workspace provider
 		ILanguageSettingsProvider provider = LanguageSettingsManager
@@ -860,6 +853,7 @@ public class LanguageSettingsManagerTests extends BaseTestCase {
 	/**
 	 * Test ability to be called with workspace provider as well (NOOP).
 	 */
+	@Test
 	public void testWorkspaceProvider_ReplaceWithWorkspaceProvider() throws Exception {
 		// get sample workspace provider
 		ILanguageSettingsProvider provider = LanguageSettingsManager

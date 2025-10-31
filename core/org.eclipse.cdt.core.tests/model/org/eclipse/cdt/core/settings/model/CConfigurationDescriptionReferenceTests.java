@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -26,27 +29,24 @@ import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.extension.impl.CDefaultConfigurationData;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.runtime.CoreException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test ICConfigurationDescription reference behaviours
  */
-public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
+public class CConfigurationDescriptionReferenceTests extends BaseTestCase5 {
 	ICProject p1, p2, p3, p4;
 	ICConfigurationDescription p1cd1, p1cd2, p1cd3;
 	ICConfigurationDescription p2cd1, p2cd2, p2cd3;
 	ICConfigurationDescription p3cd1, p3cd2, p3cd3;
 	ICConfigurationDescription p4cd1, p4cd2, p4cd3;
 
-	public static TestSuite suite() {
-		return suite(CConfigurationDescriptionReferenceTests.class, "_");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProjects() throws Exception {
 		p1 = CProjectHelper.createCCProject("p1", "bin");
 		p2 = CProjectHelper.createCCProject("p2", "bin");
 		p3 = CProjectHelper.createCCProject("p3", "bin");
@@ -126,6 +126,7 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 		return des.createConfiguration(CCorePlugin.DEFAULT_PROVIDER_ID, data);
 	}
 
+	@Test
 	public void testConfigurationDescriptionReference() throws CoreException {
 		// references
 
@@ -146,6 +147,7 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 		assertEdges(p4cd3, new ICConfigurationDescription[] {}, true);
 	}
 
+	@Test
 	public void testConfigurationDescriptionReferencing() throws CoreException {
 		// referencing
 
@@ -169,6 +171,7 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 	/**
 	 * Test that the the referencing mechanism preserves order
 	 */
+	@Test
 	public void testDependencyOrder() throws CoreException {
 		ICProject p1 = null;
 		ICProject p2 = null;
@@ -253,12 +256,12 @@ public class CConfigurationDescriptionReferenceTests extends BaseTestCase {
 		}
 		// check for each ID, don't use a Set so we detect duplicates
 		for (ICConfigurationDescription element : expected) {
-			assertTrue(element.getId() + " is missing", actualIds.contains(element.getId()));
+			assertTrue(actualIds.contains(element.getId()), element.getId() + " is missing");
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void cleanUp() throws Exception {
 		for (Object element : Arrays.asList(new ICProject[] { p1, p2, p3, p4 })) {
 			ICProject project = (ICProject) element;
 			try {

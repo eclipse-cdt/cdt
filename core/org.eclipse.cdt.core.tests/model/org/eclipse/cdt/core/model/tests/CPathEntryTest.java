@@ -33,18 +33,20 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /*
  * CPathEntryTest
  */
-public class CPathEntryTest extends BaseTestCase {
+public class CPathEntryTest extends BaseTestCase5 {
 
 	private ICProject testProject;
 
@@ -83,25 +85,16 @@ public class CPathEntryTest extends BaseTestCase {
 	}
 
 	/**
-	 * Constructor for CModelTests.
-	 *
-	 * @param name
-	 */
-	public CPathEntryTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Sets up the test fixture.
 	 *
 	 * Called before every test case method.
 	 *
 	 */
-	@Override
-	protected void setUp() throws CoreException {
+	@BeforeEach
+	protected void createProject() throws CoreException {
 		testProject = CProjectHelper.createCProject("cpathtest", "none", IPDOMManager.ID_NO_INDEXER);
 		if (testProject == null) {
-			fail("Unable to create project");
+			Assertions.fail("Unable to create project");
 		}
 	}
 
@@ -110,13 +103,9 @@ public class CPathEntryTest extends BaseTestCase {
 	 *
 	 * Called after every test case method.
 	 */
-	@Override
-	protected void tearDown() throws CoreException {
+	@AfterEach
+	protected void deleteProject() throws CoreException {
 		testProject.getProject().delete(true, null);
-	}
-
-	public static TestSuite suite() {
-		return suite(CPathEntryTest.class);
 	}
 
 	/*******************************************************************************************************************************
@@ -124,12 +113,13 @@ public class CPathEntryTest extends BaseTestCase {
 	 *
 	 * @see CProjectHelper#createCProject
 	 */
+	@Test
 	public void testCPathEntries() throws CoreException {
 		IPathEntry[] entries = testProject.getResolvedPathEntries();
 		// We always have at least two entries:
 		//  1) the default sourceEntry becomes the project
 		//  2) the default outputEntry becomes the project
-		assertTrue("No cpathentries", entries.length == 2);
+		Assertions.assertTrue(entries.length == 2, "No cpathentries");
 		entries = new IPathEntry[3];
 		entries[0] = CoreModel.newIncludeEntry(new Path(""), null, new Path("/usr/include"), true);
 		entries[1] = CoreModel.newIncludeEntry(new Path("cpaththest/foo.c"), null, new Path("/usr/include"), true);
@@ -140,7 +130,7 @@ public class CPathEntryTest extends BaseTestCase {
 		// We always have at least two entries:
 		//  1) the default sourceEntry becomes the project
 		//  2) the default outputEntry becomes the project
-		assertTrue("Expecting 5 pathentries", entries.length == (3 + 2));
+		Assertions.assertTrue(entries.length == (3 + 2), "Expecting 5 pathentries");
 		testProject.setRawPathEntries(null, null);
 	}
 
@@ -149,6 +139,7 @@ public class CPathEntryTest extends BaseTestCase {
 	 *
 	 * @see CProjectHelper#createCProject
 	 */
+	@Test
 	public void testCPathEntriesDelta() throws CoreException {
 		CProjectHelper.addCContainer(testProject, "foo");
 		IPathEntry[] entries = new IPathEntry[3];
@@ -162,12 +153,13 @@ public class CPathEntryTest extends BaseTestCase {
 		entries = testProject.getResolvedPathEntries();
 		//CoreModel.getDefault().removeElementChangedListener(listener);
 		testProject.setRawPathEntries(null, null);
-		assertTrue("Expecting 3 pathEntries deltas", listener.count > 1);
+		Assertions.assertTrue(listener.count > 1, "Expecting 3 pathEntries deltas");
 	}
 
 	/**
 	 * Check the IPathEntryContainer.
 	 */
+	@Test
 	public void testPathEntryContainer() throws CoreException {
 		final IPath containerID = new Path("Testing/Container");
 		IContainerEntry containerEntry = CoreModel.newContainerEntry(containerID);
@@ -200,15 +192,16 @@ public class CPathEntryTest extends BaseTestCase {
 		// We always have at least two entries:
 		//  1) the default sourceEntry becomes the project
 		//  2) the default outputEntry becomes the project
-		assertTrue("Expecting 3 pathentries from container", entries.length == (3 + 2));
+		Assertions.assertTrue(entries.length == (3 + 2), "Expecting 3 pathentries from container");
 
 	}
 
+	@Test
 	public void testSetExclusionFilter_Bug197486() throws Exception {
 		// get project description
 		ICProjectDescription prjDesc = CoreModel.getDefault().getProjectDescription(testProject.getProject(), true);
 		ICConfigurationDescription activeCfg = prjDesc.getActiveConfiguration();
-		assertNotNull(activeCfg);
+		Assertions.assertNotNull(activeCfg);
 
 		// add filter to source entry
 		ICSourceEntry[] entries = activeCfg.getSourceEntries();
@@ -227,7 +220,7 @@ public class CPathEntryTest extends BaseTestCase {
 		// check again.
 		prjDesc = CoreModel.getDefault().getProjectDescription(testProject.getProject(), false);
 		ICConfigurationDescription[] allConfigs = prjDesc.getConfigurations();
-		assertEquals(1, allConfigs.length);
+		Assertions.assertEquals((long) 1, (long) allConfigs.length);
 		checkExclusionPatterns(sourceEntryName, exclusionPatterns, allConfigs[0]);
 
 		activeCfg = prjDesc.getActiveConfiguration();
@@ -236,14 +229,14 @@ public class CPathEntryTest extends BaseTestCase {
 
 	private void checkExclusionPatterns(String sourceEntryName, IPath[] exclusionPatterns,
 			ICConfigurationDescription cfg) {
-		assertNotNull(cfg);
+		Assertions.assertNotNull(cfg);
 
 		ICSourceEntry[] entries = cfg.getSourceEntries();
-		assertEquals(1, entries.length);
-		assertEquals(sourceEntryName, entries[0].getName());
+		Assertions.assertEquals((long) 1, (long) entries.length);
+		Assertions.assertEquals(sourceEntryName, entries[0].getName());
 		IPath[] actualExclusionPatterns = entries[0].getExclusionPatterns();
-		assertEquals(exclusionPatterns.length, actualExclusionPatterns.length);
-		assertEquals(toSet(exclusionPatterns), toSet(actualExclusionPatterns));
+		Assertions.assertEquals((long) exclusionPatterns.length, (long) actualExclusionPatterns.length);
+		Assertions.assertEquals(toSet(exclusionPatterns), toSet(actualExclusionPatterns));
 	}
 
 	private Set toSet(Object[] array) {

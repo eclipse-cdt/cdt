@@ -18,6 +18,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,23 +34,20 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class ExternalSettingsProviderTests extends BaseTestCase {
+public class ExternalSettingsProviderTests extends BaseTestCase5 {
 	private static final String PROJ_NAME_PREFIX = "espt_";
 	ICProject p1, p2, p3, p4, p5, p6;
 
-	public static TestSuite suite() {
-		return suite(ExternalSettingsProviderTests.class, "_");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProjects() throws Exception {
 		p1 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "a", IPDOMManager.ID_NO_INDEXER);
 		p2 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "b", IPDOMManager.ID_NO_INDEXER);
 		p3 = CProjectHelper.createNewStyleCProject(PROJ_NAME_PREFIX + "c", IPDOMManager.ID_NO_INDEXER);
@@ -58,6 +60,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 	 * Test adding a external setting provider to p1 -- the contributed paths should appear
 	 * @throws Exception
 	 */
+	@Test
 	public void testRefs() throws Exception {
 		TestExtSettingsProvider.setVariantNum(0);
 		CoreModel model = CoreModel.getDefault();
@@ -122,6 +125,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 		assertTrue(Arrays.equals(expectedEntries, entries));
 	}
 
+	@Test
 	public void testCreateCfg() throws Exception {
 		TestExtSettingsProvider.setVariantNum(0);
 		CoreModel model = CoreModel.getDefault();
@@ -165,6 +169,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testProviderUpdate() throws Exception {
 		TestExtSettingsProvider.setVariantNum(0);
 
@@ -211,6 +216,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 		assertTrue(Arrays.equals(expectedEntries2, entries));
 	}
 
+	@Test
 	public void testRestoreDefaults() throws Exception {
 		TestExtSettingsProvider.setVariantNum(0);
 
@@ -272,6 +278,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 	/**
 	 * Test that all entries are present
 	 */
+	@Test
 	public void testCheckAllProvidedSettingTypes() throws CoreException {
 		TestExtSettingsProvider.setVariantNum(0);
 		CoreModel model = CoreModel.getDefault();
@@ -340,6 +347,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 	/**
 	 * Test if changing only the language IDs of an external setting works
 	 */
+	@Test
 	public void testChangeLanguageSet() throws CoreException {
 		TestExtSettingsProvider.setVariantNum(2);
 
@@ -412,6 +420,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 	/**
 	 * Test if moving an entry to an external setting with different language IDs works
 	 */
+	@Test
 	public void testChangeLanguageSetMove() throws CoreException {
 		TestExtSettingsProvider.setVariantNum(5);
 
@@ -489,6 +498,7 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 	 * Test if macros with the same name but different values can coexist when
 	 * they belong to different language ids
 	 */
+	@Test
 	public void testSameMacroWithDifferentValuesAndDifferentLanguageIds() throws CoreException {
 		TestExtSettingsProvider.setVariantNum(4);
 
@@ -520,8 +530,8 @@ public class ExternalSettingsProviderTests extends BaseTestCase {
 		}
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProjects() throws Exception {
 		try {
 			p1.getProject().delete(true, null);
 		} catch (CoreException e) {

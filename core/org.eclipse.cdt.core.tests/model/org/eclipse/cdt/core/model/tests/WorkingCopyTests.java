@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -24,41 +29,24 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.TestPluginLauncher;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Contains unit test cases for Working Copies. Run using JUnit Plugin Test
  * configuration launcher.
  */
-public class WorkingCopyTests extends TestCase {
+public class WorkingCopyTests {
 	private ICProject fCProject;
 	private IFile headerFile;
 	private NullProgressMonitor monitor;
 
-	public static void main(String[] args) {
-		TestPluginLauncher.run(TestPluginLauncher.getLocationFromProperties(), WorkingCopyTests.class, args);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(WorkingCopyTests.class.getName());
-		suite.addTest(new WorkingCopyTests("testWorkingCopy"));
-		//suite.addTest(new WorkingCopyTests("testHashing"));
-		return suite;
-	}
-
-	public WorkingCopyTests(String name) {
-		super(name);
-	}
-
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
 		monitor = new NullProgressMonitor();
 
@@ -78,11 +66,12 @@ public class WorkingCopyTests extends TestCase {
 		}
 	}
 
-	@Override
+	@AfterEach
 	protected void tearDown() {
 		CProjectHelper.delete(fCProject);
 	}
 
+	@Test
 	public void testWorkingCopy() throws Exception {
 		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
 		// CreateWorkingCopy

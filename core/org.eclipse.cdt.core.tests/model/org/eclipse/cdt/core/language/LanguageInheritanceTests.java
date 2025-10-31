@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.language;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.util.Collections;
 
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -25,18 +30,19 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.CContentTypes;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.content.IContentType;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for language inheritance computations.
  */
-public class LanguageInheritanceTests extends BaseTestCase {
+public class LanguageInheritanceTests extends BaseTestCase5 {
 
 	private static final String BIN_FOLDER = "bin";
 	private static final String FILE_NAME = "test.c";
@@ -51,12 +57,8 @@ public class LanguageInheritanceTests extends BaseTestCase {
 	private IProject fProject;
 	private ICConfigurationDescription fConfiguration;
 
-	public static Test suite() {
-		return suite(LanguageInheritanceTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProject() throws Exception {
 		String name = getClass().getName() + "_" + getName();
 		fCProject = CProjectHelper.createCCProject(name, BIN_FOLDER, IPDOMManager.ID_NO_INDEXER);
 		fProject = fCProject.getProject();
@@ -75,11 +77,12 @@ public class LanguageInheritanceTests extends BaseTestCase {
 		fManager.storeWorkspaceLanguageConfiguration(EMPTY_CONTENT_TYPES);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		CProjectHelper.delete(fCProject);
 	}
 
+	@Test
 	public void testDirectFileMapping() throws Exception {
 		ILanguage originalLanguage = fManager.getLanguageForFile(fFile, fConfiguration);
 		assertDifferentLanguages(originalLanguage, fLanguage1);
@@ -96,6 +99,7 @@ public class LanguageInheritanceTests extends BaseTestCase {
 		assertSameLanguage(originalLanguage, fManager.getLanguageForFile(fFile, fConfiguration));
 	}
 
+	@Test
 	public void testDirectProjectContentTypeMapping() throws Exception {
 		ILanguage originalLanguage = fManager.getLanguageForFile(fFile, fConfiguration);
 		assertDifferentLanguages(originalLanguage, fLanguage1);
@@ -114,6 +118,7 @@ public class LanguageInheritanceTests extends BaseTestCase {
 		assertSameLanguage(originalLanguage, fManager.getLanguageForFile(fFile, fConfiguration));
 	}
 
+	@Test
 	public void testDirectWorkspaceContentTypeMapping() throws Exception {
 		ILanguage originalLanguage = fManager.getLanguageForFile(fFile, fConfiguration);
 		assertDifferentLanguages(originalLanguage, fLanguage1);
@@ -132,6 +137,7 @@ public class LanguageInheritanceTests extends BaseTestCase {
 		assertEquals(originalLanguage, fManager.getLanguageForFile(fFile, fConfiguration));
 	}
 
+	@Test
 	public void testOverriddenWorkspaceContentTypeMapping1() throws Exception {
 		ILanguage originalLanguage = fManager.getLanguageForFile(fFile, fConfiguration);
 		assertDifferentLanguages(originalLanguage, fLanguage1);
@@ -152,6 +158,7 @@ public class LanguageInheritanceTests extends BaseTestCase {
 		assertSameLanguage(fLanguage2, fManager.getLanguageForFile(fFile, fConfiguration));
 	}
 
+	@Test
 	public void testOverriddenWorkspaceContentTypeMapping2() throws Exception {
 		ILanguage originalLanguage = fManager.getLanguageForFile(fFile, fConfiguration);
 		assertDifferentLanguages(originalLanguage, fLanguage1);
@@ -172,6 +179,7 @@ public class LanguageInheritanceTests extends BaseTestCase {
 		assertSameLanguage(fLanguage2, fManager.getLanguageForFile(fFile, fConfiguration));
 	}
 
+	@Test
 	public void testOverriddenProjectContentTypeMapping() throws Exception {
 		ILanguage originalLanguage = fManager.getLanguageForFile(fFile, fConfiguration);
 		assertDifferentLanguages(originalLanguage, fLanguage1);

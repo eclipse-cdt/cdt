@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
@@ -22,29 +25,21 @@ import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-
-import junit.framework.Test;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for C model builder bugs.
  */
-public class CModelBuilderBugsTest extends BaseTestCase {
-
-	public static Test suite() {
-		return suite(CModelBuilderBugsTest.class, "_");
-	}
+public class CModelBuilderBugsTest extends BaseTestCase5 {
 
 	private ICProject fCProject;
 	private ITranslationUnit fTU;
 
-	public CModelBuilderBugsTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createProject() throws Exception {
 		fCProject = CProjectHelper.createCProject(getName(), null, IPDOMManager.ID_FAST_INDEXER);
 		assertNotNull(fCProject);
 		CProjectHelper.importSourcesFromPlugin(fCProject, CTestPlugin.getDefault().getBundle(), "/resources/cmodel");
@@ -52,12 +47,12 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 		assertNotNull(fTU);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		CProjectHelper.delete(fCProject);
-		super.tearDown();
 	}
 
+	@Test
 	public void testModelBuilderBug222398() throws Exception {
 		IStructure clazz = (IStructure) fTU.getElement("Test");
 		assertNotNull(clazz);
@@ -73,11 +68,13 @@ public class CModelBuilderBugsTest extends BaseTestCase {
 		assertEquals("decl", functions[1].getElementName());
 	}
 
+	@Test
 	public void testModelBuilderBug262785() throws Exception {
 		assertNotNull(fTU.getElement("Unknown1::method"));
 		assertNotNull(fTU.getElement("Unknown2::method"));
 	}
 
+	@Test
 	public void testModelBuilderBug274490() throws Exception {
 		IStructure clazz = (IStructure) fTU.getElement("Bug274490");
 		assertNotNull(clazz);

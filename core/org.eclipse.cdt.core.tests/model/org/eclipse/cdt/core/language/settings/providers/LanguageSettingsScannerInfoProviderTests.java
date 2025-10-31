@@ -14,6 +14,11 @@
 
 package org.eclipse.cdt.core.language.settings.providers;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +37,7 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsScannerInfoProvider;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
 import org.eclipse.core.resources.IFile;
@@ -43,13 +48,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases testing LanguageSettingsProvider functionality
  */
-public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
+public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase5 {
 	private static final IFile FAKE_FILE = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path("/project/path0"));
 	private static final String PROVIDER_ID = "test.provider.id";
 	private static final String PROVIDER_ID_2 = "test.provider.id.2";
@@ -72,41 +76,6 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 				String languageId) {
 			return entries;
 		}
-	}
-
-	/**
-	 * Constructor.
-	 * @param name - name of the test.
-	 */
-	public LanguageSettingsScannerInfoProviderTests(String name) {
-		super(name);
-
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown(); // includes ResourceHelper cleanup
-	}
-
-	/**
-	 * @return - new TestSuite.
-	 */
-	public static TestSuite suite() {
-		return new TestSuite(LanguageSettingsScannerInfoProviderTests.class);
-	}
-
-	/**
-	 * main function of the class.
-	 *
-	 * @param args - arguments
-	 */
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(suite());
 	}
 
 	/**
@@ -140,6 +109,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test cases when some objects are null.
 	 */
+	@Test
 	public void testNulls() throws Exception {
 		{
 			// Handle project==null
@@ -200,6 +170,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test empty scanner info.
 	 */
+	@Test
 	public void testEmpty() throws Exception {
 		LanguageSettingsScannerInfoProvider scannerInfoProvider = new LanguageSettingsScannerInfoProvider();
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -226,6 +197,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test regular cases.
 	 */
+	@Test
 	public void testRegular() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -299,6 +271,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test "local" flag (#include "...").
 	 */
+	@Test
 	public void testLocal() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -354,6 +327,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test Mac frameworks.
 	 */
+	@Test
 	public void testFramework() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -398,6 +372,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test duplicate entries.
 	 */
+	@Test
 	public void testDuplicate() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -449,6 +424,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test include path managed by eclipse as a workspace path.
 	 */
+	@Test
 	public void testWorkspacePath() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -521,6 +497,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Confirm that device letter is prepended on filesystems that support that.
 	 */
+	@Test
 	public void testFilesystemPathNoDriveLetter() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -571,6 +548,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test relative paths.
 	 */
+	@Test
 	public void testRelativePath() throws Exception {
 		// create a project
 		String prjName = getName();
@@ -637,6 +615,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test relative paths - some combinations of dot paths.
 	 */
+	@Test
 	public void testRelativePathWithDots() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -739,6 +718,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test if build/environment variables are expanded
 	 */
+	@Test
 	public void testEnvironmentVars() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -783,6 +763,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test from parent folder's entries.
 	 */
+	@Test
 	public void testParentFolder() throws Exception {
 		class MockProviderForResource extends LanguageSettingsBaseProvider {
 			private IResource rc;
@@ -846,6 +827,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test resolved paths.
 	 */
+	@Test
 	public void testResolvedPath() throws Exception {
 		// create a project
 		IProject project = ResourceHelper.createCDTProjectWithConfig(getName());
@@ -910,6 +892,7 @@ public class LanguageSettingsScannerInfoProviderTests extends BaseTestCase {
 	/**
 	 * Test composition of 2 languages.
 	 */
+	@Test
 	public void testResourceLanguages() throws Exception {
 		class MockProviderLang extends LanguageSettingsBaseProvider {
 			private final String langId;

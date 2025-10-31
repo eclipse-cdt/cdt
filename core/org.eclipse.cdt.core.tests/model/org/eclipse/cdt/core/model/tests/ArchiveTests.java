@@ -14,6 +14,9 @@
 
 package org.eclipse.cdt.core.model.tests;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
@@ -32,8 +35,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
@@ -43,7 +48,8 @@ import junit.framework.TestSuite;
  * class. There is nothing exotic here, mostly just sanity type tests
  *
  */
-public class ArchiveTests extends TestCase {
+public class ArchiveTests {
+
 	IWorkspace workspace;
 	IWorkspaceRoot root;
 	ICProject testProject;
@@ -51,12 +57,8 @@ public class ArchiveTests extends TestCase {
 	Path cpath, exepath, libpath, archpath, objpath;
 	NullProgressMonitor monitor;
 
-	/**
-	 * Constructor for ArchiveTests
-	 * @param name
-	 */
-	public ArchiveTests(String name) {
-		super(name);
+	@BeforeEach
+	protected void setUp() throws Exception {
 		/***
 		* The assume that they have a working workspace
 		* and workspace root object to use to create projects/files in,
@@ -69,19 +71,6 @@ public class ArchiveTests extends TestCase {
 			fail("Workspace was not setup");
 		if (root == null)
 			fail("Workspace root was not setup");
-
-	}
-
-	/**
-	 * Sets up the test fixture.
-	 *
-	 * Called before every test case method.
-	 *
-	 * Example code test the packages in the project
-	 *  "com.qnx.tools.ide.cdt.core"
-	 */
-	@Override
-	protected void setUp() throws Exception {
 
 		/***
 		 * Setup the various files, paths and projects that are needed by the
@@ -139,7 +128,7 @@ public class ArchiveTests extends TestCase {
 	*
 	* Called after every test case method.
 	*/
-	@Override
+	@AfterEach
 	protected void tearDown() {
 		CProjectHelper.delete(testProject);
 	}
@@ -152,6 +141,7 @@ public class ArchiveTests extends TestCase {
 		junit.textui.TestRunner.run(suite());
 	}
 
+	@Test
 	public void testGetBinaries() throws CoreException, FileNotFoundException {
 		IArchive myArchive;
 		IBinary[] bins;
@@ -194,11 +184,11 @@ public class ArchiveTests extends TestCase {
 			}
 		}
 
-		assertTrue(expBin.getMissingString(), expBin.gotAll());
-		assertTrue(expBin.getExtraString(), !expBin.gotExtra());
+		assertTrue(expBin.gotAll(), expBin.getMissingString());
+		assertTrue(!expBin.gotExtra(), expBin.getExtraString());
 		for (x = 0; x < expObj.length; x++) {
-			assertTrue("Binary " + expBin.expStrings[x] + " " + expObj[x].getMissingString(), expObj[x].gotAll());
-			assertTrue("Binary " + expBin.expStrings[x] + " " + expObj[x].getExtraString(), !expObj[x].gotExtra());
+			assertTrue(expObj[x].gotAll(), "Binary " + expBin.expStrings[x] + " " + expObj[x].getMissingString());
+			assertTrue(!expObj[x].gotExtra(), "Binary " + expBin.expStrings[x] + " " + expObj[x].getExtraString());
 		}
 	}
 
@@ -206,11 +196,12 @@ public class ArchiveTests extends TestCase {
 	 *  Simple sanity test to make sure Archive.isArchive returns true
 	 *
 	 */
+	@Test
 	public void testIsArchive() throws CoreException, FileNotFoundException {
 		IArchive myArchive;
 		myArchive = CProjectHelper.findArchive(testProject, "libtestlib_g.a");
 
-		assertTrue("A archive", myArchive != null);
+		assertTrue(myArchive != null, "A archive");
 		myArchive = null;
 
 	}

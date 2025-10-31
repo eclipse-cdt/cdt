@@ -13,28 +13,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class CfgSettingsTests extends BaseTestCase {
+public class CfgSettingsTests extends BaseTestCase5 {
 	private static final String PROJ_NAME_PREFIX = "sfgst_";
 	ICProject p1;
 
-	public static TestSuite suite() {
-		return suite(CfgSettingsTests.class, "_");
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-	}
-
+	@Test
 	public void testDefaultSettingConfig() throws Exception {
 		ICProjectDescriptionManager mngr = CoreModel.getDefault().getProjectDescriptionManager();
 
@@ -151,8 +149,8 @@ public class CfgSettingsTests extends BaseTestCase {
 		return ICProjectDescriptionPreferences.CONFIGS_INDEPENDENT;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		try {
 			if (p1 != null) {
 				p1.getProject().delete(true, null);

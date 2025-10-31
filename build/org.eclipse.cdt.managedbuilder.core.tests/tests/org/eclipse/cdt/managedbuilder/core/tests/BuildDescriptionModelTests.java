@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.buildmodel.BuildDescriptionManager;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildDescription;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildIOType;

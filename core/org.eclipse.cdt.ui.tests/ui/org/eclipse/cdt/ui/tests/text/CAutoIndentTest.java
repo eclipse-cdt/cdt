@@ -17,6 +17,9 @@
 
 package org.eclipse.cdt.ui.tests.text;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

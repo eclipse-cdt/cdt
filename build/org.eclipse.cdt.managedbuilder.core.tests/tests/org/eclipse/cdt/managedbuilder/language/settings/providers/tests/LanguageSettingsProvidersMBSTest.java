@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +29,8 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.language.settings.providers.ReferencedProjectsLanguageSettingsProvider;
+import org.eclipse.cdt.managedbuilder.core.tests.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

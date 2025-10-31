@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 
-class LogMonitoring {
+public class LogMonitoring {
 
 	private List<IStatus> statusLog;
 
@@ -30,7 +30,7 @@ class LogMonitoring {
 
 	private CCorePlugin corePlugin;
 
-	void start() {
+	public void start() {
 		statusLog = Collections.synchronizedList(new ArrayList());
 		logListener = new ILogListener() {
 			@Override
@@ -55,7 +55,7 @@ class LogMonitoring {
 
 	}
 
-	void stop(int expectedLoggedNonOK) throws Exception {
+	public void stop(int expectedLoggedNonOK) throws Exception {
 		if (statusLog.size() != expectedLoggedNonOK) {
 			StringBuilder msg = new StringBuilder("Expected number (").append(expectedLoggedNonOK).append(") of ");
 			msg.append("Non-OK status objects in log differs from actual (").append(statusLog.size()).append(").\n");

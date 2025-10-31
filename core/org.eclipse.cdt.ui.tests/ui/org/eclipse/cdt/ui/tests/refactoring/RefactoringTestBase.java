@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
@@ -29,13 +32,13 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

@@ -22,7 +22,6 @@ import java.util.List;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;

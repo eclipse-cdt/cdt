@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.templateengine;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.cdt.core.templateengine.process.ProcessHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 
 public class TestTemplateEngineBugs extends BaseTestCase {
 

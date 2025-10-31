@@ -29,7 +29,6 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;

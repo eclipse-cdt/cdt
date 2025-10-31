@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuildObject;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;

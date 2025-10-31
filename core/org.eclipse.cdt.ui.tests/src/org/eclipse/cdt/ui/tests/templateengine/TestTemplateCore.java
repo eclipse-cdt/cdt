@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.templateengine;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.templateengine.TemplateCore;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 
 /**
  * Test the functionality of Tempalte Class.

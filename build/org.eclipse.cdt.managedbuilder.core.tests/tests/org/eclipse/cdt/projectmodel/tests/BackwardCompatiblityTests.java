@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.projectmodel.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +24,7 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.managedbuilder.core.tests.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 

@@ -13,14 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.templateengine;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.util.List;
 
 import org.eclipse.cdt.core.templateengine.SharedDefaults;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlProcessorFactoryCdt;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 

@@ -12,7 +12,6 @@
 package org.eclipse.cdt.managedbuilder.core.tests;
 
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.model.IncludeEntry;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;

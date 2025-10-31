@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.templateengine;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 
 /**
  * Test the functionality of the ValueStore class.

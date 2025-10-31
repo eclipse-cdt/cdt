@@ -15,12 +15,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.scannerdiscovery;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
+import org.eclipse.cdt.make.tests.BaseTestCase;
 
 import junit.framework.TestSuite;
 

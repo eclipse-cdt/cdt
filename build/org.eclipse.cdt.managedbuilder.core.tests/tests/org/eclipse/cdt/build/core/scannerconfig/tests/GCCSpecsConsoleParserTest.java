@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.build.core.scannerconfig.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser;
+import org.eclipse.cdt.managedbuilder.core.tests.BaseTestCase;
 
 public class GCCSpecsConsoleParserTest extends BaseTestCase {
 	GCCSpecsConsoleParser parser;

@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.utils;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;

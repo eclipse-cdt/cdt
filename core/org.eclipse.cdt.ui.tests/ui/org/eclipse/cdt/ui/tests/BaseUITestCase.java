@@ -21,7 +21,6 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.cdt.ui.testplugin.util.StringAsserts;

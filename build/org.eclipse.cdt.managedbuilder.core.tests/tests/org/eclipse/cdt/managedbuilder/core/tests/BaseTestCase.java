@@ -13,7 +13,7 @@
  *     Andrew Ferguson (Symbian)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
-package org.eclipse.cdt.core.testplugin.util;
+package org.eclipse.cdt.managedbuilder.core.tests;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +31,8 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
+import org.eclipse.cdt.core.testplugin.util.LogMonitoring;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
 import org.eclipse.core.resources.IFile;

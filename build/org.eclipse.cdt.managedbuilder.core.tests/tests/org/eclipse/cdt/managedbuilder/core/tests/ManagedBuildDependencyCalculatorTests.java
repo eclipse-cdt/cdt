@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IAdditionalInput;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IInputType;

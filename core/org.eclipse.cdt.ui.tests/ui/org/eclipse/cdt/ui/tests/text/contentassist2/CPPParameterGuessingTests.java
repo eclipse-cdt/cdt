@@ -16,7 +16,7 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 

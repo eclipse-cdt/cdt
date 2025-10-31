@@ -17,7 +17,7 @@
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;

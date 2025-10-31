@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.scannerdiscovery;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;

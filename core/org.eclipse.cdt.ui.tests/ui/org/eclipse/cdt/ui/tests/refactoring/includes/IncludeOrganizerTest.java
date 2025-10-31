@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.includes;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Collections;
 
 import org.eclipse.cdt.core.model.ITranslationUnit;

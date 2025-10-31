@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.includes;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.Collection;
@@ -28,11 +30,11 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.eclipse.cdt.ui.tests.refactoring.TestSourceFile;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;

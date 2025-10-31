@@ -13,11 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.doctools;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
 import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
 import org.eclipse.core.resources.IProject;

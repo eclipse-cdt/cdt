@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Collection;
 import java.util.ListResourceBundle;
 
@@ -22,13 +25,13 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.ui.editor.AddIncludeAction;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IElementSelector;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;

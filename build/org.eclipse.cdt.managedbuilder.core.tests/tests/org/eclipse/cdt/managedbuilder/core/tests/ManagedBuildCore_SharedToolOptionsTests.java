@@ -17,7 +17,6 @@ import java.net.URL;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedOptionValueHandler;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;

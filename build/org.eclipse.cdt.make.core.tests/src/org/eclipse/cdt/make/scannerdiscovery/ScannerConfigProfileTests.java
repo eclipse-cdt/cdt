@@ -16,11 +16,11 @@ package org.eclipse.cdt.make.scannerdiscovery;
 import java.io.ByteArrayInputStream;
 
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerConfigBuilderInfo2;
 import org.eclipse.cdt.make.core.tests.StandardBuildTestHelper;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.ScannerConfigProfileManager;
+import org.eclipse.cdt.make.tests.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;

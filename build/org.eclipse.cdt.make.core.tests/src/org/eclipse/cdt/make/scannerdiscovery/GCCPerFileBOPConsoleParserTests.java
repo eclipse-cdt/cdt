@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.scannerdiscovery;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.util.List;
 

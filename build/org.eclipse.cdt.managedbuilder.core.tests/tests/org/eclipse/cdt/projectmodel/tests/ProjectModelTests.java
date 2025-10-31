@@ -14,6 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.projectmodel.tests;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,13 +47,13 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.settings.model.extension.CConfigurationData;
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IFileInfo;
 import org.eclipse.cdt.managedbuilder.core.IFolderInfo;
 import org.eclipse.cdt.managedbuilder.core.IProjectType;
 import org.eclipse.cdt.managedbuilder.core.IResourceInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
+import org.eclipse.cdt.managedbuilder.core.tests.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.internal.core.Configuration;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.internal.core.ManagedProject;

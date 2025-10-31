@@ -76,28 +76,28 @@ public abstract class BaseTestCase5 {
 	 */
 	public static final String SLOW_TEST_TAG = "slowTest";
 
-	protected static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
-	protected static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
+	public static final String DEFAULT_INDEXER_TIMEOUT_SEC = "10";
+	public static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
 	/**
 	 * Indexer timeout used by tests. To avoid this timeout expiring during debugging add
 	 * -Dindexer.timeout=some_large_number to VM arguments of the test launch configuration.
 	 */
-	protected static final int INDEXER_TIMEOUT_SEC = Integer
+	public static final int INDEXER_TIMEOUT_SEC = Integer
 			.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));
-	protected static final int INDEXER_TIMEOUT_MILLISEC = INDEXER_TIMEOUT_SEC * 1000;
+	public static final int INDEXER_TIMEOUT_MILLISEC = INDEXER_TIMEOUT_SEC * 1000;
 
 	/**
 	 * The GCC version to emulate when running tests.
 	 * We emulate the latest version whose extensions we support.
 	 */
-	protected static final int GCC_MAJOR_VERSION_FOR_TESTS = 10;
-	protected static final int GCC_MINOR_VERSION_FOR_TESTS = 1;
+	public static final int GCC_MAJOR_VERSION_FOR_TESTS = 10;
+	public static final int GCC_MINOR_VERSION_FOR_TESTS = 1;
 
 	/**
 	 * This provides the systems new line separator. Use this if you do String comparisons in tests
 	 * instead of hard coding '\n' or '\r\n' respectively.
 	 */
-	protected static final String NL = System.getProperty("line.separator");
+	public static final String NL = System.getProperty("line.separator");
 
 	private boolean fExpectFailure;
 	private int fBugNumber;

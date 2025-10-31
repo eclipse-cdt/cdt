@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.chelp;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -20,7 +22,6 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.ui.CHelpProviderManager;
 import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
 import org.eclipse.cdt.internal.ui.text.CHelpSettings;
@@ -28,6 +29,7 @@ import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.ICHelpBook;
 import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
 import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

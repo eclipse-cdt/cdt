@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.scannerdiscovery;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -22,13 +25,12 @@ import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.parser.IScannerInfo;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.core.MakeProjectNature;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerConfigNature;
 import org.eclipse.cdt.make.core.tests.StandardBuildTestHelper;
 import org.eclipse.cdt.make.internal.core.scannerconfig2.PerProjectSICollector;
+import org.eclipse.cdt.make.tests.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;

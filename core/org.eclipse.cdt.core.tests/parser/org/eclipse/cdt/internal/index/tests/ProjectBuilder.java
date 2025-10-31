@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -72,9 +72,9 @@ class ProjectBuilder {
 			// Call reindex explicitly since setting indexer ID doesn't trigger reindexing.
 			indexManager.reindex(result);
 			IIndex index = indexManager.getIndex(result);
-			BaseTestCase.waitUntilFileIsIndexed(index, lastFile);
+			BaseTestCase5.waitUntilFileIsIndexed(index, lastFile);
 		}
-		BaseTestCase.waitForIndexer(result);
+		BaseTestCase5.waitForIndexer(result);
 		return result;
 	}
 }

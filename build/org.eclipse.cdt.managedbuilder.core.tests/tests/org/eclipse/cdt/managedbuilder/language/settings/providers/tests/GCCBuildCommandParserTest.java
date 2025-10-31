@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.language.settings.providers.tests;
 
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,10 +47,10 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.XmlUtil;
 import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSettingsProvidersSerializer;
 import org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager;
+import org.eclipse.cdt.managedbuilder.core.tests.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.AbstractBuildCommandParser;
 import org.eclipse.cdt.managedbuilder.language.settings.providers.GCCBuildCommandParser;
 import org.eclipse.core.resources.IFile;

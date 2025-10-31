@@ -34,8 +34,8 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+import org.eclipse.cdt.ui.tests.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.IDocument;
 

@@ -13,12 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.managedbuilder.core.tests.BaseTestCase;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;

@@ -17,7 +17,6 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;

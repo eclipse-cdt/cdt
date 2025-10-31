@@ -30,25 +30,13 @@ import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Scanner2Tests ported to use the CPreprocessor.
  */
 public class PortedScannerTests extends PreprocessorTestsBase {
-	public static TestSuite suite() {
-		return suite(PortedScannerTests.class);
-	}
-
-	public PortedScannerTests() {
-		super();
-	}
-
-	public PortedScannerTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testBug102825_1() throws Exception {
 		StringBuilder buffer = new StringBuilder("#define CURLOPTTYPE_OBJECTPOINT   10000\n");
 		buffer.append("#define CINIT = CURLOPTTYPE_##OBJECTPOINT + 1\n");
@@ -58,6 +46,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateInteger("10000");
 	}
 
+	@Test
 	public void testBug102825_2() throws Exception {
 		StringBuilder buffer = new StringBuilder("#define CURLOPTTYPE_OBJECTPOINT   10000\n");
 		buffer.append("#define CINIT(name,type,number) = CURLOPTTYPE_##type + number\n");
@@ -67,6 +56,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateInteger("10000");
 	}
 
+	@Test
 	public void testBug102825_3() throws Exception {
 		StringBuilder buffer = new StringBuilder("#define CURLOPTTYPE_OBJECTPOINT   10000\n");
 		buffer.append("#define CINIT(name,type,number) CURLOPT_ ## name = CURLOPTTYPE_	## type + number\n");
@@ -77,6 +67,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateInteger("10000");
 	}
 
+	@Test
 	public void testBug102825_4() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define glue( a, b ) a ## b\n");
@@ -88,6 +79,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testBug195610_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define glue(x, y, z) x ## y ## z\n");
@@ -98,6 +90,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testBug195610_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define glue(x, y, z) x ## y ## z\n");
@@ -108,6 +101,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testBug195610_3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define glue(x, y, z) x ## y ## z\n");
@@ -222,6 +216,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	public final static int SIZEOF_TRUTHTABLE = 10;
 
+	@Test
 	public void testWeirdStrings() throws Exception {
 		initializeScanner("Living Life L\"LONG\"");
 		validateIdentifier("Living");
@@ -231,6 +226,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	}
 
+	@Test
 	public void testUTFStrings() throws Exception {
 		IScannerExtensionConfiguration config = new GPPScannerExtensionConfiguration() {
 			@Override
@@ -246,6 +242,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testUTFChars() throws Exception {
 		IScannerExtensionConfiguration config = new GPPScannerExtensionConfiguration() {
 			@Override
@@ -259,6 +256,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testNumerics() throws Exception {
 		initializeScanner("3.0 0.9 .5 3. 4E5 2.01E-03 ...");
 		validateFloatingPointLiteral("3.0");
@@ -272,6 +270,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	}
 
+	@Test
 	public void testPreprocessorDefines() throws Exception {
 		initializeScanner("#define SIMPLE_NUMERIC 5\nint x = SIMPLE_NUMERIC");
 		validateToken(IToken.t_int);
@@ -371,6 +370,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateDefinition("SIMPLE_STRING", "This is a simple string. Continue please.");
 	}
 
+	@Test
 	public void testBug67834() throws Exception {
 		initializeScanner("#if ! BAR\n" + "foo\n" + "#else\n" + "bar\n" + "#endif\n");
 		validateIdentifier("foo");
@@ -380,6 +380,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testConcatenation() throws Exception {
 		initializeScanner("#define F1 3\n#define F2 F1##F1\nint x=F2;");
 		validateToken(IToken.t_int);
@@ -414,6 +415,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testSimpleIfdef() throws Exception {
 		initializeScanner("#define SYMBOL 5\n#ifdef SYMBOL\nint counter(SYMBOL);\n#endif");
 		validateToken(IToken.t_int);
@@ -459,6 +461,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		fScanner.addMacroDefinition(string.toCharArray(), string2.toCharArray());
 	}
 
+	@Test
 	public void testMultipleLines() throws Exception {
 		Writer code = new StringWriter();
 		code.write("#define COMPLEX_MACRO 33 \\\n");
@@ -469,6 +472,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateInteger("44");
 	}
 
+	@Test
 	public void testSlightlyComplexIfdefStructure() throws Exception {
 		initializeScanner("#ifndef BASE\n#define BASE 10\n#endif\n#ifndef BASE\n#error BASE is defined\n#endif");
 		validateEOF();
@@ -543,6 +547,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateDefinition("TWO", "2");
 	}
 
+	@Test
 	public void testIfs() throws Exception {
 		initializeScanner("#if 0\n#error NEVER\n#endif\n");
 		validateEOF();
@@ -607,6 +612,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testPreprocessorMacros() throws Exception {
 		initializeScanner("#define GO(x) x+1\nint y(5);\ny = GO(y);");
 		validateToken(IToken.t_int);
@@ -709,6 +715,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testQuickScan() throws Exception {
 		initializeScanner("#if X + 5 < 7\n  int found = 1;\n#endif", ParserMode.QUICK_PARSE);
 		validateToken(IToken.t_int);
@@ -723,6 +730,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	}
 
+	@Test
 	public void testOtherPreprocessorCommands() throws Exception {
 		initializeScanner("#\n#\t\n#define MAX_SIZE 1024\n#\n#  ");
 		validateEOF();
@@ -760,6 +768,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		}
 	}
 
+	@Test
 	public void testBug36287() throws Exception {
 		initializeScanner("X::X( const X & rtg_arg ) : U( rtg_arg ) , Z( rtg_arg.Z ) , er( rtg_arg.er ){}");
 		validateIdentifier("X");
@@ -807,12 +816,14 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug35892() throws Exception {
 		initializeScanner("'c'");
 		validateChar("c");
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36045() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append('"');
@@ -829,6 +840,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateString("\\\"\\\\");
 	}
 
+	@Test
 	public void testConditionalWithBraces() throws Exception {
 		for (int i = 0; i < 4; ++i) {
 			initializeScanner("int foobar(int a) { if(a == 0) {\n" + "#ifdef THIS\n" + "} else {}\n" + "#elif THAT\n"
@@ -888,6 +900,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	}
 
+	@Test
 	public void testNestedRecursiveDefines() throws Exception {
 		initializeScanner("#define C B A\n#define B C C\n#define A B\nA");
 
@@ -901,6 +914,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36316() throws Exception {
 		initializeScanner("#define A B->A\nA");
 
@@ -911,6 +925,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36434() throws Exception {
 		initializeScanner("#define X(Y)\nX(55)");
 		validateEOF();
@@ -921,6 +936,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertEquals( macro.getTokenizedExpansion().length, 0 );*/
 	}
 
+	@Test
 	public void testBug36047() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("# define MAD_VERSION_STRINGIZE(str)	#str\n");
@@ -941,6 +957,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36475() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write(" \"A\" \"B\" \"C\" ");
@@ -951,6 +968,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36509() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define debug(s, t) printf(\"x\" # s \"= %d, x\" # t \"= %s\", \\\n");
@@ -971,6 +989,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36695() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("\'\\4\'  \'\\n\'");
@@ -981,6 +1000,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36521() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define str(s)      # s\n");
@@ -1001,6 +1021,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateToken(IToken.tSEMI);
 	}
 
+	@Test
 	public void testBug36770() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define A 0\n");
@@ -1015,6 +1036,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36816() throws Exception {
 		initializeScanner("#include \"foo.h", ParserMode.QUICK_PARSE);
 		validateEOF();
@@ -1033,6 +1055,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(1);
 	}
 
+	@Test
 	public void testBug36255() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#if defined ( A ) \n");
@@ -1045,6 +1068,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug37011() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define A \"//\"");
@@ -1055,6 +1079,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateDefinition("A", "\"//\"");
 	}
 
+	@Test
 	public void testOtherPreprocessorDefines() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define A a//boo\n");
@@ -1080,6 +1105,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateDefinition("H", "a '\\'//b'\"/*bo\\o*/\" b");
 	}
 
+	@Test
 	public void testBug38065() throws Exception {
 		initializeScanner("Foo\\\nBar");
 
@@ -1088,6 +1114,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	}
 
+	@Test
 	public void testBug36701A() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define str(s) # s\n");
@@ -1098,6 +1125,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36701B() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define str(s) # s\n");
@@ -1109,6 +1137,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug44305() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define WCHAR_MAX 0 \n");
@@ -1120,6 +1149,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug45287() throws Exception {
 		initializeScanner("'abcdefg' L'hijklmnop'");
 		validateChar("abcdefg");
@@ -1127,6 +1157,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug45476() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define X 5\n");
@@ -1138,6 +1169,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateDefinition("Y", "10");
 	}
 
+	@Test
 	public void testBug45477() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define D\n");
@@ -1199,6 +1231,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug45551() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define stdio someNonExistantIncludeFile\n");
@@ -1212,6 +1245,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertEquals("stdio.h", includes[0].getName().toString());
 	}
 
+	@Test
 	public void testBug46402() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define X 5\n");
@@ -1224,12 +1258,14 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug50821() throws Exception {
 		initializeScanner("\'\n\n\n", ParserMode.QUICK_PARSE);
 		fScanner.nextToken();
 		validateProblemCount(1);
 	}
 
+	@Test
 	public void test54778() throws Exception {
 		initializeScanner("#if 1 || 0 < 3 \n printf \n #endif\n");
 		validateIdentifier("printf");
@@ -1242,6 +1278,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void test68229() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define COUNT 0     \n");
@@ -1278,6 +1315,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertEquals(t1.getNext(), t2);
 	}
 
+	@Test
 	public void testBug56517() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#if 0 \n");
@@ -1287,6 +1325,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug36770B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define A 0\n");
@@ -1302,6 +1341,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	}
 
+	@Test
 	public void testBug47797() throws Exception {
 		initializeScanner("\"\\uABCD\" \'\\uABCD\' \\uABCD_ident \\u001A01BC_ident ident\\U01AF ident\\u01bc00AF");
 		validateString("\\uABCD");
@@ -1313,6 +1353,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug59768() throws Exception {
 		initializeScanner("#define A A\nA");
 		validateIdentifier("A");
@@ -1321,6 +1362,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertTrue( d.isCircular() );*/
 	}
 
+	@Test
 	public void testBug60764() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define P   a,b\n");
@@ -1332,12 +1374,14 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug62042() throws Exception {
 		initializeScanner("0x", ParserMode.QUICK_PARSE);
 		validateInteger("0x"); // to me this is a valid number
 		validateEOF();
 	}
 
+	@Test
 	public void testBug61968() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("unsigned int ui = 2172748163; //ok \n");
@@ -1352,16 +1396,19 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testBug62378() throws Exception {
 		initializeScanner("\"\\?\\?<\"");
 		validateString("\\?\\?<");
 	}
 
+	@Test
 	public void testBug62384() throws Exception {
 		initializeScanner("18446744073709551615LL");
 		validateInteger("18446744073709551615LL");
 	}
 
+	@Test
 	public void testBug62390() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define f(x) x\n");
@@ -1392,12 +1439,14 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		fullyTokenize();
 	}
 
+	@Test
 	public void testBug62009() throws Exception {
 		initializeScanner("#define def(x) (x#)\ndef(orange)\n", ParserMode.QUICK_PARSE);
 		fullyTokenize();
 		validateProblemCount(1);
 	}
 
+	@Test
 	public void testBug61972() throws Exception {
 		initializeScanner("#define DEF1(A1) A1\n#define DEF2     DEF1(DEF2)\nDEF2;");
 		validateIdentifier("DEF2");
@@ -1405,6 +1454,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug64268() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define BODY \\\n");
@@ -1418,6 +1468,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testUndef() throws Exception {
 		initializeScanner("#define A 5\n" + "#define B 10\n" + "#undef A\n" + "A B");
 		validateIdentifier("A");
@@ -1425,12 +1476,14 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testWackyFunctionMacros() throws Exception {
 		initializeScanner("#define A(X) hi##X\n" + "#define B(Y) A(Y)\n" + "B(there)");
 		validateIdentifier("hithere");
 		validateEOF();
 	}
 
+	@Test
 	public void testSlashes() throws Exception {
 		initializeScanner("__q / __n");
 		validateIdentifier("__q");
@@ -1439,18 +1492,21 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testStringify() throws Exception {
 		initializeScanner("#define xS(s) #s\n#define S(s) xS(s)\n#define X hi\nS(X)");
 		validateString("hi");
 		validateEOF();
 	}
 
+	@Test
 	public void testWideToNarrowConcatenation() throws Exception {
 		initializeScanner("\"ONE\" L\"TWO\"");
 		validateLString("ONETWO");
 		validateEOF();
 	}
 
+	@Test
 	public void testUTFStringConcatenation() throws Exception {
 		IScannerExtensionConfiguration config = new GPPScannerExtensionConfiguration() {
 			@Override
@@ -1479,6 +1535,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testEmptyIncludeDirective() throws Exception {
 		initializeScanner("#include \n#include <foo.h>\n");
 		validateEOF();
@@ -1487,6 +1544,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertEquals("foo.h", includes[0].getName().toString());
 	}
 
+	@Test
 	public void testBug69412() throws Exception {
 		initializeScanner("\'\\\\\'", ParserMode.COMPLETE_PARSE);
 		validateChar("\\\\");
@@ -1494,16 +1552,19 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testBug70072() throws Exception {
 		initializeScanner("#if 1/0\nint i;\n#elif 2/0\nint j;\n#endif\nint k;\n");
 		fullyTokenize();
 	}
 
+	@Test
 	public void testBug70261() throws Exception {
 		initializeScanner("0X0");
 		validateInteger("0X0");
 	}
 
+	@Test
 	public void testBug62571() throws Exception {
 		StringBuilder buffer = new StringBuilder("#define J(X,Y) X##Y\n");
 		buffer.append("J(A,1Xxyz)\n");
@@ -1521,6 +1582,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateIdentifier("E0x0x0xxyz");
 	}
 
+	@Test
 	public void testBug69134() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("# ifdef YYDEBUG\n");
@@ -1535,6 +1597,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testBug70073() throws Exception {
 		StringBuilder buffer = new StringBuilder("#if CONST \n #endif \n #elif CONST \n int");
 		final List problems = new ArrayList();
@@ -1543,6 +1606,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(1);
 	}
 
+	@Test
 	public void testBug73652() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define DoSuperMethodA IDoSuperMethodA\n");
@@ -1565,6 +1629,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug73652_2() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define DoSuperMethodA DoSuperMethodB //doobalie\n");
@@ -1590,12 +1655,14 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	}
 
+	@Test
 	public void testBug72997() throws Exception {
 		initializeScanner("'\\\\'");
 		validateChar("\\\\");
 		validateEOF();
 	}
 
+	@Test
 	public void testBug72725() throws Exception {
 		for (int i = 0; i < 2; ++i) {
 			StringBuilder buffer = new StringBuilder();
@@ -1614,6 +1681,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		}
 	}
 
+	@Test
 	public void testBug72506() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define INCFILE(x) ver ## x\n");
@@ -1626,6 +1694,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug72506_2() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define str(x) #x\n");
@@ -1638,6 +1707,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testMacroPastingError() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define m(expr) \\\r\n");
@@ -1648,6 +1718,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testBug74176() throws Exception {
 		initializeScanner("#define MYSTRING \"X Y Z ");
 		validateEOF();
@@ -1659,6 +1730,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug74180() throws Exception {
 		initializeScanner("true false", ParserLanguage.C);
 		validateIdentifier("true");
@@ -1669,6 +1741,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateToken(IToken.t_false);
 	}
 
+	@Test
 	public void testBug73492() throws Exception {
 		String code = "#define PTR void *\n" + "PTR;\n";
 
@@ -1688,6 +1761,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertEquals(offset + 2, t.getOffset());
 	}
 
+	@Test
 	public void testBug74328() throws Exception {
 		initializeScanner("\"\";\n");
 		validateString("");
@@ -1695,6 +1769,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug72537() throws Exception {
 		initializeScanner("FOO BAR(boo)");
 		fScanner.addMacroDefinition("FOO".toCharArray(), "foo".toCharArray());
@@ -1705,6 +1780,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug75083() throws Exception {
 		String code = "#define blah() { extern foo\n blah()\n";
 		initializeScanner(code);
@@ -1728,6 +1804,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	// when fixing 75532 several IProblems were added to ExpressionEvaluator and one to Scanner2, this is to test them
 	// the problems currently don't get reported when using the DOMScanner
+	@Test
 	public void testBug75532IProblems() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#if 09 == 9\n#endif\n"); // malformed octal
@@ -1774,6 +1851,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertEquals(IProblem.SCANNER_BAD_OCTAL_FORMAT, problems[++i].getID());
 	}
 
+	@Test
 	public void testExpressionEvalProblems() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write(" #if 1 == 1L       \n");
@@ -1784,6 +1862,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testExpressionEvalProblems_2() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define FOO( a, b ) a##b    \n");
@@ -1797,6 +1876,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testUnExpandedFunctionMacro() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define foo( a ) #a         \n");
@@ -1808,6 +1888,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug39688A() throws Exception { // test valid IProblems
 		Writer writer = new StringWriter();
 		writer.write("#define decl1(type, ...    \\\n  )   type var;\n");
@@ -1833,6 +1914,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		assertTrue(problems[1].getID() == IProblem.PREPROCESSOR_MACRO_PASTING_ERROR);
 	}
 
+	@Test
 	public void testBug39688B() throws Exception { // test C99
 		Writer writer = new StringWriter();
 		writer.write("#define debug(...) fprintf(stderr, __VA_ARGS__)\n");
@@ -1868,6 +1950,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		check39688Tokens(writer);
 	}
 
+	@Test
 	public void testBug39688C() throws Exception { // test GCC
 		Writer writer = new StringWriter();
 		writer.write("#define debug(vars...) fprintf(stderr, vars)\n");
@@ -1966,6 +2049,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testMacroArgumentExpansion() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define g_return( expr ) ( expr )                                   \n");
@@ -1996,6 +2080,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateToken(IToken.tRPAREN);
 	}
 
+	@Test
 	public void testBug75956() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define ROPE( name ) name##Alloc\n");
@@ -2026,6 +2111,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testUnExpandedFunctionMacros() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define ETH(x) x  \n");
@@ -2041,6 +2127,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug79490A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define TEST 'n'\n");
@@ -2055,6 +2142,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateDefinition("FALSE", "1");
 	}
 
+	@Test
 	public void testBug79490B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define TEST 'y'\n");
@@ -2069,6 +2157,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateDefinition("TRUE", "1");
 	}
 
+	@Test
 	public void testBug102568A() throws Exception {
 		initializeScanner("///*\r\nint x;\r\n");
 		validateToken(IToken.t_int);
@@ -2077,6 +2166,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug102568B() throws Exception {
 		initializeScanner("// bla some thing /* ... \r\nint x;\r\n");
 		validateToken(IToken.t_int);
@@ -2085,6 +2175,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testbug84270() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define h g( ~\n");
@@ -2095,6 +2186,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		fullyTokenize();
 	}
 
+	@Test
 	public void testBug107150() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define FUNC_PROTOTYPE_PARAMS(list)    list\r\n");
@@ -2137,6 +2229,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug126136() throws Exception {
 		StringBuilder buffer = new StringBuilder("#define C C\n");
 		buffer.append("#if !C\n");
@@ -2146,6 +2239,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		fullyTokenize();
 	}
 
+	@Test
 	public void testBug156137() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#if (3 % 2 == 1)                              \n");
@@ -2157,6 +2251,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug162214() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef xxx  // is not defined            \n");
@@ -2179,6 +2274,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug156988() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define a        			\n");
@@ -2202,6 +2298,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug156988_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define a(x) x  			\n");
@@ -2225,6 +2322,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug162410() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#pragma message (\"test\") \n");
@@ -2234,6 +2332,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=180172
+	@Test
 	public void testBug180172() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		String value = "\"https://bugs.eclipse.org/bugs/show_bug.cgi?id=180172\"";
@@ -2244,6 +2343,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+	@Test
 	public void testBug182180_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append("printf(\"Hello World /*.ap\\n\");\n").append("#endif\n")
@@ -2253,6 +2353,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+	@Test
 	public void testBug182180_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append("char c='\"'; printf(\"Hello World /*.ap\\n\");\n")
@@ -2262,6 +2363,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+	@Test
 	public void testBug182180_3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append("char c1='\\'',c2='\\\"'; printf(\"Hello World /*.ap\\n\");\n")
@@ -2271,6 +2373,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+	@Test
 	public void testBug182180_4() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append("printf(\"Hello '\"'World /*.ap\\n\");\n").append("#endif\n")
@@ -2280,6 +2383,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=182180
+	@Test
 	public void testBug182180_5() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef _bug_182180_\n").append("printf(\"Hello \\\"World /*.ap\\n\");\n").append("#endif\n")
@@ -2289,6 +2393,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
+	@Test
 	public void testBug200830_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define string BROKEN\r\n");
@@ -2303,6 +2408,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
+	@Test
 	public void testBug200830_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define string BROKEN\r\n");
@@ -2317,6 +2423,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
+	@Test
 	public void testBug200830_3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define string BROKEN\r\n");
@@ -2331,6 +2438,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	}
 
 	// https://bugs.eclipse.org/bugs/show_bug.cgi?id=200830
+	@Test
 	public void testBug200830_4() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define s B\r\n");
@@ -2344,6 +2452,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateChar("s");
 	}
 
+	@Test
 	public void testBug185120_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define TEST_DEFINE 1UL\n");
@@ -2356,6 +2465,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateToken(IToken.tPLUS);
 	}
 
+	@Test
 	public void testBug185120_2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define TEST_DEFINE 1LLU\n");
@@ -2368,6 +2478,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateToken(IToken.tPLUS);
 	}
 
+	@Test
 	public void testBug39698() throws Exception {
 		initializeScanner("<? >?");
 		validateToken(IGCCToken.tMIN);
@@ -2375,6 +2486,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void test__attribute__() throws Exception {
 		initializeScanner("#define __cdecl __attribute__((cdecl))\n" + "__cdecl;");
 		validateToken(IGCCToken.t__attribute__);
@@ -2387,6 +2499,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testImaginary() throws Exception {
 		initializeScanner("3i", ParserLanguage.C);
 		validateInteger("3i");

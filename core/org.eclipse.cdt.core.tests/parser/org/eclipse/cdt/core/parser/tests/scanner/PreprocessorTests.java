@@ -21,17 +21,12 @@ import java.util.List;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Scanner2Tests ported to use the CPreprocessor
  */
 public class PreprocessorTests extends PreprocessorTestsBase {
-
-	public static TestSuite suite() {
-		return suite(PreprocessorTests.class);
-	}
 
 	// #define f(x) x+x
 	// #define obj_f f
@@ -44,6 +39,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// obj_fx
 	// (y)
 	// obj_fopen y)
+	@Test
 	public void testParenthesisOnNextLine() throws Exception {
 		initializeScanner();
 		validateIdentifier("y");
@@ -69,6 +65,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// f(f(x));
 	// f(f);
 	// f(f)(x);
+	@Test
 	public void testRecursiveInArgument() throws Exception {
 		initializeScanner();
 		validateIdentifier("x");
@@ -87,6 +84,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	// #define f(x) x
 	// f(f(
+	@Test
 	public void testMissingParenthesis() throws Exception {
 		initializeScanner();
 		validateEOF();
@@ -98,6 +96,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define step1 b
 	// #define step2 step1 (x)
 	// step2
+	@Test
 	public void testSpaceBeforeParenthesis() throws Exception {
 		initializeScanner();
 		validateIdentifier("ok");
@@ -108,6 +107,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define m2(x...) a2
 	// m1(1,2);
 	// m2(1,2);
+	@Test
 	public void testSuperfluousComma() throws Exception {
 		initializeScanner();
 		validateIdentifier("a1");
@@ -127,6 +127,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	//	str( a,b);
 	//	str(a a,b);
 	//	str(a, b);
+	@Test
 	public void testSpaceInArgs() throws Exception {
 		initializeScanner();
 		validateString("ab");
@@ -154,6 +155,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// open0 );
 	// open1 a );
 	// open2 a , b c );
+	@Test
 	public void testSpaceInArgsViaOpenMacro() throws Exception {
 		initializeScanner();
 		validateIdentifier("a0");
@@ -182,6 +184,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// use0;
 	// use1;
 	// use2;
+	@Test
 	public void testSpaceInArgsViaExpansion() throws Exception {
 		initializeScanner();
 		validateIdentifier("a0");
@@ -202,6 +205,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// m0();
 	// m0( );
 	// m0(x);
+	@Test
 	public void testFunctionStyleWithoutArgs() throws Exception {
 		initializeScanner();
 		validateIdentifier("m0");
@@ -225,6 +229,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define tp(x,y) #x##y
 	// tp(a, );
 	// tp(a,_b);
+	@Test
 	public void testStringifyAndPasteCPP() throws Exception {
 		initializeScanner(getAboveComment(), ParserLanguage.CPP);
 		validateString("a");
@@ -239,6 +244,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define tp(x,y) #x##y
 	// tp(a, );
 	// tp(a,b);
+	@Test
 	public void testStringifyAndPasteC() throws Exception {
 		initializeScanner(getAboveComment(), ParserLanguage.C);
 		validateString("a");
@@ -255,6 +261,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define tp(x,y) x##y
 	// tp(a, b c);
 	// tp(a b,c);
+	@Test
 	public void testPasteMultipleTokens() throws Exception {
 		initializeScanner();
 		validateIdentifier("ab");
@@ -270,6 +277,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	// #define obj a b ## c ## d e
 	// obj;
+	@Test
 	public void testObjectStyleTokenPaste() throws Exception {
 		initializeScanner();
 		validateIdentifier("a");
@@ -284,6 +292,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// variadic();
 	// variadic(b);
 	// variadic(c,d);
+	@Test
 	public void testGccVariadicMacroExtensions() throws Exception {
 		initializeScanner();
 		validateToken(IToken.tLPAREN);
@@ -315,6 +324,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// variadic();
 	// variadic(_c);
 	// variadic(_c,_c);
+	@Test
 	public void testGccVariadicMacroExtensions2() throws Exception {
 		initializeScanner();
 		validateToken(IToken.tLPAREN);
@@ -346,6 +356,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// variadic(1);
 	// variadic(,_c);
 	// variadic(,_c,_c);
+	@Test
 	public void testGccVariadicMacroExtensions3() throws Exception {
 		initializeScanner();
 		validateToken(IToken.tLPAREN);
@@ -375,6 +386,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	// #define str(x) #x
 	// str();
+	@Test
 	public void testEmptyStringify() throws Exception {
 		initializeScanner();
 		validateString("");
@@ -387,6 +399,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define _p p
 	// tp(_p,);
 	// tp(_p, a);
+	@Test
 	public void testRescanAfterTokenPaste() throws Exception {
 		initializeScanner();
 		validateIdentifier("p");
@@ -404,6 +417,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// vararg(a);
 	// vararg(a,b);
 	// vararg(a, ,c);
+	@Test
 	public void testVaargs() throws Exception {
 		initializeScanner();
 		validateToken(IToken.tLPAREN);
@@ -437,6 +451,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define func(x) __VA_ARGS__
 	// OBJ;
 	// func(a);
+	@Test
 	public void testVaargsWarning() throws Exception {
 		initializeScanner();
 		validateIdentifier("__VA_ARGS__");
@@ -454,6 +469,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define _p p
 	// #define obj str(_p)  // str is expanded before _p is rescanned.
 	// obj;
+	@Test
 	public void testRescanOrder() throws Exception {
 		initializeScanner();
 		validateString("_p");
@@ -465,6 +481,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	// #define obj #str
 	// obj;
+	@Test
 	public void testStringifyOperatorInObject() throws Exception {
 		initializeScanner();
 		validateToken(IToken.tPOUND);
@@ -478,6 +495,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define str(x) #x
 	// #define open_str() str(a
 	// open_str()b);
+	@Test
 	public void testOpenStringify() throws Exception {
 		initializeScanner();
 		validateString("ab");
@@ -491,6 +509,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define TWO(b, args...) int y
 	// ONE("string");
 	// TWO("string");
+	@Test
 	public void testSkippingVarags() throws Exception {
 		initializeScanner();
 		validateToken(IToken.t_int);
@@ -508,6 +527,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define eval(f,x) f(x)
 	// #define m(x) m[x]
 	// eval(m,y);
+	@Test
 	public void testReconsiderArgsForExpansion() throws Exception {
 		initializeScanner();
 		validateIdentifier("m");
@@ -523,6 +543,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	//#define f\
 	//(x) ok
 	// f(x)
+	@Test
 	public void testLineSpliceInMacroDefinition() throws Exception {
 		initializeScanner();
 		validateIdentifier("ok");
@@ -549,6 +570,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// xstr(tstr1(a b, c d));
 	// xstr(tstr2(a b, c d));
 	// xstr(spaceBeforeStr(c));
+	@Test
 	public void testSpaceInStringify() throws Exception {
 		initializeScanner();
 		validateString("fvalfval");
@@ -590,6 +612,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// paste2();
 	// paste2(empty);
 	// paste2(a);
+	@Test
 	public void testTokenPasteWithEmptyParam() throws Exception {
 		initializeScanner();
 		validateIdentifier("x");
@@ -623,6 +646,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// paste2();
 	// paste2(empty);
 	// paste2(a);
+	@Test
 	public void testSpacesBeforeStringify() throws Exception {
 		initializeScanner();
 		validateIdentifier("x");
@@ -651,6 +675,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define paste(x,y,z) x##y##z
 	// paste(a,b,c);
 	// paste(1,2,3);
+	@Test
 	public void testTokenPasteChain() throws Exception {
 		initializeScanner();
 		validateIdentifier("abc");
@@ -666,6 +691,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define A(x,y,z) x + y + z
 	// #define _t t
 	// A ( _t , , _t )
+	@Test
 	public void testEmptyToken() throws Exception {
 		initializeScanner();
 		validateIdentifier("t");
@@ -677,6 +703,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define FOO 5
 	// # define BAR 10
 	// int x = FOO + BAR;
+	@Test
 	public void testSimpleObjectLike1() throws Exception {
 		initializeScanner();
 		validateToken(IToken.t_int);
@@ -693,6 +720,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define FOO BAR
 	// # define BAR 10
 	// int x = BAR;
+	@Test
 	public void testSimpleObjectLike2() throws Exception {
 		initializeScanner();
 		validateToken(IToken.t_int);
@@ -706,6 +734,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	// #define MAX(a, b) (a) > (b) ? (a) : (b)
 	// int max = MAX(x, y);
+	@Test
 	public void testSimpleFunctionLike1() throws Exception {
 		// int max = (x) > (y) ? (x) : (y);
 		initializeScanner();
@@ -736,6 +765,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define ADD(a, b) (a) + (b)
 	// #define ADDPART(a) ADD(a
 	// int sum = ADDPART (x) , y);
+	@Test
 	public void testSimpleFunctionLike2() throws Exception {
 		// int sum = (x) + (y) ;
 		initializeScanner();
@@ -757,6 +787,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	// #define ADD(a, b) (a) + (b)
 	// int sum = ADD(x+1,y+1);
+	@Test
 	public void testSimpleFunctionLike3() throws Exception {
 		// int sum = (x+1) + (y+1) ;
 		initializeScanner();
@@ -782,6 +813,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	// #define ADD(a, b) (a) + (b)
 	// int sum = ADD(f(x,y),z+1);
+	@Test
 	public void testSimpleFunctionLike4() throws Exception {
 		// int sum = (f(x,y)) + (z+1) ;
 		initializeScanner();
@@ -813,6 +845,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define in_between(a) mkstr(a)
 	// #define join(c, d) in_between(c hash_hash d)
 	// char p[] = join(x, y);
+	@Test
 	public void testSpecHashHashExample() throws Exception {
 		// char p[] = "x ## y" ;
 		initializeScanner();
@@ -836,6 +869,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 				.append("#define r(x,y) x ## y \n").append("#define str(x) # x \n");
 	}
 
+	@Test
 	public void testSpecExample3_1() throws Exception {
 		StringBuffer sb = getExample3Defines();
 		sb.append("f(y+1) + f(f(z)) % t(t(g)(0) + t)(1); \n");
@@ -891,6 +925,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample3_2() throws Exception {
 		StringBuffer sb = getExample3Defines();
 		sb.append("g(x+(3,4)-w) | h 5) & m (f)^m(m); \n");
@@ -949,6 +984,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample3_3() throws Exception {
 		StringBuffer sb = getExample3Defines();
 		sb.append("p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) }; \n");
@@ -976,6 +1012,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample3_4() throws Exception {
 		StringBuffer sb = getExample3Defines();
 		sb.append("char c[2][6] = { str(hello), str() }; \n"); //31
@@ -1010,6 +1047,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 				.append("#define HIGHLOW \"hello\" \n").append("#define LOW LOW \", world\" \n");
 	}
 
+	@Test
 	public void testSpecExample4_1() throws Exception {
 		StringBuffer sb = getExample4Defines();
 		sb.append("debug(1, 2); \n"); //31
@@ -1030,6 +1068,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample4_2() throws Exception {
 		StringBuffer sb = getExample4Defines();
 		sb.append("fputs(str(strncmp(\"abc\\0d\", \"abc\", '\\4') // this goes away   \n");
@@ -1049,6 +1088,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample4_3() throws Exception {
 		StringBuffer sb = getExample4Defines();
 		sb.append("xglue(HIGH, LOW) \n");
@@ -1061,6 +1101,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample4_4() throws Exception {
 		StringBuffer sb = getExample4Defines();
 		sb.append("glue(HIGH, LOW); \n");
@@ -1076,6 +1117,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 
 	// #define t(x,y,z) x ## y ## z
 	// int j[] = { t(1,2,3), t(,4,5), t(6,,7), t(8,9,), t(10,,), t(,11,), t(,,12), t(,,) };
+	@Test
 	public void testSpecExample5() throws Exception {
 		// int j[] = {123, 45, 67, 89, 10, 11, 12, };
 		initializeScanner();
@@ -1112,6 +1154,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 				.append("#define report(test, ...) ((test)?puts(#test):\\ \n ").append("printf(__VA_ARGS__))  \n ");
 	}
 
+	@Test
 	public void testSpecExample7_1() throws Exception {
 		StringBuffer sb = getExample7Defines();
 		sb.append("debug(\"Flag\"); \n");
@@ -1130,6 +1173,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample7_2() throws Exception {
 		StringBuffer sb = getExample7Defines();
 		sb.append("debug(\"X = %d\\n\", x); \n");
@@ -1150,6 +1194,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample7_3() throws Exception {
 		StringBuffer sb = getExample7Defines();
 		sb.append("showlist(The first, second, and third items.); \n");
@@ -1166,6 +1211,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testSpecExample7_4() throws Exception {
 		StringBuffer sb = getExample7Defines();
 		sb.append("report(x>y, \"x is %d but y is %d\", x, y); \n");
@@ -1202,6 +1248,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define foo g g g
 	// #define g f##oo
 	// foo
+	@Test
 	public void testRecursiveExpansion() throws Exception {
 		initializeScanner();
 
@@ -1215,6 +1262,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define m !(m)+n
 	// #define n(n) n(m)
 	// m(m)
+	@Test
 	public void testRecursiveExpansion2() throws Exception {
 		// !(m)+ !(m)+n(!(m)+n)
 		initializeScanner();
@@ -1246,6 +1294,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #define cat(a,b) a ## b
 	// #define g bad
 	// cat(f, f)
+	@Test
 	public void testRecursiveExpansion3() throws Exception {
 		// ff
 		initializeScanner();
@@ -1280,6 +1329,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	//	(f)^m(m);
 	//	p() i[q()] = { q(1), r(2,3), r(4,), r(,5), r(,) };
 	//	char c[2][6] = { str(hello), str() };
+	@Test
 	public void testC99_6_7_5_3_5_Bug104869() throws Exception {
 		initializeScanner();
 		// read in expected tokens
@@ -1304,6 +1354,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	//	#define in_between(a) mkstr(a)
 	//	#define join(c, d) in_between(c hash_hash d)
 	//  join(x, y)
+	@Test
 	public void testC99_6_10_3_3_4_Bug84268() throws Exception {
 		initializeScanner();
 		validateString("x ## y");
@@ -1318,6 +1369,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #if (BIN == HEX && HEX == OCT && OCT == DEC)
 	// int foo = BIN;
 	// #endif
+	@Test
 	public void testGCC43BinaryNumbers() throws Exception {
 		initializeScanner();
 		validateToken(IToken.t_int);
@@ -1329,6 +1381,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 	}
 
+	@Test
 	public void testBadBinaryNumbersC() throws Exception {
 		String badbinary = "{0b012, 0b01b, 0b1111e01, 0b1111p10, 0b10010.10010}";
 		initializeScanner(badbinary, ParserLanguage.C);
@@ -1341,6 +1394,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 		validateProblem(4, IProblem.SCANNER_FLOAT_WITH_BAD_PREFIX, "0b");
 	}
 
+	@Test
 	public void testBadBinaryNumbersCPP() throws Exception {
 		// First, third, and fifth are invalid in c++11.
 		String badbinary = "{0b012, 0b01b, 0b1111e01, 0b1111p10, 0b10010.10010}";
@@ -1356,6 +1410,7 @@ public class PreprocessorTests extends PreprocessorTestsBase {
 	// #endif
 	// #if 0xU
 	// #endif
+	@Test
 	public void testUDLInPP() throws Exception {
 		initializeScanner();
 		validateEOF();

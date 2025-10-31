@@ -17,8 +17,7 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Scanner2Tests ported to use the CPreprocessor plus additional bugs fixed in
@@ -26,13 +25,10 @@ import junit.framework.TestSuite;
  */
 public class PreprocessorBugsTests extends PreprocessorTestsBase {
 
-	public static TestSuite suite() {
-		return suite(PreprocessorBugsTests.class);
-	}
-
 	// #define NOP(x)        x
 	// #define CPUINC(cpu)   <NOP(reg)NOP(cpu).sfr>
 	// #include CPUINC(xag4)
+	@Test
 	public void testMacroInInclusion_Bug122891() throws Exception {
 		initializeScanner();
 		validateEOF();
@@ -49,6 +45,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//	#define MSG "goodbye"
 	//	#endif
 	//  MSG
+	@Test
 	public void testTokenPaste_Bug210344() throws Exception {
 		initializeScanner();
 		validateString("hello");
@@ -64,6 +61,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// #define EXPAND(x,y) CONCAT(x,y)
 	// #define PREFIXED(x) EXPAND(PREFIX,x)
 	// #include PREFIXED(bar.h)
+	@Test
 	public void testEmptyStringInMacroInInclusion_Bug145270() throws Exception {
 		initializeScanner();
 		validateEOF();
@@ -78,6 +76,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// #if defined(D)
 	//     y;
 	// #endif
+	@Test
 	public void testBug186047() throws Exception {
 		initializeScanner();
 
@@ -90,6 +89,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	}
 
 	// __CDT_PARSER__
+	@Test
 	public void testPredefinedCDTMacro_Bug173848() throws Exception {
 		initializeScanner();
 		validateInteger(Integer.toString(CPreprocessor.getCDTVersion()));
@@ -112,6 +112,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//  ok
 	//  #endif
 
+	@Test
 	public void testIndirectDefined_Bug225562() throws Exception {
 		initializeScanner();
 		validateIdentifier("juhuu");
@@ -128,6 +129,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// "unintentionally unbounded
 	// "
 	//
+	@Test
 	public void testUnboundedEmptyStringLiteral_Bug190884() throws Exception {
 		initializeScanner();
 		validateString("unintentionally unbounded");
@@ -145,6 +147,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// #else
 	// yes
 	// #endif
+	@Test
 	public void testTrueInConditionalExpression_Bug246369() throws Exception {
 		initializeScanner();
 		validateIdentifier("yes");
@@ -161,6 +164,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// #if or
 	// no
 	// #endif
+	@Test
 	public void testKeywordsInConditionalExpression_Bug246369() throws Exception {
 		initializeScanner();
 		validateIdentifier("yes");
@@ -175,6 +179,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//	int main(void) {
 	//	   BAR_BLOCK_SIZE;
 	//	}
+	@Test
 	public void testMissingClosingParenthesis_Bug251734() throws Exception {
 		initializeScanner();
 		validateToken(IToken.t_int);
@@ -223,6 +228,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//	bug
 	//	#endif
 	//  passed
+	@Test
 	public void testCommentBeforeDirective_Bug255318() throws Exception {
 		initializeScanner();
 		validateIdentifier("passed");
@@ -255,6 +261,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//	#endif
 	//	)
 	//  passed3
+	@Test
 	public void testDirectiveInExpansion_Bug240194() throws Exception {
 		initializeScanner();
 		validateIdentifier("passed1");
@@ -272,6 +279,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//        #else
 	//            "C") /* parse error in this line */
 	//        #endif
+	@Test
 	public void testDirectiveInExpansion_Bug375739() throws Exception {
 		initializeScanner();
 		validateString("A");
@@ -285,6 +293,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// ok
 	// #endif
 	// 0x1p2 0xe0
+	@Test
 	public void testHexConstant_Bug265927() throws Exception {
 		initializeScanner();
 		validateIdentifier("ok");
@@ -310,6 +319,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// #elif //
 	// #endif
 	// a
+	@Test
 	public void testMissingArgument_Bug303969() throws Exception {
 		initializeScanner();
 		validateIdentifier("a");
@@ -321,6 +331,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//	#define xstr(x) str(x)
 	//  #define MY_MACROS(Type) unsigned ##Type f();
 	//	xstr(MY_MACROS(int))
+	@Test
 	public void testStringify_Bug282418() throws Exception {
 		initializeScanner();
 		validateString("unsignedint f();");
@@ -337,6 +348,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	// #else
 	// no
 	// #endif
+	@Test
 	public void testOcatalCharConstant_Bug330747() throws Exception {
 		initializeScanner();
 		validateIdentifier("yes");
@@ -347,6 +359,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 
 	//	#define foo(x) (## x)
 	//	void test foo(void);  // Valid for Microsoft's compiler, expands to (void)
+	@Test
 	public void testInvalidTokenPasting_Bug354553() throws Exception {
 		initializeScanner();
 		validateToken(IToken.t_void);
@@ -366,6 +379,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 	//	        PR"";
 	//	#endif
 	//	B
+	@Test
 	public void testRawString_Bug362562() throws Exception {
 		initializeScanner();
 		validateIdentifier("A");
@@ -375,6 +389,7 @@ public class PreprocessorBugsTests extends PreprocessorTestsBase {
 
 	// __COUNTER__
 	// __COUNTER__
+	@Test
 	public void testCounter_Bug362148() throws Exception {
 		initializeScanner();
 		validateInteger("0");

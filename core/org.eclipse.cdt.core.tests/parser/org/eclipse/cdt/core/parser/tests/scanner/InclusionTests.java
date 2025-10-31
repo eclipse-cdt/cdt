@@ -34,29 +34,17 @@ import org.eclipse.cdt.internal.core.pdom.indexer.PDOMNullIndexer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Scanner2Tests ported to use the CPreprocessor
  */
 public class InclusionTests extends PreprocessorTestsBase {
-	public static TestSuite suite() {
-		return suite(InclusionTests.class);
-	}
-
 	private ICProject fProject;
 
-	public InclusionTests() {
-		super();
-	}
-
-	public InclusionTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		if (fProject != null) {
 			CProjectHelper.delete(fProject);
 			fProject = null;
@@ -87,6 +75,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 	// #include "one.h"
 	// #include "f1/two.h"
 	// #include "f1/f2/three.h"
+	@Test
 	public void testIncludeVariables_69529() throws Exception {
 		String content = getAboveComment();
 
@@ -112,6 +101,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testIncludeNext() throws Exception {
 		String baseFile = "int zero; \n#include \"foo.h\""; //$NON-NLS-1$
 		String i1Next = "int one; \n#include_next <bar/foo.h>"; //$NON-NLS-1$
@@ -156,6 +146,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testIncludeNext_286081() throws Exception {
 		String baseFile = "0 \n#include \"foo.h\""; //$NON-NLS-1$
 		String foo1 = "1 \n#include \"intermed.h\""; //$NON-NLS-1$
@@ -185,6 +176,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testIncludePathOrdering() throws Exception {
 		// create directory structure:
 		//  project/base.cpp
@@ -232,6 +224,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	@Test
 	public void testBug91086() throws Exception {
 		IFile inclusion = importFile("file.h", "#define FOUND 666\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		StringBuilder buffer = new StringBuilder("#include \""); //$NON-NLS-1$
@@ -253,6 +246,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 		}
 	}
 
+	@Test
 	public void testBug156990() throws Exception {
 		IFile inclusion = importFile("file.h", "ok");
 		StringBuilder buffer = new StringBuilder("#include \"file.h\"");
@@ -312,6 +306,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 	// #if defined(__has_include)
 	// identifier9
 	// #endif
+	@Test
 	public void testHasInclude() throws Exception {
 		importFile("test.h", "");
 		IFile base = importFile("test.cpp", getAboveComment());
@@ -350,6 +345,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 	// #endif
 
 	// identifier3
+	@Test
 	public void testHasIncludeNext() throws Exception {
 		StringBuilder[] sections = getTestContent(4);
 		String baseFile = sections[0].toString(); //$NON-NLS-1$
@@ -385,6 +381,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 	// void foo() {
 	//   __has_include;
 	// }
+	@Test
 	public void testHasIncludeProblem() throws Exception {
 		IFile base = importFile("test.cpp", getAboveComment());
 		IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP, null, new String[] {}, null);
@@ -395,6 +392,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 	}
 
 	// #include <inc/test.h>
+	@Test
 	public void testRelativeIncludes_243170() throws Exception {
 		String content = getAboveComment();
 
@@ -414,6 +412,7 @@ public class InclusionTests extends PreprocessorTestsBase {
 	}
 
 	// #include "test.h"
+	@Test
 	public void testSuppressingUseOfCurrentFileDirectory() throws Exception {
 		String content = getAboveComment();
 

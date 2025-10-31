@@ -15,17 +15,12 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for using the preprocessor on inactive code
  */
 public class InactiveCodeTests extends PreprocessorTestsBase {
-
-	public static TestSuite suite() {
-		return suite(InactiveCodeTests.class);
-	}
 
 	@Override
 	protected void initializeScanner() throws Exception {
@@ -93,6 +88,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 	// #else
 	//   a
 	// #endif
+	@Test
 	public void testIfDef() throws Exception {
 		initializeScanner();
 		validate("aiiiaiaiiaiiaiaiia".toCharArray());
@@ -137,6 +133,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 	// #else
 	//   a
 	// #endif
+	@Test
 	public void testIfnDef() throws Exception {
 		initializeScanner();
 		validate("aiiiaiaiiaiiaiaiia".toCharArray());
@@ -180,6 +177,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 	// #else
 	//   a
 	// #endif
+	@Test
 	public void testIf() throws Exception {
 		initializeScanner();
 		validate("aiiiaiaiiaiiaiaiia".toCharArray());
@@ -222,6 +220,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 	//   i
 	// #endif
 	// a
+	@Test
 	public void testNestedInInactive() throws Exception {
 		initializeScanner();
 		validate("iiiiiaiiiiiaiiiiia".toCharArray());
@@ -237,6 +236,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 	//    i
 	// #endif
 	// a
+	@Test
 	public void testInactiveMacroDefinition() throws Exception {
 		initializeScanner();
 		validate("iaia".toCharArray());
@@ -249,6 +249,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 	//	# endif
 	//	#elif defined (Y)
 	//	#endif
+	@Test
 	public void testDefinedSyntax() throws Exception {
 		initializeScanner();
 		validateToken(IToken.tINACTIVE_CODE_START);
@@ -270,6 +271,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 	//	#else
 	//	   "part6"
 	//	#endif
+	@Test
 	public void testStringLiteralConcatenation_281745() throws Exception {
 		initializeScanner();
 		validateString("part1part3part4part5");
@@ -281,6 +283,7 @@ public class InactiveCodeTests extends PreprocessorTestsBase {
 	//	#ifdef __INCLUDE_C_STD_LIB
 	//	#include <cstdint>
 	//	#endif
+	@Test
 	public void testInactiveInclude_537942() throws Exception {
 		super.initializeScanner();
 		ASTNode include = (ASTNode) parse().getAllPreprocessorStatements()[2];

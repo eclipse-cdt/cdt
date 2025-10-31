@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 
-import junit.framework.AssertionFailedError;
-
 class LogMonitoring {
 
 	private List<IStatus> statusLog;
@@ -57,7 +55,7 @@ class LogMonitoring {
 
 	}
 
-	void stop(int expectedLoggedNonOK) {
+	void stop(int expectedLoggedNonOK) throws Exception {
 		if (statusLog.size() != expectedLoggedNonOK) {
 			StringBuilder msg = new StringBuilder("Expected number (").append(expectedLoggedNonOK).append(") of ");
 			msg.append("Non-OK status objects in log differs from actual (").append(statusLog.size()).append(").\n");
@@ -87,9 +85,8 @@ class LogMonitoring {
 					}
 				}
 			}
-			AssertionFailedError afe = new AssertionFailedError(msg.toString());
-			afe.initCause(cause);
-			throw afe;
+
+			throw new Exception(msg.toString(), cause);
 		}
 		if (corePlugin != null) {
 			corePlugin.getLog().removeLogListener(logListener);

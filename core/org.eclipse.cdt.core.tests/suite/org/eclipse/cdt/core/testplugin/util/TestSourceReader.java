@@ -15,6 +15,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin.util;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,7 +56,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.junit.Assert;
 import org.osgi.framework.Bundle;
 
 /**
@@ -205,7 +207,7 @@ public class TestSourceReader {
 	public static int indexOfInFile(String lookfor, Path fullPath) throws Exception {
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(fullPath);
 		Reader reader = new BufferedReader(new InputStreamReader(file.getContents(), file.getCharset()));
-		Assert.assertTrue(lookfor.indexOf('\n') == -1);
+		assertTrue(lookfor.indexOf('\n') == -1);
 		try {
 			int c = 0;
 			int offset = 0;
@@ -238,7 +240,7 @@ public class TestSourceReader {
 			int line = 1;
 			for (int i = 0; i < offset; i++) {
 				int c = reader.read();
-				Assert.assertTrue(c >= 0);
+				assertTrue(c >= 0);
 				if (c == '\n')
 					line++;
 			}
@@ -287,7 +289,7 @@ public class TestSourceReader {
 		} finally {
 			reader.close();
 		}
-		Assert.assertTrue("Tag '" + tag + "' is not defined inside of '" + filePath + "'.", found);
+		assertTrue(found, "Tag '" + tag + "' is not defined inside of '" + filePath + "'.");
 		return content.toString();
 	}
 
@@ -370,17 +372,17 @@ public class TestSourceReader {
 		long endTime = System.currentTimeMillis() + maxmillis;
 		int timeLeft = maxmillis;
 		while (timeLeft >= 0) {
-			Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
+			assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 			index.acquireReadLock();
 			try {
 				IIndexFile[] files = index.getFiles(ILinkage.CPP_LINKAGE_ID, indexFileLocation);
 				if (files.length > 0 && areAllFilesNotOlderThan(files, fileTimestamp)) {
-					Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
+					assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 					return;
 				}
 				files = index.getFiles(ILinkage.C_LINKAGE_ID, indexFileLocation);
 				if (files.length > 0 && areAllFilesNotOlderThan(files, fileTimestamp)) {
-					Assert.assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
+					assertTrue(CCorePlugin.getIndexManager().joinIndexer(timeLeft, new NullProgressMonitor()));
 					return;
 				}
 			} finally {
@@ -390,7 +392,7 @@ public class TestSourceReader {
 			Thread.sleep(50);
 			timeLeft = (int) (endTime - System.currentTimeMillis());
 		}
-		Assert.fail("Indexing of " + file.getFullPath() + " did not complete in " + maxmillis / 1000. + " sec");
+		fail("Indexing of " + file.getFullPath() + " did not complete in " + maxmillis / 1000. + " sec");
 	}
 
 	private static boolean areAllFilesNotOlderThan(IIndexFile[] files, long timestamp) throws CoreException {
@@ -409,7 +411,7 @@ public class TestSourceReader {
 			ITranslationUnit tu = (ITranslationUnit) elem;
 			return tu.getAST(index, ITranslationUnit.AST_SKIP_INDEXED_HEADERS);
 		}
-		Assert.fail("Could not create AST for " + file.getFullPath());
+		fail("Could not create AST for " + file.getFullPath());
 		return null;
 	}
 }

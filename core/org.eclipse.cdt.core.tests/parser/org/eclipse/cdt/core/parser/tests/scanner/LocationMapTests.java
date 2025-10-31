@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 
 import org.eclipse.cdt.core.dom.IName;
@@ -44,7 +50,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit.IDependencyTree.IASTIncl
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IMacroBinding;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.Linkage;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
@@ -53,10 +59,10 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationCtx;
 import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class LocationMapTests extends BaseTestCase {
+public class LocationMapTests extends BaseTestCase5 {
 	public class Loc implements IASTFileLocation, IName {
 		private String fFile;
 		private int fOffset;
@@ -150,20 +156,9 @@ public class LocationMapTests extends BaseTestCase {
 	private CPPASTTranslationUnit fTu;
 	private CharArray fContent;
 
-	public static TestSuite suite() {
-		return suite(LocationMapTests.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createLocationMap() throws Exception {
 		fLocationMap = new LocationMap(new LexerOptions());
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		fLocationMap = null;
-		super.tearDown();
 	}
 
 	protected StringBuilder[] getContents(int sections) throws IOException {
@@ -346,6 +341,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkASTNode(st, fTu, PROP_PST, filename, offset, length, line, line, image);
 	}
 
+	@Test
 	public void testComment() {
 		init(DIGITS);
 		fLocationMap.encounteredComment(0, 0, false, fContent);
@@ -358,6 +354,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkComment(comments[2], "56789abcdef", true, FN, 5, 11, 1, 1);
 	}
 
+	@Test
 	public void testProblems() {
 		init(DIGITS);
 		fLocationMap.encounterProblem(0, null, 0, 0);
@@ -370,6 +367,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkProblem(problems[2], 2, "b", "56789abcdef", FN, 5, 11, 1, 1);
 	}
 
+	@Test
 	public void testPoundError() {
 		init(DIGITS);
 		fLocationMap.encounterPoundError(0, 0, 0, 0);
@@ -380,6 +378,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkError(prep[1], "012", "12", FN, 0, 3, 1);
 	}
 
+	@Test
 	public void testPragma() {
 		init(DIGITS);
 		fLocationMap.encounterPoundPragma(0, 0, 0, 0);
@@ -390,6 +389,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkPragma(prep[1], "012", "12", FN, 0, 3, 1);
 	}
 
+	@Test
 	public void testIncludes() {
 		init(DIGITS);
 		fLocationMap.encounterPoundInclude(0, 0, 0, 0, "n1".toCharArray(), null, true, false, false, null);
@@ -400,6 +400,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkInclude(includes[1], new String(DIGITS), "12", "n2", "f2", false, true, FN, 0, 16, 1, 1, 2);
 	}
 
+	@Test
 	public void testIf() {
 		init(DIGITS);
 		fLocationMap.encounterPoundIf(0, 0, 0, 0, false, IASTName.EMPTY_NAME_ARRAY);
@@ -410,6 +411,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkIf(prep[1], "012", "12", true, FN, 0, 3, 1);
 	}
 
+	@Test
 	public void testIfdef() {
 		init(DIGITS);
 		fLocationMap.encounterPoundIfdef(0, 0, 0, 0, false, null);
@@ -420,6 +422,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkIfdef(prep[1], "012", "12", true, FN, 0, 3, 1);
 	}
 
+	@Test
 	public void testIfndef() {
 		init(DIGITS);
 		fLocationMap.encounterPoundIfndef(0, 0, 0, 0, false, null);
@@ -430,6 +433,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkIfndef(prep[1], "012", "12", true, FN, 0, 3, 1);
 	}
 
+	@Test
 	public void testElif() {
 		init(DIGITS);
 		fLocationMap.encounterPoundElif(0, 0, 0, 0, false, IASTName.EMPTY_NAME_ARRAY);
@@ -440,6 +444,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkElif(prep[1], "012", "12", true, FN, 0, 3, 1);
 	}
 
+	@Test
 	public void testElse() {
 		init(DIGITS);
 		fLocationMap.encounterPoundElse(0, 0, false);
@@ -450,6 +455,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkElse(prep[1], new String(DIGITS), true, FN, 0, 16, 1);
 	}
 
+	@Test
 	public void testEndif() {
 		init(DIGITS);
 		fLocationMap.encounterPoundEndIf(0, 0);
@@ -460,6 +466,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkEndif(prep[1], new String(DIGITS), FN, 0, 16, 1);
 	}
 
+	@Test
 	public void testDefine() {
 		IMacroBinding macro1 = new TestMacro("n1", "exp1", null);
 		final String[] params = new String[] { "p1", "p2" };
@@ -473,6 +480,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkMacroDefinition(prep[1], macro2, new String(DIGITS), "n2", "12", "exp2", params, FN, 0, 16, 1, 1, 2);
 	}
 
+	@Test
 	public void testPredefine() {
 		IMacroBinding macro1 = new TestMacro("n1", "exp1", null);
 		final String[] params = new String[] { "p1", "p2" };
@@ -486,6 +494,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkMacroDefinition(prep[1], macro2, "", "n2", "n2", "exp2", params, "", -1, 0, 0, -1, 0);
 	}
 
+	@Test
 	public void testIndexDefine() {
 		IMacroBinding macro1 = new TestMacro("n1", "exp1", null);
 		final String[] params = new String[] { "p1", "p2" };
@@ -499,6 +508,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkMacroDefinition(prep[1], macro2, "", "n2", "n2", "exp2", params, "fidx2", -1, 0, 0, 1, 3);
 	}
 
+	@Test
 	public void testUndefine() {
 		IMacroBinding macro1 = new TestMacro("n1", "exp1", null);
 
@@ -511,6 +521,7 @@ public class LocationMapTests extends BaseTestCase {
 		checkMacroUndef(prep[1], macro1, "0123456", "n2", "3456", FN, 0, 7, 1, 3, 4);
 	}
 
+	@Test
 	public void testMacroExpansion() {
 		IMacroBinding macro1 = new TestMacro("n1", "exp1", null);
 		IMacroBinding macro2 = new TestMacro("n2", "exp2", null);
@@ -550,6 +561,7 @@ public class LocationMapTests extends BaseTestCase {
 				ROLE_REFERENCE, FN, 110, 15, 2, 2, new String(LONGDIGITS, 110, 15));
 	}
 
+	@Test
 	public void testContexts() {
 		init(DIGITS);
 		assertEquals(FN, fLocationMap.getTranslationUnitPath());

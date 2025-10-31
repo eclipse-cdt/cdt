@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,7 +41,7 @@ import org.eclipse.cdt.core.index.URIRelativeLocationConverter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
@@ -47,29 +52,25 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
-import junit.framework.Test;
-
-public class IndexLocationTest extends BaseTestCase {
+public class IndexLocationTest extends BaseTestCase5 {
 	private static final boolean isWin = Platform.getOS().equals(Platform.OS_WIN32);
 	protected List projects = new ArrayList();
 	protected ICProject cproject;
 
-	public static Test suite() {
-		return suite(IndexLocationTest.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createProject() throws Exception {
 		cproject = CProjectHelper.createCProject("LocationTests" + System.currentTimeMillis(), "bin",
 				IPDOMManager.ID_FAST_INDEXER);
 		deleteOnTearDown(cproject);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		for (Iterator i = projects.iterator(); i.hasNext();) {
 			ICProject ptd = (ICProject) i.next();
 			if (ptd != null) {
@@ -77,7 +78,6 @@ public class IndexLocationTest extends BaseTestCase {
 						new NullProgressMonitor());
 			}
 		}
-		super.tearDown();
 	}
 
 	// //header
@@ -90,6 +90,7 @@ public class IndexLocationTest extends BaseTestCase {
 	// #include "header.h"
 	// #include "ABS_EXTERNAL"
 	// class baz {};
+	@Test
 	public void testBasicLocations() throws Exception {
 		File externalHeader = new File(CProjectHelper.freshDir(), "external.h");
 
@@ -159,6 +160,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testLinkedFilesIndexedAsWithinProject() throws Exception {
 		File location = new File(CProjectHelper.freshDir(), "external2.h");
 		createExternalFile(location, "struct External {};\n");
@@ -182,6 +184,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testSameFileLinkedToOnceInTwoProjects_186214() throws Exception {
 		File location = new File(CProjectHelper.freshDir(), "external2.h");
 		createExternalFile(location, "struct External {};\n");
@@ -217,6 +220,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testResourceContainerRelativeLocationConverter() throws Exception {
 		ICProject emptyCProject = CProjectHelper.createCProject("Empty", "bin", IPDOMManager.ID_NO_INDEXER);
 		deleteOnTearDown(emptyCProject);
@@ -238,6 +242,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testURLC_RCRLC_Interaction1() throws Exception {
 		String[] winPaths = new String[] { "c:/foo/bar/baz.cpp", "c:\\foo\\bar\\a b c\\baz.cpp",
 				"c:/foo/bar/a b/baz.cpp", "c:\\foo\\bar\\a b c\\a b/baz.cpp" };
@@ -268,6 +273,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testURLC_RCRLC_Interaction2() throws Exception {
 		String[] winPaths = new String[] { "a b c/d/e f/g.h", "a \\b /c.d", "/a b c/d-e/f.g" };
 		String[] unxPaths = new String[] { "a b c/d/e f/g.h", "a /b /c.d", "/a b c/d-e/f.g" };
@@ -295,6 +301,7 @@ public class IndexLocationTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testURLC_RCRLC_Interaction3() throws Exception {
 		IFolder linkedFolder = cproject.getProject().getFolder("linkedFolder");
 		String[] winPaths = new String[] { "a b c/d/e f/g.h", "a \\b /c.d", "/a b c/d-e/f.g" };

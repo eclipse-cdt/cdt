@@ -13,15 +13,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import junit.framework.TestSuite;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
+import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for StreamHasher class.
  */
-public class StreamHasherTests extends BaseTestCase {
+public class StreamHasherTests extends BaseTestCase5 {
 
 	private static final String TEXT = "'Twas brillig, and the slithy toves\r\n"
 			+ "Did gyre and gimble in the wabe;\r\n" + "All mimsy were the borogoves,\r\n"
@@ -39,24 +41,14 @@ public class StreamHasherTests extends BaseTestCase {
 			+ "Did gyre and gimble in the wabe;\r\n" + "All mimsy were the borogoves,\r\n"
 			+ "And the mome raths outgrabe.\r\n";
 
-	public static TestSuite suite() {
-		return suite(StreamHasherTests.class);
-	}
-
-	public StreamHasherTests() {
-		super();
-	}
-
-	public StreamHasherTests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testEmpty() throws Exception {
 		// Verify that an empty string has a zero hash value.
 		assertEquals(0, StreamHasher.hash(""));
 		assertEquals(0, new StreamHasher().computeHash());
 	}
 
+	@Test
 	public void testChunks() throws Exception {
 		// Verify that the hash value does not depend on partitioning of the character string into chunks.
 		long h = StreamHasher.hash(TEXT);

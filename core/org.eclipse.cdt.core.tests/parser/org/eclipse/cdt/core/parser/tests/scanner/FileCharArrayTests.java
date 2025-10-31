@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,48 +22,50 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.parser.scanner.AbstractCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.FileCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.LazyCharArray;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class FileCharArrayTests extends BaseTestCase {
-
-	public static TestSuite suite() {
-		return suite(FileCharArrayTests.class);
-	}
+public class FileCharArrayTests extends BaseTestCase5 {
 
 	private File fFile;
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteFile() throws Exception {
 		if (fFile != null) {
 			fFile.delete();
 		}
 	}
 
+	@Test
 	public void testAlignedMinus() throws IOException {
 		testFile(true, LazyCharArray.CHUNK_SIZE * 3 - 1);
 	}
 
+	@Test
 	public void testAlignedEven() throws IOException {
 		testFile(true, LazyCharArray.CHUNK_SIZE * 3);
 	}
 
+	@Test
 	public void testAlignedPlus() throws IOException {
 		testFile(true, LazyCharArray.CHUNK_SIZE * 3 + 1);
 	}
 
+	@Test
 	public void testUnAlignedMinus() throws IOException {
 		testFile(false, LazyCharArray.CHUNK_SIZE * 3 - 1);
 	}
 
+	@Test
 	public void testUnAlignedEven() throws IOException {
 		testFile(false, LazyCharArray.CHUNK_SIZE * 3);
 	}
 
+	@Test
 	public void testUnAlignedPlus() throws IOException {
 		testFile(false, LazyCharArray.CHUNK_SIZE * 3 + 1);
 	}

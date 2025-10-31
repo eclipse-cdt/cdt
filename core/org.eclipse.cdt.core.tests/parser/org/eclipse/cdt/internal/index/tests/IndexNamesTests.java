@@ -28,7 +28,7 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.core.resources.IContainer;
@@ -36,30 +36,137 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
+public class IndexNamesTests extends BaseTestCase5 {
 
-public class IndexNamesTests extends BaseTestCase {
+	public static void assertNotEquals(Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertNotEquals(String msg, Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(String msg, long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertEquals(Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(long expected, long actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, long expected, long actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(double a, double b, double c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, double a, double b, double c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertEquals(float a, float b, float c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, float a, float b, float c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertSame(Object expected, Object actual) {
+		Assertions.assertSame(expected, actual);
+	}
+
+	public static void assertSame(String msg, Object expected, Object actual) {
+		Assertions.assertSame(expected, actual, msg);
+	}
+
+	public static void assertNotSame(Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual);
+	}
+
+	public static void assertNotSame(String msg, Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual, msg);
+	}
+
+	public static void assertNull(Object object) {
+		Assertions.assertNull(object);
+	}
+
+	public static void assertNull(String msg, Object object) {
+		Assertions.assertNull(object, msg);
+	}
+
+	public static void assertNotNull(Object object) {
+		Assertions.assertNotNull(object);
+	}
+
+	public static void assertNotNull(String msg, Object object) {
+		Assertions.assertNotNull(object, msg);
+	}
+
+	public static void assertTrue(boolean n) {
+		Assertions.assertTrue(n);
+	}
+
+	public static void assertTrue(String msg, boolean n) {
+		Assertions.assertTrue(n, msg);
+	}
+
+	public static void assertFalse(boolean n) {
+		Assertions.assertFalse(n);
+	}
+
+	public static void assertFalse(String msg, boolean n) {
+		Assertions.assertFalse(n, msg);
+	}
+
+	public static void fail() {
+		Assertions.fail();
+	}
+
+	public static void fail(String msg) {
+		Assertions.fail(msg);
+	}
+
+	private void assertArrayEquals(char[] expected, char[] actual) {
+		Assertions.assertArrayEquals(expected, actual);
+	}
+
+	public static void assertArrayEquals() {
+		fail("TODO");
+	}
+
 	private ICProject fCProject;
 	protected IIndex fIndex;
 
-	public IndexNamesTests(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(IndexNamesTests.class);
-	}
-
-	@Override
-	protected void setUp() throws CoreException {
+	@BeforeEach
+	protected void createProject() throws CoreException {
 		fCProject = CProjectHelper.createCCProject("__encNamesTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 
-	@Override
-	protected void tearDown() throws CoreException {
+	@AfterEach
+	protected void deleteProject() throws CoreException {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
@@ -110,6 +217,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//    func();
 	//    var=1;
 	// };
+	@Test
 	public void testNestingWithFunction() throws Exception {
 		waitForIndexer();
 		String content = getComment();
@@ -168,6 +276,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//    func();
 	//    var=1;
 	// };
+	@Test
 	public void testNestingWithMethod() throws Exception {
 		waitForIndexer();
 		String content = getComment();
@@ -263,6 +372,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//		xc.vm();    // call to X::vm()
 	//		xc.X::vm(); // call to X::vm()
 	//	}
+	@Test
 	public void testCouldBePolymorphicMethodCall_Bug156691() throws Exception {
 		waitForIndexer();
 		String content = getComment();
@@ -302,6 +412,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//	class B: public A {
 	//	    virtual void foo(){}
 	//	};
+	@Test
 	public void testAddressOfPolymorphicMethod_Bug363731() throws Exception {
 		waitForIndexer();
 		String content = getComment();
@@ -355,6 +466,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//      fi(*rp); fp(rp); fcp(rp); fpp(&rwp); fcpp(&rwp); fpcp(&rp); fcpcp(&rp);
 	//      return ri;
 	//	}
+	@Test
 	public void testReadWriteFlagsC() throws Exception {
 		waitForIndexer();
 		String content = getComment();
@@ -426,6 +538,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//		fpr(rwp); fcpr(rwcp); fpcr(rp); fcpcr(rp);
 	//		return ri;
 	//	}
+	@Test
 	public void testReadWriteFlagsCpp() throws Exception {
 		waitForIndexer();
 		String content = getComment();
@@ -442,6 +555,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//		f(rwi, ri);
 	//		g(ri, rwi);
 	//	}
+	@Test
 	public void testRWInSecondArg() throws Exception {
 		waitForIndexer();
 		String content = getComment();
@@ -459,6 +573,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//	void test() {
 	//		A b(r); // Should be read-access
 	//	}
+	@Test
 	public void testRWInConstructorCall_328528() throws Exception {
 		waitForIndexer();
 		String content = getComment();
@@ -476,6 +591,7 @@ public class IndexNamesTests extends BaseTestCase {
 	//	void test() {
 	//      int b[2] = {0, r}; 	// Should be read-access
 	//	}
+	@Test
 	public void testRWInArrayInitializer_328528() throws Exception {
 		waitForIndexer();
 		String content = getComment();

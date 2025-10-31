@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,23 +34,19 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the behavior of the IIndex API when dealing with multiple projects
  */
-public class IndexCompositeTests extends BaseTestCase {
+public class IndexCompositeTests extends BaseTestCase5 {
 	Set<IProject> createdProjects = new HashSet<>();
-
-	public static Test suite() {
-		return suite(IndexCompositeTests.class);
-	}
 
 	private static final int NONE = 0;
 	private static final int REFS = IIndexManager.ADD_DEPENDENCIES;
@@ -81,6 +79,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// class A {};
 
 	// class B {};
+	@Test
 	public void testPairDisjointContent() throws Exception {
 		CharSequence[] contents = getContentsForTest(2);
 		List<ICProject> projects = new ArrayList<>();
@@ -137,6 +136,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// class A1 {};
 	// void foo(X::B2 c) {}
 	// namespace X { class A2 {}; B2 b; C2 c; }
+	@Test
 	public void testTripleLinear() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
 		List<ICProject> projects = new ArrayList<>();
@@ -253,6 +253,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// enum E {E1,E2};
 	// X::B2 cb;
 	// void foo(C1 c) {}
+	@Test
 	public void testTripleUpwardV() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
 		List<ICProject> projects = new ArrayList<>();
@@ -351,6 +352,7 @@ public class IndexCompositeTests extends BaseTestCase {
 	// class A1 {};
 	// void foo(A1 a, A1 b) {}
 	// namespace X { class A2 {}; }
+	@Test
 	public void testTripleDownwardV() throws Exception {
 		CharSequence[] contents = getContentsForTest(3);
 		List<ICProject> projects = new ArrayList<>();
@@ -469,8 +471,8 @@ public class IndexCompositeTests extends BaseTestCase {
 		index.acquireReadLock();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProjects() throws Exception {
 		if (index != null) {
 			index.releaseReadLock();
 			index = null;

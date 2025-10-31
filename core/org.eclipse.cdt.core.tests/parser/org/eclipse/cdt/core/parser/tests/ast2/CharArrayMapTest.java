@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,14 +27,13 @@ import java.util.Set;
 
 import org.eclipse.cdt.core.parser.util.CharArrayMap;
 import org.eclipse.cdt.core.parser.util.CharArrayObjectMap;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Test;
 
 /**
  *
  * @author Mike Kucera
  */
-public class CharArrayMapTest extends TestCase {
+public class CharArrayMapTest {
 
 	private static class Slice { // convenience class
 		final char[] chars;
@@ -92,6 +97,7 @@ public class CharArrayMapTest extends TestCase {
 		return System.currentTimeMillis() - start;
 	}
 
+	@Test
 	public void testBasicUsage1() {
 		char[] key1 = "first key".toCharArray();
 		char[] key2 = "second key".toCharArray();
@@ -168,6 +174,7 @@ public class CharArrayMapTest extends TestCase {
 		assertFalse(map.containsValue(100));
 	}
 
+	@Test
 	public void testBasicUsage2() {
 		char[] chars = "pantera, megadeth, soulfly, metallica, in flames, lamb of god, carcass".toCharArray();
 
@@ -230,6 +237,7 @@ public class CharArrayMapTest extends TestCase {
 		assertEquals(0, map.size());
 	}
 
+	@Test
 	public void testOrderedMap() {
 		char[] chars = "alpha beta aaa cappa almost".toCharArray();
 		Slice[] slices = { new Slice(chars, 0, 5), new Slice(chars, 6, 4), new Slice(chars, 11, 3),
@@ -265,6 +273,7 @@ public class CharArrayMapTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testProperFail() {
 		char[] hello = "hello".toCharArray();
 		CharArrayMap<Integer> map = new CharArrayMap<>();

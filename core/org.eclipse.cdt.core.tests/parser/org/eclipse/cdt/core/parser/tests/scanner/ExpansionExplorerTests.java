@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.eclipse.cdt.core.dom.parser.c.GCCScannerExtensionConfiguration;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IToken;
@@ -22,20 +25,15 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ScannerInfo;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.parser.scanner.CPreprocessor;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroExpander;
 import org.eclipse.cdt.internal.core.parser.scanner.MacroExpansionTracker;
 import org.eclipse.text.edits.ReplaceEdit;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
-
-public class ExpansionExplorerTests extends BaseTestCase {
-
-	public static TestSuite suite() {
-		return suite(ExpansionExplorerTests.class);
-	}
+public class ExpansionExplorerTests extends BaseTestCase5 {
 
 	private void performTest(int steps) throws Exception {
 		CharSequence[] bufs = TestSourceReader.getContentsForTest(CTestPlugin.getDefault().getBundle(), "parser",
@@ -100,6 +98,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// B
 
 	// B
+	@Test
 	public void testNoOp() throws Exception {
 		performTest(0);
 	}
@@ -109,6 +108,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// A
 
 	// B
+	@Test
 	public void testObject() throws Exception {
 		performTest(1);
 	}
@@ -124,6 +124,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// A2
 
 	// A
+	@Test
 	public void testObjectChain() throws Exception {
 		performTest(3);
 	}
@@ -133,6 +134,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// A(c)
 
 	// B+c
+	@Test
 	public void testFunction() throws Exception {
 		performTest(1);
 	}
@@ -145,6 +147,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// A(t)
 
 	// t+t
+	@Test
 	public void testFunctionParam() throws Exception {
 		performTest(2);
 	}
@@ -159,6 +162,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// A(t, t)
 
 	// t+t
+	@Test
 	public void test2Params() throws Exception {
 		performTest(3);
 	}
@@ -173,6 +177,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// A ( t , , t )
 
 	// t +  + t
+	@Test
 	public void test3Params() throws Exception {
 		performTest(3);
 	}
@@ -189,6 +194,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// !(m)+!(m)+n(m)
 
 	// !(m)+!(m)+n(!(m)+n)
+	@Test
 	public void testRecursiveExpansion() throws Exception {
 		performTest(4);
 	}
@@ -213,6 +219,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// f( (a*b), (b*a) )
 
 	// ((a*b) + (b*a))
+	@Test
 	public void testNestedFunctions() throws Exception {
 		performTest(7);
 	}
@@ -226,6 +233,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	//    a)
 
 	// a
+	@Test
 	public void testNewline() throws Exception {
 		performTest(2);
 	}
@@ -241,6 +249,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// x  a  _b  x
 
 	// x  a  b  x
+	@Test
 	public void testSpace() throws Exception {
 		performTest(3);
 	}
@@ -255,6 +264,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// x(1)
 
 	// 1
+	@Test
 	public void testLineNumber() throws Exception {
 		performTest(3);
 	}
@@ -278,6 +288,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	//   2)
 
 	// 2,2
+	@Test
 	public void testLineNumber2() throws Exception {
 		performTest(5);
 	}
@@ -292,6 +303,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// str(1)
 
 	// "1"
+	@Test
 	public void testStringify() throws Exception {
 		performTest(3);
 	}
@@ -304,6 +316,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// vararg( p );
 
 	// bla(p, );
+	@Test
 	public void testVararg1() throws Exception {
 		performTest(2);
 	}
@@ -316,6 +329,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// vararg( p );
 
 	// bla(p);
+	@Test
 	public void testVararg1x() throws Exception {
 		performTest(2);
 	}
@@ -330,6 +344,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// vararg( p , p );
 
 	// bla(p, p);
+	@Test
 	public void testVararg2() throws Exception {
 		performTest(3);
 	}
@@ -344,6 +359,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// vararg( p , p );
 
 	// bla(p,  p);
+	@Test
 	public void testVararg2x() throws Exception {
 		performTest(3);
 	}
@@ -356,6 +372,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 	// func2(p);
 
 	// (p,);
+	@Test
 	public void testTooFewArgs() throws Exception {
 		performTest(2);
 	}

@@ -14,6 +14,9 @@
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
 import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -21,25 +24,27 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Guido Zgraggen IFS
  */
-public class NodeCommentMapTest extends TestCase {
+public class NodeCommentMapTest {
 	private NodeCommentMap map;
 
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
 		map = new NodeCommentMap();
 	}
 
-	@Override
+	@AfterEach
 	protected void tearDown() throws Exception {
 		map = null;
 	}
 
+	@Test
 	public void testNoComment() {
 		ASTNode node = new CPPASTName();
 		assertEquals(0, map.getLeadingCommentsForNode(node).size());
@@ -47,6 +52,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(0, map.getFreestandingCommentsForNode(node).size());
 	}
 
+	@Test
 	public void testOneComment() {
 		ASTNode node = new CPPASTName();
 		IASTComment comm1 = new Comment();
@@ -66,6 +72,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(comm3, map.getFreestandingCommentsForNode(node).get(0));
 	}
 
+	@Test
 	public void testTwoComment() {
 		ASTNode node = new CPPASTName();
 		IASTComment com1 = new Comment();
@@ -90,6 +97,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(com2, map.getFreestandingCommentsForNode(node).get(1));
 	}
 
+	@Test
 	public void testCommentOnDifferentNodes() {
 		ASTNode node1 = new CPPASTName();
 		ASTNode node2 = new CPPASTName();
@@ -144,6 +152,7 @@ public class NodeCommentMapTest extends TestCase {
 		return node;
 	}
 
+	@Test
 	public void testRemoveCommentFromNode() {
 		ASTNode node = initCommentMap();
 		List<IASTComment> trailingComments = map.getTrailingCommentsForNode(node);
@@ -157,6 +166,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertFalse(map.getTrailingCommentsForNode(node).contains(commentToBeRemoved));
 	}
 
+	@Test
 	public void testRemoveLeadingCommentsFromNode() {
 		ASTNode node = initCommentMap();
 		map.removeLeadingCommentsFromNode(node);
@@ -168,6 +178,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(6, allComments.size());
 	}
 
+	@Test
 	public void testRemoveTrailingCommentsFromNode() {
 		ASTNode node = initCommentMap();
 		map.removeTrailingCommentsFromNode(node);
@@ -179,6 +190,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(6, allComments.size());
 	}
 
+	@Test
 	public void testRemoveFreestandingCommentsFromNode() {
 		ASTNode node = initCommentMap();
 		map.removeFreestandingCommentsFromNode(node);
@@ -190,6 +202,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(6, allComments.size());
 	}
 
+	@Test
 	public void testAllCommentsFromNode() {
 		ASTNode node = initCommentMap();
 		map.removeAllComments(node);

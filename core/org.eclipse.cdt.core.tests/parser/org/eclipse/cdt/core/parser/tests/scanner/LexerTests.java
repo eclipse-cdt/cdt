@@ -18,14 +18,123 @@ import org.eclipse.cdt.core.parser.IGCCToken;
 import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.tests.ast2.TestLexerLog;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.Token;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
+public class LexerTests extends BaseTestCase5 {
 
-public class LexerTests extends BaseTestCase {
+	public static void assertNotEquals(Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertNotEquals(String msg, Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(String msg, long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertEquals(Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(long expected, long actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, long expected, long actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(double a, double b, double c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, double a, double b, double c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertEquals(float a, float b, float c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, float a, float b, float c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertSame(Object expected, Object actual) {
+		Assertions.assertSame(expected, actual);
+	}
+
+	public static void assertSame(String msg, Object expected, Object actual) {
+		Assertions.assertSame(expected, actual, msg);
+	}
+
+	public static void assertNotSame(Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual);
+	}
+
+	public static void assertNotSame(String msg, Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual, msg);
+	}
+
+	public static void assertNull(Object object) {
+		Assertions.assertNull(object);
+	}
+
+	public static void assertNull(String msg, Object object) {
+		Assertions.assertNull(object, msg);
+	}
+
+	public static void assertNotNull(Object object) {
+		Assertions.assertNotNull(object);
+	}
+
+	public static void assertNotNull(String msg, Object object) {
+		Assertions.assertNotNull(object, msg);
+	}
+
+	public static void assertTrue(boolean n) {
+		Assertions.assertTrue(n);
+	}
+
+	public static void assertTrue(String msg, boolean n) {
+		Assertions.assertTrue(n, msg);
+	}
+
+	public static void assertFalse(boolean n) {
+		Assertions.assertFalse(n);
+	}
+
+	public static void assertFalse(String msg, boolean n) {
+		Assertions.assertFalse(n, msg);
+	}
+
+	public static void fail() {
+		Assertions.fail();
+	}
+
+	public static void fail(String msg) {
+		Assertions.fail(msg);
+	}
+
+	public static void assertArrayEquals() {
+		fail("TODO");
+	}
+
 	private static final LexerOptions DEFAULT_OPTIONS = new LexerOptions();
 	private static final LexerOptions NO_DOLLAR = new LexerOptions();
 	private static final LexerOptions NO_MINMAX = new LexerOptions();
@@ -46,21 +155,9 @@ public class LexerTests extends BaseTestCase {
 	static String TRIGRAPH_REPLACES_CHARS = "#^[]|{}~\\";
 	static String TRIGRAPH_CHARS = "='()!<>-/";
 
-	public static TestSuite suite() {
-		return suite(LexerTests.class);
-	}
-
 	private Lexer fLexer;
 	private final TestLexerLog fLog = new TestLexerLog();
 	private int fLastEndOffset;
-
-	public LexerTests() {
-		super();
-	}
-
-	public LexerTests(String name) {
-		super(name);
-	}
 
 	private void init(String input) throws Exception {
 		init(input, DEFAULT_OPTIONS);
@@ -189,6 +286,7 @@ public class LexerTests extends BaseTestCase {
 		assertEquals(img, fLog.removeFirstComment());
 	}
 
+	@Test
 	public void testTrigraphSequences() throws Exception {
 		init("\"??=??/??'??(??)??!??<??>??-\"");
 		str("#\\^[]|{}~");
@@ -210,6 +308,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testLessColonColon() throws Exception {
 		// 2.5-3
 		// <: is treated as digraph [
@@ -232,6 +331,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testWindowsLineEnding() throws Exception {
 		init("\n\n");
 		nl();
@@ -243,6 +343,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testLineSplicingTrigraph() throws Exception {
 		// a trigraph cannot be spliced
 		init("??\\\n=");
@@ -263,6 +364,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testLineSplicingStringLiteral() throws Exception {
 		// splicing in string literal
 		init("\"a\\\nb\"");
@@ -274,6 +376,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testLineSplicingCharLiteral() throws Exception {
 		init("'a\\\nb'");
 		ch("'ab'");
@@ -284,6 +387,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testLineSplicingHeaderName() throws Exception {
 		init("p\"a\\\nb\"");
 		fLexer.setInsideIncludeDirective(true);
@@ -310,6 +414,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testLineSplicingComment() throws Exception {
 		init("// a\\\nb\n");
 		comment("// a\\\nb");
@@ -331,6 +436,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testLineSplicingIdentifier() throws Exception {
 		init("a\\\nb");
 		id("ab");
@@ -341,6 +447,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testLineSplicingNumber() throws Exception {
 		init(".\\\n1");
 		floating(".1");
@@ -351,6 +458,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testComments() throws Exception {
 		init("// /*\na");
 		comment("// /*");
@@ -364,6 +472,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testSlashPercentComments() throws Exception {
 		init("// /%\na", SLASH_PERCENT);
 		comment("// /%");
@@ -377,6 +486,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testMinimalComment() throws Exception {
 		init("a/**/b/**/");
 		id("a");
@@ -395,6 +505,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testHeaderName() throws Exception {
 		init("p\"'/*//\\\"");
 		fLexer.setInsideIncludeDirective(true);
@@ -409,6 +520,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testIdentifier() throws Exception {
 		final String ident = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_$\\u1234\\U123456780123456789";
 		int unc1 = ident.indexOf('\\');
@@ -437,6 +549,7 @@ public class LexerTests extends BaseTestCase {
 		id(ident.substring(idxDollar + 1));
 	}
 
+	@Test
 	public void testNumber() throws Exception {
 		final String number = ".0123456789.abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
 				+ "\\uaaaa\\Uaaaaaaaae+e-E+E-";
@@ -474,6 +587,7 @@ public class LexerTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testNumberSeparator() throws Exception {
 		String n = "123'456";
 
@@ -482,6 +596,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testCharLiteral() throws Exception {
 		String lit = "'abc0123\\'\".:; \\\\'";
 		init(lit);
@@ -556,6 +671,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testStringLiteral() throws Exception {
 		String lit = "abc0123\\\"'.:; \\\\";
 		init('"' + lit + '"');
@@ -628,6 +744,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testRawStringLiteral() throws Exception {
 		String lit = "abc0123\\\"'.:; \\\\ \n\"(";
 		init("R\"(" + lit + ")\"", CPP_OPTIONS);
@@ -688,6 +805,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testRawStringLiteralInInactiveCode() throws Exception {
 		init("start\n" + "inactive: Rbla\n" + "#end", CPP_OPTIONS);
 		id("start");
@@ -705,6 +823,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testOperatorAndPunctuators() throws Exception {
 		final String ops = "{}[]###()<::><%%>%:%:%:;:...?.::..*+-*/%^&|~=!<>+=-=*=/=%="
 				+ "^=&=|=<<>><<=>>===!=<=>=&&||++--,->*-><?>?\\";
@@ -723,6 +842,7 @@ public class LexerTests extends BaseTestCase {
 		verifyOperatorAndPunctuators(ops, tokens, DEFAULT_OPTIONS, NO_MINMAX);
 	}
 
+	@Test
 	public void testOperatorAndPunctuatorsCpp20() throws Exception {
 		final String ops = "<<>><<=>>===!=<=>>=<=&&";
 
@@ -826,6 +946,7 @@ public class LexerTests extends BaseTestCase {
 		return result.toString();
 	}
 
+	@Test
 	public void testLineSplicingOperator() throws Exception {
 		// splicing in operator
 		init("|\\\n|");
@@ -837,6 +958,7 @@ public class LexerTests extends BaseTestCase {
 		eof();
 	}
 
+	@Test
 	public void testNextDirective() throws Exception {
 		init("#if \n /*\n#*/ \"#\" '#' \\\n# ??/\n# \n## \n#\\\n# \n#??/\n# \n#ok \r\n#");
 		token(IToken.tPOUND);

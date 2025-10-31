@@ -15,6 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
@@ -78,31 +85,19 @@ import org.eclipse.cdt.core.parser.NullLogService;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.ParserMode;
 import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author jcamelon
  */
-public class CompleteParser2Tests extends BaseTestCase {
+public class CompleteParser2Tests extends BaseTestCase5 {
 	private static final NullLogService NULL_LOG = new NullLogService();
-
-	public CompleteParser2Tests() {
-	}
-
-	public CompleteParser2Tests(String name) {
-		super(name);
-	}
-
-	public static TestSuite suite() {
-		return suite(CompleteParser2Tests.class);
-	}
 
 	static private class NameCollector extends ASTVisitor {
 		public List nameList = new ArrayList();
@@ -197,10 +192,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		return tu;
 	}
 
+	@Test
 	public void testEmptyCompilationUnit() throws Exception {
 		parse("// no real code ");
 	}
 
+	@Test
 	public void testSimpleNamespace() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A { }");
 		NameCollector col = new NameCollector();
@@ -210,6 +207,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertTrue(col.getName(0).resolveBinding() instanceof ICPPNamespace);
 	}
 
+	@Test
 	public void testMultipleNamespaceDefinitions() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A { } namespace A { }");
 		NameCollector col = new NameCollector();
@@ -220,6 +218,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, A, 2);
 	}
 
+	@Test
 	public void testNestedNamespaceDefinitions() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A { namespace B { } }");
 		NameCollector col = new NameCollector();
@@ -232,6 +231,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(A.getNamespaceScope(), B.getNamespaceScope().getParent());
 	}
 
+	@Test
 	public void testEmptyClassDeclaration() throws Exception {
 		IASTTranslationUnit tu = parse("class A { };");
 		NameCollector col = new NameCollector();
@@ -241,6 +241,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertTrue(col.getName(0).resolveBinding() instanceof ICPPClassType);
 	}
 
+	@Test
 	public void testSimpleSubclass() throws Exception {
 		IASTTranslationUnit tu = parse("class A { };  class B : public A { };");
 		NameCollector col = new NameCollector();
@@ -259,6 +260,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertFalse(base.isVirtual());
 	}
 
+	@Test
 	public void testNestedSubclass() throws Exception {
 		IASTTranslationUnit tu = parse("namespace N { class A { }; } class B : protected virtual N::A { };");
 		NameCollector col = new NameCollector();
@@ -281,6 +283,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertEquals(base.getVisibility(), ICPPBase.v_protected);
 	}
 
+	@Test
 	public void testSimpleVariable() throws Exception {
 		IASTTranslationUnit tu = parse("int x;");
 		NameCollector col = new NameCollector();
@@ -294,6 +297,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertEquals(t.getType(), IBasicType.t_int);
 	}
 
+	@Test
 	public void testSimpleClassReferenceVariable() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; A x;");
 		NameCollector col = new NameCollector();
@@ -307,6 +311,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(x.getType(), A);
 	}
 
+	@Test
 	public void testNestedClassReferenceVariable() throws Exception {
 		IASTTranslationUnit tu = parse("namespace N { class A { }; } N::A x;");
 		NameCollector col = new NameCollector();
@@ -323,6 +328,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(A.getScope(), N.getNamespaceScope());
 	}
 
+	@Test
 	public void testMultipleDeclaratorsVariable() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; A x, y, z;");
 		NameCollector col = new NameCollector();
@@ -340,6 +346,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(y.getType(), z.getType());
 	}
 
+	@Test
 	public void testSimpleField() throws Exception {
 		IASTTranslationUnit tu = parse("class A { double x; };");
 		NameCollector col = new NameCollector();
@@ -355,6 +362,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(fields[0], x);
 	}
 
+	@Test
 	public void testUsingClauses() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A { namespace B { int x;  class C { static int y = 5; }; } } \n "
 				+ "using namespace A::B;\n " + "using A::B::x;" + "using A::B::C;" + "using A::B::C::y;");
@@ -384,6 +392,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(using_y.getDelegates()[0], y);
 	}
 
+	@Test
 	public void testEnumerations() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A { enum E { e1, e2, e3 }; E varE;}");
 		NameCollector col = new NameCollector();
@@ -405,6 +414,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotNull(varE);
 	}
 
+	@Test
 	public void testSimpleFunction() throws Exception {
 		IASTTranslationUnit tu = parse("void foo(void);");
 		NameCollector col = new NameCollector();
@@ -418,6 +428,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(p.getScope(), foo.getFunctionScope());
 	}
 
+	@Test
 	public void testSimpleFunctionWithTypes() throws Exception {
 		IASTTranslationUnit tu = parse("class A { public: \n class B { }; }; const A::B &  foo(A * myParam);");
 		NameCollector col = new NameCollector();
@@ -444,6 +455,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(((IPointerType) pt).getType(), A);
 	}
 
+	@Test
 	public void testSimpleMethod() throws Exception {
 		IASTTranslationUnit tu = parse("class A { void foo(); };");
 		NameCollector col = new NameCollector();
@@ -456,6 +468,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(foo.getScope(), A.getCompositeScope());
 	}
 
+	@Test
 	public void testSimpleMethodWithTypes() throws Exception {
 		IASTTranslationUnit tu = parse("class U { }; class A { U foo(U areDumb); };");
 		NameCollector col = new NameCollector();
@@ -474,6 +487,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(p.getType(), U);
 	}
 
+	@Test
 	public void testUsingDeclarationWithFunctionsAndMethods() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"namespace N { int foo(void); } class A { static int bar(void); }; using N::foo; using ::A::bar;");
@@ -498,6 +512,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(using_bar.getDelegates()[0], bar);
 	}
 
+	@Test
 	public void testLinkageSpec() throws Exception {
 		IASTTranslationUnit tu = parse("extern \"C\" { int foo(); }");
 		NameCollector col = new NameCollector();
@@ -508,6 +523,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotNull(foo);
 	}
 
+	@Test
 	public void testBogdansExample() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"namespace A { namespace B {	enum e1{e_1,e_2};	int x;	class C	{	static int y = 5;	}; }} ");
@@ -533,6 +549,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotNull(y);
 	}
 
+	@Test
 	public void testAndrewsExample() throws Exception {
 		IASTTranslationUnit tu = parse("namespace N{ class A {}; }	using namespace N;	class B: public A{};");
 		NameCollector col = new NameCollector();
@@ -550,6 +567,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(base.getBaseClass(), A);
 	}
 
+	@Test
 	public void testSimpleTypedef() throws Exception {
 		IASTTranslationUnit tu = parse("typedef int myInt;\n myInt var;");
 		NameCollector col = new NameCollector();
@@ -564,6 +582,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(var.getType(), myInt);
 	}
 
+	@Test
 	public void testComplexTypedef() throws Exception {
 		IASTTranslationUnit tu = parse("class A{ }; typedef A ** A_DOUBLEPTR;");
 		NameCollector col = new NameCollector();
@@ -590,6 +609,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testBug40842() throws Exception {
 		Writer code = new StringWriter();
 		code.write("class A {} a;\n");
@@ -602,6 +622,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(a.getType(), A);
 	}
 
+	@Test
 	public void testNestedClassname() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A {  \n class A::B { };}");
 		NameCollector col = new NameCollector();
@@ -613,6 +634,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertEquals(B.getScope(), A.getNamespaceScope());
 	}
 
+	@Test
 	public void testForwardDeclaration() throws Exception {
 		IASTTranslationUnit tu = parse("class forward;");
 		IASTSimpleDeclaration decl = (IASTSimpleDeclaration) tu.getDeclarations()[0];
@@ -623,6 +645,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotNull(forward);
 	}
 
+	@Test
 	public void testElaboratedType() throws Exception {
 		IASTTranslationUnit tu = parse("class A; class A * a;");
 		NameCollector col = new NameCollector();
@@ -636,6 +659,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(ptr.getType(), A);
 	}
 
+	@Test
 	public void testForewardDeclarationWithUsage() throws Exception {
 		IASTTranslationUnit tu = parse("class A; A * anA;class A { };");
 		NameCollector col = new NameCollector();
@@ -649,6 +673,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(ptr.getType(), A);
 	}
 
+	@Test
 	public void testASM() throws Exception {
 		parse("asm (\"blah blah blah\");");
 	}
@@ -658,6 +683,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	 *  e.g. asm volatile ("stuff");
 	 *       asm ("addl %%ebx,%%eax" : "=a"(foo) : "a"(foo),"b"(bar));
 	 */
+	@Test
 	public void testGNUASMExtension() throws Exception {
 		// volatile keyword
 		parse("asm volatile(\"blah blah blah\");", true, ParserLanguage.C, true);
@@ -681,6 +707,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 				+ "      : \"rm\"(div), \"A\"(divs));\r\n" + "\r\n" + "        return dum2;\r\n" + "\r\n" + "}");
 	}
 
+	@Test
 	public void testOverride() throws Exception {
 		IASTTranslationUnit tu = parse("void foo();\n void foo(int);\n");
 		NameCollector col = new NameCollector();
@@ -693,6 +720,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotSame(foo1, foo2);
 	}
 
+	@Test
 	public void testSimpleExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x; int y = x;");
 		NameCollector col = new NameCollector();
@@ -705,6 +733,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotNull(y);
 	}
 
+	@Test
 	public void testParameterExpressions() throws Exception {
 		IASTTranslationUnit tu = parse("int x = 5; void foo(int sub = x) { }");
 		NameCollector col = new NameCollector();
@@ -715,6 +744,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 2);
 	}
 
+	@Test
 	public void testNestedNamespaceExpression() throws Exception {
 		IASTTranslationUnit tu = parse("namespace A { int x = 666; } int y  = A::x;");
 		NameCollector col = new NameCollector();
@@ -727,6 +757,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 3);
 	}
 
+	@Test
 	public void testConstructorChain() throws Exception {
 		IASTTranslationUnit tu = parse("int x = 5;\n class A \n{ public : \n int a; \n A() : a(x) { } };");
 		NameCollector col = new NameCollector();
@@ -741,6 +772,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, a, 2);
 	}
 
+	@Test
 	public void testArrayModExpression() throws Exception {
 		IASTTranslationUnit tu = parse("const int x = 5; int y[ x ]; ");
 		NameCollector col = new NameCollector();
@@ -754,6 +786,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertTrue(((IArrayType) y.getType()).getType() instanceof IBasicType);
 	}
 
+	@Test
 	public void testPointerVariable() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; A * anA;");
 		NameCollector col = new NameCollector();
@@ -767,6 +800,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(((IPointerType) anA.getType()).getType(), A);
 	}
 
+	@Test
 	public void testExceptionSpecification() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; void foo(void) throw (A);");
 		NameCollector col = new NameCollector();
@@ -777,6 +811,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, A, 2);
 	}
 
+	@Test
 	public void testNewExpressions() throws Exception {
 		IASTTranslationUnit tu = parse("typedef int A; int B; int C; int D; int P; int*p = new  (P) (A[B][C][D]);");
 		NameCollector col = new NameCollector();
@@ -799,6 +834,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertTrue(p.getType() instanceof IPointerType);
 	}
 
+	@Test
 	public void testBug41520() throws Exception {
 		IASTTranslationUnit tu = parse("int f() { const int x = 666; const int y(x); }");
 		IASTCompoundStatement s = (IASTCompoundStatement) ((IASTFunctionDefinition) tu.getDeclarations()[0]).getBody();
@@ -819,6 +855,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 2);
 	}
 
+	@Test
 	public void testNewXReferences() throws Exception {
 		IASTTranslationUnit tu = parse("const int max = 5;\n int * x = new int[max];");
 		NameCollector col = new NameCollector();
@@ -829,6 +866,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, max, 2);
 	}
 
+	@Test
 	public void testQualifiedNameReferences() throws Exception {
 		// Used to cause AST Semantic exception
 		IASTTranslationUnit tu = parse(
@@ -852,6 +890,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(B.getScope(), A.getCompositeScope());
 	}
 
+	@Test
 	public void testIsConstructor() throws Exception {
 		IASTTranslationUnit tu = parse("class A{ public: A(); }; \n  A::A() {}; \n");
 		NameCollector col = new NameCollector();
@@ -865,6 +904,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, ctor, 3);
 	}
 
+	@Test
 	public void testIsDestructor() throws Exception {
 		IASTTranslationUnit tu = parse("class A{ public: ~A(); }; \n  A::~A() {}; \n");
 		NameCollector col = new NameCollector();
@@ -878,6 +918,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, dtor, 3);
 	}
 
+	@Test
 	public void testBug41445() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; namespace N { class B : public A { struct A {}; }; }");
 		NameCollector col = new NameCollector();
@@ -897,6 +938,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 
 	}
 
+	@Test
 	public void testSimpleFunctionBody() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"class A { int f1(); }; const int x = 4; int f() { return x; } int A::f1() { return x; }");
@@ -913,6 +955,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 3);
 	}
 
+	@Test
 	public void testSimpleForLoop() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"const int FIVE = 5;  void f() {  int x = 0; for (int i = 0; i < FIVE; ++i) { x += i; }  }");
@@ -929,6 +972,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, i, 4);
 	}
 
+	@Test
 	public void testBug42541() throws Exception {
 		IASTTranslationUnit tu = parse("union{ int v; char a; } id;");
 		NameCollector col = new NameCollector();
@@ -947,6 +991,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(id.getType(), unnamed);
 	}
 
+	@Test
 	public void testSimpleIfStatement() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"const bool T = true; int foo() { if (T) { return 5; } else if (! T) return 20; else { return 10; } }");
@@ -971,6 +1016,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, T, 3);
 	}
 
+	@Test
 	public void testSimpleWhileStatement() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"const bool T = true; void foo() { int x = 0; while(T) {  ++x;  if (x == 100) break; } }");
@@ -984,6 +1030,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 3);
 	}
 
+	@Test
 	public void testSimpleSwitchStatement() throws Exception {
 		IASTTranslationUnit tu = parse("const int x = 5; const int y = 10; " + "void foo() {                       "
 				+ "	while(true) {                 " + "      switch(x) {                "
@@ -1004,6 +1051,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, blah, 2);
 	}
 
+	@Test
 	public void testSimpleDoStatement() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"const int x = 3; int counter = 0; void foo() { do { ++counter; } while(counter != x); } ");
@@ -1017,6 +1065,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, counter, 3);
 	}
 
+	@Test
 	public void testThrowStatement() throws Exception {
 		IASTTranslationUnit tu = parse("class A { }; void foo() throw (A) { A a; throw a; throw; } ");
 		NameCollector col = new NameCollector();
@@ -1030,6 +1079,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, a, 2);
 	}
 
+	@Test
 	public void testScoping() throws Exception {
 		IASTTranslationUnit tu = parse("void foo() { int x = 3; if (x == 1) { int x = 4; } else int x = 2; }");
 		NameCollector col = new NameCollector();
@@ -1045,6 +1095,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x3, 1);
 	}
 
+	@Test
 	public void testEnumeratorReferences() throws Exception {
 		IASTTranslationUnit tu = parse("enum E { e1, e2, e3 }; E anE = e1;");
 		NameCollector col = new NameCollector();
@@ -1064,6 +1115,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, anE, 1);
 	}
 
+	@Test
 	public void testBug42840() throws Exception {
 		IASTTranslationUnit tu = parse("void foo(); void foo() { } class SearchMe { };");
 		NameCollector col = new NameCollector();
@@ -1075,6 +1127,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, foo, 2);
 	}
 
+	@Test
 	public void testBug42872() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"struct B {}; struct D : B {}; void foo(D* dp) { B* bp = dynamic_cast<B*>(dp); }");
@@ -1089,6 +1142,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, D, 2);
 	}
 
+	@Test
 	public void testBug43503A() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"class SD_01 { void f_SD_01() {}}; int main(){ SD_01 * a = new SD_01(); a->f_SD_01();	} ");
@@ -1104,6 +1158,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, f_SD_01, 2);
 	}
 
+	@Test
 	public void testBug42979() throws Exception {
 		Writer code = new StringWriter();
 		code.write("class OperatorOverload{\n");
@@ -1133,6 +1188,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 	/**
 	 * class A { static int x; } int A::x = 5;
 	 */
+	@Test
 	public void testBug43373() throws Exception {
 		IASTTranslationUnit tu = parse("class A { static int x; }; int A::x = 5;");
 		NameCollector col = new NameCollector();
@@ -1146,6 +1202,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 3);
 	}
 
+	@Test
 	public void testBug39504() throws Exception {
 		IASTTranslationUnit tu = parse("const int w = 2; int x[ 5 ]; int y = sizeof (x[w]);");
 		NameCollector col = new NameCollector();
@@ -1159,10 +1216,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 2);
 	}
 
+	@Test
 	public void testBug43375() throws Exception {
 		parse("extern int x;");
 	}
 
+	@Test
 	public void testBug43503() throws Exception {
 		StringBuilder buff = new StringBuilder();
 
@@ -1204,6 +1263,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, f_SD_01, 4);
 	}
 
+	@Test
 	public void testBug43679_A() throws Exception {
 		IASTTranslationUnit tu = parse(
 				"struct Sample { int size() const; }; extern const Sample * getSample(); int trouble() {  return getSample()->size(); } ");
@@ -1220,6 +1280,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, getSample, 2);
 	}
 
+	@Test
 	public void testBug43679_B() throws Exception {
 		IASTTranslationUnit tu = parse("struct Sample{int size() const; }; struct Sample; ");
 		NameCollector col = new NameCollector();
@@ -1233,6 +1294,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, size, 1);
 	}
 
+	@Test
 	public void testBug43951() throws Exception {
 		IASTTranslationUnit tu = parse("class B{ B(); ~B(); }; B::B(){} B::~B(){}");
 		NameCollector col = new NameCollector();
@@ -1248,6 +1310,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, destructor, 3);
 	}
 
+	@Test
 	public void testBug44342() throws Exception {
 		IASTTranslationUnit tu = parse("class A { void f(){} void f(int){} }; int main(){ A * a = new A(); a->f();} ");
 		NameCollector col = new NameCollector(true);
@@ -1268,6 +1331,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, a, 2);
 	}
 
+	@Test
 	public void testCDesignatedInitializers() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct Inner { int a,b,c; };");
@@ -1277,24 +1341,29 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(buffer.toString(), true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug39551A() throws Exception {
 		parse("extern float _Complex conjf (float _Complex);", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug39551B() throws Exception {
 		//this used to be 99.99 * __I__, but I don't know where the __I__ came from, its not in C99, nor in GCC
 		parse("_Imaginary double id = 99.99 * 1i;", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testCBool() throws Exception {
 		parse("_Bool x;", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testCBoolAsParameter() throws Exception {
 		parse("void f(_Bool b) {} " + "_Bool g(_Bool b) {} " + "void main(){" + "   _Bool b;  " + "   f(b);"
 				+ "	f(g((_Bool) 1) );" + "}", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug44510() throws Exception {
 		IASTTranslationUnit tu = parse("int initialize(); " + "int initialize(char){} "
 				+ "int initialize(){ return 1; } " + "void main(){ int i = initialize(); }");
@@ -1310,6 +1379,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, init2, 1);
 	}
 
+	@Test
 	public void testBug44925() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("class MyClass { };");
@@ -1335,6 +1405,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(item.getType(), myEnum);
 	}
 
+	@Test
 	public void testBug44838() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("class A { int myX; A(int x); };\n");
@@ -1356,6 +1427,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 4);
 	}
 
+	@Test
 	public void testBug46165() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("class A { int myX; A(int x); };\n");
@@ -1363,6 +1435,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(buffer.toString());
 	}
 
+	@Test
 	public void testBug47624() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct s { }; \n");
@@ -1384,6 +1457,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(instance.getType(), s);
 	}
 
+	@Test
 	public void testQualifiedLookup() throws Exception {
 		//this is meant to test that on a->f, the lookup for f is qualified
 		//the namespace is necessary because of bug 47926
@@ -1414,6 +1488,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, ctor, 1);
 	}
 
+	@Test
 	public void testBug43110() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("void x(int y, ...);\n");
@@ -1433,6 +1508,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotNull(z);
 	}
 
+	@Test
 	public void testBug43110_XRef() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("void foo(...) {}\n");
@@ -1448,6 +1524,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, foo, 2);
 	}
 
+	@Test
 	public void testErrorHandling_1() throws Exception {
 		IASTTranslationUnit tu = parse("A anA; int x = c; class A {}; A * anotherA = &anA; int b;", false);
 
@@ -1471,6 +1548,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertEquals(ISemanticProblem.TYPE_UNRESOLVED_NAME, pt.getID());
 	}
 
+	@Test
 	public void testBug44340() throws Exception {
 		// Inline function with reference to variables declared after them
 		IASTTranslationUnit tu = parse("class A{ int getX() {return x[1];} int x[10];};");
@@ -1484,6 +1562,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, x, 2);
 	}
 
+	@Test
 	public void testBug47628() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void h(char) { }\n");
@@ -1493,6 +1572,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug47636() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void f(char[]); \n");
@@ -1510,6 +1590,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(p1, p2);
 	}
 
+	@Test
 	public void testBug45697() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write(" int f(bool); \n");
@@ -1529,6 +1610,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertNotSame(p1, p2);
 	}
 
+	@Test
 	public void testBug54639() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("typedef enum _A { } A, *pA; ");
@@ -1549,6 +1631,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(((IPointerType) pA.getType()).getType(), _A);
 	}
 
+	@Test
 	public void testBug55163() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void foo() { \n");
@@ -1571,6 +1654,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, di, 2);
 	}
 
+	@Test
 	public void testBug55673() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct Example { int i;  int (* pfi) (int); }; ");
@@ -1588,10 +1672,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertTrue(((IPointerType) pfi.getType()).getType() instanceof IFunctionType);
 	}
 
+	@Test
 	public void testBug54531() throws Exception {
 		parse("typedef enum _A {} A, *pA;");
 	}
 
+	@Test
 	public void testBug56516() throws Exception {
 		IASTTranslationUnit tu = parse("typedef struct blah sb;");
 		NameCollector col = new NameCollector();
@@ -1604,14 +1690,17 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(sb.getType(), blah);
 	}
 
+	@Test
 	public void testBug53786() throws Exception {
 		parse("struct Example {  struct Data * data; };");
 	}
 
+	@Test
 	public void testBug54029() throws Exception {
 		parse("typedef int T; T i;");
 	}
 
+	@Test
 	public void testBug47625() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct s { int num; }; ");
@@ -1638,6 +1727,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertSame(s2, ref1);
 	}
 
+	@Test
 	public void testBug57754() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct X {          ");
@@ -1659,6 +1749,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, f, 3);
 	}
 
+	@Test
 	public void testBug57800() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class G2 { int j; };");
@@ -1676,6 +1767,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, alt, 2);
 	}
 
+	@Test
 	public void testBug46246() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct A {                 ");
@@ -1697,10 +1789,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, B, 2);
 	}
 
+	@Test
 	public void testBug45235() throws Exception {
 		parse("class A { friend class B; friend void f(); }; ");
 	}
 
+	@Test
 	public void testBug57791() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write(" void f() {                  ");
@@ -1711,11 +1805,13 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug44249() throws Exception {
 
 		parse("class SD_01 { public:\n	void SD_01::f_SD_01();};");
 	}
 
+	@Test
 	public void testBug59149() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A{ friend class B; friend class B; };");
@@ -1723,6 +1819,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug59302() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A { class N{}; };         ");
@@ -1730,6 +1827,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testULong() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#ifndef ASMINCLUDE\n");
@@ -1749,10 +1847,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug47926() throws Exception {
 		parse("void f() {} class A {}; void main() { A * a = new A(); a->f();	}", false);
 	}
 
+	@Test
 	public void testBug50984_ASTMethod_getOwnerClassSpecifier_ClassCastException() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("template < typename _OutIter >                                 ");
@@ -1767,10 +1867,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testGloballyQualifiedUsingDeclaration() throws Exception {
 		parse("int iii; namespace N { using ::iii; }");
 	}
 
+	@Test
 	public void test57513_new() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A{ A(); A(int); };   \n");
@@ -1783,6 +1885,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void test57513_NoConstructor() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A{  };   \n");
@@ -1793,6 +1896,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void test57513_ctorinit() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A{ A(); A(A *); };   \n");
@@ -1802,6 +1906,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void test575513_qualified() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace Foo{                     ");
@@ -1814,6 +1919,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug60944() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("typedef int OurInt;\n");
@@ -1824,6 +1930,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testDestructorReference() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class ABC {\n");
@@ -1837,10 +1944,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug39676_tough() throws Exception {
 		parse("int widths[] = {[0 ... 9] = 1,[10 ... 99] = 2,[100] = 3 };", true, ParserLanguage.C, true);
 	}
 
+	@Test
 	public void testBug60939() throws Exception {
 		for (int i = 0; i < 2; ++i) {
 			Writer writer = new StringWriter();
@@ -1854,6 +1963,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testBug64010() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write(" #define ONE	else if (0) { } \n");
@@ -1870,6 +1980,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug64271() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("typedef int DWORD;\n");
@@ -1886,6 +1997,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug47752() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class BBC\n");
@@ -1903,14 +2015,17 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug61972() throws Exception {
 		parse("#define DEF1(A1) A1\n#define DEF2     DEF1(DEF2)\nDEF2;", false);
 	}
 
+	@Test
 	public void testBug65569() throws Exception {
 		parse("class Sample;\nstruct Sample { /* ... */ };");
 	}
 
+	@Test
 	public void testBug64268() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define BODY \\\n");
@@ -1923,10 +2038,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug67622() throws Exception {
 		parse("const char * x = __FILE__;");
 	}
 
+	@Test
 	public void testBug67680() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("template < class T> class Base {};                  \n");
@@ -1935,10 +2052,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), false);
 	}
 
+	@Test
 	public void testTypeIDSignature() throws Exception {
 		parse("int * v = (int*)0;");//$NON-NLS-1$
 	}
 
+	@Test
 	public void testUnaryAmperCast() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void f(char *);              \r\n ");
@@ -1951,6 +2070,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug68235() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write(" struct xTag { int x; };               ");
@@ -1961,6 +2081,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug60407() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct ZZZ { int x, y, z; };\r\n");
@@ -1975,6 +2096,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug68623() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A {                         \n");
@@ -1995,6 +2117,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug69798() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("enum Flags { FLAG1, FLAG2 };                          \n");
@@ -2003,6 +2126,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug69662() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A { operator float * (); };  \n");
@@ -2011,6 +2135,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug68528() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace N526026\n");
@@ -2029,6 +2154,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), false);
 	}
 
+	@Test
 	public void testBug71094() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("using namespace DOESNOTEXIST;\n");
@@ -2036,6 +2162,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), false);
 	}
 
+	@Test
 	public void testPredefinedSymbol_bug70928() throws Exception {
 		// GNU built-in storage class type __cdecl preceded by a custom return type
 		Writer writer = new StringWriter();
@@ -2044,6 +2171,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testPredefinedSymbol_bug70928_infinite_loop_test1() throws Exception {
 		// GNU builtin storage class type __cdecl preceded by a custom return type
 		Writer writer = new StringWriter();
@@ -2053,6 +2181,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), false, ParserLanguage.C, false);// test for an infinite loop if the GCC extensions aren't supported
 	}
 
+	@Test
 	public void testPredefinedSymbol_bug70928_infinite_loop_test2() throws Exception {
 		// GNU builtin storage class type __cdecl preceded by a custom return type
 		Writer writer = new StringWriter();
@@ -2061,6 +2190,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), false, ParserLanguage.C, false);// test for an infinite loop if the GCC extensions aren't supported
 	}
 
+	@Test
 	public void testBug102376() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int func1 (void) __attribute__((,id2,id (,,),,,));\n");
@@ -2142,6 +2272,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug73652() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define DoSuperMethodA IDoSuperMethodA\n");
@@ -2153,6 +2284,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), false);
 	}
 
+	@Test
 	public void testBug73428() throws Exception {
 		parse("namespace {  }");//$NON-NLS-1$
 		parse("namespace {  };");//$NON-NLS-1$
@@ -2160,6 +2292,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse("namespace {  int abc; }");//$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug73615() throws Exception {
 		for (int i = 0; i < 2; ++i) {
 			StringWriter writer = new StringWriter();
@@ -2173,10 +2306,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testBug74180() throws Exception {
 		parse("enum DHCPFOBoolean { false, true } additionalHB, more_payload; \n", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug72691() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("typedef int * PINT; \n");
@@ -2185,6 +2320,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug72691_2() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("typedef int * PINT;    \n");
@@ -2196,6 +2332,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug74328() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int\n");
@@ -2207,6 +2344,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug71733() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void foo(int);\n");
@@ -2217,6 +2355,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug69526() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("unsigned inkernel;\n");
@@ -2227,6 +2366,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug69454() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define CATCH_ALL_EXCEPTIONS()                         \\\n");
@@ -2243,6 +2383,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug72692A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("extern double pow(double, double);\n");
@@ -2256,6 +2397,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug72692B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("extern double pow(double, double);\n");
@@ -2269,6 +2411,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug72692C() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("extern double pow(double, double){}\n");
@@ -2279,6 +2422,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug74575A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("double pow(double, double);\n");
@@ -2287,6 +2431,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug75338() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Thrown { };\n");
@@ -2294,11 +2439,13 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug74847() throws Exception {
 		String code = "class A : public FOO {};";
 		parse(code, false);
 	}
 
+	@Test
 	public void testBug76696() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write(" void f(){       \n");
@@ -2310,6 +2457,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), false);
 	}
 
+	@Test
 	public void testBug74069() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int f() {                \n");
@@ -2332,6 +2480,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug77805() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#if X // Do something only if X is true\n");
@@ -2340,6 +2489,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug77821() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("typedef struct { /* ... */ }TYPE;\n");
@@ -2349,10 +2499,12 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug77009() throws Exception {
 		parse("int foo(volatile int &);\n");
 	}
 
+	@Test
 	public void testBug77281() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void fun2(float a, float b) {}\n");
@@ -2360,6 +2512,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug77921() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void f()\n{\n");
@@ -2367,6 +2520,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug71317A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void f();\n");
@@ -2376,6 +2530,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug71317B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void f();\n");
@@ -2385,6 +2540,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug77097() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define SOME_MACRO() { \\\r\n");
@@ -2393,6 +2549,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug77276() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#if (!defined(OS_LIBMODE_R) && !defined(OS_LIBMODE_RP) && \\\r\n");
@@ -2402,6 +2559,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug78165() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct Node {\n");
@@ -2427,6 +2585,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug103560() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define A(a, b) a ## b               \n");
@@ -2435,6 +2594,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		parse(writer.toString(), true, ParserLanguage.CPP);
 	}
 
+	@Test
 	public void test158192_declspec_on_class() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class __declspec(foobar) Foo1 {};\n");
@@ -2459,6 +2619,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, fooStruct, 1);
 	}
 
+	@Test
 	public void test158192_declspec_on_variable() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("__declspec(foobar) class Foo {} bar;\n");
@@ -2475,6 +2636,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, bar, 1);
 	}
 
+	@Test
 	public void test158192_declspec_in_declarator() throws Exception {
 		Writer writer = new StringWriter();
 
@@ -2482,7 +2644,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		IASTTranslationUnit tu = parse(writer.toString(), true, ParserLanguage.CPP, true);
 
 		IASTProblem[] problems = CPPVisitor.getProblems(tu);
-		assertFalse("__declspec rejected inside declarator", problems.length > 0);
+		assertFalse(problems.length > 0, "__declspec rejected inside declarator");
 
 		NameCollector col = new NameCollector();
 		tu.accept(col);
@@ -2493,6 +2655,7 @@ public class CompleteParser2Tests extends BaseTestCase {
 		assertInstances(col, bar, 1);
 	}
 
+	@Test
 	public void test173874_nestedClasses() throws Exception {
 		String code = "class aClass { class bClass; int x; };";
 		IASTTranslationUnit tu = parse(code, true, ParserLanguage.CPP, true);

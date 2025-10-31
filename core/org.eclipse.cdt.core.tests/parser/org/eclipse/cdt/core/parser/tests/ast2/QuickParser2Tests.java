@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -40,25 +43,17 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author jcamelon
  */
-public class QuickParser2Tests extends TestCase {
+public class QuickParser2Tests {
 	private static final NullLogService NULL_LOG = new NullLogService();
 
-	public QuickParser2Tests() {
-		super();
-	}
-
-	public QuickParser2Tests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void setAllows() throws Exception {
 		CPPASTNameBase.sAllowRecursionBindings = false;
 		CPPASTNameBase.sAllowNameComputation = false;
 	}
@@ -67,6 +62,7 @@ public class QuickParser2Tests extends TestCase {
 	 * Test code: int x = 5; Purpose: to test the simple declaration in it's
 	 * simplest form.
 	 */
+	@Test
 	public void testIntGlobal() throws Exception {
 		// Parse and get the translation Unit
 		parse("int x = 5;");
@@ -75,6 +71,7 @@ public class QuickParser2Tests extends TestCase {
 	/**
 	 * Test code: class A { } a; Purpose: tests the use of a classSpecifier in
 	 */
+	@Test
 	public void testEmptyClass() throws Exception {
 		// Parse and get the translation unit
 		Writer code = new StringWriter();
@@ -86,6 +83,7 @@ public class QuickParser2Tests extends TestCase {
 	 * Test code: class A { public: int x; }; Purpose: tests a declaration in a
 	 * class scope.
 	 */
+	@Test
 	public void testSimpleClassMember() throws Exception {
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
@@ -108,6 +106,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code, true, ParserLanguage.CPP);
 	}
 
+	@Test
 	public void testNamespaceDefinition() throws Exception {
 		for (int i = 0; i < 2; ++i) {
 			if (i == 0)
@@ -117,6 +116,7 @@ public class QuickParser2Tests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testLinkageSpecification() throws Exception {
 		for (int i = 0; i < 2; ++i) {
 			if (i == 0)
@@ -126,6 +126,7 @@ public class QuickParser2Tests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testEnumSpecifier() throws Exception {
 		Writer code = new StringWriter();
 		code.write("enum { yo, go = 3, away };\n");
@@ -133,10 +134,12 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testTypedef() throws Exception {
 		parse("typedef const struct A * const cpStructA;");
 	}
 
+	@Test
 	public void testUsingClauses() throws Exception {
 		Writer code = new StringWriter();
 		code.write("using namespace A::B::C;\n");
@@ -151,6 +154,7 @@ public class QuickParser2Tests extends TestCase {
 	 * Test code: class A : public B, private C, virtual protected D { public:
 	 * int x, y; float a,b,c; } Purpose: tests a declaration in a class scope.
 	 */
+	@Test
 	public void testSimpleClassMembers() throws Exception {
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
@@ -161,6 +165,7 @@ public class QuickParser2Tests extends TestCase {
 	/**
 	 * Test code: int myFunction(void);
 	 */
+	@Test
 	public void testSimpleFunctionDeclaration() throws Exception {
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
@@ -173,6 +178,7 @@ public class QuickParser2Tests extends TestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testFunctionDeclarationWithParameters() throws Exception {
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
@@ -180,32 +186,39 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testAssignmentExpressions() throws Exception {
 		parse("int x = y = z = 5;");
 	}
 
+	@Test
 	public void testBug39348() throws Exception {
 		parse("unsigned char a[sizeof (struct sss)];");
 	}
 
+	@Test
 	public void testBug39501() throws Exception {
 		parse("struct A { A() throw (int); };");
 	}
 
+	@Test
 	public void testBug39349() throws Exception {
 		parse("enum foo {  foo1   = 0,  foo2   = 0xffffffffffffffffULL,  foo3   = 0xf0fffffffffffffeLLU };");
 	}
 
+	@Test
 	public void testBug39544() throws Exception {
 		parse("wchar_t wc = L'X';");
 	}
 
+	@Test
 	public void testBug36290() throws Exception {
 		parse("typedef void (A:: * pMethod) (void); ");
 		parse("typedef void (boo) (void); ");
 		parse("typedef void boo (void); ");
 	}
 
+	@Test
 	public void testBug36769B() throws Exception {
 		parse("class X { operator int(); }; \n");
 		parse("class X { operator int*(); }; \n");
@@ -347,10 +360,12 @@ public class QuickParser2Tests extends TestCase {
 		parse("X::X() : var(new (P) (A[B][C][D])) {}");
 	}
 
+	@Test
 	public void testBugSingleton192() throws Exception {
 		parse("int Test::* pMember_;");
 	}
 
+	@Test
 	public void testBug36931() throws Exception {
 		parse("A::nested::nested(){}; ");
 		parse("int A::nested::foo() {} ");
@@ -364,10 +379,12 @@ public class QuickParser2Tests extends TestCase {
 		parse("template <class B,C> A::nested::operator int() {} ");
 	}
 
+	@Test
 	public void testBug37019() throws Exception {
 		parse("static const A a(1, 0);");
 	}
 
+	@Test
 	public void testBug36766and36769A() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template <class _CharT, class _Alloc>\n");
@@ -377,6 +394,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36766and36769B() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template<class _CharT>\n");
@@ -386,6 +404,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36766and36769C() throws Exception {
 		//TODO - requires CPPVisitor
 		Writer code = new StringWriter();
@@ -396,6 +415,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36766and36769D() throws Exception {
 		//TODO - requires CPPVisitor
 		Writer code = new StringWriter();
@@ -405,6 +425,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36932A() throws Exception {
 		parse("A::A() : var(new char[ (unsigned)bufSize ]) {}");
 	}
@@ -520,12 +541,14 @@ public class QuickParser2Tests extends TestCase {
 		parse(" p = new (P) (A[B][C][D]); ");
 	}
 
+	@Test
 	public void testBug36769A() throws Exception {
 		parse("template <class A, B> cls<A, C>::operator otherType() const {}\n");
 		parse("template <class A, B> cls<A, C>::cls() {}\n");
 		parse("template <class A, B> cls<A, C>::~cls() {}\n");
 	}
 
+	@Test
 	public void testBug36714() throws Exception {
 		Writer code = new StringWriter();
 		code.write("unsigned long a = 0UL;\n");
@@ -533,15 +556,18 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBugFunctor758() throws Exception {
 		parse("class Functor {"
 				+ "template <typename Fun> Functor(Fun fun) : spImpl_(new FunctorHandler<Functor, Fun>(fun)){}" + "};");
 	}
 
+	@Test
 	public void testBug36932() throws Exception {
 		parse("A::A(): b(new int(5)), b(new B), c(new int) {}");
 	}
 
+	@Test
 	public void testBug36704() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template<typename T, typename U> class Typelist;");
@@ -554,6 +580,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36699() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template <	template <class> class ThreadingModel = DEFAULT_THREADING,\n");
@@ -565,6 +592,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36691() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template <class T, class H>\n");
@@ -573,6 +601,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36702() throws Exception {
 		Writer code = new StringWriter();
 		code.write("void mad_decoder_init(struct mad_decoder *, void *,\n");
@@ -593,6 +622,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36852() throws Exception {
 		Writer code = new StringWriter();
 		code.write("int CBT::senseToAllRect(double id_standardQuot = DOSE, double id_minToleranz =15.0,\n");
@@ -601,6 +631,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36689() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template\n");
@@ -620,22 +651,27 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36707() throws Exception {
 		parse("enum { exists = sizeof(typename H::Small) == sizeof((H::Test(H::MakeT()))) };");
 	}
 
+	@Test
 	public void testBug36717() throws Exception {
 		parse("enum { eA = A::b };");
 	}
 
+	@Test
 	public void testBug36693() throws Exception {
 		parse("FixedAllocator::Chunk* FixedAllocator::VicinityFind(void* p){}");
 	}
 
+	@Test
 	public void testWeirdExpression() throws Exception {
 		parse("int x = rhs.spImpl_.get();");
 	}
 
+	@Test
 	public void testBug36696() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template<typename T> class RefCounted {");
@@ -645,10 +681,12 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testArrayOfPointerToFunctions() throws Exception {
 		parse("unsigned char (*main_data)[MAD_BUFFER_MDLEN];");
 	}
 
+	@Test
 	public void testBug36073() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class A{\n");
@@ -660,10 +698,12 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testTemplateSpecialization() throws Exception {
 		parse("template<> class stream<char> { /* ... */ };");
 	}
 
+	@Test
 	public void testTemplateInstantiation() throws Exception {
 		parse("template class Array<char>;");
 	}
@@ -671,23 +711,28 @@ public class QuickParser2Tests extends TestCase {
 	/**
 	 * Test code: "class A { int floor(double input), someInt; };"
 	 */
+	@Test
 	public void testMultipleDeclarators() throws Exception {
 		// Parse and get the translation unit
 		parse("class A { int floor(double input), someInt; };");
 	}
 
+	@Test
 	public void testFunctionModifiers() throws Exception {
 		parse("class A {virtual void foo(void) const throw (yay, nay, we::dont::care) = 0;};");
 	}
 
+	@Test
 	public void testArrays() throws Exception {
 		parse("int x[5][];");
 	}
 
+	@Test
 	public void testElaboratedParms() throws Exception {
 		parse("int x(struct A myA) { /* junk */ }");
 	}
 
+	@Test
 	public void testMemberDeclarations() throws Exception {
 		Writer code = new StringWriter();
 		code.write("class A {\n");
@@ -701,10 +746,12 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testPointerOperators() throws Exception {
 		parse("int * x = 0, & y, * const * volatile * z;");
 	}
 
+	@Test
 	public void testBug26467() throws Exception {
 		StringWriter code = new StringWriter();
 		code.write("struct foo { int fooInt; char fooChar;	};\n");
@@ -713,19 +760,23 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testASMDefinition() throws Exception {
 		parse("asm(\"mov ep1 ds2\");");
 	}
 
+	@Test
 	public void testConstructorChain() throws Exception {
 		//TODO - requires CPPVisitor in order to reduce ambiguities
 		parse("TrafficLight_Actor::TrafficLight_Actor(RTController * rtg_rts, RTActorRef * rtg_ref)	: RTActor(rtg_rts, rtg_ref), myId(0) {}");
 	}
 
+	@Test
 	public void testBug36237() throws Exception {
 		parse("A::A():B((char *)0){}");
 	}
 
+	@Test
 	public void testBug36532() throws Exception {
 		try {
 			parse("template<int f() {\n");
@@ -736,18 +787,22 @@ public class QuickParser2Tests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testPreprocessor() throws Exception {
 		parse("#include <stdio.h>\n#define DEF VALUE\n");
 	}
 
+	@Test
 	public void testTemplateDeclarationOfFunction() throws Exception {
 		parse("template<class A, typename B=C> A aTemplatedFunction(B bInstance);");
 	}
 
+	@Test
 	public void testTemplateDeclarationOfClass() throws Exception {
 		parse("template<class T, typename Tibor = junk, class, typename, int x, float y,template <class Y> class, template<class A> class AClass> class myarray { /* ... */ };");
 	}
 
+	@Test
 	public void testBug35906() throws Exception {
 		StringWriter code = new StringWriter();
 		code.write("void TTest::MTest() {}\n");
@@ -755,22 +810,27 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36288() throws Exception {
 		parse("int foo() {}\nlong foo2(){}");
 	}
 
+	@Test
 	public void testBug36250() throws Exception {
 		parse("int f(int = 0);");
 	}
 
+	@Test
 	public void testBug36240() throws Exception {
 		parse("A & A::operator=(A){}");
 	}
 
+	@Test
 	public void testBug36254() throws Exception {
 		parse("unsigned i;\nvoid f(unsigned p1 = 0);");
 	}
 
+	@Test
 	public void testBug36432() throws Exception {
 		Writer code = new StringWriter();
 		code.write("#define CMD_GET		\"g\"\n");
@@ -784,22 +844,27 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36594() throws Exception {
 		parse("const int n = sizeof(A) / sizeof(B);");
 	}
 
+	@Test
 	public void testBug36794() throws Exception {
 		parse("template<> class allocator<void> {};");
 	}
 
+	@Test
 	public void testBug36799() throws Exception {
 		parse("static const int __WORD_BIT = int(CHAR_BIT*sizeof(unsigned int));");
 	}
 
+	@Test
 	public void testBug36764() throws Exception {
 		parse("struct{ int x : 4; int y : 8; };");
 	}
 
+	@Test
 	public void testOrder() throws Exception {
 		//TODO - requires CPPVisitor
 		Writer code = new StringWriter();
@@ -815,6 +880,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36771() throws Exception {
 		Writer code = new StringWriter();
 		code.write("#include /**/ \"foo.h\"\n");
@@ -822,6 +888,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36811() throws Exception {
 		Writer code = new StringWriter();
 		code.write("using namespace std;\n");
@@ -829,18 +896,22 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36708() throws Exception {
 		parse("enum { isPointer = PointerTraits<T>::result };");
 	}
 
+	@Test
 	public void testBug36690() throws Exception {
 		parse("class Functor {" + "Functor(const Functor& rhs) : spImpl_(Impl::Clone(rhs.spImpl_.get())){}" + "};");
 	}
 
+	@Test
 	public void testBug36703() throws Exception {
 		parse("const std::type_info& Get() const;");
 	}
 
+	@Test
 	public void testBug36692() throws Exception {
 		Writer code = new StringWriter();
 		code.write("template <typename T, typename Destroyer>\n");
@@ -849,6 +920,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36551() throws Exception {
 		Writer code = new StringWriter();
 		code.write("class TextFrame {\n");
@@ -868,6 +940,7 @@ public class QuickParser2Tests extends TestCase {
 	//        parse(code.toString());
 	//    }
 
+	@Test
 	public void testStruct() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("struct mad_bitptr { unsigned char const *byte;\n");
@@ -875,6 +948,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug36559() throws Exception {
 		Writer code = new StringWriter();
 		code.write("namespace myNameSpace {\n");
@@ -884,6 +958,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testPointersToFunctions() throws Exception {
 		Writer code = new StringWriter();
 		code.write("void (*name)(void);\n");
@@ -892,10 +967,12 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug36600() throws Exception {
 		parse("enum mad_flow (*input_func)(void *, struct mad_stream *);");
 	}
 
+	@Test
 	public void testBug36713() throws Exception {
 		Writer code = new StringWriter();
 		code.write("A (* const fPtr) (void *); \n");
@@ -998,15 +1075,18 @@ public class QuickParser2Tests extends TestCase {
 	// DeclSpecifier.t_float);
 	//	}
 
+	@Test
 	public void testPointersToMemberFunctions() throws Exception {
 		parse("void (A::*name)(void);");
 	}
 
+	@Test
 	public void testBug39550() throws Exception {
 		parse("double x = 0x1.fp1;");
 	}
 
 	// digraphs/trigraphs have been temporarily remove
+	@Test
 	public void testBug39552A(int x) throws Exception {
 		Writer code = new StringWriter();
 		code.write("%:define glue(x, y) x %:%: y	/* #define glue(x, y) x ## y. */\n");
@@ -1029,6 +1109,7 @@ public class QuickParser2Tests extends TestCase {
 	}
 
 	// digraphs/trigraphs have been temporarily remove
+	@Test
 	public void testBug39552B(int x) throws Exception {
 		Writer code = new StringWriter();
 
@@ -1054,58 +1135,72 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug39553() throws Exception {
 		parse("#define COMP_INC \"foobar.h\"  \n" + "#include COMP_INC\n"); //$NON-NLS-2$
 	}
 
+	@Test
 	public void testBug39537() throws Exception {
 		parse("typedef foo<(U::id > 0)> foobar;");
 	}
 
+	@Test
 	public void testBug39546() throws Exception {
 		parse("signed char c = (signed char) 0xffffffff;");
 	}
 
+	@Test
 	public void testIndirectDeclarators() throws Exception {
 		parse("void (*x)(int);");
 	}
 
+	@Test
 	public void testBug39532() throws Exception {
 		parse("class N1::N2::B : public A {};");
 	}
 
+	@Test
 	public void testBug39540() throws Exception {
 		parse("class {} const null;");
 	}
 
+	@Test
 	public void testBug39530() throws Exception {
 		parse("X sPassed(-1);");
 	}
 
+	@Test
 	public void testBug39526() throws Exception {
 		parse("UnitList unit_list (String(\"keV\"));");
 	}
 
+	@Test
 	public void testBug39535() throws Exception {
 		parse("namespace bar = foo;");
 	}
 
+	@Test
 	public void testBug39504B() throws Exception {
 		parse("int y = sizeof (int*);");
 	}
 
+	@Test
 	public void testBug39505A() throws Exception {
 		parse("int AD::* gp_down = static_cast<int AD::*>(gp_stat);");
 	}
 
+	@Test
 	public void testBug39505B() throws Exception {
 		parse("int* gp_down = static_cast<int*>(gp_stat);");
 	}
 
+	@Test
 	public void testBug42985() throws Exception {
 		parse("const int x = 4; int y = ::x;");
 	}
 
+	@Test
 	public void testBug40419() throws Exception {
 		Writer code = new StringWriter();
 		try {
@@ -1117,6 +1212,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug39556() throws Exception {
 		parse("int *restrict ip_fn (void);", true, ParserLanguage.C);
 	}
@@ -1125,6 +1221,7 @@ public class QuickParser2Tests extends TestCase {
 	 * Test code: struct Example { Example(); Example(int); ~Example();};
 	 * Purpose: tests a declaration in a class scope.
 	 */
+	@Test
 	public void testBug43371() throws Exception {
 		// Parse and get the translaton unit
 		Writer code = new StringWriter();
@@ -1132,26 +1229,32 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug43644() throws Exception {
 		parse("void foo();{ int x; }", false);
 	}
 
+	@Test
 	public void testBug43062() throws Exception {
 		parse("class X { operator short  (); 	operator int unsigned(); operator int signed(); };");
 	}
 
+	@Test
 	public void testBug39531() throws Exception {
 		parse("class AString { operator char const *() const; };");
 	}
 
+	@Test
 	public void testBug40007() throws Exception {
 		parse("int y = #;", false);
 	}
 
+	@Test
 	public void testBug40759() throws Exception {
 		parse("#define X SomeName \n class X {};");
 	}
 
+	@Test
 	public void testBug44633() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("template <typename T> class A {};\n");
@@ -1161,14 +1264,17 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug39525() throws Exception {
 		parse("C &(C::*DD)(const C &x) = &C::operator=;");
 	}
 
+	@Test
 	public void testBug41935() throws Exception {
 		parse("namespace A	{  int x; } namespace B = A;");
 	}
 
+	@Test
 	public void testBug39528() throws Exception {
 		Writer code = new StringWriter();
 		try {
@@ -1184,10 +1290,12 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug39538() throws Exception {
 		parse("template C::operator int<float> ();");
 	}
 
+	@Test
 	public void testBug39536() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("template<class E>\n");
@@ -1199,19 +1307,23 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug39536A() throws Exception {
 		parse("template<class E> class X { X<E>(); };");
 	}
 
+	@Test
 	public void testBug39536B() throws Exception {
 		parse("template<class E> class X { inline X<E>(int); };");
 	}
 
+	@Test
 	public void testBug39542() throws Exception {
 		parse("void f(int a, struct {int b[a];} c) {}");
 	}
 
 	//Here starts C99-specific section
+	@Test
 	public void testBug39549() throws Exception {
 		parse("struct X x = { .b = 40, .z = { sizeof(X), 42 }, .t[3] = 2, .t.f[3].x = A * B };", true,
 				ParserLanguage.C);
@@ -1220,22 +1332,27 @@ public class QuickParser2Tests extends TestCase {
 				ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug39551A() throws Exception {
 		parse("extern float _Complex conjf (float _Complex);", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug39551B() throws Exception {
 		parse("_Imaginary double id = 99.99 * __I__;", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testCBool() throws Exception {
 		parse("_Bool x;", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug39678() throws Exception {
 		parse("char *s = L\"a\" \"b\";");
 	}
 
+	@Test
 	public void testBug43110() throws Exception {
 		parse("void x(int y, ...);");
 	}
@@ -1292,11 +1409,13 @@ public class QuickParser2Tests extends TestCase {
 	//		assertEquals(token.getType(), signal);
 	//	}
 
+	@Test
 	public void testBug47752() throws Exception {
 		//TODO requires CPPVisitor
 		parse("void func(cFoo bar) try {	} catch (const char * error){	}");
 	}
 
+	@Test
 	public void testBug47628() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void h(char) { }\n");
@@ -1305,22 +1424,27 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug44336() throws Exception {
 		parse("class A {};  typedef typename A foo;");
 	}
 
+	@Test
 	public void testBug39705() throws Exception {
 		parse("#ident \"@(#)filename.c   1.3 90/02/12\"");
 	}
 
+	@Test
 	public void testBug45235() throws Exception {
 		parse("class A { friend class B; friend void f(); }; ");
 	}
 
+	@Test
 	public void testBug59179() throws Exception {
 		parse("class __decl  main{  int main; };", false);
 	}
 
+	@Test
 	public void testBug57652() throws Exception {
 		parse("struct file_operations driver_fops = {  open: device_open, release: device_release	};", true,
 				ParserLanguage.C, true);
@@ -1361,10 +1485,12 @@ public class QuickParser2Tests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testBug60142() throws Exception {
 		parse("unsigned long var;");
 	}
 
+	@Test
 	public void testBug61431() throws Exception {
 		for (int i = 0; i < 2; ++i) {
 			ParserLanguage language = (i == 0) ? ParserLanguage.C : ParserLanguage.CPP;
@@ -1372,14 +1498,17 @@ public class QuickParser2Tests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testBadIdentifier() throws Exception {
 		parse("class 0302 { private: int stinks; };", false);
 	}
 
+	@Test
 	public void testBug67622() throws Exception {
 		parse("const char * x = __FILE__;");
 	}
 
+	@Test
 	public void testBug68116() throws Exception {
 		StringBuilder buffer = new StringBuilder("char dummy[] = \"0123456789");
 		for (int i = 0; i < 5000; ++i)
@@ -1388,6 +1517,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(buffer.toString());
 	}
 
+	@Test
 	public void testBug69161() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("#define MACRO(s) s\n ");
@@ -1400,6 +1530,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug73524() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("static char fmt_1002[] = \"(/,\\002At iterate\\002,i5,4x,\\002f= \\002,1p,d12\\\r\n");
@@ -1407,10 +1538,12 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString(), true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug39694() throws Exception {
 		parse("int ab$cd = 1;");
 	}
 
+	@Test
 	public void testBug39704A() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define __declspec(x) __attribute__((x))");
@@ -1418,6 +1551,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug39704D() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define __declspec(x) __attribute__((x))");
@@ -1425,14 +1559,17 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString());
 	}
 
+	@Test
 	public void testBug39695() throws Exception {
 		parse("int a = __alignof__ (int);", true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39684() throws Exception {
 		parse("typeof(foo(1)) bar () { return foo(1); }", true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39703() throws Exception {
 		Writer code = new StringWriter();
 		code.write("/* __extension__ enables GNU C mode for the duration of the declaration.  */\n");
@@ -1443,26 +1580,32 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString(), true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39698A() throws Exception {
 		parse("int c = a <? b;", true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39698B() throws Exception {
 		parse("int c = a >? b;", true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39554() throws Exception {
 		parse("_Pragma(\"foobar\")", true, ParserLanguage.C);
 	}
 
+	@Test
 	public void testBug39704B() throws Exception {
 		parse("extern int (* import) (void) __attribute__((dllimport));", true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39704C() throws Exception {
 		parse("int func2 (void) __attribute__((dllexport));", true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39686() throws Exception {
 		Writer code = new StringWriter();
 		code.write("__complex__ double x; // complex double\n");
@@ -1474,6 +1617,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString(), true, ParserLanguage.C, true);
 	}
 
+	@Test
 	public void testBug39681() throws Exception {
 		Writer code = new StringWriter();
 		code.write("double\n");
@@ -1485,6 +1629,7 @@ public class QuickParser2Tests extends TestCase {
 		parse(code.toString());
 	}
 
+	@Test
 	public void testBug39677() throws Exception {
 		parse("B::B() : a(({ 1; })) {}", true, ParserLanguage.CPP, true);
 		Writer writer = new StringWriter();
@@ -1507,14 +1652,17 @@ public class QuickParser2Tests extends TestCase {
 		parse(writer.toString(), true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39701A() throws Exception {
 		parse("extern template int max (int, int);", true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39701B() throws Exception {
 		parse("inline template class Foo<int>;", true, ParserLanguage.CPP, true);
 	}
 
+	@Test
 	public void testBug39701C() throws Exception {
 		parse("static template class Foo<int>;", true, ParserLanguage.CPP, true);
 	}

@@ -35,12 +35,10 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTypeId;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriterVisitor;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
-import junit.framework.TestCase;
-
-public class ExpressionWriterTest extends TestCase {
+public class ExpressionWriterTest {
 	private static final String BR = System.getProperty("line.separator");
 	private static CPPASTSimpleDeclSpecifier INT = new CPPASTSimpleDeclSpecifier();
 	private static IASTName NO_NAME = new CPPASTName(new char[] {});
@@ -51,8 +49,7 @@ public class ExpressionWriterTest extends TestCase {
 		INT.setType(IASTSimpleDeclSpecifier.t_int);
 	}
 
-	@Override
-	@Before
+	@BeforeEach
 	protected void setUp() throws Exception {
 		visitor = new ASTWriterVisitor(commentMap);
 	}

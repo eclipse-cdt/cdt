@@ -15,12 +15,16 @@
 
 package org.eclipse.cdt.core.parser.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.parser.util.SegmentMatcher;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
+public class SegmentMatcherTest {
 
-public class SegmentMatcherTest extends TestCase {
-
+	@Test
 	public void testSimple() {
 
 		assertTrue(matchSegments("", "fooBarBaz"));
@@ -55,6 +59,7 @@ public class SegmentMatcherTest extends TestCase {
 
 	}
 
+	@Test
 	public void testSuffix() {
 
 		assertTrue(matchSegments("fooBar", "fooBar123"));
@@ -63,6 +68,7 @@ public class SegmentMatcherTest extends TestCase {
 
 	}
 
+	@Test
 	public void testNumeric() {
 
 		assertTrue(matchSegments("fBBaz", "foo29BarBaz"));
@@ -78,6 +84,7 @@ public class SegmentMatcherTest extends TestCase {
 
 	}
 
+	@Test
 	public void testSeparator() {
 
 		assertTrue(matchSegments("fBB", "foo_Bar_Baz"));
@@ -104,6 +111,7 @@ public class SegmentMatcherTest extends TestCase {
 
 	}
 
+	@Test
 	public void testPrefixChars() {
 
 		assertFalse(matchSegments("$asd", "_asd"));
@@ -125,17 +133,20 @@ public class SegmentMatcherTest extends TestCase {
 
 	}
 
+	@Test
 	public void testAbbreviations() {
 		assertTrue(matchSegments("IFB", "IFooBar"));
 		assertTrue(matchSegments("IFoB", "IFooBar"));
 		assertTrue(matchSegments("XYZ", "XYZFooBar"));
 	}
 
+	@Test
 	public void testSingleSegment() {
 		assertTrue(matchSegments("foo", "fooBar"));
 		assertFalse(matchSegments("bar", "fooBar"));
 	}
 
+	@Test
 	public void testGetPrefixForBinarySearch() {
 		// Segments can be skipped, because of that the first letter as well
 		// as the leading separator must not be added to the binary search prefix.

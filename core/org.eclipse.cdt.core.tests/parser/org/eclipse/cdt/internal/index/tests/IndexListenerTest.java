@@ -14,6 +14,9 @@
 
 package org.eclipse.cdt.internal.index.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,34 +29,32 @@ import org.eclipse.cdt.core.index.IIndexerStateEvent;
 import org.eclipse.cdt.core.index.IIndexerStateListener;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.core.resources.IFile;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.Test;
-
-public class IndexListenerTest extends BaseTestCase {
+public class IndexListenerTest extends BaseTestCase5 {
 	private ICProject fProject1;
 	private ICProject fProject2;
 
-	public static Test suite() {
-		return suite(IndexListenerTest.class);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createProjects() throws Exception {
 		fProject1 = CProjectHelper.createCCProject("testIndexListener1", null, IPDOMManager.ID_FAST_INDEXER);
 		fProject2 = CProjectHelper.createCCProject("testIndexListener2", null, IPDOMManager.ID_FAST_INDEXER);
 		waitForIndexer(fProject1);
 		waitForIndexer(fProject2);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProjects() throws Exception {
 		CProjectHelper.delete(fProject1);
 		CProjectHelper.delete(fProject2);
 	}
 
+	@Test
 	public void testIdleListener() throws Exception {
 		final Object mutex = new Object();
 		final int[] state = new int[] { 0, 0, 0 };
@@ -96,6 +97,7 @@ public class IndexListenerTest extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testChangeListener() throws Exception {
 		final Object mutex = new Object();
 		final List projects = new ArrayList();

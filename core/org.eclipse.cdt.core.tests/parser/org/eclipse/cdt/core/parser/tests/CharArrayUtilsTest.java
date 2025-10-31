@@ -14,15 +14,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
-import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import junit.framework.TestCase;
+import org.eclipse.cdt.core.parser.util.CharArrayUtils;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Doug Schaefer
  */
-public class CharArrayUtilsTest extends TestCase {
+public class CharArrayUtilsTest {
 
+	@Test
 	public void testEquals_Bug289852() {
 		assertTrue(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 3, "abc".toCharArray(), false));
 		assertFalse(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 4, "abcd".toCharArray(), false));
@@ -33,6 +37,7 @@ public class CharArrayUtilsTest extends TestCase {
 		assertTrue(CharArrayUtils.equals("pre_abc".toCharArray(), 4, 2, "AB".toCharArray(), true));
 	}
 
+	@Test
 	public void testTrim() {
 		assertEquals("", new String(CharArrayUtils.trim("".toCharArray())));
 		assertEquals("", new String(CharArrayUtils.trim("   ".toCharArray())));
@@ -42,6 +47,7 @@ public class CharArrayUtilsTest extends TestCase {
 		assertEquals("a  b", new String(CharArrayUtils.trim("a  b ".toCharArray())));
 	}
 
+	@Test
 	public void testLastIndexOf() {
 		assertEquals(-1, CharArrayUtils.lastIndexOf('a', "".toCharArray()));
 		assertEquals(3, CharArrayUtils.lastIndexOf('a', "array".toCharArray()));

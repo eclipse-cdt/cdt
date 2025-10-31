@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -87,7 +85,7 @@ import org.eclipse.cdt.core.settings.model.ICSourceEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.pdom.CModelListener;
@@ -110,16 +108,123 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestSuite;
+public class IndexBugsTests extends BaseTestCase5 {
 
-public class IndexBugsTests extends BaseTestCase {
+	public static void assertNotEquals(Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertNotEquals(String msg, Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(String msg, long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertEquals(Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(long expected, long actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, long expected, long actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(double a, double b, double c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, double a, double b, double c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertEquals(float a, float b, float c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, float a, float b, float c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertSame(Object expected, Object actual) {
+		Assertions.assertSame(expected, actual);
+	}
+
+	public static void assertSame(String msg, Object expected, Object actual) {
+		Assertions.assertSame(expected, actual, msg);
+	}
+
+	public static void assertNotSame(Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual);
+	}
+
+	public static void assertNotSame(String msg, Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual, msg);
+	}
+
+	public static void assertNull(Object object) {
+		Assertions.assertNull(object);
+	}
+
+	public static void assertNull(String msg, Object object) {
+		Assertions.assertNull(object, msg);
+	}
+
+	public static void assertNotNull(Object object) {
+		Assertions.assertNotNull(object);
+	}
+
+	public static void assertNotNull(String msg, Object object) {
+		Assertions.assertNotNull(object, msg);
+	}
+
+	public static void assertTrue(boolean n) {
+		Assertions.assertTrue(n);
+	}
+
+	public static void assertTrue(String msg, boolean n) {
+		Assertions.assertTrue(n, msg);
+	}
+
+	public static void assertFalse(boolean n) {
+		Assertions.assertFalse(n);
+	}
+
+	public static void assertFalse(String msg, boolean n) {
+		Assertions.assertFalse(n, msg);
+	}
+
+	public static void fail() {
+		Assertions.fail();
+	}
+
+	public static void fail(String msg) {
+		Assertions.fail(msg);
+	}
+
+	public static void assertArrayEquals() {
+		fail("TODO");
+	}
+
 	private ICProject fCProject;
 	protected IIndex fIndex;
-
-	public IndexBugsTests(String name) {
-		super(name);
-	}
 
 	protected class BindingAssertionHelper {
 		protected IASTTranslationUnit tu;
@@ -254,27 +359,19 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
-	public static TestSuite suite() {
-		final TestSuite ts = suite(IndexBugsTests.class);
-		ts.addTest(Bug246129.suite());
-		return ts;
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createProject() throws Exception {
 		fCProject = CProjectHelper.createCCProject("__bugsTest__", "bin", IPDOMManager.ID_FAST_INDEXER);
 		CCorePlugin.getIndexManager().reindex(fCProject);
 		waitForIndexer();
 		fIndex = CCorePlugin.getIndexManager().getIndex(fCProject);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void deleteProject() throws Exception {
 		if (fCProject != null) {
 			CProjectHelper.delete(fCProject);
 		}
-		super.tearDown();
 	}
 
 	protected IProject getProject() {
@@ -354,15 +451,6 @@ public class IndexBugsTests extends BaseTestCase {
 		return clazz.cast(binding);
 	}
 
-	protected static <T> T assertInstance(Object o, Class<T> clazz, Class... cs) {
-		assertNotNull("Expected " + clazz.getName() + " but got null", o);
-		assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), clazz.isInstance(o));
-		for (Class c : cs) {
-			assertTrue("Expected " + clazz.getName() + " but got " + o.getClass().getName(), c.isInstance(o));
-		}
-		return clazz.cast(o);
-	}
-
 	// class A {
 	// public:
 	//   void one() {}
@@ -375,6 +463,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//   void four() {}
 	//   void five() {}
 	// };
+	@Test
 	public void test154563() throws Exception {
 		// Because of fix for http://bugs.eclipse.org/193779 this test case passes.
 		// However http://bugs.eclipse.org/154563 remains to be fixed.
@@ -409,6 +498,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void test150906() throws Exception {
 		String fileName = "bug150906.c";
 		String varName = "arrayDataSize";
@@ -442,6 +532,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	// enum {e20070206};
+	@Test
 	public void test156671() throws Exception {
 		waitForIndexer();
 		String content = getContentsForTest(1)[0];
@@ -460,6 +551,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void test160281_1() throws Exception {
 		waitForIndexer();
 		IProject project = fCProject.getProject();
@@ -496,6 +588,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void test160281_2() throws Exception {
 		waitForIndexer();
 		IProject project = fCProject.getProject();
@@ -540,6 +633,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//    };
 	//    void function162011(Class162011 x){};
 	//  }
+	@Test
 	public void test162011() throws Exception {
 		String content = getContentsForTest(1)[0];
 		String fileName = "bug162011.cpp";
@@ -585,6 +679,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void test164360_1() throws Exception {
 		waitForIndexer();
 		IFile include = TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
@@ -608,6 +703,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void test164360_2() throws Exception {
 		waitForIndexer();
 		IFile include = TestSourceReader.createFile(fCProject.getProject(), "test164360.h", "");
@@ -634,6 +730,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #define macro164500 1
 	// #undef macro164500
 	// #define macro164500 2
+	@Test
 	public void test164500() throws Exception {
 		waitForIndexer();
 		String content = getContentsForTest(1)[0];
@@ -666,6 +763,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// // header.h
 	// enum E {A,B,C};
+	@Test
 	public void test171834() throws Exception {
 		CModelListener.sSuppressUpdateOfLastRecentlyUsed = false;
 		waitForIndexer();
@@ -713,6 +811,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef struct S20070201 {
 	//    int a;
 	// } S20070201;
+	@Test
 	public void test172454_1() throws Exception {
 		waitForIndexer();
 		String content = getContentsForTest(1)[0];
@@ -747,6 +846,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// typedef struct S20070201 {
 	//    int a;
 	// } S20070201;
+	@Test
 	public void test172454_2() throws Exception {
 		waitForIndexer();
 		String content = getContentsForTest(1)[0];
@@ -782,6 +882,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	// typedef int T20070213;
+	@Test
 	public void test173997() throws Exception {
 		waitForIndexer();
 		String content = getContentsForTest(1)[0];
@@ -838,6 +939,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// class A {};
 	// class B {};
 	// B var;
+	@Test
 	public void test173997_2() throws Exception {
 		String[] content = getContentsForTest(2);
 
@@ -885,6 +987,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	//	template <class U1> class Test;
 	//	template <class U2> void f();
+	@Test
 	public void test253080() throws Exception {
 		waitForIndexer();
 
@@ -925,6 +1028,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	void test(B<int>::value_type x) {
 	//	  f(x);
 	//	}
+	@Test
 	public void test257818_1() throws Exception {
 		waitForIndexer();
 
@@ -966,6 +1070,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	void test(B<C> x, C y) {
 	//	  x.m(&y);
 	//	}
+	@Test
 	public void test257818_2() throws Exception {
 		waitForIndexer();
 
@@ -988,6 +1093,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	// class A {}; class B {}; class C {};
+	@Test
 	public void testIndexContentOverProjectDelete() throws Exception {
 		waitForIndexer();
 
@@ -1016,6 +1122,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	// class A {}; class B {}; class C {}; class D {};
+	@Test
 	public void testIndexContentOverProjectMove() throws Exception {
 		waitForIndexer();
 
@@ -1055,6 +1162,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//     };
 	//   };
 	// };
+	@Test
 	public void testFindBindingsWithPrefix() throws Exception {
 		waitForIndexer();
 		String content = getContentsForTest(1)[0];
@@ -1088,6 +1196,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	// class a { class b { class c { void f(); }; }; };
+	@Test
 	public void testFilterFindBindingsFQCharArray() throws Exception {
 		waitForIndexer();
 		String content = getContentsForTest(1)[0];
@@ -1123,6 +1232,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// #include "../__bugsTest__/common.h"
 	// StructA_T gvar2;
+	@Test
 	public void testFileInMultipleFragments_bug192352() throws Exception {
 		String[] contents = getContentsForTest(3);
 
@@ -1170,6 +1280,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #ifndef _h1
 	// #include "header1.h"   // inactive but resolved.
 	// #endif
+	@Test
 	public void testIncludeGuardsOutsideOfHeader_Bug167100() throws Exception {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		String[] contents = getContentsForTest(5);
@@ -1214,6 +1325,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// void func() {
 	//    MAC()= MAC(1) + MAC(1,2);
 	// }
+	@Test
 	public void testVariadicMacros_Bug200239_1() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1240,6 +1352,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// void func() {
 	//    GMAC()= GMAC(1) + GMAC(1,2);
 	// }
+	@Test
 	public void testVariadicMacros_Bug200239_2() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1261,6 +1374,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// typedef bug200553_A bug200553_B;
 	// typedef bug200553_B bug200553_A;
+	@Test
 	public void testTypedefRecursionCpp_Bug200553() throws Exception {
 		String[] contents = getContentsForTest(1);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1310,6 +1424,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// typedef bug200553_A bug200553_B;
 	// typedef bug200553_B bug200553_A;
+	@Test
 	public void testTypedefRecursionC_Bug200553() throws Exception {
 		String[] contents = getContentsForTest(1);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1351,6 +1466,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #ifndef GUARD
 	// #include "source.cpp"
 	// #endif
+	@Test
 	public void testIncludeSource_Bug199412() throws Exception {
 		String[] contents = getContentsForTest(1);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1379,6 +1495,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	// void func_209049(long long x);
+	@Test
 	public void testGPPTypes_Bug209049() throws Exception {
 		String[] contents = getContentsForTest(1);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1400,6 +1517,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// void f1() {
 	//    staticInHeader();
 	// }
+	@Test
 	public void testStaticFunctionsInHeader_Bug180305() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1426,6 +1544,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// void f1() {
 	//    int a= staticConstInHeader;
 	// }
+	@Test
 	public void testStaticVariableInHeader_Bug180305() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1452,6 +1571,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// void f1() {
 	//    staticInHeader();
 	// }
+	@Test
 	public void testStaticFunctionsInHeaderC_Bug180305() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1479,6 +1599,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// void f1() {
 	//    int a= staticConstInHeader;
 	// }
+	@Test
 	public void testStaticVariableInHeaderC_Bug180305() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1503,6 +1624,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// int ok;
 
 	// #include "header.x"
+	@Test
 	public void testNonStandardSuffix_Bug205778() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1527,6 +1649,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #include "MyClass_inline.h"
 
 	// #include "MyClass.h"
+	@Test
 	public void testAddingMemberBeforeContainer_Bug203170() throws Exception {
 		String[] contents = getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1558,6 +1681,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//    unrelated a;
 	//    a.b;
 	// }
+	@Test
 	public void testUnrelatedTypedef_Bug214146() throws Exception {
 		String[] contents = getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1627,6 +1751,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	  a.a2 = 6;
 	//	  return u.u2 + a.a2;
 	//	}
+	@Test
 	public void testUnrelatedTypedefInHeader_Bug214146() throws Exception {
 		String[] contents = getContentsForTest(4);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1690,6 +1815,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #else
 	//    int ok;
 	// #endif
+	@Test
 	public void testUndefInHeader_Bug227088() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1717,6 +1843,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// #include "common.h"
 	// #include "header.h"
+	@Test
 	public void testCommonHeader_Bug228012() throws Exception {
 		String[] contents = getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1743,6 +1870,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// #define BUG ok
 	// #include "h1.h"
+	@Test
 	public void testIndirectContext_Bug267907() throws Exception {
 		String[] contents = getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1766,6 +1894,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #include <header.h>
 	// #define _CONCAT(x,y) x##y
 	// #define CONCAT(x,y) _CONCAT(x,y)
+	@Test
 	public void testIncludeHeuristics_Bug213562() throws Exception {
 		String contents = getContentsForTest(1)[0];
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1792,6 +1921,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testIncludeHeuristicsFlag_Bug213562() throws Exception {
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
 		TestSourceReader.createFile(fCProject.getProject(), "f1/header.h", "");
@@ -1815,6 +1945,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// #include "dir"
 	// #include "header.h"
+	@Test
 	public void testInclusionOfFolders_Bug243682() throws Exception {
 		String contents = getContentsForTest(1)[0];
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1855,6 +1986,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #endif
 
 	// #include "a.h"
+	@Test
 	public void testStrangeIncludeStrategy_Bug249884() throws Exception {
 		String[] contents = getContentsForTest(3);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1884,6 +2016,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// struct s {int a;};
 	// struct s x[]= {{.a=1,},{.a=2}};
+	@Test
 	public void testReferencesInDesignators_Bug253690() throws Exception {
 		String code = getContentsForTest(1)[0];
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1905,6 +2038,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	}
 	//	class Y : public ns::X<int> {
 	//	};
+	@Test
 	public void testInstanceInheritance_258745() throws Exception {
 		String code = getContentsForTest(1)[0];
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1928,6 +2062,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// static int STATIC;
 	// void ref() {STATIC=1;}
+	@Test
 	public void testStaticVarInSourceIncluded_Bug265821() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -1953,6 +2088,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	// #include "a.h"
 	// void test() {a=0;}
+	@Test
 	public void testDeclarationForBinding_Bug254844() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -2013,6 +2149,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//    a.i = 0;
 	//    a.j = 0;
 	//  }
+	@Test
 	public void testDisambiguationByReachability_268704_1() throws Exception {
 		waitForIndexer();
 
@@ -2054,6 +2191,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	//  #include "b.h"
 	//	int i = e;
+	@Test
 	public void testDisambiguationByReachability_268704_2() throws Exception {
 		waitForIndexer();
 
@@ -2092,6 +2230,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	void test() {
 	//	  xx();
 	//	}
+	@Test
 	public void testDisambiguationByReachability_268704_3() throws Exception {
 		String[] testData = getContentsForTest(4);
 		TestSourceReader.createFile(fCProject.getProject(), "a.h", testData[0]);
@@ -2130,6 +2269,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	}
 
 	//	enum E { e2	};
+	@Test
 	public void testDisambiguationByReachability_281782() throws Exception {
 		waitForIndexer();
 
@@ -2163,6 +2303,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//	typedef int A;
 	//	}
 	//	}
+	@Test
 	public void testNamespaceReachability_319632() throws Exception {
 		waitForIndexer();
 
@@ -2195,6 +2336,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//  #ifdef AAA
 	//  int ok;
 	//  #endif
+	@Test
 	public void testPreprocessingStatementOrder_270806_1() throws Exception {
 		waitForIndexer();
 		String[] testData = getContentsForTest(3);
@@ -2229,6 +2371,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//  #ifdef AAA
 	//  int bug;
 	//  #endif
+	@Test
 	public void testPreprocessingStatementOrder_270806_2() throws Exception {
 		waitForIndexer();
 		String[] testData = getContentsForTest(3);
@@ -2259,6 +2402,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//  #include <inc.h>
 	//  using namespace X;
 	//  using namespace Y;
+	@Test
 	public void testPreprocessingStatementOrder_270806_3() throws Exception {
 		waitForIndexer();
 		String[] testData = getContentsForTest(1);
@@ -2291,6 +2435,7 @@ public class IndexBugsTests extends BaseTestCase {
 	}
 
 	//	template<typename T> void f(T t) throw (T) {}
+	@Test
 	public void testFunctionTemplateWithThrowsException_293021() throws Exception {
 		waitForIndexer();
 		String testData = getContentsForTest(1)[0].toString();
@@ -2327,6 +2472,7 @@ public class IndexBugsTests extends BaseTestCase {
 	//  // source2.cpp
 	// #include "b.h"
 	// P::C c;
+	@Test
 	public void testDisambiguateClassVsNamespace_297686() throws Exception {
 		waitForIndexer();
 		String[] testData = getContentsForTest(4);
@@ -2368,6 +2514,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	//  // source2.cpp
 	// Error d;  // Problem, without inclusion we need to prefer the function.
+	@Test
 	public void testDisambiguateObjectVsType_304479() throws Exception {
 		waitForIndexer();
 		String[] testData = getContentsForTest(4);
@@ -2396,6 +2543,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testUpdateNonSrcFolderHeader_283080() throws Exception {
 		IIndexBinding[] r;
 
@@ -2457,6 +2605,7 @@ public class IndexBugsTests extends BaseTestCase {
 		}
 	}
 
+	@Test
 	public void testUpdateForContentTypeChange_283080() throws Exception {
 		IIndexBinding[] r;
 
@@ -2495,6 +2644,7 @@ public class IndexBugsTests extends BaseTestCase {
 		assertTrue(offset1 != offset2);
 	}
 
+	@Test
 	public void testUpdateOnFolderRemove_343538() throws Exception {
 		IIndexBinding[] r;
 
@@ -2575,6 +2725,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	//	// a.h and b.h
 	//	int A;
+	@Test
 	public void testUpdatingHeaderInContext_367315() throws Exception {
 		String[] contents = getContentsForTest(2);
 		final IIndexManager indexManager = CCorePlugin.getIndexManager();
@@ -2617,6 +2768,7 @@ public class IndexBugsTests extends BaseTestCase {
 
 	//	// b.h
 	//	namespace ns { typedef int INT; }
+	@Test
 	public void testUpdateUnresolvedIncludes_378317() throws Exception {
 		// Turn off indexing of unused headers.
 		IndexerPreferences.set(fCProject.getProject(), IndexerPreferences.KEY_INDEX_UNUSED_HEADERS_WITH_DEFAULT_LANG,
@@ -2671,6 +2823,7 @@ public class IndexBugsTests extends BaseTestCase {
 	// #include "../p1/h1.hh"
 	// #include "h2.hh"
 	// static int i = h1;
+	@Test
 	public void test429196StackOverflow() throws Exception {
 		// Bug429196: StackOverflow when creating a PDOMBinding in the following case: 	2550
 		//            1) The variable is file-local 	2551

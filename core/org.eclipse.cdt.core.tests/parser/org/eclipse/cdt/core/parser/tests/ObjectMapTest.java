@@ -17,14 +17,15 @@
  */
 package org.eclipse.cdt.core.parser.tests;
 
-import org.eclipse.cdt.core.parser.util.ObjectMap;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import junit.framework.TestCase;
+import org.eclipse.cdt.core.parser.util.ObjectMap;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link ObjectMap}.
  */
-public class ObjectMapTest extends TestCase {
+public class ObjectMapTest {
 
 	private static class HashObject {
 		final public int hash;
@@ -54,6 +55,7 @@ public class ObjectMapTest extends TestCase {
 		assertEquals(map.size(), contents.length);
 	}
 
+	@Test
 	public void testSimpleAdd() throws Exception {
 		ObjectMap map = new ObjectMap(2);
 
@@ -66,6 +68,7 @@ public class ObjectMapTest extends TestCase {
 		assertEquals(map.capacity(), 8);
 	}
 
+	@Test
 	public void testSimpleCollision() throws Exception {
 		ObjectMap map = new ObjectMap(2);
 
@@ -82,6 +85,7 @@ public class ObjectMapTest extends TestCase {
 		assertContents(map, contents);
 	}
 
+	@Test
 	public void testResize() throws Exception {
 		ObjectMap map = new ObjectMap(1);
 
@@ -95,6 +99,7 @@ public class ObjectMapTest extends TestCase {
 		assertContents(map, res);
 	}
 
+	@Test
 	public void testCollisionResize() throws Exception {
 		ObjectMap map = new ObjectMap(1);
 
@@ -109,6 +114,7 @@ public class ObjectMapTest extends TestCase {
 		assertContents(map, res);
 	}
 
+	@Test
 	public void testReAdd() throws Exception {
 		ObjectMap map = new ObjectMap(1);
 

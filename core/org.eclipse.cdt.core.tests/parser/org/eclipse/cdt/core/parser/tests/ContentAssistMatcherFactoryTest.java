@@ -15,19 +15,23 @@
 
 package org.eclipse.cdt.core.parser.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
+public class ContentAssistMatcherFactoryTest {
 
-public class ContentAssistMatcherFactoryTest extends TestCase {
-
-	@Override
+	@AfterEach
 	protected void tearDown() throws Exception {
 		ContentAssistMatcherFactory.getInstance().setShowCamelCaseMatches(true);
-		super.tearDown();
 	}
 
+	@Test
 	public void testConfiguration() {
 		// Default is show camel case matches on
 		assertTrue(match("foo", "fooBar"));
@@ -44,6 +48,7 @@ public class ContentAssistMatcherFactoryTest extends TestCase {
 		assertTrue(match("fB", "fooBar"));
 	}
 
+	@Test
 	public void testCamelCaseMatcher() {
 		setShowCamelCaseMatches(true);
 		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher("fB");
@@ -52,6 +57,7 @@ public class ContentAssistMatcherFactoryTest extends TestCase {
 		assertTrue(matcher.matchRequiredAfterBinarySearch());
 	}
 
+	@Test
 	public void testPrefixMatcher() {
 		setShowCamelCaseMatches(true);
 		IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher("foo");

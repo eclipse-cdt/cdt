@@ -14,16 +14,21 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
-
-public class ArrayUtilTest extends TestCase {
+public class ArrayUtilTest {
 	private final Object o1 = new Object();
 	private final Object o2 = new Object();
 	private final Object o3 = new Object();
 	private final Object o4 = new Object();
 
+	@Test
 	public void testAppend() {
 		Object[] array = null;
 		array = ArrayUtil.append(array, o1);
@@ -41,6 +46,7 @@ public class ArrayUtilTest extends TestCase {
 		assertEquals(o3, array[2]);
 	}
 
+	@Test
 	public void testPrepend() {
 		Object[] array = null;
 		array = ArrayUtil.prepend(Object.class, array, o1);
@@ -51,6 +57,7 @@ public class ArrayUtilTest extends TestCase {
 		assertEquals(o1, array[2]);
 	}
 
+	@Test
 	public void testTrim() {
 		Object[] array = new Object[] { null, null };
 		array = ArrayUtil.trim(Object.class, array);
@@ -85,6 +92,7 @@ public class ArrayUtilTest extends TestCase {
 		assertNotSame(array, array2);
 	}
 
+	@Test
 	public void testAddAll() {
 		Object[] array1 = { o1, o2, null };
 		Object[] array2 = { o3, null };
@@ -150,6 +158,7 @@ public class ArrayUtilTest extends TestCase {
 		assertEquals("s", result[2]);
 	}
 
+	@Test
 	public void testRemove() {
 		Object[] array = new Object[] { o1, o2, o3, o4, null };
 		ArrayUtil.remove(array, o3);
@@ -190,6 +199,7 @@ public class ArrayUtilTest extends TestCase {
 		assertNull(array[0]);
 	}
 
+	@Test
 	public void testRemoveNulls() {
 		Object[] array = new Object[0];
 		Object[] result;
@@ -244,6 +254,7 @@ public class ArrayUtilTest extends TestCase {
 		assertSame(result[1], o2);
 	}
 
+	@Test
 	public void testRemoveDuplicates() {
 		String[] array = { "1", "2", null, "3", "2", "1", "4", "3" };
 		String[] result = ArrayUtil.removeDuplicates(array);

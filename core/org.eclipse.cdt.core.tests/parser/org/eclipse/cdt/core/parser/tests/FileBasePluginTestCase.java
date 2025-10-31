@@ -26,13 +26,123 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
-
-import junit.framework.TestCase;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author dsteffle
  */
-public abstract class FileBasePluginTestCase extends TestCase {
+public abstract class FileBasePluginTestCase {
+
+	public static void assertNotEquals(Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertNotEquals(String msg, Object expected, Object actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(String msg, long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual, msg);
+	}
+
+	public static void assertNotEquals(long expected, long actual) {
+		Assertions.assertNotEquals(expected, actual);
+	}
+
+	public static void assertEquals(Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, Object expected, Object actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(long expected, long actual) {
+		Assertions.assertEquals(expected, actual);
+	}
+
+	public static void assertEquals(String msg, long expected, long actual) {
+		Assertions.assertEquals(expected, actual, msg);
+	}
+
+	public static void assertEquals(double a, double b, double c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, double a, double b, double c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertEquals(float a, float b, float c) {
+		Assertions.assertEquals(a, b, c);
+	}
+
+	public static void assertEquals(String msg, float a, float b, float c) {
+		Assertions.assertEquals(a, b, c, msg);
+	}
+
+	public static void assertSame(Object expected, Object actual) {
+		Assertions.assertSame(expected, actual);
+	}
+
+	public static void assertSame(String msg, Object expected, Object actual) {
+		Assertions.assertSame(expected, actual, msg);
+	}
+
+	public static void assertNotSame(Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual);
+	}
+
+	public static void assertNotSame(String msg, Object expected, Object actual) {
+		Assertions.assertNotSame(expected, actual, msg);
+	}
+
+	public static void assertNull(Object object) {
+		Assertions.assertNull(object);
+	}
+
+	public static void assertNull(String msg, Object object) {
+		Assertions.assertNull(object, msg);
+	}
+
+	public static void assertNotNull(Object object) {
+		Assertions.assertNotNull(object);
+	}
+
+	public static void assertNotNull(String msg, Object object) {
+		Assertions.assertNotNull(object, msg);
+	}
+
+	public static void assertTrue(boolean n) {
+		Assertions.assertTrue(n);
+	}
+
+	public static void assertTrue(String msg, boolean n) {
+		Assertions.assertTrue(n, msg);
+	}
+
+	public static void assertFalse(boolean n) {
+		Assertions.assertFalse(n);
+	}
+
+	public static void assertFalse(String msg, boolean n) {
+		Assertions.assertFalse(n, msg);
+	}
+
+	public static void fail() {
+		Assertions.fail();
+	}
+
+	public static void fail(String msg) {
+		Assertions.fail(msg);
+	}
+
+	public static void assertArrayEquals() {
+		fail("TODO");
+	}
+
 	static NullProgressMonitor monitor;
 	static IWorkspace workspace;
 	static IProject project;
@@ -41,9 +151,8 @@ public abstract class FileBasePluginTestCase extends TestCase {
 	static ICProject cPrj;
 	private Class className2;
 
-	@Override
+	@BeforeEach
 	protected void setUp() throws Exception {
-		super.setUp();
 		monitor = new NullProgressMonitor();
 
 		workspace = ResourcesPlugin.getWorkspace();
@@ -53,7 +162,7 @@ public abstract class FileBasePluginTestCase extends TestCase {
 		assertNotNull(project);
 	}
 
-	@Override
+	@AfterEach
 	protected void tearDown() throws Exception {
 		if (project == null || !project.exists())
 			return;

@@ -47,11 +47,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.core.resources.IFile;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author dsteffle
  */
 public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
+	@Test
 	public void testBaseCase_VariableReference() throws Exception {
 		String code = "void f() { int x; x=3; }"; //$NON-NLS-1$
 		int offset1 = code.indexOf("x="); //$NON-NLS-1$
@@ -67,9 +69,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBaseCase_FunctionReference() throws Exception {
 		String code = "int x(){x( );}"; //$NON-NLS-1$
 		int offset1 = code.indexOf("x( "); //$NON-NLS-1$
@@ -81,7 +84,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, offset1, length).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
@@ -89,9 +92,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBaseCase_FunctionDeclaration() throws Exception {
 		String code = "int x(); x( );"; //$NON-NLS-1$
 		int offset1 = code.indexOf("x()"); //$NON-NLS-1$
@@ -103,7 +107,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, offset1, length);
 		assertNotNull(node);
 		assertTrue(node instanceof IASTName);
@@ -111,9 +115,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBaseCase_FunctionDeclaration2() throws Exception {
 		String code = "int printf( const char *, ... ); "; //$NON-NLS-1$
 		int offset1 = code.indexOf("printf"); //$NON-NLS-1$
@@ -125,7 +130,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "printf"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "printf"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, offset1, length);
 		assertNotNull(node);
 		assertTrue(node instanceof IASTName);
@@ -133,9 +138,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "printf"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "printf"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBaseCase_VariableDeclaration() throws Exception {
 		String code = "int x = 3;"; //$NON-NLS-1$
 		int offset1 = code.indexOf("x"); //$NON-NLS-1$
@@ -147,7 +153,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, offset1, length);
 		assertNotNull(node);
 		assertTrue(node instanceof IASTName);
@@ -155,9 +161,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBaseCase_Parameter() throws Exception {
 		String code = "int main( int argc ) { int x = argc; }"; //$NON-NLS-1$
 		int offset1 = code.indexOf("argc;"); //$NON-NLS-1$
@@ -170,7 +177,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTIdExpression) ((IASTEqualsInitializer) node).getInitializerClause()).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "argc"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "argc"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, offset1, length).getParent().getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTEqualsInitializer);
@@ -179,9 +186,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTIdExpression) ((IASTEqualsInitializer) node).getInitializerClause()).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "argc"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "argc"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug57898() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Gonzo {  public: void playHorn(); };\n"); //$NON-NLS-1$
@@ -209,10 +217,11 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 			IASTName name = (IASTName) node;
 			assertNotNull(name.resolveBinding());
 			assertTrue(name.resolveBinding() instanceof ICPPMethod);
-			assertEquals(((ICPPMethod) name.resolveBinding()).getName(), "playHorn"); //$NON-NLS-1$
+			assertEquals(name.resolveBinding().getName(), "playHorn"); //$NON-NLS-1$
 		}
 	}
 
+	@Test
 	public void testConstructorDestructorDeclaration() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Gonzo { Gonzo(); ~Gonzo(); };"); //$NON-NLS-1$
@@ -226,7 +235,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-		assertEquals(((ICPPConstructor) name.resolveBinding()).getName(), "Gonzo"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Gonzo"); //$NON-NLS-1$
 		offset = code.indexOf(" ~Gonzo") + 1; //$NON-NLS-1$
 		length = "~Gonzo".length(); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, offset, length);
@@ -236,10 +245,11 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPMethod);
-		assertEquals(((ICPPMethod) name.resolveBinding()).getName(), "~Gonzo"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "~Gonzo"); //$NON-NLS-1$
 
 	}
 
+	@Test
 	public void testBug60264() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace Muppets { int i;	}\n"); //$NON-NLS-1$
@@ -254,7 +264,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPNamespace);
-		assertEquals(((ICPPNamespace) name.resolveBinding()).getName(), "Muppets"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Muppets"); //$NON-NLS-1$
 		index = code.indexOf("e Muppets") + 2; //$NON-NLS-1$
 		length = "Muppets".length(); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -264,10 +274,11 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPNamespace);
-		assertEquals(((ICPPNamespace) name.resolveBinding()).getName(), "Muppets"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Muppets"); //$NON-NLS-1$
 
 	}
 
+	@Test
 	public void testBug61613() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Foo {  // ** (A) **\n"); //$NON-NLS-1$
@@ -288,9 +299,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPClassType);
-		assertEquals(((ICPPClassType) name.resolveBinding()).getName(), "Foo"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Foo"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug60038() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Gonzo {\n"); //$NON-NLS-1$
@@ -335,7 +347,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 				name = TestUtil.findImplicitName(name);
 				IBinding binding = name.resolveBinding();
 				assertTrue(binding instanceof ICPPConstructor);
-				assertEquals(((ICPPConstructor) binding).getName(), "Gonzo"); //$NON-NLS-1$
+				assertEquals(binding.getName(), "Gonzo"); //$NON-NLS-1$
 				break;
 			default:
 				assertTrue(node instanceof IASTName);
@@ -343,13 +355,14 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 				name = (IASTName) node;
 				assertNotNull(name.resolveBinding());
 				assertTrue(name.resolveBinding() instanceof ICPPMethod);
-				assertEquals(((ICPPMethod) name.resolveBinding()).getName(), "~Gonzo"); //$NON-NLS-1$
+				assertEquals(name.resolveBinding().getName(), "~Gonzo"); //$NON-NLS-1$
 				break;
 
 			}
 		}
 	}
 
+	@Test
 	public void testMethodReference() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Sample { public:\n"); //$NON-NLS-1$
@@ -369,9 +382,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPMethod);
-		assertEquals(((ICPPMethod) name.resolveBinding()).getName(), "getAnswer"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "getAnswer"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testConstructorDefinition() throws Exception {
 		String code = "class ABC { public: ABC(); }; ABC::ABC(){}"; //$NON-NLS-1$
 		int startIndex = code.indexOf("::ABC") + 2; //$NON-NLS-1$
@@ -383,9 +397,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertNotNull(name.resolveBinding());
 		assertEquals(node.toString(), "ABC"); //$NON-NLS-1$
 		assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-		assertEquals(((ICPPConstructor) name.resolveBinding()).getName(), "ABC"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "ABC"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug63966() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("void foo(int a) {}\n"); //$NON-NLS-1$
@@ -402,7 +417,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "foo"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "foo"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, startIndex, length).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
@@ -410,9 +425,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "foo"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "foo"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug66744() throws Exception {
 		Writer writerCPP = new StringWriter();
 		writerCPP.write("enum EColours { RED, GREEN, BLUE };      \n"); //$NON-NLS-1$
@@ -433,7 +449,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IEnumeration);
-		assertEquals(((IEnumeration) name.resolveBinding()).getName(), "EColours"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "EColours"); //$NON-NLS-1$
 		startIndex = codeCPP.indexOf("EColours color"); //$NON-NLS-1$
 		node = parse(codeCPP, ParserLanguage.CPP, startIndex, length).getParent();
 		assertNotNull(node);
@@ -442,9 +458,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTNamedTypeSpecifier) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IEnumeration);
-		assertEquals(((IEnumeration) name.resolveBinding()).getName(), "EColours"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "EColours"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug68527() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct X;\n"); //$NON-NLS-1$
@@ -459,7 +476,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICompositeType);
-		assertEquals(((ICompositeType) name.resolveBinding()).getName(), "X"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "X"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, startIndex, length);
 		assertNotNull(node);
 		assertTrue(node instanceof IASTName);
@@ -467,9 +484,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICompositeType);
-		assertEquals(((ICompositeType) name.resolveBinding()).getName(), "X"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "X"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug60407() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct ZZZ { int x, y, z; };\n"); //$NON-NLS-1$
@@ -491,7 +509,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "static_function"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "static_function"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, startIndex, length).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
@@ -499,9 +517,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "static_function"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "static_function"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug61800() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class B {};\n"); //$NON-NLS-1$
@@ -518,9 +537,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "stInt"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "stInt"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug68739() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int fprintf( int *, const char *, ... );               \n"); //$NON-NLS-1$
@@ -539,7 +559,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "fprintf"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "fprintf"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, startIndex, length).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTIdExpression);
@@ -547,9 +567,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "fprintf"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "fprintf"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug72818() throws Exception {
 		Writer writerCPP = new StringWriter();
 		writerCPP.write("union Squaw	{	int x;	double u; };\n"); //$NON-NLS-1$
@@ -574,7 +595,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICompositeType);
-		assertEquals(((ICompositeType) name.resolveBinding()).getName(), "Squaw"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Squaw"); //$NON-NLS-1$
 		startIndex = codeCPP.indexOf("sizeof( ") + "sizeof( ".length(); //$NON-NLS-1$ //$NON-NLS-2$
 		node = parse(codeCPP, ParserLanguage.CPP, startIndex, length).getParent().getParent();
 		assertNotNull(node);
@@ -583,9 +604,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTNamedTypeSpecifier) ((IASTTypeId) node).getDeclSpecifier()).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPClassType);
-		assertEquals(((ICPPClassType) name.resolveBinding()).getName(), "Squaw"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Squaw"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void test72220() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("const int FOUND_ME = 1;\n"); //$NON-NLS-1$
@@ -606,9 +628,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "FOUND_ME"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "FOUND_ME"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug72721() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write(" class ABC { public: ABC(int); };   \n"); //$NON-NLS-1$
@@ -627,9 +650,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-		assertEquals(((ICPPConstructor) name.resolveBinding()).getName(), "ABC"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "ABC"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug72372() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace B {                                   \n"); //$NON-NLS-1$
@@ -648,9 +672,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPMethod);
-		assertEquals(((ICPPMethod) name.resolveBinding()).getName(), "f_SD"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "f_SD"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug72372_2() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace A {                                   \n"); //$NON-NLS-1$
@@ -673,9 +698,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "f_SD"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "f_SD"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug72713() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Deck{ void initialize(); };   \n"); //$NON-NLS-1$
@@ -691,9 +717,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPMethod);
-		assertEquals(((ICPPMethod) name.resolveBinding()).getName(), "initialize"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "initialize"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug72712() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class B{ public: B(); }; void f(){ B* b; b = new B(); }"); //$NON-NLS-1$
@@ -709,9 +736,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = TestUtil.findImplicitName(name);
 		IBinding binding = name.resolveBinding();
 		assertTrue(binding instanceof ICPPConstructor);
-		assertEquals(((ICPPConstructor) binding).getName(), "B"); //$NON-NLS-1$
+		assertEquals(binding.getName(), "B"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug72712_2() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class A {};                                        \n"); //$NON-NLS-1$
@@ -728,9 +756,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTNamedTypeSpecifier) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPClassType);
-		assertEquals(((ICPPClassType) name.resolveBinding()).getName(), "A"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "A"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug72710() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("class Card{\n"); //$NON-NLS-1$
@@ -750,9 +779,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug75731() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int rank() {\n"); //$NON-NLS-1$
@@ -780,7 +810,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("class Card{") + 6; //$NON-NLS-1$
 		length = "Card".length(); //$NON-NLS-1$
@@ -791,7 +821,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPClassType);
-		assertEquals(((ICPPClassType) name.resolveBinding()).getName(), "Card"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Card"); //$NON-NLS-1$
 
 		index = code.indexOf("Card( int rank );"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -801,7 +831,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-		assertEquals(((ICPPConstructor) name.resolveBinding()).getName(), "Card"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Card"); //$NON-NLS-1$
 
 		index = code.indexOf("Card( int rank );") + 10; //$NON-NLS-1$
 		length = "rank".length(); //$NON-NLS-1$
@@ -812,7 +842,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("int rank;") + 4; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length).getParent();
@@ -822,7 +852,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("int getRank();") + 4; //$NON-NLS-1$
 		length = "getRank".length(); //$NON-NLS-1$
@@ -833,7 +863,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPMethod);
-		assertEquals(((ICPPMethod) name.resolveBinding()).getName(), "getRank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "getRank"); //$NON-NLS-1$
 
 		index = code.indexOf("Card::Card( int rank )"); //$NON-NLS-1$
 		length = "Card".length(); //$NON-NLS-1$
@@ -844,7 +874,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPClassType);
-		assertEquals(((ICPPClassType) name.resolveBinding()).getName(), "Card"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Card"); //$NON-NLS-1$
 
 		index = code.indexOf("Card::Card( int rank )") + 6; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -854,7 +884,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPConstructor);
-		assertEquals(((ICPPConstructor) name.resolveBinding()).getName(), "Card"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Card"); //$NON-NLS-1$
 
 		index = code.indexOf("Card::Card( int rank )") + 16; //$NON-NLS-1$
 		length = "rank".length(); //$NON-NLS-1$
@@ -865,7 +895,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = ::rank();") + 6; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -875,7 +905,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = ::rank();") + 15; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -885,7 +915,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IFunction);
-		assertEquals(((IFunction) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = this->rank;") + 6; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -895,7 +925,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = this->rank;") + 19; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -905,7 +935,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = rank;") + 6; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -915,7 +945,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = rank;") + 13; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length).getParent();
@@ -925,7 +955,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = Card::rank;") + 6; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -935,7 +965,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = Card::rank;") + 19; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -945,7 +975,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = getRank();") + 6; //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
@@ -955,7 +985,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPField);
-		assertEquals(((ICPPField) name.resolveBinding()).getName(), "rank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "rank"); //$NON-NLS-1$
 
 		index = code.indexOf("this->rank = getRank();") + 13; //$NON-NLS-1$
 		length = "getRank".length(); //$NON-NLS-1$
@@ -966,9 +996,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTIdExpression) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPMethod);
-		assertEquals(((ICPPMethod) name.resolveBinding()).getName(), "getRank"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "getRank"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug77989() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("namespace N {        /* A */\n"); //$NON-NLS-1$
@@ -986,9 +1017,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICPPNamespace);
-		assertEquals(((ICPPNamespace) name.resolveBinding()).getName(), "N"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "N"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug78435() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int itself;          //A\n"); //$NON-NLS-1$
@@ -1004,7 +1036,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "itself"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "itself"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length).getParent();
 		assertNotNull(node);
 		assertTrue(node instanceof IASTDeclarator);
@@ -1012,9 +1044,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IVariable);
-		assertEquals(((IVariable) name.resolveBinding()).getName(), "itself"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "itself"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug78231A() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("struct Base {\n"); //$NON-NLS-1$
@@ -1031,7 +1064,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICompositeType);
-		assertEquals(((ICompositeType) name.resolveBinding()).getName(), "Data"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Data"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
 		assertNotNull(node);
 		assertTrue(node instanceof IASTName);
@@ -1039,9 +1072,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICompositeType);
-		assertEquals(((ICompositeType) name.resolveBinding()).getName(), "Data"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Data"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug78231B() throws Exception {
 		Writer writer = new StringWriter();
 		writer.write("int Data;\n"); //$NON-NLS-1$
@@ -1059,7 +1093,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICompositeType);
-		assertEquals(((ICompositeType) name.resolveBinding()).getName(), "Data"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Data"); //$NON-NLS-1$
 		node = parse(code, ParserLanguage.CPP, index, length);
 		assertNotNull(node);
 		assertTrue(node instanceof IASTName);
@@ -1067,9 +1101,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ICompositeType);
-		assertEquals(((ICompositeType) name.resolveBinding()).getName(), "Data"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "Data"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleKRCTest1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(char x);\n"); //$NON-NLS-1$
@@ -1086,9 +1121,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleKRCTest2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f();\n"); //$NON-NLS-1$
@@ -1105,9 +1141,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleKRCTest3() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int const *f();\n"); //$NON-NLS-1$
@@ -1124,9 +1161,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTSimpleDeclaration) node).getDeclarators()[0].getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRC_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int isroot (x, y) /* comment */ \n"); //$NON-NLS-1$
@@ -1144,9 +1182,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "y"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "y"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRCWithTypes() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("typedef char c;\n"); //$NON-NLS-1$
@@ -1165,7 +1204,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = ((IASTNamedTypeSpecifier) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof ITypedef);
-		assertEquals(((ITypedef) name.resolveBinding()).getName(), "c"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "c"); //$NON-NLS-1$
 
 		index = code.indexOf("x;"); //$NON-NLS-1$
 		length = "x".length(); //$NON-NLS-1$
@@ -1176,9 +1215,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = ((IASTDeclarator) node).getName();
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "x"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "x"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRC_monop_cards1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#ifdef __STDC__\n"); //$NON-NLS-1$
@@ -1214,7 +1254,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IField);
-		assertEquals(((IField) name.resolveBinding()).getName(), "c"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "c"); //$NON-NLS-1$
 
 		index = code.indexOf("c[2]"); //$NON-NLS-1$
 		length = "c".length(); //$NON-NLS-1$
@@ -1224,9 +1264,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IField);
-		assertEquals(((IField) name.resolveBinding()).getName(), "c"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "c"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRC_monop_cards2() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int\n"); //$NON-NLS-1$
@@ -1244,7 +1285,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertEquals(name.toString(), "list"); //$NON-NLS-1$
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "list"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "list"); //$NON-NLS-1$
 
 		index = code.indexOf("[]"); //$NON-NLS-1$
 		length = "[]".length(); //$NON-NLS-1$
@@ -1259,6 +1300,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertTrue(node instanceof IASTPointer);
 	}
 
+	@Test
 	public void testKRC_getParametersOrder() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int f(a, b) int b,a;{}\n"); //$NON-NLS-1$
@@ -1273,9 +1315,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertEquals(name.toString(), "b"); //$NON-NLS-1$
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IParameter);
-		assertEquals(((IParameter) name.resolveBinding()).getName(), "b"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "b"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testKRC_Ethereal_1() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct symbol {\n"); //$NON-NLS-1$
@@ -1309,7 +1352,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IField);
-		assertEquals(((IField) name.resolveBinding()).getName(), "symbols"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "symbols"); //$NON-NLS-1$
 
 		index = code.indexOf("lemp->symbols") + 6; //$NON-NLS-1$
 		length = "symbols".length(); //$NON-NLS-1$
@@ -1319,9 +1362,10 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IField);
-		assertEquals(((IField) name.resolveBinding()).getName(), "symbols"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "symbols"); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBug86698() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("struct C;\n"); //$NON-NLS-1$
@@ -1340,10 +1384,11 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		IASTName name = (IASTName) node;
 		assertNotNull(name.resolveBinding());
 		assertTrue(name.resolveBinding() instanceof IField);
-		assertEquals(((IField) name.resolveBinding()).getName(), "c"); //$NON-NLS-1$
+		assertEquals(name.resolveBinding().getName(), "c"); //$NON-NLS-1$
 
 	}
 
+	@Test
 	public void testLittleThings() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("int a[3];\r\n"); //$NON-NLS-1$
@@ -1414,6 +1459,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		}
 	}
 
+	@Test
 	public void testSimpleWindowsPreprocessorSelections() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define ONE 1\r\n"); //$NON-NLS-1$
@@ -1460,6 +1506,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		}
 	}
 
+	@Test
 	public void testBug86993() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define _BEGIN_STD_C extern \"C\" {\r\n"); //$NON-NLS-1$
@@ -1485,6 +1532,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertTrue(name.resolveBinding() instanceof IVariable);
 	}
 
+	@Test
 	public void testBug86870() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#if VERSION == 1\r\n"); //$NON-NLS-1$
@@ -1533,6 +1581,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertEquals(((ASTNode) node).getLength(), length);
 	}
 
+	@Test
 	public void testBug87179() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("#define ONE 1\r\n"); //$NON-NLS-1$
@@ -1549,6 +1598,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertNotNull(node);
 	}
 
+	@Test
 	public void testBug96702() throws Exception {
 		importFile("test.h", "int x;\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		String code = "#include \"test.h\"   // comment \nvoid f();   // comment \n"; //$NON-NLS-1$
@@ -1561,6 +1611,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertEquals(((ASTNode) node).getLength(), 1);
 	}
 
+	@Test
 	public void testBug97301() throws Exception {
 		StringBuilder buffer = new StringBuilder();
 		// test2.h:
@@ -1601,6 +1652,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertEquals(fileOffset, fileLocOffset);
 	}
 
+	@Test
 	public void testBug86126() throws Exception {
 		String header = "foo" + System.currentTimeMillis() + ".h";
 		String source = "blah" + System.currentTimeMillis() + ".c";
@@ -1613,6 +1665,7 @@ public class AST2SelectionParseTest extends AST2SelectionParseTestBase {
 		assertNotNull(node);
 	}
 
+	@Test
 	public void testBug98806() throws Exception {
 		String code = "template <class T> class A { typedef typename T::B _B;};";
 		IASTNode node = parse(code, ParserLanguage.CPP, code.indexOf("T::B"), "T::B".length());

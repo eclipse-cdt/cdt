@@ -186,6 +186,7 @@ public class FoldingTest extends FoldingTestBase {
 	////
 	//// non-doc multiline (with blank first line)
 	//// line 3
+
 	//void func3() {}
 	//
 	/////

@@ -715,6 +715,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//#endif /* TEST_H_ */
 	//====================
 	///*
+
 	// * test.h
 	// */
 	//
@@ -762,6 +763,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//#endif /* TEST_H_ */
 	//====================
 	///*
+
 	// * test.h
 	// */
 	//
@@ -1313,6 +1315,7 @@ public class GenerateGettersAndSettersTest extends RefactoringTestBase {
 	//#endif /* TEST_H_ */
 	//====================
 	///*
+
 	// * test.h
 	// */
 	//

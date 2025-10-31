@@ -97,6 +97,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//====================
 	//// Comment line 1
 	//// Comment line 2
+
 	//
 	//#include "A.h"
 	//
@@ -133,6 +134,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//#define INCLUDE_GUARD
 	//// Comment line 1
 	//// Comment line 2
+
 	//
 	//#include "B.h"
 	//
@@ -172,6 +174,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//namespace ns {
 	//// Comment line 1
 	//// Comment line 2
+
 	//
 	//// Comment for A
 	//class A : public B<C> {};
@@ -202,6 +205,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 
 	//A.cpp
 	//// Comment
+
 	//
 	//#include "h2.h" /* Required */  // another comment
 	//#include "h1.h"  // Unused
@@ -260,6 +264,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 
 	//A.cpp
 	//// Comment
+
 	//
 	//#include "h2.h" /* Required */  // another comment
 	//#include "h1.h"  // Unused
@@ -375,6 +380,7 @@ public class IncludeOrganizerTest extends IncludesTestBase {
 	//h4.h
 	//#include "h1.h"
 	///* IWYU pragma: begin_exports */
+
 	//#include "h3.h"
 	///* IWYU pragma: end_exports */
 	//class D {};

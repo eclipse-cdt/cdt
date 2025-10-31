@@ -196,6 +196,7 @@ public class FoldingCommentsTest extends FoldingTestBase {
 	//
 	///// adjacent single lines of different types, first line takes precedence
 	//// line 2
+
 	//void func11d() {}
 	//
 	///// adjacent single lines of different types, first line takes precedence

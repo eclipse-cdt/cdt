@@ -2480,6 +2480,7 @@ public class ToggleRefactoringTest extends RefactoringTestBase {
 	//}
 	///* two */catch (int j) {
 	//	// draa
+
 	//}
 	///* three */
 	public void testClassToHeaderTrailingMultipleCommentsInTryBlock() throws Exception {

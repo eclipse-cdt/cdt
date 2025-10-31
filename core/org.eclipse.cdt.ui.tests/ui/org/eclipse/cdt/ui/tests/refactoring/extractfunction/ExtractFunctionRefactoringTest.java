@@ -2548,6 +2548,7 @@ public class ExtractFunctionRefactoringTest extends RefactoringTestBase {
 
 	//test.h
 	///*
+
 	// * Copyright 2009
 	// */
 	//#ifndef test_h_seen

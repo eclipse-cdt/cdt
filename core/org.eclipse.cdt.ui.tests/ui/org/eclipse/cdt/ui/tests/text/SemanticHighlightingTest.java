@@ -420,6 +420,7 @@ public class SemanticHighlightingTest extends TestCase {
 	//class myClass {};                                  //$class
 	//
 	////http://bugs.eclipse.org/372004
+
 	//void g() {                                         //$functionDeclaration
 	//    // declared as global near top
 	//    extern int globalVariable;                     //$globalVariable

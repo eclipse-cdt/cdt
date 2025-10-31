@@ -26,6 +26,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Base class for tests that use AST. The files in the test project are created from the comments
@@ -34,7 +36,8 @@ import org.eclipse.core.runtime.Path;
  * header1.h, header2.h, etc. The AST is created for the source file only and can be obtained
  * by calling getAst().
  */
-public abstract class OneSourceMultipleHeadersTestCase extends BaseTestCase {
+public abstract class OneSourceMultipleHeadersTestCase extends BaseTestCase5 {
+
 	private static final boolean DEBUG = false;
 
 	private final TestSourceReader testSourceReader;
@@ -49,7 +52,6 @@ public abstract class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 	}
 
 	public OneSourceMultipleHeadersTestCase(String name, TestSourceReader testSourceReader, boolean cpp) {
-		super(name);
 		this.testSourceReader = testSourceReader;
 		this.cpp = cpp;
 	}
@@ -74,8 +76,8 @@ public abstract class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 		return testData[testData.length - 1].toString();
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void createTestData() throws Exception {
 		setUp(false);
 	}
 
@@ -120,8 +122,8 @@ public abstract class OneSourceMultipleHeadersTestCase extends BaseTestCase {
 		ast = TestSourceReader.createIndexBasedAST(index, cproject, cppfile);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void cleanupTestData() throws Exception {
 		if (index != null) {
 			index.releaseReadLock();
 		}

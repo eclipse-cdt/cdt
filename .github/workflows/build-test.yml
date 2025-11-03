@@ -54,7 +54,7 @@ jobs:
         mvn \
           clean verify -B -V \
           -Dmaven.test.failure.ignore=true \
-          -DexcludedGroups=flakyTest,slowTest \
+          -DexcludedGroups=flakyTest,slowTest,jdt-ui-bug \
           -Ddsf.gdb.tests.timeout.multiplier=50 \
           -Ddsf-gdb.skip.tests=$(test ${{ steps.filter.outputs.dsf }} == 'false' && echo 'true' || echo 'false') \
           -Dindexer.timeout=300 \

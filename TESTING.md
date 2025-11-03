@@ -64,8 +64,28 @@ As an example, this is how the `org.eclipse.cdt.core.tests` project is configure
 
 ## File name patterns
 
-The build machine generally use the standard [Tycho Surefire](https://www.eclipse.org/tycho/sitedocs/tycho-surefire-plugin/plugin-info.html) class name patterns for [includes](https://www.eclipse.org/tycho/sitedocs/tycho-surefire-plugin/integration-test-mojo.html#includes) and [excludes](https://www.eclipse.org/tycho/sitedocs/tycho-surefire-plugin/integration-test-mojo.html#excludes) to identify tests during automated builds.
+The build machine generally use the standard [Tycho Surefire](https://www.eclipse.org/tycho/sitedocs/tycho-surefire-plugin/plugin-info.html) class name patterns for [includes](https://tycho.eclipseprojects.io/doc/latest/tycho-surefire-plugin/plugin-test-mojo.html#includes) and [excludes](https://tycho.eclipseprojects.io/doc/latest/tycho-surefire-plugin/plugin-test-mojo.html#excludes) to identify tests during automated builds.
 See [BUILDING](BUILDING.md) for more information.
+
+## JDT UI test discovery
+
+JDT does not do test discovery in the same way that Tycho Surefire does.
+In particular, JDT will discover tests based on the contents (such as using `@Test` annotations), which means JDT will find tests that will not run on the build machine.
+Therefore, ensure that when contributing new tests to the suite that they actually run on the build machine.
+
+### JDT UI can miss nested tests
+
+JDT can miss nested tests, such as org.eclipse.cdt.internal.index.tests.IndexCBindingResolutionBugsTest.SingleProjectTest.
+Therefore extra care needs to be taken to ensure that these tests are discovered.
+As of the writing of this, it means when using JUnit5 and "Run all tests in the selected project, package or source folder" ensure that you have the package `org` selected within the source folder, instead of the source folder `parser`.
+
+![jdt_use_package.png](images/jdt_use_package.png "screenshot of what to select")
+
+As the expectation is that no one will likely see this help, a test that always fails has been introduced to make sure devs read this documentation.
+Once read and understood, the test failure can be ignored, or even excluded by adding `jdt-ui-bug` to the list of excluded tags.
+
+See [this issue #2591](https://github.com/eclipse-jdt/eclipse.jdt.ui/issues/2591) for the current state.
+Once the JDT issue is resolved, this particular caution and workaround will not be needed.
 
 ## Marking tests as Slow or Flaky
 

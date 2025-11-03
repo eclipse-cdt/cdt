@@ -43,7 +43,7 @@ pipeline {
                       -Ddsf-gdb.skip.tests=true \
                       -Dgpg.passphrase="${KEYRING_PASSPHRASE}"  \
                       -Dmaven.test.failure.ignore=true \
-                      -DexcludedGroups=flakyTest,slowTest \
+                      -DexcludedGroups=flakyTest,slowTest,jdt-ui-bug \
                       -P baseline-compare-and-replace \
                       -P api-baseline-check \
                       -Ddsf.gdb.tests.timeout.multiplier=50 \

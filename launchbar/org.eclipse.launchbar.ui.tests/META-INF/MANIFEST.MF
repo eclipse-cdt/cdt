@@ -3,12 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.launchbar.ui.tests;singleton:=true
 Bundle-Version: 1.1.0.qualifier
+Export-Package: org.eclipse.launchbar.ui.tests
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
  org.eclipse.swtbot.go;bundle-version="[4.2.1,5)",
  org.eclipse.debug.core;bundle-version="[3.23.0,4)",
- org.eclipse.debug.ui;bundle-version="[3.18.800,4)"
+ org.eclipse.debug.ui;bundle-version="[3.18.800,4)",
+ org.eclipse.launchbar.core;bundle-version="3.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.launchbar.ui.controls.internal,

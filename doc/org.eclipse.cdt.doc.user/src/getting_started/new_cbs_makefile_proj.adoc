@@ -28,7 +28,7 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Creating a Core Build System Makefile project
+== Creating a Core Makefile project
 
 This tutorial describes the process of creating a new C/{cpp} project that includes a Makefile file.
 
@@ -52,7 +52,7 @@ image:c_cpp_project_wizard.png[width=515]
 
 By default, the CDT presents all *C/{cpp} Project* templates.
 
-. Select the *Make* template filter and choose from the *Makefile project* project template.
+. Select the *Make* template filter and choose *Core Makefile Project*.
 +
 image:c_cpp_project_wizard_makefile.png[]
 +

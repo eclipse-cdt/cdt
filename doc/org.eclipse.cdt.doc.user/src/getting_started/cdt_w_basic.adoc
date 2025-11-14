@@ -28,7 +28,7 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-== Tutorial: Creating a Managed Build System Makefile project
+== Tutorial: Creating a Classic C/{cpp} project
 
 In this tutorial, you will use the CDT to create a simple 'Hello World'
 application. This tutorial describes the process of creating a new {cpp}
@@ -56,7 +56,7 @@ option,width=591,height=183]
  +
 image:cdt_w_basic03a.png[Select project type]
  +
-. Select *{cpp} Managed Build* and click *Next*.
+. Select *Classic {cpp} Project* and click *Next*.
  +
 image:cdt_w_basic03b.png[Select {cpp} Managed Build]
  +

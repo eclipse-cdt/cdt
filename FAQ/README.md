@@ -458,7 +458,7 @@ later to avoid having to rebuild manually when modifying your
 projects.)
 2. In the "C/C++ Projects" View, right click and select "New
 Project ..."
-3. Expand "C++", then select "Managed Make C++ Project"
+3. Expand "C/C++", then select C/C++ Project"
 4. Enter a name for the new project and select "Finish". Note: you
 can determine the build Settings from this dialog, but we will do so
 later, in the build section.
@@ -469,7 +469,7 @@ later, in the build section.
 <!-- end list -->
 
 ``` cpp
-              
+
 #include <stdio.h>
 int main()
 {
@@ -526,11 +526,11 @@ so later, in the build section.
 int main()
 {
     printf("Hello World\n");
-    
+
     //block until user types something
     getchar();
     return 0;
-} 
+}
 ```
 
 Now, save the file.
@@ -606,8 +606,8 @@ really easy. You must choose "Makefile project/Other Toolchain" in New →
 Convert to C/C++ project. You should manually set the include path to
 follow the NDK toolchain:
 
-`${NDK_ROOT}/build/prebuilt/windows/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/include-fixed`  
-`${NDK_ROOT}/build/prebuilt/windows/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/include`  
+`${NDK_ROOT}/build/prebuilt/windows/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/include-fixed`
+`${NDK_ROOT}/build/prebuilt/windows/arm-eabi-4.4.0/lib/gcc/arm-eabi/4.4.0/include`
 `${NDK_ROOT}/build/platforms/android-8/arch-arm/usr/include`
 
 You can **build** native code with CDT as part of the Android project
@@ -664,8 +664,8 @@ containing your source file.
 
 For example, in the following code:
 
-`     int main() {`  
-`       pr`  
+`     int main() {`
+`       pr`
 `   }`
 
 You should not expect "pr" to provide "printf" as a completion unless:
@@ -839,7 +839,7 @@ Since Eclipse Juno this new Scanner Discovery is integrated in CDT, see
 
 #### Why is this key/arrow/push pin emblem is shown on my file? Or maybe it is a wrench icon.
 
-![Wrench.png](images/Wrench.png "Wrench.png")  
+![Wrench.png](images/Wrench.png "Wrench.png")
 Yes it is a wrench overlay. It is shown when build settings for file or
 folder are customized, i.e. differ from parent resource. This also
 includes custom include paths and macros.
@@ -884,7 +884,7 @@ feature, see this message:
 
 <http://www.eclipse.org/forums/index.php/mv/msg/373462/909018/#msg_909018>
 
-  
+
 
 #### The index is rebuilt every time the active configuration is changed and it takes too long
 
@@ -1032,8 +1032,8 @@ This message usually indicates that the a tool called from inside the
 makefile is not found (on the path). If the error looks like the
 following, then "gcc" could not be found:
 
-`gcc -c hello.c`  
-`Process begin: CreateProcess((null), gcc -c hello.c, ...) failed.`  
+`gcc -c hello.c`
+`Process begin: CreateProcess((null), gcc -c hello.c, ...) failed.`
 `make (e=2): The system cannot find the file specified.`
 
 You will need to ensure that the path to the executable "gcc" is on your
@@ -1153,12 +1153,12 @@ proper setup of GDB as described below.
 
 ![NoPrettyPrint.png](images/NoPrettyPrint.png "NoPrettyPrint.png")
 
-  
+
 **With pretty-printing:**
 
 ![FullPrettyPrint.png](images/FullPrettyPrint.png "FullPrettyPrint.png")
 
-  
+
 **Configuring GDB for pretty-printing:**
 
   - You will need to have python installed on your machine
@@ -1180,7 +1180,7 @@ proper setup of GDB as described below.
     add the following lines (use whatever limit you feel is
     appropriate):
 
-`       if len > 100:`  
+`       if len > 100:`
 `          len = 100`
 
   - You will need to create a gdbinit file to tell GDB where the
@@ -1189,11 +1189,11 @@ proper setup of GDB as described below.
     checked-out. So if checked out to: /home/marc/gdb\_printers/, the
     path would be as written in the example:
 
-` python`  
-`import sys`  
-`sys.path.insert(0, '/home/marc/gdb_printers/python')`  
-`from libstdcxx.v6.printers import register_libstdcxx_printers`  
-`register_libstdcxx_printers (None)`  
+` python`
+`import sys`
+`sys.path.insert(0, '/home/marc/gdb_printers/python')`
+`from libstdcxx.v6.printers import register_libstdcxx_printers`
+`register_libstdcxx_printers (None)`
 `end`
 
   - You will need GDB 7.0 or later. That latest version of GDB is
@@ -1244,7 +1244,7 @@ debugging buttons will appear, allowing you to do:
   - Reverse Step-over
   - Reverse Step-return
 
-  
+
 ![ReverseButtons.png](images/ReverseButtons.png "ReverseButtons.png")
 
 #### What is the difference between Non-stop and All-stop multi-threaded debugging?
@@ -1265,7 +1265,7 @@ Debugger subtab. You will require GDB 7.0 or later.
 
 ![NonStopOption.png](images/NonStopOption.png "NonStopOption.png")
 
-  
+
 A global preference can be set in *Preferences-\>C/C++-\>Debug-\>GDB* to
 default to Non-stop mode for any new launch.
 
@@ -1458,7 +1458,7 @@ sessions.
 
 ![MultiAttachDialog.png](images/MultiAttachDialog.png "MultiAttachDialog.png")
 
-  
+
 You will then have the newly selected process added to your debug
 session, where you can control it and examine it. You can use the
 "Disconnect" button to remove processes from your debug session, or you
@@ -1467,12 +1467,12 @@ can use the "Connect" button to add new ones.
 ![MultiProducerConsumer.png](images/MultiProducerConsumer.png
 "MultiProducerConsumer.png")
 
-  
+
 An option to automatically attach to a forked process is also available.
 This means that whenever any process you are currently debugging forks a
 new process, that new process will be added to your debug session.
 
-  
+
 ![AutoAttachOption.png](images/AutoAttachOption.png "AutoAttachOption.png")
 
 #### What is the Multicore Visualizer?
@@ -1500,29 +1500,29 @@ For example:
   - pattern-matched sorted groups of local variables, where the symbols
     \* \[\] ? can be used e.g.,
 
-`=v?r     -- Will show local variables starting with a 'v' and ending with 'r' with a single character in between`  
-`=*       -- Will show all local variables of the selected stack frame in sorted order (the '=' is optional for this expression, i.e., '*')`  
+`=v?r     -- Will show local variables starting with a 'v' and ending with 'r' with a single character in between`
+`=*       -- Will show all local variables of the selected stack frame in sorted order (the '=' is optional for this expression, i.e., '*')`
 `=*x      -- Will show local variables ending with 'x'`
 
   - array ranges including glob-expressions
 
-`=array[30-40]        -- Will show array elements from 30 to 40`  
-`=array[1-5,20,30-31] -- Will show array elements from 1 to 5, 20 and 30 to 31`  
+`=array[30-40]        -- Will show array elements from 30 to 40`
+`=array[1-5,20,30-31] -- Will show array elements from 1 to 5, 20 and 30 to 31`
 `=array?[1-5]         -- Will show array elements from 1 to 5 for any array starting with 'array' followed by a single character`
 
   - pattern-matched sorted registers groups, where the symbols \* \[\] ?
     can be used e.g.,
 
-`=$e?x     -- Will show all registers starting with 'e' and ending with 'x' with a single character in between`  
-`=$*       -- Will show all registers (the '=' is optional for this expression, i.e., '$*')`  
-`=$*x      -- Will show registers ending with 'x'`  
+`=$e?x     -- Will show all registers starting with 'e' and ending with 'x' with a single character in between`
+`=$*       -- Will show all registers (the '=' is optional for this expression, i.e., '$*')`
+`=$*x      -- Will show registers ending with 'x'`
 `=$st[3-5] -- Will show registers $st3, $st4, $st5`
 
   - semi-colon-separated, individually sorted groups of expressions,
     e.g,
 
-`var1; var2 -- Will create a group containing both var1 and var2 `  
-`$eax; var1 -- Will show a group containing register $eax and variable var1`  
+`var1; var2 -- Will create a group containing both var1 and var2 `
+`$eax; var1 -- Will show a group containing register $eax and variable var1`
 `var1; =$e*  -- Will show a group containing variable var1 as well as all registers starting with 'e'`
 
 This feature allows to quickly define multiple expressions that interest
@@ -1700,11 +1700,11 @@ This command accepts a comma-separated list of any valid expressions. In
 addition to global, static, or local variables, the following special
 arguments are supported:
 
-`$regs `  
-`     Collect all registers. `  
-`$args `  
-`     Collect all function arguments. `  
-`$locals `  
+`$regs `
+`     Collect all registers. `
+`$args `
+`     Collect all function arguments. `
+`$locals `
 `     Collect all local variables.`
 
 You can give several consecutive collect commands, each one with a
@@ -1722,7 +1722,7 @@ incorporating this in Eclipse in a graphical way.
 
 ![CollectString.png](images/CollectString.png "CollectString.png")
 
-  
+
 *Evaluate*
 
 Evaluate the given expressions when the tracepoint is hit. This command
@@ -1753,7 +1753,7 @@ is hit *n* times. Note that hitting the passcount limit will stop the
 particular tracepoint. To disable a tracepoint after a certain count,
 one must use a tracepoint condition and a *trace state variable*.
 
-  
+
 Now that your Tracepoints are all setup, it is time to run the
 application and trace it. Note that creating Tracepoints does not
 automatically start tracing the application, even if the debug session
@@ -2011,7 +2011,7 @@ FAQ](http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/cdt-home/user/faq.h
 A tip has been posted to the cdt-dev mailinglist recently:
 <http://dev.eclipse.org/mhonarc/lists/cdt-dev/msg17396.html>.
 
-  
+
 The idea is to start a new terminal yourself such as xterm:
 
 `      term -title "debugger terminal" -e /bin/sh -c "tty; sleep 3600" &`
@@ -2125,7 +2125,7 @@ you can use package systems such as [Homebrew](http://brew.sh/) and
 [MacPorts](http://www.macports.org). Once installed, when you start
 debugging with GDB you will see an error message such as:
 
-`Unable to find Mach task port for process-id 28885: (os/kern) failure (0x5).`  
+`Unable to find Mach task port for process-id 28885: (os/kern) failure (0x5).`
 ` (please check gdb is codesigned - see taskgated(8))`
 
 In this case, you need to code sign GDB by following the instructions
@@ -2316,12 +2316,12 @@ Communication with boost test module is done through standard output
 flush the data about tests execution when they are available. Possible
 solution is to turn off the standard output buffering like this:
 
-`   static struct DisableStdCoutBuffering`  
-`  {`  
-`      DisableStdCoutBuffering()`  
-`      {`  
-`          std::cout.setf(std::ios_base::unitbuf);`  
-`      }`  
+`   static struct DisableStdCoutBuffering`
+`  {`
+`      DisableStdCoutBuffering()`
+`      {`
+`          std::cout.setf(std::ios_base::unitbuf);`
+`      }`
 `  } s_disableStdCoutBuffering;`
 
 ## Miscellaneous Troubleshooting
@@ -2348,7 +2348,7 @@ more details. Either add fflush calls after every printf or add the
 following lines in the start of the main function:
 
 ``` c
- 
+
 setvbuf(stdout, NULL, _IONBF, 0);
 setvbuf(stderr, NULL, _IONBF, 0);
 ```
@@ -2381,7 +2381,7 @@ The web page <http://www.thefreecountry.com/compilers/cpp.shtml>
 contains a list of free C and C++ compilers for various platforms and
 targets.
 
-  
+
 
 #### How to handle Resource-Script-Files '\*.rc' with CDT?
 
@@ -2765,7 +2765,7 @@ For other information you can perhaps attach to the CVS repository @
 dev.eclipse.org in order to see the rest of the code. The repository
 path is /home/tools and you can attach anonymously to get the source.
 
-  
+
 
 #### Missing org.eclipse.cdt.templateengine
 
@@ -2792,10 +2792,10 @@ Tip: Increase heap size before starting the index for Linux Kernel. See [How do 
 - Start up Eclipse.
 - Click **File** -&gt; **New** -&gt; **Project**
 - In the pop-up window, choose **C/C++**-&gt; **C/C++ Project**. Click **Next**
-- In the next window, choose **C Managed Build**
+- In the next window, choose **Classic C Project**
 - Fill in a project name like *Linux v6.12*
 - Uncheck the **Use default location** box and type in the root directory of your kernel into the **Location** box.
-- In the **Project type:** pane, click the **Makefile project** and select **Empty Project**
+- In the **Project type:** pane, click the **Makefile project** and select **Existing code or empty Project**
 - On the right side, select **Linux GCC**. Click **Next**
 - Click **Advanced settings...** and a Properties dialog will pop up.
 -  Note: At this point, and starting from Eclipse Oxygen, Eclipse will aggressively start indexing your project, which can make Eclipse painfully slow for the rest of the configuration steps below. To mitigate that, temporarily disable indexing now by opening **C/C++ General** section, click on **Indexer**, click on **Enable project-specific settings**, then unmark the **Enable indexer** option and click on **Apply**.
@@ -3139,7 +3139,7 @@ please see: [getting IProject](http://cdt-devel-faq.wikidot.com/#toc4)
 Originally from:
 
 ``` html4strict
-org.eclipse.linuxtools.profiling.ui.CProjectBuildHelpers.setOption_inCDT(IProject, String, boolean, String) 
+org.eclipse.linuxtools.profiling.ui.CProjectBuildHelpers.setOption_inCDT(IProject, String, boolean, String)
 ```
 
 ### Programmatically add/remove a language settings provider
@@ -3168,7 +3168,7 @@ private void fiddleProjectLanguageSettingsProvider(IProject project) throws Core
     final ILanguageSettingsProvidersKeeper lspKeeper = (ILanguageSettingsProvidersKeeper) projConfig;
     final List<ILanguageSettingsProvider> lspProviders = lspKeeper.getLanguageSettingProviders();
     final List<ILanguageSettingsProvider> fiddled = new ArrayList<>(lspProviders);
-      
+
         /* Prepare new language settings provider by modifying 'fiddled' */
         your own business...;
 
@@ -3193,9 +3193,9 @@ items.
 
 #### Plug-in used
 
-Eclipse PDE 3.3.1.1  
-CDT 4.0.2  
-Plug-in in development (CUTE)  
+Eclipse PDE 3.3.1.1
+CDT 4.0.2
+Plug-in in development (CUTE)
 
 #### Steps
 
@@ -3231,24 +3231,24 @@ Menus](http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/referen
 The path is separated by **/**, and thus you can have an id with period
 within as shown. For CDT Source, the path is
 **org.eclipse.cdt.ui.source.menu**. For **Test Code** the group marker
-was omitted and thus defaulted to the group called **additions**  
+was omitted and thus defaulted to the group called **additions**
 ![04menu.png](images/04menu.png "04menu.png")
 
-Invalid path resulting in menu not shown  
+Invalid path resulting in menu not shown
 *Image missing from wiki source* `![04menuA.png](images/04menuA.png "04menuA.png")`
 
-Paths are not cumulative, no menu  
+Paths are not cumulative, no menu
 ![04menuB.png](images/04menuB.png "04menuB.png")
 
-Right clicking for menu is no longer possible  
+Right clicking for menu is no longer possible
 *Image missing from wiki source* `![04menuC.png](images/04menuC.png "04menuC.png")`
 
 Added to a new named group called **abcd**, just above
-**additions**,possible to appear after.  
+**additions**,possible to appear after.
 *Image missing from wiki source* `![04menuD.png](images/04menuD.png "04menuD.png")`
 
 It appears that only one menu maybe added to additions, no Add Test
-shown  
+shown
 ![04menuE.png](images/04menuE.png "04menuE.png")
 
 The working path that creates the submenu that I wanted
@@ -3267,11 +3267,11 @@ UI is represented via popupMenus.
 For the desired submenu, the menubarPath:
 **org.eclipse.cdt.ui.source.menu/addTestMenu/addTestGroup**
 
-![05action.png](images/05action.png "05action.png")  
-![05actionA.png](images/05actionA.png "05actionA.png")  
-![05actionB.png](images/05actionB.png "05actionB.png")  
+![05action.png](images/05action.png "05action.png")
+![05actionA.png](images/05actionA.png "05actionA.png")
+![05actionB.png](images/05actionB.png "05actionB.png")
 *Image missing from wiki source* `![05actionc.png](images/05actionc.png "05actionc.png")`
-![05actiond.png](images/05actiond.png "05actiond.png")  
+![05actiond.png](images/05actiond.png "05actiond.png")
 (menu)/(menu)/(GroupMarker)
 
 No menu shown as based on IWorkbenchActionConstants.MB\_ADDITIONS which
@@ -3314,7 +3314,7 @@ is empty at the moment. see popup menu ![05actione.png](05actione.png
                  label="New Test Function"
                  menubarPath="org.eclipse.cdt.ui.source.menu/ch.hsr.ifs.cutelauncher.testCodeMenu">
            </action>
-           
+
            <menu
                  id="ch.hsr.ifs.cutelauncher.testCodeMenu"
                  label="Test Code"

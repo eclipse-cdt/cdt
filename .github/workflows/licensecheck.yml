@@ -4,18 +4,21 @@ name: License check
 
 on:
   push:
-    branches: 
-      - 'main'
   pull_request:
-    branches: 
-     - 'main'
+    paths:
+    - '**/pom.xml'
+    - '**/*.target'
+    - '.github/workflows/licensecheck.yml'
   issue_comment:
     types: [created]
 
 jobs:
   call:
+    if: github.event_name == 'pull_request' || github.event_name == 'issue_comment' || github.repository_owner == 'eclipse-cdt'
     uses: eclipse-dash/dash-licenses/.github/workflows/mavenLicenseCheck.yml@master
     with:
       projectId: tools.cdt
     secrets:
       gitlabAPIToken: ${{ secrets.GITLAB_API_TOKEN }}
+    permissions:
+      pull-requests: write

@@ -2,10 +2,10 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 <toc label="Getting Started">
           <topic label="Preparing the Workbench" href="getting_started/cdt_w_prepare_workbench.htm"/>
-	  <topic label="Core Build System" href="getting_started/index_cbs.htm">
-              <topic label="Core Build System" href="getting_started/core_build_system.htm"/>
+	  <topic label="CMake and Core Makefile projects" href="getting_started/index_cbs.htm">
+              <topic label="Using the Core Build System" href="getting_started/core_build_system.htm"/>
               <topic label="Creating a CMake project" href="getting_started/new_cmake_proj.htm"/>
-              <topic label="Creating a Core Build System Makefile project" href="getting_started/new_cbs_makefile_proj.htm"/>
+              <topic label="Creating a Core Makefile project" href="getting_started/new_cbs_makefile_proj.htm"/>
               <topic label="Using existing code" href="getting_started/cbs_using_existing_code.htm"/>
               <topic label="Launch Bar" href="getting_started/cbs_launchbar.htm"/>
               <topic label="Building a project" href="getting_started/cbs_build_project.htm"/>
@@ -13,8 +13,9 @@
               <topic label="Debugging a local target" href="getting_started/cbs_debug_project.htm"/>
               <topic label="Debugging a remote target" href="getting_started/cbs_debug_remote.htm"/>
           </topic>
-	  <topic label="Legacy Managed Build System" href="getting_started/index_mbs.htm">
-              <topic label="Creating a Managed Build System Makefile project" href="getting_started/cdt_w_basic.htm"/>
+	  <topic label="Classic C/C++ projects" href="getting_started/index_mbs.htm">
+              <topic label="Using the Managed Build System" href="getting_started/managed_build_system.htm"/>
+              <topic label="Creating a Classic C/C++ project" href="getting_started/cdt_w_basic.htm"/>
               <topic label="Importing an existing project" href="getting_started/cdt_w_import.htm"/>
               <topic href="getting_started/cdt_w_newcpp.htm" label="Creating a C++ file"/>
               <topic href="getting_started/cdt_w_newmake.htm" label="Creating a makefile"/>

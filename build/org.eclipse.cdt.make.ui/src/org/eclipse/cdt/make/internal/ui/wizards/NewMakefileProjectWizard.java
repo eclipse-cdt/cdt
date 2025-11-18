@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 QNX Software Systems and others.
+ * Copyright (c) 2017, 2025 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,7 +32,7 @@ public class NewMakefileProjectWizard extends TemplateWizard {
 	@Override
 	public void setContainer(IWizardContainer wizardContainer) {
 		super.setContainer(wizardContainer);
-		setWindowTitle("New Makefile Project");
+		setWindowTitle("New Core Makefile Project");
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class NewMakefileProjectWizard extends TemplateWizard {
 				Dialog.applyDialogFont(getControl());
 			}
 		};
-		mainPage.setTitle("New Makefile Project");
+		mainPage.setTitle("New Core Makefile Project");
 		mainPage.setDescription("Specify properties of new Makefile project.");
 		this.addPage(mainPage);
 	}

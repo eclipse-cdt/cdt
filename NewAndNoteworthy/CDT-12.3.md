@@ -36,6 +36,11 @@ With this release of CDT the WinPTY version of the code has been removed.
 The WinPTY code was known to not work in many circumstances.
 The replacement Windows Pseudo Console (ConPTY) API is much more stable.
 
+## Clearer wizards for Makefile projects
+
+Avoiding confusion by naming legacy Managed Build System projects "Classic C/C++" and
+Core Build System projects "Core Makefile".
+
 # API Changes, current and planned
 
 

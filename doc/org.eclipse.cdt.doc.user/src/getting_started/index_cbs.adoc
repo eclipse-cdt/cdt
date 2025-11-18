@@ -28,13 +28,13 @@ endif::[]
 // adoc files.
 // ENDOFHEADER
 
-= Core Build System
+= CMake and Core Makefile projects
 
 xref:core_build_system.adoc[Using the Core Build System]
 
 xref:new_cmake_proj.adoc[Creating a CMake project]
 
-xref:new_cbs_makefile_proj.adoc[Creating a Core Build System Makefile project]
+xref:new_cbs_makefile_proj.adoc[Creating a Core Makefile project]
 
 xref:cbs_using_existing_code.adoc[Using existing code]
 

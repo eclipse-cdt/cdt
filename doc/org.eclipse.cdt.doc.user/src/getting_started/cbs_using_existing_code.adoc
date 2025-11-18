@@ -55,10 +55,10 @@ xref:new_cmake_proj.adoc[Creating a CMake project]
 === Using an existing Makefile project
 
 Create a CBS Makefile project in CDT as described in
-xref:new_cbs_makefile_proj.adoc[Creating a Core Build System Makefile project]
+xref:new_cbs_makefile_proj.adoc[Creating a Core Makefile project]
 with the following changes:
 
-In the *New Makefile Project* wizard uncheck *Use default location*,
+In the *New Core Makefile Project* wizard uncheck *Use default location*,
 set the location of the existing code, and uncheck *Create Hello
 World Source and Makefile example*.
 

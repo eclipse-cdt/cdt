@@ -55,7 +55,9 @@ image:c_cpp_project_wizard.png[width=515]
 By default, the CDT presents all *C/{cpp} Project* templates.
 
 . Select the *CMake* template filter and choose from the following *CMake* project templates:
-
++
+image:c_cpp_project_wizard_cmake.png[]
++
 
 - *CMake Project* - provides a simple {cpp} Hello World executable application project with main() and a supporting CMakeLists.txt file.
 - *Empty or Existing CMake Project* - provides an empty executable application project suitable for importing existing source and CMakeLists.txt files.
@@ -72,4 +74,4 @@ Your new project displays in the Project Explorer view.
 Your project may be empty because you have not yet created files for your project.
 You can now start writing the code for your application or importing code from elsewhere.
 
-icon:arrow-circle-right[] xref:new_cbs_makefile_proj.adoc[Next: Creating a Core Build System Makefile project]
+icon:arrow-circle-right[] xref:new_cbs_makefile_proj.adoc[Next: Creating a Core Makefile project]

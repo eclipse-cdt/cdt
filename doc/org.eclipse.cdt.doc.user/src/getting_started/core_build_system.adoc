@@ -33,15 +33,15 @@ endif::[]
 The Core Build System is the successor of the legacy Managed Build
 System.
 
-The classical Makefile projects are based on the Managed Build System.
+The Classic C/{cpp} projects are based on the Managed Build System.
 Managed Build projects can generate a Makefile based on GUI controlled
 build configurations in the project properties. The user can
 manage the separate build configurations for Run and Debug. There is a
 notion of "active" build configuration, which is the one that gets
 built when the build button is pressed.
 
-The Core Build System is the basis for CMake projects and Core Build
-Makefile projects. The CDT LaunchBar plays a central role and is used
+The Core Build System is the basis for *CMake* projects and *Core
+Makefile* projects. The CDT LaunchBar plays a central role and is used
 for building and launching the program. The philosophy is "Build for
 launch". It simplifies the flow a lot.
 

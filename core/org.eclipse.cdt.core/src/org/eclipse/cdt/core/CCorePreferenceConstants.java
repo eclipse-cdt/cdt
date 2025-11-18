@@ -425,7 +425,7 @@ public class CCorePreferenceConstants {
 		IEclipsePreferences node = null;
 		if (project != null) {
 			node = new ProjectScope(project).getNode(CCorePlugin.PLUGIN_ID);
-			if (node.get(key, null) != null) {
+			if (node != null && node.get(key, null) != null) {
 				return node;
 			}
 		}

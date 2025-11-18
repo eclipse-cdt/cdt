@@ -33,6 +33,7 @@ import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.osgi.util.NLS;
 
 /**
@@ -65,6 +66,9 @@ public class PDOMRebuildTask implements IPDOMIndexerTask {
 
 	@Override
 	public void run(IProgressMonitor monitor) throws InterruptedException {
+		if (monitor.isCanceled()) {
+			return;
+		}
 		fProgressMonitor = monitor;
 		try {
 			monitor.subTask(

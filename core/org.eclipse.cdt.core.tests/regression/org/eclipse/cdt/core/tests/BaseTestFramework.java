@@ -18,6 +18,8 @@
  */
 package org.eclipse.cdt.core.tests;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
@@ -25,7 +27,6 @@ import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.FileManager;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase5;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -34,11 +35,13 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author aniefer
  */
-abstract public class BaseTestFramework extends BaseTestCase {
+abstract public class BaseTestFramework extends BaseTestCase5 {
 	protected NullProgressMonitor monitor;
 	protected IWorkspace workspace;
 	protected IProject project;
@@ -46,20 +49,8 @@ abstract public class BaseTestFramework extends BaseTestCase {
 	protected FileManager fileManager;
 	protected boolean indexDisabled = false;
 
-	public BaseTestFramework() {
-		super();
-	}
-
-	/**
-	 * @param name
-	 */
-	public BaseTestFramework(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void createProjectBefore() throws Exception {
 		monitor = new NullProgressMonitor();
 		workspace = ResourcesPlugin.getWorkspace();
 		cproject = CProjectHelper.createCCProject("RegressionTestProject", "bin", IPDOMManager.ID_NO_INDEXER); //$NON-NLS-1$ //$NON-NLS-2$
@@ -70,14 +61,13 @@ abstract public class BaseTestFramework extends BaseTestCase {
 		fileManager = new FileManager();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void cleanUpProjectAfter() throws Exception {
 		if (project == null || !project.exists())
 			return;
 
 		project.delete(true, true, monitor);
 		BaseTestCase5.assertWorkspaceIsEmpty();
-		super.tearDown();
 	}
 
 	protected IFile importFile(String fileName, String contents) throws Exception {

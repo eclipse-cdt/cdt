@@ -41,6 +41,18 @@ The replacement Windows Pseudo Console (ConPTY) API is much more stable.
 Avoiding confusion by naming legacy Managed Build System projects "Classic C/C++" and
 Core Build System projects "Core Makefile".
 
+## Enhanced LLDB debugger support
+
+The _Memory_ view now supports the editing of memory when debugging using LLDB.
+The _Variables_ view now supports the editing of local variables when debugging using LLDB.
+C/C++ Watchpoints may now be set on variables in the _Expressions_ view and modified from the _Breakpoint Properties_ dialog via the _Breakpoints_ view.
+These enhancements require installation of the optional [C/C++ LLDB Debugger Integration](https://github.com/eclipse-cdt/cdt/tree/main/FAQ#how-do-i-install-the-lldb-debugger-integration) feature and a build of the `lldb-mi` tool from sources more recent than version 0.0.1.
+On macOS hosts, `lldb-mi` may be built from the latest sources and installed using the following command:
+
+```
+brew install --HEAD eclipse-cdt/tools/lldb-mi
+```
+
 # API Changes, current and planned
 
 

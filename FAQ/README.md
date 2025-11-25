@@ -2187,7 +2187,7 @@ The lldb-mi tool may be installed using the Homebrew package manager. Install
 Homebrew by following instructions on the [Homebrew](https://brew.sh/) home
 page. Then install lldb-mi with
 
-`brew install eclipse-cdt/tools/lldb-mi`
+`brew install --HEAD eclipse-cdt/tools/lldb-mi`
 
 Note that if you had previous debug configurations with a non-default
 path for LLDB or if you changed the path in the preferences, the path to
@@ -2231,14 +2231,10 @@ Launcher**.
 
 #### What are the limitations of using the LLDB debugger in Eclipse?
 
-There are quite a few limitations right now but the LLDB integration is
-very new and evolving:
+There are quite a few limitations right now:
 
   - Remote debugging is not implemented
   - Core dump debugging is not implemented
-  - Watch points do not work
-  - Variables cannot be edited (Variables view)
-  - Memory cannot be edited (Memory view)
   - Move to Line, Resume at Line actions are not implemented (but Run to
     Line works)
   - Modules view is not populated

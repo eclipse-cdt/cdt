@@ -104,7 +104,7 @@ These tags can only be applied to JUnit5 (aka Jupiter) tests. If a test needs co
 
 ## Converting tests to JUnit5
 
-To take advantage of new features, such as excluding flaky and slow tests, individual tests need to JUnit5 (aka Jupiter). If a test is currently written in JUnit4 or JUnit3 style it needs to be converted to JUnit5 first. Those tests that currently derive from `org.eclipse.cdt.core.testplugin.util.BaseTestCase` (or `org.eclipse.cdt.ui.tests.BaseUITestCase` for UI tests) can change to `org.eclipse.cdt.core.testplugin.util.BaseTestCase5` (`org.eclipse.cdt.ui.tests.BaseUITestCase5` for UI tests) and make further adjustments. Common adjustments are:
+To take advantage of new features, such as excluding flaky and slow tests, individual tests need to be upgraded to JUnit5 (aka Jupiter). If a test is currently written in JUnit4 or JUnit3 style, it needs to be converted to JUnit5 first. Those tests that currently derive from `org.eclipse.cdt.core.testplugin.util.BaseTestCase` (or `org.eclipse.cdt.ui.tests.BaseUITestCase` for UI tests) can change to `org.eclipse.cdt.core.testplugin.util.BaseTestCase5` (`org.eclipse.cdt.ui.tests.BaseUITestCase5` for UI tests) and make further adjustments. Common adjustments are:
 - refactoring `setUp`/`tearDown` methods to use `@BeforeEach` and `@AfterEach` annotations
 - refactor complicated uses of TestSuites in JUnit3 that were workarounds for the lack of JUnit features like `@BeforeAll` and `@AfterAll`.
 - add `@Test` annotation (make sure to use `org.junit.jupiter.api.Test` and not JUnit4's `org.junit.Test`)

@@ -13,6 +13,12 @@
  ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.StringWriter;
 
 import org.eclipse.cdt.core.CCorePlugin;
@@ -31,6 +37,8 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author markus.schorn@windriver.com
@@ -38,24 +46,15 @@ import org.eclipse.text.edits.TextEditGroup;
 public abstract class RefactoringTests extends BaseTestFramework {
 	private int fBufferSize;
 
-	public RefactoringTests() {
-	}
-
-	public RefactoringTests(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@BeforeEach
+	protected void setUpProject() throws Exception {
 		CCorePlugin.getIndexManager().setIndexerId(cproject, IPDOMManager.ID_FAST_INDEXER);
 		fBufferSize = FileCharSequenceProvider.BUFFER_SIZE;
 		FileCharSequenceProvider.BUFFER_SIZE = 1024 * 4;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@AfterEach
+	protected void tearDownFlush() throws Exception {
 		SavedCodeReaderFactory.getInstance().getCodeReaderCache().flush();
 		FileCharSequenceProvider.BUFFER_SIZE = fBufferSize;
 	}
@@ -70,8 +69,8 @@ public abstract class RefactoringTests extends BaseTestFramework {
 			countChanges(changes, count);
 		}
 		assertEquals(numChanges, count[0]);
-		assertEquals("potential changes: ", potChanges, count[1]);
-		assertEquals("comment changes: ", commentCh, count[2]);
+		assertEquals((long) potChanges, (long) count[1], "potential changes: ");
+		assertEquals((long) commentCh, (long) count[2], "comment changes: ");
 	}
 
 	private void countChanges(Change change, int[] count) {
@@ -156,7 +155,7 @@ public abstract class RefactoringTests extends BaseTestFramework {
 
 	private boolean checkTextEdit(TextEdit edit, int startOffset, int numChars, String newText) {
 		if (edit instanceof MultiTextEdit) {
-			if (checkTextEdits(((MultiTextEdit) edit).getChildren(), startOffset, numChars, newText)) {
+			if (checkTextEdits(edit.getChildren(), startOffset, numChars, newText)) {
 				return true;
 			}
 		} else if (edit instanceof ReplaceEdit) {
@@ -255,18 +254,18 @@ public abstract class RefactoringTests extends BaseTestFramework {
 
 	protected void assertRefactoringError(RefactoringStatus status, String msg) {
 		RefactoringStatusEntry e = status.getEntryMatchingSeverity(RefactoringStatus.ERROR);
-		assertNotNull("Expected refactoring error!", e);
+		assertNotNull(e, "Expected refactoring error!");
 		assertEquals(msg, e.getMessage());
 	}
 
 	protected void assertRefactoringWarning(RefactoringStatus status, String msg) {
 		RefactoringStatusEntry e = status.getEntryMatchingSeverity(RefactoringStatus.WARNING);
-		assertNotNull("Expected refactoring warning!", e);
+		assertNotNull(e, "Expected refactoring warning!");
 		assertEquals(msg, e.getMessage());
 	}
 
 	protected void assertRefactoringOk(RefactoringStatus status) {
-		assertTrue("Expected refactoring status ok: " + status.getMessageMatchingSeverity(status.getSeverity()),
-				status.getSeverity() == RefactoringStatus.OK);
+		assertTrue(status.getSeverity() == RefactoringStatus.OK,
+				"Expected refactoring status ok: " + status.getMessageMatchingSeverity(status.getSeverity()));
 	}
 }

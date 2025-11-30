@@ -2,18 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.ui; singleton:=true
-Bundle-Version: 3.5.300.qualifier
+Bundle-Version: 3.5.400.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.internal.ui.CodanUIActivator
 Bundle-Vendor: %Bundle-Vendor
 Require-Bundle: org.eclipse.cdt.codan.core;bundle-version="[4.2.300,5)",
- org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
- org.eclipse.cdt.ui;bundle-version="[9.0.100,10)",
+ org.eclipse.cdt.core;bundle-version="[9.3.0,10.0.0)",
+ org.eclipse.cdt.ui;bundle-version="[9.1.0,10.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.11.200,2)",
- org.eclipse.core.resources;bundle-version="[3.22.200,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
- org.eclipse.jface.text;bundle-version="[3.28.0,4)",
+ org.eclipse.core.resources;bundle-version="[3.23.0,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",
+ org.eclipse.jface.text;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.207.200,4)",
- org.eclipse.ui.console;bundle-version="[3.14.300,4)",
+ org.eclipse.ui.console;bundle-version="[3.15.0,4.0.0)",
  org.eclipse.ui.editors;bundle-version="[3.20.0,4)",
  org.eclipse.ui.ide;bundle-version="[3.22.600,4)",
  org.eclipse.ui.workbench.texteditor;bundle-version="[3.19.200,4)"

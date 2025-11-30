@@ -2,22 +2,22 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.cdt.flatpak.launcher;singleton:=true
-Bundle-Version: 1.1.300.qualifier
+Bundle-Version: 1.1.400.qualifier
 Bundle-Activator: org.eclipse.cdt.flatpak.launcher.FlatpakLaunchPlugin
 Bundle-Vendor: %Plugin.vendor
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
+ org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",
  org.eclipse.cdt.launch;bundle-version="[11.0.0,12)",
  org.eclipse.debug.core;bundle-version="[3.23.0,4)",
- org.eclipse.debug.ui;bundle-version="[3.18.800,4)",
- org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
+ org.eclipse.debug.ui;bundle-version="[3.19.0,4.0.0)",
+ org.eclipse.cdt.core;bundle-version="[9.3.0,10.0.0)",
  org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)",
- org.eclipse.cdt.ui;bundle-version="[9.0.100,10)",
+ org.eclipse.cdt.ui;bundle-version="[9.1.0,10.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.22.600,4)",
  org.eclipse.cdt.debug.ui;bundle-version="[8.5.700,9)",
- org.eclipse.cdt.dsf.gdb;bundle-version="[7.1.500,8)",
- org.eclipse.cdt.dsf.gdb.ui;bundle-version="[2.8.700,3)",
+ org.eclipse.cdt.dsf.gdb;bundle-version="[7.3.0,8.0.0)",
+ org.eclipse.cdt.dsf.gdb.ui;bundle-version="[2.9.0,3.0.0)",
  org.eclipse.core.variables;bundle-version="[3.6.500,4)",
  org.eclipse.cdt.managedbuilder.ui;bundle-version="[9.4.300,10)",
  org.eclipse.cdt.managedbuilder.core;bundle-version="[9.7.100,10)",

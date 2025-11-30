@@ -7,8 +7,8 @@ Bundle-Version: 1.0.500.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.cdt.jsoncdb.core;bundle-version="[1.4.100,2)",
  org.eclipse.help;bundle-version="[3.10.100,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
- org.eclipse.cdt.core;bundle-version="[9.1.0,10)"
+ org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",
+ org.eclipse.cdt.core;bundle-version="[9.3.0,10.0.0)"
 Bundle-Vendor: %Bundle-Vendor
 Automatic-Module-Name: org.eclipse.cdt.jsoncdb.freescale
 Bundle-ActivationPolicy: lazy

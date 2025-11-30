@@ -6,13 +6,13 @@ Bundle-Version: 5.0.100.qualifier
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
+ org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",
  org.eclipse.terminal.control;bundle-version="[1.0.0,2.0.0)",
  org.eclipse.remote.core;bundle-version="[4.2.300,5)",
  org.eclipse.remote.ui;bundle-version="[2.3.300,3)",
- org.eclipse.core.resources;bundle-version="[3.22.200,4)",
- org.eclipse.swt;bundle-version="[3.130.0,4)",
- org.eclipse.jface;bundle-version="[3.37.0,4)"
+ org.eclipse.core.resources;bundle-version="[3.23.0,4.0.0)",
+ org.eclipse.swt;bundle-version="[3.132.0,4.0.0)",
+ org.eclipse.jface;bundle-version="[3.38.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: org.eclipse.tm.terminal.connector.remote,
  org.eclipse.tm.terminal.connector.remote.controls,

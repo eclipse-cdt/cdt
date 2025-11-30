@@ -2,23 +2,23 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.cmake.ui;singleton:=true
-Bundle-Version: 1.4.600.qualifier
+Bundle-Version: 1.4.700.qualifier
 Bundle-Activator: org.eclipse.cdt.cmake.ui.internal.Activator
 Bundle-Vendor: %providerName
-Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
- org.eclipse.core.resources;bundle-version="[3.22.200,4)",
+Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",
+ org.eclipse.core.resources;bundle-version="[3.23.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.ui.ide;bundle-version="[3.22.600,4)",
  org.eclipse.cdt.cmake.core;bundle-version="[2.0.0,3)",
  org.eclipse.tools.templates.core;bundle-version="[2.0.0,3)",
  org.eclipse.tools.templates.ui;bundle-version="[2.0.0,3)",
  org.eclipse.tools.templates.freemarker;bundle-version="[2.0.0,3)",
- org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
- org.eclipse.debug.ui;bundle-version="[3.18.800,4)",
+ org.eclipse.cdt.core;bundle-version="[9.3.0,10.0.0)",
+ org.eclipse.debug.ui;bundle-version="[3.19.0,4.0.0)",
  org.eclipse.cdt.launch;bundle-version="[11.0.0,12)",
  org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)",
- org.eclipse.cdt.ui;bundle-version="[9.0.100,10)",
- org.eclipse.launchbar.core;bundle-version="[3.0.0,4)"
+ org.eclipse.cdt.ui;bundle-version="[9.1.0,10.0.0)",
+ org.eclipse.launchbar.core;bundle-version="[3.1.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Bundle-Localization: plugin

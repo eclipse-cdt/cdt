@@ -4,9 +4,9 @@ Bundle-Name: %bundleName
 Bundle-SymbolicName: org.eclipse.cdt.autotools.ui.tests
 Bundle-Version: 1.1.200.qualifier
 Bundle-Localization: plugin
-Require-Bundle: org.eclipse.swtbot.go;bundle-version="[4.2.1,5)",
- org.eclipse.core.resources;bundle-version="[3.22.200,4)",
- org.eclipse.cdt.core;bundle-version="[9.1.0,10)"
+Require-Bundle: org.eclipse.swtbot.go;bundle-version="[4.3.0,5.0.0)",
+ org.eclipse.core.resources;bundle-version="[3.23.0,4.0.0)",
+ org.eclipse.cdt.core;bundle-version="[9.3.0,10.0.0)"
 Bundle-ActivationPolicy: lazy
 Fragment-Host: org.eclipse.cdt.autotools.ui
 Bundle-RequiredExecutionEnvironment: JavaSE-17

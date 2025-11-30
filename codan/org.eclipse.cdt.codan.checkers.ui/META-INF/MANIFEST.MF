@@ -2,17 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.cdt.codan.checkers.ui;singleton:=true
-Bundle-Version: 3.4.300.qualifier
+Bundle-Version: 3.4.400.qualifier
 Bundle-Activator: org.eclipse.cdt.codan.internal.checkers.ui.CheckersUiActivator
-Require-Bundle: org.eclipse.core.resources;bundle-version="[3.22.200,4)",
- org.eclipse.core.runtime;bundle-version="[3.33.0,4)",
- org.eclipse.cdt.core;bundle-version="[9.1.0,10)",
+Require-Bundle: org.eclipse.core.resources;bundle-version="[3.23.0,4.0.0)",
+ org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",
+ org.eclipse.cdt.core;bundle-version="[9.3.0,10.0.0)",
  org.eclipse.cdt.codan.checkers;bundle-version="[3.5.700,4)",
  org.eclipse.cdt.codan.core;bundle-version="[4.2.300,5)",
  org.eclipse.cdt.codan.core.cxx;bundle-version="[3.6.200,4)",
  org.eclipse.cdt.codan.ui.cxx;bundle-version="[3.7.100,4)",
- org.eclipse.cdt.ui;bundle-version="[9.0.100,10)",
- org.eclipse.jface.text;bundle-version="[3.28.0,4)",
+ org.eclipse.cdt.ui;bundle-version="[9.1.0,10.0.0)",
+ org.eclipse.jface.text;bundle-version="[3.29.0,4.0.0)",
  org.eclipse.ltk.core.refactoring;bundle-version="[3.15.0,4)",
  org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.ui.ide;bundle-version="[3.22.600,4)"

@@ -28,6 +28,7 @@ for p in serial/org.eclipse.cdt.native.serial core/org.eclipse.cdt.core.native; 
     logfile=jni-headers-${p//\//-}.log
     if ! ${MVN:-mvn} -B -V process-resources -P jniheaders -f $p >${logfile} 2>&1; then
         echo "Rebuilding of $p JNI headers failed. The log (${logfile}) is part of the artifacts of the build"
+        echo "If this fails with a message like Missing requirement: org.eclipse.cdt.native.serial 12.3.0.qualifier requires 'osgi.bundle; org.eclipse.cdt.core.native [6.6.0,7.0.0)' but it could not be found: See log for details then see RELEASING.md for info"
         exit 1
     fi
 

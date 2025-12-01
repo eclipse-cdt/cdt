@@ -55,6 +55,7 @@ find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i s/12.2.0.qualifier/12.3.0.
     - Then in the launched bash (we stay in the bash shell so that we don't have to download dependencies repeatedly):
     - update dependency version `mvn org.eclipse.tycho.extras:tycho-version-bump-plugin:update-manifest`
     - bump bundle versions for compare and replace `mvn verify org.eclipse.tycho:tycho-versions-plugin:bump-versions -Dtycho.bump-versions.increment=100 -DskipDoc=true -DskipTests=true -P baseline-compare-and-replace -fae -Djgit.dirtyWorkingTree-cdtDefault=warning` <-- simply running this over and over again sometimes doesn't work and a manual version bump may be needed
+    - "unbump" `org.eclipse.cdt.native.serial`'s dependency on `org.eclipse.cdt.core.native` unless the dependency really needs updating - if it really needs updating `releng/scripts/do_rebuild_natives.sh` will probably fail because the script tries to run just the one bundle, so sees an older version of `org.eclipse.cdt.core.native`.
 - create a PR with all the above against the new branch - see https://github.com/eclipse-cdt/cdt/pull/1184 for a past example
 - merge the PR once it is clean
 - wait for the build on the branch to complete that has this change https://ci.eclipse.org/cdt/job/cdt/job/cdt_12_1/

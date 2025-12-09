@@ -2,6 +2,6 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eclipse Remote Development documentation plug-in
 Bundle-SymbolicName: org.eclipse.remote.doc.isv;singleton:=true
-Bundle-Version: 12.3.0.qualifier
+Bundle-Version: 12.4.0.qualifier
 Bundle-Vendor: Eclipse PTP
 Require-Bundle: org.eclipse.help;bundle-version="[3.10.500,4)"

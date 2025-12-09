@@ -24,32 +24,4 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/cdt/codan/core/param/ListProblemPreference.java" type="org.eclipse.cdt.codan.core.param.ListProblemPreference">
-        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
-            <message_arguments>
-                <message_argument value="IProblemPreferenceCompositeDescriptor"/>
-                <message_argument value="ListProblemPreference"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
-            <message_arguments>
-                <message_argument value="IProblemPreferenceCompositeValue"/>
-                <message_argument value="ListProblemPreference"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/cdt/codan/core/param/MapProblemPreference.java" type="org.eclipse.cdt.codan.core.param.MapProblemPreference">
-        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
-            <message_arguments>
-                <message_argument value="IProblemPreferenceCompositeDescriptor"/>
-                <message_argument value="MapProblemPreference"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Squash over zealous warning from PDE. See Bug 558477" id="576725006">
-            <message_arguments>
-                <message_argument value="IProblemPreferenceCompositeValue"/>
-                <message_argument value="MapProblemPreference"/>
-            </message_arguments>
-        </filter>
-    </resource>
 </component>

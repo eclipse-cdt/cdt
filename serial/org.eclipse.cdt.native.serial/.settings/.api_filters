@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<component id="org.eclipse.cdt.debug.application" version="2">
+<component id="org.eclipse.cdt.native.serial" version="2">
     <resource path="META-INF/MANIFEST.MF">
         <filter comment="Version is incremented more than needed to keep bundle version aligned with CDT version to simplify releng" id="926941240">
             <message_arguments>

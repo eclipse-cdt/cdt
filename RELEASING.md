@@ -20,14 +20,23 @@ Prepare main branch for next release
 - in the root pom.xml update comparator.repo, api-baseline.repo, api-baseline.repo.simrel, help-docs-eclipserun-repo, and simrel-site with the correct URLs based on what was used above in the target files/setup files
 - Update versions to CDT.
     - Do a global find/replace, for example:
-    - 12.1.0-SNAPSHOT -> 12.2.0-SNAPSHOT
-    - 12.1.0.qualifier -> 12.2.0.qualifier
+    - 12.3.0-SNAPSHOT -> 12.4.0-SNAPSHOT
+    - 12.3.0.qualifier -> 12.4.0.qualifier
     - the above two can be done quickly as the chance of a false positive is very low, after applying them, search for remaining 12.1.0 and 12.1 strings in the codebase and update them - being careful as some of those search results should not be changed. Version ranges in dependencies can be done now, or handled with "update dependency version" as above
     - Usefule commands for performing these updates:
 ```
-find $CDT_ROOT -type f -name pom.xml -exec sed -i s/12.2.0-SNAPSHOT/12.3.0-SNAPSHOT/g {} \;
-find $CDT_ROOT -type f -name feature.xml -exec sed -i s/12.2.0.qualifier/12.3.0.qualifier/g {} \;
-find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i s/12.2.0.qualifier/12.3.0.qualifier/g {} \;
+# Once updated, run the now updated commands:
+CDT_ROOT=$PWD # update if you are not in CDT's root
+find $CDT_ROOT -type f -name pom.xml -exec sed -i s/12.3.0-SNAPSHOT/12.4.0-SNAPSHOT/g {} \;
+find $CDT_ROOT -type f -name feature.xml -exec sed -i s/12.3.0.qualifier/12.4.0.qualifier/g {} \;
+find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i s/12.3.0.qualifier/12.4.0.qualifier/g {} \;
+find \
+    $CDT_ROOT/debug/org.eclipse.cdt.debug.application/plugin.properties \
+    $CDT_ROOT/debug/org.eclipse.cdt.debug.application/plugin.properties \
+    $CDT_ROOT/debug/org.eclipse.cdt.debug.application.product/debug.product \
+    $CDT_ROOT/doc/org.eclipse.cdt.doc.isv/pom.xml \
+    $CDT_ROOT/remote/org.eclipse.remote.doc.isv/pom.xml \
+    -type f -exec sed -i s/12.3.0/12.4.0/g {} \;
 ```
 - run check_code_cleanliness to make sure that everything looks good `docker run --rm -it -v $(git rev-parse --show-toplevel):/work -w /work/$(git rev-parse --show-prefix) quay.io/eclipse-cdt/cdt-infra:latest releng/scripts/check_code_cleanliness.sh` - if version bumps are needed, see "bump bundle versions" below
 - create a PR with the above and push it to main when it succeeds.
@@ -41,7 +50,7 @@ find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i s/12.2.0.qualifier/12.3.0.
 - Add new committers (send them private email with draft nomination statement, then start election, trying to time it around a CDT call to ensure maximum engagement on the voting)
 - Retire inactive committers - this happens on occasion, not with each release (past example https://github.com/eclipse-cdt/cdt/issues/1183)
 - Make sure CDT build is green (https://ci.eclipse.org/cdt/job/cdt/job/main/)
-- Create and push a branch of CDT (e.g. `git fetch origin && git checkout origin/main -b cdt_12_1 && git push origin cdt_12_1`)
+- Create and push a branch of CDT (e.g. `git fetch origin && git checkout origin/main -b cdt_12_4 && git push origin cdt_12_4`)
 - On the branch, update cdt.target to the stable/final location for dependencies
     - this is not always possible, especially when we depend on I-builds from platform, in that case use provisional or RC2 I-build and update it again after they release
     - The contents of the `aggrcon` files in https://github.com/eclipse-simrel/simrel.build is useful to know latest p2 URLs for dependencies
@@ -55,11 +64,12 @@ find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i s/12.2.0.qualifier/12.3.0.
     - Then in the launched bash (we stay in the bash shell so that we don't have to download dependencies repeatedly):
     - update dependency version `mvn org.eclipse.tycho.extras:tycho-version-bump-plugin:update-manifest`
     - bump bundle versions for compare and replace `mvn verify org.eclipse.tycho:tycho-versions-plugin:bump-versions -Dtycho.bump-versions.increment=100 -DskipDoc=true -DskipTests=true -P baseline-compare-and-replace -fae -Djgit.dirtyWorkingTree-cdtDefault=warning` <-- simply running this over and over again sometimes doesn't work and a manual version bump may be needed
+    - one way to run it again and again is to surround with `while true; do mvn ... && break; done`
     - "unbump" `org.eclipse.cdt.native.serial`'s dependency on `org.eclipse.cdt.core.native` unless the dependency really needs updating - if it really needs updating `releng/scripts/do_rebuild_natives.sh` will probably fail because the script tries to run just the one bundle, so sees an older version of `org.eclipse.cdt.core.native`.
 - create a PR with all the above against the new branch - see https://github.com/eclipse-cdt/cdt/pull/1184 for a past example
 - merge the PR once it is clean
-- wait for the build on the branch to complete that has this change https://ci.eclipse.org/cdt/job/cdt/job/cdt_12_1/
-- test that the build works with simrel (See https://github.com/eclipse-simrel/ for details of simrel) by pointing cdt.aggrcon to the just-built p2 repo (e.g. https://download.eclipse.org/tools/cdt/builds/cdt/cdt_12_1/), updating versions and running validate aggregation
+- wait for the build on the branch to complete that has this change https://ci.eclipse.org/cdt/job/cdt/job/cdt_12_4/
+- test that the build works with simrel (See https://github.com/eclipse-simrel/ for details of simrel) by pointing cdt.aggrcon to the just-built p2 repo (e.g. https://download.eclipse.org/tools/cdt/builds/cdt/cdt_12_4/), updating versions and running validate aggregation
 - Ensure release entry on [PMI](https://projects.eclipse.org/projects/tools.cdt) "Release Date" section it says the appropriate "This release is part of Eclipse IDE ??????".
 - Make sure documentation is part of simrel's [help](http://help.eclipse.org).
 - Review closed issues and merged PRs to make sure labels and milestones are accurate
@@ -69,7 +79,7 @@ find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i s/12.2.0.qualifier/12.3.0.
 
 ### Items on Release day:
 
-- Tag the release. Example: `git tag -a CDT_12_1_0 sha1ofpromotedbuild -m"CDT 12.1.0" && git push origin CDT_12_1_0`
+- Tag the release. Example: `git tag -a CDT_12_4_0 sha1ofpromotedbuild -m"CDT 12.4.0" && git push origin CDT_12_4_0`
 - [Promote a cdt build from jenkins](https://ci.eclipse.org/cdt/job/promote-a-build/) to releases
     - Description is automatically added to the promote-a-build job and the job it promoted.
     - Add description to the promoted job and ensure it is marked as keep

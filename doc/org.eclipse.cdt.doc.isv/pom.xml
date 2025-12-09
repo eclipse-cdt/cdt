@@ -17,11 +17,11 @@
 	<parent>
 		<groupId>org.eclipse.cdt</groupId>
 		<artifactId>cdt-parent</artifactId>
-		<version>12.3.0-SNAPSHOT</version>
+		<version>12.4.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
-	<version>12.3.0-SNAPSHOT</version>
+	<version>12.4.0-SNAPSHOT</version>
 	<artifactId>org.eclipse.cdt.doc.isv</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
@@ -121,7 +121,7 @@
 											<additionalArgument>-linkoffline ../../org.eclipse.platform.doc.isv/reference/api
 											</additionalArgument>
 											<additionalArgument>-public</additionalArgument>
-											<additionalArgument>-header "Eclipse CDT 12.3.0"
+											<additionalArgument>-header "Eclipse CDT 12.4.0"
 											</additionalArgument>
 											<additionalArgument>-bottom "Copyright (c) IBM Corp. and others 2004, 2021. All Rights Reserved."</additionalArgument>
 											<additionalArgument>-tag 'noimplement:a:Restriction:'</additionalArgument>

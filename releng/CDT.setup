@@ -34,8 +34,12 @@
         name="org.eclipse.jdt.feature.group"/>
     <requirement
         name="org.eclipse.pde.feature.group"/>
+    <requirement
+        name="org.eclipse.cdt.feature.group"/>
     <repository
         url="https://download.eclipse.org/technology/swtbot/releases/latest"/>
+    <repository
+        url="https://download.eclipse.org/tools/cdt/releases/latest/"/>
     <description>Install the tools needed in the IDE to work with the source code for ${scope.project.label}</description>
   </setupTask>
   <setupTask

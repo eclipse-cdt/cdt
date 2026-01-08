@@ -1,4 +1,4 @@
-package services;
+package org.eclipse.cdt.dsf.example.study.services;
 
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;

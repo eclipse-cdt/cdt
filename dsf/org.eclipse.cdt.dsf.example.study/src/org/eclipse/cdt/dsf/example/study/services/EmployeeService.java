@@ -1,4 +1,4 @@
-package services;
+package org.eclipse.cdt.dsf.example.study.services;
 
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
@@ -6,13 +6,12 @@ import java.util.Map;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.example.study.datamodel.EmployeeDMContext;
+import org.eclipse.cdt.dsf.example.study.internal.CdtDsfStudyPluginActivator;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.ILog;
 import org.osgi.framework.BundleContext;
-
-import datamodel.EmployeeDMContext;
-import internal.CdtDsfStudyPluginActivator;
 
 /**
  * Employee Service tracks a set of employees, which are created per user request.

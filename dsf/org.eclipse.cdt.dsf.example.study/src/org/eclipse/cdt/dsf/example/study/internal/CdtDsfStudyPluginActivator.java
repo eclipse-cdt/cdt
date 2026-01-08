@@ -1,4 +1,4 @@
-package internal;
+package org.eclipse.cdt.dsf.example.study.internal;
 
 import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

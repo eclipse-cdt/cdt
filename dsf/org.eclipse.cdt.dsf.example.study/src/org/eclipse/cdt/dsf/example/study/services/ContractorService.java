@@ -1,14 +1,13 @@
-package services;
+package org.eclipse.cdt.dsf.example.study.services;
 
 import java.util.Hashtable;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
+import org.eclipse.cdt.dsf.example.study.internal.CdtDsfStudyPluginActivator;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.ILog;
 import org.osgi.framework.BundleContext;
-
-import internal.CdtDsfStudyPluginActivator;
 
 /**
  * The Contractor Service tracks employees.

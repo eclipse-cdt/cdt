@@ -10,7 +10,7 @@
       </category>
       <view
             category="cdt.dsf.study.category.id"
-            class="ui.CdtDsfStudyView"
+            class="org.eclipse.cdt.dsf.example.study.ui.CdtDsfStudyView"
             icon="icons/view_icon.gif"
             id="cdt.dsf.study.view.id"
             name="Cdt Dsf Study View">

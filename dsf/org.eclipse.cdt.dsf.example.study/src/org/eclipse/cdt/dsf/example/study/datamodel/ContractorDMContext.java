@@ -1,4 +1,4 @@
-package datamodel;
+package org.eclipse.cdt.dsf.example.study.datamodel;
 
 import org.eclipse.cdt.dsf.datamodel.AbstractDMContext;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;

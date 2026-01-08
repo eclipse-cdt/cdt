@@ -32,8 +32,8 @@ import org.eclipse.swt.graphics.RGB;
  * View model node that defines how Employee DMContexts are displayed in the view.
  */
 public class EmployeesDMVMNode extends AbstractDMVMNode implements IElementLabelProvider, IElementPropertiesProvider {
-	private static final String PROP_EMPLOYEE_NUMBER = "alarmNumber";
-	private static final String PROP_EMPLOYEE_VALUE = "alarmTriggerValue";
+	private static final String PROP_EMPLOYEE_NUMBER = "number";
+	private static final String PROP_EMPLOYEE_VALUE = "value";
 
 	// Create and configure the label provider.
 	private static final PropertiesBasedLabelProvider fgLabelProvider;
@@ -140,7 +140,7 @@ public class EmployeesDMVMNode extends AbstractDMVMNode implements IElementLabel
 			return;
 		}
 
-		update.setProperty(PROP_EMPLOYEE_NUMBER, dmc.getTimerNumberId());
+		update.setProperty(PROP_EMPLOYEE_NUMBER, dmc.getEmployeeNumberId());
 		update.setProperty(PROP_EMPLOYEE_VALUE, value);
 		update.done();
 	}

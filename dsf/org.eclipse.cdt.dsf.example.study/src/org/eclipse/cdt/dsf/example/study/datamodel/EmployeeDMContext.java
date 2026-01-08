@@ -17,7 +17,7 @@ public class EmployeeDMContext extends AbstractDMContext {
 		this.fId = fId;
 	}
 
-	public int getTimerNumberId() {
+	public int getEmployeeNumberId() {
 		return fId;
 	}
 

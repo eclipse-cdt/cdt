@@ -3,6 +3,7 @@ package org.eclipse.cdt.dsf.example.study.services;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -57,7 +58,7 @@ public class EmployeeService extends AbstractDsfService {
 	}
 
 	public int getTimerDMContextValue(EmployeeDMContext ctx) {
-		return 0;
+		return ThreadLocalRandom.current().nextInt(1, 9999 + 1);
 	}
 
 	/**

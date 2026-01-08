@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Cdt Dsf Example Study
+Bundle-SymbolicName: org.eclipse.cdt.dsf.example.study
+Bundle-Version: 1.0.0.qualifier
+Require-Bundle: org.eclipse.swt,
+ org.eclipse.jface
+Automatic-Module-Name: org.eclipse.cdt.dsf.example.study
+Bundle-RequiredExecutionEnvironment: JavaSE-21

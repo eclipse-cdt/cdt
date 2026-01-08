@@ -9,9 +9,9 @@ import org.osgi.framework.BundleContext;
  */
 public class CdtDsfStudyPluginActivator extends AbstractUIPlugin {
 	// The plug-in ID
-	public static final String PLUGIN_ID = "org.eclipse.cdt.dsf.study.id"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "org.eclipse.cdt.dsf.example.study"; //$NON-NLS-1$
 
-	public static final String IMG_EMPLOYEE = "icons/employee.png"; //$NON-NLS-1$
+	public static final String IMG_EMPLOYEE = "icons/employee.gif"; //$NON-NLS-1$
 
 	// The shared instance
 	private static CdtDsfStudyPluginActivator fgPlugin;

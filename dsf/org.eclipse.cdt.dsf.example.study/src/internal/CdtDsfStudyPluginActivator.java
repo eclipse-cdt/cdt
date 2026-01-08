@@ -7,21 +7,21 @@ import org.osgi.framework.BundleContext;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class PluginActivator extends AbstractUIPlugin {
+public class CdtDsfStudyPluginActivator extends AbstractUIPlugin {
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.eclipse.cdt.dsf.study.id"; //$NON-NLS-1$
 
-	public static final String IMG_TIMER = "icons/timer.gif"; //$NON-NLS-1$
+	public static final String IMG_EMPLOYEE = "icons/employee.png"; //$NON-NLS-1$
 
 	// The shared instance
-	private static PluginActivator fgPlugin;
+	private static CdtDsfStudyPluginActivator fgPlugin;
 
 	private static BundleContext fgBundleContext;
 
 	/**
 	 * The constructor
 	 */
-	public PluginActivator() {
+	public CdtDsfStudyPluginActivator() {
 		fgPlugin = this;
 	}
 
@@ -29,7 +29,7 @@ public class PluginActivator extends AbstractUIPlugin {
 	public void start(BundleContext context) throws Exception {
 		fgBundleContext = context;
 		super.start(context);
-		getImageRegistry().put(IMG_TIMER, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, IMG_TIMER).get());
+		getImageRegistry().put(IMG_EMPLOYEE, ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, IMG_EMPLOYEE).get());
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class PluginActivator extends AbstractUIPlugin {
 	 *
 	 * @return the shared instance
 	 */
-	public static PluginActivator getDefault() {
+	public static CdtDsfStudyPluginActivator getDefault() {
 		return fgPlugin;
 	}
 

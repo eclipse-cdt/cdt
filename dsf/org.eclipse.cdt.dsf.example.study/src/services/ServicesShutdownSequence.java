@@ -10,7 +10,7 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import internal.PluginActivator;
+import internal.CdtDsfStudyPluginActivator;
 
 /**
  * Sequence that stops the services in the employees session.
@@ -31,7 +31,7 @@ public class ServicesShutdownSequence extends Sequence {
 	Step[] fSteps = { new Step() {
 		@Override
 		public void execute(RequestMonitor requestMonitor) {
-			fServices = new DsfServicesTracker(PluginActivator.getBundleContext(), fSession.getId());
+			fServices = new DsfServicesTracker(CdtDsfStudyPluginActivator.getBundleContext(), fSession.getId());
 			requestMonitor.done();
 		}
 	}, new Step() {
@@ -60,7 +60,7 @@ public class ServicesShutdownSequence extends Sequence {
 		if (service != null) {
 			service.shutdown(requestMonitor);
 		} else {
-			requestMonitor.setStatus(new Status(IStatus.ERROR, PluginActivator.PLUGIN_ID,
+			requestMonitor.setStatus(new Status(IStatus.ERROR, CdtDsfStudyPluginActivator.PLUGIN_ID,
 					IDsfStatusConstants.INTERNAL_ERROR, "Service '" + clazz.getName() + "' not found.", null));
 			requestMonitor.done();
 		}

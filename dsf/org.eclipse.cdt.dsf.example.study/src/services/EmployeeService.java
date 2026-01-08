@@ -12,14 +12,14 @@ import org.eclipse.core.runtime.ILog;
 import org.osgi.framework.BundleContext;
 
 import datamodel.EmployeeDMContext;
-import internal.PluginActivator;
+import internal.CdtDsfStudyPluginActivator;
 
 /**
- * Timer Service tracks a set of employees, which are created per user request.
+ * Employee Service tracks a set of employees, which are created per user request.
  */
 public class EmployeeService extends AbstractDsfService {
 	@Immutable
-	public static class RenesasTimersDMChangedEvent {
+	public static class EmployeesDMChangedEvent {
 	}
 
 	// Counter for generating employee numbers
@@ -34,7 +34,7 @@ public class EmployeeService extends AbstractDsfService {
 
 	@Override
 	protected BundleContext getBundleContext() {
-		return PluginActivator.getBundleContext();
+		return CdtDsfStudyPluginActivator.getBundleContext();
 	}
 
 	public void updateDebugContext() {
@@ -70,7 +70,7 @@ public class EmployeeService extends AbstractDsfService {
 		final EmployeeDMContext employeeCtx = createTimerDMContext(getSession());
 
 		// Notify an event to all clients in the current dsf dession
-		dispatchEvent(new RenesasTimersDMChangedEvent());
+		dispatchEvent(new EmployeesDMChangedEvent());
 	}
 
 	private EmployeeDMContext createTimerDMContext(DsfSession session) {
@@ -80,8 +80,8 @@ public class EmployeeService extends AbstractDsfService {
 	}
 
 	private void dispatchEvent(Object event) {
-		if (event instanceof RenesasTimersDMChangedEvent) {
-			ILog.get().info("Dispatchs event: " + RenesasTimersDMChangedEvent.class.getName());
+		if (event instanceof EmployeesDMChangedEvent) {
+			ILog.get().info("Dispatchs event: " + EmployeesDMChangedEvent.class.getName());
 			getSession().dispatchEvent(event, getProperties());
 			return;
 		}

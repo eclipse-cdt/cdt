@@ -8,7 +8,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.ILog;
 import org.osgi.framework.BundleContext;
 
-import internal.PluginActivator;
+import internal.CdtDsfStudyPluginActivator;
 
 /**
  * The Contractor Service tracks employees.
@@ -21,7 +21,7 @@ public class ContractorService extends AbstractDsfService {
 
 	@Override
 	protected BundleContext getBundleContext() {
-		return PluginActivator.getBundleContext();
+		return CdtDsfStudyPluginActivator.getBundleContext();
 	}
 
 	public void updateDebugContext() {

@@ -9,3 +9,5 @@ Automatic-Module-Name: org.eclipse.cdt.dsf.example.study
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: internal.PluginActivator
 Bundle-RequiredExecutionEnvironment: JavaSE-17
+Import-Package: org.eclipse.cdt.dsf.datamodel,
+ org.eclipse.cdt.dsf.service

@@ -46,6 +46,7 @@ static ThreadRet THREAD_CALL_CONV PrintHello(void *void_arg)
 int main(int argc, char *argv[])
 {
 	ThreadHandle threads[NUM_THREADS];
+	ThreadRet thread_ret;
 	struct PrintHelloArgs args[NUM_THREADS];
 	const char *thread_names[NUM_THREADS] = {"monday", "tuesday", "wednesday", "thursday", "friday"};
 
@@ -99,7 +100,7 @@ int main(int argc, char *argv[])
 	for (int t = 0; t < NUM_THREADS; t++)
 	{
 		printf("In main, joining thread #%d\n", t);
-		JoinThread(threads[t], NULL);
+		JoinThread(threads[t], &thread_ret);
 	}
 
 	ThreadBarrierDestroy(&barrier_start);

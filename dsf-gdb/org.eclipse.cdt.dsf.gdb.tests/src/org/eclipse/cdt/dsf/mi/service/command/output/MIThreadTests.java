@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2014 Freescale and others.
+ * Copyright (c) 2011, 2026 Freescale and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Freescale  - Initial API and Implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Moved from cdt.tests.dsf.gdb (Bug 437562)
+ *     John Dallaway - Accommodate decimal parent ID with hex OS ID (#1421)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -23,6 +24,7 @@ public class MIThreadTests {
 	public void testOsIdParsing() {
 		assertEquals("7010", MIThread.parseOsId("Thread 0xb7c8ab90 (LWP 7010)"));
 		assertEquals("32942", MIThread.parseOsId("Thread 162.32942"));
+		assertEquals("0x80ae", MIThread.parseOsId("Thread 162.0x80ae")); // for MinGW gdb
 		assertEquals("abc123", MIThread.parseOsId("Thread abc123"));
 		assertEquals("abc123", MIThread.parseOsId("thread abc123"));
 		assertEquals("abc123", MIThread.parseOsId("THREAD abc123"));
@@ -32,5 +34,6 @@ public class MIThreadTests {
 	@Test
 	public void testParentIdParsing() {
 		assertEquals("162", MIThread.parseParentId("Thread 162.32942"));
+		assertEquals("162", MIThread.parseParentId("Thread 162.0x80ae")); // for MinGW gdb
 	}
 }

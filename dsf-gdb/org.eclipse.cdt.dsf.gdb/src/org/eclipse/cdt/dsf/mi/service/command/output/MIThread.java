@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Ericsson and others.
+ * Copyright (c) 2008, 2026 Ericsson and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
  *     Xavier Raynaud (Kalray) - MIThread can be overridden (Bug 429124)
  *     Alvaro Sanchez-Leon - Bug 451396 - Improve extensibility to process MI "-thread-info" results
  *     Simon Marchi (Ericsson) - Bug 378154 - Have MIThread provide thread name
+ *     John Dallaway - Accommodate decimal parent ID with hex OS ID (#1421)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
@@ -166,7 +167,8 @@ public class MIThread {
 	// Note that windows gdbs returns lower case "thread" , so the matcher needs to be case-insensitive.
 	private static Pattern fgOsIdPattern1 = Pattern
 			.compile("([Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\([Ll][Ww][Pp]\\s*)(\\d*)", 0); //$NON-NLS-1$
-	private static Pattern fgOsIdPattern2 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*\\d+\\.(\\d+)", 0); //$NON-NLS-1$
+	private static Pattern fgOsIdPattern2 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*\\d+\\.(0x[0-9a-fA-F]+|\\d+)", //$NON-NLS-1$
+			0);
 	private static Pattern fgOsIdPattern3 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\S+)", 0); //$NON-NLS-1$
 	private static Pattern fgOsIdPattern4 = Pattern.compile("[Pp][Rr][Oo][Cc][Ee][Ss][Ss]\\s*(\\S+)", 0); //$NON-NLS-1$
 
@@ -177,7 +179,7 @@ public class MIThread {
 		// General format:
 		//      "Thread 0xb7c8ab90 (LWP 7010)"
 		//                              ^^^^
-		//      "Thread 162.32942"
+		//      "Thread 162.32942"    => an integer in decimal or 0x hex notation
 		//                  ^^^^^
 		//      "thread abc123"
 		//
@@ -208,7 +210,8 @@ public class MIThread {
 		return null;
 	}
 
-	private static Pattern fgIdPattern = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\d+)\\.\\d+", 0); //$NON-NLS-1$
+	private static Pattern fgIdPattern = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\d+)\\.(0x[0-9a-fA-F]+|\\d+)", //$NON-NLS-1$
+			0);
 
 	/**
 	 * This is used to parse the same ID fed to {@link #parseOsId(String)}. The

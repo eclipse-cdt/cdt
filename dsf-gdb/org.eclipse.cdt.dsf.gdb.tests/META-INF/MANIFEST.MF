@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.dsf.gdb.tests;singleton:=true
 Bundle-Vendor: %providerName
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.100.qualifier
 Fragment-Host: org.eclipse.cdt.dsf.gdb
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.junit;bundle-version="[4.13.2,5)"

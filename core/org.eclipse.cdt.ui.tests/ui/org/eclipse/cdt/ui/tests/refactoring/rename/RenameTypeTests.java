@@ -19,23 +19,14 @@ import java.io.StringWriter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author markus.schorn@windriver.com
  */
 public class RenameTypeTests extends RenameTestBase {
 
-	public RenameTypeTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(RenameTypeTests.class);
-	}
-
+	@Test
 	public void testClassNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -340,6 +331,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testNamespaceNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -642,6 +634,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testStructNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -944,6 +937,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testStructNameConflictsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -1021,6 +1015,7 @@ public class RenameTypeTests extends RenameTestBase {
 
 	}
 
+	@Test
 	public void testUnionNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -1323,6 +1318,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testUnionNameConflictsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -1393,6 +1389,7 @@ public class RenameTypeTests extends RenameTestBase {
 
 	}
 
+	@Test
 	public void testEnumNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -1629,6 +1626,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testEnumNameConflictsPlainC() throws Exception {
 		createCppFwdDecls("c_fwd.h");
 		createCppDefs("c_def.h");
@@ -1707,6 +1705,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testTypedefNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -1941,6 +1940,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testTypedefNameConflictsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -2021,6 +2021,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testRenameClass() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class String              \n");
@@ -2048,6 +2049,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertTotalChanges(countOccurrences(contents, "String"), ch);
 	}
 
+	@Test
 	public void testRenameClassFromCtor() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class String              \n"); //$NON-NLS-1$
@@ -2074,6 +2076,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertTotalChanges(countOccurrences(contents, "String"), ch); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testRenameClassFromDtor() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class String              \n"); //$NON-NLS-1$
@@ -2100,6 +2103,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertTotalChanges(countOccurrences(contents, "String"), ch); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testUsingDeclaration_332895() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("namespace ns {            \n");
@@ -2119,6 +2123,7 @@ public class RenameTypeTests extends RenameTestBase {
 		assertTotalChanges(countOccurrences(contents, "MyType"), ch);
 	}
 
+	@Test
 	public void testBug72888() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class MyEx {};            \n");

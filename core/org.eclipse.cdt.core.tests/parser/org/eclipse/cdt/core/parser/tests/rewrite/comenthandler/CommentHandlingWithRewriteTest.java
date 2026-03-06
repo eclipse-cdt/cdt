@@ -24,26 +24,23 @@ import org.eclipse.cdt.core.parser.tests.rewrite.RewriteTester;
 import org.eclipse.cdt.core.parser.tests.rewrite.TestSourceFile;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.text.edits.TextEditGroup;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class CommentHandlingWithRewriteTest extends CommentHandlingTest {
 	private ASTRewrite newRewrite;
 
-	public CommentHandlingWithRewriteTest(String name, List<TestSourceFile> files) {
-		super(name, files);
-	}
-
-	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite(CommentHandlingWithRewriteTest.class.getName());
-		suite.addTest(
-				RewriteTester.suite("CommentMultiFileTests", "resources/rewrite/CommentHandlingWithRewriteTest.rts")); //$NON-NLS-1$
-		return suite;
+	public static List<Arguments> loadTestsWithRewrite() throws Exception {
+		return RewriteTester.loadTests(CommentHandlingWithRewriteTest.class,
+				"resources/rewrite/CommentHandlingWithRewriteTest.rts");
 	}
 
 	@Override
-	protected void runTest() throws Throwable {
+	@ParameterizedTest
+	@MethodSource("loadTestsWithRewrite")
+	protected void test(List<TestSourceFile> testFiles) throws Throwable {
+		loadFiles(testFiles);
 		IASTTranslationUnit tu = getUnit("main.cpp");
 		IASTTranslationUnit otherTu = getUnit("other.cpp");
 
@@ -53,7 +50,7 @@ public class CommentHandlingWithRewriteTest extends CommentHandlingTest {
 
 		ASTRewrite rewrite = ASTRewrite.create(tu);
 		newRewrite = rewrite.insertBefore(fooBody, iNode, jNode, new TextEditGroup("test group"));
-		super.runTest();
+		runTest(testFiles);
 	}
 
 	@Override

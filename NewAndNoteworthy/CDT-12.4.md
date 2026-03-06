@@ -2,13 +2,15 @@
 
 This is the New & Noteworthy page for CDT 12.4 which is part of Eclipse 2026-03 Simultaneous Release
 
+In addition to changes in CDT's own repo, please see the [changelog of CDT LSP](https://github.com/eclipse-cdt/cdt-lsp/blob/main/CHANGELOG.md).
+
 ---
 
 # Release Notes
 
-
 # API Changes, current and planned
 
+None for CDT 12.4.
 
 ## Breaking API changes
 

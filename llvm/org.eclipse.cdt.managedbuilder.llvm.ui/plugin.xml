@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <!--
-Copyright (c) 2010-2025 Nokia Siemens Networks Oyj and others
+Copyright (c) 2010, 2026 Nokia Siemens Networks Oyj and others
 This program and the accompanying materials
 are made available under the terms of the Eclipse Public License 2.0
 which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ SPDX-License-Identifier: EPL-2.0
 Contributors:
     Nokia Siemens Networks - initial implementation
     John Dallaway - add option for clang '-emit-llvm' (#1277)
+    John Dallaway - update linker options for clang (#1427)
 -->
 <plugin>
    <extension
@@ -50,7 +51,27 @@ Contributors:
          </optionCategory>
          <option
                category="llvm.c.link.category.general"
-               command="-stats"
+               id="llvm.c.link.option.linker.useld"
+               name="%Option.Posix.Linker.UseLd"
+               tip="%option.tip.useld"
+               valueType="enumerated">
+            <enumeratedOptionValue
+                  name="%Option.Posix.Linker.UseLd.default"
+                  command=""
+                  isDefault="true"
+                  id="llvm.c.link.option.linker.useld.default" />
+            <enumeratedOptionValue
+                  name="%Option.Posix.Linker.UseLd.ld"
+                  command="-fuse-ld=ld"
+                  id="llvm.c.link.option.linker.useld.ld" />
+            <enumeratedOptionValue
+                  name="%Option.Posix.Linker.UseLd.lld"
+                  command="-fuse-ld=lld"
+                  id="llvm.c.link.option.linker.useld.lld" />
+         </option>
+         <option
+               category="llvm.c.link.category.general"
+               command="-Wl,--stats"
                defaultValue="false"
                id="llvm.c.link.option.stats"
                name="%Option.Posix.Linker.Stats"
@@ -58,7 +79,7 @@ Contributors:
          </option>
          <option
                category="llvm.c.link.category.general"
-               command="-v"
+               command="-Wl,--verbose"
                defaultValue="false"
                id="llvm.c.link.option.verbose"
                name="%Option.Posix.Linker.Verbose"
@@ -93,7 +114,7 @@ Contributors:
          </optionCategory>
          <option
                category="llvm.c.link.category.optimizations"
-               command="-strip-all"
+               command="-Wl,--strip-all"
                defaultValue="false"
                id="llvm.c.link.option.strip.debug"
                name="%Option.Posix.Linker.Strip"
@@ -102,47 +123,11 @@ Contributors:
          </option>
          <option
                category="llvm.c.link.category.optimizations"
-               command="-strip-debug"
+               command="-Wl,--strip-debug"
                defaultValue="false"
                id="llvm.c.link.option.strip"
                name="%Option.Posix.Linker.Strip.Debug"
                tip="%option.tip.1"
-               valueType="boolean">
-         </option>
-         <option
-               category="llvm.c.link.category.optimizations"
-               command="-verify-each"
-               defaultValue="false"
-               id="llvm.c.link.option.verification"
-               name="%Option.Posix.Linker.Verification"
-               tip="%option.tip.2"
-               valueType="boolean">
-         </option>
-         <option
-               category="llvm.c.link.category.optimizations"
-               command="-disable-internalize"
-               defaultValue="false"
-               id="llvm.c.link.option.disable_internalize"
-               name="%Option.Posix.Linker.DisableInternalize"
-               tip="%option.tip.3"
-               valueType="boolean">
-         </option>
-         <option
-               category="llvm.c.link.category.optimizations"
-               command="-disable-opt"
-               defaultValue="false"
-               id="llvm.c.link.option.disable_optimization"
-               name="%Option.Posix.Linker.DisableOptimization"
-               tip="%option.tip.4"
-               valueType="boolean">
-         </option>
-         <option
-               category="llvm.c.link.category.optimizations"
-               command="-disable-inlining"
-               defaultValue="false"
-               id="llvm.c.link.option.disable_inhiling"
-               name="%Option.Posix.Linker.DisableInhiling"
-               tip="%option.tip.5"
                valueType="boolean">
          </option>
          <option

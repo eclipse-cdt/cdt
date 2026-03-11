@@ -10,7 +10,6 @@
             file="tools.xml"
             primary="true">
       </toc>
-      <index path="index"/>
    </extension>
    <extension
          id="org.eclipse.cdt.autotools.docs.cheatsheets"

@@ -35,7 +35,7 @@
 
 		<!-- When changing this value, consider also bumping the version numbers of all the docs plug-ins (those with build-doc profile in pom.xml)
 		     so that compare&replace does not replace the the newly built docs because the only change is in the filtered out index/* resources. -->
-		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.37/R-4.37-202509050730/</help-docs-eclipserun-repo>
+		<help-docs-eclipserun-repo>https://download.eclipse.org/eclipse/updates/4.39/R-4.39-202602260420/</help-docs-eclipserun-repo>
 
 		<tycho.scmUrl>scm:git:https://github.com/eclipse-cdt/cdt</tycho.scmUrl>
 		<!-- Some old tests, like CDescriptorOldTests, fail due to reflection access. Therefore we add-opens to make that pass -->
@@ -1002,48 +1002,6 @@
 					<groupId>org.eclipse.tycho</groupId>
 					<artifactId>tycho-eclipse-plugin</artifactId>
 					<version>${tycho-version}</version>
-					<configuration>
-						<applicationArgs>
-							<arg>-application</arg>
-							<arg>org.eclipse.ant.core.antRunner</arg>
-							<arg>-buildfile</arg>
-							<arg>customBuildCallbacks.xml</arg>
-							<arg>build.index</arg>
-						</applicationArgs>
-						<dependencies>
-							<dependency>
-								<artifactId>org.apache.ant</artifactId>
-								<type>eclipse-plugin</type>
-							</dependency>
-							<dependency>
-								<artifactId>org.eclipse.help.base</artifactId>
-								<type>eclipse-plugin</type>
-							</dependency>
-							<dependency>
-								<artifactId>org.eclipse.ant.core</artifactId>
-								<type>eclipse-plugin</type>
-							</dependency>
-						</dependencies>
-						<!-- This needs to be explicitely set now, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=395281 -->
-						<repositories>
-							<repository>
-								<id>platform</id>
-								<layout>p2</layout>
-								<url>${help-docs-eclipserun-repo}</url>
-							</repository>
-						</repositories>
-					</configuration>
-					<executions>
-						<execution>
-							<goals>
-								<goal>eclipse-run</goal>
-							</goals>
-							<phase>compile</phase>
-							<configuration>
-								<executionEnvironment>JavaSE-21</executionEnvironment>
-							</configuration>
-						</execution>
-					</executions>
 				</plugin>
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>

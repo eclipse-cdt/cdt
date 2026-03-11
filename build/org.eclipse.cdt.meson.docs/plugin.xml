@@ -6,7 +6,6 @@
       <toc
             file="toc.xml"
             primary="true"/>
-      <index path="index"/>
    </extension>
 
 </plugin>

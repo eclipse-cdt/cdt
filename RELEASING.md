@@ -38,6 +38,7 @@ find \
     $CDT_ROOT/remote/org.eclipse.remote.doc.isv/pom.xml \
     -type f -exec sed -i s/12.4.0/12.5.0/g {} \;
 ```
+- At the beginning of the calendar year, or on the first edit to `**/*.adoc` files, update the copyright end year in `doc/org.eclipse.cdt.doc.user/adoc-headers.txt` and run `releng/scripts/do_generate_asciidoc.sh` to propagate the change to all the asciidoc files.
 - run check_code_cleanliness to make sure that everything looks good `docker run --rm -it -v $(git rev-parse --show-toplevel):/work -w /work/$(git rev-parse --show-prefix) quay.io/eclipse-cdt/cdt-infra:latest releng/scripts/check_code_cleanliness.sh` - if version bumps are needed, see "bump bundle versions" below
 - create a PR with the above and push it to main when it succeeds.
 - test CDT.setup works

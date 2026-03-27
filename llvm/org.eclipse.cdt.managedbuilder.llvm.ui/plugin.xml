@@ -137,68 +137,11 @@ Contributors:
                valueType="string">
          </option>
          <option
-               category="llvm.c.link.category.llvmOptions"
-               command="-native"
-               defaultValue="false"
-               id="llvm.c.link.option.native"
-               isAbstract="false"
-               name="%Option.Posix.Linker.native"
-               resourceFilter="all"
-               tip="%option.tip.6"
-               valueType="boolean">
-         </option>
-         <option
-               category="llvm.c.link.category.llvmOptions"
-               command="-native-cbe"
-               defaultValue="false"
-               id="llvm.c.link.option.nativeCBackEnd"
-               isAbstract="false"
-               name="%Option.Posix.Linker.nativeCBackend"
-               resourceFilter="all"
-               tip="%option.tip.7"
-               valueType="boolean">
-            <enablement
-                  attribute="defaultValue"
-                  extensionAdjustment="false"
-                  type="CONTAINER_ATTRIBUTE"
-                  value="false">
-               <checkBuildProperty
-                     property="org.eclipse.cdt.build.core.buildArtefactType"
-                     value="org.eclipse.cdt.build.core.buildArtefactType.exe">
-               </checkBuildProperty>
-            </enablement>
-         </option>
-         <option
                browseType="file"
                category="llvm.c.link.category.other"
                id="llvm.c.link.option.userobjs"
                name="%Option.Posix.UserBcs"
                valueType="userObjs">
-         </option>
-         <optionCategory
-               id="llvm.c.link.category.llvmOptions"
-               name="%Option.Posix.Linker.LlvmOptions"
-               owner="cdt.managedbuild.tool.llvm.c.linker">
-         </optionCategory>
-         <option
-               category="llvm.c.link.category.llvmOptions"
-               command="-link-as-library"
-               defaultValue="false"
-               id="llvm.c.link.option.linkaslibrary"
-               isAbstract="false"
-               name="%Option.Posix.Linker.link_as_library"
-               tip="%option.tip.8"
-               valueType="boolean">
-            <enablement
-                  attribute="defaultValue"
-                  extensionAdjustment="false"
-                  type="CONTAINER_ATTRIBUTE"
-                  value="true">
-               <checkBuildProperty
-                     property="org.eclipse.cdt.build.core.buildArtefactType"
-                     value="org.eclipse.cdt.build.core.buildArtefactType.sharedLib">
-               </checkBuildProperty>
-            </enablement>
          </option>
          <optionCategory
                id="llvm.c.link.category.other"
@@ -384,7 +327,7 @@ Contributors:
          </option>
          <option
                category="llvm.asm.category.general"
-               command="-v"
+               command="--version"
                defaultValue="false"
                id="llvm.both.asm.option.version"
                name="%Option.Llvm.Assembler.version"

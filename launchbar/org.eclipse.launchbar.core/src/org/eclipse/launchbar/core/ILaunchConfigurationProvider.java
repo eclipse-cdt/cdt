@@ -131,4 +131,26 @@ public interface ILaunchConfigurationProvider {
 	 */
 	void launchTargetRemoved(ILaunchTarget target) throws CoreException;
 
+	/**
+	 * Returns the preferred launch mode id for the given launch descriptor and target.
+	 * <p>
+	 * Returning {@code null} indicates that this provider has no preferred mode for
+	 * the given descriptor/target combination.
+	 * </p>
+	 * <p>
+	 * The returned id is treated as a preference only. If it does not resolve to a
+	 * known launch mode, or if that mode is not supported for the active descriptor
+	 * and target, Launch Bar continues normal fallback resolution.
+	 * </p>
+	 *
+	 * @param descriptor the launch descriptor
+	 * @param target the launch target
+	 * @return the preferred launch mode id, or {@code null} if none
+	 * @throws CoreException if the preferred mode cannot be determined
+	 * @since 3.2
+	 */
+	default String getPreferredLaunchModeId(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
+		return null;
+	}
+
 }

@@ -569,10 +569,11 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		// last desc mode id
 		String storedModeId = getPerDescriptorStore().get(PREF_ACTIVE_LAUNCH_MODE, null);
 		String lastActiveModeId = activeLaunchMode == null ? null : activeLaunchMode.getIdentifier();
+		String preferredModeId = getPreferredLaunchModeId(activeLaunchDesc, activeLaunchTarget);
 		// this is based on active desc and target which are already set
 		ILaunchMode[] supportedModes = getLaunchModes();
 		if (supportedModes.length > 0) { // mna, what if no modes are supported?
-			String modeNames[] = new String[] { storedModeId, lastActiveModeId, "run", //$NON-NLS-1$
+			String modeNames[] = new String[] { storedModeId, lastActiveModeId, preferredModeId, "run", //$NON-NLS-1$
 					"debug", //$NON-NLS-1$
 					supportedModes[0].getIdentifier() };
 			for (int i = 0; i < modeNames.length; i++) {
@@ -1049,5 +1050,25 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 			Activator.log(e);
 		}
 		return false;
+	}
+
+	private String getPreferredLaunchModeId(ILaunchDescriptor descriptor, ILaunchTarget target) throws CoreException {
+		if (descriptor == null) {
+			return null;
+		}
+		List<LaunchConfigProviderInfo> providerInfos = configProviders.get(getDescriptorTypeId(descriptor.getType()));
+		if (providerInfos == null) {
+			return null;
+		}
+		for (LaunchConfigProviderInfo providerInfo : providerInfos) {
+			if (providerInfo.enabled(descriptor) && providerInfo.enabled(target)) {
+				ILaunchConfigurationProvider provider = providerInfo.getProvider();
+				if (provider != null && provider.supports(descriptor, target)) {
+					return provider.getPreferredLaunchModeId(descriptor, target);
+				}
+			}
+		}
+		// not found
+		return null;
 	}
 }

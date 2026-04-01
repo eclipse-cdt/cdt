@@ -24,7 +24,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -40,9 +42,89 @@ import org.eclipse.launchbar.core.ILaunchDescriptor;
 import org.eclipse.launchbar.core.ILaunchDescriptorType;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
 import org.eclipse.launchbar.core.target.ILaunchTargetManager;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class LaunchBarManagerTest {
+
+	/**
+	 * <p>This is a dummy launch object</p>
+	 *
+	 * Object's data: <b>launchObject_no1</b>
+	 * <ul>
+	 * <li>launchConfigTypeId = "fakeLaunchConfigType_no1";
+	 * <li>launchDescTypeId = "fakeDescriptorType_no1";
+	 * <li>preferredMode = "preferredMode_no1";
+	 * </ul>
+	 */
+	private static final String launchObject_no1 = "launchObject_no1";
+	private static final String launchConfigTypeId_no1 = "fakeLaunchConfigType_no1"; //$NON-NLS-1$
+	private static final String launchDescTypeId_no1 = "fakeDescriptorType_no1"; //$NON-NLS-1$
+	private static final String preferredMode_no1 = "preferredMode_no1"; //$NON-NLS-1$
+	/**
+	 * <p>This is a dummy launch object</p>
+	 *
+	 * Object's data: <b>launchObject_no2</b>
+	 * <ul>
+	 * <li>launchConfigTypeId = "fakeLaunchConfigType_no2";
+	 * <li>launchDescTypeId = "fakeDescriptorType_no2";
+	 * <li>preferredMode = "preferredMode_no2"; // Not supported launch Mode
+	 * </ul>
+	 */
+	private static final String launchObject_no2 = "launchObject_no2";
+	private static final String launchConfigTypeId_no2 = "fakeLaunchConfigType_no2"; //$NON-NLS-1$
+	private static final String launchDescTypeId_no2 = "fakeDescriptorType_no2"; //$NON-NLS-1$
+	private static final String preferredMode_no2 = "preferredMode_no2"; //$NON-NLS-1$
+
+	private static final String runMode = "run"; //$NON-NLS-1$
+	private static final String debugMode = "debug"; //$NON-NLS-1$
+
+	private LaunchBarManager launchBarManagerMock = null;
+
+	@Before
+	public void before() throws CoreException {
+		Map<String, ILaunchConfigurationType> launchConfigTypes = new HashMap<>();
+		// Create mocked Object no1
+		ILaunchDescriptor descriptor_no1 = createLaunchDescriptorMock(launchObject_no1);
+		ILaunchConfigurationType launchConfigType_no1 = createLaunchConfigType(launchConfigTypeId_no1,
+				preferredMode_no1, runMode, debugMode);
+		ILaunchConfigurationProvider launchConfigProvider_no1 = creatLaunchConfigProvier(launchConfigType_no1,
+				descriptor_no1, preferredMode_no1);
+		launchConfigTypes.put(launchConfigTypeId_no1, launchConfigType_no1);
+		// Create mocked Object no2
+		ILaunchDescriptor descriptor_no2 = createLaunchDescriptorMock(launchObject_no2);
+		ILaunchConfigurationType launchConfigType_no2 = createLaunchConfigType(launchConfigTypeId_no2, runMode,
+				debugMode);
+		// preferredMode_no2 not supported
+		doReturn(false).when(launchConfigType_no2).supportsMode(preferredMode_no2);
+		ILaunchConfigurationProvider launchConfigProvider_no2 = creatLaunchConfigProvier(launchConfigType_no2,
+				descriptor_no2, preferredMode_no2);
+		launchConfigTypes.put(launchConfigTypeId_no2, launchConfigType_no2);
+		// Mock Launch bar manager
+		List<IConfigurationElement> elements = new ArrayList<>();
+		final IExtensionPoint extensionPoint = mock(IExtensionPoint.class);
+		IExtension extension = mock(IExtension.class);
+		doReturn(new IExtension[] { extension }).when(extensionPoint).getExtensions();
+		elements.add(createConfigElementMockForDescriptorType(launchDescTypeId_no1, descriptor_no1));
+		elements.add(createConfigElementMockForConfigProvider(launchDescTypeId_no1, launchConfigProvider_no1));
+		elements.add(createConfigElementMockForDescriptorType(launchDescTypeId_no2, descriptor_no2));
+		elements.add(createConfigElementMockForConfigProvider(launchDescTypeId_no2, launchConfigProvider_no2));
+		ILaunchManager launchManager = createLaunchManagerMock(launchConfigTypes, preferredMode_no1, preferredMode_no2,
+				runMode, debugMode);
+		ILaunchTargetManager targetManager = createLaunchTargetManagerMock();
+		doReturn(elements.toArray(IConfigurationElement[]::new)).when(extension).getConfigurationElements();
+		// Mock Launch bar manager
+		launchBarManagerMock = createLaunchBarManagerMock(extensionPoint, launchManager, targetManager);
+		// Initial LaunchBarManager
+		launchBarManagerMock.init();
+	}
+
+	@After
+	public void after() {
+		launchBarManagerMock.dispose();
+	}
+
 	@Test
 	public void startupTest() throws Exception {
 		// Make sure the manager starts up and defaults everything to null
@@ -308,6 +390,207 @@ public class LaunchBarManagerTest {
 		manager.launchObjectAdded(launchObject);
 
 		assertEquals(launchConfig, manager.getActiveLaunchConfiguration());
+	}
+
+	/**
+	 * <p>
+	 * Test that preferred launch mode is taken into consideration in
+	 * {@link LaunchBarManager#syncActiveMode()}.
+	 * <p>
+	 * Verifies that when stored mode and last active mode is NULL, preferred mode is selected
+	 * as active mode.</p>
+	 *
+	 * Order when choosing active mode for active launch descriptor is:
+	 * <ul>stored mode -> last active mode -> preferred mode -> "run" -> "debug" -> supportedMode[0]</ul>
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void preferredLaunchModeTest_StoredModeAndLastActiveModeIsNull() throws CoreException {
+		launchBarManagerMock.launchObjectAdded(launchObject_no1);
+		// "preferredMode_no1" will be selected as active mode.
+		ILaunchMode activeMode = launchBarManagerMock.getActiveLaunchMode();
+		assertEquals(preferredMode_no1, activeMode.getIdentifier());
+	}
+
+	/**
+	 * <p>
+	 * Test that preferred launch mode is taken into consideration in
+	 * {@link LaunchBarManager#syncActiveMode()}.
+	 * <p>
+	 * Verifies that when stored mode and last active mode is NULL, and preferred mode is not
+	 * supported, "run" mode (fall back mode) is selected as active mode.</p>
+	 *
+	 * Order when choosing active mode for active launch descriptor is:
+	 * <ul>stored mode -> last active mode -> preferred mode -> "run" -> "debug" -> supportedMode[0]</ul>
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void preferredLaunchModeTest_preferredModeNotSupported() throws CoreException {
+		launchBarManagerMock.launchObjectAdded(launchObject_no2);
+		// When preferred mode not supported, launch bar manager fall back to other hard-coded mode.
+		// In this case, "run" comes after preferred mode, so "run" is selected as active mode.
+		ILaunchMode activeMode = launchBarManagerMock.getActiveLaunchMode();
+		assertEquals(runMode, activeMode.getIdentifier());
+	}
+
+	/**
+	 * <p>
+	 * Test that preferred launch mode is taken into consideration in
+	 * {@link LaunchBarManager#syncActiveMode()}.
+	 * <p>
+	 * Verifies that when stored mode is NULL and last active mode is Not NULL, last active
+	 * mode will be selected as active mode.</p>
+	 *
+	 * Order when choosing active mode for active launch descriptor is:
+	 * <ul>stored mode -> last active mode -> preferred mode -> "run" -> "debug" -> supportedMode[0]</ul>
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void preferredLaunchModeTest_lastActiveModeNotNull() throws CoreException {
+		// After launch object no2 is added and activated, active mode now is "run" mode.
+		launchBarManagerMock.launchObjectAdded(launchObject_no2);
+		launchBarManagerMock.launchObjectAdded(launchObject_no1);
+		// When launchObject_no1 is added, last active mode now will be "run."
+		// Since preferred mode comes after last active mode, "run" mode is selected for launchObject_no1.
+		ILaunchMode activeMode = launchBarManagerMock.getActiveLaunchMode();
+		assertEquals(runMode, activeMode.getIdentifier());
+	}
+
+	/**
+	 * <p>
+	 * Test that preferred launch mode is taken into consideration in
+	 * {@link LaunchBarManager#syncActiveMode()}.
+	 * <p>
+	 * Verifies that when stored mode is not NULL, stored mode is selected as active mode.</p>
+	 *
+	 * Order when choosing active mode for active launch descriptor is:
+	 * <ul>stored mode -> last active mode -> preferred mode -> "run" -> "debug" -> supportedMode[0]</ul>
+	 *
+	 * @throws CoreException
+	 */
+	@Test
+	public void preferredLaunchModeTest_storedModeNotNull() throws CoreException {
+		// Stored mode is saved as "preferredMode_no1" for launchObject_no1
+		launchBarManagerMock.launchObjectAdded(launchObject_no1);
+		launchBarManagerMock.launchObjectRemoved(launchObject_no1);
+		// After launch object no2 is added and activated, active mode now is "run" mode.
+		launchBarManagerMock.launchObjectAdded(launchObject_no2);
+		launchBarManagerMock.launchObjectAdded(launchObject_no1);
+		// After launch object no1 is added and activated, stored mode now is "preferredMode_no1".
+		// Since stored mode comes first, "preferredMode_no1" mode is selected for launchObject_no1
+		// when it is re-activated.
+		ILaunchMode activeMode = launchBarManagerMock.getActiveLaunchMode();
+		assertEquals(preferredMode_no1, activeMode.getIdentifier());
+	}
+
+	private ILaunchDescriptor createLaunchDescriptorMock(Object launchObject) throws CoreException {
+		ILaunchDescriptorType descriptorType = mock(ILaunchDescriptorType.class);
+		ILaunchDescriptor descriptor = mock(ILaunchDescriptor.class);
+		doReturn(true).when(descriptorType).supportsTargets();
+		doReturn(descriptor).when(descriptorType).getDescriptor(launchObject);
+		doReturn(descriptorType).when(descriptor).getType();
+		doReturn(launchObject).when(descriptor).getName();
+		return descriptor;
+	}
+
+	private ILaunchConfigurationType createLaunchConfigType(String launchConfigTypeId, String... supportModes) {
+		ILaunchConfigurationType launchConfigType = mock(ILaunchConfigurationType.class);
+		doReturn(launchConfigTypeId).when(launchConfigType).getIdentifier();
+		for (String mode : supportModes) {
+			doReturn(true).when(launchConfigType).supportsMode(mode);
+		}
+		return launchConfigType;
+	}
+
+	private ILaunchConfigurationProvider creatLaunchConfigProvier(ILaunchConfigurationType launchConfigType,
+			ILaunchDescriptor desc, String preferredMode) throws CoreException {
+		ILaunchConfigurationProvider configProvider = mock(ILaunchConfigurationProvider.class);
+		ILaunchConfiguration launchConfig = mock(ILaunchConfiguration.class);
+		doReturn(launchConfig).when(configProvider).getLaunchConfiguration(eq(desc), any(ILaunchTarget.class));
+		doReturn(launchConfigType).when(configProvider).getLaunchConfigurationType(any(ILaunchDescriptor.class),
+				any(ILaunchTarget.class));
+		doReturn(launchConfig).when(desc).getAdapter(ILaunchConfiguration.class);
+		doAnswer(invocation -> {
+			ILaunchTarget target = (ILaunchTarget) invocation.getArguments()[1];
+			return target.getTypeId().equals(ILaunchTargetManager.localLaunchTargetTypeId);
+		}).when(configProvider).supports(eq(desc), any(ILaunchTarget.class));
+		doReturn(preferredMode).when(configProvider).getPreferredLaunchModeId(eq(desc), any(ILaunchTarget.class));
+		return configProvider;
+	}
+
+	private IConfigurationElement createConfigElementMockForDescriptorType(String descriptorTypeId,
+			ILaunchDescriptor desc) throws CoreException {
+		IConfigurationElement element = mock(IConfigurationElement.class);
+		doReturn("descriptorType").when(element).getName(); //$NON-NLS-1$
+		doReturn(descriptorTypeId).when(element).getAttribute("id"); //$NON-NLS-1$
+		doReturn(desc.getType()).when(element).createExecutableExtension("class"); //$NON-NLS-1$
+		return element;
+	}
+
+	private IConfigurationElement createConfigElementMockForConfigProvider(String descriptorTypeId,
+			ILaunchConfigurationProvider configProvider) throws CoreException {
+		IConfigurationElement element = mock(IConfigurationElement.class);
+		doReturn("configProvider").when(element).getName(); //$NON-NLS-1$
+		doReturn(descriptorTypeId).when(element).getAttribute("descriptorType"); //$NON-NLS-1$
+		doReturn("10").when(element).getAttribute("priority"); //$NON-NLS-1$ $NON-NLS-2$
+		doReturn(configProvider).when(element).createExecutableExtension("class"); //$NON-NLS-1$
+		return element;
+	}
+
+	private ILaunchTargetManager createLaunchTargetManagerMock() {
+		ILaunchTargetManager targetManager = mock(ILaunchTargetManager.class);
+		ILaunchTarget localTarget = mock(ILaunchTarget.class);
+		doReturn(ILaunchTargetManager.localLaunchTargetTypeId).when(localTarget).getTypeId();
+		doReturn("Local").when(localTarget).getId(); //$NON-NLS-1$
+		doReturn(new ILaunchTarget[] { localTarget }).when(targetManager).getLaunchTargets();
+		return targetManager;
+	}
+
+	private ILaunchManager createLaunchManagerMock(Map<String, ILaunchConfigurationType> launchConfigTypes,
+			String... supportModes) throws CoreException {
+		ILaunchManager launchManager = mock(ILaunchManager.class);
+		List<ILaunchMode> modes = new ArrayList<>();
+		for (String supportMode : supportModes) {
+			ILaunchMode mode = createLaunchModeMock(supportMode);
+			doReturn(mode).when(launchManager).getLaunchMode(supportMode);
+			modes.add(mode);
+		}
+		doReturn(modes.toArray(ILaunchMode[]::new)).when(launchManager).getLaunchModes();
+
+		launchConfigTypes.forEach((typeId, type) -> {
+			doReturn(type).when(launchManager).getLaunchConfigurationType(typeId);
+		});
+		doReturn(new ILaunchConfiguration[0]).when(launchManager).getLaunchConfigurations();
+		return launchManager;
+	}
+
+	private LaunchBarManager createLaunchBarManagerMock(IExtensionPoint extensionPoint, ILaunchManager launchManager,
+			ILaunchTargetManager targetManager) {
+		return new LaunchBarManager(false) {
+			@Override
+			IExtensionPoint getExtensionPoint() throws CoreException {
+				return extensionPoint;
+			}
+
+			@Override
+			ILaunchManager getLaunchManager() {
+				return launchManager;
+			}
+
+			@Override
+			ILaunchTargetManager getLaunchTargetManager() {
+				return targetManager;
+			}
+		};
+	}
+
+	private ILaunchMode createLaunchModeMock(String identifier) {
+		ILaunchMode mode = mock(ILaunchMode.class);
+		doReturn(identifier).when(mode).getIdentifier();
+		return mode;
 	}
 
 	// TODO - test that changing active target type produces a different launch

@@ -35,18 +35,17 @@ toolchain with a built-in CDT integration. However, if you downloaded
 the CDT from the Eclipse web site, then you will require a toolchain
 before you can build and debug any projects.
 
-The standard CDT supports integration with the GNU toolchain. This
-includes GNU's make, gcc compiler, and gdb debugger utilities. If you
-require a toolchain to build software for your development host, this is
-the best choice to get started.
+The standard CDT supports integration with both GNU (GCC) and LLVM (Clang) toolchains. If you
+require a toolchain to build software for your development host, these are
+the best choices to get started.
 
-Each platform that runs the CDT requires different steps to acquire this
-toolchain.
+Each platform that runs the CDT requires different steps to acquire these
+toolchains.
 
-=== Windows
+=== Microsoft Windows
 
-For windows, MinGW and Cygwin are the two main platform choices for
-acquiring the GNU toolchain. It is important to understand the
+For Windows, MinGW and Cygwin are the two main platform choices for
+acquiring the GNU and LLVM toolchains. It is important to understand the
 difference between them. Cygwin produces executables that use the Cygwin
 POSIX runtime. Note that this runtime is GPL licensed. MinGW produces
 native Windows executables that do not require a separate runtime.
@@ -116,7 +115,7 @@ distribution.
 
 === macOS
 
-The CDT supports the _Clang_ toolchain provided by the
+The CDT supports the _LLVM with Clang_ toolchain provided by the
 _Xcode Command Line Tools_. It is recommended to use the Homebrew
 software distribution for any additional tools. The CDT will automatically
 detect tools that are installed using the Homebrew package manager.
@@ -133,7 +132,7 @@ individual tools:
 
 |lldb-mi
 |`brew install --HEAD cdt-project/tools/lldb-mi`
-|Required for local _C/{cpp} Application_ debugging on Apple silicon (you must also install the CDT _C/{cpp} LLDB Debugger Integration_ feature)
+|Required for local _C/{cpp} Application_ debugging on Apple silicon
 
 |ninja
 |`brew install ninja`

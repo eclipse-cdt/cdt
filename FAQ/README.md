@@ -2146,38 +2146,14 @@ report](https://sourceware.org/bugzilla/show_bug.cgi?id=20266).
 
 #### How do I get the LLDB debugger?
 
-CDT has experimental support for LLDB starting from CDT 9.1. The minimum
-recommended version for LLDB is 3.8.
+CDT has support for LLDB starting from CDT 9.1. The use of LLDB with CDT is
+recommended for local macOS application debugging on Apple silicon (AArch64) only.
 
-  - Ubuntu
-
-Using Ubuntu 16.04, install with
-
-`sudo apt-get install lldb`
-
-This will install lldb 3.8 along with the necessary lldb-mi executable.
-CDT should find lldb-mi on the PATH (environment variable).
-
-Note that previous versions of LLDB that were in previous Ubuntu
-releases could be buggy and not as well tested with CDT.
-
-  - Fedora
-
-Using Fedora 24, install with
-
-`sudo dnf install lldb`
-
-This will install lldb 3.8 along with the necessary lldb-mi executable.
-CDT should find lldb-mi on the PATH (environment variable).
-
-Note that previous versions of LLDB that were in previous Fedora
-releases could be buggy and not as well tested with CDT.
-
-  - Other Linux
+  - Linux
 
 The lldb-mi tool was removed from the LLVM repository in 2019 and is no-longer
 present in builds of LLDB from version 10 onwards. If
-lldb-mi is not available (or too old) in your distribution, it is
+lldb-mi is not available in your distribution, it is
 not difficult to build it from source, see the
 [lldb-mi README](https://github.com/lldb-tools/lldb-mi/blob/main/README.md).
 
@@ -2195,11 +2171,10 @@ lldb will not be automatically set for you. You will have to edit the
 LLDB path manually in the debug configuration and/or you need to reset
 the preferences to defaults (if it was modified).
 
-  - Windows
+  - Microsoft Windows
 
 Debugging on Windows with LLDB is not as mature at this moment and still
-very much in progress. This is very likely to improve in the future
-versions of LLDB (and CDT).
+very much in progress.
 
 The lldb-mi tool may be installed using the MSYS2 package manager. Install
 MSYS2 by following instructions on the

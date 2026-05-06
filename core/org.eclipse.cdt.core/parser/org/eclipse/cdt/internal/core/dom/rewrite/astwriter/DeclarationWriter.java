@@ -68,7 +68,7 @@ public class DeclarationWriter extends NodeWriter {
 	private static final char CLOSE_PAREN = ')';
 	private static final char OPEN_BRACKET = '[';
 	private static final char CLOSE_BRACKET = ']';
-	private static final String ASM_START = "asm" + OPEN_PAREN; //$NON-NLS-1$
+	private static final String ASM_START = "asm"; //$NON-NLS-1$
 	private static final String TEMPLATE_DECLARATION = "template<"; //$NON-NLS-1$
 	private static final String TEMPLATE_SPECIALIZATION = "template<> "; //$NON-NLS-1$
 	private static final char COMMA = ',';
@@ -315,6 +315,16 @@ public class DeclarationWriter extends NodeWriter {
 
 	private void writeASMDeclatation(IASTASMDeclaration asmDeclaration) {
 		scribe.print(ASM_START);
+		if (asmDeclaration.isVolatile()) {
+			scribe.print(" volatile"); //$NON-NLS-1$
+		}
+		if (asmDeclaration.isInline()) {
+			scribe.print(" inline"); //$NON-NLS-1$
+		}
+		if (asmDeclaration.isGoto()) {
+			scribe.print(" goto"); //$NON-NLS-1$
+		}
+		scribe.print(OPEN_PAREN);
 		scribe.print(asmDeclaration.getAssembly());
 		scribe.print(CLOSE_PAREN);
 		printSemicolon();

@@ -113,6 +113,76 @@ however, be installed by default. For instructions about installing the
 GNU toolchain for Linux, see the instructions for your particular
 distribution.
 
+In the case of Debian-based Linux distributions, use the following commands to install individual tools:
+
+[cols="1,5,4"]
+|===
+|Tool|Installation command|Notes
+
+|clang
+|`apt install clang`
+|Provides the _LLVM with Clang_ toolchain
+
+|clangd
+|`apt install clangd`
+|Required by the _C/{cpp} Editor (LSP)_
+
+|cmake
+|`apt install cmake`
+|Required for building _CMake_ projects
+
+|gcc
+|`apt install build-essential`
+|Provides the _Linux GCC_ toolchain
+
+|gdb
+|`apt install gdb`
+|Required for local _C/{cpp} Application_ debugging
+
+|make
+|`apt install make`
+|Required for building _Managed Build_ projects
+
+|ninja
+|`apt install ninja-build`
+|Required for building _CMake_ projects
+|===
+
+In the case of Red Hat-based Linux distributions, use the following commands to install individual tools:
+
+[cols="1,5,4"]
+|===
+|Tool|Installation command|Notes
+
+|clang
+|`dnf install clang`
+|Provides the _LLVM with Clang_ toolchain
+
+|clangd
+|`dnf install clang-tools-extra`
+|Required by the _C/{cpp} Editor (LSP)_
+
+|cmake
+|`dnf install cmake`
+|Required for building _CMake_ projects
+
+|gcc
+|`dnf groupinstall "Development Tools"`
+|Provides the _Linux GCC_ toolchain
+
+|gdb
+|`dnf install gdb`
+|Required for local _C/{cpp} Application_ debugging
+
+|make
+|`dnf install make`
+|Required for building _Managed Build_ projects
+
+|ninja
+|`dnf install ninja-build`
+|Required for building _CMake_ projects
+|===
+
 === macOS
 
 The CDT supports the _LLVM with Clang_ toolchain provided by the

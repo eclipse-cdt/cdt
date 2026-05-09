@@ -18,6 +18,11 @@ The recommended way to obtain Eclipse CDT is to download it as part of the compl
 
 Alternatively Eclipse CDT can be installed into an existing Eclipse installation using this p2 URL: `https://download.eclipse.org/tools/cdt/releases/latest/` ([see how](https://help.eclipse.org/topic/org.eclipse.platform.doc.user/tasks/tasks-127.htm))
 
+> [!NOTE]
+> Eclipse CDT uses command line tools to support editing, building and debugging activities. Refer to the
+> [Before you Begin page](https://help.eclipse.org/topic/org.eclipse.cdt.doc.user/concepts/cdt_c_before_you_begin.htm)
+> for tool installation details.
+
 ### Download Development Builds
 
 Milestone builds of the *Eclipse IDE for C/C++ Developers* or *Eclipse IDE for Embedded C/C++ Developers* can be found on the [Eclipse Downloads page](https://www.eclipse.org/downloads/packages/) by clicking on the Eclipse Developer Builds tab (only present when there is a milestone build newer than the latest release).

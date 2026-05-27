@@ -7,7 +7,6 @@ pipeline {
     string(defaultValue: 'cdt-9.8.0', description: 'The full name of this release (e.g. cdt-9.4.2, cdt-9.5.0-rc1, cdt-lsp-1.0.0, cdt-lsp-1.0.0-rc1)', name: 'MILESTONE')
     choice(choices: ['cdt', 'cdt-lsp'], description: 'The repo being published', name: 'CDT_REPO')
     string(defaultValue: 'main', description: 'The repo branch being published (e.g. main, master, cdt_11_3)', name: 'CDT_BRANCH')
-    string(defaultValue: '12345', description: 'The CI build number being promoted from', name: 'CDT_BUILD_NUMBER')
     choice(choices: ['releases', 'builds'], description: 'Publish location (releases or builds)', name: 'RELEASE_OR_BUILD')
   }
   options {
@@ -24,17 +23,7 @@ pipeline {
             description = "Dry Run: $description"
           }
 
-          // TODO: Can we get permission from EF IT to use Jenkins.instance.getItemByFullName
-          // def job = Jenkins.instance.getItemByFullName(jobName)
-          // def build = job?.getBuildByNumber(buildNumber)
-          
-          // if (build) {
-          //     build.setDescription(description)
-          //     build.keepLog(true)
-          // } else {
-          //     echo "Build not found: ${jobName} #${CDT_BUILD_NUMBER}"
-          // }
-          currentBuild.description = "$description from <a href='https://ci.eclipse.org/cdt/job/$CDT_REPO/job/$CDT_BRANCH/$CDT_BUILD_NUMBER'>$CDT_REPO/job/$CDT_BRANCH/$CDT_BUILD_NUMBER</a>"
+          currentBuild.description = "$description from <a href='https://ci.eclipse.org/cdt/job/$CDT_REPO/job/$CDT_BRANCH'>$CDT_REPO/job/$CDT_BRANCH</a>"
         }
         sshagent ( ['projects-storage.eclipse.org-bot-ssh']) {
           sh './releng/scripts/promote-a-build.sh'

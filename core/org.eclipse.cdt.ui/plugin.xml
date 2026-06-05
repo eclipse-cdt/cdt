@@ -5209,5 +5209,16 @@
             name="%toolchains.preferences.name">
       </page>
  </extension>
-
+ <extension
+       point="org.eclipse.ui.editors.stickyLinesProviders">
+    <stickyLinesProvider
+          class="org.eclipse.cdt.internal.ui.editor.CSourceStickyLinesProvider"
+          id="org.eclipse.cdt.ui.CSourceStickyLinesProvider">
+       <enabledWhen>
+         <with variable="editor">
+            <instanceof value="org.eclipse.cdt.internal.ui.editor.CEditor"/>
+         </with>
+       </enabledWhen>
+    </stickyLinesProvider>
+ </extension>
 </plugin>

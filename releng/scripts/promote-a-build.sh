@@ -35,3 +35,4 @@ echo Copying artifacts from latest build output of $CDT_REPO/$CDT_BRANCH to $DOW
 $ECHO $SSH "cp -rpvf $ARTIFACTS/* $DOWNLOAD/"
 echo Renaming zip of artifacts to match the expected name for the milestone
 $ECHO $SSH "mv -vf $DOWNLOAD/$ZIP_NAME $DOWNLOAD/$MILESTONE.zip"
+$ECHO $SSH "find $DOWNLOAD -exec touch {} +"

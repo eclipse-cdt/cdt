@@ -1,0 +1,231 @@
+/*******************************************************************************
+ * Copyright (c) 2025, 2026 Red Hat and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Red Hat - reference Java implementation
+ *     John Dallaway - initial C/C++ implementation (#1455)
+ *******************************************************************************/
+package org.eclipse.cdt.internal.ui.editor;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDefaultStatement;
+import org.eclipse.cdt.core.dom.ast.IASTDoStatement;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTForStatement;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
+import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTWhileStatement;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.text.AbstractDocument;
+import org.eclipse.jface.text.ITextViewerExtension5;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLine;
+import org.eclipse.ui.texteditor.stickyscroll.IStickyLinesProvider;
+import org.eclipse.ui.texteditor.stickyscroll.StickyLine;
+
+public class CSourceStickyLinesProvider implements IStickyLinesProvider {
+
+	private static final boolean DEBUG = Boolean
+			.parseBoolean(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/debug/editor/stickyLines")); //$NON-NLS-1$
+
+	private static final List<Class<? extends IASTNode>> STICKY_NODE_CLASSES = List.of(IASTCompositeTypeSpecifier.class,
+			IASTDoStatement.class, IASTEnumerationSpecifier.class, IASTForStatement.class, IASTFunctionDefinition.class,
+			IASTIfStatement.class, IASTSwitchStatement.class, IASTWhileStatement.class);
+
+	private IASTTranslationUnit fAst = null;
+	private long fModificationStamp = AbstractDocument.UNKNOWN_MODIFICATION_STAMP;
+
+	@Override
+	public List<IStickyLine> getStickyLines(ISourceViewer sourceViewer, int lineNumber,
+			StickyLinesProperties properties) {
+		final long startTime = System.currentTimeMillis();
+		final LinkedList<IStickyLine> stickyLines = new LinkedList<>();
+		final int textWidgetLineNumber = mapLineNumberToWidget(sourceViewer, lineNumber);
+		final int fileLineNumber = textWidgetLineNumber + 1;
+		if (DEBUG) {
+			System.out.println("Sticky lines request at source line: " + fileLineNumber); //$NON-NLS-1$
+		}
+		if (textWidgetLineNumber < 1) { // if no possibility of sticky lines
+			if (DEBUG) {
+				System.out.println("> No processing"); //$NON-NLS-1$
+			}
+			return stickyLines;
+		}
+
+		final IEditorPart editor = properties.editor();
+		final ICElement inputElement = getInputElement(editor);
+		if (inputElement instanceof ITranslationUnit tu) {
+			// determine whether document has been modified since last request
+			boolean documentModified = true;
+			if (sourceViewer.getDocument() instanceof AbstractDocument document) {
+				final long modificationStamp = document.getModificationStamp();
+				documentModified = (modificationStamp != fModificationStamp);
+				fModificationStamp = modificationStamp;
+				if (DEBUG) {
+					System.out.println("> Modification stamp: " + fModificationStamp); //$NON-NLS-1$
+				}
+			}
+
+			// fetch AST on first request or if document modified
+			if (documentModified || (null == fAst)) {
+				try {
+					fAst = tu.getAST(null, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+					if (DEBUG) {
+						System.out.println("> Fetching AST: " + tu.toString()); //$NON-NLS-1$
+					}
+				} catch (CoreException e) {
+					ILog.get().error("Error getting AST for sticky lines", e); //$NON-NLS-1$
+					return stickyLines;
+				}
+			}
+
+			// locate initial AST node
+			final StyledText textWidget = sourceViewer.getTextWidget();
+			final IASTNodeSelector nodeSelector = fAst.getNodeSelector(fAst.getFilePath());
+			final String line = textWidget.getLine(textWidgetLineNumber);
+			final int offset = textWidget.getOffsetAtLine(textWidgetLineNumber);
+			IASTNode node = nodeSelector.findEnclosingNode(offset, line.length());
+
+			// process sticky ancestor nodes
+			while (null != node) {
+				if (DEBUG) {
+					System.out.printf("> Examining AST node: %s (lines %d-%d)\n", node.getClass().getSimpleName(), //$NON-NLS-1$
+							node.getFileLocation().getStartingLineNumber(),
+							node.getFileLocation().getEndingLineNumber());
+				}
+				if (nodeInstanceOfStickyClass(node)) {
+					processStickyNode(node, fileLineNumber, sourceViewer, stickyLines);
+				}
+				node = node.getParent();
+			}
+		}
+		if (DEBUG) {
+			System.out.println("> Sticky line count: " + stickyLines.size()); //$NON-NLS-1$
+			System.out.println("> Execution time (ms): " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
+		}
+		return stickyLines;
+	}
+
+	private void processStickyNode(IASTNode node, int fileLineNumber, ISourceViewer sourceViewer,
+			LinkedList<IStickyLine> stickyLines) {
+		final int startingLineNumber = node.getFileLocation().getStartingLineNumber();
+		if (startingLineNumber < fileLineNumber) {
+			if (node instanceof IASTIfStatement ifStatement) {
+				// process possible else clause first
+				processElseClause(ifStatement, fileLineNumber, sourceViewer, stickyLines);
+			} else if (node instanceof IASTSwitchStatement switchStatement) {
+				// if node has compound switch body
+				if (switchStatement.getBody() instanceof IASTCompoundStatement switchBody) {
+					// process case statement in switch body first
+					processSwitchBody(switchBody, fileLineNumber, sourceViewer, stickyLines);
+				}
+			}
+			addStickyLine(startingLineNumber, sourceViewer, stickyLines);
+		}
+	}
+
+	private void processSwitchBody(IASTCompoundStatement switchBody, int fileLineNumber, ISourceViewer sourceViewer,
+			LinkedList<IStickyLine> stickyLines) {
+		final LinkedList<IASTStatement> stickyStatements = new LinkedList<>();
+		for (IASTStatement statement : switchBody.getStatements()) {
+			final int startingLineNumber = statement.getFileLocation().getStartingLineNumber();
+			if (DEBUG) {
+				System.out.printf("> Examining AST node: %s (lines %d-%d)\n", //$NON-NLS-1$
+						statement.getClass().getSimpleName(), startingLineNumber,
+						statement.getFileLocation().getEndingLineNumber());
+			}
+			// if we have reached the requested line within the switch body
+			if (startingLineNumber >= fileLineNumber) {
+				// process accumulated case/default statements as sticky
+				for (IASTStatement stickyStatement : stickyStatements) {
+					final int stickyStartingLineNumber = stickyStatement.getFileLocation().getStartingLineNumber();
+					addStickyLine(stickyStartingLineNumber, sourceViewer, stickyLines);
+				}
+				break;
+			} else if (statement instanceof IASTCaseStatement || statement instanceof IASTDefaultStatement) {
+				// accumulate case/default statements
+				stickyStatements.addFirst(statement);
+			} else if (statement instanceof IASTBreakStatement || statement instanceof IASTReturnStatement) {
+				// clear case/default statements
+				stickyStatements.clear();
+			}
+		}
+	}
+
+	private void processElseClause(IASTIfStatement ifStatement, int fileLineNumber, ISourceViewer sourceViewer,
+			LinkedList<IStickyLine> stickyLines) {
+		final IASTStatement elseClause = ifStatement.getElseClause();
+		if (null == elseClause) {
+			return; // no else clause
+		}
+		// locate source line containing 'else' keyword between then/else clauses
+		// but search only as far as the line preceding the requested line
+		final int startingLineNumber = ifStatement.getThenClause().getFileLocation().getEndingLineNumber();
+		final int endingLineNumber = Math.min(elseClause.getFileLocation().getStartingLineNumber(), fileLineNumber - 1);
+		final StyledText textWidget = sourceViewer.getTextWidget();
+		for (int lineNumber = endingLineNumber; lineNumber >= startingLineNumber; lineNumber--) {
+			if (textWidget.getLine(lineNumber - 1).contains("else")) { //$NON-NLS-1$
+				addStickyLine(lineNumber, sourceViewer, stickyLines);
+			}
+		}
+	}
+
+	private void addStickyLine(int sourceLineNumber, ISourceViewer sourceViewer, LinkedList<IStickyLine> stickyLines) {
+		final int textWidgetLineNumber = sourceLineNumber - 1;
+		// suppress duplicate sticky lines
+		if (stickyLines.isEmpty() || (stickyLines.getFirst().getLineNumber() > textWidgetLineNumber)) {
+			if (DEBUG) {
+				System.out.println("> Sticky line: " + sourceLineNumber); //$NON-NLS-1$
+			}
+			stickyLines.addFirst(new StickyLine(textWidgetLineNumber, sourceViewer));
+		}
+	}
+
+	private boolean nodeInstanceOfStickyClass(IASTNode node) {
+		return STICKY_NODE_CLASSES.stream().anyMatch(nodeClass -> nodeClass.isInstance(node));
+	}
+
+	private ICElement getInputElement(IEditorPart part) {
+		final IEditorInput editorInput = part.getEditorInput();
+		if (null != editorInput) {
+			return CDTUITools.getEditorInputCElement(editorInput);
+		}
+		return null;
+	}
+
+	private int mapLineNumberToWidget(ISourceViewer sourceViewer, int line) {
+		if (sourceViewer instanceof ITextViewerExtension5 extension) {
+			return extension.modelLine2WidgetLine(line); // -1 if line not found
+		}
+		return line;
+	}
+
+}

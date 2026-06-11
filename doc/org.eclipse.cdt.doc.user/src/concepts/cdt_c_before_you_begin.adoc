@@ -201,7 +201,7 @@ individual tools:
 |Required for building _CMake_ projects
 
 |lldb-mi
-|`brew install --HEAD cdt-project/tools/lldb-mi`
+|`brew install --HEAD eclipse-cdt/tools/lldb-mi`
 |Required for local _C/{cpp} Application_ debugging on Apple silicon
 
 |ninja

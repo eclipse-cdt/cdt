@@ -3,10 +3,10 @@
 <repository name='CDT LSP Latest Update Site'
     type='org.eclipse.equinox.internal.p2.artifact.repository.CompositeArtifactRepository' version='1.0.0'>
   <properties size='1'>
-    <!-- timestamp made with date +%s%3N -->
-    <property name='p2.timestamp' value='1773240665169'/>
+    <!-- timestamp made with date +%s000 -->
+    <property name='p2.timestamp' value='1781183635000'/>
   </properties>
   <children size='1'>
-    <child location='../cdt-lsp-3.5'/>
+    <child location='../cdt-lsp-3.6'/>
   </children>
 </repository>

@@ -20,23 +20,23 @@ Prepare main branch for next release
 - in the root pom.xml update comparator.repo, api-baseline.repo, api-baseline.repo.simrel, help-docs-eclipserun-repo, and simrel-site with the correct URLs based on what was used above in the target files/setup files
 - Update versions to CDT.
     - Do a global find/replace, for example:
-    - 12.4.0-SNAPSHOT -> 12.5.0-SNAPSHOT
-    - 12.4.0.qualifier -> 12.5.0.qualifier
+    - 12.5.0-SNAPSHOT -> 12.6.0-SNAPSHOT
+    - 12.5.0.qualifier -> 12.6.0.qualifier
     - the above two can be done quickly as the chance of a false positive is very low, after applying them, search for remaining 12.1.0 and 12.1 strings in the codebase and update them - being careful as some of those search results should not be changed. Version ranges in dependencies can be done now, or handled with "update dependency version" as above
     - Usefule commands for performing these updates:
 ```
 # Once updated, run the now updated commands:
 CDT_ROOT=$PWD # update if you are not in CDT's root
-find $CDT_ROOT -type f -name pom.xml -exec sed -i s/12.4.0-SNAPSHOT/12.5.0-SNAPSHOT/g {} \;
-find $CDT_ROOT -type f -name feature.xml -exec sed -i s/12.4.0.qualifier/12.5.0.qualifier/g {} \;
-find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i 's/Bundle-Version: 12.4.0.qualifier/Bundle-Version: 12.5.0.qualifier/g' {} \;
+find $CDT_ROOT -type f -name pom.xml -exec sed -i s/12.5.0-SNAPSHOT/12.6.0-SNAPSHOT/g {} \;
+find $CDT_ROOT -type f -name feature.xml -exec sed -i s/12.5.0.qualifier/12.6.0.qualifier/g {} \;
+find $CDT_ROOT -type f -name MANIFEST.MF -exec sed -i 's/Bundle-Version: 12.5.0.qualifier/Bundle-Version: 12.6.0.qualifier/g' {} \;
 find \
     $CDT_ROOT/debug/org.eclipse.cdt.debug.application/plugin.properties \
     $CDT_ROOT/debug/org.eclipse.cdt.debug.application/plugin.properties \
     $CDT_ROOT/debug/org.eclipse.cdt.debug.application.product/debug.product \
     $CDT_ROOT/doc/org.eclipse.cdt.doc.isv/pom.xml \
     $CDT_ROOT/remote/org.eclipse.remote.doc.isv/pom.xml \
-    -type f -exec sed -i s/12.4.0/12.5.0/g {} \;
+    -type f -exec sed -i s/12.5.0/12.6.0/g {} \;
 ```
 - At the beginning of the calendar year, or on the first edit to `**/*.adoc` files, update the copyright end year in `doc/org.eclipse.cdt.doc.user/adoc-headers.txt` and run `releng/scripts/do_generate_asciidoc.sh` to propagate the change to all the asciidoc files.
 - run check_code_cleanliness to make sure that everything looks good `docker run --rm -it -v $(git rev-parse --show-toplevel):/work -w /work/$(git rev-parse --show-prefix) quay.io/eclipse-cdt/cdt-infra:latest releng/scripts/check_code_cleanliness.sh` - if version bumps are needed, see "bump bundle versions" below

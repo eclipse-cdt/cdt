@@ -42,6 +42,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.AbstractDocument;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.custom.StyledText;
@@ -68,8 +69,11 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 			StickyLinesProperties properties) {
 		final long startTime = System.currentTimeMillis();
 		final LinkedList<IStickyLine> stickyLines = new LinkedList<>();
+		// lineNumber in the zero-based line number as known to the IDocument
+		// textWidgetLineNumber is the the line number as known to the ISourceViewer
 		final int textWidgetLineNumber = mapLineNumberToWidget(sourceViewer, lineNumber);
-		final int fileLineNumber = textWidgetLineNumber + 1;
+		// fileLineNumber is the 1-based line number as known to the AST and the underlying source file
+		final int fileLineNumber = lineNumber + 1;
 		if (DEBUG) {
 			System.out.println("Sticky lines request at source line: " + fileLineNumber); //$NON-NLS-1$
 		}
@@ -111,8 +115,14 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 			final StyledText textWidget = sourceViewer.getTextWidget();
 			final IASTNodeSelector nodeSelector = fAst.getNodeSelector(fAst.getFilePath());
 			final String line = textWidget.getLine(textWidgetLineNumber);
-			final int offset = textWidget.getOffsetAtLine(textWidgetLineNumber);
-			IASTNode node = nodeSelector.findEnclosingNode(offset, line.length());
+			IASTNode node = null;
+			try {
+				final int offset = sourceViewer.getDocument().getLineOffset(lineNumber);
+				node = nodeSelector.findEnclosingNode(offset, line.length());
+			} catch (BadLocationException e) {
+				ILog.get().error("Error getting line offset for sticky lines", e); //$NON-NLS-1$
+				return stickyLines;
+			}
 
 			// process sticky ancestor nodes
 			while (null != node) {
@@ -191,21 +201,22 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 		final int startingLineNumber = ifStatement.getThenClause().getFileLocation().getEndingLineNumber();
 		final int endingLineNumber = Math.min(elseClause.getFileLocation().getStartingLineNumber(), fileLineNumber - 1);
 		final StyledText textWidget = sourceViewer.getTextWidget();
-		for (int lineNumber = endingLineNumber; lineNumber >= startingLineNumber; lineNumber--) {
-			if (textWidget.getLine(lineNumber - 1).contains("else")) { //$NON-NLS-1$
-				addStickyLine(lineNumber, sourceViewer, stickyLines);
+		for (int fileLineNum = endingLineNumber; fileLineNum >= startingLineNumber; fileLineNum--) {
+			final int textWidgetLineNumber = mapLineNumberToWidget(sourceViewer, fileLineNum - 1);
+			if (textWidget.getLine(textWidgetLineNumber).contains("else")) { //$NON-NLS-1$
+				addStickyLine(fileLineNum, sourceViewer, stickyLines);
 			}
 		}
 	}
 
-	private void addStickyLine(int sourceLineNumber, ISourceViewer sourceViewer, LinkedList<IStickyLine> stickyLines) {
-		final int textWidgetLineNumber = sourceLineNumber - 1;
+	private void addStickyLine(int fileLineNumber, ISourceViewer sourceViewer, LinkedList<IStickyLine> stickyLines) {
+		final int lineNumber = fileLineNumber - 1;
 		// suppress duplicate sticky lines
-		if (stickyLines.isEmpty() || (stickyLines.getFirst().getLineNumber() > textWidgetLineNumber)) {
+		if (stickyLines.isEmpty() || (stickyLines.getFirst().getLineNumber() > lineNumber)) {
 			if (DEBUG) {
-				System.out.println("> Sticky line: " + sourceLineNumber); //$NON-NLS-1$
+				System.out.println("> Sticky line: " + fileLineNumber); //$NON-NLS-1$
 			}
-			stickyLines.addFirst(new StickyLine(textWidgetLineNumber, sourceViewer));
+			stickyLines.addFirst(new StickyLine(lineNumber, sourceViewer));
 		}
 	}
 
@@ -221,11 +232,11 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 		return null;
 	}
 
-	private int mapLineNumberToWidget(ISourceViewer sourceViewer, int line) {
+	private int mapLineNumberToWidget(ISourceViewer sourceViewer, int lineNumber) {
 		if (sourceViewer instanceof ITextViewerExtension5 extension) {
-			return extension.modelLine2WidgetLine(line); // -1 if line not found
+			return extension.modelLine2WidgetLine(lineNumber); // -1 if line not found
 		}
-		return line;
+		return lineNumber;
 	}
 
 }

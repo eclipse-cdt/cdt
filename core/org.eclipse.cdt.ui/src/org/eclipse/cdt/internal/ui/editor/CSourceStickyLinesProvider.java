@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +31,13 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTIfStatement;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElifStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorElseStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorEndifStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfdefStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIfndefStatement;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
 import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTSwitchStatement;
@@ -68,7 +77,7 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 	public List<IStickyLine> getStickyLines(ISourceViewer sourceViewer, int lineNumber,
 			StickyLinesProperties properties) {
 		final long startTime = System.currentTimeMillis();
-		final LinkedList<IStickyLine> stickyLines = new LinkedList<>();
+		List<IStickyLine> stickyLines = new LinkedList<>();
 		// lineNumber in the zero-based line number as known to the IDocument
 		// textWidgetLineNumber is the the line number as known to the ISourceViewer
 		final int textWidgetLineNumber = mapLineNumberToWidget(sourceViewer, lineNumber);
@@ -119,12 +128,18 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 			try {
 				final int offset = sourceViewer.getDocument().getLineOffset(lineNumber);
 				node = nodeSelector.findEnclosingNode(offset, line.length());
+				if (node instanceof IASTPreprocessorStatement) {
+					// find enclosing non-preprocessor node using adjusted offset
+					final int nodeOffset = node.getFileLocation().getNodeOffset();
+					node = nodeSelector.findEnclosingNode(nodeOffset - 1, 2);
+				}
 			} catch (BadLocationException e) {
 				ILog.get().error("Error getting line offset for sticky lines", e); //$NON-NLS-1$
 				return stickyLines;
 			}
 
 			// process sticky ancestor nodes
+			final LinkedList<IStickyLine> ancestorLines = new LinkedList<>();
 			while (null != node) {
 				if (DEBUG) {
 					System.out.printf("> Examining AST node: %s (lines %d-%d)\n", node.getClass().getSimpleName(), //$NON-NLS-1$
@@ -132,16 +147,59 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 							node.getFileLocation().getEndingLineNumber());
 				}
 				if (nodeInstanceOfStickyClass(node)) {
-					processStickyNode(node, fileLineNumber, sourceViewer, stickyLines);
+					processStickyNode(node, fileLineNumber, sourceViewer, ancestorLines);
 				}
 				node = node.getParent();
 			}
+
+			// process sticky pre-processor nodes and merge with ancestor nodes
+			final List<IStickyLine> preprocessorLines = findPreprocessorStickyLines(fileLineNumber, sourceViewer);
+			stickyLines = mergeStickyLines(ancestorLines, preprocessorLines);
 		}
 		if (DEBUG) {
 			System.out.println("> Sticky line count: " + stickyLines.size()); //$NON-NLS-1$
 			System.out.println("> Execution time (ms): " + (System.currentTimeMillis() - startTime)); //$NON-NLS-1$
 		}
 		return stickyLines;
+	}
+
+	private List<IStickyLine> findPreprocessorStickyLines(int fileLineNumber, ISourceViewer sourceViewer) {
+		final Deque<IASTPreprocessorStatement> stack = new ArrayDeque<>();
+		for (IASTPreprocessorStatement statement : fAst.getAllPreprocessorStatements()) {
+			if (statement.getFileLocation().getStartingLineNumber() >= fileLineNumber) {
+				break;
+			}
+			if (nodeInstanceOfPreprocessorIfClass(statement) || statement instanceof IASTPreprocessorElifStatement
+					|| statement instanceof IASTPreprocessorElseStatement) {
+				stack.push(statement);
+			} else if (statement instanceof IASTPreprocessorEndifStatement) {
+				IASTPreprocessorStatement previous = statement;
+				while (!stack.isEmpty() && !nodeInstanceOfPreprocessorIfClass(previous)) {
+					previous = stack.pop();
+				}
+			}
+		}
+		final LinkedList<IStickyLine> stickyLines = new LinkedList<>();
+		stack.forEach(statement -> addStickyLine(statement.getFileLocation().getStartingLineNumber(), sourceViewer,
+				stickyLines));
+		return stickyLines;
+	}
+
+	private List<IStickyLine> mergeStickyLines(List<IStickyLine> lines1, List<IStickyLine> lines2) {
+		final Deque<IStickyLine> deque1 = new ArrayDeque<>(lines1);
+		final Deque<IStickyLine> deque2 = new ArrayDeque<>(lines2);
+		final List<IStickyLine> mergedLines = new LinkedList<>();
+		while (null != deque1.peek() && null != deque2.peek()) {
+			// assume both lists are sorted in ascending line number order
+			if (deque1.peek().getLineNumber() < deque2.peek().getLineNumber()) {
+				mergedLines.add(deque1.pop());
+			} else {
+				mergedLines.add(deque2.pop());
+			}
+		}
+		mergedLines.addAll(deque1);
+		mergedLines.addAll(deque2);
+		return mergedLines;
 	}
 
 	private void processStickyNode(IASTNode node, int fileLineNumber, ISourceViewer sourceViewer,
@@ -222,6 +280,11 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 
 	private boolean nodeInstanceOfStickyClass(IASTNode node) {
 		return STICKY_NODE_CLASSES.stream().anyMatch(nodeClass -> nodeClass.isInstance(node));
+	}
+
+	private boolean nodeInstanceOfPreprocessorIfClass(IASTNode node) {
+		return node instanceof IASTPreprocessorIfStatement || node instanceof IASTPreprocessorIfdefStatement
+				|| node instanceof IASTPreprocessorIfndefStatement;
 	}
 
 	private ICElement getInputElement(IEditorPart part) {

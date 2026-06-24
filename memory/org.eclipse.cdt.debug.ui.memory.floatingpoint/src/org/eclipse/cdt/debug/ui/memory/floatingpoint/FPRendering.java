@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 Wind River Systems Inc. and others.
+ * Copyright (c) 2006, 2026 Wind River Systems Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     Randy Rohrbach (Wind River Systems, Inc.) - Copied and modified to create the floating point plugin
+ *     John Dallaway - Generate disabled menu item icon descriptor (#1485)
  *******************************************************************************/
 
 package org.eclipse.cdt.debug.ui.memory.floatingpoint;
@@ -1195,10 +1196,10 @@ class CopyAction extends Action {
 		fRendering = rendering;
 		setText(DebugUIMessages.CopyViewToClipboardAction_title);
 		setToolTipText(DebugUIMessages.CopyViewToClipboardAction_tooltip);
-		setImageDescriptor(
-				DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY_VIEW_TO_CLIPBOARD));
-		setDisabledImageDescriptor(
-				DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_COPY_VIEW_TO_CLIPBOARD));
+		ImageDescriptor descriptor = DebugPluginImages
+				.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_COPY_VIEW_TO_CLIPBOARD);
+		setImageDescriptor(descriptor);
+		setDisabledImageDescriptor(descriptor.asDisabledDescriptor());
 	}
 
 	@Override

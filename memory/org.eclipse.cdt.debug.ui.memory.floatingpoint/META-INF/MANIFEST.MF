@@ -2,12 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.debug.ui.memory.floatingpoint;singleton:=true
-Bundle-Version: 1.2.400.qualifier
+Bundle-Version: 1.2.500.qualifier
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.debug.core;bundle-version="[3.23.0,4)",
  org.eclipse.debug.ui;bundle-version="[3.19.0,4.0.0)",
  org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",
  org.eclipse.ui;bundle-version="[3.207.200,4)",
+ org.eclipse.jface;bundle-version="[3.40.0,4.0.0)",
  org.eclipse.search;bundle-version="[3.17.200,4)",
  org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)"
 Bundle-ActivationPolicy: lazy

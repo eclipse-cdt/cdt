@@ -110,7 +110,8 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 			// fetch AST on first request or if document modified
 			if (documentModified || (null == fAst)) {
 				try {
-					fAst = tu.getAST(null, ITranslationUnit.AST_SKIP_ALL_HEADERS);
+					fAst = tu.getAST(null,
+							ITranslationUnit.AST_PARSE_INACTIVE_CODE | ITranslationUnit.AST_SKIP_ALL_HEADERS);
 					if (DEBUG) {
 						System.out.println("> Fetching AST: " + tu.toString()); //$NON-NLS-1$
 					}
@@ -171,11 +172,21 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 			}
 			if (nodeInstanceOfPreprocessorIfClass(statement) || statement instanceof IASTPreprocessorElifStatement
 					|| statement instanceof IASTPreprocessorElseStatement) {
+				if (DEBUG) {
+					System.out.printf("> Pushing AST preprocessor node: %s (lines %d-%d)\n", //$NON-NLS-1$
+							statement.getClass().getSimpleName(), statement.getFileLocation().getStartingLineNumber(),
+							statement.getFileLocation().getEndingLineNumber());
+				}
 				stack.push(statement);
 			} else if (statement instanceof IASTPreprocessorEndifStatement) {
 				IASTPreprocessorStatement previous = statement;
 				while (!stack.isEmpty() && !nodeInstanceOfPreprocessorIfClass(previous)) {
 					previous = stack.pop();
+					if (DEBUG) {
+						System.out.printf("> Popping AST preprocessor node: %s (lines %d-%d)\n", //$NON-NLS-1$
+								previous.getClass().getSimpleName(), previous.getFileLocation().getStartingLineNumber(),
+								previous.getFileLocation().getEndingLineNumber());
+					}
 				}
 			}
 		}

@@ -15,6 +15,7 @@
 package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,10 +48,9 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.text.AbstractDocument;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -70,92 +70,22 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 			IASTDoStatement.class, IASTEnumerationSpecifier.class, IASTForStatement.class, IASTFunctionDefinition.class,
 			IASTIfStatement.class, IASTSwitchStatement.class, IASTWhileStatement.class);
 
-	private IASTTranslationUnit fAst = null;
-	private long fModificationStamp = AbstractDocument.UNKNOWN_MODIFICATION_STAMP;
-
 	@Override
 	public List<IStickyLine> getStickyLines(ISourceViewer sourceViewer, int lineNumber,
 			StickyLinesProperties properties) {
 		final long startTime = System.currentTimeMillis();
-		List<IStickyLine> stickyLines = new LinkedList<>();
-		// lineNumber in the zero-based line number as known to the IDocument
-		// textWidgetLineNumber is the the line number as known to the ISourceViewer
-		final int textWidgetLineNumber = mapLineNumberToWidget(sourceViewer, lineNumber);
-		// fileLineNumber is the 1-based line number as known to the AST and the underlying source file
-		final int fileLineNumber = lineNumber + 1;
+		final List<IStickyLine> stickyLines = new LinkedList<>();
 		if (DEBUG) {
-			System.out.println("Sticky lines request at source line: " + fileLineNumber); //$NON-NLS-1$
-		}
-		if (textWidgetLineNumber < 1) { // if no possibility of sticky lines
-			if (DEBUG) {
-				System.out.println("> No processing"); //$NON-NLS-1$
-			}
-			return stickyLines;
+			System.out.println("Sticky lines request at source line: " + (lineNumber + 1)); //$NON-NLS-1$
 		}
 
 		final IEditorPart editor = properties.editor();
 		final ICElement inputElement = getInputElement(editor);
 		if (inputElement instanceof ITranslationUnit tu) {
-			// determine whether document has been modified since last request
-			boolean documentModified = true;
-			if (sourceViewer.getDocument() instanceof AbstractDocument document) {
-				final long modificationStamp = document.getModificationStamp();
-				documentModified = (modificationStamp != fModificationStamp);
-				fModificationStamp = modificationStamp;
-				if (DEBUG) {
-					System.out.println("> Modification stamp: " + fModificationStamp); //$NON-NLS-1$
-				}
-			}
-
-			// fetch AST on first request or if document modified
-			if (documentModified || (null == fAst)) {
-				try {
-					fAst = tu.getAST(null,
-							ITranslationUnit.AST_PARSE_INACTIVE_CODE | ITranslationUnit.AST_SKIP_ALL_HEADERS);
-					if (DEBUG) {
-						System.out.println("> Fetching AST: " + tu.toString()); //$NON-NLS-1$
-					}
-				} catch (CoreException e) {
-					ILog.get().error("Error getting AST for sticky lines", e); //$NON-NLS-1$
-					return stickyLines;
-				}
-			}
-
-			// locate initial AST node
-			final StyledText textWidget = sourceViewer.getTextWidget();
-			final IASTNodeSelector nodeSelector = fAst.getNodeSelector(fAst.getFilePath());
-			final String line = textWidget.getLine(textWidgetLineNumber);
-			IASTNode node = null;
-			try {
-				final int offset = sourceViewer.getDocument().getLineOffset(lineNumber);
-				node = nodeSelector.findEnclosingNode(offset, line.length());
-				if (node instanceof IASTPreprocessorStatement) {
-					// find enclosing non-preprocessor node using adjusted offset
-					final int nodeOffset = node.getFileLocation().getNodeOffset();
-					node = nodeSelector.findEnclosingNode(nodeOffset - 1, 2);
-				}
-			} catch (BadLocationException e) {
-				ILog.get().error("Error getting line offset for sticky lines", e); //$NON-NLS-1$
-				return stickyLines;
-			}
-
-			// process sticky ancestor nodes
-			final LinkedList<IStickyLine> ancestorLines = new LinkedList<>();
-			while (null != node) {
-				if (DEBUG) {
-					System.out.printf("> Examining AST node: %s (lines %d-%d)\n", node.getClass().getSimpleName(), //$NON-NLS-1$
-							node.getFileLocation().getStartingLineNumber(),
-							node.getFileLocation().getEndingLineNumber());
-				}
-				if (nodeInstanceOfStickyClass(node)) {
-					processStickyNode(node, fileLineNumber, sourceViewer, ancestorLines);
-				}
-				node = node.getParent();
-			}
-
-			// process sticky pre-processor nodes and merge with ancestor nodes
-			final List<IStickyLine> preprocessorLines = findPreprocessorStickyLines(fileLineNumber, sourceViewer);
-			stickyLines = mergeStickyLines(ancestorLines, preprocessorLines);
+			CUIPlugin.getDefault().getASTProvider().runOnAST(tu, ASTProvider.WAIT_IF_OPEN, null, (lang, ast) -> {
+				stickyLines.addAll(calculateStickyLines(sourceViewer, lineNumber, ast));
+				return Status.OK_STATUS;
+			});
 		}
 		if (DEBUG) {
 			System.out.println("> Sticky line count: " + stickyLines.size()); //$NON-NLS-1$
@@ -164,9 +94,59 @@ public class CSourceStickyLinesProvider implements IStickyLinesProvider {
 		return stickyLines;
 	}
 
-	private List<IStickyLine> findPreprocessorStickyLines(int fileLineNumber, ISourceViewer sourceViewer) {
+	private List<IStickyLine> calculateStickyLines(ISourceViewer sourceViewer, int lineNumber,
+			IASTTranslationUnit ast) {
+		// lineNumber in the zero-based line number as known to the IDocument
+		// fileLineNumber is the 1-based line number as known to the AST and the underlying source file
+		// textWidgetLineNumber is the the line number as known to the ISourceViewer
+		final int fileLineNumber = lineNumber + 1;
+		final StyledText textWidget = sourceViewer.getTextWidget();
+		final int textWidgetLineNumber = mapLineNumberToWidget(sourceViewer, lineNumber);
+		if (textWidgetLineNumber < 1) { // if no possibility of sticky lines
+			if (DEBUG) {
+				System.out.println("> No processing"); //$NON-NLS-1$
+			}
+			return Collections.emptyList();
+		}
+
+		// locate initial AST node
+		final IASTNodeSelector nodeSelector = ast.getNodeSelector(ast.getFilePath());
+		final String line = textWidget.getLine(textWidgetLineNumber);
+		IASTNode node = null;
+		try {
+			final int offset = sourceViewer.getDocument().getLineOffset(lineNumber);
+			node = nodeSelector.findEnclosingNode(offset, line.length());
+			if (node instanceof IASTPreprocessorStatement) {
+				// find enclosing non-preprocessor node using adjusted offset
+				final int nodeOffset = node.getFileLocation().getNodeOffset();
+				node = nodeSelector.findEnclosingNode(nodeOffset - 1, 2);
+			}
+		} catch (BadLocationException e) {
+			ILog.get().error("Error getting line offset for sticky lines", e); //$NON-NLS-1$
+		}
+
+		// process sticky ancestor nodes
+		final LinkedList<IStickyLine> ancestorLines = new LinkedList<>();
+		while (null != node) {
+			if (DEBUG) {
+				System.out.printf("> Examining AST node: %s (lines %d-%d)\n", node.getClass().getSimpleName(), //$NON-NLS-1$
+						node.getFileLocation().getStartingLineNumber(), node.getFileLocation().getEndingLineNumber());
+			}
+			if (nodeInstanceOfStickyClass(node)) {
+				processStickyNode(node, fileLineNumber, sourceViewer, ancestorLines);
+			}
+			node = node.getParent();
+		}
+
+		// process sticky pre-processor nodes and merge with ancestor nodes
+		final List<IStickyLine> preprocessorLines = findPreprocessorStickyLines(sourceViewer, fileLineNumber, ast);
+		return mergeStickyLines(ancestorLines, preprocessorLines);
+	}
+
+	private List<IStickyLine> findPreprocessorStickyLines(ISourceViewer sourceViewer, int fileLineNumber,
+			IASTTranslationUnit ast) {
 		final Deque<IASTPreprocessorStatement> stack = new ArrayDeque<>();
-		for (IASTPreprocessorStatement statement : fAst.getAllPreprocessorStatements()) {
+		for (IASTPreprocessorStatement statement : ast.getAllPreprocessorStatements()) {
 			if (statement.getFileLocation().getStartingLineNumber() >= fileLineNumber) {
 				break;
 			}

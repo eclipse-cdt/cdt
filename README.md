@@ -14,7 +14,7 @@ See also https://projects.eclipse.org/projects/tools.cdt and https://eclipse.org
 
 ## Download
 
-The recommended way to obtain Eclipse CDT is to download it as part of the complete *Eclipse IDE for C/C++ Developers* or *Eclipse IDE for Embedded C/C++ Developers* from the main [Eclipse IDE download site](https://eclipseide.org/release/).
+The recommended way to obtain Eclipse CDT is to download it as part of the complete *Eclipse IDE for C/C++ Developers* or *Eclipse IDE for Embedded C/C++ Developers* from the main [Eclipse IDE download site](https://www.eclipse.org/downloads/packages/).
 
 Alternatively Eclipse CDT can be installed into an existing Eclipse installation using this p2 URL: `https://download.eclipse.org/tools/cdt/releases/latest/` ([see how](https://help.eclipse.org/topic/org.eclipse.platform.doc.user/tasks/tasks-127.htm))
 

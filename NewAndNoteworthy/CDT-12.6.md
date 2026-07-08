@@ -8,6 +8,16 @@ In addition to changes in CDT's own repo, please see the [changelog of CDT LSP](
 
 # Release Notes
 
+## Enhanced sticky scrolling support
+
+The _C/C++ Editor_ now supports sticky scrolling based on source code structure rather than line indentation:
+
+<p align="center"><img src="images/CDT-12.6-sticky-lines.png" width="50%"></p>
+
+Sticky scrolling may be enabled on the _General_ > _Editors_ > _Text Editors_ page of the workbench preferences dialog:
+
+<p align="center"><img src="images/CDT-12.6-sticky-lines-enable.png" width="80%"></p>
+
 # API Changes, current and planned
 
 ## Breaking API changes

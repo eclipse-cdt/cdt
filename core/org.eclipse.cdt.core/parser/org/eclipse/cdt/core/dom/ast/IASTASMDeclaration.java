@@ -35,6 +35,48 @@ public interface IASTASMDeclaration extends IASTDeclaration {
 	public void setAssembly(String assembly);
 
 	/**
+	 * Returns whether the <code>volatile</code> qualifier was present.
+	 *
+	 * @since 9.3
+	 */
+	public boolean isVolatile();
+
+	/**
+	 * Sets the <code>volatile</code> qualifier.
+	 *
+	 * @since 9.3
+	 */
+	public void setVolatile(boolean value);
+
+	/**
+	 * Returns whether the <code>inline</code> qualifier was present.
+	 *
+	 * @since 9.3
+	 */
+	public boolean isInline();
+
+	/**
+	 * Sets the <code>inline</code> qualifier.
+	 *
+	 * @since 9.3
+	 */
+	public void setInline(boolean value);
+
+	/**
+	 * Returns whether the <code>goto</code> qualifier was present.
+	 *
+	 * @since 9.3
+	 */
+	public boolean isGoto();
+
+	/**
+	 * Sets the <code>goto</code> qualifier.
+	 *
+	 * @since 9.3
+	 */
+	public void setGoto(boolean value);
+
+	/**
 	 * @since 5.1
 	 */
 	@Override

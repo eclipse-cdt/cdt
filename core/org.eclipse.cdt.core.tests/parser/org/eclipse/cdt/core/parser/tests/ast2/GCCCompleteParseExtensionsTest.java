@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.parser.tests.ast2;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.StringWriter;
@@ -506,5 +507,51 @@ public class GCCCompleteParseExtensionsTest extends AST2TestBase {
 		String code = getAboveComment();
 		parseGCC(code);
 		parseGPP(code);
+	}
+
+	@Test
+	public void testAsmInlineGotoQualifiers() throws Exception {
+		// __asm__ inline ("nop");
+		IASTDeclaration[] decls = parseGCC("__asm__ inline (\"nop\");").getDeclarations();
+		IASTASMDeclaration asmDecl = (IASTASMDeclaration) decls[0];
+		assertEquals("\"nop\"", asmDecl.getAssembly());
+		assertTrue(asmDecl.isInline());
+		assertFalse(asmDecl.isVolatile());
+		assertFalse(asmDecl.isGoto());
+
+		// __asm__ goto ("nop");
+		decls = parseGCC("__asm__ goto (\"nop\");").getDeclarations();
+		asmDecl = (IASTASMDeclaration) decls[0];
+		assertEquals("\"nop\"", asmDecl.getAssembly());
+		assertTrue(asmDecl.isGoto());
+		assertFalse(asmDecl.isVolatile());
+		assertFalse(asmDecl.isInline());
+
+		// asm volatile inline goto ("nop"); - multiple qualifiers in any order
+		decls = parseGCC("asm volatile inline goto (\"nop\");").getDeclarations();
+		asmDecl = (IASTASMDeclaration) decls[0];
+		assertTrue(asmDecl.isVolatile());
+		assertTrue(asmDecl.isInline());
+		assertTrue(asmDecl.isGoto());
+
+		// CPP variants
+		decls = parseGPP("__asm__ inline (\"nop\");").getDeclarations();
+		asmDecl = (IASTASMDeclaration) decls[0];
+		assertTrue(asmDecl.isInline());
+		assertFalse(asmDecl.isVolatile());
+		assertFalse(asmDecl.isGoto());
+
+		decls = parseGPP("__asm__ goto (\"nop\");").getDeclarations();
+		asmDecl = (IASTASMDeclaration) decls[0];
+		assertTrue(asmDecl.isGoto());
+		assertFalse(asmDecl.isVolatile());
+		assertFalse(asmDecl.isInline());
+
+		// volatile qualifier (existing) is still stored correctly
+		decls = parseGCC("asm volatile (\"nop\");").getDeclarations();
+		asmDecl = (IASTASMDeclaration) decls[0];
+		assertTrue(asmDecl.isVolatile());
+		assertFalse(asmDecl.isInline());
+		assertFalse(asmDecl.isGoto());
 	}
 }

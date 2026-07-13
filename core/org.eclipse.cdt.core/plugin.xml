@@ -675,8 +675,19 @@
       <file-association 
        content-type="org.eclipse.cdt.core.cxxHeader"
        file-names="any,execution,filesystem,memory_resource,optional,string_view,variant"/>
+   </extension>
+   <!-- Headers added in C++ 23 -->
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="expected,flat_map,flat_set,generator,mdspan,print,spanstream,stacktrace,stdfloat"/>
+   </extension>
+   <!-- Headers added in C++ 26 -->
+   <extension point="org.eclipse.core.contenttype.contentTypes"> 
+      <file-association 
+       content-type="org.eclipse.cdt.core.cxxHeader"
+       file-names="contracts,debugging,hazard_pointer,hive,inplace_vector,linalg,rcu,simd,text_encoding"/>
    </extension> 
- 
 <!-- =================================================================================== -->
 <!-- Initialize the preference for the Core Plugin                                       -->
 <!-- =================================================================================== -->

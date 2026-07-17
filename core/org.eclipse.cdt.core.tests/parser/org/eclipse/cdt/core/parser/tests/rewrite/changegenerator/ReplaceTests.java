@@ -74,14 +74,9 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTUnaryExpression;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class ReplaceTests extends ChangeGeneratorTest {
-
-	public static TestSuite suite() {
-		return new TestSuite(ReplaceTests.class);
-	}
 
 	private IASTAttribute createAttribute(String name) {
 		return factory.newAttribute(name.toCharArray(), null);
@@ -122,6 +117,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//int *pi[3];
 
 	//int *pi[15];
+	@Test
 	public void testArrayModifier() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -146,6 +142,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//int *values = new int[5][6];
 
 	//int *values = new int[5][7];
+	@Test
 	public void testArraySizeExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -175,6 +172,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//TestClass::TestClass(int a) :
 	//		alpha(a) {
 	//}
+	@Test
 	public void testCtorChainInitializer() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -209,6 +207,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 	//void foo(int parameter) throw (int) {
 	//}
+	@Test
 	public void testExceptionTest() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -243,6 +242,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//	int s = 0, c = 0, h = 0;
 	//	s = 3, c = 9, h = 5;
 	//}
+	@Test
 	public void testExpressionTest() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -292,6 +292,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//#endif /*A_H_*/
 	//
 	//
+	@Test
 	public void testIdentical() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -310,6 +311,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//int hs = 5;
 
 	//int hs = 999;
+	@Test
 	public void testInitializer() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -352,6 +354,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//};
 	//
 	//#endif /*A_H_*/
+	@Test
 	public void testMoveRename() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -400,6 +403,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//#endif /*A_H_*/
 	//
 	//
+	@Test
 	public void testMove() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -444,6 +448,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//#endif /*A_H_*/
 	//
 	//
+	@Test
 	public void testName() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -467,6 +472,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//void foo(int x) {
 	//	x++;
 	//}
+	@Test
 	public void testNestedReplace() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -506,6 +512,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//int *value = new int(5);
 
 	//int *value = new int(6);
+	@Test
 	public void testNewInitializerExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -531,6 +538,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 	//void foo(int *parameter) {
 	//}
+	@Test
 	public void testPointerInParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -580,6 +588,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//  }
 	//
 	//}
+	@Test
 	public void testReplaceForLoopBody() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -610,6 +619,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//	i = 42;
 	//	i++;
 	//}
+	@Test
 	public void testReplaceInsertStatement() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -647,6 +657,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 	//void bar() {
 	//}
+	@Test
 	public void testReplaceReplacedNode() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -691,6 +702,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//#endif /*A_H_*/
 	//
 	//
+	@Test
 	public void testSameName() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -721,6 +733,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//		i++;
 	//	}
 	//}
+	@Test
 	public void testStatement() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -770,6 +783,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//  }
 	//
 	//}
+	@Test
 	public void testWhitespaceHandling() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -811,6 +825,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//		int two = 2;
 	//	}
 	//}
+	@Test
 	public void testNestedReplacementInIfStatementWithMacroInSibling_474020() throws Exception {
 		compareResult(new ASTVisitor() {
 			private ASTModification parentModification;
@@ -861,6 +876,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//		int two = 2;
 	//	}
 	//}
+	@Test
 	public void testNestedReplacementInIfStatementWithMacroInCondition_474020() throws Exception {
 		compareResult(new ASTVisitor() {
 			private ASTModification parentModification;
@@ -911,6 +927,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//		int two = 2;
 	//	}
 	//}
+	@Test
 	public void testNestedReplacementInIfStatementWithMacroAsFirstPartOfCondition_474020() throws Exception {
 		compareResult(new ASTVisitor() {
 			private ASTModification parentModification;
@@ -961,6 +978,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//		int two = 2;
 	//	}
 	//}
+	@Test
 	public void testNestedReplacementInIfStatementWithMacroAsInnerPartOfCondition_474020() throws Exception {
 		compareResult(new ASTVisitor() {
 			private ASTModification parentModification;
@@ -1011,6 +1029,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//		int two = 2;
 	//	}
 	//}
+	@Test
 	public void testNestedReplacementInIfStatementWithMacroAsLastPartOfCondition_474020() throws Exception {
 		compareResult(new ASTVisitor() {
 			private ASTModification parentModification;
@@ -1067,6 +1086,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//	void func3() override final;
 	//	void func4() final override;
 	//};
+	@Test
 	public void testReplaceFunctionDeclaratorWithVirtualSpecifier_Bug518628() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -1090,6 +1110,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//{
 	//	virtual void foo() throw (int) = 0;
 	//};
+	@Test
 	public void testPureVirtualFunction() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -1110,26 +1131,31 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	}
 
 	//[[foo]] int hs = 5;
+	@Test
 	public void testCopyReplaceAttribute_Bug533552_1a() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, IASTDeclaration.class::isInstance));
 	}
 
 	//[[foo, bar]][[foobar]] int hs = 5;
+	@Test
 	public void testCopyReplaceAttribute_Bug533552_1b() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, IASTDeclaration.class::isInstance));
 	}
 
 	//[[foo, bar]][[foobar]] int [[asdf]] hs = 5;
+	@Test
 	public void testCopyReplaceAttribute_Bug533552_1c() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, IASTDeclaration.class::isInstance));
 	}
 
 	//using I [[attribute]] = int;
+	@Test
 	public void testCopyReplaceAliasDeclarationWithAttributes_Bug533552_1d() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTAliasDeclaration.class::isInstance));
 	}
 
 	//int i [[attribute]];
+	@Test
 	public void testCopyReplaceDeclaratorWithAttributes_Bug533552_1e() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, IASTDeclarator.class::isInstance));
 	}
@@ -1137,6 +1163,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//[[foo]] int hs = 5;
 
 	//[[foo, bar]] int hs = 5;
+	@Test
 	public void testAddAttribute_Bug533552_2a() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -1157,6 +1184,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//[[foo]] int hs = 5;
 
 	//[[foo]][[bar]] int hs = 5;
+	@Test
 	public void testAddAttribute_Bug533552_2b() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -1182,6 +1210,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//		break;
 	//	}
 	//}
+	@Test
 	public void testCopyReplaceAttribute_Bug535265_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, IASTSwitchStatement.class::isInstance));
 	}
@@ -1195,6 +1224,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//	[[foo]][[bar]] switch (true) {
 	//	}
 	//}
+	@Test
 	public void testCopyReplaceAttributeOnSwitchStatement_Bug535263_1() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -1221,6 +1251,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//	[[foo]] switch (true) [[bar]][[foobar]] {
 	//	}
 	//}
+	@Test
 	public void testCopyReplaceAttributeOnSwitchCompoundStatement_Bug535263_2() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -1241,12 +1272,14 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 	//void f([[attr1]] int p1, int [[attr2]] p2, [[attr3]] int p3) {
 	//}
+	@Test
 	public void testCopyReplaceAttribute_Bug535275() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTFunctionDeclarator.class::isInstance));
 	}
 
 	//enum [[foo]] X : int [[bar]] {
 	//};
+	@Test
 	public void testEnumReplacementRetainsAttributes_Bug535256_1() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTEnumerationSpecifier.class::isInstance));
 	}
@@ -1255,6 +1288,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 	//};
 	//enum struct ES {
 	//};
+	@Test
 	public void testScopedEnumReplacementRetains_Bug535256_2() throws Exception {
 		compareCopyResult(new CopyReplaceVisitor(this, ICPPASTEnumerationSpecifier.class::isInstance));
 	}

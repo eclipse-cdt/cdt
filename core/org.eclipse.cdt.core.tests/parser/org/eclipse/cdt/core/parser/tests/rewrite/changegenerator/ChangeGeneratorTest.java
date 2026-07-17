@@ -17,6 +17,8 @@ package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 
@@ -45,31 +47,23 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class ChangeGeneratorTest extends BaseTestFramework {
 	protected ASTModificationStore modStore;
 	protected final ICPPNodeFactory factory = CPPNodeFactory.getDefault();
 
-	public ChangeGeneratorTest() {
-		super();
-	}
-
-	public ChangeGeneratorTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@BeforeEach
+	protected void setUpModStore() throws Exception {
 		modStore = new ASTModificationStore();
 		CCorePlugin.getIndexManager().joinIndexer(IIndexManager.FOREVER, new NullProgressMonitor());
-		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@AfterEach
+	protected void tearDownLocal() throws Exception {
 		System.gc();
 		fileManager.closeAllFiles();
-		super.tearDown();
 	}
 
 	protected StringBuilder[] getTestSource(int sections) throws IOException {
@@ -110,7 +104,7 @@ public abstract class ChangeGeneratorTest extends BaseTestFramework {
 		if (shouldValidateAST) {
 			ProblemNodeChecker validator = new ProblemNodeChecker();
 			unit.accept(validator);
-			assertFalse("Problem nodes found, AST is invalid.", validator.problemsFound());
+			assertFalse(validator.problemsFound(), "Problem nodes found, AST is invalid.");
 		}
 
 		final ChangeGenerator changeGenerator = new ChangeGenerator(modStore, ASTCommenter.getCommentedNodeMap(unit));

@@ -52,4 +52,54 @@
          </tagReference>
       </template>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu?after=additions">
+         <command
+               commandId="org.eclipse.cdt.cmake.example.configureCMakeProject"
+               label="Configure CMake Project"
+               style="push"
+               tooltip="Start CMake configuration">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="activeMenuSelection">
+                  <and>
+                     <count
+                           value="1">
+                     </count>
+                     <iterate
+                           ifEmpty="false">
+                        <adapt
+                              type="org.eclipse.core.resources.IProject">
+                           <test
+                                 forcePluginActivation="true"
+                                 property="org.eclipse.core.resources.projectNature"
+                                 value="org.eclipse.cdt.cmake.core.cmakeNature">
+                           </test>
+                        </adapt>
+                     </iterate>
+                  </and>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         id="org.eclipse.cdt.cmake.example.configureCMake"
+         name="Configure Project"
+         point="org.eclipse.ui.commands">
+      <command
+            id="org.eclipse.cdt.cmake.example.configureCMakeProject"
+            name="Configure Extended CMake Project">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="org.eclipse.cdt.cmake.example.handler.ConfigureExtendedCMakeProjectHandler"
+            commandId="org.eclipse.cdt.cmake.example.configureCMakeProject">
+      </handler>
+   </extension>
 </plugin>

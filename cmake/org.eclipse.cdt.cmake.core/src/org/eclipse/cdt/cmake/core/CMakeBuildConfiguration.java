@@ -268,7 +268,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 	/**
 	 * @since 2.1
 	 */
-	protected IStatus configureCMakeBuildFiles(IProgressMonitor monitor) throws CoreException, IOException {
+	public IStatus configureCMakeBuildFiles(IProgressMonitor monitor) throws CoreException, IOException {
 		IProject project = getProject();
 		project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 		// Setup console

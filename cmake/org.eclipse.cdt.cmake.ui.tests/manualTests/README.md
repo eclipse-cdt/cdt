@@ -41,6 +41,16 @@ Note, the Build Settings tab settings are stored separately for Run mode and Deb
 #### 8.1) Perform build, clean and open build settings
   Expected: Settings are persisted
 
+### 9) CMake configuration
+
+Verifies that the API for configuring CMake can be invoked independently.  
+Note: this API can only be tested in a CDT development environment that includes the **org.eclipse.cdt.cmake.example** plug-in.  
+
+  1. Remove any existing **/build/** folder.
+  2. Right-click the project and select Configure CMake Project.
+
+Expected: The CMake configuration process starts using the active launch settings.
+
 ## Setup & prerequisites
 ### Setup Host
   Note, these instructions do not require the following tools to be added to the system path environment variable in the OS before starting Eclipse. This allows a clean environment to be maintained.

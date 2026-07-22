@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.cmake.example;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0.1.qualifier
 Export-Package: org.eclipse.cdt.cmake.example;x-internal:=true
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-17
@@ -17,7 +17,10 @@ Require-Bundle: org.eclipse.cdt.cmake.core,
  org.eclipse.tools.templates.freemarker,
  org.eclipse.ui,
  org.eclipse.ui.ide,
- org.eclipse.launchbar.core;bundle-version="[3.0.0,4.0.0)"
+ org.eclipse.launchbar.core;bundle-version="[3.0.0,4.0.0)",
+ org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10.0.0)",
+ org.eclipse.debug.core;bundle-version="[3.24.0,4.0.0)",
+ org.eclipse.cdt.launch;bundle-version="[11.0.0,12.0.0)"
 Import-Package: freemarker.template;version="[2.3.22,3.0.0)"
 Automatic-Module-Name: org.eclipse.cdt.cmake.example
 Bundle-Localization: plugin

@@ -31,6 +31,7 @@ import org.eclipse.cdt.cmake.core.properties.CMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.CMakePropertiesFactory;
 import org.eclipse.cdt.cmake.core.properties.ICMakeGenerator;
 import org.eclipse.cdt.cmake.core.properties.ICMakeProperties;
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CommandLauncherManager;
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ErrorParserManager;
@@ -60,8 +61,11 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.launchbar.core.target.ILaunchTarget;
@@ -195,50 +199,14 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 			}
 			CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties);
 			if (runCMake) {
-				CMakeBuildConfiguration.deleteCMakeErrorMarkers(project);
-
-				infoStream.write(String.format(Messages.CMakeBuildConfiguration_Configuring, buildDir));
-				CommandDescriptor command = cmdBuilder
-						.makeCMakeCommandline(toolChainFile != null ? toolChainFile.getPath() : null);
-				// tell cmake where its script is located..
-				IContainer srcFolder = project;
-				command.getArguments().add(new File(srcFolder.getLocationURI()).getAbsolutePath());
-
-				infoStream.write(String.join(" ", command.getArguments()) + '\n'); //$NON-NLS-1$
-
-				org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(
-						getBuildDirectory().toString());
-				// hook in cmake error parsing
-				try (CMakeErrorParser errorParser = new CMakeErrorParser(new CMakeExecutionMarkerFactory(srcFolder))) {
-					ParsingConsoleOutputStream errStream = new ParsingConsoleOutputStream(console.getErrorStream(),
-							errorParser);
-					IConsole errConsole = new CMakeConsoleWrapper(console, errStream);
-					Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir,
-							errConsole, monitor);
-					String arg0 = command.getArguments().get(0);
-					if (p == null) {
-						// process start failed
-						String msg = String.format(Messages.CMakeBuildConfiguration_Failure, ""); //$NON-NLS-1$
-						addMarker(new ProblemMarkerInfo(srcFolder.getProject(), -1, msg,
-								IMarkerGenerator.SEVERITY_ERROR_BUILD, null, new org.eclipse.core.runtime.Path(arg0)));
-						return null;
-					}
-
-					// check cmake exit status
-					final int exitValue = watchProcess(errConsole, monitor);
-					if (exitValue != 0) {
-						// cmake had errors...
-						String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
-						addMarker(srcFolder.getProject(), -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
-						return null;
-					}
+				IStatus result = configureCMakeBuildFiles(cmdBuilder, console, infoStream, monitor);
+				if (!result.isOK()) {
+					return null;
 				}
-				cmakeListsModified = false;
 			}
 
 			// parse compile_commands.json file
-			getCompileCommandsFile().refreshLocal(IResource.DEPTH_ZERO, monitor);
-			processCompileCommandsFile(console, monitor);
+			refreshAndProcessCompileCommandsFile(console, monitor);
 
 			infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
 			// run the build tool...
@@ -294,6 +262,89 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 			throw new CoreException(Activator
 					.errorStatus(String.format(Messages.CMakeBuildConfiguration_Building, project.getName()), e));
 		}
+	}
+
+	/**
+	 * Runs the CMake configure step for this build configuration without invoking
+	 * the build target. On success, refreshes and processes compile_commands.json
+	 * so scanner information is updated.
+	 * <p>
+	 * This method writes to the CDT build console, deletes stale CMake execution
+	 * markers, may create new CMake execution markers, and updates scanner
+	 * information for this build configuration.
+	 * <p>
+	 * Callers should run this from a background workspace operation, not directly
+	 * from the UI thread.
+	 *
+	 * @param monitor progress monitor, or {@code null}
+	 * @return {@link Status#OK_STATUS} if CMake completed successfully; otherwise
+	 *         an error status if the CMake process could not be started or exited
+	 *         non-zero
+	 * @throws CoreException if workspace refresh, marker handling, or scanner-info
+	 *         processing fails
+	 * @throws IOException if console/process I/O fails
+	 * @since 2.1
+	 */
+	public IStatus configureCMakeBuildFiles(IProgressMonitor monitor) throws CoreException, IOException {
+		// Setup console
+		IConsole console = CCorePlugin.getDefault().getConsole();
+		console.start(getProject());
+		ICMakeProperties cmakeProperties = getCMakeProperties();
+		CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
+		IStatus result = configureCMakeBuildFiles(cmdBuilder, console, console.getInfoStream(), subMonitor.split(1));
+		refreshAndProcessCompileCommandsFile(console, subMonitor.split(1));
+		return result;
+	}
+
+	private IStatus configureCMakeBuildFiles(CommandDescriptorBuilder cmdBuilder, IConsole console,
+			ConsoleOutputStream infoStream, IProgressMonitor monitor) throws CoreException, IOException {
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 4);
+		CMakeBuildConfiguration.deleteCMakeErrorMarkers(getProject());
+		infoStream.write(String.format(Messages.CMakeBuildConfiguration_Configuring, getBuildDirectory()));
+		CommandDescriptor command = cmdBuilder
+				.makeCMakeCommandline(toolChainFile != null ? toolChainFile.getPath() : null);
+		// tell cmake where its script is located..
+		IContainer srcFolder = getProject();
+		command.getArguments().add(new File(srcFolder.getLocationURI()).getAbsolutePath());
+
+		infoStream.write(String.join(" ", command.getArguments()) + '\n'); //$NON-NLS-1$
+
+		org.eclipse.core.runtime.Path workingDir = new org.eclipse.core.runtime.Path(getBuildDirectory().toString());
+		// hook in cmake error parsing
+		try (CMakeErrorParser errorParser = new CMakeErrorParser(new CMakeExecutionMarkerFactory(srcFolder))) {
+			ParsingConsoleOutputStream errStream = new ParsingConsoleOutputStream(console.getErrorStream(),
+					errorParser);
+			IConsole errConsole = new CMakeConsoleWrapper(console, errStream);
+			Process p = startBuildProcess(command.getArguments(), new IEnvironmentVariable[0], workingDir, errConsole,
+					subMonitor.split(1));
+			String arg0 = command.getArguments().get(0);
+			if (p == null) {
+				// process start failed
+				String msg = String.format(Messages.CMakeBuildConfiguration_Failure, "Process failed to start"); //$NON-NLS-1$
+				addMarker(new ProblemMarkerInfo(srcFolder.getProject(), -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD,
+						null, new org.eclipse.core.runtime.Path(arg0)));
+				return Status.error(msg);
+			}
+			// check cmake exit status
+			final int exitValue = watchProcess(errConsole, subMonitor.split(1));
+			if (exitValue != 0) {
+				// cmake had errors...
+				String msg = String.format(Messages.CMakeBuildConfiguration_ExitFailure, arg0, exitValue);
+				addMarker(srcFolder.getProject(), -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD, null);
+				return Status.error(msg);
+			}
+		}
+		cmakeListsModified = false;
+		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Parse compile_commands.json file
+	 */
+	private void refreshAndProcessCompileCommandsFile(IConsole console, IProgressMonitor monitor) throws CoreException {
+		getCompileCommandsFile().refreshLocal(IResource.DEPTH_ZERO, monitor);
+		processCompileCommandsFile(console, monitor);
 	}
 
 	@Override

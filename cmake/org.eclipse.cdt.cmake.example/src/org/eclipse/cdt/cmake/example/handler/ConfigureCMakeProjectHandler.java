@@ -11,8 +11,10 @@
 package org.eclipse.cdt.cmake.example.handler;
 
 import java.io.IOException;
+import java.text.MessageFormat;
 
 import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
+import org.eclipse.cdt.cmake.example.Messages;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
@@ -26,10 +28,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.launchbar.core.ILaunchBarManager;
 
-public class ConfigureExtendedCMakeProjectHandler extends AbstractHandler {
+public class ConfigureCMakeProjectHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -41,18 +44,18 @@ public class ConfigureExtendedCMakeProjectHandler extends AbstractHandler {
 			IProject project = LaunchUtils.getProject(activeLaunchConfiguration);
 			ICBuildConfiguration buildConfig = configManager.getBuildConfiguration(project.getActiveBuildConfig());
 			if (buildConfig instanceof CMakeBuildConfiguration cbc) {
-				WorkspaceJob job = new WorkspaceJob("Configuring Extended CMake Project...") { //$NON-NLS-1$
+				WorkspaceJob job = new WorkspaceJob("Configuring CMake Project...") { //$NON-NLS-1$
 					@Override
 					public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
 						try {
 							return cbc.configureCMakeBuildFiles(monitor);
 						} catch (CoreException | IOException e) {
-							ILog.of(ConfigureExtendedCMakeProjectHandler.class)
-									.error("Failed to configure for extended CMake Project", e); //$NON-NLS-1$
+							return Status.error(MessageFormat.format(Messages.ConfigureCMakeProjectHandler_ConfigError,
+									project.getName()), e);
 						}
-						return null;
 					}
 				};
+				job.setRule(project);
 				job.schedule();
 			}
 		} catch (CoreException e) {

@@ -206,8 +206,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 			}
 
 			// parse compile_commands.json file
-			getCompileCommandsFile().refreshLocal(IResource.DEPTH_ZERO, monitor);
-			processCompileCommandsFile(console, monitor);
+			refreshAndProcessCompileCommandsFile(console, monitor);
 
 			infoStream.write(String.format(Messages.CMakeBuildConfiguration_BuildingIn, buildDir.toString()));
 			// run the build tool...
@@ -266,17 +265,36 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 	}
 
 	/**
+	 * Runs the CMake configure step for this build configuration without invoking
+	 * the build target. On success, refreshes and processes compile_commands.json
+	 * so scanner information is updated.
+	 * <p>
+	 * This method writes to the CDT build console, deletes stale CMake execution
+	 * markers, may create new CMake execution markers, and updates scanner
+	 * information for this build configuration.
+	 * <p>
+	 * Callers should run this from a background workspace operation, not directly
+	 * from the UI thread.
+	 *
+	 * @param monitor progress monitor, or {@code null}
+	 * @return {@link Status#OK_STATUS} if CMake completed successfully; otherwise
+	 *         an error status if the CMake process could not be started or exited
+	 *         non-zero
+	 * @throws CoreException if workspace refresh, marker handling, or scanner-info
+	 *         processing fails
+	 * @throws IOException if console/process I/O fails
 	 * @since 2.1
 	 */
 	public IStatus configureCMakeBuildFiles(IProgressMonitor monitor) throws CoreException, IOException {
-		IProject project = getProject();
-		project.deleteMarkers(ICModelMarker.C_MODEL_PROBLEM_MARKER, false, IResource.DEPTH_INFINITE);
 		// Setup console
 		IConsole console = CCorePlugin.getDefault().getConsole();
-		console.start(project);
+		console.start(getProject());
 		ICMakeProperties cmakeProperties = getCMakeProperties();
 		CommandDescriptorBuilder cmdBuilder = new CommandDescriptorBuilder(cmakeProperties);
-		return configureCMakeBuildFiles(cmdBuilder, console, console.getInfoStream(), monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 2);
+		IStatus result = configureCMakeBuildFiles(cmdBuilder, console, console.getInfoStream(), subMonitor.split(1));
+		refreshAndProcessCompileCommandsFile(console, subMonitor.split(1));
+		return result;
 	}
 
 	private IStatus configureCMakeBuildFiles(CommandDescriptorBuilder cmdBuilder, IConsole console,
@@ -303,7 +321,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 			String arg0 = command.getArguments().get(0);
 			if (p == null) {
 				// process start failed
-				String msg = String.format(Messages.CMakeBuildConfiguration_Failure, ""); //$NON-NLS-1$
+				String msg = String.format(Messages.CMakeBuildConfiguration_Failure, "Process failed to start"); //$NON-NLS-1$
 				addMarker(new ProblemMarkerInfo(srcFolder.getProject(), -1, msg, IMarkerGenerator.SEVERITY_ERROR_BUILD,
 						null, new org.eclipse.core.runtime.Path(arg0)));
 				return Status.error(msg);
@@ -318,10 +336,15 @@ public class CMakeBuildConfiguration extends CBuildConfiguration implements ICMa
 			}
 		}
 		cmakeListsModified = false;
-		// parse compile_commands.json file
-		getCompileCommandsFile().refreshLocal(IResource.DEPTH_ZERO, subMonitor.split(1));
-		processCompileCommandsFile(console, subMonitor.split(1));
 		return Status.OK_STATUS;
+	}
+
+	/**
+	 * Parse compile_commands.json file
+	 */
+	private void refreshAndProcessCompileCommandsFile(IConsole console, IProgressMonitor monitor) throws CoreException {
+		getCompileCommandsFile().refreshLocal(IResource.DEPTH_ZERO, monitor);
+		processCompileCommandsFile(console, monitor);
 	}
 
 	@Override

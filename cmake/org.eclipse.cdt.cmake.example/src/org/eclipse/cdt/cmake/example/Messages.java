@@ -17,6 +17,8 @@ public class Messages extends NLS {
 	public static String NewExtendedCMakeProjectWizard_PageTitle;
 	public static String NewExtendedCMakeProjectWizard_WindowTitle;
 
+	public static String ConfigureCMakeProjectHandler_ConfigError;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages("org.eclipse.cdt.cmake.example.messages", Messages.class); //$NON-NLS-1$

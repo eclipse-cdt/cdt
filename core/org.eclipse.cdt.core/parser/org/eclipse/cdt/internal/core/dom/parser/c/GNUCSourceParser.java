@@ -869,10 +869,11 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 	protected void consumePointerOperators(List<IASTPointerOperator> pointerOps)
 			throws EndOfFileException, BacktrackException {
 		for (;;) {
+			IToken mark = mark();
+
 			// __attribute__ in-between pointers
 			__attribute_decl_seq(supportAttributeSpecifiers, false);
 
-			IToken mark = mark();
 			IToken last = null;
 
 			boolean isConst = false, isVolatile = false, isRestrict = false;
@@ -883,7 +884,7 @@ public class GNUCSourceParser extends AbstractGNUSourceCodeParser {
 			}
 
 			last = consume();
-			int startOffset = mark.getOffset();
+			int startOffset = last.getOffset();
 			for (;;) {
 				IToken t = LA(1);
 				switch (LT(1)) {

@@ -8153,4 +8153,20 @@ public class AST2Tests extends AST2TestBase {
 		IASTAttributeSpecifier[] attributes = declSpec.getAttributeSpecifiers();
 		assertEquals(1, attributes.length);
 	}
+
+	//	enum __attribute__ ((packed)) color {
+	//		RED = 1,
+	//		GREEN = 2
+	//	};
+	@Test
+	public void testEnumAttribute() throws Exception {
+		BindingAssertionHelper helper = getAssertionHelper(C);
+		IASTDeclaration[] decls = helper.getTranslationUnit().getDeclarations();
+		assertEquals(1, decls.length);
+		assertInstance(decls[0], IASTSimpleDeclaration.class);
+		IASTDeclSpecifier declSpec = ((IASTSimpleDeclaration) decls[0]).getDeclSpecifier();
+		assertInstance(declSpec, IASTEnumerationSpecifier.class);
+		IASTAttributeSpecifier[] attributes = declSpec.getAttributeSpecifiers();
+		assertEquals(1, attributes.length);
+	}
 }

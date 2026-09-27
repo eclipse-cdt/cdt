@@ -17,6 +17,7 @@
 
 package org.eclipse.cdt.dsf.mi.service.command;
 
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -60,8 +61,10 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.utils.pty.PTY;
+import org.eclipse.cdt.utils.pty.PersistentPTY;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 /**
@@ -73,15 +76,20 @@ import org.eclipse.core.runtime.Status;
  */
 public class MIInferiorProcess extends Process implements IEventListener, ICommandListener {
 
+	/** End-of-transmission character; makes a read on a canonical-mode tty return EOF. */
+	private static final int EOT = 4;
+
 	// Indicates that the inferior has been started
 	// It implies the ContainerDMContext is fully-formed
 	// with the pid of the process (as a parent dmc)
 	private boolean fStarted;
 
 	// Indicates that the inferior has been terminated
-	private boolean fTerminated;
+	private volatile boolean fTerminated;
 
 	private OutputStream fOutputStream;
+	/** Stream handed out by {@link #getOutputStream()}; may wrap {@link #fOutputStream}. */
+	private OutputStream fUserOutputStream;
 	private InputStream fInputStream;
 
 	private PipedOutputStream fInputStreamPiped;
@@ -190,6 +198,25 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 			fOutputStream = pty.getOutputStream();
 			fInputStream = pty.getInputStream();
 			fInputStreamPiped = null;
+			if (pty instanceof PersistentPTY && !Platform.OS_WIN32.equals(Platform.getOS())) {
+				// PersistentPTY ignores close() so the PTY survives restarts. Closing the
+				// stream handed to clients (console EOF, input redirected from a file) must
+				// still signal end of input to a running inferior, like a regular PTY does.
+				final OutputStream ptyStream = fOutputStream;
+				fUserOutputStream = new FilterOutputStream(ptyStream) {
+					@Override
+					public void write(byte[] b, int off, int len) throws IOException {
+						ptyStream.write(b, off, len);
+					}
+
+					@Override
+					public void close() throws IOException {
+						if (!fTerminated) {
+							ptyStream.write(EOT);
+						}
+					}
+				};
+			}
 		} else {
 			fOutputStream = new OutputStream() {
 				@Override
@@ -242,7 +269,7 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 
 	@Override
 	public OutputStream getOutputStream() {
-		return fOutputStream;
+		return fUserOutputStream != null ? fUserOutputStream : fOutputStream;
 	}
 
 	@Override
@@ -374,6 +401,7 @@ public class MIInferiorProcess extends Process implements IEventListener, IComma
 				fOutputStream.close();
 			// Make sure things get GCed
 			fOutputStream = null;
+			fUserOutputStream = null;
 		} catch (IOException e) {
 		}
 		try {

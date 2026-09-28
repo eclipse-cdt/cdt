@@ -17,20 +17,11 @@ package org.eclipse.cdt.ui.tests.refactoring.rename;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class RenameMacroTests extends RenameTestBase {
 
-	public RenameMacroTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(RenameMacroTests.class);
-	}
-
+	@Test
 	public void testMacroRename() throws Exception {
 		StringBuilder buf = new StringBuilder();
 		buf.append("#define HALLO x   \n");
@@ -91,6 +82,7 @@ public class RenameMacroTests extends RenameTestBase {
 		off = contents.indexOf("HALLO", off + 1);
 	}
 
+	@Test
 	public void testMacroNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -142,6 +134,7 @@ public class RenameMacroTests extends RenameTestBase {
 						+ "New element: enum_item  \n" + "Conflicting element type: Enumerator");
 	}
 
+	@Test
 	public void testClassMacroClash() throws Exception {
 		StringBuilder buf = new StringBuilder();
 		buf.append("class CC {int a;};         \n");
@@ -163,6 +156,7 @@ public class RenameMacroTests extends RenameTestBase {
 		assertTotalChanges(2, ch);
 	}
 
+	@Test
 	public void testMacroRename_434917() throws Exception {
 		StringBuilder buf = new StringBuilder();
 		buf.append("#define CC mm\n");
@@ -180,6 +174,7 @@ public class RenameMacroTests extends RenameTestBase {
 		assertTotalChanges(2, ch);
 	}
 
+	@Test
 	public void testIncludeGuard() throws Exception {
 		StringBuilder buf = new StringBuilder();
 		buf.append("#ifndef _guard            \n");
@@ -199,6 +194,7 @@ public class RenameMacroTests extends RenameTestBase {
 		assertChange(ch, cpp, off, 6, "WELT");
 	}
 
+	@Test
 	public void testMacroParameters() throws Exception {
 		StringBuilder buf = new StringBuilder();
 		buf.append("int var;                  \n");
@@ -213,6 +209,7 @@ public class RenameMacroTests extends RenameTestBase {
 		assertTotalChanges(1, 1, 0, ch);
 	}
 
+	@Test
 	public void testRenameMacroAsMacroArgument() throws Exception {
 		StringBuilder buf = new StringBuilder();
 		buf.append("#define M1(var) var       \n");

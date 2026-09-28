@@ -50,18 +50,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification;
 import org.eclipse.cdt.internal.core.dom.rewrite.ASTModification.ModificationKind;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class InsertBeforeTests extends ChangeGeneratorTest {
-
-	public static TestSuite suite() {
-		return new TestSuite(InsertBeforeTests.class);
-	}
 
 	//int *pi[3];
 
 	//int *pi[5][3];
+	@Test
 	public void testArrayModifier() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -87,6 +83,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 	//int *values = new int[5];
 
 	//int *values = new int[6][5];
+	@Test
 	public void testArraySizeExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -116,6 +113,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 	//TestClass::TestClass(int a, int b) :
 	//		alpha(a), beta(b) {
 	//}
+	@Test
 	public void testCtorChainInitializer() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -147,6 +145,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 
 	//void foo(int parameter) throw (int, /*Test*/float) /*Test2*/{
 	//}
+	@Test
 	public void testException() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -180,6 +179,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 	//	int s = 0, c = 0, h = 0;
 	//	s = 3, c = 9, h = 5;
 	//}
+	@Test
 	public void testExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -209,6 +209,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 
 	//void foo(int newParameter, int a) {
 	//}
+	@Test
 	public void testFirstParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -250,6 +251,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 	//	s2;
 	//	int j;
 	//}
+	@Test
 	public void testInsertMultipleStatements() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -289,6 +291,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 	//	int j;
 	//	int j;
 	//}
+	@Test
 	public void testInsertStatement() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -314,6 +317,7 @@ public class InsertBeforeTests extends ChangeGeneratorTest {
 
 	//void foo(int **parameter) {
 	//}
+	@Test
 	public void testPointerParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{

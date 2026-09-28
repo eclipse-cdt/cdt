@@ -38,18 +38,14 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNewExpression;
-
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 public class RemoveTests extends ChangeGeneratorTest {
-
-	public static TestSuite suite() {
-		return new TestSuite(RemoveTests.class);
-	}
 
 	//int *pi[3];
 
 	//int *pi;
+	@Test
 	public void testArrayModifier() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -72,6 +68,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 	//int *values = new int[5][6];
 
 	//int *values = new int[5];
+	@Test
 	public void testArraySizeExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -98,6 +95,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 
 	//TestClass::TestClass(int a) {
 	//}
+	@Test
 	public void testCtorChainInitializer() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -142,6 +140,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 	//};
 	//
 	//#endif /*A_H_*/
+	@Test
 	public void testDeclaration() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -170,6 +169,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 
 	//void foo(int parameter) throw () {
 	//}
+	@Test
 	public void testException() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -200,6 +200,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 	//	int s = 0, c = 0, h = 0;
 	//	s = 3, h = 5;
 	//}
+	@Test
 	public void testExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -224,6 +225,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 
 	//void foo(int b, int c) {
 	//}
+	@Test
 	public void testFirstParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -253,6 +255,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 
 	//void foo(int a, int b) {
 	//}
+	@Test
 	public void testLastParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -282,6 +285,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 
 	//void foo(int a, int c) {
 	//}
+	@Test
 	public void testMiddleParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -309,6 +313,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 	//int *value = new int(5);
 
 	//int *value = new int();
+	@Test
 	public void testNewInitializerExpression() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -334,6 +339,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 
 	//void foo(int parameter) {
 	//}
+	@Test
 	public void testPointerInParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -364,6 +370,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 
 	//void foo() {
 	//}
+	@Test
 	public void testSingleParameter() throws Exception {
 		compareResult(new ASTVisitor() {
 			{
@@ -400,6 +407,7 @@ public class RemoveTests extends ChangeGeneratorTest {
 	//{
 	//	int i = 0;
 	//}
+	@Test
 	public void testStatement() throws Exception {
 		compareResult(new ASTVisitor() {
 			{

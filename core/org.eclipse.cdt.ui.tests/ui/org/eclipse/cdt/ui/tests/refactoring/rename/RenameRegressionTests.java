@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.StringWriter;
 
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -21,23 +26,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.Test;
+import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 public class RenameRegressionTests extends RenameTestBase {
-	public RenameRegressionTests() {
-		super();
-	}
 
-	public RenameRegressionTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return suite(RenameRegressionTests.class, "_");
-	}
-
+	@Test
 	public void testSimpleRename() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("int boo;    // boo  \n");
@@ -57,6 +51,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("boo++"), 3, "ooga");
 	}
 
+	@Test
 	public void testLocalVar() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("void f() {          \n");
@@ -82,6 +77,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, offset, 3, "ooga");
 	}
 
+	@Test
 	public void testParameter() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("void f(int boo) {   \n");
@@ -106,6 +102,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, offset, 3, "ooga");
 	}
 
+	@Test
 	public void testFileStaticVar() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("static int boo;     \n");
@@ -129,6 +126,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, offset, 3, "ooga");
 	}
 
+	@Test
 	public void testClass_1() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Boo/*vp1*/{}; \n");
@@ -146,6 +144,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Boo a"), 3, "Ooga");
 	}
 
+	@Test
 	public void testAttribute_2() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Boo{          \n");
@@ -166,6 +165,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("att1;//res2"), 4, "ooga");
 	}
 
+	@Test
 	public void testMethod_1() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{                                \n");
@@ -190,6 +190,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("method1(\"hello"), 7, "m1");
 	}
 
+	@Test
 	public void testMethod_3() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Boo{                   \n");
@@ -215,6 +216,7 @@ public class RenameRegressionTests extends RenameTestBase {
 	// However, the UI does display the error in the preview panel. Defect 78769 states
 	// the error should be shown on the first page. The parser passes, but the UI could be
 	// better.
+	@Test
 	public void testConstructor_27() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Boo{           \n");
@@ -238,6 +240,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		fail("An error should have occurred in the input check.");
 	}
 
+	@Test
 	public void testDestructor_29_72612() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Boo{           \n");
@@ -261,6 +264,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		fail("An error should have occurred in the input check.");
 	}
 
+	@Test
 	public void testFunction_31() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("void foo(){}             \n");
@@ -281,6 +285,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("foo(3)"), 3, "ooga");
 	}
 
+	@Test
 	public void testMethod_32_72717() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Base {                 \n");
@@ -303,6 +308,7 @@ public class RenameRegressionTests extends RenameTestBase {
 				+ "Type of problem: Overloading  \n" + "New element: foo  \n" + "Conflicting element type: Method");
 	}
 
+	@Test
 	public void testMethod_33_72605() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo {                  \n");
@@ -318,6 +324,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("aMethod(int x)"), 7, "ooga");
 	}
 
+	@Test
 	public void testMethod_33b_72605() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo {                  \n");
@@ -346,6 +353,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cppfile, cppoffset, 7, "ooga");
 	}
 
+	@Test
 	public void testMethod_34() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Base{              \n");
@@ -393,6 +401,7 @@ public class RenameRegressionTests extends RenameTestBase {
 
 	}
 
+	@Test
 	public void testMethod_39() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{                              \n");
@@ -431,6 +440,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("method2(3"), 7, "m2");
 	}
 
+	@Test
 	public void testMethod_40() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{                                   \n");
@@ -468,6 +478,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("method2(3"), 7, "m2");
 	}
 
+	@Test
 	public void testMethod_41() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{                                   \n");
@@ -499,6 +510,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("method1(1"), 7, "m1");
 	}
 
+	@Test
 	public void testMethod_43() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{                                   \n");
@@ -528,6 +540,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("method1(1"), 7, "m1");
 	}
 
+	@Test
 	public void testMethod_44() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Base{              \n");
@@ -553,6 +566,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("v(){i++;}"), 1, "v1");
 	}
 
+	@Test
 	public void testMethod_45() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Base{              \n");
@@ -579,6 +593,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("v(){i"), 1, "v1");
 	}
 
+	@Test
 	public void testStruct_46() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("struct st1/*vp1*/{};             \n");
@@ -618,6 +633,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("st3 ss"), 3, "Ooga3");
 	}
 
+	@Test
 	public void testUnion_47() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("union st1/*vp1*/{};              \n");
@@ -657,6 +673,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("st3 ss"), 3, "Ooga3");
 	}
 
+	@Test
 	public void testEnumeration_48() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("enum e1/*vp1*/{E0};              \n");
@@ -696,6 +713,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("e3 ss"), 2, "Ooga3");
 	}
 
+	@Test
 	public void testTemplate_49_72626() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("template <class Type>            \n");
@@ -720,6 +738,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, offset = contents.indexOf("Array", offset + 1), 5, "Arr2");
 	}
 
+	@Test
 	public void testClass_52() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("namespace N1 {           \n");
@@ -743,6 +762,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Boo c2"), 3, "Ooga");
 	}
 
+	@Test
 	public void testClass_53() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo/*vp1*/ {//ren1     \n");
@@ -774,6 +794,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Foo();//ren10"), 3, "Ooga");
 	}
 
+	@Test
 	public void testAttribute_54() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Boo{                   \n");
@@ -796,6 +817,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("att;//rn3"), 3, "ooga");
 	}
 
+	@Test
 	public void testClass_55() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{           \n");
@@ -821,6 +843,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Hoo(){}"), 3, "ooga");
 	}
 
+	@Test
 	public void testClass_55_79231() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Boo{};//vp1            \n");
@@ -842,6 +865,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Boo{};//vp1"), 3, "Ooga");
 	}
 
+	@Test
 	public void testClass_55_72748() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{};//vp1            \n");
@@ -862,6 +886,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Foo*>(0)"), 3, "Ooga");
 	}
 
+	@Test
 	public void testClass_56() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{};//vp1,rn1            \n");
@@ -882,6 +907,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Foo(){}//rn3"), 3, "Ooga");
 	}
 
+	@Test
 	public void testAttribute_61() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{       \n");
@@ -903,6 +929,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("count"), 5, "ooga");
 	}
 
+	@Test
 	public void testEnumerator_62() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("enum Foo{E0, E1};//vp1       \n");
@@ -927,6 +954,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("E1"), 2, "ooga");
 	}
 
+	@Test
 	public void testAttribute_63() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{       \n");
@@ -951,6 +979,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("att"), 3, "ooga");
 	}
 
+	@Test
 	public void testAttribute_64() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Foo{               \n");
@@ -977,6 +1006,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, h, header.indexOf("b;//rn2"), 1, "ooga");
 	}
 
+	@Test
 	public void testAttribute_65() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class A{             \n");
@@ -1005,6 +1035,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, cpp, source.indexOf("att;"), 3, "ooga");
 	}
 
+	@Test
 	public void testNamespace_66() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("namespace Foo/*vp1*/{            \n");
@@ -1033,6 +1064,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Baz;"), 3, "Wooga");
 	}
 
+	@Test
 	public void testNamespace_66_79281() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("namespace Foo{           \n");
@@ -1052,6 +1084,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Bar::"), 3, "Ooga");
 	}
 
+	@Test
 	public void testNamespace_66_79282() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("namespace Foo/*vp1*/{}           \n");
@@ -1067,6 +1100,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("Foo;"), 3, "Ooga");
 	}
 
+	@Test
 	public void testFunction_67() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("void foo/*vp1*/(){}//rn1     \n");
@@ -1089,6 +1123,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("foo();}//rn3"), 3, "ooga");
 	}
 
+	@Test
 	public void testVariable_68() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class A{                 \n");
@@ -1114,6 +1149,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertChange(changes, file, contents.indexOf("var.i=3;//rn3"), 3, "ooga");
 	}
 
+	@Test
 	public void testVariable_68_79295() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("int var;//vp1            \n");
@@ -1132,6 +1168,7 @@ public class RenameRegressionTests extends RenameTestBase {
 
 	// similar to test 92, except this one will continue with warning, or error status
 	// while case in 92 must stop refactor with fatal status
+	@Test
 	public void testClass_81_72620() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("union u_haul{};      \n");
@@ -1148,6 +1185,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		fail("An error should have occurred in the input check.");
 	}
 
+	@Test
 	public void testVariable_88_72617() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class A{};               \n");
@@ -1172,6 +1210,7 @@ public class RenameRegressionTests extends RenameTestBase {
 	// if you don't know the error message, catch on getRefactorChanges
 	// or if you want to verify a message or severity, use getRefactorMessages
 	// and getRefactorSeverity
+	@Test
 	public void testClass_92A() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class Boo{};         \n");
@@ -1191,6 +1230,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		fail("An error or warning should have occurred in the input check.");
 	}
 
+	@Test
 	public void testClass_92B() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class A{};           \n");
@@ -1209,6 +1249,7 @@ public class RenameRegressionTests extends RenameTestBase {
 		assertEquals(RefactoringStatus.ERROR, s);
 	}
 
+	@Test
 	public void testRenameParticipant() throws Exception {
 		TestRenameParticipant.reset();
 		StringWriter writer = new StringWriter();

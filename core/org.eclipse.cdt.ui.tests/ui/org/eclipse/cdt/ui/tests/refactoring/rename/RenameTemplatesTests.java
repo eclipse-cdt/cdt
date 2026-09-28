@@ -18,23 +18,14 @@ import java.io.StringWriter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author markus.schorn@windriver.com
  */
 public class RenameTemplatesTests extends RenameTestBase {
 
-	public RenameTemplatesTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(RenameTemplatesTests.class);
-	}
-
+	@Test
 	public void testClassTemplate() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("template <class Type>   \n");

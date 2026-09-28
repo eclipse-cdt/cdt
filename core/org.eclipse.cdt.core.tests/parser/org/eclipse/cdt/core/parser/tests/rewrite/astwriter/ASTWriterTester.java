@@ -14,7 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.astwriter;
 
-import java.util.Map;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.List;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.parser.ISourceCodeParser;
@@ -43,47 +45,47 @@ import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ASTWriter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.text.TextSelection;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * @author Guido Zgraggen
  */
-public abstract class ASTWriterTester extends RewriteBaseTest {
+public class ASTWriterTester extends RewriteBaseTest {
+
 	private static final IParserLogService NULL_LOG = new NullLogService();
 
 	private IFile file;
 
-	public ASTWriterTester(String name, ASTWriterTestSourceFile file) {
-		super(name);
-		fileMap.put(file.getName(), file);
+	public static List<Arguments> loadTests() throws Exception {
+		return SourceRewriteTest.loadTests();
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		for (TestSourceFile testFile : fileMap.values()) {
-			if (testFile.getSource().length() > 0) {
-				file = importFile(testFile.getName(), testFile.getSource());
-			}
+	@ParameterizedTest
+	@MethodSource("loadTests")
+	protected void test(ASTWriterTestSourceFile testFile) throws Throwable {
+		if (testFile.getSource().length() > 0) {
+			importFile(testFile.getName(), testFile.getSource());
 		}
-	}
+		TextSelection sel = testFile.getSelection();
+		if (sel != null) {
+			setFileWithSelection(testFile.getName());
+			setSelection(sel);
+		}
 
-	@Override
-	protected void runTest() throws Throwable {
 		file = project.getFile("ASTWritterTest.h"); //$NON-NLS-1$
-		compareFiles(fileMap);
+		compareFiles(testFile);
 	}
 
-	@Override
-	protected void compareFiles(Map<String, TestSourceFile> testResourceFiles) throws Exception {
-		for (String fileName : testResourceFiles.keySet()) {
-			TestSourceFile testFile = testResourceFiles.get(fileName);
-			String code = generateSource(testFile);
-			assertEquals(TestHelper.unifyNewLines(testFile.getExpectedSource()),
-					TestHelper.unifyNewLines(code + System.getProperty("line.separator"))); //$NON-NLS-1$
-		}
+	private void compareFiles(ASTWriterTestSourceFile testFile) throws Exception {
+		String code = generateSource(testFile);
+		assertEquals(TestHelper.unifyNewLines(testFile.getExpectedSource()),
+				TestHelper.unifyNewLines(code + System.getProperty("line.separator"))); //$NON-NLS-1$
 	}
 
-	public String generateSource(TestSourceFile testFile) throws Exception {
+	private String generateSource(TestSourceFile testFile) throws Exception {
 		IASTTranslationUnit unit = getParser(testFile).parse();
 		NodeCommentMap commentMap = ASTCommenter.getCommentedNodeMap(unit);
 		ASTModificationMap map = new ASTModificationMap();
@@ -92,7 +94,7 @@ public abstract class ASTWriterTester extends RewriteBaseTest {
 		return writer.write(unit, commentMap);
 	}
 
-	protected ISourceCodeParser getParser(TestSourceFile testFile) throws Exception {
+	private ISourceCodeParser getParser(TestSourceFile testFile) throws Exception {
 		FileContent codeReader = FileContent.create(file);
 
 		ParserLanguage language = getLanguage(testFile);

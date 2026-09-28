@@ -14,6 +14,8 @@
  ******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
 import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
 import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
@@ -32,13 +34,6 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
  */
 public abstract class RenameTestBase extends RefactoringTests {
 	private static final IProgressMonitor NPM = new NullProgressMonitor();
-
-	protected RenameTestBase(String name) {
-		super(name);
-	}
-
-	protected RenameTestBase() {
-	}
 
 	/**
 	 * @param element the CElement to rename

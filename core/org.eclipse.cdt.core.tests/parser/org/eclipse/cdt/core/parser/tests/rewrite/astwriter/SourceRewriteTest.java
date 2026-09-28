@@ -18,22 +18,25 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2TestBase.ScannerKind;
-import org.eclipse.cdt.core.parser.tests.rewrite.RewriteBaseTest;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.text.TextSelection;
+import org.junit.jupiter.params.provider.Arguments;
 import org.osgi.framework.Bundle;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-public class SourceRewriteTest extends TestSuite {
+/**
+ * This is not actually a test, but a test provider. See loadTests and its uses
+ *
+ * The possibly unusual structure here is a result of migrating this JUnit 3 test
+ * suite creator to JUnit 5
+ */
+public class SourceRewriteTest {
 	private static final String testRegexp = "//!(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
 	private static final String codeTypeRegexp = "//%(C|CPP|CPP20)( GNU)?$"; //$NON-NLS-1$
 	private static final String resultRegexp = "//=.*$"; //$NON-NLS-1$
@@ -42,83 +45,73 @@ public class SourceRewriteTest extends TestSuite {
 		skip, inTest, inSource, inExpectedResult
 	}
 
-	protected static BufferedReader createReader(String file) throws IOException {
+	private static BufferedReader createReader(String file) throws IOException {
 		Bundle bundle = CTestPlugin.getDefault().getBundle();
 		Path path = new Path(file);
 		file = FileLocator.toFileURL(FileLocator.find(bundle, path, null)).getFile();
 		return new BufferedReader(new FileReader(file));
 	}
 
-	public static Test suite() throws Exception {
-		TestSuite suite = new TestSuite("AstWriterTests");
-		suite.addTest(
+	public static List<Arguments> loadTests() throws Exception {
+		List<Arguments> suite = new ArrayList<>();
+		suite.addAll(
 				SourceRewriteTest.suite("ExpressionTests", "resources/rewrite/ASTWriterExpressionTestSource.awts"));
 
-		suite.addTest(
+		suite.addAll(
 				SourceRewriteTest.suite("DelcSpecifierTests", "resources/rewrite/ASTWriterDeclSpecTestSource.awts"));
-		suite.addTest(SourceRewriteTest.suite("Commented DelcSpecifierTests",
+		suite.addAll(SourceRewriteTest.suite("Commented DelcSpecifierTests",
 				"resources/rewrite/ASTWriterCommentedDeclSpecTestSource.awts"));
 
-		suite.addTest(
+		suite.addAll(
 				SourceRewriteTest.suite("DeclaratorTests", "resources/rewrite/ASTWriterDeclaratorTestSource.awts"));
-		suite.addTest(SourceRewriteTest.suite("Commented DeclaratorTests",
+		suite.addAll(SourceRewriteTest.suite("Commented DeclaratorTests",
 				"resources/rewrite/ASTWriterCommentedDeclaratorTestSource.awts"));
 
-		suite.addTest(
-				SourceRewriteTest.suite("StatementsTests", "resources/rewrite/ASTWriterStatementTestSource.awts"));
-		suite.addTest(SourceRewriteTest.suite("Commented StatementsTests",
+		suite.addAll(SourceRewriteTest.suite("StatementsTests", "resources/rewrite/ASTWriterStatementTestSource.awts"));
+		suite.addAll(SourceRewriteTest.suite("Commented StatementsTests",
 				"resources/rewrite/ASTWriterCommentedStatementTestSource.awts"));
 
-		suite.addTest(SourceRewriteTest.suite("NameTests", "resources/rewrite/ASTWriterNameTestSource.awts"));
-		suite.addTest(SourceRewriteTest.suite("Commented NameTests",
+		suite.addAll(SourceRewriteTest.suite("NameTests", "resources/rewrite/ASTWriterNameTestSource.awts"));
+		suite.addAll(SourceRewriteTest.suite("Commented NameTests",
 				"resources/rewrite/ASTWriterCommentedNameTestSource.awts"));
 
-		suite.addTest(
+		suite.addAll(
 				SourceRewriteTest.suite("InitializerTests", "resources/rewrite/ASTWriterInitializerTestSource.awts"));
 
-		suite.addTest(
+		suite.addAll(
 				SourceRewriteTest.suite("DeclarationTests", "resources/rewrite/ASTWriterDeclarationTestSource.awts"));
-		suite.addTest(SourceRewriteTest.suite("Commented DeclarationTests",
+		suite.addAll(SourceRewriteTest.suite("Commented DeclarationTests",
 				"resources/rewrite/ASTWriterCommentedDeclarationTestSource.awts"));
 
-		suite.addTest(SourceRewriteTest.suite("TemplatesTests", "resources/rewrite/ASTWriterTemplateTestSource.awts"));
+		suite.addAll(SourceRewriteTest.suite("TemplatesTests", "resources/rewrite/ASTWriterTemplateTestSource.awts"));
 
-		suite.addTest(SourceRewriteTest.suite("CommentTests", "resources/rewrite/ASTWriterCommentedTestSource.awts"));
-		suite.addTest(
+		suite.addAll(SourceRewriteTest.suite("CommentTests", "resources/rewrite/ASTWriterCommentedTestSource.awts"));
+		suite.addAll(
 				SourceRewriteTest.suite("NewCommentTests", "resources/rewrite/ASTWriterCommentedTestSource2.awts"));
-		suite.addTest(SourceRewriteTest.suite("AttributeTests", "resources/rewrite/ASTWriterAttributeTestSource.awts"));
-		suite.addTestSuite(ExpressionWriterTest.class);
+		suite.addAll(SourceRewriteTest.suite("AttributeTests", "resources/rewrite/ASTWriterAttributeTestSource.awts"));
 		return suite;
 	}
 
-	public static Test suite(String name, String file) throws Exception {
+	private static List<Arguments> suite(String name, String file) throws Exception {
 		BufferedReader in = createReader(file);
-		ArrayList<RewriteBaseTest> testCases = createTests(in);
+		List<Arguments> testCases = createTests(name, in);
 		in.close();
-		return createSuite(testCases, name);
+		return testCases;
 	}
 
-	private static TestSuite createSuite(ArrayList<RewriteBaseTest> testCases, String name) {
-		TestSuite suite = new TestSuite(name);
-		for (RewriteBaseTest subject : testCases) {
-			suite.addTest(subject);
-		}
-		return suite;
-	}
-
-	protected static boolean lineMatchesBeginOfTest(String line) {
+	private static boolean lineMatchesBeginOfTest(String line) {
 		return createMatcherFromString(testRegexp, line).find();
 	}
 
-	protected static boolean lineMatchesCodeType(String line) {
+	private static boolean lineMatchesCodeType(String line) {
 		return createMatcherFromString(codeTypeRegexp, line).find();
 	}
 
-	protected static Matcher createMatcherFromString(String pattern, String line) {
+	private static Matcher createMatcherFromString(String pattern, String line) {
 		return Pattern.compile(pattern).matcher(line);
 	}
 
-	protected static String getNameOfTest(String line) {
+	private static String getNameOfTest(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(testRegexp, line);
 		if (matcherBeginOfTest.find()) {
 			return matcherBeginOfTest.group(1);
@@ -127,21 +120,21 @@ public class SourceRewriteTest extends TestSuite {
 		}
 	}
 
-	protected static boolean lineMatchesBeginOfResult(String line) {
+	private static boolean lineMatchesBeginOfResult(String line) {
 		return createMatcherFromString(resultRegexp, line).find();
 	}
 
-	private static ArrayList<RewriteBaseTest> createTests(BufferedReader inputReader) throws Exception {
+	private static List<Arguments> createTests(String name, BufferedReader inputReader) throws Exception {
 		ASTWriterTestSourceFile file = null;
 		MatcherState matcherState = MatcherState.skip;
-		ArrayList<RewriteBaseTest> testCases = new ArrayList<>();
+		ArrayList<Arguments> testCases = new ArrayList<>();
 
 		String line;
 		while ((line = inputReader.readLine()) != null) {
 			if (lineMatchesBeginOfTest(line)) {
 				matcherState = MatcherState.inTest;
 				file = new ASTWriterTestSourceFile("ASTWritterTest.h"); //$NON-NLS-1$
-				testCases.add(createTestClass(getNameOfTest(line), file));
+				testCases.add(Arguments.argumentSet(name + "." + getNameOfTest(line), file));
 				continue;
 			} else if (lineMatchesBeginOfResult(line)) {
 				matcherState = MatcherState.inExpectedResult;
@@ -173,7 +166,7 @@ public class SourceRewriteTest extends TestSuite {
 		return testCases;
 	}
 
-	protected static ScannerKind getScannerKind(String line) {
+	private static ScannerKind getScannerKind(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(codeTypeRegexp, line);
 		if (matcherBeginOfTest.find()) {
 			String codeType = matcherBeginOfTest.group(1);
@@ -189,7 +182,7 @@ public class SourceRewriteTest extends TestSuite {
 		return ScannerKind.STD;
 	}
 
-	protected static ParserLanguage getParserLanguage(String line) {
+	private static ParserLanguage getParserLanguage(String line) {
 		Matcher matcherBeginOfTest = createMatcherFromString(codeTypeRegexp, line);
 		if (matcherBeginOfTest.find()) {
 			String codeType = matcherBeginOfTest.group(1);
@@ -202,18 +195,5 @@ public class SourceRewriteTest extends TestSuite {
 			}
 		}
 		return ParserLanguage.C;
-	}
-
-	private static RewriteBaseTest createTestClass(String testName, ASTWriterTestSourceFile file) throws Exception {
-		ASTWriterTester test = new ASTWriterTester(testName, file) {
-			// ASTWriterTester is an abstract class so it doesn't
-			// look like a test, make it a concrete class here
-		};
-		TextSelection sel = file.getSelection();
-		if (sel != null) {
-			test.setFileWithSelection(file.getName());
-			test.setSelection(sel);
-		}
-		return test;
 	}
 }

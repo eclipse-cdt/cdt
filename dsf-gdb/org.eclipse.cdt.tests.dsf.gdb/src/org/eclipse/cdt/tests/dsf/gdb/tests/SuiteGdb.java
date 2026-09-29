@@ -39,10 +39,10 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 		// new style tests
 		MIBreakpointsTest.class, MICatchpointsTest.class, MIRegistersTest.class, MIExpressionsTest.class,
-		LaunchConfigurationAndRestartTest.class, SourceLookupTest.class, StepIntoSelectionTest.class,
-		OperationsWhileTargetIsRunningTest.class, MIModifiedServicesTest.class, MIRunControlTest.class,
-		MIRunControlTargetAvailableTest.class, MIRunControlReverseTest.class, GDBPatternMatchingExpressionsTest.class,
-		GDBMultiNonStopRunControlTest.class, GDBConsoleBreakpointsTest.class,
+		LaunchConfigurationAndRestartTest.class, InferiorStdinEofTest.class, SourceLookupTest.class,
+		StepIntoSelectionTest.class, OperationsWhileTargetIsRunningTest.class, MIModifiedServicesTest.class,
+		MIRunControlTest.class, MIRunControlTargetAvailableTest.class, MIRunControlReverseTest.class,
+		GDBPatternMatchingExpressionsTest.class, GDBMultiNonStopRunControlTest.class, GDBConsoleBreakpointsTest.class,
 		MIRunControlNonStopTargetAvailableTest.class, MIExpressionsNonStopTest.class,
 		OperationsWhileTargetIsRunningNonStopTest.class, StepIntoSelectionNonStopTest.class,
 		GDBRemoteTracepointsTest.class, TraceFileTest.class, GDBConsoleSynchronizingTest.class, MIMemoryTest.class,

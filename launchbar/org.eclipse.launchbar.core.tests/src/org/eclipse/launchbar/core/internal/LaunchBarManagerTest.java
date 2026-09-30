@@ -515,22 +515,13 @@ public class LaunchBarManagerTest {
 	 * manager has finished update launch mode and launch target for that descriptor
 	 *
 	 * @throws CoreException
-	 * @throws InterruptedException
 	 */
 	@Test
-	public void launchBarStateTest_LaunchDescriptorChanged() throws CoreException, InterruptedException {
+	public void launchBarStateTest_LaunchDescriptorChanged() throws CoreException {
 		// Dummy listener to collect data from the launch bar
-		AtomicReference<Map<String, Object>> launchBarState = new AtomicReference<>();
-		ILaunchBarListener launchBarListener = new ILaunchBarListener() {
-			@Override
-			public void activeLaunchDescriptorChanged(ILaunchDescriptor descriptor) {
-				Map<String, Object> state = new HashMap<>();
-				state.put(attr_activeDesc, descriptor);
-				state.put(attr_activeTarget, launchBarManagerMock.getActiveLaunchTarget());
-				state.put(attr_activeMode, launchBarManagerMock.getActiveLaunchMode());
-				launchBarState.set(state);
-			}
-		};
+		AtomicReference<List<Map<String, Object>>> launchBarState = new AtomicReference<>();
+		launchBarState.set(new ArrayList<>());
+		ILaunchBarListener launchBarListener = createLaunchBarListener(launchBarState);
 		// Add initial active value to launch bar
 		ILaunchDescriptor desc_no1 = launchBarManagerMock.launchObjectAdded(launchObject_no1);
 		ILaunchTarget target_no1 = targetManagerMock.getLaunchTarget(targetTypeId, targetId_no1);
@@ -548,9 +539,11 @@ public class LaunchBarManagerTest {
 		// launch descriptor: launchObject_no1
 		// launch target: targetId_no1
 		// launch mode: preferredMode_no1
-		assertEquals(launchObject_no1, ((ILaunchDescriptor) launchBarState.get().get(attr_activeDesc)).getName());
-		assertEquals(targetId_no1, ((ILaunchTarget) launchBarState.get().get(attr_activeTarget)).getId());
-		assertEquals(preferredMode_no1, ((ILaunchMode) launchBarState.get().get(attr_activeMode)).getIdentifier());
+		for (var stateMap : launchBarState.get()) {
+			assertEquals(launchObject_no1, ((ILaunchDescriptor) stateMap.get(attr_activeDesc)).getName());
+			assertEquals(targetId_no1, ((ILaunchTarget) stateMap.get(attr_activeTarget)).getId());
+			assertEquals(preferredMode_no1, ((ILaunchMode) stateMap.get(attr_activeMode)).getIdentifier());
+		}
 	}
 
 	/**
@@ -562,22 +555,13 @@ public class LaunchBarManagerTest {
 	 * manager has finished update launch mode for that descriptor
 	 *
 	 * @throws CoreException
-	 * @throws InterruptedException
 	 */
 	@Test
-	public void launchBarStateTest_LaunchTargetChanged() throws CoreException, InterruptedException {
+	public void launchBarStateTest_LaunchTargetChanged() throws CoreException {
 		// Dummy listener to collect data from the launch bar
-		AtomicReference<Map<String, Object>> launchBarState = new AtomicReference<>();
-		ILaunchBarListener launchBarListener = new ILaunchBarListener() {
-			@Override
-			public void activeLaunchTargetChanged(ILaunchTarget target) {
-				Map<String, Object> state = new HashMap<>();
-				state.put(attr_activeDesc, launchBarManagerMock.getActiveLaunchDescriptor());
-				state.put(attr_activeTarget, target);
-				state.put(attr_activeMode, launchBarManagerMock.getActiveLaunchMode());
-				launchBarState.set(state);
-			}
-		};
+		AtomicReference<List<Map<String, Object>>> launchBarState = new AtomicReference<>();
+		launchBarState.set(new ArrayList<>());
+		ILaunchBarListener launchBarListener = createLaunchBarListener(launchBarState);
 		// Add initial active value to launch bar
 		launchBarManagerMock.launchObjectAdded(launchObject_no1);
 		ILaunchTarget target_no1 = targetManagerMock.getLaunchTarget(targetTypeId, targetId_no1);
@@ -593,9 +577,11 @@ public class LaunchBarManagerTest {
 		// launch descriptor: launchObject_no1
 		// launch target: targetId_no1
 		// launch mode: preferredMode_no1
-		assertEquals(launchObject_no1, ((ILaunchDescriptor) launchBarState.get().get(attr_activeDesc)).getName());
-		assertEquals(targetId_no1, ((ILaunchTarget) launchBarState.get().get(attr_activeTarget)).getId());
-		assertEquals(preferredMode_no1, ((ILaunchMode) launchBarState.get().get(attr_activeMode)).getIdentifier());
+		for (var stateMap : launchBarState.get()) {
+			assertEquals(launchObject_no1, ((ILaunchDescriptor) stateMap.get(attr_activeDesc)).getName());
+			assertEquals(targetId_no1, ((ILaunchTarget) stateMap.get(attr_activeTarget)).getId());
+			assertEquals(preferredMode_no1, ((ILaunchMode) stateMap.get(attr_activeMode)).getIdentifier());
+		}
 	}
 
 	/**
@@ -607,22 +593,13 @@ public class LaunchBarManagerTest {
 	 * fields in launch bar manager are up-to-date
 	 *
 	 * @throws CoreException
-	 * @throws InterruptedException
 	 */
 	@Test
-	public void launchBarStateTest_LaunchModeChanged() throws CoreException, InterruptedException {
+	public void launchBarStateTest_LaunchModeChanged() throws CoreException {
 		// Dummy listener to collect data from the launch bar
-		AtomicReference<Map<String, Object>> launchBarState = new AtomicReference<>();
-		ILaunchBarListener launchBarListener = new ILaunchBarListener() {
-			@Override
-			public void activeLaunchModeChanged(ILaunchMode mode) {
-				Map<String, Object> state = new HashMap<>();
-				state.put(attr_activeDesc, launchBarManagerMock.getActiveLaunchDescriptor());
-				state.put(attr_activeTarget, launchBarManagerMock.getActiveLaunchTarget());
-				state.put(attr_activeMode, mode);
-				launchBarState.set(state);
-			}
-		};
+		AtomicReference<List<Map<String, Object>>> launchBarState = new AtomicReference<>();
+		launchBarState.set(new ArrayList<>());
+		ILaunchBarListener launchBarListener = createLaunchBarListener(launchBarState);
 		// Add initial active value to launch bar
 		launchBarManagerMock.launchObjectAdded(launchObject_no1);
 		ILaunchTarget target_no1 = targetManagerMock.getLaunchTarget(targetTypeId, targetId_no1);
@@ -635,9 +612,11 @@ public class LaunchBarManagerTest {
 		// launch descriptor: launchObject_no1
 		// launch target: targetId_no1
 		// launch mode: Run
-		assertEquals(launchObject_no1, ((ILaunchDescriptor) launchBarState.get().get(attr_activeDesc)).getName());
-		assertEquals(targetId_no1, ((ILaunchTarget) launchBarState.get().get(attr_activeTarget)).getId());
-		assertEquals(runMode, ((ILaunchMode) launchBarState.get().get(attr_activeMode)).getIdentifier());
+		for (var stateMap : launchBarState.get()) {
+			assertEquals(launchObject_no1, ((ILaunchDescriptor) stateMap.get(attr_activeDesc)).getName());
+			assertEquals(targetId_no1, ((ILaunchTarget) stateMap.get(attr_activeTarget)).getId());
+			assertEquals(runMode, ((ILaunchMode) stateMap.get(attr_activeMode)).getIdentifier());
+		}
 	}
 
 	private ILaunchDescriptor createLaunchDescriptorMock(Object launchObject) throws CoreException {
@@ -759,6 +738,40 @@ public class LaunchBarManagerTest {
 		ILaunchMode mode = mock(ILaunchMode.class);
 		doReturn(identifier).when(mode).getIdentifier();
 		return mode;
+	}
+
+	/**
+	 * @param launchBarState variable to collect data
+	 */
+	private ILaunchBarListener createLaunchBarListener(AtomicReference<List<Map<String, Object>>> launchBarState) {
+		return new ILaunchBarListener() {
+			@Override
+			public void activeLaunchDescriptorChanged(ILaunchDescriptor descriptor) {
+				Map<String, Object> state = new HashMap<>();
+				state.put(attr_activeDesc, descriptor);
+				state.put(attr_activeTarget, launchBarManagerMock.getActiveLaunchTarget());
+				state.put(attr_activeMode, launchBarManagerMock.getActiveLaunchMode());
+				launchBarState.get().add(state);
+			}
+
+			@Override
+			public void activeLaunchModeChanged(ILaunchMode mode) {
+				Map<String, Object> state = new HashMap<>();
+				state.put(attr_activeDesc, launchBarManagerMock.getActiveLaunchDescriptor());
+				state.put(attr_activeTarget, launchBarManagerMock.getActiveLaunchTarget());
+				state.put(attr_activeMode, mode);
+				launchBarState.get().add(state);
+			}
+
+			@Override
+			public void activeLaunchTargetChanged(ILaunchTarget target) {
+				Map<String, Object> state = new HashMap<>();
+				state.put(attr_activeDesc, launchBarManagerMock.getActiveLaunchDescriptor());
+				state.put(attr_activeTarget, target);
+				state.put(attr_activeMode, launchBarManagerMock.getActiveLaunchMode());
+				launchBarState.get().add(state);
+			}
+		};
 	}
 
 	// TODO - test that changing active target type produces a different launch

@@ -36,12 +36,31 @@ public class Messages extends NLS {
 	public static String CMakeBuildTab_useDefaultCmakeSettingsTip;
 	public static String CMakeBuildTab_UsedForLaunchMode;
 	public static String CMakePreferencePage_Add;
+	public static String CMakePreferencePage_Browse;
+	public static String CMakePreferencePage_CMakeLocation;
+	public static String CMakePreferencePage_CMakeLocationTooltip;
+	public static String CMakePreferencePage_CMakeTools;
 	public static String CMakePreferencePage_ConfirmRemoveDesc;
 	public static String CMakePreferencePage_ConfirmRemoveTitle;
+	public static String CMakePreferencePage_Delete;
+	public static String CMakePreferencePage_Edit;
+	public static String CMakePreferencePage_EditGeneratorLocations_Title;
+	public static String CMakePreferencePage_EditGeneratorLocations_GeneratorLocation;
+	public static String CMakePreferencePage_FailToTestCmakeLocation_Body;
+	public static String CMakePreferencePage_FailToTestCmakeLocation_Title;
 	public static String CMakePreferencePage_Files;
+	public static String CMakePreferencePage_GeneratorLocation;
+	public static String CMakePreferencePage_GeneratorLocationTooltip;
 	public static String CMakePreferencePage_Path;
 	public static String CMakePreferencePage_Remove;
+	public static String CMakePreferencePage_Test;
+	public static String CMakePreferencePage_TestCmakeLocation_Body;
+	public static String CMakePreferencePage_TestCmakeLocation_Title;
+	public static String CMakePreferencePage_TestTooltip;
 	public static String CMakePreferencePage_Toolchain;
+	public static String CMakePreferencePage_UseCMakeToolLocationsInCMakeBuilds;
+	public static String CMakePreferencePage_UseCMakeToolLocationsInCMakeBuildsTooltip;
+	public static String CMakePreferencePage_Variables;
 	public static String CMakePropertyPage_FailedToStartCMakeGui_Body;
 	public static String CMakePropertyPage_FailedToStartCMakeGui_Title;
 	public static String CMakePropertyPage_FailedToGetOS_Body;
@@ -62,6 +81,8 @@ public class Messages extends NLS {
 	public static String NewCMakeToolChainFilePage_Select;
 	public static String NewCMakeToolChainFilePage_Title;
 	public static String NewCMakeToolChainFilePage_Toolchain;
+
+	public static String VariablesDialog_Title;
 
 	static {
 		// initialize resource bundle

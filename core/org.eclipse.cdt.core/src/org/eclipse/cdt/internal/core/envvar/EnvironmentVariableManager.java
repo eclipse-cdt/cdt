@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.cdtvariables.CdtVariableException;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 import org.eclipse.cdt.core.envvar.EnvironmentVariable;
@@ -35,6 +36,7 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
 import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.core.runtime.Adapters;
 
 /**
  * This class implements the IEnvironmentVariableProvider interface and provides all
@@ -55,6 +57,7 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	public static final EclipseEnvironmentSupplier fEclipseSupplier = new EclipseEnvironmentSupplier();
 	public static final ToolChainEnvironmentSupplier fToolChainSupplier = new ToolChainEnvironmentSupplier();
 	public static final BuildConfigEnvironmentSupplier fBuildConfigSupplier = new BuildConfigEnvironmentSupplier();
+	public static final CMakeBuildEnvironmentSupplier fCmakeSupplier = new CMakeBuildEnvironmentSupplier();
 
 	private ContributedEnvironment fContributedEnvironment;
 
@@ -225,6 +228,9 @@ public class EnvironmentVariableManager implements IEnvironmentVariableManager {
 	 * or null if the the given level is not supported
 	 */
 	public IEnvironmentContextInfo getContextInfo(Object level) {
+		if (Adapters.adapt(level, ICBuildConfiguration.class) != null) {
+			return new CMakeEnvironmentContextInfo(getDefaultContextInfo(level));
+		}
 		if (level instanceof ICConfigurationDescription) {
 			return fContributedEnvironment.appendEnvironment((ICConfigurationDescription) level)
 					? getDefaultContextInfo(level)

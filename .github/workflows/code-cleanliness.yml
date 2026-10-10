@@ -17,6 +17,13 @@ jobs:
           options: -v ${{ github.workspace }}:/work
           run: |
             set -ex
+            # The image only provides Java 17 and 21, but the target platform needs Java 25.
+            # Run Maven with a downloaded Java 25 and leave JAVA_HOME alone, the code formatter
+            # and the native builds need the Java of the image.
+            # Remove this once the image is rebuilt with Java 25.
+            mkdir -p /tmp/jdk25
+            curl -fsSL "https://api.adoptium.net/v3/binary/latest/25/ga/linux/x64/jdk/hotspot/normal/eclipse" | tar xzf - -C /tmp/jdk25 --strip-components=1
+            export MVN="env JAVA_HOME=/tmp/jdk25 mvn"
             cd /work
             ./releng/scripts/check_code_cleanliness_only.sh
             ./releng/scripts/check_bundle_versions.sh

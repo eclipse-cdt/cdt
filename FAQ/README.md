@@ -2754,7 +2754,7 @@ Because of way the Linux kernel source code is architected and
 configured, it's a bit subtler than you might think.
 
 
-**Disclaimer: These steps were last updated for Eclipse 2025-06 R, CDT 12.1.0, and Linux v6.12.34**
+**Disclaimer: These steps were last updated for Eclipse 2026-03 R, CDT 12.4.0, and Linux v7.0**
 
 Tip: Increase heap size before starting the index for Linux Kernel. See [How do I increase Heap Size](https://wiki.eclipse.org/FAQ_How_do_I_increase_the_heap_size_available_to_Eclipse%3F)
 
@@ -2764,7 +2764,7 @@ Tip: Increase heap size before starting the index for Linux Kernel. See [How do 
 - Click **File** -&gt; **New** -&gt; **Project**
 - In the pop-up window, choose **C/C++**-&gt; **C/C++ Project**. Click **Next**
 - In the next window, choose **Classic C Project**
-- Fill in a project name like *Linux v6.12*
+- Fill in a project name like *Linux v7.0*
 - Uncheck the **Use default location** box and type in the root directory of your kernel into the **Location** box.
 - In the **Project type:** pane, click the **Makefile project** and select **Existing code or empty Project**
 - On the right side, select **Linux GCC**. Click **Next**
@@ -2774,15 +2774,25 @@ Tip: Increase heap size before starting the index for Linux Kernel. See [How do 
 - Select the **Includes** tab and then select **GNU C**
 - Click **Add...**
 - Click **Workspace...** then select your kernel's `include`, and `include/uapi` directories
-- Do another Add, Workspace and add both `arch/`*architecture*`/include`, and `arch/`**architecture*`/include/uapi` directories. e.g., `arch/arm64/include` and `arch/arm64/include/uapi` (The UAPI directories are due to the kernel's user/kernel header split covered [here](http://lwn.net/Articles/507794/) in-detail)
+- Do another Add, Workspace and add both `arch/`*architecture*`/include`, and `arch/`*architecture*`/include/uapi` directories. e.g., `arch/arm64/include` and `arch/arm64/include/uapi` (The UAPI directories are due to the kernel's user/kernel header split covered [here](http://lwn.net/Articles/507794/) in-detail)
+- Same again for `arch/`*architecture*`/include/generated` and `arch/`*architecture*`/include/generated/uapi`
 - Click the **# Symbols** tab
 - Click **Add...**
 - Set the name to `__KERNEL__`
 - Set the value to `1` and click **OK**
+- In the same way add the following symbols:
+    - Name: `KBUILD_MODNAME` Value: `"my_module"`
+    - Name: `__KBUILD_MODNAME` Value: `my_module`
+    - Name: `KBUILD_MODFILE` Value: `"my_module.c"`
+    - Name: `KBUILD_BASENAME` Value: `"my_basename"`
+
+  Note that the values are just dummies - in reality the build system sets different values
+  per module. But defining these symbols here help the CDT parser with macros that use them.
 - Click the **Source Location** tab
 - Click the plus sign (or arrow/triangle) next to your project name.
 - Select the **Filter** item and click **Edit Filter...**
-- Click **Add Multiple...** and then select all of the `arch/*` directories in your kernel source that will not be used (i.e. all the ones that are not for the architecture you are using)
+- Click **Add Multiple...** and then select all of the `arch/*` directories in your kernel source that will not be used (i.e. all the ones that are not for the architecture you are using).  
+  Also add `tools/testing/` or at least `tools/testing/selftests/bpf/`, because the CDT parser needs forever to parse `tools/testing/selftests/bpf/uprobe_multi.c`, the same issue *may* exist in other tests.
 - Click **OK** and **OK** again to dismiss that dialog.
 - Click **Apply**
 - Under **C/C++ General**, select **Preprocessor Include Paths, Macros etc.**
@@ -2793,16 +2803,19 @@ Tip: Increase heap size before starting the index for Linux Kernel. See [How do 
 - Click the **Providers** tab and select **CDT GCC Built-in Compiler Settings**
 - Uncheck **Use global provider shared between projects** if it is checked.
 - Append `-nostdinc` to the curretly-existing **Command to get compiler specs**. The kernel is a *free-standing* environment by ISO C99 definition. That is, it does not want to be polluted, and obviously cannot work with, the "host" header files and libraries.
-- Open a terminal, and type "echo -isystem $(gcc -print-file-name=include/)". Append *the resulting output* to the **Command to get compiler specs** mentioned above. If you're using a cross-toolchain to compile the kernel, use the full path of *that* cross GCC compiler, instead of just typing `gcc` in the command mentioned. Rationale for this step: `-nostdinc` already asked gcc to *not* search the standard system directories for header files. But the Linux Kernel depends on GCC-provided "freestanding environment" headers like *stdarg.h*, *stdbool.h* and so on, which are typically hosted by GCC under */usr/lib/gcc/<arch>/<version>/include*. Thus this step.
+- Open a terminal, and type "echo -isystem $(gcc -print-file-name=include/)". Append *the resulting output* to the **Command to get compiler specs** mentioned above. If you're using a cross-toolchain to compile the kernel, use the full path of *that* cross GCC compiler, instead of just typing `gcc` in the command mentioned. Rationale for this step: `-nostdinc` already asked gcc to *not* search the standard system directories for header files. But the Linux Kernel depends on GCC-provided "freestanding environment" headers like *stdarg.h*, *stdbool.h* and so on, which are typically hosted by GCC under `/usr/lib/gcc/<arch>/<version>/include`. Thus this step.
 - Click **Apply**
-- Click on **Indexer** under **C/C++ General** on the left
-- Uncheck **Index source files not included in the build**
-- Click **OK** on the Properties dialog.
-- Check the **Enable indexer** option.
-- Click **Apply and Close** on the bottom right of the C Project dialog.
+- Click **Apply and Close** on the bottom right of the Properties dialog.
 - Click on **Finish**
+- Adjust some headers to appease the CDT parser as shown [here](https://github.com/eclipse-cdt/cdt/issues/1447#issuecomment-4260614168), unless that issue is resolved in your CDT version.
+- Go back to the Project Properties (Right-click the project in the Project Explorer, click **Properties**)
+- Go to **C/C++ General** -> **Indexer**
+- Check the **Enable indexer** option.
+- Uncheck **Index source files not included in the build**
+- Click **Apply and Close** on the bottom right of the Properties Dialog.
 - The Project will index automatically.
-- On a platter drive indexing will take upwards of 20 minutes to complete, on a SSD/NVME indexing will take between 2 to 5 minutes to complete.
+- Indexing can take over 20 minutes even on a fast PC with SSD.  
+  It can probably be sped up by filtering out directories of drivers or tools or tests etc you don't care about (see *Edit Filter...* above).
 
 
 Updated for the latest Eclipse CDT versions by:

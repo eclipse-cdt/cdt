@@ -25,7 +25,8 @@ done
 
 echo "The following images have been pushed."
 for image in $images; do
-    hashname=$(docker inspect --format='{{index .RepoDigests 0}}' $image)
+    hashname=$(docker inspect --format='{{range .RepoDigests}}{{println .}}{{end}}' $image | grep "^${namespace}/" | head -n1)
+    [ -n "$hashname" ] || { echo "No digest found for $image in $namespace"; exit 1; }
     echo $image "-->" $hashname
     nameonly=$(echo $image | sed -es,:.*,,)
     find $toplevel -name \*\.Jenkinsfile -or -name \*\.yaml -or -name \*\.yml | while read file; do

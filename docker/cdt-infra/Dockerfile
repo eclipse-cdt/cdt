@@ -98,8 +98,10 @@ ENV LC_ALL=en_US.UTF-8
 # Update toolchains.xml too when updating this
 ENV JDK17_VERSION=jdk-17.0.13+11
 ENV JDK21_VERSION=jdk-21.0.5+11
+ENV JDK25_VERSION=jdk-25.0.4+7
 ENV JAVA17_HOME=/usr/lib/jvm/${JDK17_VERSION}
 ENV JAVA21_HOME=/usr/lib/jvm/${JDK21_VERSION}
+ENV JAVA25_HOME=/usr/lib/jvm/${JDK25_VERSION}
 
 # Get Java from adoptium + header files for win32 & mac for cross compiling JNI libraries on Java 8, 11, 17
 # TODO: Move these runs into a script, the only difference between each invocation is the env variables
@@ -135,13 +137,29 @@ RUN export JVERSION=${JDK17_VERSION} \
     && mv /tmp/x/mac/${JVERSION}/Contents/Home/include/darwin $JHOME/include \
     && find $JHOME/include \
     && rm -rf /tmp/x
+  RUN export JVERSION=${JDK25_VERSION} \
+    && export JHOME=${JAVA25_HOME} \
+    && mkdir /tmp/x && mkdir -p /usr/lib/jvm \
+    && curl -sL "https://api.adoptium.net/v3/binary/version/${JVERSION}/linux/x64/jdk/hotspot/normal/eclipse?project=jdk" > /tmp/x/openjdk-linux.tar.gz \
+    && mkdir /tmp/x/linux && cd /tmp/x/linux && tar xvf /tmp/x/openjdk-linux.tar.gz \
+    && mv /tmp/x/linux/${JVERSION} /usr/lib/jvm \
+    && curl -sL "https://api.adoptium.net/v3/binary/version/${JVERSION}/windows/x64/jdk/hotspot/normal/eclipse?project=jdk" > /tmp/x/openjdk-win32.zip \
+    && curl -sL "https://api.adoptium.net/v3/binary/version/${JVERSION}/mac/x64/jdk/hotspot/normal/eclipse?project=jdk" > /tmp/x/openjdk-mac.tar.gz \
+    && mkdir /tmp/x/win32 && cd /tmp/x/win32 && unzip /tmp/x/openjdk-win32.zip \
+    && mkdir /tmp/x/mac && cd /tmp/x/mac && tar xvf /tmp/x/openjdk-mac.tar.gz \
+    && cd $JHOME/include && for i in *.h; do diff -w $i /tmp/x/win32/${JVERSION}/include/$i ; done \
+    && cd $JHOME/include && for i in *.h; do diff -w $i /tmp/x/mac/${JVERSION}/Contents/Home/include/$i ; done \
+    && mv /tmp/x/win32/${JVERSION}/include/win32 $JHOME/include \
+    && mv /tmp/x/mac/${JVERSION}/Contents/Home/include/darwin $JHOME/include \
+    && find $JHOME/include \
+    && rm -rf /tmp/x
 
-# Default to JAVA21 being in use
-ENV PATH="${JAVA21_HOME}/bin:${PATH}"
-ENV JAVA_HOME=${JAVA21_HOME}
+# Default to JAVA25 being in use
+ENV PATH="${JAVA25_HOME}/bin:${PATH}"
+ENV JAVA_HOME=${JAVA25_HOME}
 
 # Maven - Note that this is the default, but the Jenkinsfile may override it with JIPP version
-ENV MAVEN_VERSION=3.9.9
+ENV MAVEN_VERSION=3.9.16
 RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz | tar xzf - -C /usr/share \
   && mv /usr/share/apache-maven-$MAVEN_VERSION /usr/share/maven \
   && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
@@ -158,6 +176,9 @@ ENV PATH="/opt/osxcross/target/bin:${PATH}"
 RUN mkdir -p ${HOME}/buildtools && cd ${HOME}/buildtools \
   && curl -sL https://download.eclipse.org/eclipse/downloads/drops4/R-4.34-202411201800/eclipse-SDK-4.34-linux-gtk-x86_64.tar.gz | tar xvz \
   && mv eclipse eclipse-SDK-4.34
+RUN mkdir -p ${HOME}/buildtools && cd ${HOME}/buildtools \
+  && curl -sL https://download.eclipse.org/eclipse/downloads/drops4/R-4.41-202608281142/eclipse-SDK-4.41-linux-gtk-x86_64.tar.gz | tar xvz \
+  && mv eclipse eclipse-SDK-4.41
 
 # Get WoA toolchain https://github.com/eclipse-cdt/cdt/pull/971
 # Note that we remove the "fake" gcc and g++ provided here as they

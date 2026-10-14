@@ -377,7 +377,7 @@
          </visibility>
          <action
                label="%AddExpressionAction.label"
-               icon="icons/etool16/watch_exp.gif"
+               icon="icons/etool16/watch_exp.svg"
                helpContextId="add_expression_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionEditorActionDelegate"
                menubarPath="additions"
@@ -463,7 +463,7 @@
          </visibility>
          <action
                label="%AddExpressionAction.label"
-               icon="icons/etool16/watch_exp.gif"
+               icon="icons/etool16/watch_exp.svg"
                helpContextId="add_expression_action_context"
                class="org.eclipse.cdt.debug.internal.ui.actions.AddExpressionEditorActionDelegate"
                menubarPath="additions"
@@ -927,7 +927,7 @@
             annotationType="org.eclipse.cdt.debug.core.breakpoint"
             colorPreferenceKey="breakpointIndicationColor"
             colorPreferenceValue="0,0,255"
-            icon="icons/obj16/brkp_obj.png"
+            icon="icons/obj16/brkp_obj.svg"
             label="%BreakpointMarkerPreference.label"
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler"
             overviewRulerPreferenceValue="false"

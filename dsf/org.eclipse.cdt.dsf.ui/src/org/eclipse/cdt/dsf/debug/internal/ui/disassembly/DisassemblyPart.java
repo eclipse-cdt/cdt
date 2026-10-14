@@ -1341,7 +1341,7 @@ public abstract class DisassemblyPart extends WorkbenchPart
 		fActionToggleSource = new ActionToggleSource();
 		fStateDependentActions.add(fActionToggleSource);
 		fActionToggleSource.setImageDescriptor(
-				ResourceLocator.imageDescriptorFromBundle(DsfUIPlugin.PLUGIN_ID, "icons/source.gif").get()); //$NON-NLS-1$
+				ResourceLocator.imageDescriptorFromBundle(DsfUIPlugin.PLUGIN_ID, "icons/source.svg").get()); //$NON-NLS-1$
 		fVerticalRuler.getControl().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(final MouseEvent e) {

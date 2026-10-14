@@ -30,7 +30,7 @@ public class ShowTestsInHierarchyAction extends Action {
 		this.testsHierarchyViewer = testsHierarchyViewer;
 		setToolTipText(ActionsMessages.ShowTestsInHierarchyAction_tooltip);
 		setChecked(testsHierarchyViewer.showTestsHierarchy());
-		setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/show_tests_hierarchy.gif")); //$NON-NLS-1$
+		setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/show_tests_hierarchy.svg")); //$NON-NLS-1$
 	}
 
 	@Override

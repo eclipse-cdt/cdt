@@ -84,7 +84,7 @@ public class ManagedBuilderUIImages {
 	/**
 	 * @since 8.0
 	 */
-	public static final String IMG_TEXTFILE_OBJ = NAME_PREFIX + "textfile_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_TEXTFILE_OBJ = NAME_PREFIX + "textfile_obj.svg"; //$NON-NLS-1$
 	/**
 	 * @since 8.0
 	 */

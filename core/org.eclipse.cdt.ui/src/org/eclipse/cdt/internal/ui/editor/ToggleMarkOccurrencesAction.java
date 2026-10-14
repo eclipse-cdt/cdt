@@ -42,7 +42,7 @@ public class ToggleMarkOccurrencesAction extends TextEditorAction implements IPr
 	public ToggleMarkOccurrencesAction() {
 		super(ConstructedCEditorMessages.getResourceBundle(), "ToggleMarkOccurrencesAction.", null, //$NON-NLS-1$
 				IAction.AS_CHECK_BOX);
-		CPluginImages.setToolImageDescriptors(this, "mark_occurrences.gif"); //$NON-NLS-1$
+		CPluginImages.setToolImageDescriptors(this, "mark_occurrences.svg"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.TOGGLE_MARK_OCCURRENCES_ACTION);
 		update();
 	}

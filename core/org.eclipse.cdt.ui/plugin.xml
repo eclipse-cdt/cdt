@@ -318,7 +318,7 @@
       <view
             category="org.eclipse.cdt.ui.views"
             class="org.eclipse.cdt.internal.ui.indexview.IndexView"
-            icon="icons/view16/types.gif"
+            icon="icons/view16/types.svg"
             id="org.eclipse.cdt.ui.IndexView"
             name="%IndexView.name"/>
       <view
@@ -330,19 +330,19 @@
       <view
             category="org.eclipse.cdt.ui.views"
             class="org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart"
-            icon="icons/view16/call_hierarchy.gif"
+            icon="icons/view16/call_hierarchy.svg"
             id="org.eclipse.cdt.ui.callHierarchy"
             name="%callHierarchy.name"
             allowMultiple="true"/>
       <view
             category="org.eclipse.cdt.ui.views"
             class="org.eclipse.cdt.internal.ui.typehierarchy.THViewPart"
-            icon="icons/view16/class_hi.gif"
+            icon="icons/view16/class_hi.svg"
             id="org.eclipse.cdt.ui.typeHierarchy"
             name="%typeHierarchy.name"/>
       <view
             name="%templatesViewName"
-            icon="$nl$/icons/view16/templates.gif"
+            icon="$nl$/icons/view16/templates.svg"
             category="org.eclipse.ui"
             class="org.eclipse.ui.texteditor.templates.TemplatesView"
             id="org.eclipse.ui.texteditor.TemplatesView" />
@@ -382,7 +382,7 @@
       </wizard>
       <wizard
             name="%NewWizards.file"
-            icon="icons/etool16/newfile_wiz.gif"
+            icon="icons/etool16/newfile_wiz.svg"
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFileCreationWizard">
@@ -408,7 +408,7 @@
       </wizard>
       <wizard
             name="%NewWizards.folder"
-            icon="icons/etool16/newfolder_wiz.gif"
+            icon="icons/etool16/newfolder_wiz.svg"
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewFolderCreationWizard">
@@ -421,7 +421,7 @@
       </wizard>
       <wizard
             name="%NewWizards.class"
-            icon="icons/etool16/newclass_wiz.gif"
+            icon="icons/etool16/newclass_wiz.svg"
             category="org.eclipse.cdt.ui.newCWizards"
             finalPerspective="org.eclipse.cdt.ui.CPerspective"
             id="org.eclipse.cdt.ui.wizards.NewClassCreationWizard">
@@ -1584,7 +1584,7 @@
          </filter>
          <action
                label="%DeleteTaskAction.label"
-               icon="icons/ovr16/error_co.gif"
+               icon="icons/ovr16/error_co.svg"
                class="org.eclipse.cdt.internal.ui.util.DeleteTaskAction"
                menubarPath="additions"
                enablesFor="+"
@@ -2037,7 +2037,7 @@
                label="%CopyQualifiedName.label"
                retarget="true"
                menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
-               icon="$nl$/icons/elcl16/cpyqual_menu.png"
+               icon="$nl$/icons/elcl16/cpyqual_menu.svg"
                id="org.eclipse.cdt.ui.actions.CopyQualifiedName">
          </action>
          <action
@@ -2064,7 +2064,7 @@
          <action
                definitionId="org.eclipse.ui.edit.text.shiftLeft"
                disabledIcon="icons/dlcl16/shift_l_edit.gif"
-               icon="icons/elcl16/shift_l_edit.gif"
+               icon="icons/elcl16/shift_l_edit.svg"
                id="org.eclipse.cdt.ui.actions.ShiftLeft"
                label="%ShiftLeftAction.label"
                menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
@@ -2073,7 +2073,7 @@
          <action
                definitionId="org.eclipse.ui.edit.text.shiftRight"
                disabledIcon="icons/dlcl16/shift_r_edit.gif"
-               icon="icons/elcl16/shift_r_edit.gif"
+               icon="icons/elcl16/shift_r_edit.svg"
                id="org.eclipse.cdt.ui.actions.ShiftRight"
                label="%ShiftRightAction.label"
                menubarPath="org.eclipse.jdt.ui.source.menu/editGroup"
@@ -2158,7 +2158,7 @@
                toolbarPath="org.eclipse.search.searchActionSet/Search"
                class="org.eclipse.cdt.internal.ui.browser.opentype.OpenTypeAction"
                definitionId="org.eclipse.cdt.ui.navigate.opentype"
-               icon="icons/etool16/opentype.gif"
+               icon="icons/etool16/opentype.svg"
                helpContextId="org.eclipse.cdt.ui.open_type_action"
                label="%OpenTypeAction.label"
                menubarPath="navigate/open.ext2"
@@ -2237,7 +2237,7 @@
          <action
                class="org.eclipse.cdt.internal.ui.wizards.NewTypeDropDownAction"
                disabledIcon="icons/dtool16/newclass_wiz.gif"
-               icon="icons/etool16/newclass_wiz.gif"
+               icon="icons/etool16/newclass_wiz.svg"
                id="org.eclipse.cdt.ui.actions.NewTypeDropDown"
                label="%NewTypeDropDownAction.label"
                style="pulldown"
@@ -2286,7 +2286,7 @@
                id="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"
                definitionId="org.eclipse.cdt.ui.edit.text.c.toggleMarkOccurrences"
                disabledIcon="$nl$/icons/dtool16/mark_occurrences.gif"
-               icon="$nl$/icons/etool16/mark_occurrences.gif"
+               icon="$nl$/icons/etool16/mark_occurrences.svg"
                helpContextId="toggle_mark_occurrences_action"
                label="%toggleMarkOccurrences.label"
                retarget="true"
@@ -3435,7 +3435,7 @@
             presentationLayer="3"
             textStylePreferenceValue="NONE"
             symbolicIcon="warning"
-            icon="icons/obj16/unknown_obj.gif"
+            icon="icons/obj16/unknown_obj.svg"
             label="%CDTIndexerMarker.label"
             textPreferenceValue="true"
             textPreferenceKey="indexResultIndication"
@@ -3451,7 +3451,7 @@
 	  <specification
             annotationType="org.eclipse.cdt.ui.occurrences"
             label="%OccurrenceAnnotation.label"
-            icon="$nl$/icons/obj16/searchm_obj.gif"
+            icon="$nl$/icons/obj16/searchm_obj.svg"
             textPreferenceKey="org.eclipse.cdt.ui.occurrenceIndication"
             textPreferenceValue="false"
             highlightPreferenceKey="org.eclipse.cdt.ui.occurrenceHighlighting"
@@ -3795,7 +3795,7 @@
         id="templateProposalCategory"
         name="%TemplateProposalCategory">
         <proposalCategory
-            icon="$nl$/icons/elcl16/templateprop_co.gif"/>
+            icon="$nl$/icons/elcl16/templateprop_co.svg"/>
     </extension>
     <extension
         point="org.eclipse.cdt.ui.completionProposalComputer"
@@ -3809,7 +3809,7 @@
         id="textProposalCategory"
         name="%TextProposalCategory">
         <proposalCategory
-            icon="$nl$/icons/elcl16/wordassist_co.gif"/>
+            icon="$nl$/icons/elcl16/wordassist_co.svg"/>
     </extension>
     <extension
           id="DOMCompletionProposalComputer"
@@ -4293,7 +4293,7 @@
      <wizard
            category="org.eclipse.cdt.ui.exportWizardCategory"
            class="org.eclipse.cdt.internal.ui.wizards.indexwizards.TeamProjectIndexExportWizard"
-           icon="icons/etool16/exportzip_wiz.gif"
+           icon="icons/etool16/exportzip_wiz.svg"
            id="org.eclipse.cdt.ui.teamSharedIndexWizard"
            name="%teamProjectIndexExportWizard.name">
         <selection
@@ -4721,7 +4721,7 @@
 		</id-association>
 		<id-association
 			id="org.eclipse.cdt.core.ReferencedProjectsLanguageSettingsProvider"
-			icon="icons/obj16/search_ref_obj.gif"
+			icon="icons/obj16/search_ref_obj.svg"
 			ui-clear-entries="false"
 			ui-edit-entries="false">
 		</id-association>
@@ -4737,7 +4737,7 @@
 			tooltip="%AllLanguageSettingEntries.tooltip"/>
 		<tab
 			class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
-			icon="icons/obj16/extension_obj.gif"
+			icon="icons/obj16/extension_obj.svg"
 			name="%AllLanguageSettingProviders.name"
 			weight="020"
 			parent="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProvidersPage"

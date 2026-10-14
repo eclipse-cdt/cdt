@@ -3885,8 +3885,17 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 					endOffset = consume().getEndOffset();
 					break;
 				case IToken.t_explicit:
-					options |= EXPLICIT;
-					endOffset = consume().getEndOffset();
+					endOffset = consume().getEndOffset(); // t_explicit
+
+					// Partial support for c++20 explicit specifier. Constant expression not yet supported.
+					if (LT(1) == IToken.tLPAREN) {
+						consume();
+						if (consume(IToken.t_true, IToken.t_false).getType() == IToken.t_true)
+							options |= EXPLICIT;
+						endOffset = consume(IToken.tRPAREN).getEndOffset();
+					} else {
+						options |= EXPLICIT;
+					}
 					break;
 				case IToken.t_friend:
 					options |= FRIEND;

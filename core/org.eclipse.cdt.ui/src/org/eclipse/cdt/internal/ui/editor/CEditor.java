@@ -2793,6 +2793,8 @@ public class CEditor extends TextEditor
 		IPreferenceStore store = getPreferenceStore();
 		AdaptedSourceViewer cSourceViewer = new AdaptedSourceViewer(editorComposite, ruler, getOverviewRuler(),
 				isOverviewRulerVisible(), styles, store);
+		// The projection ruler column copies the text background when it is created below
+		cSourceViewer.initializeViewerColors();
 
 		/*
 		 * This is a performance optimization to reduce the computation of

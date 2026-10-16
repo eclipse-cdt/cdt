@@ -65,6 +65,8 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 		when(mockToolchain.getTypeId()).thenReturn("tc_typeId");
 		when(mockToolchain.getId()).thenReturn("tcId");
 		when(mockToolchain.getBuildConfigNameFragment()).thenReturn("buildConfigName");
+
+		waitForLaunchBarTracker();
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2020 IBM Corporation and others.
+ * Copyright (c) 2005, 2026 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -2793,6 +2793,8 @@ public class CEditor extends TextEditor
 		IPreferenceStore store = getPreferenceStore();
 		AdaptedSourceViewer cSourceViewer = new AdaptedSourceViewer(editorComposite, ruler, getOverviewRuler(),
 				isOverviewRulerVisible(), styles, store);
+		// The projection ruler column copies the text background when it is created below
+		cSourceViewer.initializeViewerColors();
 
 		/*
 		 * This is a performance optimization to reduce the computation of

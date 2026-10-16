@@ -37,6 +37,8 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -168,21 +170,31 @@ public class CBuildConfigurationManager
 			String configName, IProgressMonitor monitor) throws CoreException {
 		String name = provider.getId() + '/' + configName;
 
-		CoreModel m = CoreModel.getDefault();
-		synchronized (m) {
-			Set<String> names = new HashSet<>();
-			for (IBuildConfiguration config : project.getBuildConfigs()) {
-				names.add(config.getName());
-			}
-			// need to add default config name because it can be active by
-			// default without being in the build config list used above
-			names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
+		// Acquire the workspace scheduling rule before locking CoreModel.
+		// CoreBuildLaunchBarTracker uses the same lock order; reversing it can deadlock when creating a build configuration.
+		// See #1533.
+		IWorkspace workspace = project.getWorkspace();
+		IWorkspaceRunnable wsRunable = new IWorkspaceRunnable() {
+			@Override
+			public void run(IProgressMonitor monitor) throws CoreException {
+				CoreModel m = CoreModel.getDefault();
+				synchronized (m) {
+					Set<String> names = new HashSet<>();
+					for (IBuildConfiguration config : project.getBuildConfigs()) {
+						names.add(config.getName());
+					}
+					// need to add default config name because it can be active by
+					// default without being in the build config list used above
+					names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
 
-			IProjectDescription desc = project.getDescription();
-			names.add(name);
-			desc.setBuildConfigs(names.toArray(new String[names.size()]));
-			project.setDescription(desc, monitor);
-		}
+					IProjectDescription desc = project.getDescription();
+					names.add(name);
+					desc.setBuildConfigs(names.toArray(new String[names.size()]));
+					project.setDescription(desc, monitor);
+				}
+			}
+		};
+		workspace.run(wsRunable, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
 
 		return project.getBuildConfig(name);
 	}

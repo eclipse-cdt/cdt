@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   id="svg2"
+   version="1.1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="arrow_background">
+      <stop
+         style="stop-color:#ffffee;stop-opacity:1"
+         offset="0"
+         id="background_stop_0" />
+      <stop
+         style="stop-color:#ffecad;stop-opacity:1"
+         offset="1"
+         id="background_stop_1" />
+    </linearGradient>
+    <linearGradient
+       id="arrow_stroke">
+      <stop
+         style="stop-color:#ba7f0d;stop-opacity:1"
+         offset="0"
+         id="stroke_stop_0" />
+      <stop
+         style="stop-color:#a2660b;stop-opacity:1"
+         offset="1"
+         id="stroke_stop_1" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#arrow_stroke"
+       id="linearGradient4747"
+       x1="11.0625"
+       y1="1038.5497"
+       x2="11.0625"
+       y2="1049.912"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1,0,0,1,16,0)" />
+    <linearGradient
+       xlink:href="#arrow_background"
+       id="linearGradient4755"
+       x1="4.5"
+       y1="1042.047"
+       x2="4.5"
+       y2="1046.4902"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-1,0,0,1,16,0)" />
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     style="display:inline"
+     transform="translate(0,-1036.3622)">
+    <path
+       style="fill:url(#linearGradient4755);fill-opacity:1;stroke:url(#linearGradient4747);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       d="m 7.5,1038.8622 0,3 5.78125,0 c 0.667867,0 1.21875,0.5509 1.21875,1.2188 l 0,2.5625 c 0,0.6678 -0.550883,1.2187 -1.21875,1.2187 l -5.78125,0 0,3 -1,0 -5.5,-5.5 5.5,-5.5 1,0 z"
+       id="back_arrow" />
+  </g>
+</svg>

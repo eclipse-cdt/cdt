@@ -50,9 +50,9 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_BUILD_TARGET = NAME_PREFIX + "target_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_TARGET = createManaged(OBJ, IMG_OBJS_BUILD_TARGET);
 
-	public static final String IMG_OBJS_ERROR = NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ERROR = NAME_PREFIX + "error_obj.svg"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJ_ERROR = createManaged(OBJ, IMG_OBJS_ERROR);
-	public static final String IMG_OBJS_WARNING = NAME_PREFIX + "warning_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_WARNING = NAME_PREFIX + "warning_obj.svg"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJ_WARNING = createManaged(OBJ, IMG_OBJS_WARNING);
 
 	public static final String IMG_TOOLS_MAKE_TARGET_BUILD = NAME_PREFIX + "target_build.gif"; //$NON-NLS-1$
@@ -61,7 +61,7 @@ public class MakeUIImages {
 	public static final String IMG_TOOLS_MAKE_TARGET_EDIT = NAME_PREFIX + "target_edit.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOLS_MAKE_TARGET_FILTER = NAME_PREFIX + "target_filter.gif"; //$NON-NLS-1$
 
-	public static final String IMG_OBJS_MAKEFILE_MACRO = NAME_PREFIX + "macro_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_MAKEFILE_MACRO = NAME_PREFIX + "macro_obj.svg"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_MACRO = createManaged(OBJ, IMG_OBJS_MAKEFILE_MACRO);
 
 	public static final String IMG_OBJS_MAKEFILE_ACMACRO = NAME_PREFIX + "acmacro_obj.gif"; //$NON-NLS-1$
@@ -83,14 +83,14 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_MAKEFILE_INCLUDE = NAME_PREFIX + "include_obj.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_MAKEFILE_INCLUDE = createManaged(OBJ, IMG_OBJS_MAKEFILE_INCLUDE);
 
-	public static final String IMG_OBJS_ENVIRONMNET = NAME_PREFIX + "environment_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENVIRONMNET = NAME_PREFIX + "environment_obj.svg"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ENVIRONMENT = createManaged(OBJ, IMG_OBJS_ENVIRONMNET);
 
-	public static final String IMG_OBJS_ENV_VAR = NAME_PREFIX + "envvar_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENV_VAR = NAME_PREFIX + "envvar_obj.svg"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ENV_VAR = createManaged(OBJ, IMG_OBJS_ENV_VAR);
 
-	public static final String IMG_TOOLS_ALPHA_SORTING = NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$
-	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT = NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
+	public static final String IMG_TOOLS_ALPHA_SORTING = NAME_PREFIX + "alphab_sort_co.svg"; //$NON-NLS-1$
+	public static final String IMG_TOOLS_MAKEFILE_SEGMENT_EDIT = NAME_PREFIX + "segment_edit.svg"; //$NON-NLS-1$
 
 	public static final String IMG_MENU_OPEN_INCLUDE = NAME_PREFIX + "open_include.gif"; //$NON-NLS-1$
 
@@ -129,7 +129,9 @@ public class MakeUIImages {
 	 */
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		relPath = relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(create("d" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
+		// SVG icons have no disabled variant, JFace derives the disabled image instead
+		if (!relPath.endsWith(".svg")) //$NON-NLS-1$
+			action.setDisabledImageDescriptor(create("d" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
 		//		action.setHoverImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
 		action.setImageDescriptor(create("e" + type + "/", relPath)); //$NON-NLS-1$ //$NON-NLS-2$
 	}

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   id="svg2"
+   version="1.1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient4789">
+      <stop
+         style="stop-color:#4e8fbd;stop-opacity:1;"
+         offset="0"
+         id="stop4791" />
+      <stop
+         style="stop-color:#30495a;stop-opacity:1;"
+         offset="1"
+         id="stop4793" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4773">
+      <stop
+         style="stop-color:#8e4694;stop-opacity:1;"
+         offset="0"
+         id="stop4775" />
+      <stop
+         style="stop-color:#bc7bc1;stop-opacity:1;"
+         offset="1"
+         id="stop4777" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4763">
+      <stop
+         style="stop-color:#77a29d;stop-opacity:1;"
+         offset="0"
+         id="stop4765" />
+      <stop
+         style="stop-color:#1b867b;stop-opacity:1;"
+         offset="1"
+         id="stop4767" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient4763"
+       id="linearGradient4769"
+       x1="4.8479562"
+       y1="1040.7981"
+       x2="10.96875"
+       y2="1040.7981"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-0.0625,-0.25000001)" />
+    <linearGradient
+       xlink:href="#linearGradient4773"
+       id="linearGradient4779"
+       x1="14.683416"
+       y1="11.370661"
+       x2="9.6459417"
+       y2="11.370661"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0969221,0,0,1.0969221,-1.0417872,1035.3433)" />
+    <linearGradient
+       xlink:href="#linearGradient4789"
+       id="linearGradient4795"
+       x1="-2.2873085"
+       y1="1044.6919"
+       x2="-2.2873085"
+       y2="1049.5981"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.15665,0,0,1.0413513,5.171885,-43.166919)" />
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     style="display:inline"
+     transform="translate(0,-1036.3622)">
+    <path
+       style="fill:url(#linearGradient4795);fill-opacity:1;stroke:none"
+       d="m 1.9127345,1038.399 1.0479023,0 0,9.0433 2.0958048,0 -2.530301,2.7613 -2.55585954,-2.7383 1.96801194,0 z"
+       id="path3986" />
+    <path
+       style="fill:url(#linearGradient4769);fill-opacity:1;stroke:#29776f;stroke-width:0.2;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 7.6875,1037.4872 c -0.3507913,0.01 -0.59375,0.031 -0.59375,0.031 0,0 -0.6243495,0.1776 -1,0.5312 -0.3756504,0.3536 -0.5479854,0.8011 -0.4375,1 0.1104854,0.1988 0.3339466,0.3255 0.6875,0.2813 0.3535534,-0.044 0.4273149,-0.2867 0.78125,-0.5625 0.262294,-0.2043 1.0770413,-0.5309 1.328125,0.4062 0.066337,0.2476 -0.03125,1 -0.03125,1 0,0 -1.5761643,-0.064 -2.109375,0.1094 -0.5332107,0.1736 -0.6941068,0.231 -1.0145146,0.7393 -0.2198281,0.3807 -0.2774588,1.1309 -0.1669733,1.4844 0.1104854,0.3536 0.7411166,1.1044 1.3377379,1.1044 0.5966214,0 4.4375,-0.031 4.4375,-0.031 l 0,-0.875 -0.875,0 0,-3.6875 c 0,-0.6569 -0.6312816,-1.4337 -1.25,-1.5 -0.3093592,-0.033 -0.7429587,-0.039 -1.09375,-0.031 z m -0.28125,3.5625 c 0.5916503,0 1.0625,0.3574 1.0625,0.8125 0,0.4551 -0.4708497,0.8438 -1.0625,0.8438 -0.5916503,0 -1.09375,-0.3887 -1.09375,-0.8438 0,-0.4551 0.5020997,-0.8125 1.09375,-0.8125 z"
+       id="path4758" />
+    <path
+       style="fill:url(#linearGradient4779);fill-opacity:1;stroke:#711a78;stroke-width:0.21938443;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 9.1627409,1044.5076 5.6961141,0 0,1.527 -3.58734,3.5873 0,0.606 2.036057,0 1.575522,-1.8421 0,2.7875 -5.7688307,0 0,-1.9149 3.9266837,-3.7571 -2.181491,0 -1.7694314,1.7694 z"
+       id="path4771" />
+  </g>
+</svg>

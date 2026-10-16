@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   id="svg2"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     style="display:inline"
+     transform="translate(0,-1036.3622)">
+    <g
+       id="g6616">
+      <path
+         transform="matrix(0.93090814,0,0,0.93090814,1.1022966,1036.9051)"
+         d="m 14.363107,7.912466 c 0,3.758796 -3.047107,6.805903 -6.8059032,6.805903 -3.7587964,0 -6.80590299,-3.047107 -6.80590299,-6.805903 0,-3.7587964 3.04710659,-6.8059029 6.80590299,-6.8059029 3.7587962,0 6.8059032,3.0471065 6.8059032,6.8059029 z"
+         id="path6578"
+         style="color:#000000;fill:none;stroke:#3d9465;stroke-width:1.39648581;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.50434102,0,0,0.50434102,4.4143396,1040.3687)"
+         d="m 14.363107,7.912466 c 0,3.758796 -3.047107,6.805903 -6.8059032,6.805903 -3.7587964,0 -6.80590299,-3.047107 -6.80590299,-6.805903 0,-3.7587964 3.04710659,-6.8059029 6.80590299,-6.8059029 3.7587962,0 6.8059032,3.0471065 6.8059032,6.8059029 z"
+         id="path6578-2"
+         style="color:#000000;fill:none;stroke:#3d9465;stroke-width:2.57762098;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         transform="matrix(0.23263973,0,0,0.23263973,6.5301417,1042.456)"
+         d="m 14.363107,7.912466 c 0,3.758796 -3.047107,6.805903 -6.8059032,6.805903 -3.7587964,0 -6.80590299,-3.047107 -6.80590299,-6.805903 0,-3.7587964 3.04710659,-6.8059029 6.80590299,-6.8059029 3.7587962,0 6.8059032,3.0471065 6.8059032,6.8059029 z"
+         id="path6578-2-0"
+         style="color:#000000;fill:#20680c;fill-opacity:1;stroke:#20680c;stroke-width:2.03037214;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    </g>
+  </g>
+</svg>

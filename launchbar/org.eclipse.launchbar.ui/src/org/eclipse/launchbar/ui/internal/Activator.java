@@ -54,7 +54,7 @@ public class Activator extends AbstractUIPlugin {
 		plugin = this;
 
 		ImageRegistry imageRegistry = getImageRegistry();
-		imageRegistry.put(IMG_LOCAL_TARGET, imageDescriptorFromPlugin(PLUGIN_ID, "icons/localTarget.png")); //$NON-NLS-1$
+		imageRegistry.put(IMG_LOCAL_TARGET, imageDescriptorFromPlugin(PLUGIN_ID, "icons/localTarget.svg")); //$NON-NLS-1$
 
 		context.registerService(ILaunchTargetUIManager.class, new LaunchTargetUIManager(), null);
 		context.registerService(ILaunchBarUIManager.class, new LaunchBarUIManager(), null);

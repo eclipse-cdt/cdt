@@ -418,8 +418,8 @@ public class HistoryDropDownAction extends Action {
 		super(ActionsMessages.HistoryAction_history_text);
 		setToolTipText(ActionsMessages.HistoryAction_history_tooltip);
 		setDisabledImageDescriptor(TestsRunnerPlugin.getImageDescriptor("dlcl16/history_list.gif")); //$NON-NLS-1$
-		setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/history_list.gif")); //$NON-NLS-1$
-		setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/history_list.gif")); //$NON-NLS-1$
+		setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/history_list.svg")); //$NON-NLS-1$
+		setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/history_list.svg")); //$NON-NLS-1$
 		this.testingSessionsManager = testingSessionsManager;
 		this.shell = shell;
 		setMenuCreator(new HistoryMenuCreator());

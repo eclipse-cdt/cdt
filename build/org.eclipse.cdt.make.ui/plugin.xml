@@ -271,7 +271,7 @@
       </category>
       <view
             name="%Make.Target.label"
-            icon="icons/view16/make_target.gif"
+            icon="icons/view16/make_target.svg"
             category="org.eclipse.cdt.make.ui"
             class="org.eclipse.cdt.make.ui.views.MakeView"
             id="org.eclipse.cdt.make.ui.views.MakeView">
@@ -469,7 +469,7 @@
      <tab
            class="org.eclipse.cdt.ui.newui.ErrorParsTab"
            helpId="cdt_u_prop_build_setting_errparser"
-           icon="icons/obj16/error_obj.gif"
+           icon="icons/obj16/error_obj.svg"
            name="%ErrorParsersTab.name"
            parent="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
            tooltip="%ErrorParsersTab.tooltip"
@@ -477,7 +477,7 @@
      </tab>
      <tab
            class="org.eclipse.cdt.internal.ui.language.settings.providers.LanguageSettingsProviderTab"
-           icon="icons/obj16/search.gif"
+           icon="icons/obj16/search.svg"
            name="%LanguageSettingsProvidersTab.name"
            parent="org.eclipse.cdt.make.internal.ui.preferences.BuildSettingsPreferencePage"
            tooltip="%LanguageSettingsProvidersTab.tooltip"

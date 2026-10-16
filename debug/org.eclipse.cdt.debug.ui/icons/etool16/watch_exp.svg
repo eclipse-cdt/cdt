@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   id="svg2"
+   height="16"
+   width="16"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,-1036.3622)"
+     style="display:inline"
+     id="layer1">
+    <g
+       transform="translate(-8.2201163,-12.904699)"
+       id="g8159"
+       style="display:inline">
+      <path
+         id="text4105"
+         d="m 9.3738045,1050.2671 1.8750005,2.7187 -2.0286887,2.9375 h 1.1987707 l 1.383196,-2.1875 1.383197,2.1875 h 1.229508 l -2.059426,-2.9375 1.875,-2.7187 h -1.229508 l -1.198771,1.9687 -1.229508,-1.9687 z m 6.8852465,0 v 2.0312 h -1.844263 v 0.8125 h 1.844263 v 2.0313 h 0.79918 v -2.0313 h 1.844262 v -0.8125 h -1.844262 v -2.0312 z m 2.920082,0 2.059426,5.6562 c -0.312287,0.9129 -0.713414,1.375 -1.198771,1.375 -0.07525,0 -0.134272,0.012 -0.215164,0 -0.08089,-0.012 -0.16689,-0.032 -0.245901,-0.062 v 0.9063 c 0.0903,0.031 0.196384,0.051 0.307377,0.062 0.110992,0.012 0.217714,0.031 0.338115,0.031 0.259609,0 0.491867,-0.074 0.676229,-0.1875 0.184359,-0.1136 0.350709,-0.2665 0.491803,-0.4687 0.141091,-0.2022 0.252214,-0.4376 0.368853,-0.7188 0.116634,-0.2811 0.244688,-0.5985 0.368852,-0.9375 l 2.090164,-5.6562 h -1.075819 l -1.444673,4.4375 -1.475409,-4.4375 z m -3.012296,6.5 c -0.6716,0 -1.209349,0.216 -1.59836,0.6562 -0.374334,0.4291 -0.55328,1.0062 -0.553279,1.7188 h 0.922131 c -2e-6,-0.9552 0.41111,-1.4375 1.229508,-1.4375 0.300932,0 0.576689,0.1148 0.829919,0.3125 0.271571,0.2164 0.399586,0.4515 0.39959,0.75 -4e-6,0.4515 -0.154174,0.8214 -0.491804,1.0937 -0.311947,0.2463 -0.637257,0.5075 -0.952868,0.75 -0.337637,0.3732 -0.491806,0.8998 -0.491804,1.5938 v 0.7187 h 0.922131 v -0.7187 c -3e-6,-0.4627 0.173894,-0.8629 0.522541,-1.1875 l 0.983607,-0.8125 c 0.348639,-0.3731 0.522536,-0.8354 0.522541,-1.4063 -5e-6,-0.5633 -0.226211,-1.0695 -0.706967,-1.4687 -0.451407,-0.3806 -0.971719,-0.5625 -1.536886,-0.5625 z m -6.7008194,1.3125 v 0.8125 H 12.3861 v -0.8125 z m 0,2.0937 v 0.7813 H 12.3861 v -0.7813 z m 5.8709014,3.875 v 1.125 h 1.168033 v -1.125 z"
+         style="font-style:normal;font-weight:normal;font-size:7.78049px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#127cba;fill-opacity:1;stroke:none;stroke-width:0.991769" />
+      <text
+         id="text4105-1"
+         y="1061.2869"
+         x="31.619894"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:Gautami;-inkscape-font-specification:Gautami;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none"
+         xml:space="preserve"><tspan
+           style="font-size:10px;line-height:1.25"
+           y="1061.2869"
+           x="31.619894"
+           id="tspan4107-7">Gautami</tspan></text>
+    </g>
+  </g>
+</svg>

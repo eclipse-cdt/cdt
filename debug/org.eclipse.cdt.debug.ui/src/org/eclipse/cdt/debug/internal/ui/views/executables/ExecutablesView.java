@@ -105,13 +105,13 @@ public class ExecutablesView extends ViewPart {
 	public static final String EXECUTABLES_VIEW_CONTEXT = "org.eclipse.cdt.debug.ui.executables_View_context"; //$NON-NLS-1$;
 	private static final String PATH_LCL = ICONS_PATH + "elcl16/"; //$NON-NLS-1$
 	private static final String PATH_LCL_DISABLED = ICONS_PATH + "dlcl16/"; //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REFRESH = create(PATH_LCL, "refresh.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REFRESH_DISABLED = create(PATH_LCL_DISABLED, "refresh.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_IMPORT = create(PATH_LCL, "import.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_IMPORT_DISABLED = create(PATH_LCL_DISABLED, "import.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLUMNS = create(PATH_LCL, "columns.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_COLUMNS_DISABLED = create(PATH_LCL_DISABLED, "columns.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_REMOVE = create(PATH_LCL, "rem_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_REMOVE = create(PATH_LCL, "rem_co.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_REMOVE_DISABLED = create(PATH_LCL_DISABLED, "rem_co.gif"); //$NON-NLS-1$
 	public static final int COLUMN_WIDTH_PADDING = 24;
 

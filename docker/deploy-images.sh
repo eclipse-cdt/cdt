@@ -2,18 +2,26 @@
 
 set -eux
 
-if ! git diff-index HEAD --quiet; then
-    echo "git tree is dirty, please commit changes before deploying images"
+toplevel_cdt_lsp=$1
+if [ -z "$toplevel_cdt_lsp" ]; then
+    echo "Usage: $0 <toplevel_cdt_lsp> [namespace]"
     exit 1
 fi
 
-namespace=${1:-quay.io/eclipse-cdt}
+pushd $toplevel_cdt_lsp
+    if ! git diff-index HEAD --quiet; then
+        echo "CDT LSP git tree is dirty, please commit changes before deploying images"
+        exit 1
+    fi
+popd
+
+namespace=${2:-quay.io/eclipse-cdt}
 shorthash=$(git rev-parse --short HEAD)
-toplevel=$(git rev-parse --show-toplevel)
+toplevel_cdt=$(git rev-parse --show-toplevel)
 
 images="cdt-infra:latest cdt-infra-jipp:latest cdt-infra-github:latest"
 
-$toplevel/docker/build-images.sh
+$toplevel_cdt/docker/build-images.sh
 
 for image in $images; do
     docker tag $image ${namespace}/${image}-${shorthash}
@@ -29,11 +37,18 @@ for image in $images; do
     [ -n "$hashname" ] || { echo "No digest found for $image in $namespace"; exit 1; }
     echo $image "-->" $hashname
     nameonly=$(echo $image | sed -es,:.*,,)
-    find $toplevel -name \*\.Jenkinsfile -or -name \*\.yaml -or -name \*\.yml | while read file; do
+    find $toplevel_cdt -name \*\.Jenkinsfile -or -name \*\.yaml -or -name \*\.yml | while read file; do
         sed -i "s#image: $namespace/$nameonly[:@].*#image: $hashname#" $file
         git add $file
     done
+    pushd $toplevel_cdt_lsp
+        find $toplevel_cdt_lsp -name \*\.Jenkinsfile -or -name \*\.yaml -or -name \*\.yml | while read file; do
+            sed -i "s#image: $namespace/$nameonly[:@].*#image: $hashname#" $file
+            git add $file
+        done
+    popd
 done
 echo "Finished pushing to $namespace with tag hash $shorthash"
 git commit -m"Update images to Dockerfiles from commit $shorthash"
-echo "The .yaml and .Jenkinsfiles have been updated to new image and committed, now Push!"
+(cd $toplevel_cdt_lsp && git commit -m"Update images to Dockerfiles from CDT commit $shorthash")
+echo "The .yaml and .Jenkinsfiles have been updated to new image and committed, now Push both CDT and CDT LSP!"

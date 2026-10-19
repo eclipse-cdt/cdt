@@ -2,7 +2,7 @@
 # This first part of the file is derived from:
 # - https://github.com/eclipse-cbi/dockerfiles/blob/74dda784b6cf294012a3bf0d66221a1af480a83c/gtk3-wm/ubuntu-metacity/Dockerfile
 # Consult https://github.com/eclipse-cbi/dockerfiles for possible updates
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \

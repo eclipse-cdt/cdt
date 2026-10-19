@@ -1,5 +1,5 @@
 # This dockerfile is used to build the MacOSX SDK
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt update
@@ -25,7 +25,7 @@ ENV UNATTENDED=1
 RUN cd /opt/osxcross && ./build.sh
 
 # Start next stage build
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 COPY --from=0 /opt/osxcross/target /opt/osxcross/target
 ENV PATH="/opt/osxcross/target/bin:${PATH}"
 # At this point the osxcross toolchain is not usable,

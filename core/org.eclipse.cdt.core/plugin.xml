@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 <plugin>
 
+<!-- Fake edit to trigger version number increment requirement   -->
 
 <!-- =================================================================================== -->
 <!-- Obsolete extension point no longer in use, will be removed.                          -->

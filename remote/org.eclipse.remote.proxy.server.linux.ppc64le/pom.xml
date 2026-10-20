@@ -25,6 +25,15 @@
 	<artifactId>org.eclipse.remote.proxy.server.linux.ppc64le</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.eclipse.cdt</groupId>
+			<artifactId>org.eclipse.remote.proxy.server.product</artifactId>
+			<version>12.7.0-SNAPSHOT</version>
+			<type>eclipse-repository</type>
+		</dependency>
+	</dependencies>
+
     <build>
 		<plugins>
 			<plugin>

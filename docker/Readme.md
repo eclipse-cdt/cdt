@@ -15,6 +15,12 @@ deploy-images.sh
 Builds images (from cache), uploads them to quay.io/eclipse-cdt namespace and then
 updates all the Jenkinsfile and yaml files to refer to these new images.
 
+When you run deploy-images it updated CDT LSP too, so pass the location of CDT LSP on the command line, e.g.
+
+```
+./deploy-images.sh /scratch/eclipse/src/cdt/eclipse-cdt-lsp/
+```
+
 Using the docker images
 =======================
 

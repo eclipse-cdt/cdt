@@ -8,6 +8,16 @@ In addition to changes in CDT's own repo, please see the [changelog of CDT LSP](
 
 # Release Notes
 
+
+## Minimum version of GLIBC required
+
+The minimum version of GLIBC required is now 2.34.
+This version can be found in Ubuntu 22.04 and later, RHEL 9.0 and later and other distros as well.
+CDT's native components may work with older versions of glibc too, assuming they provide the required APIs for Eclipse CDT.
+
+See also the matching corresponding news entry in Eclipse Platform's release notes.
+[Minimum glibc Version Raised to 2.34 on Linux](https://eclipse.dev/eclipse/markdown/?f=news/4.42/platform.md)
+
 # API Changes, current and planned
 
 ## Breaking API changes

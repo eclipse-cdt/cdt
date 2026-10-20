@@ -16,7 +16,7 @@ Prepare main branch for next release
     - Update the cdt-lsp version too
     - ensure any newly created features are added (it has been a while since a new CDT feature was created, but sometimes when we adopt code from other projects, like the terminal, those features should be listed. There are some API warnings in the workspace that appear if plug-ins are missing from the baseline, so check that there aren't any unexpected warnings)
 - make the target platform changes to CDT.setup too
-- in the root pom.xml update comparator.repo, api-baseline.repo, api-baseline.repo.simrel, help-docs-eclipserun-repo, and simrel-site with the correct URLs based on what was used above in the target files/setup files
+- in the root pom.xml update releaseNumberCDT, comparator.repo, api-baseline.repo, api-baseline.repo.simrel, help-docs-eclipserun-repo, and simrel-site with the correct URLs based on what was used above in the target files/setup files
 - Update versions to CDT.
     - Do a find/replace in this document, for example:
     - 12.6 -> 12.7

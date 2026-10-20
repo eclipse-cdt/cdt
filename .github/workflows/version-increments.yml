@@ -1,0 +1,15 @@
+# (derived from Eclipse Platform version check results)
+name: Publish Version Check Results
+
+on:
+  workflow_run:
+    workflows: [ 'Pull-Request Checks' ]
+    types: [ completed ]
+
+jobs:
+  publish-version-check-results:
+    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/publishVersionCheckResults.yml@master
+    with:
+      botGithubId: eclipse-pde-bot
+    secrets:
+      githubBotPAT: ${{ secrets.CDT_BOT_PAT }}

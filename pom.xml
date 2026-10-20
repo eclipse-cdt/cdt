@@ -53,6 +53,7 @@
 		<compare-version-with-baselines.skip>true</compare-version-with-baselines.skip>
 		<replace-version-with-baselines.mode>disable</replace-version-with-baselines.mode>
 		<replace-version-with-baselines.replace>none</replace-version-with-baselines.replace>
+		<releaseNumberCDT>12.7.0</releaseNumberCDT>
 		<!--
 			Valid options: error, warning, and ignore
 			jgit.dirtyWorkingTree checking was added as of Tycho 0.19.0

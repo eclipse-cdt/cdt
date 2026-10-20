@@ -1,0 +1,21 @@
+# Fast running checks for pull-requests (derived from Eclipse Platform pull request checks)
+
+name: Pull-Request Checks
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  check-merge-commits:
+    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkMergeCommits.yml@master
+  check-versions:
+    uses: eclipse-platform/eclipse.platform.releng.aggregator/.github/workflows/checkVersions.yml@master
+    with:
+      extra-maven-args: -P baseline-compare-and-replace -DskipDoc=true -DskipTests=true -Djgit.dirtyWorkingTree-cdtDefault=ignore
+      stream-version-property: releaseNumberCDT
+      botName: Eclipse CDT Bot
+      botMail: cdt-bot@eclipse.org

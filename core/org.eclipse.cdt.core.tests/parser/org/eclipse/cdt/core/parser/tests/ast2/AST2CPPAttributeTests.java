@@ -642,4 +642,19 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 		assertSame(parent1, parent3);
 		assertSame(parent1, parent4);
 	}
+
+	//	int target;
+	//	extern int other, __attribute__((alias("target"))) error_decl;
+	@Test
+	public void testGCCAttributeBeforeDeclaratorInList_bug706() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.C, ScannerKind.GNU);
+		checkAttributeRelations(getAttributeSpecifiers(tu), IASTDeclarator.class);
+	}
+
+	//	extern int ( __attribute__((__artificial__)) func)();
+	@Test
+	public void testGCCAttributeInNestedDeclarator_bug602() throws Exception {
+		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment(), ParserLanguage.C, ScannerKind.GNU);
+		checkAttributeRelations(getAttributeSpecifiers(tu), IASTDeclarator.class);
+	}
 }

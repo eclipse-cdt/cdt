@@ -22,5 +22,15 @@
                after="my.custom.tab">
          </placement>
       </tab>
+      <!-- Test for Launch Bar Launch Configuration OK button being enabled once an error is fixed -->
+      <tab
+            class="org.eclipse.launchbar.ui.tests.internal.ErrorToggleLaunchConfigTab"
+            group="org.eclipse.pde.ui.launcher.WorkbenchLauncherTabGroup"
+            id="org.eclipse.launchbar.ui.tests.internal.ErrorToggleLaunchConfigTab"
+            name="Error Toggle Tab">
+         <placement
+               after="org.eclipse.launchbar.ui.tests.internal.WarningLaunchConfigTab">
+         </placement>
+      </tab>
    </extension>
 </plugin>

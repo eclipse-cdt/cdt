@@ -482,6 +482,7 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		message = getWarningMessage();
 		if (message != null) {
 			setMessage(message, IMessageProvider.WARNING);
+			okButton.setEnabled(true);
 			return;
 		}
 

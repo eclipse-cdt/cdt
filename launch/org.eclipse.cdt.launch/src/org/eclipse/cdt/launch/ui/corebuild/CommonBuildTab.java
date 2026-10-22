@@ -39,6 +39,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Common utilities for Core Build launch configuration tabs.
@@ -47,7 +49,10 @@ import org.eclipse.swt.widgets.Group;
  */
 public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 
+	private static final String BEFORE_YOU_BEGIN_HELP = "/org.eclipse.cdt.doc.user/concepts/cdt_c_before_you_begin.htm"; //$NON-NLS-1$
+
 	private Combo tcCombo;
+	private Link noToolchainLink;
 	private ICBuildConfiguration buildConfig;
 	private IToolChain[] toolchains;
 
@@ -106,7 +111,43 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
+		noToolchainLink = new Link(tcGroup, SWT.NONE);
+		noToolchainLink.setText(LaunchMessages.CommonBuildTab_NoToolchainHelpLink);
+		GridData linkData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		linkData.exclude = true;
+		noToolchainLink.setLayoutData(linkData);
+		noToolchainLink.setVisible(false);
+		noToolchainLink.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(BEFORE_YOU_BEGIN_HELP);
+			}
+		});
+
 		return tcGroup;
+	}
+
+	private boolean hasNoToolchains() {
+		return toolchains != null && toolchains.length == 0;
+	}
+
+	private void updateNoToolchainLink() {
+		boolean show = hasNoToolchains();
+		((GridData) noToolchainLink.getLayoutData()).exclude = !show;
+		noToolchainLink.setVisible(show);
+		noToolchainLink.getParent().getParent().layout(true, true);
+	}
+
+	@Override
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (hasNoToolchains()) {
+			ILaunchTarget target = getLaunchTarget();
+			setErrorMessage(String.format(LaunchMessages.CommonBuildTab_NoToolchainForTarget,
+					target != null ? target.getId() : "")); //$NON-NLS-1$
+			setMessage(null);
+			return false;
+		}
+		return super.isValid(launchConfig);
 	}
 
 	@Override
@@ -135,6 +176,7 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 			}
 
 			tcCombo.select(0);
+			updateNoToolchainLink();
 
 			String toolchainId = configuration.getAttribute(ICBuildConfiguration.TOOLCHAIN_ID, (String) null);
 			if (toolchainId != null) {

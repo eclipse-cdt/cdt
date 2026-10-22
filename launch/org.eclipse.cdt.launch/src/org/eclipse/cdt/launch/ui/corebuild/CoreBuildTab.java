@@ -99,6 +99,17 @@ public class CoreBuildTab extends AbstractLaunchConfigurationTab {
 	}
 
 	@Override
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (activeTab == null) {
+			return super.isValid(launchConfig);
+		}
+		boolean valid = activeTab.isValid(launchConfig);
+		setErrorMessage(activeTab.getErrorMessage());
+		setMessage(activeTab.getMessage());
+		return valid;
+	}
+
+	@Override
 	public String getName() {
 		return LaunchMessages.CoreBuildTab_Build;
 	}

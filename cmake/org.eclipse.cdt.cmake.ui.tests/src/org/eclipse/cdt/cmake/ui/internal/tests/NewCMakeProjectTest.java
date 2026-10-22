@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.ICoreRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.eclipse.finder.waits.Conditions;
 import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotPerspective;
@@ -152,7 +153,7 @@ public class NewCMakeProjectTest {
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
 		URL url = FileLocator
 				.toFileURL(FileLocator.find(bundle, new org.eclipse.core.runtime.Path("projects/" + projectDir), null));
-		copyDir(Paths.get(url.getPath()), TEMP_DIR.resolve(projectDir));
+		copyDir(Paths.get(URIUtil.toURI(url)), TEMP_DIR.resolve(projectDir));
 
 		// Activate import wizard
 		bot.menu("File").menu("Import...").click();

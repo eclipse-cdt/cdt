@@ -8,8 +8,15 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.swtbot.go;bundle-version="[4.3.0,5.0.0)",
  org.eclipse.cdt.core;bundle-version="[9.3.0,10.0.0)",
  org.eclipse.core.resources;bundle-version="[3.23.0,4.0.0)",
- org.eclipse.cdt.cmake.core;bundle-version="[2.0.0,3)"
+ org.eclipse.cdt.cmake.core;bundle-version="[2.0.0,3)",
+ org.eclipse.cdt.launch;bundle-version="[11.0.0,12.0.0)",
+ org.eclipse.launchbar.core;bundle-version="[3.1.0,4.0.0)",
+ org.eclipse.launchbar.ui;bundle-version="[2.5.600,3)",
+ org.eclipse.debug.core;bundle-version="[3.23.0,4)",
+ org.eclipse.debug.ui;bundle-version="[3.19.0,4.0.0)",
+ org.eclipse.ui;bundle-version="[3.207.200,4)"
 Automatic-Module-Name: org.eclipse.cdt.cmake.ui.tests
 Bundle-Localization: plugin
 Import-Package: org.junit.jupiter.api;version="5.8.1",
+ org.junit.jupiter.api.function;version="5.8.1",
  org.junit.jupiter.api.io;version="5.8.1"

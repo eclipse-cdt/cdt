@@ -12,7 +12,7 @@
    <extension
             point="org.eclipse.ui.preferenceTransfer">
          <transfer
-               icon="icons/full/obj16/connection.gif"
+               icon="icons/full/obj16/connection.svg"
                id="org.eclipse.remote.proxy.transfer.connections"
                name="%ProxyTransferConnections.name">
             <mapping

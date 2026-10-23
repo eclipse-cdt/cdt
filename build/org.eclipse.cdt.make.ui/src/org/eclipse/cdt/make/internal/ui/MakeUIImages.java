@@ -52,8 +52,8 @@ public class MakeUIImages {
 	public static final String IMG_OBJS_RELATION = "icons/obj16/relation_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_COMMAND = "icons/obj16/command_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDE = "icons/obj16/include_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_ENVIRONMENT = "icons/obj16/environment_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_ENV_VAR = "icons/obj16/envvar_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENVIRONMENT = "icons/obj16/environment_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENV_VAR = "icons/obj16/envvar_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_AUTO_VARIABLE = "icons/obj16/var_auto.png"; //$NON-NLS-1$
 	public static final String IMG_OBJS_FUNCTION = "icons/obj16/builtin_func.png"; //$NON-NLS-1$
 
@@ -68,9 +68,9 @@ public class MakeUIImages {
 	public static final String IMG_DTOOL_TARGET_DELETE = "icons/dtool16/target_delete.gif"; //$NON-NLS-1$
 	public static final String IMG_ETOOL_TARGET_FILTER = "icons/etool16/target_filter.gif"; //$NON-NLS-1$
 	public static final String IMG_DTOOL_TARGET_FILTER = "icons/dtool16/target_filter.gif"; //$NON-NLS-1$
-	public static final String IMG_ETOOL_ALPHA_SORTING = "icons/etool16/alphab_sort_co.gif"; //$NON-NLS-1$
+	public static final String IMG_ETOOL_ALPHA_SORTING = "icons/etool16/alphab_sort_co.svg"; //$NON-NLS-1$
 	public static final String IMG_DTOOL_ALPHA_SORTING = "icons/dtool16/alphab_sort_co.gif"; //$NON-NLS-1$
-	public static final String IMG_ETOOL_SEGMENT_EDIT = "icons/etool16/segment_edit.gif"; //$NON-NLS-1$
+	public static final String IMG_ETOOL_SEGMENT_EDIT = "icons/etool16/segment_edit.svg"; //$NON-NLS-1$
 	public static final String IMG_DTOOL_SEGMENT_EDIT = "icons/dtool16/segment_edit.gif"; //$NON-NLS-1$
 
 	// overlays

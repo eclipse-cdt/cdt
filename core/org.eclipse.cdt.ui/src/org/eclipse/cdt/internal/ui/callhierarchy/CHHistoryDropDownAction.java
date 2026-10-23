@@ -51,7 +51,7 @@ public class CHHistoryDropDownAction extends Action implements IMenuCreator {
 		fHierarchyView = view;
 		fMenu = null;
 		setToolTipText(CHMessages.CHHistoryDropDownAction_ShowHistoryList_tooltip);
-		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "history_list.gif"); //$NON-NLS-1$
+		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "history_list.svg"); //$NON-NLS-1$
 		setMenuCreator(this);
 	}
 

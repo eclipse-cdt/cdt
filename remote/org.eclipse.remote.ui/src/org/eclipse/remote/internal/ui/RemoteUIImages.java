@@ -49,14 +49,14 @@ public class RemoteUIImages {
 	/*
 	 * Set of predefined Image Descriptors.
 	 */
-	public static final ImageDescriptor DESC_ELCL_UP_NAV = createManaged(T_ELCL, "up_nav.gif", IMG_ELCL_UP_NAV); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_UP_NAV = createManaged(T_ELCL, "up_nav.svg", IMG_ELCL_UP_NAV); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DLCL_UP_NAV = createManaged(T_DLCL, "up_nav.gif", IMG_ELCL_UP_NAV); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_SYMLINK = createManaged(T_OVR, "symlink_ovr.gif", IMG_OVR_SYMLINK); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_SYMLINK = createManaged(T_OVR, "symlink_ovr.svg", IMG_OVR_SYMLINK); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ELCL_NEW_FOLDER = createManaged(T_ELCL, "new_folder.gif", //$NON-NLS-1$
 			IMG_ELCL_NEW_FOLDER);
 	public static final ImageDescriptor DESC_DLCL_NEW_FOLDER = createManaged(T_DLCL, "new_folder.gif", //$NON-NLS-1$
 			IMG_DLCL_NEW_FOLDER);
-	public static final ImageDescriptor DESC_DEFAULT_TYPE = createManaged(ICONS_PATH.append("console.png"), //$NON-NLS-1$
+	public static final ImageDescriptor DESC_DEFAULT_TYPE = createManaged(ICONS_PATH.append("console.svg"), //$NON-NLS-1$
 			IMG_DEFAULT_TYPE);
 
 	/**

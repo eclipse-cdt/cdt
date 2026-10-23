@@ -52,7 +52,7 @@
       <wizard
             category="org.eclipse.launchbar.ui.targetWizards"
             class="org.eclipse.launchbar.ui.internal.target.NewLaunchTargetWizard"
-            icon="icons/localTarget.png"
+            icon="icons/localTarget.svg"
             id="org.eclipse.launchbar.ui.superTargetWizard"
             name="Launch Target"
             project="false">

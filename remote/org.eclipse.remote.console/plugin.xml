@@ -6,7 +6,7 @@
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
             class="org.eclipse.remote.internal.console.TerminalConsoleFactory"
-            icon="icons/cview16/terminal_view.gif"
+            icon="icons/cview16/terminal_view.svg"
             label="%terminal.console.name">
       </consoleFactory>
    </extension>

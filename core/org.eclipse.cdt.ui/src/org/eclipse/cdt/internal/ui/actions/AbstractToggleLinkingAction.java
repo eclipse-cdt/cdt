@@ -33,7 +33,7 @@ public abstract class AbstractToggleLinkingAction extends Action {
 		super(ActionMessages.ToggleLinkingAction_label);
 		setDescription(ActionMessages.ToggleLinkingAction_description);
 		setToolTipText(ActionMessages.ToggleLinkingAction_tooltip);
-		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.gif"); //$NON-NLS-1$
+		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "synced.svg"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, ICHelpContextIds.LINK_EDITOR_ACTION);
 	}
 

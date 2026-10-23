@@ -52,7 +52,7 @@ public class TracepointImageRegistry extends AbstractImageRegistry {
 	public static final String ICON_Exit_Visualization = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID,
 			new String[] { "full/obj16" }, "stop_visual_trace.gif"); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final String ICON_Edit_enabled = add(ORG_ECLIPSE_CDT_DSF_GDB_UI_PLUGIN_ID,
-			new String[] { "full/obj16" }, "write_obj.gif"); //$NON-NLS-1$ //$NON-NLS-2$
+			new String[] { "full/obj16" }, "write_obj.svg"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private static TracepointImageRegistry INSTANCE = new TracepointImageRegistry(GdbUIPlugin.getDefault());
 

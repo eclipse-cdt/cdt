@@ -199,7 +199,7 @@ public class CTestingTab extends CLaunchConfigurationTab {
 
 	@Override
 	public Image getImage() {
-		return TestsRunnerPlugin.createAutoImage("obj16/test_notrun.gif"); //$NON-NLS-1$
+		return TestsRunnerPlugin.createAutoImage("obj16/test_notrun.svg"); //$NON-NLS-1$
 	}
 
 }

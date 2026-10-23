@@ -51,7 +51,7 @@
       <view
             category="org.eclipse.remote.ui.view.category.connections"
             class="org.eclipse.remote.internal.ui.views.RemoteConnectionsView"
-            icon="icons/connection.gif"
+            icon="icons/connection.svg"
             id="org.eclipse.remote.ui.view.connections"
             name="%ConnectionsView.name"
             restorable="true">
@@ -155,7 +155,7 @@
             locationURI="toolbar:org.eclipse.remote.ui.view.connections">
          <command
                commandId="org.eclipse.remote.ui.command.newConnection"
-               icon="icons/new_wiz.gif"
+               icon="icons/new_wiz.svg"
                label="%NewConnectionCommand.name"
                style="push">
          </command>

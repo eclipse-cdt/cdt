@@ -199,7 +199,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 					filterEnabled);
 			hideFields.setDescription(ActionMessages.MemberFilterActionGroup_hide_fields_description);
 			hideFields.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_fields_tooltip);
-			CPluginImages.setImageDescriptors(hideFields, CPluginImages.T_LCL, "fields_co.gif"); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(hideFields, CPluginImages.T_LCL, "fields_co.svg"); //$NON-NLS-1$
 			actions.add(hideFields);
 		}
 
@@ -216,7 +216,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 					filterEnabled);
 			hideStatic.setDescription(ActionMessages.MemberFilterActionGroup_hide_static_description);
 			hideStatic.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_static_tooltip);
-			CPluginImages.setImageDescriptors(hideStatic, CPluginImages.T_LCL, "static_co.gif"); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(hideStatic, CPluginImages.T_LCL, "static_co.svg"); //$NON-NLS-1$
 			actions.add(hideStatic);
 		}
 
@@ -233,7 +233,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 					filterEnabled);
 			hideNonPublic.setDescription(ActionMessages.MemberFilterActionGroup_hide_nonpublic_description);
 			hideNonPublic.setToolTipText(ActionMessages.MemberFilterActionGroup_hide_nonpublic_tooltip);
-			CPluginImages.setImageDescriptors(hideNonPublic, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$
+			CPluginImages.setImageDescriptors(hideNonPublic, CPluginImages.T_LCL, "public_co.svg"); //$NON-NLS-1$
 			actions.add(hideNonPublic);
 		}
 

@@ -35,9 +35,9 @@ public class ToggleOrientationAction extends Action {
 			setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/orientation_horizontal.gif")); //$NON-NLS-1$
 		} else if (orientation == ResultsView.Orientation.Vertical) {
 			setText(ActionsMessages.ToggleOrientationAction_vertical_text);
-			setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/orientation_vertical.gif")); //$NON-NLS-1$
+			setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/orientation_vertical.svg")); //$NON-NLS-1$
 			setDisabledImageDescriptor(TestsRunnerPlugin.getImageDescriptor("dlcl16/orientation_vertical.gif")); //$NON-NLS-1$
-			setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/orientation_vertical.gif")); //$NON-NLS-1$
+			setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/orientation_vertical.svg")); //$NON-NLS-1$
 		} else if (orientation == ResultsView.Orientation.Auto) {
 			setText(ActionsMessages.ToggleOrientationAction_automatic_text);
 			setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/orientation_auto.gif")); //$NON-NLS-1$

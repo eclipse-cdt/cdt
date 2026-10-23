@@ -144,7 +144,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 		workspace.addResourceChangeListener(closeProjectAction, IResourceChangeEvent.POST_CHANGE);
 		refreshAction = new RefreshAction(site);
 		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
-		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$
+		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.svg"));//$NON-NLS-1$
 		//		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$
 	}
 

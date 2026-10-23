@@ -163,7 +163,7 @@ public class MainActionGroup extends CViewActionGroup {
 		collapseAllAction = new CollapseAllAction(getCView().getViewer());
 
 		toggleLinkingAction = new ToggleLinkingAction(getCView());
-		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
+		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.svg"));//$NON-NLS-1$
 		//		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 
 		selectionSearchGroup = new SelectionSearchGroup(getCView().getSite());

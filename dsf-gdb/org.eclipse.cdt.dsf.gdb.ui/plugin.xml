@@ -745,7 +745,7 @@
             targetID="org.eclipse.cdt.dsf.gdb.ui.debugsources.view">
          <action
                class="org.eclipse.cdt.dsf.gdb.internal.ui.debugsources.actions.DebugSourcesViewRefresh"
-               icon="icons/refresh.gif"
+               icon="icons/refresh.svg"
                id="org.eclipse.cdt.dsf.gdb.ui.debugsources.view.refresh"
                label="%debugSourcesRefresh.name"
                toolbarPath="additions">

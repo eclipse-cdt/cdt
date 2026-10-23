@@ -15,8 +15,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.cdt.cmake.core.CMakeBuildConfiguration;
 import org.eclipse.cdt.cmake.core.CMakeBuildConfigurationProvider;
@@ -34,6 +39,7 @@ import org.eclipse.cdt.internal.core.language.settings.providers.LanguageSetting
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -47,12 +53,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CBuildConfigurationManagerTests extends BaseTestCase5 {
+
+	private static final long DEADLOCK_TIMEOUT_MS = 20000;
+
 	private IProject project;
 	private IToolChain mockToolchain;
 	private ICBuildConfigurationManager configManager = CDebugCorePlugin.getService(ICBuildConfigurationManager.class);
 	private ILaunchBarManager launchBarManager = CDebugCorePlugin.getService(ILaunchBarManager.class);
 	private ILaunchTargetManager launchTargetManager = CDebugCorePlugin.getService(ILaunchTargetManager.class);
 	private ILaunchTarget launchTarget;
+	private IToolChainManager toolchainManager = CDebugCorePlugin.getService(IToolChainManager.class);
 
 	@BeforeEach
 	public void setup() throws Exception {
@@ -246,11 +256,86 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 		//		System.out.println("Active launch target id after=" + launchBarManager.getActiveLaunchTarget().getId());
 	}
 
+	/**
+	 * Test that {@link ICBuildConfigurationManager#createBuildConfiguration} does not deadlock with the
+	 * CoreBuildLaunchBarTracker job.
+	 * See https://github.com/eclipse-cdt/cdt/issues/1533
+	 *
+	 * Before the fix, createBuildConfiguration locked CoreModel and then waited for the workspace root rule, while the
+	 * tracker job held the root rule and waited for CoreModel. The test forces that order: the tracker job is paused
+	 * in IToolChain.matches() (called while it holds the root rule) until the caller is blocked on the root rule.
+	 */
+	@Test
+	public void createBuildConfigurationNoDeadlockWithLaunchBarTracker() throws Exception {
+		AtomicReference<Boolean> isCallerBlocked = new AtomicReference<>();
+		// After a CMake project is created, CoreBuildLaunchBarTracker will be triggered. Ignore it.
+		waitForLaunchBarTracker();
+		CMakeBuildConfigurationProvider provider = new CMakeBuildConfigurationProvider();
+		NullProgressMonitor callerMonitor = new NullProgressMonitor();
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					configManager.createBuildConfiguration(provider, project, "fromCaller", callerMonitor);
+				} catch (OperationCanceledException e) {
+					// Do nothing as, this's expected to be cancelled by the test when deadlock occurred
+				} catch (Exception e) {
+					// Log other exception
+					ILog.get().error(e.getLocalizedMessage(), e);
+				}
+			}
+		};
+		Thread caller = new Thread(runnable, "Creating BuildConfiguration"); //$NON-NLS-1$
+		caller.setDaemon(true);
+		// Pause the tracker job, while it holds the root rule, until the caller is blocked on the root rule
+		CountDownLatch trackerPaused = new CountDownLatch(1);
+		when(mockToolchain.matches(anyMap())).thenAnswer(invocation -> {
+			Job job = Job.getJobManager().currentJob();
+			if (job != null && job.belongsTo(CoreBuildLaunchBarTracker.JOB_FAMILY_CORE_BUILD_LAUNCH_BAR_TRACKER)
+					&& trackerPaused.getCount() > 0) {
+				trackerPaused.countDown();
+				// wait until the caller is blocked
+				isCallerBlocked.set(Boolean.valueOf(awaitBlockedOnSchedulingRule(caller)));
+			}
+			return true;
+		});
+		toolchainManager.getAllToolChains(); // initialize, so the added toolchain is used for matching
+		toolchainManager.addToolChain(mockToolchain);
+		// Add new active launch target to trigger CoreBuildLaunchBarTracker
+		launchTarget = launchTargetManager.addLaunchTarget(ILaunchTargetManager.localLaunchTargetTypeId,
+				"deadlockTarget"); //$NON-NLS-1$
+		assertThat("Tracker job did not run", trackerPaused.await(DEADLOCK_TIMEOUT_MS, TimeUnit.MILLISECONDS));
+		// After CoreBuildLaunchBarTracker job with Workspace rule start, start caller to createBuildConfiguration()
+		caller.start();
+		// Wait for timeout and check for deadlock
+		caller.join(DEADLOCK_TIMEOUT_MS);
+		// Caller still alive and a LaunchBarTracker job still exists -> deadlock occurred
+		boolean deadlockOccured = caller.isAlive() && !joinCoreBuildLaunchBarTrackerJob();
+		if (deadlockOccured) {
+			// Break the deadlock so the test can continue
+			callerMonitor.setCanceled(true);
+			joinCoreBuildLaunchBarTrackerJob();
+		}
+		assertThat("Deadlock occurred", deadlockOccured, is(false)); //$NON-NLS-1$
+		// Extra check in case Deadlock simulation failed:
+		String err = "Deadlock simulation failed"; //$NON-NLS-1$
+		// Make sure that the caller doesn't have error
+		assertThat(err.concat(": Failed to create configuration"), //$NON-NLS-1$
+				configManager.hasConfiguration(provider, project, "fromCaller"), is(true)); //$NON-NLS-1$
+		// Make sure that caller is truly blocked
+		assertThat(err.concat(": Caller never blocked"), isCallerBlocked.get(), is(Boolean.TRUE)); //$NON-NLS-1$
+	}
+
 	@AfterEach
 	public void removeLaunchTarget() throws Exception {
 		if (launchTarget != null) {
 			launchTargetManager.removeLaunchTarget(launchTarget);
 		}
+	}
+
+	@AfterEach
+	public void removeMockToolchain() {
+		toolchainManager.removeToolChain(mockToolchain);
 	}
 
 	private IProject createCMakeProject() throws Exception {
@@ -266,5 +351,35 @@ public class CBuildConfigurationManagerTests extends BaseTestCase5 {
 
 	private void waitForLaunchBarTracker() throws OperationCanceledException, InterruptedException {
 		Job.getJobManager().join(CoreBuildLaunchBarTracker.JOB_FAMILY_CORE_BUILD_LAUNCH_BAR_TRACKER, null);
+	}
+
+	/**
+	 * @return true if all CoreBuildLaunchBarTracker jobs finished within {@link #DEADLOCK_TIMEOUT_MS}
+	 * @see {@link Job#join(long, IProgressMonitor)}
+	 */
+	private boolean joinCoreBuildLaunchBarTrackerJob() throws InterruptedException {
+		for (Job job : Job.getJobManager().find(CoreBuildLaunchBarTracker.JOB_FAMILY_CORE_BUILD_LAUNCH_BAR_TRACKER)) {
+			if (!job.join(DEADLOCK_TIMEOUT_MS, null)) {
+				return Job.NONE == job.getState();
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Waits until the caller thread is blocked.
+	 *
+	 * @return true if the thread blocked within {@link #DEADLOCK_TIMEOUT_MS}
+	 */
+	private static boolean awaitBlockedOnSchedulingRule(Thread thread) throws InterruptedException {
+		long timeout = System.currentTimeMillis() + DEADLOCK_TIMEOUT_MS;
+		while (System.currentTimeMillis() < timeout && thread.getState() != Thread.State.TERMINATED) {
+			Thread.State state = thread.getState();
+			if (state == Thread.State.WAITING || state == Thread.State.TIMED_WAITING) {
+				return true;
+			}
+			Thread.sleep(100);
+		}
+		return false;
 	}
 }

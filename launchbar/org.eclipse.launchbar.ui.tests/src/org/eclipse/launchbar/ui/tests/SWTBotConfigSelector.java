@@ -87,6 +87,11 @@ public class SWTBotConfigSelector extends SWTBotCSelector {
 			bot().button("OK").click();
 			return this;
 		}
+
+		public EditConfigDialog cancel() {
+			bot().button("Cancel").click();
+			return this;
+		}
 	}
 
 	public SWTBotConfigSelector(ConfigSelector configSelector) {

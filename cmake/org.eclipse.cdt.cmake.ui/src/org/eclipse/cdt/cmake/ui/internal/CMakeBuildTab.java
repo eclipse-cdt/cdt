@@ -166,17 +166,21 @@ public class CMakeBuildTab extends CommonBuildTab {
 	 * When use CMake defaults is selected, restore the defaults
 	 */
 	private void showDefaultsInUi() {
-		if (useDefaultCmakeSettings.getSelection()) {
-			restoreProperties(getBuildConfiguration().getDefaultProperties());
+		ICBuildConfiguration buildConfig = getBuildConfiguration();
+		if (buildConfig != null && useDefaultCmakeSettings.getSelection()) {
+			restoreProperties(buildConfig.getDefaultProperties());
 		}
 	}
 
 	/**
-	 * Updates the enabled state of the CMake settings controls based on useUiCmakeSettings checkbox
+	 * Updates the enabled state of the CMake settings controls based on useUiCmakeSettings checkbox.
+	 * All controls are disabled when there is no build configuration, e.g. because no toolchains are available.
 	 */
 	private void updateEnablement() {
+		boolean hasBuildConfig = getBuildConfiguration() != null;
+		useDefaultCmakeSettings.setEnabled(hasBuildConfig);
 		boolean isDefaultCMakeProperties = useDefaultCmakeSettings.getSelection();
-		boolean enabled = !isDefaultCMakeProperties;
+		boolean enabled = hasBuildConfig && !isDefaultCMakeProperties;
 		generatorLabel.setEnabled(enabled);
 		generatorCombo.setEnabled(enabled);
 		cmakeArgsLabel.setEnabled(enabled);
@@ -196,6 +200,9 @@ public class CMakeBuildTab extends CommonBuildTab {
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// Set defaults for Build Settings
 		ICBuildConfiguration buildConfig = getBuildConfiguration();
+		if (buildConfig == null) {
+			return;
+		}
 		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS,
 				CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS_DEFAULT);
 	}
@@ -205,6 +212,10 @@ public class CMakeBuildTab extends CommonBuildTab {
 		super.initializeFrom(configuration);
 
 		ICBuildConfiguration buildConfig = getBuildConfiguration();
+		if (buildConfig == null) {
+			updateEnablement();
+			return;
+		}
 
 		boolean isDefaultCMakeProperties = Boolean
 				.valueOf(buildConfig.getProperty(CMakeBuildConfiguration.CMAKE_USE_DEFAULT_CMAKE_SETTINGS));
@@ -224,6 +235,9 @@ public class CMakeBuildTab extends CommonBuildTab {
 		super.performApply(configuration);
 
 		ICBuildConfiguration buildConfig = getBuildConfiguration();
+		if (buildConfig == null) {
+			return;
+		}
 
 		String generator = generatorCombo.getText().trim();
 		buildConfig.setProperty(CMakeBuildConfiguration.CMAKE_GENERATOR, generator);
@@ -282,6 +296,10 @@ public class CMakeBuildTab extends CommonBuildTab {
 	@Override
 	protected void restoreProperties(Map<String, String> properties) {
 		super.restoreProperties(properties);
+
+		if (getBuildConfiguration() == null) {
+			return;
+		}
 
 		String gen = properties.getOrDefault(CMakeBuildConfiguration.CMAKE_GENERATOR,
 				CMakeBuildConfiguration.CMAKE_GENERATOR_DEFAULT);

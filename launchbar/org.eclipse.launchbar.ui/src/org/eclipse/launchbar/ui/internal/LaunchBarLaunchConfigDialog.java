@@ -238,6 +238,9 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		// insert our buttons ahead of the OK/Cancel buttons
 		configButtons.moveAbove(okCancelButtons);
 
+		// The tabs are initialized and the OK button now exists, so validate to show any errors on open
+		updateMessage();
+
 		return buttonBar;
 	}
 
@@ -479,11 +482,12 @@ public class LaunchBarLaunchConfigDialog extends TitleAreaDialog implements ILau
 		message = getWarningMessage();
 		if (message != null) {
 			setMessage(message, IMessageProvider.WARNING);
+			okButton.setEnabled(true);
 			return;
 		}
 
 		message = getTabsMessage();
-		setMessage(message);
+		setMessage(message != null ? message : Messages.LaunchBarLaunchConfigDialog_SetParameters);
 		okButton.setEnabled(true);
 	}
 

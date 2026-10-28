@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="7"
+   height="8"
+   id="svg2"
+   version="1.1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient4949">
+      <stop
+         style="stop-color:#224367;stop-opacity:1"
+         offset="0"
+         id="stop4951" />
+      <stop
+         style="stop-color:#abb9d4;stop-opacity:1"
+         offset="1"
+         id="stop4953" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient4949"
+       id="linearGradient4175"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0698871,0,0,1.0698871,15.590192,1043.4798)"
+       x1="1.28125"
+       y1="1.4531251"
+       x2="7"
+       y2="8.015625" />
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     style="display:inline"
+     transform="translate(0,-1044.3622)">
+    <g
+       style="display:inline"
+       id="g8472"
+       transform="matrix(0.9346781,0,0,0.9346781,-14.571811,69.044514)">
+      <g
+         id="g4170"
+         transform="matrix(0,-1,1,0,-1029.0076,1066.8345)">
+        <rect
+           y="1045.1515"
+           x="16.125135"
+           height="6.4861565"
+           width="6.7202282"
+           id="rect4179"
+           style="fill:#e3ecf5;fill-opacity:1;stroke:url(#linearGradient4175);stroke-width:1.06988704;stroke-opacity:1" />
+        <g
+           style="fill:#17325d;fill-opacity:1;display:inline"
+           transform="matrix(-0.70710678,-0.70710678,0.70710678,-0.70710678,-708.7552,1801.8372)"
+           id="g4955">
+          <path
+             style="fill:#17325d;fill-opacity:1;stroke:none"
+             d="m 12.266549,1047.2726 5.605266,-0.047 0.07092,-1.7852 2.240365,2.2256 -2.240364,2.2866 -0.07092,-1.5902 -5.605266,0.047 z"
+             id="path4183" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

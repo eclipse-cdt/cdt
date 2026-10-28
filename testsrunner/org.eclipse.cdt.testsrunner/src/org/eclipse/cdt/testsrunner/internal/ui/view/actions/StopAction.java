@@ -29,8 +29,8 @@ public class StopAction extends Action {
 		super(ActionsMessages.StopAction_text);
 		setToolTipText(ActionsMessages.StopAction_tooltip);
 		setDisabledImageDescriptor(TestsRunnerPlugin.getImageDescriptor("dlcl16/stop.gif")); //$NON-NLS-1$
-		setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/stop.gif")); //$NON-NLS-1$
-		setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/stop.gif")); //$NON-NLS-1$
+		setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/stop.svg")); //$NON-NLS-1$
+		setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/stop.svg")); //$NON-NLS-1$
 		this.testingSessionsManager = testingSessionsManager;
 	}
 

@@ -39,7 +39,7 @@ public class LaunchImages {
 	private static final String T_TABS = "full/view16/"; //$NON-NLS-1$
 	private static final String T_OBJS = "full/obj16/"; //$NON-NLS-1$
 
-	public static String IMG_VIEW_MAIN_TAB = NAME_PREFIX + "main_tab.gif"; //$NON-NLS-1$
+	public static String IMG_VIEW_MAIN_TAB = NAME_PREFIX + "main_tab.svg"; //$NON-NLS-1$
 	public static String IMG_VIEW_ARGUMENTS_TAB = NAME_PREFIX + "arguments_tab.gif"; //$NON-NLS-1$
 	public static String IMG_VIEW_DEBUGGER_TAB = NAME_PREFIX + "debugger_tab.gif"; //$NON-NLS-1$
 

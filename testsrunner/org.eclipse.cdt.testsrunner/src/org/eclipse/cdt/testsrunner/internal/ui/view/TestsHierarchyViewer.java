@@ -146,7 +146,7 @@ public class TestsHierarchyViewer {
 		/** Images for the test cases with the different statuses. */
 		private Map<ITestItem.Status, Image> testCaseImages = new HashMap<>();
 		{
-			testCaseImages.put(ITestItem.Status.NotRun, TestsRunnerPlugin.createAutoImage("obj16/test_notrun.gif")); //$NON-NLS-1$
+			testCaseImages.put(ITestItem.Status.NotRun, TestsRunnerPlugin.createAutoImage("obj16/test_notrun.svg")); //$NON-NLS-1$
 			testCaseImages.put(ITestItem.Status.Skipped, TestsRunnerPlugin.createAutoImage("obj16/test_skipped.gif")); //$NON-NLS-1$
 			testCaseImages.put(ITestItem.Status.Passed, TestsRunnerPlugin.createAutoImage("obj16/test_passed.gif")); //$NON-NLS-1$
 			testCaseImages.put(ITestItem.Status.Failed, TestsRunnerPlugin.createAutoImage("obj16/test_failed.gif")); //$NON-NLS-1$

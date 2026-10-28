@@ -30,8 +30,8 @@ public class MessagesOrderingAction extends Action {
 		setText(ActionsMessages.MessagesOrderingAction_text);
 		setToolTipText(ActionsMessages.MessagesOrderingAction_tooltip);
 		setDisabledImageDescriptor(TestsRunnerPlugin.getImageDescriptor("dlcl16/sort.gif")); //$NON-NLS-1$
-		setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/sort.gif")); //$NON-NLS-1$
-		setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/sort.gif")); //$NON-NLS-1$
+		setHoverImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/sort.svg")); //$NON-NLS-1$
+		setImageDescriptor(TestsRunnerPlugin.getImageDescriptor("elcl16/sort.svg")); //$NON-NLS-1$
 		setChecked(messagesViewer.getOrderingMode());
 	}
 

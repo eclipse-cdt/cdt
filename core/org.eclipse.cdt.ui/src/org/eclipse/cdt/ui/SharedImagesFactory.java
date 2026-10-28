@@ -85,7 +85,15 @@ public class SharedImagesFactory {
 			return urlMap.get(key);
 
 		IPath projectRelativePath = new Path(key);
-		URL url = FileLocator.find(bundle, projectRelativePath, null);
+		URL url = null;
+		// Prefer an SVG next to a GIF/PNG so the image keys stay stable for clients
+		String extension = projectRelativePath.getFileExtension();
+		if ("gif".equals(extension) || "png".equals(extension)) { //$NON-NLS-1$ //$NON-NLS-2$
+			url = FileLocator.find(bundle, projectRelativePath.removeFileExtension().addFileExtension("svg"), null); //$NON-NLS-1$
+		}
+		if (url == null) {
+			url = FileLocator.find(bundle, projectRelativePath, null);
+		}
 		if (url == null) {
 			Exception e = new Exception(NLS.bind(Messages.CDTSharedImages_MissingImage, key, CUIPlugin.PLUGIN_ID));
 			CUIPlugin.log(e.getMessage(), e);

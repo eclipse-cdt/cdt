@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="16"
+   height="16"
+   id="svg2"
+   version="1.1"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient4731">
+      <stop
+         style="stop-color:#6b9ac3;stop-opacity:1;"
+         offset="0"
+         id="stop4733" />
+      <stop
+         style="stop-color:#4d94c4;stop-opacity:1"
+         offset="1"
+         id="stop4735" />
+    </linearGradient>
+    <linearGradient
+       y2="462.11539"
+       x2="388.63736"
+       y1="478.18777"
+       x1="388.63736"
+       gradientUnits="userSpaceOnUse"
+       id="linearGradient3929-5"
+       xlink:href="#linearGradient10798-1-9-3-7-6-8-9-0-9-1" />
+    <linearGradient
+       id="linearGradient10798-1-9-3-7-6-8-9-0-9-1">
+      <stop
+         style="stop-color:#80c3eb;stop-opacity:1"
+         offset="0"
+         id="stop10800-5-2-1-8-20-6-4-9-8-2" />
+      <stop
+         id="stop10806-6-8-5-3-9-24-8-4-3-2"
+         offset="0.5"
+         style="stop-color:#0e9ad8;stop-opacity:1" />
+      <stop
+         style="stop-color:#a1cfed;stop-opacity:1"
+         offset="1"
+         id="stop10802-1-5-3-0-4-8-4-2-9-2" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient4731"
+       id="linearGradient4737"
+       x1="392.18716"
+       y1="458.16541"
+       x2="391.74918"
+       y2="478.97156"
+       gradientUnits="userSpaceOnUse" />
+    <filter
+       id="filter4764"
+       x="-0.075"
+       y="-0.05"
+       width="1.15"
+       height="1.1">
+      <feGaussianBlur
+         stdDeviation="0.125"
+         id="feGaussianBlur4766" />
+    </filter>
+    <filter
+       color-interpolation-filters="sRGB"
+       id="filter4764-5"
+       x="-0.075"
+       y="-0.05"
+       width="1.15"
+       height="1.1">
+      <feGaussianBlur
+         stdDeviation="0.125"
+         id="feGaussianBlur4766-4" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     style="display:inline"
+     transform="translate(0,-1036.3622)">
+    <g
+       transform="matrix(0.27903303,0,0,0.27903303,-100.53208,912.07901)"
+       style="display:inline"
+       id="g11331-3-1-1">
+      <g
+         id="g13408-8"
+         style="fill:#737986;fill-opacity:1;stroke:#595e68;stroke-opacity:1" />
+    </g>
+    <g
+       transform="matrix(-1,0,0,1,16.12959,8.0140628)"
+       style="display:inline"
+       id="g6124-3">
+      <g
+         transform="scale(-1,1)"
+         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+         id="text6430" />
+      <g
+         transform="scale(-1,1)"
+         style="font-size:13.58917427px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;font-family:Sans"
+         id="g6438">
+        <path
+           style="fill:url(#linearGradient3929-5);fill-opacity:1;stroke:url(#linearGradient4737);stroke-width:2.16621375;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
+           id="path10796-2-6-2"
+           d="m 398.75,468.23718 c 0,5.86803 -4.75697,10.625 -10.625,10.625 -5.86803,0 -10.625,-4.75697 -10.625,-10.625 0,-5.86802 4.75697,-10.625 10.625,-10.625 5.86803,0 10.625,4.75698 10.625,10.625 z"
+           transform="matrix(0.47161511,0,0,0.47161511,-190.67655,815.03248)" />
+        <g
+           style="font-size:7.60321283px;font-variant:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;font-family:Arial;-inkscape-font-specification:Arial"
+           id="text4739"
+           transform="translate(20,0)">
+          <path
+             d="m -29.262172,1039.2155 0,-6 4,0 0,1 -3,0 0,1 2,0 0,1 -2,0 0,3 z"
+             style="font-size:7.60321283px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:0.5;fill:#000000;fill-opacity:1;stroke:none;display:inline;filter:url(#filter4764-5);font-family:Arial;-inkscape-font-specification:Arial"
+             id="path4744-9-1" />
+          <path
+             d="m -29.12959,1039.3481 0,-6 4,0 0,1 -3,0 0,1 2,0 0,1 -2,0 0,3 z"
+             style="fill:#ffffff"
+             id="path4744" />
+          <path
+             d="m -28.997008,1039.4807 0,-6 4,0 0,1 -3,0 0,1 2,0 0,1 -2,0 0,3 z"
+             style="font-size:7.60321283px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;opacity:0.5;fill:#ffffff;fill-opacity:1;stroke:none;display:inline;filter:url(#filter4764);font-family:Arial;-inkscape-font-specification:Arial"
+             id="path4744-9" />
+          <path
+             style="font-size:7.60321283px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000f6f;fill-opacity:1;stroke:#6f99c7;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;display:inline;font-family:Arial;-inkscape-font-specification:Arial"
+             d="m -34.44209,1029.3481 14,14"
+             id="path4792-9" />
+          <path
+             style="fill:#000f6f;fill-opacity:1;stroke:#000f6f;stroke-width:1px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1"
+             d="m -35.12959,1029.3481 14,14"
+             id="path4792" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

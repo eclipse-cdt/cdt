@@ -18,7 +18,7 @@
             targetID="org.eclipse.debug.ui.BreakpointView">
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
+               icon="icons/refresh.svg"
                id="org.eclipse.cdt.dsf.debug.ui.breakpoints.viewmodel.update.actions.refresh"
                label="%action.refresh.label"
                toolbarPath="additions">
@@ -31,7 +31,7 @@
             targetID="org.eclipse.debug.ui.VariableView">
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
+               icon="icons/refresh.svg"
                id="org.eclipse.cdt.dsf.debug.ui.variables.viewmodel.update.actions.refresh"
                label="%action.refresh.label"
                toolbarPath="additions">
@@ -44,7 +44,7 @@
             targetID="org.eclipse.debug.ui.RegisterView">
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
+               icon="icons/refresh.svg"
                id="org.eclipse.cdt.dsf.debug.ui.registers.viewmodel.update.actions.refresh"
                label="%action.refresh.label"
                toolbarPath="additions">
@@ -57,7 +57,7 @@
             targetID="org.eclipse.debug.ui.ExpressionView">
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
+               icon="icons/refresh.svg"
                id="org.eclipse.cdt.dsf.debug.ui.expressions.viewmodel.update.actions.refresh"
                label="%action.refresh.label"
                toolbarPath="additions">
@@ -70,7 +70,7 @@
             targetID="org.eclipse.debug.ui.DebugView">
          <action
                class="org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions.RefreshActionDelegate"
-               icon="icons/refresh.gif"
+               icon="icons/refresh.svg"
                id="org.eclipse.cdt.dsf.debug.ui.debugview.viewmodel.update.actions.refresh"
                label="%action.refresh.label"
                toolbarPath="additions">
@@ -747,7 +747,7 @@
     	<action
            class="org.eclipse.cdt.dsf.debug.ui.memory.RefreshAction"
            enablesFor="1"
-           icon="icons/refresh.gif"
+           icon="icons/refresh.svg"
            id="org.eclipse.debug.ui.MemoryView.memoryViewRefresh"
            label="Refresh"
            toolbarPath="additions">
@@ -759,7 +759,7 @@
 	    	<action
 	           class="org.eclipse.cdt.dsf.debug.ui.memory.RefreshAction"
 	           enablesFor="1"
-	           icon="icons/refresh.gif"
+	           icon="icons/refresh.svg"
 	           id="org.eclipse.cdt.debug.ui.memory.memorybrowser.MemoryBrowser.memoryBrowserRefresh"
 	           label="Refresh"
 	           toolbarPath="additions">

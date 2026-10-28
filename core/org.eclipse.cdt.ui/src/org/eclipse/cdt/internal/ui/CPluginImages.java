@@ -60,11 +60,11 @@ public class CPluginImages {
 	public static final String T_VIEW = "view16/"; //$NON-NLS-1$
 	public static final String T_OVR = "ovr16/"; //$NON-NLS-1$
 
-	public static final String IMG_OBJS_TEMPLATE = NAME_PREFIX + "template_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_TEMPLATE = NAME_PREFIX + "template_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_VARIABLE = NAME_PREFIX + "variable_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_LOCAL_VARIABLE = NAME_PREFIX + "variable_local_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_CLASS = NAME_PREFIX + "class_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_CLASS_ALT = NAME_PREFIX + "classfo_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_CLASS = NAME_PREFIX + "class_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_CLASS_ALT = NAME_PREFIX + "classfo_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_NAMESPACE = NAME_PREFIX + "namespace_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_USING = NAME_PREFIX + "using_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_STRUCT = NAME_PREFIX + "struct_obj.gif"; //$NON-NLS-1$
@@ -73,7 +73,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_UNION_ALT = NAME_PREFIX + "unionfo_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TYPEDEF = NAME_PREFIX + "typedef_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_TYPEDEF_ALT = NAME_PREFIX + "typedeffo_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_ENUMERATION = NAME_PREFIX + "enum_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ENUMERATION = NAME_PREFIX + "enum_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENUMERATION_ALT = NAME_PREFIX + "enumfo_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_UNKNOWN_TYPE = NAME_PREFIX + "unknown_type_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ENUMERATOR = NAME_PREFIX + "enumerator_obj.gif"; //$NON-NLS-1$
@@ -82,9 +82,9 @@ public class CPluginImages {
 	public static final String IMG_OBJS_PROTECTED_METHOD = NAME_PREFIX + "method_protected_obj.gif"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_PRIVATE_METHOD = NAME_PREFIX + "method_private_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_PUBLIC_FIELD = NAME_PREFIX + "field_public_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_PROTECTED_FIELD = NAME_PREFIX + "field_protected_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_PRIVATE_FIELD = NAME_PREFIX + "field_private_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_PUBLIC_FIELD = NAME_PREFIX + "field_public_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_PROTECTED_FIELD = NAME_PREFIX + "field_protected_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_PRIVATE_FIELD = NAME_PREFIX + "field_private_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_KEYWORD = NAME_PREFIX + "keyword_obj.gif"; //$NON-NLS-1$
 
 	public static final String IMG_OBJS_DECLARATION = NAME_PREFIX + "cdeclaration_obj.gif"; //$NON-NLS-1$
@@ -100,7 +100,7 @@ public class CPluginImages {
 	public static final String IMG_OBJS_TUNIT_RESOURCE_A = NAME_PREFIX + "asm_resource_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SOURCE_ROOT = NAME_PREFIX + "sroot_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SOURCE2_ROOT = NAME_PREFIX + "sroot2_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_FOLDER = NAME_PREFIX + "fldr_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_FOLDER = NAME_PREFIX + "fldr_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CFOLDER = NAME_PREFIX + "cfolder_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CONFIG = NAME_PREFIX + "config.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ARCHIVE = NAME_PREFIX + "ar_obj.gif"; //$NON-NLS-1$
@@ -119,9 +119,9 @@ public class CPluginImages {
 	public static final String IMG_OBJS_QUOTE_INCLUDES_FOLDER = NAME_PREFIX + "hfolder_quote_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDES_FOLDER_SYSTEM = NAME_PREFIX + "fldr_sys_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_INCLUDES_FOLDER_WORKSPACE = NAME_PREFIX + "wsp_includefolder.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_ORDER = NAME_PREFIX + "cp_order_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_ORDER = NAME_PREFIX + "cp_order_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXCLUDSION_FILTER_ATTRIB = NAME_PREFIX + "exclusion_filter_attrib.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_SOURCE_ATTACH_ATTRIB = NAME_PREFIX + "source_attach_attrib.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_SOURCE_ATTACH_ATTRIB = NAME_PREFIX + "source_attach_attrib.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_ARCHIVE_WSRC = NAME_PREFIX + "ar_src_obj.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_IMPORT_SETTINGS = NAME_PREFIX + "import_settings_wiz.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_EXPORT_SETTINGS = NAME_PREFIX + "export_settings_wiz.gif"; //$NON-NLS-1$
@@ -135,15 +135,15 @@ public class CPluginImages {
 	public static final String IMG_OBJS_BREAKPOINT_DISABLED = NAME_PREFIX + "breakpoint_disabled.gif"; //$NON-NLS-1$
 	public static final String IMG_OBJS_BREAKPOINT_ACTIVE = NAME_PREFIX + "breakpoint_active.gif"; //$NON-NLS-1$
 
-	public static final String IMG_OBJS_FIXABLE_PROBLEM = NAME_PREFIX + "quickfix_warning_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_FIXABLE_ERROR = NAME_PREFIX + "quickfix_error_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_FIXABLE_PROBLEM = NAME_PREFIX + "quickfix_warning_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_FIXABLE_ERROR = NAME_PREFIX + "quickfix_error_obj.svg"; //$NON-NLS-1$
 
 	// build console
 	public static final String IMG_VIEW_BUILD = NAME_PREFIX + "buildconsole.gif"; //$NON-NLS-1$
 	public static final String IMG_SAVE_CONSOLE = NAME_PREFIX + "save_console.gif"; //$NON-NLS-1$
 
 	// unknown type
-	public static final String IMG_OBJS_UNKNOWN = NAME_PREFIX + "unknown_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_UNKNOWN = NAME_PREFIX + "unknown_obj.svg"; //$NON-NLS-1$
 
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
@@ -346,8 +346,8 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_EXPORT_SETTINGS = createManaged(T_OBJ, IMG_OBJS_EXPORT_SETTINGS);
 
 	public static final ImageDescriptor DESC_OVR_PATH_INHERIT = createUnManaged(T_OVR, "path_inherit_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_OVERRIDES = createUnManaged(T_OBJ, "over_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_IMPLEMENTS = createUnManaged(T_OBJ, "implm_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_OVERRIDES = createUnManaged(T_OBJ, "over_co.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_IMPLEMENTS = createUnManaged(T_OBJ, "implm_co.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_SHADOWS = createUnManaged(T_OBJ, "shad_co.gif"); //$NON-NLS-1$
 
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
@@ -374,48 +374,48 @@ public class CPluginImages {
 	@Deprecated
 	public static final ImageDescriptor DESC_OBJS_BREAKPOINT_ACTIVE = createManaged(T_OBJ, IMG_OBJS_BREAKPOINT_ACTIVE);
 
-	public static final String IMG_MENU_SHIFT_RIGHT = NAME_PREFIX + "shift_r_edit.gif"; //$NON-NLS-1$
-	public static final String IMG_MENU_SHIFT_LEFT = NAME_PREFIX + "shift_l_edit.gif"; //$NON-NLS-1$
+	public static final String IMG_MENU_SHIFT_RIGHT = NAME_PREFIX + "shift_r_edit.svg"; //$NON-NLS-1$
+	public static final String IMG_MENU_SHIFT_LEFT = NAME_PREFIX + "shift_l_edit.svg"; //$NON-NLS-1$
 	public static final String IMG_MENU_OPEN_INCLUDE = NAME_PREFIX + "open_include.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_GROUP_INCLUDE = NAME_PREFIX + "group_include.gif"; //$NON-NLS-1$
 	public static final String IMG_MENU_HIDE_PRAGMA_MARKS = NAME_PREFIX + "outline_mark.png"; //$NON-NLS-1$
-	public static final String IMG_MENU_SEGMENT_EDIT = NAME_PREFIX + "segment_edit.gif"; //$NON-NLS-1$
+	public static final String IMG_MENU_SEGMENT_EDIT = NAME_PREFIX + "segment_edit.svg"; //$NON-NLS-1$
 	public static final String IMG_MENU_CODE_ASSIST = NAME_PREFIX + "metharg_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_MENU_COLLAPSE_ALL = NAME_PREFIX + "collapseall.png"; //$NON-NLS-1$
-	public static final String IMG_MENU_EXPAND_ALL = NAME_PREFIX + "expandall.png"; //$NON-NLS-1$
+	public static final String IMG_MENU_COLLAPSE_ALL = NAME_PREFIX + "collapseall.svg"; //$NON-NLS-1$
+	public static final String IMG_MENU_EXPAND_ALL = NAME_PREFIX + "expandall.svg"; //$NON-NLS-1$
 	public static final String IMG_CLEAR_CONSOLE = NAME_PREFIX + "clear_co.gif"; //$NON-NLS-1$
-	public static final String IMG_SCROLL_LOCK = NAME_PREFIX + "lock_co.gif"; //$NON-NLS-1$
-	public static final String IMG_ALPHA_SORTING = NAME_PREFIX + "alphab_sort_co.gif"; //$NON-NLS-1$
+	public static final String IMG_SCROLL_LOCK = NAME_PREFIX + "lock_co.svg"; //$NON-NLS-1$
+	public static final String IMG_ALPHA_SORTING = NAME_PREFIX + "alphab_sort_co.svg"; //$NON-NLS-1$
 	public static final String IMG_TOOL_GOTO_PREV_ERROR = NAME_PREFIX + "prev_error_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_TOOL_GOTO_NEXT_ERROR = NAME_PREFIX + "next_error_nav.gif"; //$NON-NLS-1$
 	public static final String IMG_EDIT_PROPERTIES = NAME_PREFIX + "prop_edt.gif"; //$NON-NLS-1$
 
-	public static final String IMG_ACTION_HIDE_FIELDS = NAME_PREFIX + "fields_co.gif"; //$NON-NLS-1$
-	public static final String IMG_ACTION_SHOW_PUBLIC = NAME_PREFIX + "public_co.gif"; //$NON-NLS-1$
-	public static final String IMG_ACTION_HIDE_STATIC = NAME_PREFIX + "static_co.gif"; //$NON-NLS-1$
+	public static final String IMG_ACTION_HIDE_FIELDS = NAME_PREFIX + "fields_co.svg"; //$NON-NLS-1$
+	public static final String IMG_ACTION_SHOW_PUBLIC = NAME_PREFIX + "public_co.svg"; //$NON-NLS-1$
+	public static final String IMG_ACTION_HIDE_STATIC = NAME_PREFIX + "static_co.svg"; //$NON-NLS-1$
 
-	public static final String IMG_ACTION_SHOW_REF_BY = NAME_PREFIX + "ch_callers.gif"; //$NON-NLS-1$
-	public static final String IMG_ACTION_SHOW_RELATES_TO = NAME_PREFIX + "ch_callees.gif"; //$NON-NLS-1$
+	public static final String IMG_ACTION_SHOW_REF_BY = NAME_PREFIX + "ch_callers.svg"; //$NON-NLS-1$
+	public static final String IMG_ACTION_SHOW_RELATES_TO = NAME_PREFIX + "ch_callees.svg"; //$NON-NLS-1$
 	public static final String IMG_ACTION_HIDE_INACTIVE = NAME_PREFIX + "filterInactive.gif"; //$NON-NLS-1$
 	public static final String IMG_ACTION_HIDE_SYSTEM = NAME_PREFIX + "filterSystem.gif"; //$NON-NLS-1$
 	public static final String IMG_ACTION_HIDE_MACROS = NAME_PREFIX + "filterDefines.gif"; //$NON-NLS-1$
-	public static final String IMG_SHOW_NEXT = NAME_PREFIX + "search_next.gif"; //$NON-NLS-1$
-	public static final String IMG_SHOW_PREV = NAME_PREFIX + "search_prev.gif"; //$NON-NLS-1$
+	public static final String IMG_SHOW_NEXT = NAME_PREFIX + "search_next.svg"; //$NON-NLS-1$
+	public static final String IMG_SHOW_PREV = NAME_PREFIX + "search_prev.svg"; //$NON-NLS-1$
 
-	public static final String IMG_REFRESH = NAME_PREFIX + "refresh_nav.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_CANCEL = NAME_PREFIX + "progress_stop.gif"; //$NON-NLS-1$
+	public static final String IMG_REFRESH = NAME_PREFIX + "refresh_nav.svg"; //$NON-NLS-1$
+	public static final String IMG_LCL_CANCEL = NAME_PREFIX + "progress_stop.svg"; //$NON-NLS-1$
 
 	// view orientation
-	public static final String IMG_LCL_HORIZONTAL_ORIENTATION = NAME_PREFIX + "th_horizontal.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_VERTICAL_ORIENTATION = NAME_PREFIX + "th_vertical.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_AUTOMATIC_ORIENTATION = NAME_PREFIX + "th_automatic.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SINGLE_ORIENTATION = NAME_PREFIX + "th_single.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_HORIZONTAL_ORIENTATION = NAME_PREFIX + "th_horizontal.svg"; //$NON-NLS-1$
+	public static final String IMG_LCL_VERTICAL_ORIENTATION = NAME_PREFIX + "th_vertical.svg"; //$NON-NLS-1$
+	public static final String IMG_LCL_AUTOMATIC_ORIENTATION = NAME_PREFIX + "th_automatic.svg"; //$NON-NLS-1$
+	public static final String IMG_LCL_SINGLE_ORIENTATION = NAME_PREFIX + "th_single.svg"; //$NON-NLS-1$
 
 	// hierarchy kind
-	public static final String IMG_LCL_TYPE_HIERARCHY = NAME_PREFIX + "hierarchy_co.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SUB_TYPE_HIERARCHY = NAME_PREFIX + "sub_co.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SUPER_TYPE_HIERARCHY = NAME_PREFIX + "super_co.gif"; //$NON-NLS-1$
-	public static final String IMG_LCL_SHOW_INHERITED_MEMBERS = NAME_PREFIX + "inher_co.gif"; //$NON-NLS-1$
+	public static final String IMG_LCL_TYPE_HIERARCHY = NAME_PREFIX + "hierarchy_co.svg"; //$NON-NLS-1$
+	public static final String IMG_LCL_SUB_TYPE_HIERARCHY = NAME_PREFIX + "sub_co.svg"; //$NON-NLS-1$
+	public static final String IMG_LCL_SUPER_TYPE_HIERARCHY = NAME_PREFIX + "super_co.svg"; //$NON-NLS-1$
+	public static final String IMG_LCL_SHOW_INHERITED_MEMBERS = NAME_PREFIX + "inher_co.svg"; //$NON-NLS-1$
 
 	public static final String IMG_FILESYSTEM = NAME_PREFIX + "filesyst.gif"; //$NON-NLS-1$
 	public static final String IMG_WORKSPACE = NAME_PREFIX + "workspace.gif"; //$NON-NLS-1$
@@ -447,8 +447,8 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OVR_EXTERNAL_FILE = createUnManaged(T_OVR, "external_file.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OVR_SETTING = createUnManaged(T_OVR, "setting_nav.gif"); //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_OVR_WARNING = createUnManaged(T_OVR, "warning_co.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OVR_ERROR = createUnManaged(T_OVR, "error_co.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_WARNING = createUnManaged(T_OVR, "warning_co.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OVR_ERROR = createUnManaged(T_OVR, "error_co.svg"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_WIZABAN_NEW_PROJ = createUnManaged(T_WIZBAN, "newcprj_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_NEWCLASS = createUnManaged(T_WIZBAN, "newclass_wiz.gif"); //$NON-NLS-1$
@@ -467,12 +467,12 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_BUILD_MENU = createManaged(T_OBJ, IMG_OBJS_BUILD);
 
 	//for search
-	public static final String IMG_OBJS_SEARCH_REF = NAME_PREFIX + "search_ref_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_SEARCH_DECL = NAME_PREFIX + "search_decl_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_SEARCH_LINE = NAME_PREFIX + "searchm_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_SEARCH_REF = NAME_PREFIX + "search_ref_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_SEARCH_DECL = NAME_PREFIX + "search_decl_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_SEARCH_LINE = NAME_PREFIX + "searchm_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_CSEARCH = NAME_PREFIX + "csearch_obj.gif"; //$NON-NLS-1$
 
-	public static final String IMG_OBJS_SEARCHFOLDER = NAME_PREFIX + "fldr_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_SEARCHFOLDER = NAME_PREFIX + "fldr_obj.svg"; //$NON-NLS-1$
 	public static final String IMG_OBJS_SEARCHPROJECT = NAME_PREFIX + "cprojects.gif"; //$NON-NLS-1$
 
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
@@ -496,10 +496,10 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_OBJS_SEARCHHIERFODLER = createManaged(T_OBJ, IMG_OBJS_SEARCHFOLDER);
 
 	// refactoring
-	public static final String IMG_OBJS_REFACTORING_FATAL = NAME_PREFIX + "fatalerror_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_REFACTORING_ERROR = NAME_PREFIX + "error_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_REFACTORING_WARNING = NAME_PREFIX + "warning_obj.gif"; //$NON-NLS-1$
-	public static final String IMG_OBJS_REFACTORING_INFO = NAME_PREFIX + "info_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_FATAL = NAME_PREFIX + "fatalerror_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_ERROR = NAME_PREFIX + "error_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_WARNING = NAME_PREFIX + "warning_obj.svg"; //$NON-NLS-1$
+	public static final String IMG_OBJS_REFACTORING_INFO = NAME_PREFIX + "info_obj.svg"; //$NON-NLS-1$
 
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
@@ -521,17 +521,17 @@ public class CPluginImages {
 			"refactor_method_wiz.png"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_WIZBAN_REFACTOR_TYPE = createUnManaged(T_WIZBAN, "refactor_type_wiz.png"); //$NON-NLS-1$
 
-	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE = createUnManaged(T_OBJ, "change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE = createUnManaged(T_OBJ, "composite_change.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_DEFAULT_CHANGE = createUnManaged(T_OBJ, "change.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_COMPOSITE_CHANGE = createUnManaged(T_OBJ, "composite_change.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_OBJS_CU_CHANGE = createUnManaged(T_OBJ, "cu_change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE = createUnManaged(T_OBJ, "file_change.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT = createUnManaged(T_OBJ, "text_edit.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_FILE_CHANGE = createUnManaged(T_OBJ, "file_change.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_OBJS_TEXT_EDIT = createUnManaged(T_OBJ, "text_edit.svg"); //$NON-NLS-1$
 
 	public static final String IMG_PREFERRED = NAME_PREFIX + "tc_preferred.gif"; //$NON-NLS-1$
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
 	public static final ImageDescriptor DESC_PREFERRED = createManaged(T_OBJ, IMG_PREFERRED);
-	public static final String IMG_EMPTY = NAME_PREFIX + "tc_empty.gif"; //$NON-NLS-1$
+	public static final String IMG_EMPTY = NAME_PREFIX + "tc_empty.svg"; //$NON-NLS-1$
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
 	public static final ImageDescriptor DESC_EMPTY = createManaged(T_OBJ, IMG_EMPTY);
@@ -539,11 +539,11 @@ public class CPluginImages {
 	public static final ImageDescriptor DESC_DLCL_CONFIGURE_ANNOTATIONS = createUnManaged(T_DLCL,
 			"configure_annotations.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ELCL_CONFIGURE_ANNOTATIONS = createUnManaged(T_ELCL,
-			"configure_annotations.gif"); //$NON-NLS-1$
+			"configure_annotations.svg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_DLCL_VIEW_MENU = createUnManaged(T_DLCL, "view_menu.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ELCL_VIEW_MENU = createUnManaged(T_ELCL, "view_menu.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_VIEW_MENU = createUnManaged(T_ELCL, "view_menu.svg"); //$NON-NLS-1$
 
-	public static final String IMG_OBJS_QUICK_ASSIST = NAME_PREFIX + "quickassist_obj.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_QUICK_ASSIST = NAME_PREFIX + "quickassist_obj.svg"; //$NON-NLS-1$
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
 	public static final ImageDescriptor DESC_OBJS_QUICK_ASSIST = createManaged(T_OBJ, IMG_OBJS_QUICK_ASSIST);
@@ -551,32 +551,32 @@ public class CPluginImages {
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
 	public static final ImageDescriptor DESC_CORRECTION_ADD = createManaged(T_OBJ, IMG_CORRECTION_ADD);
-	public static final String IMG_CORRECTION_CHANGE = NAME_PREFIX + "correction_change.gif"; //$NON-NLS-1$
+	public static final String IMG_CORRECTION_CHANGE = NAME_PREFIX + "correction_change.svg"; //$NON-NLS-1$
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
 	public static final ImageDescriptor DESC_CORRECTION_CHANGE = createManaged(T_OBJ, IMG_CORRECTION_CHANGE);
-	public static final String IMG_CORRECTION_RENAME = NAME_PREFIX + "correction_rename.gif"; //$NON-NLS-1$
+	public static final String IMG_CORRECTION_RENAME = NAME_PREFIX + "correction_rename.svg"; //$NON-NLS-1$
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
 	public static final ImageDescriptor DESC_CORRECTION_RENAME = createManaged(T_OBJ, IMG_CORRECTION_RENAME);
-	public static final String IMG_CORRECTION_LINKED_RENAME = NAME_PREFIX + "correction_linked_rename.gif"; //$NON-NLS-1$
+	public static final String IMG_CORRECTION_LINKED_RENAME = NAME_PREFIX + "correction_linked_rename.svg"; //$NON-NLS-1$
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
 	public static final ImageDescriptor DESC_CORRECTION_LINKED_RENAME = createManaged(T_OBJ,
 			IMG_CORRECTION_LINKED_RENAME);
 
-	public static final String IMG_OBJS_NLS_NEVER_TRANSLATE = NAME_PREFIX + "never_translate.gif"; //$NON-NLS-1$
+	public static final String IMG_OBJS_NLS_NEVER_TRANSLATE = NAME_PREFIX + "never_translate.svg"; //$NON-NLS-1$
 	/** @deprecated as of CDT 8.0. Use {@link CDTSharedImages#getImageDescriptor(String)}. */
 	@Deprecated
 	public static final ImageDescriptor DESC_OBJS_NLS_NEVER_TRANSLATE = createManaged(T_OBJ,
 			IMG_OBJS_NLS_NEVER_TRANSLATE);
 
-	public static final ImageDescriptor DESC_ELCL_NAVIGATE_BACKWARD = createUnManaged(T_ELCL, "backward_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ELCL_NAVIGATE_FORWARD = createUnManaged(T_ELCL, "forward_nav.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ELCL_OPEN_DECLARATION = createUnManaged(T_ELCL, "goto_input.gif"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_NAVIGATE_BACKWARD = createUnManaged(T_ELCL, "backward_nav.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_NAVIGATE_FORWARD = createUnManaged(T_ELCL, "forward_nav.svg"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_OPEN_DECLARATION = createUnManaged(T_ELCL, "goto_input.svg"); //$NON-NLS-1$
 
 	public static final ImageDescriptor DESC_DLCL_COPY_QUALIFIED_NAME = createUnManaged(T_DLCL, "cpyqual_menu.png"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_ELCL_COPY_QUALIFIED_NAME = createUnManaged(T_ELCL, "cpyqual_menu.png"); //$NON-NLS-1$
+	public static final ImageDescriptor DESC_ELCL_COPY_QUALIFIED_NAME = createUnManaged(T_ELCL, "cpyqual_menu.svg"); //$NON-NLS-1$
 	// incorrectly defined descriptors
 	/** @deprecated as of CDT 8.0. */
 	@Deprecated
@@ -697,7 +697,9 @@ public class CPluginImages {
 	public static void setImageDescriptors(IAction action, String type, String relPath) {
 		if (relPath.startsWith(NAME_PREFIX))
 			relPath = relPath.substring(NAME_PREFIX_LENGTH);
-		action.setDisabledImageDescriptor(createUnManaged(("d" + type), relPath)); //$NON-NLS-1$
+		// SVG icons have no disabled variant, JFace derives the disabled image instead
+		if (!relPath.endsWith(".svg")) //$NON-NLS-1$
+			action.setDisabledImageDescriptor(createUnManaged(("d" + type), relPath)); //$NON-NLS-1$
 		//		action.setHoverImageDescriptor(create("c" + type, relPath)); //$NON-NLS-1$
 		action.setImageDescriptor(createUnManaged(("e" + type), relPath)); //$NON-NLS-1$
 

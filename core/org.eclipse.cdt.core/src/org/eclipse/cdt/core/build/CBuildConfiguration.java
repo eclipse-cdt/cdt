@@ -22,7 +22,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -74,7 +73,6 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -367,31 +365,7 @@ public abstract class CBuildConfiguration extends PlatformObject implements ICBu
 	}
 
 	public void setActive(IProgressMonitor monitor) throws CoreException {
-		IProject project = config.getProject();
-		if (config.equals(project.getActiveBuildConfig())) {
-			// already set
-			return;
-		}
-
-		CoreModel m = CoreModel.getDefault();
-		synchronized (m) {
-			IProjectDescription projectDesc = project.getDescription();
-			IBuildConfiguration[] bconfigs = project.getBuildConfigs();
-			Set<String> names = new LinkedHashSet<>();
-			for (IBuildConfiguration bconfig : bconfigs) {
-				names.add(bconfig.getName());
-			}
-			// must add default config name as it may not be in build config list
-			names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
-			// ensure active config is last in list so clean build will clean
-			// active config last and this will be left in build console for user to see
-			names.remove(config.getName());
-			names.add(config.getName());
-
-			projectDesc.setBuildConfigs(names.toArray(new String[0]));
-			projectDesc.setActiveBuildConfig(config.getName());
-			project.setDescription(projectDesc, monitor);
-		}
+		CBuildConfigurationManager.setActiveBuildConfiguration(config, monitor);
 	}
 
 	protected Preferences getSettings() {

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.cdt.core; singleton:=true
-Bundle-Version: 9.3.200.qualifier
+Bundle-Version: 9.3.300.qualifier
 Bundle-Activator: org.eclipse.cdt.core.CCorePlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -66,7 +66,7 @@ Export-Package: org.eclipse.cdt.core,
    org.eclipse.cdt.testsrunner.boost,
    org.eclipse.cdt.testsrunner.qttest",
  org.eclipse.cdt.internal.core.browser;x-friends:="org.eclipse.cdt.ui",
- org.eclipse.cdt.internal.core.build;x-friends:="org.eclipse.cdt.core.tests",
+ org.eclipse.cdt.internal.core.build;x-friends:="org.eclipse.cdt.core.tests,org.eclipse.cdt.debug.core,org.eclipse.cdt.docker.launcher",
  org.eclipse.cdt.internal.core.cdtvariables;x-internal:=true,
  org.eclipse.cdt.internal.core.dom;x-internal:=true,
  org.eclipse.cdt.internal.core.dom.ast.tag;x-internal:=true,

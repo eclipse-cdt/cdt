@@ -12,9 +12,7 @@ package org.eclipse.cdt.debug.core.launch;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.build.ErrorBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
@@ -22,20 +20,19 @@ import org.eclipse.cdt.core.build.ICBuildConfiguration2;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
+import org.eclipse.cdt.internal.core.build.CBuildConfigurationManager;
 import org.eclipse.core.resources.IBuildConfiguration;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.launchbar.core.ILaunchBarListener;
@@ -147,7 +144,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 
 		// Pick core build config based on launch mode and toolchain for target
 		// Since this may create a new config, need to run it in a Job
-		Job job = new Job(InternalDebugCoreMessages.CoreBuildLaunchBarTracker_Job) {
+		WorkspaceJob job = new WorkspaceJob(InternalDebugCoreMessages.CoreBuildLaunchBarTracker_Job) {
 
 			@Override
 			public boolean belongsTo(Object family) {
@@ -155,10 +152,10 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 			}
 
 			@Override
-			protected IStatus run(IProgressMonitor monitor) {
+			public IStatus runInWorkspace(IProgressMonitor monitor) {
 				try {
 					Map<String, String> properties = new HashMap<>();
-					properties.putAll(lastTarget.getAttributes());
+					properties.putAll(target.getAttributes());
 					Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
 					ICBuildConfiguration buildConfig = null;
 					if (!tcs.isEmpty()) {
@@ -166,9 +163,9 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 							ICBuildConfiguration testConfig = configManager.getBuildConfiguration(config);
 							if (testConfig != null && !(testConfig instanceof ErrorBuildConfiguration)) {
 								// Match launch mode run/debug.
-								if (testConfig.getLaunchMode().equals(lastMode.getIdentifier())) {
+								if (testConfig.getLaunchMode().equals(mode.getIdentifier())) {
 									// Match launch target
-									if (testConfig.getLaunchTarget().equals(lastTarget)) {
+									if (testConfig.getLaunchTarget().equals(target)) {
 										// Match toolchain.
 										for (IToolChain tc : tcs) {
 											if (testConfig.getToolChain().equals(tc)) {
@@ -184,7 +181,7 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 						if (buildConfig == null) {
 							for (IToolChain toolChain : tcs) {
 								buildConfig = configManager.getBuildConfiguration(finalProject, toolChain,
-										mode.getIdentifier(), lastTarget, monitor);
+										mode.getIdentifier(), target, monitor);
 								if (buildConfig != null) {
 									break;
 								}
@@ -224,26 +221,8 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 
 					if (buildConfig != null
 							&& !buildConfig.getBuildConfiguration().equals(finalProject.getActiveBuildConfig())) {
-						CoreModel m = CoreModel.getDefault();
-						synchronized (m) {
-							// set it as active
-							IProjectDescription desc = finalProject.getDescription();
-							IBuildConfiguration[] configs = finalProject.getBuildConfigs();
-							Set<String> names = new LinkedHashSet<>();
-							for (IBuildConfiguration config : configs) {
-								names.add(config.getName());
-							}
-							// must add default config name as it may not be in build config list
-							names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
-							// ensure active config is last in list so clean build will clean
-							// active config last and this will be left in build console for user to see
-							names.remove(buildConfig.getBuildConfiguration().getName());
-							names.add(buildConfig.getBuildConfiguration().getName());
-
-							desc.setBuildConfigs(names.toArray(new String[0]));
-							desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
-							finalProject.setDescription(desc, monitor);
-						}
+						CBuildConfigurationManager.setActiveBuildConfiguration(buildConfig.getBuildConfiguration(),
+								monitor);
 						// notify the active build config that it is active
 						((ICBuildConfiguration2) buildConfig).setActive();
 					}

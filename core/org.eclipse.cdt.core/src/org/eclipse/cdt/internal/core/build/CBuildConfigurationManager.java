@@ -19,8 +19,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CProjectNature;
@@ -37,6 +39,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -167,24 +170,49 @@ public class CBuildConfigurationManager
 	public IBuildConfiguration createBuildConfiguration(ICBuildConfigurationProvider provider, IProject project,
 			String configName, IProgressMonitor monitor) throws CoreException {
 		String name = provider.getId() + '/' + configName;
+		changeBuildConfigs(project, names -> names.add(name), null, monitor);
+		return project.getBuildConfig(name);
+	}
 
-		CoreModel m = CoreModel.getDefault();
-		synchronized (m) {
-			Set<String> names = new HashSet<>();
+	/**
+	 * Makes a build configuration active and moves it to the end of the list, so that a clean
+	 * build cleans it last.
+	 */
+	public static void setActiveBuildConfiguration(IBuildConfiguration config, IProgressMonitor monitor)
+			throws CoreException {
+		String name = config.getName();
+		changeBuildConfigs(config.getProject(), names -> {
+			names.remove(name);
+			names.add(name);
+		}, name, monitor);
+	}
+
+	/**
+	 * Changes the build configurations of a project, and the active one if activeName is not
+	 * null. Uses the workspace root rule so that changes at the same time are not lost.
+	 */
+	private static void changeBuildConfigs(IProject project, Consumer<Set<String>> change, String activeName,
+			IProgressMonitor monitor) throws CoreException {
+		IWorkspace workspace = project.getWorkspace();
+		workspace.run(pm -> {
+			if (activeName != null && activeName.equals(project.getActiveBuildConfig().getName())) {
+				return;
+			}
+			Set<String> names = new LinkedHashSet<>();
 			for (IBuildConfiguration config : project.getBuildConfigs()) {
 				names.add(config.getName());
 			}
-			// need to add default config name because it can be active by
-			// default without being in the build config list used above
+			// the default config can be active without being in the list
 			names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
+			change.accept(names);
 
 			IProjectDescription desc = project.getDescription();
-			names.add(name);
-			desc.setBuildConfigs(names.toArray(new String[names.size()]));
-			project.setDescription(desc, monitor);
-		}
-
-		return project.getBuildConfig(name);
+			desc.setBuildConfigs(names.toArray(new String[0]));
+			if (activeName != null) {
+				desc.setActiveBuildConfig(activeName);
+			}
+			project.setDescription(desc, pm);
+		}, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
 	}
 
 	@Override

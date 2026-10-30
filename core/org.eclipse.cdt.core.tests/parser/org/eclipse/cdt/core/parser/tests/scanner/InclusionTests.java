@@ -331,6 +331,27 @@ public class InclusionTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	// #define test something different
+	//
+	// #if __has_include(<test.h>)
+	// found_header_with_macro1
+	// #endif
+	//
+	// #if __has_include("test.h")
+	// found_header_with_macro2
+	// #endif
+	public void testHasIncludeArgumentMacroInteraction() throws Exception {
+		importFile("test.h", "");
+		IFile base = importFile("test.cpp", getAboveComment());
+		IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP,
+				new String[] { fProject.getProject().getLocation().toOSString() }, new String[] {}, null);
+		FileContent reader = FileContent.create(base);
+		initializeScanner(reader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo);
+		validateIdentifier("found_header_with_macro1");
+		validateIdentifier("found_header_with_macro2");
+		validateEOF();
+	}
+
 	// #include "foo.h"
 	//
 	// #ifdef __has_include_next

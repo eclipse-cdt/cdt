@@ -370,7 +370,19 @@ public class ExpressionEvaluator {
 		// various cases like macro expansion.
 		String headerName;
 		boolean quoteInclude = false;
-		if (LA() == IToken.tLT) {
+		switch (LA()) {
+		case Lexer.tSYSTEM_HEADER_NAME:
+			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '<', '>', new int[2]));
+			consume();
+			break;
+
+		case Lexer.tQUOTE_HEADER_NAME:
+			quoteInclude = true;
+			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '"', '"', new int[2]));
+			consume();
+			break;
+
+		case IToken.tLT:
 			headerName = ""; //$NON-NLS-1$
 			while (fTokens.getType() != IToken.tGT) {
 				if (fTokens.getType() == IToken.tEND_OF_INPUT) {
@@ -382,11 +394,15 @@ public class ExpressionEvaluator {
 			consume();
 			headerName += ">"; //$NON-NLS-1$
 			headerName = new String(fPreprocessor.extractHeaderName(headerName.toCharArray(), '<', '>', new int[2]));
-		} else if (LA() == IToken.tSTRING) {
+			break;
+
+		case IToken.tSTRING:
 			quoteInclude = true;
 			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '"', '"', new int[2]));
 			consume();
-		} else {
+			break;
+
+		default:
 			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
 		}
 

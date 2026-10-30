@@ -2063,6 +2063,8 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		if (isCondition)
 			options |= PROTECT_INTRINSICS;
 
+		boolean expansionDisabledUntilRParen = false;
+
 		loop: while (true) {
 			Token t = internalFetchToken(scannerCtx, options, withinExpansion);
 			switch (t.getType()) {
@@ -2080,10 +2082,25 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			case t__HAS_FEATURE:
 				options |= NO_EXPANSION;
 				break;
+			case t__HAS_INCLUDE:
+			case t__HAS_INCLUDE_NEXT:
+				options |= NO_EXPANSION;
+				// prevent expanding filename argument of form ( <file name tokens ...> ) until tRPAREN
+				// string-like form ( "single file name token" ) works too
+				expansionDisabledUntilRParen = true;
+				break;
 			case IToken.tLPAREN:
 				break;
-			default:
+			case IToken.tRPAREN:
+				if (expansionDisabledUntilRParen) {
+					expansionDisabledUntilRParen = false;
+				}
 				options &= ~NO_EXPANSION;
+				break;
+			default:
+				if (!expansionDisabledUntilRParen) {
+					options &= ~NO_EXPANSION;
+				}
 				break;
 			}
 			result.append(t);

@@ -2080,6 +2080,18 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			case t__HAS_FEATURE:
 				options |= NO_EXPANSION;
 				break;
+			case t__HAS_INCLUDE:
+			case t__HAS_INCLUDE_NEXT: {
+				final Lexer lexer = scannerCtx.getLexer();
+				if (lexer != null) {
+					result.append(t);
+					lexer.setInsideIncludeDirective(true);
+					// internalFetchToken will move lexer forward which now will read include file name token
+					t = internalFetchToken(scannerCtx, options, withinExpansion);
+					lexer.setInsideIncludeDirective(false);
+				}
+				break;
+			}
 			case IToken.tLPAREN:
 				break;
 			default:

@@ -361,16 +361,28 @@ public class ExpressionEvaluator {
 		}
 		consume(); // opening parenthesis
 
-		// We don't have a tSYSTEM_HEADER_NAME or tQUOTED_HEADER_NAME token type here, these only get created when
-		// executing an include directive. In the case of a tSTRING, we only have to extract the header name from the
-		// quotes (extractHeaderName) but for system header, we have to reassemble the string by concatenating the
-		// tokens.
-		// A possibly more elegant solution could be to generate tSYSTEM_HEADER_NAME or tQUOTED_HEADER_NAME (during
-		// internalFetchToken?) but this is more ambitious and intrusive (more refactoring), especially considering
-		// various cases like macro expansion.
+		// If internalFetchToken worked over original input, we have tSYSTEM_HEADER_NAME or tQUOTED_HEADER_NAME
+		// token types here, like with an include directive.
+		//
+		// If internalFetchToken worked over macro expansion tokens, we have a tSTRING for quoted header name
+		// or individual tokens for system header. In the case of a tSTRING, we only have to extract the header name
+		// from the quotes (extractHeaderName) but for system header, we have to reassemble the string
+		// by concatenating the tokens.
 		String headerName;
 		boolean quoteInclude = false;
-		if (LA() == IToken.tLT) {
+		switch (LA()) {
+		case Lexer.tSYSTEM_HEADER_NAME:
+			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '<', '>', new int[2]));
+			consume();
+			break;
+
+		case Lexer.tQUOTE_HEADER_NAME:
+			quoteInclude = true;
+			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '"', '"', new int[2]));
+			consume();
+			break;
+
+		case IToken.tLT:
 			headerName = ""; //$NON-NLS-1$
 			while (fTokens.getType() != IToken.tGT) {
 				if (fTokens.getType() == IToken.tEND_OF_INPUT) {
@@ -382,11 +394,15 @@ public class ExpressionEvaluator {
 			consume();
 			headerName += ">"; //$NON-NLS-1$
 			headerName = new String(fPreprocessor.extractHeaderName(headerName.toCharArray(), '<', '>', new int[2]));
-		} else if (LA() == IToken.tSTRING) {
+			break;
+
+		case IToken.tSTRING:
 			quoteInclude = true;
 			headerName = new String(fPreprocessor.extractHeaderName(fTokens.getCharImage(), '"', '"', new int[2]));
 			consume();
-		} else {
+			break;
+
+		default:
 			throw new EvalException(IProblem.SCANNER_EXPRESSION_SYNTAX_ERROR, null);
 		}
 

@@ -51,6 +51,8 @@ public class LaunchMessages extends NLS {
 	public static String LocalAttachLaunchDelegate_CDT_Launch_Error;
 	public static String CommonBuildTab_Default;
 	public static String CommonBuildTab_NotFound;
+	public static String CommonBuildTab_NoToolchainForTarget;
+	public static String CommonBuildTab_NoToolchainHelpLink;
 	public static String CommonBuildTab_Toolchain;
 	public static String CoreBuildMainTab_Keep_empty_for_auto_selection;
 	public static String CoreBuildTab_Build;

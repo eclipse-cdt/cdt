@@ -119,17 +119,15 @@ public class CHeaderRule implements IRule {
 			current = unread(scanner);
 			lookBehind++;
 		}
-		if (Character.isWhitespace((char) current)) {
-			do {
+		while (Character.isWhitespace((char) current)) {
+			current = unread(scanner);
+			lookBehind++;
+
+			if (current == '(' && !hasIncludeCandidate) {
+				hasIncludeCandidate = true;
 				current = unread(scanner);
 				lookBehind++;
-
-				if (current == '(' && !hasIncludeCandidate) {
-					hasIncludeCandidate = true;
-					current = unread(scanner);
-					lookBehind++;
-				}
-			} while (Character.isWhitespace((char) current));
+			}
 		}
 		scanner.read();
 		--lookBehind;

@@ -60,7 +60,7 @@ public class CHeaderRule implements IRule {
 
 					// Rewind and check for an #include.
 					seek(scanner, -lookAhead);
-					if (!followsIncludeDirective(scanner)) {
+					if (!followsIncludeDirectiveOrHasInclude(scanner)) {
 						return Token.UNDEFINED;
 					}
 
@@ -100,30 +100,50 @@ public class CHeaderRule implements IRule {
 
 	/**
 	 * Returns true if the previous contents of the scanner is an #include
-	 * directive.
+	 * directive or __has_include expression
 	 *
 	 * @param scanner
 	 *            Scanner.
 	 * @return true if the previous contents of the scanner is an #include
 	 *         directive.
 	 */
-	private boolean followsIncludeDirective(ICharacterScanner scanner) {
+	private boolean followsIncludeDirectiveOrHasInclude(ICharacterScanner scanner) {
 		int lookBehind = 0;
 		boolean result = false;
+		boolean hasIncludeCandidate = false;
 
 		int current = unread(scanner);
 		lookBehind++;
+		if (current == '(') {
+			hasIncludeCandidate = true;
+			current = unread(scanner);
+			lookBehind++;
+		}
 		if (Character.isWhitespace((char) current)) {
 			do {
 				current = unread(scanner);
 				lookBehind++;
+
+				if (current == '(' && !hasIncludeCandidate) {
+					hasIncludeCandidate = true;
+					current = unread(scanner);
+					lookBehind++;
+				}
 			} while (Character.isWhitespace((char) current));
 		}
 		scanner.read();
 		--lookBehind;
-		if (current == 'e' && searchBackwards(scanner, "include") || //$NON-NLS-1$
-				current == 't' && searchBackwards(scanner, "include_next")) { //$NON-NLS-1$
-			result = true;
+
+		if (hasIncludeCandidate) {
+			if (current == 'e' && searchBackwards(scanner, "__has_include") || //$NON-NLS-1$
+					current == 't' && searchBackwards(scanner, "__has_include_next")) { //$NON-NLS-1$
+				result = true;
+			}
+		} else {
+			if (current == 'e' && searchBackwards(scanner, "include") || //$NON-NLS-1$
+					current == 't' && searchBackwards(scanner, "include_next")) { //$NON-NLS-1$
+				result = true;
+			}
 		}
 
 		seek(scanner, lookBehind);

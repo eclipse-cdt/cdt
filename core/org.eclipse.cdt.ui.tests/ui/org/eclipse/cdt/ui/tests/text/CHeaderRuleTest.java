@@ -75,6 +75,14 @@ public class CHeaderRuleTest extends TestCase {
 		assertHeader("#include_next<vector>", "<vector>", 13);
 	}
 
+	public void testHeaderHasInclude() {
+		assertHeader("#if __has_include(<vector>)", "<vector>", 18);
+	}
+
+	public void testHeaderHasIncludeNext() {
+		assertHeader("#if __has_include_next(<vector>)", "<vector>", 23);
+	}
+
 	public void testBooleanLogic() {
 		assertNotHeader("if (x < 10 && x > 20) return false;", 6);
 	}

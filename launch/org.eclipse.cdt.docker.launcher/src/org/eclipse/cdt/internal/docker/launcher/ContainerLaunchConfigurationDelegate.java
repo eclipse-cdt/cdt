@@ -30,7 +30,6 @@ import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
@@ -39,9 +38,9 @@ import org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin;
 import org.eclipse.cdt.docker.launcher.IContainerLaunchTarget;
 import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate;
+import org.eclipse.cdt.internal.core.build.CBuildConfigurationManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -552,7 +551,6 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 	@Override
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor)
 			throws CoreException {
-		IProject project = getProject(configuration);
 		String name = configuration.getName();
 		Pattern p = Pattern.compile(".*?\\[([^\\]]+)\\](.*)"); //$NON-NLS-1$
 		Matcher m = p.matcher(name);
@@ -569,12 +567,7 @@ public class ContainerLaunchConfigurationDelegate extends GdbLaunchDelegate {
 			if (target != null) {
 				ICBuildConfiguration cconfig = getBuildConfiguration(configuration, mode, target, monitor);
 				if (cconfig != null) {
-					CoreModel model = CoreModel.getDefault();
-					synchronized (model) {
-						IProjectDescription desc = project.getDescription();
-						desc.setActiveBuildConfig(cconfig.getBuildConfiguration().getName());
-						project.setDescription(desc, monitor);
-					}
+					CBuildConfigurationManager.setActiveBuildConfiguration(cconfig.getBuildConfiguration(), monitor);
 				}
 			}
 		}

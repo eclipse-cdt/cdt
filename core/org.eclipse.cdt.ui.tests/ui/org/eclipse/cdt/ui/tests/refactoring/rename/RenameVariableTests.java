@@ -18,23 +18,14 @@ import java.io.StringWriter;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author markus.schorn@windriver.com
  */
 public class RenameVariableTests extends RenameTestBase {
 
-	public RenameVariableTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(RenameVariableTests.class);
-	}
-
+	@Test
 	public void testLocalNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -277,6 +268,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testLocalNameConflictsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -345,6 +337,7 @@ public class RenameVariableTests extends RenameTestBase {
 
 	}
 
+	@Test
 	public void testParameterNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -585,6 +578,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testParameterNameConflictsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -656,6 +650,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testVaribleNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -937,6 +932,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testVaribleNameConflictsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -1025,6 +1021,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testEnumeratorNameConflicts() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -1297,6 +1294,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testEnumeratorNameConflictsPlainC() throws Exception {
 		createCFwdDecls("c_fwd.h");
 		createCDefs("c_def.h");
@@ -1373,6 +1371,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testMemberNameConflicts1() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -1475,6 +1474,7 @@ public class RenameVariableTests extends RenameTestBase {
 						+ "New element: static_method  \n" + "Conflicting element type: Method");
 	}
 
+	@Test
 	public void testMemberNameConflicts2() throws Exception {
 		createCppFwdDecls("cpp_fwd.hh");
 		createCppDefs("cpp_def.hh");
@@ -1657,6 +1657,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertRefactoringOk(status);
 	}
 
+	@Test
 	public void testReferenceViaMacro() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define PASSON(x) (x)         \n");
@@ -1676,6 +1677,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertChange(changes, cpp, offset2, 2, "z");
 	}
 
+	@Test
 	public void testReferenceViaMacro2() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define INC(x,y) x+=y      \n");
@@ -1694,6 +1696,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertChange(changes, cpp, offset2, 2, "z");
 	}
 
+	@Test
 	public void testReferenceViaMacro3() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define INC(x,y) x+=y      \n");
@@ -1714,6 +1717,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertChange(changes, cpp, offset, 2, "z");
 	}
 
+	@Test
 	public void testReferenceViaMacro4() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define INC(x)   v2++      \n");
@@ -1730,6 +1734,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertChange(changes, cpp, offset, 2, "z");
 	}
 
+	@Test
 	public void testReferenceViaMacro5() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("#define INC(x)   v1++      \n");
@@ -1752,6 +1757,7 @@ public class RenameVariableTests extends RenameTestBase {
 		assertChange(changes, cpp, offset2, 2, "z");
 	}
 
+	@Test
 	public void testBug72646() throws Exception {
 		StringWriter writer = new StringWriter();
 		writer.write("class C2: public C1 {     \n");

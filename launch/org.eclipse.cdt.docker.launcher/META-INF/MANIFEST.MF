@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.cdt.docker.launcher;singleton:=true
-Bundle-Version: 2.1.800.qualifier
+Bundle-Version: 2.1.900.qualifier
 Bundle-Activator: org.eclipse.cdt.docker.launcher.DockerLaunchUIPlugin
 Bundle-Vendor: %Plugin.vendor
 Bundle-Localization: plugin
@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.ui;bundle-version="[3.207.200,4)",
  org.eclipse.cdt.launch;bundle-version="[11.0.0,12)",
  org.eclipse.debug.core;bundle-version="[3.23.0,4)",
  org.eclipse.debug.ui;bundle-version="[3.19.0,4.0.0)",
- org.eclipse.cdt.core;bundle-version="[9.3.0,10.0.0)",
+ org.eclipse.cdt.core;bundle-version="[9.3.300,10.0.0)",
  org.eclipse.cdt.debug.core;bundle-version="[9.0.0,10)",
  org.eclipse.cdt.ui;bundle-version="[9.1.0,10.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.22.600,4)",

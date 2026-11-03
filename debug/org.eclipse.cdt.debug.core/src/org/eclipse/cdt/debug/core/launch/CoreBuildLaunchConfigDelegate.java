@@ -12,22 +12,18 @@ package org.eclipse.cdt.debug.core.launch;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
 import org.eclipse.cdt.core.build.ICBuildConfigurationManager;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainManager;
-import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.cdt.debug.internal.core.InternalDebugCoreMessages;
-import org.eclipse.core.resources.IBuildConfiguration;
+import org.eclipse.cdt.internal.core.build.CBuildConfigurationManager;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -169,26 +165,7 @@ public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationT
 
 		ICBuildConfiguration buildConfig = getBuildConfiguration(configuration, mode, target, monitor);
 		if (buildConfig != null) {
-			IProject project = getProject(configuration);
-			CoreModel m = CoreModel.getDefault();
-			synchronized (m) {
-				IProjectDescription desc = project.getDescription();
-				IBuildConfiguration[] bconfigs = project.getBuildConfigs();
-				Set<String> names = new LinkedHashSet<>();
-				for (IBuildConfiguration bconfig : bconfigs) {
-					names.add(bconfig.getName());
-				}
-				// must add default config name as it may not be in build config list
-				names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
-				// ensure active config is last in list so clean build will clean
-				// active config last and this will be left in build console for user to see
-				names.remove(buildConfig.getBuildConfiguration().getName());
-				names.add(buildConfig.getBuildConfiguration().getName());
-
-				desc.setBuildConfigs(names.toArray(new String[0]));
-				desc.setActiveBuildConfig(buildConfig.getBuildConfiguration().getName());
-				project.setDescription(desc, monitor);
-			}
+			CBuildConfigurationManager.setActiveBuildConfiguration(buildConfig.getBuildConfiguration(), monitor);
 		}
 
 		// proceed with the build

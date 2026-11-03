@@ -357,12 +357,14 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	}
 
 	private OptionStringValue[] resolve(OptionStringValue ov, IOption option, SupplierBasedCdtVariableSubstitutor sub) {
+		boolean isMacro = getKind() == ICSettingEntry.MACRO;
 		String value = ov.getValue();
-		value = stripQuotes(value, false);
+		if (!isMacro)
+			value = stripQuotes(value, false);
 		String[] rValues = resolve(value, option, sub);
 		OptionStringValue[] result = new OptionStringValue[rValues.length];
 		for (int i = 0; i < result.length; i++) {
-			result[i] = substituteValue(ov, stripQuotes(rValues[i], false));
+			result[i] = substituteValue(ov, isMacro ? unquoteMacro(rValues[i]) : stripQuotes(rValues[i], false));
 		}
 		return result;
 	}
@@ -485,8 +487,9 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			SupplierBasedCdtVariableSubstitutor subst) {
 		String result;
 		boolean checkQuote = true;
-		if (entry.getKind() == ICSettingEntry.MACRO && entry.getValue().length() > 0) {
-			result = new StringBuilder(entry.getName()).append('=').append(entry.getValue()).toString();
+		if (entry.getKind() == ICSettingEntry.MACRO) {
+			result = quoteMacro(entry.getName(), entry.getValue());
+			checkQuote = false;
 		} else if (entry instanceof ICLanguageSettingPathEntry) {
 			IOptionPathConverter converter = fLangData.getTool().getOptionPathConverter();
 			if (converter instanceof IReverseOptionPathConverter) {
@@ -580,6 +583,95 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		if (quoted)
 			return pathName;
 		return nullIfNone ? null : pathName;
+	}
+
+	/**
+	 * Characters having a special meaning for a shell, which require the macro to be quoted.
+	 * Variable references are quoted too, as their value may contain spaces.
+	 */
+	private static final String SHELL_SPECIAL_CHARS = " \t\n'\\$`;&|<>()*?[]"; //$NON-NLS-1$
+
+	/**
+	 * Returns the option value for a macro, which is passed to the compiler through a shell by
+	 * the generated makefiles. The value is what the compiler is to see, e.g. {@code "Hello World"}
+	 * for a string literal, and is quoted as a single shell word:
+	 * <ul>
+	 * <li>{@code NoSpace} is stored as is</li>
+	 * <li>{@code With Space} is stored as {@code "With Space"}</li>
+	 * <li>{@code "QuotedNoSpace"} is stored as {@code \"QuotedNoSpace\"}</li>
+	 * <li>{@code "Quoted With Space"} is stored as {@code "\"Quoted With Space\""}</li>
+	 * </ul>
+	 * A name that is not an identifier, e.g. the one of a function-like macro, is quoted together
+	 * with the value.
+	 *
+	 * @see #unquoteMacro(String)
+	 */
+	private static String quoteMacro(String name, String value) {
+		if (value.isEmpty()) {
+			return quoteShellWord(name);
+		}
+		if (!needsShellQuotes(name) && name.indexOf('"') < 0) {
+			return name + '=' + quoteShellWord(value);
+		}
+		return quoteShellWord(name + '=' + value);
+	}
+
+	private static boolean needsShellQuotes(String str) {
+		for (int i = 0; i < str.length(); i++) {
+			if (SHELL_SPECIAL_CHARS.indexOf(str.charAt(i)) >= 0) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static String quoteShellWord(String str) {
+		if (!needsShellQuotes(str)) {
+			return str.replace("\"", "\\\""); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		// Within double quotes, a backslash escapes only ", \, $ and `, and only those need escaping.
+		// $ is not escaped, so that variable references are expanded
+		StringBuilder buf = new StringBuilder(str.length() + 2).append('"');
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (c == '"' || c == '`') {
+				buf.append('\\');
+			} else if (c == '\\' && (i == str.length() - 1 || "\"\\$`".indexOf(str.charAt(i + 1)) >= 0)) { //$NON-NLS-1$
+				buf.append('\\');
+			}
+			buf.append(c);
+		}
+		return buf.append('"').toString();
+	}
+
+	/**
+	 * Returns the macro, as name=value, from its option value by removing the quotes and escapes
+	 * the way a shell does. This reads the values quoted by {@link #quoteMacro(String, String)},
+	 * as well as the ones entered directly in the option or quoted by previous versions, e.g.
+	 * {@code "FOO=a b"}, {@code FOO="a b"} and {@code FOO=\"str\"}.
+	 */
+	private static String unquoteMacro(String str) {
+		StringBuilder buf = new StringBuilder(str.length());
+		char quote = 0;
+		for (int i = 0; i < str.length(); i++) {
+			char c = str.charAt(i);
+			if (quote == '\'') {
+				if (c == '\'') {
+					quote = 0;
+				} else {
+					buf.append(c);
+				}
+			} else if (c == '\\' && i < str.length() - 1 && (quote == 0 || "\"\\$`".indexOf(str.charAt(i + 1)) >= 0)) { //$NON-NLS-1$
+				buf.append(str.charAt(++i));
+			} else if (c == '"') {
+				quote = quote == 0 ? '"' : 0;
+			} else if (c == '\'' && quote == 0) {
+				quote = '\'';
+			} else {
+				buf.append(c);
+			}
+		}
+		return buf.toString();
 	}
 
 	public static String[] macroNameValueFromValue(String value) {
@@ -769,10 +861,16 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		return list.toArray(new UserEntryInfo[list.size()]);
 	}
 
-	private static UserEntryInfo createDesequencedEntry(UserEntryInfo info) {
+	private UserEntryInfo createDesequencedEntry(UserEntryInfo info) {
 		OptionStringValue resolvedValue = info.fBsResolvedValue;
 		if (resolvedValue != null) {
-			String v = doubleQuotePath(resolvedValue.getValue(), true);
+			String v;
+			if (getKind() == ICSettingEntry.MACRO) {
+				String nv[] = macroNameValueFromValue(resolvedValue.getValue());
+				v = quoteMacro(nv[0], nv[1]);
+			} else {
+				v = doubleQuotePath(resolvedValue.getValue(), true);
+			}
 			if (v != null)
 				resolvedValue = substituteValue(resolvedValue, v);
 		}

@@ -12,9 +12,11 @@ package org.eclipse.cdt.cmake.ui.internal.tests;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.cdt.cmake.core.CMakeNature;
 import org.eclipse.cdt.core.build.ICBuildConfiguration;
+import org.eclipse.cdt.core.build.IToolChain;
+import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.launch.ui.corebuild.CoreBuildTab;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -66,11 +70,17 @@ public class NoToolchainsBuildTabTest {
 	private static final String TARGET_TYPE = "org.eclipse.cdt.cmake.ui.tests.targetType";
 	private static final String TARGET_ID = "NoToolchainTarget";
 	private static final String LAUNCH_CONFIG_TYPE = "org.eclipse.cdt.launch.applicationLaunchType";
+	private static final String TARGET_OS = "no-such-os";
+	private static final String TARGET_ARCH = "no-such-arch";
+	private static final String TOOLCHAIN_TYPE = "org.eclipse.cdt.cmake.ui.tests.toolChainType";
+	private static final String TOOLCHAIN_ID = "org.eclipse.cdt.cmake.ui.tests.toolChain";
 
 	private IProject project;
 	private ILaunchTargetManager targetManager;
 	private ILaunchTarget target;
 	private ILaunchConfiguration launchConfig;
+	private IToolChainManager toolChainManager;
+	private IToolChain testToolChain;
 
 	private Shell shell;
 	private CoreBuildTab tab;
@@ -91,8 +101,8 @@ public class NoToolchainsBuildTabTest {
 		BundleContext context = launchBarCore.getBundleContext();
 		targetManager = context.getService(context.getServiceReference(ILaunchTargetManager.class));
 		ILaunchTargetWorkingCopy targetCopy = targetManager.addLaunchTarget(TARGET_TYPE, TARGET_ID).getWorkingCopy();
-		targetCopy.setAttribute(ILaunchTarget.ATTR_OS, "no-such-os");
-		targetCopy.setAttribute(ILaunchTarget.ATTR_ARCH, "no-such-arch");
+		targetCopy.setAttribute(ILaunchTarget.ATTR_OS, TARGET_OS);
+		targetCopy.setAttribute(ILaunchTarget.ATTR_ARCH, TARGET_ARCH);
 		target = targetCopy.save();
 
 		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager()
@@ -117,6 +127,9 @@ public class NoToolchainsBuildTabTest {
 		}
 		if (project != null) {
 			project.delete(true, true, null);
+		}
+		if (testToolChain != null) {
+			toolChainManager.removeToolChain(testToolChain);
 		}
 	}
 
@@ -160,6 +173,78 @@ public class NoToolchainsBuildTabTest {
 			assertFalse(workingCopy.hasAttribute(ICBuildConfiguration.TOOLCHAIN_ID));
 			assertFalse(workingCopy.hasAttribute(ICBuildConfiguration.TOOLCHAIN_TYPE));
 		});
+	}
+
+	/**
+	 * The dialog reuses its tab instances, so a tab that reported there was no toolchain must stop reporting the
+	 * error when it is initialized again and there is now a toolchain for the launch target.
+	 */
+	@Test
+	public void errorIsClearedWhenAToolchainBecomesAvailable() throws Throwable {
+		runOnUiThread(() -> {
+			createAndInitializeTab();
+
+			assertFalse(tab.isValid(launchConfig), "launch configuration should be invalid without toolchains");
+			assertNotNull(tab.getErrorMessage(), "an error message should be set");
+		});
+
+		// Make a toolchain available that matches the launch target
+		Bundle cdtCore = FrameworkUtil.getBundle(IToolChainManager.class);
+		cdtCore.start();
+		BundleContext context = cdtCore.getBundleContext();
+		toolChainManager = context.getService(context.getServiceReference(IToolChainManager.class));
+		testToolChain = createToolChain();
+		toolChainManager.addToolChain(testToolChain);
+
+		runOnUiThread(() -> {
+			// Initialize the same tab again, as the dialog does
+			tab.initializeFrom(launchConfig);
+
+			assertTrue(tab.isValid(launchConfig), "launch configuration should be valid with a toolchain");
+			assertNull(tab.getErrorMessage(), "the error message should be cleared");
+		});
+	}
+
+	/**
+	 * Creates a toolchain that matches the launch target. Only the properties used to match a toolchain to a launch
+	 * target and to identify it are implemented.
+	 */
+	private static IToolChain createToolChain() {
+		return (IToolChain) Proxy.newProxyInstance(NoToolchainsBuildTabTest.class.getClassLoader(),
+				new Class<?>[] { IToolChain.class }, (proxy, method, args) -> {
+					switch (method.getName()) {
+					case "getId":
+						return TOOLCHAIN_ID;
+					case "getTypeId":
+						return TOOLCHAIN_TYPE;
+					case "getName":
+					case "toString":
+						return "Test toolchain";
+					case "getVersion":
+						return "1";
+					case "getProperty":
+						if (IToolChain.ATTR_OS.equals(args[0])) {
+							return TARGET_OS;
+						}
+						return IToolChain.ATTR_ARCH.equals(args[0]) ? TARGET_ARCH : null;
+					case "hashCode":
+						return System.identityHashCode(proxy);
+					case "equals":
+						return proxy == args[0];
+					default:
+						if (method.isDefault()) {
+							return InvocationHandler.invokeDefault(proxy, method, args);
+						}
+						Class<?> returnType = method.getReturnType();
+						if (returnType.isPrimitive() && returnType != void.class) {
+							return Array.get(Array.newInstance(returnType, 1), 0);
+						}
+						if (returnType.isArray()) {
+							return Array.newInstance(returnType.getComponentType(), 0);
+						}
+						return returnType == List.class ? List.of() : null;
+					}
+				});
 	}
 
 	/**

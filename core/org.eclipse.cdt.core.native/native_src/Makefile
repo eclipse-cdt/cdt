@@ -115,7 +115,7 @@ $(OS_DIR_WIN32_X86_64)/starter.exe: win/starter.c win/util.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
 	x86_64-w64-mingw32-gcc $(COMMON_CFLAGS) -o $@ -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
-		-DUNICODE \
+		-DUNICODE -D__USE_MINGW_ANSI_STDIO=0 \
 		$^ \
 		-lpsapi
 
@@ -123,7 +123,7 @@ $(OS_DIR_WIN32_X86_64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c win
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
 	x86_64-w64-mingw32-gcc $(COMMON_CFLAGS) -o $@ -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
-		-DUNICODE \
+		-DUNICODE -D__USE_MINGW_ANSI_STDIO=0 \
 		$^ \
 		-Wl,--kill-at --shared
 
@@ -132,7 +132,7 @@ $(OS_DIR_WIN32_AARCH64)/starter.exe: win/starter.c win/util.c
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
 	aarch64-w64-mingw32-gcc $(COMMON_CFLAGS) -o $@ -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
-		-DUNICODE \
+		-DUNICODE -D__USE_MINGW_ANSI_STDIO=0 \
 		$^ \
 		-lpsapi
 
@@ -140,7 +140,7 @@ $(OS_DIR_WIN32_AARCH64)/spawner.dll: win/iostream.c win/raise.c win/spawner.c wi
 	mkdir -p $(dir $@) && \
 	$(REPRODUCIBLE_BUILD_WRAPPER) \
 	aarch64-w64-mingw32-gcc $(COMMON_CFLAGS) -o $@ -Iinclude -I"$(JAVA_HOME)/include" -I"$(JAVA_HOME)/include/win32" \
-		-DUNICODE \
+		-DUNICODE -D__USE_MINGW_ANSI_STDIO=0 \
 		$^ \
 		-Wl,--kill-at --shared
 

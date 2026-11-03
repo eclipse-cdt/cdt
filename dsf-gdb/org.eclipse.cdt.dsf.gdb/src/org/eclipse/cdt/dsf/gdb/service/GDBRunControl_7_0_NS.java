@@ -69,6 +69,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugPreferenceConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.service.TargetAvailableInterrupts;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionActiveOperation;
 import org.eclipse.cdt.dsf.gdb.internal.service.control.StepIntoSelectionUtils;
@@ -406,13 +407,17 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 	 */
 	private Set<IMIExecutionDMContext> fDisableNextRunningEventDmcSet = new HashSet<>();
 	/**
-	 * Set of threads for which the next MISignal (MIStopped) event should be silenced.
+	 * Tracks the interrupts that executeWithTargetAvailable() sends.
+	 * In non-stop mode, each thread stops and runs on its own.
 	 */
-	private Set<IMIExecutionDMContext> fDisableNextSignalEventDmcSet = new HashSet<>();
-	/**
-	 * Map that stores the silenced MIStopped event for the specified thread, in case we need to use it for a failure.
-	 */
-	private Map<IMIExecutionDMContext, MIStoppedEvent> fSilencedSignalEventMap = new HashMap<>();
+	private final TargetAvailableInterrupts<IMIExecutionDMContext> fTargetAvailableInterrupts = TargetAvailableInterrupts
+			.nonStop(
+
+					thread -> isSuspended(thread),
+
+					thread -> this.fExecutionDmcToSuspendSet.remove(thread)
+
+			);
 
 	/**
 	 * This variable allows us to know if run control operation
@@ -449,12 +454,14 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 		fProcessService = getServicesTracker().getService(IGDBProcesses.class);
 
 		getSession().addServiceEventListener(this, null);
+		getSession().addServiceEventListener(fTargetAvailableInterrupts, null);
 		rm.done();
 	}
 
 	@Override
 	public void shutdown(final RequestMonitor rm) {
 		unregister();
+		getSession().removeServiceEventListener(fTargetAvailableInterrupts);
 		getSession().removeServiceEventListener(this);
 		super.shutdown(rm);
 	}
@@ -1545,21 +1552,12 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 			CountingRequestMonitor crm = new ImmediateCountingRequestMonitor(rm);
 			crm.setDoneCount(fExecutionDmcToSuspendSet.size());
 
-			for (final IMIExecutionDMContext thread : fExecutionDmcToSuspendSet) {
+			// Iterate over a copy: a thread that stops by itself is removed from the set
+			for (final IMIExecutionDMContext thread : new ArrayList<>(fExecutionDmcToSuspendSet)) {
 				assert !fDisableNextRunningEventDmcSet.contains(thread);
-				assert !fDisableNextSignalEventDmcSet.contains(thread);
 
-				// Don't broadcast the next stopped signal event
-				fDisableNextSignalEventDmcSet.add(thread);
-
-				suspend(thread, new ImmediateRequestMonitor(crm) {
-					@Override
-					protected void handleFailure() {
-						// We weren't able to suspend, so abort the operation
-						fDisableNextSignalEventDmcSet.remove(thread);
-						super.handleFailure();
-					}
-				});
+				// The stop that this interrupt causes is not broadcast
+				fTargetAvailableInterrupts.interrupt(thread, GDBRunControl_7_0_NS.this::suspend, crm);
 			}
 		}
 
@@ -1641,7 +1639,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 						new ImmediateDataRequestMonitor<MIInfo>(crm) {
 							@Override
 							protected void handleSuccess() {
-								fSilencedSignalEventMap.remove(thread);
+								fTargetAvailableInterrupts.resumed(thread);
 								super.handleSuccess();
 							}
 
@@ -1650,14 +1648,11 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 								// Darn, we're unable to restart the target.  Must cleanup!
 								fDisableNextRunningEventDmcSet.remove(thread);
 
-								// We must also sent the Stopped event that we had kept silent
-								MIStoppedEvent event = fSilencedSignalEventMap.remove(thread);
+								// We must also send the Stopped event that we had kept silent.
+								// If it didn't arrive yet, it will not be silenced anymore.
+								MIStoppedEvent event = fTargetAvailableInterrupts.resumeFailed(thread);
 								if (event != null) {
 									eventDispatched(event);
-								} else {
-									// Maybe the stopped event didn't arrive yet.
-									// We don't want to silence it anymore
-									fDisableNextSignalEventDmcSet.remove(thread);
 								}
 
 								super.handleFailure();
@@ -1716,8 +1711,7 @@ public class GDBRunControl_7_0_NS extends AbstractDsfService
 		// to set a breakpoint.  This can happen during a run-to-line
 		// or step-into operation, so we need to check it first.
 		IMIExecutionDMContext threadDmc = DMContexts.getAncestorOfType(e.getDMContext(), IMIExecutionDMContext.class);
-		if (e instanceof MISignalEvent && fDisableNextSignalEventDmcSet.remove(threadDmc)) {
-			fSilencedSignalEventMap.put(threadDmc, e);
+		if (fTargetAvailableInterrupts.handleStop(threadDmc, e)) {
 			// Don't broadcast the stopped event
 			return;
 		}

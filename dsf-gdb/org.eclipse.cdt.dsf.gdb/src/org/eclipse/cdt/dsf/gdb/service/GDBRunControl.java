@@ -52,7 +52,6 @@ import org.eclipse.cdt.dsf.mi.service.command.events.MIBreakpointHitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIInferiorExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIRunningEvent;
-import org.eclipse.cdt.dsf.mi.service.command.events.MISignalEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIStoppedEvent;
 import org.eclipse.cdt.dsf.mi.service.command.events.MIThreadExitEvent;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakInsertInfo;
@@ -403,9 +402,7 @@ public class GDBRunControl extends MIRunControl {
 		// A disabled signal event is due to interrupting the target
 		// to set a breakpoint.  This can happen during a run-to-line
 		// or step-into operation, so we need to check it first.
-		if (fDisableNextSignalEvent && e instanceof MISignalEvent) {
-			fDisableNextSignalEvent = false;
-			fSilencedSignalEvent = e;
+		if (handleTargetAvailableStop(e)) {
 			// We don't broadcast this stopped event
 			return;
 		}

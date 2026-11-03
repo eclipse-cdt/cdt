@@ -59,6 +59,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlShutdownDMEvent;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.service.TargetAvailableInterrupts;
 import org.eclipse.cdt.dsf.gdb.internal.service.command.events.MITracepointSelectedEvent;
 import org.eclipse.cdt.dsf.mi.service.MIBreakpoints.MIBreakpointDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.CommandFactory;
@@ -413,14 +414,35 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	/**
 	 * Indicates that the next MISignal (MIStopped) event should be silenced.
 	 * @since 4.3
+	 * @deprecated Not used anymore. The interrupts that
+	 *             {@link #executeWithTargetAvailable} sends are now tracked
+	 *             internally, see {@link #handleTargetAvailableStop}.
 	 */
+	@Deprecated
 	protected boolean fDisableNextSignalEvent;
 	/**
 	 * Stores the silenced MIStopped event in case we need to use it
 	 * for a failure.
 	 * @since 4.3
+	 * @deprecated Not used anymore. The interrupts that
+	 *             {@link #executeWithTargetAvailable} sends are now tracked
+	 *             internally, see {@link #handleTargetAvailableStop}.
 	 */
+	@Deprecated
 	protected MIStoppedEvent fSilencedSignalEvent;
+
+	/**
+	 * Tracks the interrupts that executeWithTargetAvailable() sends.
+	 * In all-stop mode, any stop or resume applies to the whole target.
+	 */
+	private final TargetAvailableInterrupts<IExecutionDMContext> fTargetAvailableInterrupts = TargetAvailableInterrupts
+			.allStop(
+
+					context -> isSuspended(context),
+
+					context -> setTargetAvailable(true)
+
+			);
 
 	private static final String FAKE_THREAD_ID = "0"; //$NON-NLS-1$
 
@@ -454,11 +476,13 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		fMICommandCache = new CommandCache(getSession(), bufferedCommandControl);
 		fMICommandCache.setContextAvailable(fConnection.getContext(), true);
 		getSession().addServiceEventListener(this, null);
+		getSession().addServiceEventListener(fTargetAvailableInterrupts, null);
 		rm.done();
 	}
 
 	@Override
 	public void shutdown(final RequestMonitor rm) {
+		getSession().removeServiceEventListener(fTargetAvailableInterrupts);
 		getSession().removeServiceEventListener(this);
 		fMICommandCache.reset();
 		super.shutdown(rm);
@@ -541,9 +565,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	 */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIStoppedEvent e) {
-		if (fDisableNextSignalEvent && e instanceof MISignalEvent) {
-			fDisableNextSignalEvent = false;
-			fSilencedSignalEvent = e;
+		if (handleTargetAvailableStop(e)) {
 			// We don't broadcast this stopped event
 			return;
 		}
@@ -1078,6 +1100,21 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 	private LinkedList<TargetAvailableOperationInfo> fOperationsPending = new LinkedList<>();
 
 	/**
+	 * Checks if the stop was caused by the interrupt that
+	 * {@link #executeWithTargetAvailable} sent. If the target stopped by itself
+	 * instead (for example at a breakpoint), the target is left stopped when
+	 * the operation completes. Subclasses that override
+	 * {@link #eventDispatched(MIStoppedEvent)} must call this method before
+	 * they handle the event.
+	 *
+	 * @return true if the stop must not be broadcast
+	 * @since 7.4
+	 */
+	protected boolean handleTargetAvailableStop(MIStoppedEvent e) {
+		return fTargetAvailableInterrupts.handleStop(e.getDMContext(), e);
+	}
+
+	/**
 	 * Returns whether the target is available to perform operations
 	 * @since 3.0
 	 */
@@ -1341,18 +1378,9 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 		public void execute(final RequestMonitor rm) {
 			if (!isTargetAvailable()) {
 				assert fDisableNextRunningEvent == false;
-				assert fDisableNextSignalEvent == false;
 
-				// Don't broadcast the coming stopped signal event
-				fDisableNextSignalEvent = true;
-				suspend(getContextToSuspend(), new RequestMonitor(getExecutor(), rm) {
-					@Override
-					protected void handleFailure() {
-						// We weren't able to suspend, so abort the operation
-						fDisableNextSignalEvent = false;
-						super.handleFailure();
-					}
-				});
+				// The stop that this interrupt causes is not broadcast
+				fTargetAvailableInterrupts.interrupt(getContextToSuspend(), MIRunControl.this::suspend, rm);
 			} else {
 				rm.done();
 			}
@@ -1431,7 +1459,7 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 						new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 							@Override
 							protected void handleSuccess() {
-								fSilencedSignalEvent = null;
+								fTargetAvailableInterrupts.resumed(getContextToSuspend());
 								super.handleSuccess();
 							}
 
@@ -1440,14 +1468,12 @@ public class MIRunControl extends AbstractDsfService implements IMIRunControl, I
 								// Darn, we're unable to restart the target.  Must cleanup!
 								fDisableNextRunningEvent = false;
 
-								// We must also sent the Stopped event that we had kept silent
-								if (fSilencedSignalEvent != null) {
-									eventDispatched(fSilencedSignalEvent);
-									fSilencedSignalEvent = null;
-								} else {
-									// Maybe the stopped event didn't arrive yet.
-									// We don't want to silence it anymore
-									fDisableNextSignalEvent = false;
+								// We must also send the Stopped event that we had kept silent.
+								// If it didn't arrive yet, it will not be silenced anymore.
+								MIStoppedEvent silencedEvent = fTargetAvailableInterrupts
+										.resumeFailed(getContextToSuspend());
+								if (silencedEvent != null) {
+									eventDispatched(silencedEvent);
 								}
 
 								super.handleFailure();

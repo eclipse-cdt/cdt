@@ -147,6 +147,8 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 			setMessage(null);
 			return false;
 		}
+		// The superclass does not clear the error set above when the tab is initialized again with a toolchain
+		setErrorMessage(null);
 		return super.isValid(launchConfig);
 	}
 

@@ -48,6 +48,8 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -356,6 +358,17 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			}
 		}, getGDBExitWaitTime(), TimeUnit.SECONDS);
 
+		// GDB can hang in -gdb-exit while a running program starts threads,
+		// so in async mode stop the program first, see #1065
+		suspendRunningProcesses(runControl, new RequestMonitor(getExecutor(), null) {
+			@Override
+			protected void handleCompleted() {
+				exitGDB(forceQuitTask, rm);
+			}
+		});
+	}
+
+	private void exitGDB(Future<?> forceQuitTask, RequestMonitor rm) {
 		queueCommand(getCommandFactory().createMIGDBExit(getContext()),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 					@Override
@@ -371,6 +384,31 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 						// to leave enough time for the interrupt() to complete.
 					}
 				});
+	}
+
+	/**
+	 * Suspends the processes that run while GDB accepts commands, that is in async mode.
+	 */
+	private void suspendRunningProcesses(IMIRunControl runControl, RequestMonitor rm) {
+		IProcesses processes = getServicesTracker().getService(IProcesses.class);
+		if (runControl == null || processes == null || !runControl.isTargetAcceptingCommands()) {
+			rm.done();
+			return;
+		}
+		processes.getProcessesBeingDebugged(fControlDmc, new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+				int count = 0;
+				for (IDMContext context : getData()) {
+					if (context instanceof IContainerDMContext container && !runControl.isSuspended(container)) {
+						runControl.suspend(container, crm);
+						count++;
+					}
+				}
+				crm.setDoneCount(count);
+			}
+		});
 	}
 
 	/**

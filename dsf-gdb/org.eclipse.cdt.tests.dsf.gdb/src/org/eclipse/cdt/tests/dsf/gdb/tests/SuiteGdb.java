@@ -16,6 +16,7 @@ package org.eclipse.cdt.tests.dsf.gdb.tests;
 import org.eclipse.cdt.tests.dsf.gdb.framework.BaseParametrizedTestCase;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.GDBMultiNonStopRunControlTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIExpressionsNonStopTest;
+import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIRunControlNonStopTargetAvailableRaceTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MIRunControlNonStopTargetAvailableTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.MultiProcessRemoteTest;
 import org.eclipse.cdt.tests.dsf.gdb.tests.nonstop.OperationsWhileTargetIsRunningNonStopTest;
@@ -48,7 +49,8 @@ import org.junit.runners.Suite;
 		GDBRemoteTracepointsTest.class, TraceFileTest.class, GDBConsoleSynchronizingTest.class, MIMemoryTest.class,
 		MIDisassemblyTest.class, GDBProcessesTest.class, PostMortemCoreTest.class, CommandTimeoutTest.class,
 		ThreadStackFrameSyncTest.class, CommandLineArgsTest.class, MIAsyncErrorProcessorTests.class,
-		MultiProcessRemoteTest.class
+		MultiProcessRemoteTest.class, MIRunControlTargetAvailableRaceTest.class,
+		MIRunControlNonStopTargetAvailableRaceTest.class
 /* Add your test class here */
 })
 public class SuiteGdb {

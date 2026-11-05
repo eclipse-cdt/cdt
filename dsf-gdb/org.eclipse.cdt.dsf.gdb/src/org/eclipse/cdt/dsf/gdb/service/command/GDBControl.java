@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -48,6 +49,8 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -356,6 +359,20 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			}
 		}, getGDBExitWaitTime(), TimeUnit.SECONDS);
 
+		// GDB can hang in -gdb-exit while a running program starts threads,
+		// so in async mode stop the program first, see #1065
+		suspendRunningProcesses(runControl, forceQuitTask, new RequestMonitor(getExecutor(), null) {
+			@Override
+			protected void handleCompleted() {
+				// The forceQuitTask destroys GDB if the suspend takes too long
+				if (!forceQuitTask.isDone()) {
+					exitGDB(forceQuitTask, rm);
+				}
+			}
+		});
+	}
+
+	private void exitGDB(Future<?> forceQuitTask, RequestMonitor rm) {
 		queueCommand(getCommandFactory().createMIGDBExit(getContext()),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 					@Override
@@ -371,6 +388,75 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 						// to leave enough time for the interrupt() to complete.
 					}
 				});
+	}
+
+	/**
+	 * Suspends the processes that run while GDB accepts commands, that is in async mode.
+	 */
+	private void suspendRunningProcesses(IMIRunControl runControl, Future<?> forceQuitTask, RequestMonitor rm) {
+		IProcesses processes = getServicesTracker().getService(IProcesses.class);
+		if (runControl == null || processes == null || !runControl.isTargetAcceptingCommands()) {
+			rm.done();
+			return;
+		}
+		processes.getProcessesBeingDebugged(fControlDmc, new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm);
+				int count = 0;
+				for (IDMContext context : getData()) {
+					if (context instanceof IContainerDMContext container) {
+						suspendAndWait(runControl, container, forceQuitTask, crm);
+						count++;
+					}
+				}
+				crm.setDoneCount(count);
+			}
+		});
+	}
+
+	/**
+	 * Suspends the process if a thread runs, and waits until all its threads stop.
+	 */
+	private void suspendAndWait(IMIRunControl runControl, IContainerDMContext container, Future<?> forceQuitTask,
+			RequestMonitor rm) {
+		runControl.canSuspend(container, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (!getData()) {
+					rm.done();
+					return;
+				}
+				runControl.suspend(container, new RequestMonitor(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						waitUntilStopped(runControl, container, forceQuitTask, rm);
+					}
+				});
+			}
+		});
+	}
+
+	/**
+	 * In non-stop mode, suspend() completes before all threads stop.
+	 */
+	private void waitUntilStopped(IMIRunControl runControl, IContainerDMContext container, Future<?> forceQuitTask,
+			RequestMonitor rm) {
+		runControl.canSuspend(container, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (!getData() || forceQuitTask.isDone()) {
+					rm.done();
+					return;
+				}
+				try {
+					getExecutor().schedule(() -> waitUntilStopped(runControl, container, forceQuitTask, rm), 10,
+							TimeUnit.MILLISECONDS);
+				} catch (RejectedExecutionException e) {
+					rm.done();
+				}
+			}
+		});
 	}
 
 	/**

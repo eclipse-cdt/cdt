@@ -109,8 +109,9 @@ Expected:
 
 Expected:
 
-- The Eclipse help opens on the "Before you begin" topic.
-- Known limitation: on Windows the Edit Configuration dialog is modal, so the help view cannot be used until the dialog is closed.
+- The help tray of the Edit Configuration dialog opens to the right of the dialog and shows the "Before you begin" topic.
+- The topic can be read and scrolled while the dialog is open, even though the dialog is modal.
+- The help tray can be closed again with the help (?) button at the bottom left of the dialog.
 
 7. Click **Cancel**.
 

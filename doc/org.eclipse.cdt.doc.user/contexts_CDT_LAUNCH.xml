@@ -7,6 +7,7 @@
 	<!ENTITY envPage "Environment page, Run/Debug dialog box">
 	<!ENTITY debuggerPage "Debugger page, Run/Debug dialog box">
 	<!ENTITY sourcePage "Source page, Run/Debug dialog box">
+	<!ENTITY beforeYouBegin "Before you begin">
 ]>
 <contexts>
 
@@ -44,6 +45,13 @@
    <description>Specify where the debugger should look for source files. </description>
    <topic href="reference/cdt_u_run_dbg_srce.htm"
    	label="&sourcePage;"/>
+</context>
+
+<!-- No description on purpose: with a single topic and no description, the help system opens the
+     topic directly instead of listing it -->
+<context id ="launch_configuration_dialog_no_toolchain">
+   <topic href="concepts/cdt_c_before_you_begin.htm"
+   	label="&beforeYouBegin;"/>
 </context>
 
 <context id ="run_dbg_comm">

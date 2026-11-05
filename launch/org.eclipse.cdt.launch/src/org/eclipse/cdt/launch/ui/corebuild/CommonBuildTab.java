@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.launch.ui.ICDTLaunchHelpContextIds;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -49,7 +50,11 @@ import org.eclipse.ui.PlatformUI;
  */
 public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 
-	private static final String BEFORE_YOU_BEGIN_HELP = "/org.eclipse.cdt.doc.user/concepts/cdt_c_before_you_begin.htm"; //$NON-NLS-1$
+	/**
+	 * Help context that links to the "Before you begin" topic. See contexts_CDT_LAUNCH.xml in the user guide.
+	 */
+	private static final String NO_TOOLCHAIN_HELP_CONTEXT = ICDTLaunchHelpContextIds.PREFIX
+			+ "launch_configuration_dialog_no_toolchain"; //$NON-NLS-1$
 
 	private Combo tcCombo;
 	private Link noToolchainLink;
@@ -120,7 +125,8 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 		noToolchainLink.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PlatformUI.getWorkbench().getHelpSystem().displayHelpResource(BEFORE_YOU_BEGIN_HELP);
+				// Shows the help tray of the dialog the tab is in, which a modal dialog does not block
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp(NO_TOOLCHAIN_HELP_CONTEXT);
 			}
 		});
 

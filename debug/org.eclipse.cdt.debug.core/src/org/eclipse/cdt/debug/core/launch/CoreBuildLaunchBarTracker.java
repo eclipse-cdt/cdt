@@ -65,9 +65,9 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 	private final IToolChainManager toolChainManager = CDebugCorePlugin.getService(IToolChainManager.class);
 	private final ILaunchTargetManager targetManager = CDebugCorePlugin.getService(ILaunchTargetManager.class);
 
-	private ILaunchMode lastMode;
-	private ILaunchDescriptor lastDescriptor;
-	private ILaunchTarget lastTarget;
+	private volatile ILaunchMode lastMode;
+	private volatile ILaunchDescriptor lastDescriptor;
+	private volatile ILaunchTarget lastTarget;
 
 	public CoreBuildLaunchBarTracker() {
 		targetManager.addListener(this);

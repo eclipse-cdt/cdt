@@ -14,6 +14,7 @@ import static org.eclipse.swtbot.eclipse.finder.matchers.WidgetMatcherFactory.wi
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.widgetOfType;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,12 +33,19 @@ import org.eclipse.swtbot.eclipse.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.waits.ICondition;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotCheckBox;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
+/**
+ * Tests the Launch Bar Launch Configuration dialog.
+ *
+ * To run these tests manually from PDE, use the SWTBot Test launch delegate with Main > Run as application
+ * set to org.eclipse.ui.ide.workbench.
+ */
 public class CreateLaunchConfigTests {
 
 	private static SWTWorkbenchBot bot;
@@ -187,6 +195,67 @@ public class CreateLaunchConfigTests {
 			public String getFailureMessage() {
 				return String.format("Incorrect warning message; expected=%s, actual=%s",
 						WarningLaunchConfigTab.WARNING_MESSAGE, warningMessage.get());
+			}
+		});
+	}
+
+	/**
+	 * Tests that when editing an existing Launch Configuration, using the Launch Bar, the OK button is
+	 * disabled while a tab has an error and is enabled again once the error is fixed, even though the
+	 * visible tab still shows a warning.
+	 * @see {@link ErrorToggleLaunchConfigTab}
+	 * @see {@code org.eclipse.launchbar.ui.tests/plugin.xml}
+	 */
+	@Test
+	@Timeout(value = 2, unit = TimeUnit.MINUTES)
+	public void editExistingLaunchConfigOkEnabledWhenErrorFixedAndWarningRemains() throws Exception {
+		// Whether OK was enabled with just the warning, with the error and after fixing the error.
+		// Needs to be effectively final.
+		AtomicReference<boolean[]> okEnabled = new AtomicReference<>();
+
+		// Create a launch config to edit
+		ILaunchConfigurationType type = DebugPlugin.getDefault().getLaunchManager()
+				.getLaunchConfigurationType("org.eclipse.pde.ui.RuntimeWorkbench");
+		ILaunchConfigurationWorkingCopy wc = type.newInstance(null, "Test Config 2");
+		wc.doSave();
+
+		// Edit config with launchbar
+		bot.waitUntil(new ICondition() {
+			@Override
+			public void init(SWTBot bot) {
+				// Open the launch config created above using the launch bar
+				EditConfigDialog dialog = new SWTBotConfigSelector(bot).editConfigDialog();
+				try {
+					// Select the tab that has a warning, which becomes the visible tab
+					dialog.selectTab(ErrorToggleLaunchConfigTab.TAB_NAME);
+					SWTBotCheckBox errorCheckbox = dialog.bot().checkBox(ErrorToggleLaunchConfigTab.CHECKBOX_LABEL);
+					boolean withWarning = dialog.bot().button("OK").isEnabled();
+
+					// Make the tab have an error as well, which must disable OK
+					errorCheckbox.select();
+					boolean withError = dialog.bot().button("OK").isEnabled();
+
+					// Fix the error, which leaves just the warning and must enable OK again
+					errorCheckbox.deselect();
+					boolean errorFixed = dialog.bot().button("OK").isEnabled();
+
+					okEnabled.set(new boolean[] { withWarning, withError, errorFixed });
+				} finally {
+					// Cancel is always enabled, so the dialog is closed even when the checks above fail
+					dialog.cancel();
+				}
+			}
+
+			@Override
+			public boolean test() throws Exception {
+				boolean[] states = okEnabled.get();
+				return states != null && states[0] && !states[1] && states[2];
+			}
+
+			@Override
+			public String getFailureMessage() {
+				return String.format("Incorrect OK button enabled states; expected=[true, false, true], actual=%s",
+						Arrays.toString(okEnabled.get()));
 			}
 		});
 	}

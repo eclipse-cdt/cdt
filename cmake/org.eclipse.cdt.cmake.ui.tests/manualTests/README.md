@@ -51,6 +51,11 @@ Note: this API can only be tested in a CDT development environment that includes
 
 Expected: The CMake configuration process starts using the active launch settings.
 
+### 10) No toolchain for the launch target
+
+Verifies the Edit Launch Configuration dialog when there is no toolchain for the launch target.  
+See [no-toolchains.md](no-toolchains.md) for the test cases, which have their own setup.
+
 ## Setup & prerequisites
 ### Setup Host
   Note, these instructions do not require the following tools to be added to the system path environment variable in the OS before starting Eclipse. This allows a clean environment to be maintained.

@@ -21,6 +21,7 @@ import org.eclipse.cdt.core.build.IToolChainManager;
 import org.eclipse.cdt.debug.core.launch.CoreBuildLaunchConfigDelegate;
 import org.eclipse.cdt.launch.internal.ui.LaunchMessages;
 import org.eclipse.cdt.launch.internal.ui.LaunchUIPlugin;
+import org.eclipse.cdt.launch.ui.ICDTLaunchHelpContextIds;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -39,6 +40,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Common utilities for Core Build launch configuration tabs.
@@ -47,7 +50,14 @@ import org.eclipse.swt.widgets.Group;
  */
 public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 
+	/**
+	 * Help context that links to the "Before you begin" topic. See contexts_CDT_LAUNCH.xml in the user guide.
+	 */
+	private static final String NO_TOOLCHAIN_HELP_CONTEXT = ICDTLaunchHelpContextIds.PREFIX
+			+ "launch_configuration_dialog_no_toolchain"; //$NON-NLS-1$
+
 	private Combo tcCombo;
+	private Link noToolchainLink;
 	private ICBuildConfiguration buildConfig;
 	private IToolChain[] toolchains;
 
@@ -106,7 +116,46 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
+		noToolchainLink = new Link(tcGroup, SWT.NONE);
+		noToolchainLink.setText(LaunchMessages.CommonBuildTab_NoToolchainHelpLink);
+		GridData linkData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		linkData.exclude = true;
+		noToolchainLink.setLayoutData(linkData);
+		noToolchainLink.setVisible(false);
+		noToolchainLink.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				// Shows the help tray of the dialog the tab is in, which a modal dialog does not block
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp(NO_TOOLCHAIN_HELP_CONTEXT);
+			}
+		});
+
 		return tcGroup;
+	}
+
+	private boolean hasNoToolchains() {
+		return toolchains != null && toolchains.length == 0;
+	}
+
+	private void updateNoToolchainLink() {
+		boolean show = hasNoToolchains();
+		((GridData) noToolchainLink.getLayoutData()).exclude = !show;
+		noToolchainLink.setVisible(show);
+		noToolchainLink.getParent().getParent().layout(true, true);
+	}
+
+	@Override
+	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (hasNoToolchains()) {
+			ILaunchTarget target = getLaunchTarget();
+			setErrorMessage(String.format(LaunchMessages.CommonBuildTab_NoToolchainForTarget,
+					target != null ? target.getId() : "")); //$NON-NLS-1$
+			setMessage(null);
+			return false;
+		}
+		// The superclass does not clear the error set above when the tab is initialized again with a toolchain
+		setErrorMessage(null);
+		return super.isValid(launchConfig);
 	}
 
 	@Override
@@ -135,6 +184,7 @@ public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {
 			}
 
 			tcCombo.select(0);
+			updateNoToolchainLink();
 
 			String toolchainId = configuration.getAttribute(ICBuildConfiguration.TOOLCHAIN_ID, (String) null);
 			if (toolchainId != null) {

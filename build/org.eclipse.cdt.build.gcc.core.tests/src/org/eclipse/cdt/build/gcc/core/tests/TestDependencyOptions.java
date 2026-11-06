@@ -59,4 +59,21 @@ public class TestDependencyOptions {
 		List<String> args = Arrays.asList("-mcpu=cortex-m4", "-DMODE=1", "-I", "inc", "-Wall", "a.c");
 		assertEquals(args, remove(args.toArray(new String[0])));
 	}
+
+	@Test
+	public void preprocessorOptionsOnly() {
+		assertEquals(Arrays.asList("-c", "a.c"), remove("-Wp,-MMD,dir/.a.o.d", "-c", "a.c"));
+		assertEquals(Arrays.asList("-c", "a.c"), remove("-Wp,-MD,a.d", "-Wp,-MP,-MT,a.o", "-c", "a.c"));
+	}
+
+	@Test
+	public void preprocessorOtherOptionsStay() {
+		assertEquals(Arrays.asList("-Wp,-DFOO,-UBAR", "-c", "a.c"), remove("-Wp,-DFOO,-MMD,a.d,-UBAR", "-c", "a.c"));
+		assertEquals(Arrays.asList("-Wp,-D_FORTIFY_SOURCE=2"), remove("-Wp,-D_FORTIFY_SOURCE=2"));
+	}
+
+	@Test
+	public void preprocessorValueAtEnd() {
+		assertEquals(Arrays.asList("-c"), remove("-c", "-Wp,-MF"));
+	}
 }

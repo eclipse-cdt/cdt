@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.cdt.build.gcc.core.internal.Activator;
+import org.eclipse.cdt.build.gcc.core.internal.DependencyOptions;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.build.IToolChain;
 import org.eclipse.cdt.core.build.IToolChainProvider;
@@ -422,7 +423,10 @@ public class GCCToolChain extends PlatformObject implements IToolChain {
 			}
 
 			addDiscoveryOptions(commandLine);
-			commandLine.addAll(commandStrings.subList(offset + 1, commandStrings.size()));
+			List<String> buildArgs = new ArrayList<>(commandStrings.subList(offset + 1, commandStrings.size()));
+			// Do not make dependency files when we run the compiler for discovery
+			DependencyOptions.remove(buildArgs);
+			commandLine.addAll(buildArgs);
 
 			// Strip surrounding quotes from the args on Windows
 			if (Platform.OS_WIN32.equals(Platform.getOS())) {

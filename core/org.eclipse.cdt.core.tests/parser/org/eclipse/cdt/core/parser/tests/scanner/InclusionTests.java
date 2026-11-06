@@ -331,6 +331,73 @@ public class InclusionTests extends PreprocessorTestsBase {
 		validateEOF();
 	}
 
+	// #define test something different
+	//
+	// #if __has_include(<test.h>)
+	// found_header_with_macro1
+	// #endif
+	//
+	// #if __has_include("test.h")
+	// found_header_with_macro2
+	// #endif
+	//
+	// #define HEADER_Q "test.h"
+	// #if __has_include(HEADER_Q)
+	// found_header_with_macro3
+	// #endif
+	//
+	// #define HEADER_S <test.h>
+	// #if !__has_include(HEADER_S)
+	// not_found_header_with_macro4
+	// #endif
+	//
+	// #define HAS_HEADER_Q __has_include("test.h")
+	// #if HAS_HEADER_Q
+	// found_header_with_macro5
+	// #endif
+	//
+	// #define HAS_HEADER_S __has_include(<test.h>)
+	// #if !HAS_HEADER_S
+	// not_found_header_with_macro6
+	// #endif
+	//
+	// #define HAS_HEADER_Q_MACRO __has_include(HEADER_Q)
+	// #if HAS_HEADER_Q_MACRO
+	// found_header_with_macro7
+	// #endif
+	//
+	// #define HAS_HEADER_S_MACRO __has_include(HEADER_S)
+	// #if !HAS_HEADER_S_MACRO
+	// not_found_header_with_macro8
+	// #endif
+	//
+	// #define INCPART test.h
+	// #if !__has_include(<INCPART>)
+	// not_found_header_with_macro9
+	// #endif
+	// #if !__has_include("INCPART")
+	// not_found_header_with_macro10
+	// #endif
+	public void testHasIncludeArgumentMacroInteraction() throws Exception {
+		importFile("test.h", "");
+		IFile base = importFile("test.cpp", getAboveComment());
+		IScannerInfo scannerInfo = new ExtendedScannerInfo(Collections.EMPTY_MAP,
+				new String[] { fProject.getProject().getLocation().toOSString() }, new String[] {}, null);
+		FileContent reader = FileContent.create(base);
+		initializeScanner(reader, ParserLanguage.CPP, ParserMode.COMPLETE_PARSE, scannerInfo);
+		validateIdentifier("found_header_with_macro1");
+		validateIdentifier("found_header_with_macro2");
+		validateIdentifier("found_header_with_macro3");
+		validateIdentifier("not_found_header_with_macro4");
+		validateIdentifier("found_header_with_macro5");
+		validateIdentifier("not_found_header_with_macro6");
+		validateIdentifier("found_header_with_macro7");
+		validateIdentifier("not_found_header_with_macro8");
+		validateIdentifier("not_found_header_with_macro9");
+		validateIdentifier("not_found_header_with_macro10");
+		validateEOF();
+	}
+
 	// #include "foo.h"
 	//
 	// #ifdef __has_include_next

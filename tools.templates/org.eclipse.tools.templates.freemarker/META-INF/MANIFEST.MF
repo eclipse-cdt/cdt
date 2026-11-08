@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.tools.templates.freemarker
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.tools.templates.freemarker
-Bundle-Version: 2.0.300.qualifier
+Bundle-Version: 2.0.400.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",

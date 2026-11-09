@@ -2,18 +2,18 @@ Manifest-Version: 1.0
 Automatic-Module-Name: org.eclipse.tools.templates.freemarker
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.tools.templates.freemarker
-Bundle-Version: 2.0.300.qualifier
+Bundle-Version: 2.0.400.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.34.0,4.0.0)",
  org.eclipse.core.resources;bundle-version="[3.23.0,4.0.0)",
- org.eclipse.tools.templates.core;bundle-version="[2.0.0,3)",
- com.sun.xml.bind;bundle-version="[2.3.3,3.0.0)"
+ org.eclipse.tools.templates.core;bundle-version="[2.0.0,3)"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.tools.templates.freemarker
 Bundle-Localization: plugin
-Import-Package: freemarker.cache;version="[2.3.22,3.0.0)",
+Import-Package: com.sun.xml.bind.v2;version="[2.3.9,3.0.0)",
+ freemarker.cache;version="[2.3.22,3.0.0)",
  freemarker.template;version="[2.3.22,3.0.0)",
  javax.xml.bind;version="[2.3.3,3.0.0)",
  javax.xml.bind.annotation;version="[2.3.3,3.0.0)"

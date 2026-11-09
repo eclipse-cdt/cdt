@@ -347,6 +347,55 @@ public class UnusedSymbolInFileScopeCheckerTest extends CheckerTestCase {
 		checkNoErrors();
 	}
 
+	// #define __used __attribute__((used))
+	// static int v1 __attribute__((used));
+	// static int __attribute__((__used__)) v2;
+	// static int v3 __used;
+	// static void f1() __attribute__((used));
+	// static void f1() {}
+	// static void __attribute__((__used__)) f2() {}
+	// static void __attribute__((__constructor__)) Ctor() {}
+	// static void __attribute__((__destructor__)) Dtor() {}
+	public void testAttributeUsed_Issue616() throws Exception {
+		loadCodeAndRunC(getAboveComment());
+		checkNoErrors();
+
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	// [[gnu::used]] static int v1;
+	// [[gnu::used]] static void f1() {}
+	// [[maybe_unused]] static void f2() {}
+	public void testAttributeCppGnuUsed_Issue616() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	// static void f1 [[gnu::used]] () {}
+	public void testAttributeCppOnDeclarator_Issue616() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkNoErrors();
+	}
+
+	// [[gnu::noinline]] static void f1() {}
+	// static void __attribute__((noinline)) f2() {}
+	// static void f3(int x __attribute__((unused))) {}
+	public void testAttributeCppOtherStillReported_Issue616() throws Exception {
+		loadCodeAndRunCpp(getAboveComment());
+		checkErrorLine(1);
+		checkErrorLine(2);
+		checkErrorLine(3);
+	}
+
+	// static int v1;
+	// static int v2 __attribute__((aligned(4)));
+	public void testAttributeOtherStillReported_Issue616() throws Exception {
+		loadCodeAndRunC(getAboveComment());
+		checkErrorLine(1);
+		checkErrorLine(2);
+	}
+
 	//	extern int* pxCurrentTCB;
 	//
 	//	int main() {

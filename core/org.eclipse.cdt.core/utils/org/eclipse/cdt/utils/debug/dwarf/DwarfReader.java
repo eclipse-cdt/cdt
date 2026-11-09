@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2025 Nokia and others.
+ * Copyright (c) 2007, 2026 Nokia and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -740,13 +740,38 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 		cuName = cuCompDir = ""; //$NON-NLS-1$
 
+		// process DW_AT_str_offsets_base before attributes that reference its value
+		for (int i = 0; i < list.size(); i++) {
+			AttributeValue av = list.get(i);
+			int name = (int) av.attribute.name;
+			if (DwarfConstants.DW_AT_str_offsets_base == name) {
+				// read the base of all offsets into .debug_str_offsets
+				offsetsBase = (offsetSize == 8) ? ((Number) av.value).longValue() : ((Number) av.value).intValue();
+			}
+		}
+
 		for (int i = 0; i < list.size(); i++) {
 			AttributeValue av = list.get(i);
 			try {
 				int name = (int) av.attribute.name;
 				switch (name) {
 				case DwarfConstants.DW_AT_name:
-					cuName = (String) av.value;
+					if ((av.attribute.form == DwarfConstants.DW_FORM_strp)
+							|| (av.attribute.form == DwarfConstants.DW_FORM_line_strp)) {
+						cuName = (String) av.value;
+					} else if ((av.attribute.form == DwarfConstants.DW_FORM_strx1) && (offsets != null)
+							&& (offsetsBase != -1L)) {
+						int index = ((Number) av.value).intValue();
+						// read the pointer into .debug_str from .debug_str_offsets
+						long offset = offsetsBase + (index * offsetSize);
+						offsets.position((int) offset);
+						long strp = readOffset(offsets, offsetSize);
+						// read the string from .debug_str
+						strings.position((int) strp);
+						cuName = readString(strings);
+					} else {
+						ILog.get().warn(String.format("DW_AT_name form 0x%x not handled", av.attribute.form)); //$NON-NLS-1$
+					}
 					break;
 				case DwarfConstants.DW_AT_comp_dir:
 					if ((av.attribute.form == DwarfConstants.DW_FORM_strp)
@@ -768,10 +793,6 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					break;
 				case DwarfConstants.DW_AT_stmt_list:
 					stmtList = ((Number) av.value).intValue();
-					break;
-				case DwarfConstants.DW_AT_str_offsets_base:
-					// read the base of all offsets into .debug_str_offsets
-					offsetsBase = (offsetSize == 8) ? ((Number) av.value).longValue() : ((Number) av.value).intValue();
 					break;
 				default:
 					break;

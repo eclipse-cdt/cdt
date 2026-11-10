@@ -151,6 +151,9 @@ public interface ICBuildConfiguration extends IAdaptable, IScannerInfoProvider {
 	 * @param env
 	 *            build environment
 	 * @since 6.1
+	 * @implNote Ensure you pass a new non-empty map containing the base environment
+	 * as this method modifies the passed in map adding the ICBuildConfiguration specific
+	 * overrides, such as applying the project's build environment.
 	 */
 	default void setBuildEnvironment(Map<String, String> env) {
 	}

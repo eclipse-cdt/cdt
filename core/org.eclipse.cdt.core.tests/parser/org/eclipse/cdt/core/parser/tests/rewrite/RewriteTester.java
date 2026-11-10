@@ -14,30 +14,32 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.parser.tests.rewrite.comenthandler.CommentHandlingTest;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.text.TextSelection;
+import org.junit.jupiter.params.provider.Arguments;
 import org.osgi.framework.Bundle;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
+ * This is not actually a test, but a test provider. See loadTests and its uses
+ *
+ * The possibly unusual structure here is a result of migrating this JUnit 3 test
+ * suite creator to JUnit 5
+ *
  * @author Emanuel Graf
  */
-public class RewriteTester extends TestSuite {
+public class RewriteTester {
 	enum MatcherState {
 		skip, inTest, inSource, inExpectedResult
 	}
@@ -47,12 +49,12 @@ public class RewriteTester extends TestSuite {
 	private static final String fileRegexp = "//@(.*)\\s*(\\w*)*$"; //$NON-NLS-1$
 	private static final String resultRegexp = "//=.*$"; //$NON-NLS-1$
 
-	public static Test suite(String name, String file) throws Exception {
+	public static List<Arguments> loadTests(Class<? extends CommentHandlingTest> clazz, String file) throws Exception {
 		BufferedReader in = createReader(file);
 
-		ArrayList<RewriteBaseTest> testCases = createTests(in);
+		List<Arguments> testCases = createTests(clazz, in);
 		in.close();
-		return createSuite(testCases, name);
+		return testCases;
 	}
 
 	protected static BufferedReader createReader(String file) throws IOException {
@@ -62,12 +64,13 @@ public class RewriteTester extends TestSuite {
 		return new BufferedReader(new FileReader(file2));
 	}
 
-	private static ArrayList<RewriteBaseTest> createTests(BufferedReader inputReader) throws Exception {
+	private static List<Arguments> createTests(Class<? extends CommentHandlingTest> clazz, BufferedReader inputReader)
+			throws Exception {
 		String line;
 		List<TestSourceFile> files = new ArrayList<>();
 		TestSourceFile actFile = null;
 		MatcherState matcherState = MatcherState.skip;
-		ArrayList<RewriteBaseTest> testCases = new ArrayList<>();
+		List<Arguments> testCases = new ArrayList<>();
 		String testName = null;
 		String className = null;
 		boolean bevorFirstTest = true;
@@ -75,7 +78,7 @@ public class RewriteTester extends TestSuite {
 		while ((line = inputReader.readLine()) != null) {
 			if (lineMatchesBeginOfTest(line)) {
 				if (!bevorFirstTest) {
-					RewriteBaseTest test = createTestClass(className, testName, files);
+					Arguments test = createTestClass(clazz, className, testName, files);
 					testCases.add(test);
 					files = new ArrayList<>();
 					className = null;
@@ -113,42 +116,17 @@ public class RewriteTester extends TestSuite {
 				break;
 			}
 		}
-		RewriteBaseTest test = createTestClass(className, testName, files);
+		Arguments test = createTestClass(clazz, className, testName, files);
 		testCases.add(test);
 		return testCases;
 	}
 
-	private static RewriteBaseTest createTestClass(String className, String testName, List<TestSourceFile> files)
-			throws Exception {
-		try {
-			Class<?> refClass = Class.forName(className);
-			Constructor<?> ct = refClass.getConstructor(new Class[] { String.class, List.class });
-			RewriteBaseTest test = (RewriteBaseTest) ct.newInstance(new Object[] { testName, files });
-			for (TestSourceFile file : files) {
-				TextSelection sel = file.getSelection();
-				if (sel != null) {
-					test.setFileWithSelection(file.getName());
-					test.setSelection(sel);
-					break;
-				}
-			}
-			return test;
-		} catch (ClassNotFoundException e) {
-			throw new Exception("Unknown TestClass: " + e.getMessage()
-					+ ". Make sure the test's sourcefile specifies a valid test class.");
-		} catch (SecurityException e) {
-			throw new Exception("Security Exception during Test creation", e);
-		} catch (NoSuchMethodException e) {
-			throw new Exception("Test class does not provied required constructor.");
-		} catch (IllegalArgumentException e) {
-			throw new Exception("IllegalArgumentException during Test creation", e);
-		} catch (InstantiationException e) {
-			throw new Exception("InstantiationException during Test creation", e);
-		} catch (IllegalAccessException e) {
-			throw new Exception("IllegalAccessException during Test creation", e);
-		} catch (InvocationTargetException e) {
-			throw new Exception("InvocationTargetException during Test creation", e);
-		}
+	private static Arguments createTestClass(Class<? extends CommentHandlingTest> clazz, String className,
+			String testName, List<TestSourceFile> files) throws Exception {
+		// For historical reasons, the Java classname of the test exists in the rts files.
+		// This is a check that the rts file matches the test currently being loaded.
+		assertEquals(clazz.getName(), className);
+		return Arguments.argumentSet(testName, files);
 	}
 
 	private static String getFileName(String line) {
@@ -190,15 +168,5 @@ public class RewriteTester extends TestSuite {
 
 	private static boolean lineMatchesBeginOfResult(String line) {
 		return createMatcherFromString(resultRegexp, line).find();
-	}
-
-	private static TestSuite createSuite(ArrayList<RewriteBaseTest> testCases, String name) {
-		TestSuite suite = new TestSuite(name);
-		Iterator<RewriteBaseTest> it = testCases.iterator();
-		while (it.hasNext()) {
-			RewriteBaseTest subject = it.next();
-			suite.addTest(subject);
-		}
-		return suite;
 	}
 }

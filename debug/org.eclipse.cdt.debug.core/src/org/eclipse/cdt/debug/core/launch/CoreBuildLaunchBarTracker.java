@@ -153,13 +153,25 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 
 			@Override
 			public IStatus runInWorkspace(IProgressMonitor monitor) {
-				if (targetManager.getLaunchTarget(target.getTypeId(), target.getId()) == null) {
-					// The target was removed before the job ran
+				if (!isCurrentTarget(target)) {
+					// The target was removed or replaced before the job ran
+					return Status.OK_STATUS;
+				}
+				Map<String, String> properties;
+				try {
+					properties = new HashMap<>(target.getAttributes());
+				} catch (IllegalStateException e) {
+					if (!isCurrentTarget(target)) {
+						// The target was removed while the job read it
+						return Status.OK_STATUS;
+					}
+					throw e;
+				}
+				if (!isCurrentTarget(target)) {
+					// The target was removed or replaced while the job read it
 					return Status.OK_STATUS;
 				}
 				try {
-					Map<String, String> properties = new HashMap<>();
-					properties.putAll(target.getAttributes());
 					Collection<IToolChain> tcs = toolChainManager.getToolChainsMatching(properties);
 					ICBuildConfiguration buildConfig = null;
 					if (!tcs.isEmpty()) {
@@ -239,6 +251,13 @@ public class CoreBuildLaunchBarTracker implements ILaunchBarListener, ILaunchTar
 		};
 		job.setRule(project.getWorkspace().getRoot());
 		job.schedule();
+	}
+
+	/**
+	 * @return whether the target is still known, and not removed or replaced by a target with the same ID
+	 */
+	private boolean isCurrentTarget(ILaunchTarget target) {
+		return targetManager.getLaunchTarget(target.getTypeId(), target.getId()) == target;
 	}
 
 	@Override

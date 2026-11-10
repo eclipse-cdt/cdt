@@ -219,6 +219,43 @@ public class CoreBuildLaunchBarTrackerTests extends BaseTestCase5 {
 	 */
 	@Test
 	public void removedTargetDoesNotFailTrackerJob() throws Exception {
+		List<IStatus> results = trackerJobResults(() -> {
+			launchBarManager.setActiveLaunchTarget(addOtherTarget());
+			launchTargetManager.removeLaunchTarget(otherTarget);
+			otherTarget = null;
+		});
+
+		assertAllOk(results);
+	}
+
+	/**
+	 * A tracker job must not use its target when the target is removed and a new target with the
+	 * same ID is added before the job runs.
+	 */
+	@Test
+	public void recreatedTargetDoesNotFailTrackerJob() throws Exception {
+		List<IStatus> results = trackerJobResults(() -> {
+			launchBarManager.setActiveLaunchTarget(addOtherTarget());
+			launchTargetManager.removeLaunchTarget(otherTarget);
+			addOtherTarget();
+		});
+
+		assertAllOk(results);
+		// The launch bar selects the new target
+		assertThat(activeConfig(),
+				is(ILaunchManager.RUN_MODE + '/' + launchBarManager.getActiveLaunchTarget().getId()));
+	}
+
+	private interface LaunchBarChanges {
+		void run() throws Exception;
+	}
+
+	/**
+	 * Makes the changes while the tracker jobs wait for the workspace rule, as in a busy workspace.
+	 *
+	 * @return the results of the tracker jobs that ran
+	 */
+	private List<IStatus> trackerJobResults(LaunchBarChanges changes) throws Exception {
 		List<IStatus> results = new CopyOnWriteArrayList<>();
 		IJobChangeListener listener = new JobChangeAdapter() {
 			@Override
@@ -230,13 +267,10 @@ public class CoreBuildLaunchBarTrackerTests extends BaseTestCase5 {
 		};
 		Job.getJobManager().addJobChangeListener(listener);
 		try {
-			// Hold the tracker job back until its target is removed
 			ISchedulingRule root = ResourcesPlugin.getWorkspace().getRoot();
 			Job.getJobManager().beginRule(root, null);
 			try {
-				launchBarManager.setActiveLaunchTarget(addOtherTarget());
-				launchTargetManager.removeLaunchTarget(otherTarget);
-				otherTarget = null;
+				changes.run();
 			} finally {
 				Job.getJobManager().endRule(root);
 			}
@@ -244,7 +278,10 @@ public class CoreBuildLaunchBarTrackerTests extends BaseTestCase5 {
 		} finally {
 			Job.getJobManager().removeJobChangeListener(listener);
 		}
+		return results;
+	}
 
+	private static void assertAllOk(List<IStatus> results) {
 		assertThat("No tracker job ran", results.isEmpty(), is(false)); //$NON-NLS-1$
 		for (IStatus result : results) {
 			assertThat(result.toString(), result.isOK(), is(true));

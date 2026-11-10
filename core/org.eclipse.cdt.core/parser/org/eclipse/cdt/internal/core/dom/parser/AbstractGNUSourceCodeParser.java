@@ -1554,8 +1554,9 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		final IToken mark = mark();
 		final int offset = consume().getOffset();
 
-		// if __attribute__ or __declspec occurs after struct/union/class and before the identifier
-		__attribute_decl_seq(supportAttributeSpecifiers, supportDeclspecSpecifiers);
+		// if __attribute__ or __declspec occurs after enum and before the identifier
+		List<IASTAttributeSpecifier> attributes = __attribute_decl_seq(supportAttributeSpecifiers,
+				supportDeclspecSpecifiers);
 
 		IASTName name;
 		if (LT(1) == IToken.tIDENTIFIER) {
@@ -1570,6 +1571,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		}
 
 		final IASTEnumerationSpecifier result = nodeFactory.newEnumerationSpecifier(name);
+		addAttributeSpecifiers(attributes, result);
 
 		int endOffset = enumBody(result);
 		return setRange(result, offset, endOffset);

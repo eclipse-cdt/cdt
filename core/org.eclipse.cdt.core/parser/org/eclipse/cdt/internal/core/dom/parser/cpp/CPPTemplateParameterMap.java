@@ -223,26 +223,34 @@ public class CPPTemplateParameterMap implements ICPPTemplateParameterMap {
 					sb.append(", "); //$NON-NLS-1$
 				}
 
-				final Object obj = fMap.getAt(i);
-				if (obj instanceof ICPPTemplateArgument) {
-					appendArg(sb, key, (ICPPTemplateArgument) obj);
-				} else if (obj instanceof ICPPTemplateArgument[]) {
-					for (ICPPTemplateArgument arg : (ICPPTemplateArgument[]) obj) {
-						appendArg(sb, key, arg);
-					}
-				}
+				appendArg(sb, key, fMap.getAt(i));
 			}
 		}
 		sb.append("}"); //$NON-NLS-1$
 		return sb.toString();
 	}
 
-	private void appendArg(StringBuilder sb, Integer key, ICPPTemplateArgument value) {
-		sb.append('#');
-		sb.append(key >> 16);
-		sb.append(',');
-		sb.append(key & 0xffff);
+	private void appendArg(StringBuilder sb, Integer key, Object value) {
+		sb.append("lvl"); //$NON-NLS-1$
+		int templateNestingLevel = key >> 16;
+		sb.append(templateNestingLevel);
+		sb.append(",pos"); //$NON-NLS-1$
+		int paramPosition = key & 0xffff;
+		sb.append(paramPosition);
 		sb.append(": "); //$NON-NLS-1$
-		sb.append(ASTTypeUtil.getArgumentString(value, true));
+
+		if (value instanceof ICPPTemplateArgument) {
+			sb.append(ASTTypeUtil.getArgumentString((ICPPTemplateArgument) value, true));
+		} else if (value instanceof ICPPTemplateArgument[]) {
+			sb.append("["); //$NON-NLS-1$
+			ICPPTemplateArgument[] args = (ICPPTemplateArgument[]) value;
+			for (int j = 0; j < args.length; j++) {
+				if (j != 0) {
+					sb.append(", "); //$NON-NLS-1$
+				}
+				sb.append(ASTTypeUtil.getArgumentString(args[j], true));
+			}
+			sb.append("]"); //$NON-NLS-1$
+		}
 	}
 }

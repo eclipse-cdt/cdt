@@ -195,28 +195,43 @@ public class CBuildConfigurationManager
 	 */
 	private static void changeBuildConfigs(IProject project, Consumer<Set<String>> change, String activeName,
 			IProgressMonitor monitor) throws CoreException {
+		// Do not take the workspace rule when nothing changes
+		if (newBuildConfigs(project, change, activeName) == null) {
+			return;
+		}
 		IWorkspace workspace = project.getWorkspace();
 		workspace.run(pm -> {
-			List<String> oldNames = new ArrayList<>();
-			for (IBuildConfiguration config : project.getBuildConfigs()) {
-				oldNames.add(config.getName());
-			}
-			Set<String> names = new LinkedHashSet<>(oldNames);
-			// the default config can be active without being in the list
-			names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
-			change.accept(names);
-			if (List.copyOf(names).equals(oldNames)
-					&& (activeName == null || activeName.equals(project.getActiveBuildConfig().getName()))) {
+			String[] names = newBuildConfigs(project, change, activeName);
+			if (names == null) {
 				return;
 			}
-
 			IProjectDescription desc = project.getDescription();
-			desc.setBuildConfigs(names.toArray(new String[0]));
+			desc.setBuildConfigs(names);
 			if (activeName != null) {
 				desc.setActiveBuildConfig(activeName);
 			}
 			project.setDescription(desc, pm);
 		}, workspace.getRoot(), IWorkspace.AVOID_UPDATE, monitor);
+	}
+
+	/**
+	 * @return the changed build configuration names, or null if nothing changes
+	 */
+	private static String[] newBuildConfigs(IProject project, Consumer<Set<String>> change, String activeName)
+			throws CoreException {
+		List<String> oldNames = new ArrayList<>();
+		for (IBuildConfiguration config : project.getBuildConfigs()) {
+			oldNames.add(config.getName());
+		}
+		Set<String> names = new LinkedHashSet<>(oldNames);
+		// the default config can be active without being in the list
+		names.add(IBuildConfiguration.DEFAULT_CONFIG_NAME);
+		change.accept(names);
+		if (List.copyOf(names).equals(oldNames)
+				&& (activeName == null || activeName.equals(project.getActiveBuildConfig().getName()))) {
+			return null;
+		}
+		return names.toArray(new String[0]);
 	}
 
 	@Override

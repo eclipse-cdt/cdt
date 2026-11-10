@@ -108,6 +108,8 @@ public class CoreBuildLaunchBarTrackerTests extends BaseTestCase5 {
 		waitForLaunchBarTracker();
 		if (otherTarget != null) {
 			launchTargetManager.removeLaunchTarget(otherTarget);
+			// Removing the selected target starts a tracker job
+			waitForLaunchBarTracker();
 		}
 		toolchainManager.removeToolChain(mockToolchain);
 		for (IToolChain toolchain : removedToolchains) {
@@ -212,6 +214,23 @@ public class CoreBuildLaunchBarTrackerTests extends BaseTestCase5 {
 
 		IBuildConfiguration[] configs = project.getBuildConfigs();
 		assertThat(configs[configs.length - 1], is(active));
+	}
+
+	/**
+	 * Setting the active build configuration again must not need the workspace rule, so that a
+	 * caller that holds only a project rule can do it.
+	 */
+	@Test
+	public void setActiveWithoutChangeNeedsNoWorkspaceRule() throws Exception {
+		IBuildConfiguration active = project.getActiveBuildConfig();
+		CBuildConfigurationManager.setActiveBuildConfiguration(active, null);
+
+		Job.getJobManager().beginRule(project, null);
+		try {
+			CBuildConfigurationManager.setActiveBuildConfiguration(active, null);
+		} finally {
+			Job.getJobManager().endRule(project);
+		}
 	}
 
 	/**

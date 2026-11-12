@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 QNX Software Systems and others.
+ * Copyright (c) 2000, 2026 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@
  *     John Dallaway - Support DW_FORM_line_strp (#198)
  *     John Dallaway - Support DW_FORM_implicit_const (#443)
  *     Alexander Fedorov (ArSysOp) - fix resource leak (#693)
- *     John Dallaway - Support DW_FORM_strx1 (#1135)
+ *     John Dallaway - Support DW_FORM_strx1 and others (#1135)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -38,6 +38,7 @@ import org.eclipse.cdt.utils.debug.tools.DebugSym;
 import org.eclipse.cdt.utils.debug.tools.DebugSymsRequestor;
 import org.eclipse.cdt.utils.elf.Elf;
 import org.eclipse.cdt.utils.elf.Elf.Section;
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -803,6 +804,10 @@ public class Dwarf implements AutoCloseable {
 			obj = Integer.valueOf(Byte.toUnsignedInt(in.get()));
 			break;
 
+		case DwarfConstants.DW_FORM_strx2:
+			obj = Integer.valueOf(Short.toUnsignedInt(read_2_bytes(in)));
+			break;
+
 		case DwarfConstants.DW_FORM_ref1:
 			obj = Byte.valueOf(in.get());
 			break;
@@ -852,12 +857,22 @@ public class Dwarf implements AutoCloseable {
 		case DwarfConstants.DW_FORM_ref_sig8:
 			obj = Long.valueOf(read_8_bytes(in));
 			break;
+		case DwarfConstants.DW_FORM_addrx:
+			obj = Long.valueOf(read_unsigned_leb128(in));
+			break;
+		case DwarfConstants.DW_FORM_loclistx:
+			obj = Long.valueOf(read_unsigned_leb128(in));
+			break;
+		case DwarfConstants.DW_FORM_rnglistx:
+			obj = Long.valueOf(read_unsigned_leb128(in));
+			break;
 
 		default:
 			if (printEnabled) {
 				System.out.println("Default for " + form); //$NON-NLS-1$
 				System.out.println("Last form is " + oldForm); //$NON-NLS-1$
 			}
+			ILog.get().warn(String.format("DWARF attribute form 0x%x not handled", form)); //$NON-NLS-1$
 			break;
 		}
 

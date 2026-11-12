@@ -496,12 +496,12 @@ public class LaunchBarManager implements ILaunchBarManager, ILaunchTargetListene
 		doSetActiveLaunchDescriptor(descriptor);
 		// store in persistent storage
 		storeActiveDescriptor(activeLaunchDesc);
-		// Send notifications
-		fireActiveLaunchDescriptorChanged();
 		// Set active target
 		syncActiveTarget();
 		// Set active mode
 		syncActiveMode();
+		// Send notifications
+		fireActiveLaunchDescriptorChanged();
 	}
 
 	private void doSetActiveLaunchDescriptor(ILaunchDescriptor descriptor) {

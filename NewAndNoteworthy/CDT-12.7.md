@@ -18,6 +18,13 @@ CDT's native components may work with older versions of glibc too, assuming they
 See also the matching corresponding news entry in Eclipse Platform's release notes.
 [Minimum glibc Version Raised to 2.34 on Linux](https://eclipse.dev/eclipse/markdown/?f=news/4.42/platform.md)
 
+## New version of jsch which provides SSH support for org.eclipse.remote
+
+Eclipse has replaced abandoned the abandoned com.jcraft.jsch with the maintained mwiede fork.
+This brings in support for newer ssh servers.
+
+See [eclipse.platform.releng.aggregator#4042](https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/pull/4042) and [cdt#1563](https://github.com/eclipse-cdt/cdt/issues/1563)
+
 # API Changes, current and planned
 
 ## Breaking API changes

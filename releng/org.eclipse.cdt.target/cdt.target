@@ -208,6 +208,7 @@
 			<unit id="bcpg" version="0.0.0"/>
 			<unit id="bcprov" version="0.0.0"/>
 			<unit id="org.apache.commons.logging" version="0.0.0"/>
+			<unit id="com.github.mwiede.jsch" version="2.28.8"/>
 		</location>
 	</locations>
 	<targetJRE path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-25" />

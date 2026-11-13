@@ -20,7 +20,7 @@ See also the matching corresponding news entry in Eclipse Platform's release not
 
 ## New version of jsch which provides SSH support for org.eclipse.remote
 
-Eclipse has replaced abandoned the abandoned com.jcraft.jsch with the maintained mwiede fork.
+Eclipse has replaced the abandoned com.jcraft.jsch with the maintained mwiede fork.
 This brings in support for newer ssh servers.
 
 See [eclipse.platform.releng.aggregator#4042](https://github.com/eclipse-platform/eclipse.platform.releng.aggregator/pull/4042) and [cdt#1563](https://github.com/eclipse-cdt/cdt/issues/1563)

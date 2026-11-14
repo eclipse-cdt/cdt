@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.remote.jsch.core;singleton:=true
-Bundle-Version: 1.2.200.qualifier
+Bundle-Version: 1.2.300.qualifier
 Bundle-Activator: org.eclipse.remote.internal.jsch.core.Activator
 Bundle-Vendor: %pluginProvider
 Bundle-ActivationPolicy: lazy
@@ -10,7 +10,7 @@ Export-Package: org.eclipse.remote.internal.jsch.core;x-friends:="org.eclipse.re
  org.eclipse.remote.internal.jsch.core.messages;x-internal:=true
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Import-Package: com.jcraft.jsch,
+Import-Package: com.jcraft.jsch;version="[2.28.8,3.0.0)",
  org.eclipse.core.filesystem,
  org.eclipse.core.filesystem.provider,
  org.eclipse.core.runtime,

@@ -10,7 +10,7 @@ Export-Package: org.eclipse.remote.internal.proxy.ui;x-internal:=true,
  org.eclipse.remote.internal.proxy.ui.messages;x-internal:=true
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Import-Package: com.jcraft.jsch,
+Import-Package: com.jcraft.jsch;version="[2.28.8,3.0.0)",
  org.eclipse.core.filesystem,
  org.eclipse.core.runtime,
  org.eclipse.jface.dialogs,

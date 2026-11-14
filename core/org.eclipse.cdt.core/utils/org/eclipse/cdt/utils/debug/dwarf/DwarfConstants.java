@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2025 QNX Software Systems and others.
+ * Copyright (c) 2000, 2026 QNX Software Systems and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     John Dallaway - Add DW_FORM_line_strp (#198)
- *     John Dallaway - Add DW_FORM_implicit_const and DW_LNCT codes (#443)
+ *     John Dallaway - Add DW_FORM and DW_LNCT codes (#198, #443, #1135)
  *******************************************************************************/
 
 package org.eclipse.cdt.utils.debug.dwarf;
@@ -211,6 +210,8 @@ public class DwarfConstants {
 	 * @since 5.7
 	 */
 	public final static int DW_FORM_flag_present = 0x19;
+	/** @since 9.4 */
+	public final static int DW_FORM_addrx = 0x1b;
 	/** @since 9.1 */
 	public final static int DW_FORM_data16 = 0x1e;
 	/**
@@ -225,8 +226,14 @@ public class DwarfConstants {
 	 * @since 8.3
 	 */
 	public final static int DW_FORM_implicit_const = 0x21;
+	/** @since 9.4 */
+	public final static int DW_FORM_loclistx = 0x22;
+	/** @since 9.4 */
+	public final static int DW_FORM_rnglistx = 0x23;
 	/** @since 9.1 */
 	public final static int DW_FORM_strx1 = 0x25;
+	/** @since 9.4 */
+	public final static int DW_FORM_strx2 = 0x26;
 	/* Extensions for Fission. See http://gcc.gnu.org/wiki/DebugFission. */
 	/**
 	 * @since 5.7

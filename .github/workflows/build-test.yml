@@ -1,6 +1,12 @@
 name: Build and Test
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    # notifications go to whoever last edited the cron line
+    # https://docs.github.com/en/actions/concepts/workflows-and-actions/notifications-for-workflow-runs
+    - cron: '33 4 * * *'
 
 jobs:
   build:
@@ -14,6 +20,7 @@ jobs:
         fetch-depth: 0
     - uses: dorny/paths-filter@v3
       id: filter
+      if: github.event_name != 'schedule'
       with:
         # dsf filters are to know when to run dsf-gdb tests (See ref below)
         # it includes any changes to debug, or anything likely to affect gdb

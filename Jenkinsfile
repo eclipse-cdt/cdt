@@ -8,6 +8,9 @@ pipeline {
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '2'))
   }
+  triggers {
+    cron('H H * * *')
+  }
   stages {
     stage('initialize PGP') {
       steps {
@@ -107,6 +110,13 @@ pipeline {
         archiveArtifacts '*.log,serial/org.eclipse.cdt.native.serial/**,core/org.eclipse.cdt.core.*/**,*/*/target/surefire-reports/**,**/target/work/data/.metadata/.log,releng/org.eclipse.cdt.repo/target/org.eclipse.cdt.repo.zip,releng/org.eclipse.cdt.repo/target/repository/**,releng/org.eclipse.cdt.testing.repo/target/org.eclipse.cdt.testing.repo.zip,releng/org.eclipse.cdt.testing.repo/target/repository/**,debug/org.eclipse.cdt.debug.application.product/target/product/*.tar.gz,debug/org.eclipse.cdt.debug.application.product/target/products/*.zip,debug/org.eclipse.cdt.debug.application.product/target/products/*.tar.gz,debug/org.eclipse.cdt.debug.application.product/target/repository/**'
         junit '*/*/target/surefire-reports/*.xml'
       }
+    }
+    failure {
+      emailext (
+        subject: "Build failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+        body: "Build failed: ${env.BUILD_URL}",
+        to: 'jonah@kichwacoders.com'
+      )
     }
   }
 }

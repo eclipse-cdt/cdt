@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.dsf.concurrent.ConfinedToDsfExecutor;
@@ -48,6 +49,8 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -356,6 +359,20 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			}
 		}, getGDBExitWaitTime(), TimeUnit.SECONDS);
 
+		// GDB can hang in -gdb-exit while a running program starts threads,
+		// so in async mode stop the program first, see #1065
+		stopRunningProcesses(runControl, forceQuitTask, new RequestMonitor(getExecutor(), null) {
+			@Override
+			protected void handleCompleted() {
+				// The forceQuitTask destroys GDB if the suspend takes too long
+				if (!forceQuitTask.isDone()) {
+					exitGDB(forceQuitTask, rm);
+				}
+			}
+		});
+	}
+
+	private void exitGDB(Future<?> forceQuitTask, RequestMonitor rm) {
 		queueCommand(getCommandFactory().createMIGDBExit(getContext()),
 				new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
 					@Override
@@ -371,6 +388,90 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 						// to leave enough time for the interrupt() to complete.
 					}
 				});
+	}
+
+	/**
+	 * Stops the processes that run while GDB accepts commands, that is in async mode, and waits
+	 * until all their threads stop.
+	 */
+	private void stopRunningProcesses(IMIRunControl runControl, Future<?> forceQuitTask, RequestMonitor rm) {
+		IProcesses processes = getServicesTracker().getService(IProcesses.class);
+		if (runControl == null || processes == null || !runControl.isTargetAcceptingCommands()) {
+			rm.done();
+			return;
+		}
+		processes.getProcessesBeingDebugged(fControlDmc, new DataRequestMonitor<IDMContext[]>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				List<IContainerDMContext> containers = new ArrayList<>();
+				for (IDMContext context : getData()) {
+					if (context instanceof IContainerDMContext container) {
+						containers.add(container);
+					}
+				}
+				canSuspendAny(runControl, containers, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+					@Override
+					protected void handleSuccess() {
+						if (!getData()) {
+							rm.done();
+							return;
+						}
+						// In non-stop mode, -exec-interrupt --thread-group can miss threads that
+						// start at the same time, so interrupt all threads
+						queueCommand(getCommandFactory().createMIExecInterrupt(containers.get(0), true),
+								new DataRequestMonitor<MIInfo>(getExecutor(), rm) {
+									@Override
+									protected void handleSuccess() {
+										waitUntilStopped(runControl, containers, forceQuitTask, rm);
+									}
+								});
+					}
+				});
+			}
+		});
+	}
+
+	private void waitUntilStopped(IMIRunControl runControl, List<IContainerDMContext> containers,
+			Future<?> forceQuitTask, RequestMonitor rm) {
+		canSuspendAny(runControl, containers, new DataRequestMonitor<Boolean>(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				if (!getData() || forceQuitTask.isDone()) {
+					rm.done();
+					return;
+				}
+				try {
+					getExecutor().schedule(() -> waitUntilStopped(runControl, containers, forceQuitTask, rm), 10,
+							TimeUnit.MILLISECONDS);
+				} catch (RejectedExecutionException e) {
+					rm.done();
+				}
+			}
+		});
+	}
+
+	/**
+	 * @return in the rm, whether a thread of the processes runs
+	 */
+	private void canSuspendAny(IMIRunControl runControl, List<IContainerDMContext> containers,
+			DataRequestMonitor<Boolean> rm) {
+		boolean[] any = new boolean[1];
+		CountingRequestMonitor crm = new CountingRequestMonitor(getExecutor(), rm) {
+			@Override
+			protected void handleSuccess() {
+				rm.done(any[0]);
+			}
+		};
+		for (IContainerDMContext container : containers) {
+			runControl.canSuspend(container, new DataRequestMonitor<Boolean>(getExecutor(), crm) {
+				@Override
+				protected void handleSuccess() {
+					any[0] |= getData();
+					crm.done();
+				}
+			});
+		}
+		crm.setDoneCount(containers.size());
 	}
 
 	/**

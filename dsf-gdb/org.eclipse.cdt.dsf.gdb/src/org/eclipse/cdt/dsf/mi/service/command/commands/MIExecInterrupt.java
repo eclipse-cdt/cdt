@@ -50,6 +50,8 @@ public class MIExecInterrupt extends MICommand<MIInfo> {
 		this(dmc, false, groupId);
 	}
 
+	private final boolean fAllThreads;
+
 	/*
 	 * The parameters allThreads and groupId are mutually exclusive.  allThreads must be false
 	 * if we are to use groupId.  The value of this method is to only have one place
@@ -57,10 +59,22 @@ public class MIExecInterrupt extends MICommand<MIInfo> {
 	 */
 	private MIExecInterrupt(IExecutionDMContext dmc, boolean allThreads, String groupId) {
 		super(dmc, "-exec-interrupt"); //$NON-NLS-1$
+		fAllThreads = allThreads;
 		if (allThreads) {
 			setParameters(new String[] { "--all" }); //$NON-NLS-1$
 		} else if (groupId != null) {
 			setParameters(new String[] { "--thread-group", groupId }); //$NON-NLS-1$
 		}
+	}
+
+	// GDB does not accept --thread or --thread-group together with --all
+	@Override
+	public boolean supportsThreadAndFrameOptions() {
+		return !fAllThreads && super.supportsThreadAndFrameOptions();
+	}
+
+	@Override
+	public boolean supportsThreadGroupOption() {
+		return !fAllThreads && super.supportsThreadGroupOption();
 	}
 }

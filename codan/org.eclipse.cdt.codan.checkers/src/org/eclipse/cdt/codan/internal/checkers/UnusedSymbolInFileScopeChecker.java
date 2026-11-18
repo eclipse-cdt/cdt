@@ -72,8 +72,8 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	/*
 	 * Various attributes that when present for a symbol should make it considered as used.
 	 */
-	private static final String[] USAGE_ATTRIBUTES = new String[] { "__unused__", "unused", "constructor", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-			"destructor", StandardAttributes.MAYBE_UNUSED }; //$NON-NLS-1$
+	private static final String[] USAGE_ATTRIBUTES = new String[] { "__unused__", "unused", "__used__", "used", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
+			"__constructor__", "constructor", "__destructor__", "destructor", StandardAttributes.MAYBE_UNUSED }; //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$//$NON-NLS-4$
 
 	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<>();
 	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<>();
@@ -219,7 +219,8 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 						IASTName astName = declarator.getName();
 						if (astName != null) {
 							IBinding binding = astName.resolveBinding();
-							if (hasUsageAttribute(definition.getDeclSpecifier())) {
+							if (hasUsageAttribute(definition.getDeclSpecifier()) || hasUsageAttribute(declarator)
+									|| (definition instanceof IASTAttributeOwner owner && hasUsageAttribute(owner))) {
 								declarationsWithUsageAttributes.add(binding);
 							}
 

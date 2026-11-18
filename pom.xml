@@ -459,6 +459,26 @@
 				</plugins>
 			</build>
 		</profile>
+		<!-- Automatic profile to run JUnit 3 and JUnit 4 tests with the JUnit 5 vintage engine -->
+		<profile>
+			<id>junit-vintage-test-plugin</id>
+			<activation>
+				<file>
+				<exists>junit-vintage-test-plugin.properties</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-surefire-plugin</artifactId>
+					<configuration>
+						<providerHint>junit5vintage</providerHint>
+					</configuration>
+				</plugin>
+				</plugins>
+			</build>
+		</profile>
 		<!-- Automatic profile to define the settings for SWTBot test plugins -->
 		<profile>
 			<id>swtbot-test-plugin</id>

@@ -7,10 +7,15 @@ public class Messages extends NLS {
 	public static String MakeBuildSettingsTab_Build;
 	public static String MakeBuildSettingsTab_BuildCommands;
 	public static String MakeBuildSettingsTab_BuildInConfigDir;
+	public static String MakeBuildSettingsTab_BuildInCustomDir;
 	public static String MakeBuildSettingsTab_BuildInProjectDir;
 	public static String MakeBuildSettingsTab_BuildOutputLocation;
 	public static String MakeBuildSettingsTab_Clean;
 	public static String MakeBuildSettingsTab_Makefile;
+	public static String MakeBuildSettingsTab_IndexerIncludePathsAndMacros;
+	public static String MakeBuildSettingsTab_IncludePathsAndMacrosExtractFromBuildStepConsoleOutput;
+	public static String MakeBuildSettingsTab_IncludePathsAndMacrosCDBFromBuildDirectory;
+	public static String MakeBuildSettingsTab_IncludePathsAndMacrosCDBCustomFile;
 	public static String MakeBuildSettingsTab_UseTopLevelMakefile;
 	static {
 		// initialize resource bundle

@@ -476,18 +476,26 @@ public class IndexUpdateTests extends IndexTestBase {
 
 	// class MyClass {explicit MyClass(char a, int b);};
 
+	// class MyClass {explicit(true) MyClass(char a, int b);};
+
+	// class MyClass {explicit(false) MyClass(char a, int b);};
+
 	// class MyClass {public: MyClass(char a, int b);};
 
 	// class MyClass {protected: MyClass(char a, int b);};
 
 	// class MyClass {private: MyClass(char a, int b);};
 	public void testCppConstructor() throws Exception {
-		setupFile(6, true);
+		setupFile(8, true);
 		checkCppConstructor("MyClass::MyClass", new String[] { "", INT, INT }, new String[] { PRIVATE });
 		updateFile();
 		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PRIVATE });
 		updateFile();
 		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PRIVATE, EXPLICIT });
+		updateFile();
+		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PRIVATE, EXPLICIT });
+		updateFile();
+		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PRIVATE });
 		updateFile();
 		checkCppConstructor("MyClass::MyClass", new String[] { "", CHAR, INT }, new String[] { PUBLIC });
 		updateFile();

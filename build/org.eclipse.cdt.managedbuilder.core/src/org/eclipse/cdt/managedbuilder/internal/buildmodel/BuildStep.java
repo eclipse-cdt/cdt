@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2022 Intel Corporation and others.
+ * Copyright (c) 2006, 2026 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  * Intel Corporation - Initial API and implementation
  * John Dallaway - Accommodate extra flags with internal builder (bug 580286)
+ * John Dallaway - Accommodate escaping of quotes in command arguments (#1536)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
@@ -432,24 +433,28 @@ public class BuildStep implements IBuildStep {
 		char arr[] = commandLine.toCharArray();
 		char expect = 0;
 		char prev = 0;
-		// int start = 0;
+		char escape = 0;
 		List<String> list = new ArrayList<>();
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < arr.length; i++) {
 			char ch = arr[i];
+
+			if (escape != 0) {
+				buf.append(ch);
+				escape = 0;
+				continue;
+			}
+
 			switch (ch) {
+			case '\\':
+				escape = ch;
+				break;
 			case '\'':
 			case '"':
 				if (expect == ch) {
-					// String s = cmd.substring(start, i);
-					// list.add(s);
 					expect = 0;
-					// start = i + 1;
 				} else if (expect == 0) {
-					// String s = cmd.substring(start, i);
-					// list.add(s);
 					expect = ch;
-					// start = i + 1;
 				} else {
 					buf.append(ch);
 				}
@@ -460,7 +465,6 @@ public class BuildStep implements IBuildStep {
 						list.add(buf.toString());
 						buf.delete(0, buf.length());
 					}
-					// start = i + 1;
 				} else {
 					buf.append(ch);
 				}
@@ -468,7 +472,6 @@ public class BuildStep implements IBuildStep {
 			default:
 				buf.append(ch);
 				break;
-
 			}
 			prev = ch;
 		}
@@ -501,7 +504,7 @@ public class BuildStep implements IBuildStep {
 		for (int i = 0; i < rcs.length; i++) {
 			IPath path = BuildDescriptionManager.getRelPath(cwd, rcs[i].getLocation());
 			path = rmNamePrefix(path, prefixToRm);
-			list.add(path.toOSString());
+			list.add(path.toOSString().replace("\\", "\\\\")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return list.toArray(new String[list.size()]);
 	}

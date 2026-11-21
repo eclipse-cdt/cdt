@@ -285,6 +285,7 @@
 		<module>releng/org.eclipse.cdt.sdk-feature</module>
 		<module>releng/org.eclipse.cdt.repo</module>
 
+		<module>build/org.eclipse.cdt.build.gcc.core.tests</module>
 		<module>build/org.eclipse.cdt.managedbuilder.core.tests</module>
 		<module>build/org.eclipse.cdt.managedbuilder.ui.tests</module>
 		<module>build/org.eclipse.cdt.make.core.tests</module>

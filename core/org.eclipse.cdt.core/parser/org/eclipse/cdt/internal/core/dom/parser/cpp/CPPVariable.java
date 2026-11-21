@@ -23,11 +23,13 @@ import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUti
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEqualsInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
 import org.eclipse.cdt.core.dom.ast.IASTInitializer;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -255,6 +257,7 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 		if (!recursionProtectionSet.add(this)) {
 			return IntegralValue.UNKNOWN;
 		}
+		IASTNode lookupPoint = null;
 		try {
 			IValue initialValue = null;
 			final IType nestedType = SemanticUtil.getNestedType(getType(), TDEF | REF | CVTYPE);
@@ -265,8 +268,8 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 					return null;
 				}
 				if (!initEval.isValueDependent()) {
-					IASTNode point = fDefinition != null ? fDefinition : fDeclarations[0];
-					CPPSemantics.pushLookupPoint(point);
+					lookupPoint = fDefinition != null ? fDefinition : fDeclarations[0];
+					CPPSemantics.pushLookupPoint(lookupPoint);
 					try {
 						return initEval.getValue();
 					} finally {
@@ -276,6 +279,19 @@ public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredV
 				return DependentValue.create(initEval);
 			}
 			return initialValue;
+		} catch (RuntimeException e) {
+			final IASTFileLocation fileLocation = lookupPoint != null ? lookupPoint.getFileLocation() : null;
+			final String locationMessage;
+			if (fileLocation != null) {
+				locationMessage = " at " + fileLocation.getFileName() + ", line " //$NON-NLS-1$ //$NON-NLS-2$
+						+ fileLocation.getStartingLineNumber();
+			} else {
+				locationMessage = ""; //$NON-NLS-1$
+			}
+
+			CCorePlugin.log("Internal error while computing initial value of variable '" + getName() + "'" //$NON-NLS-1$ //$NON-NLS-2$
+					+ locationMessage, e);
+			return IntegralValue.UNKNOWN;
 		} finally {
 			recursionProtectionSet.remove(this);
 		}

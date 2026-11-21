@@ -1,1 +1,0 @@
-These UML diagrams are made with eUML2Free Eclipse plugin and it needs GMF (Graphical Modeling Framework) runtime to work.

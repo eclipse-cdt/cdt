@@ -26,11 +26,6 @@
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>com.soyatec.additional.Builder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
-		<buildCommand>
 			<name>org.eclipse.pde.api.tools.apiAnalysisBuilder</name>
 			<arguments>
 			</arguments>
@@ -39,7 +34,6 @@
 	<natures>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-		<nature>com.soyatec.additional.Nature</nature>
 		<nature>org.eclipse.pde.api.tools.apiAnalysisNature</nature>
 	</natures>
 </projectDescription>

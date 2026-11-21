@@ -22,6 +22,9 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
  */
 public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration {
 	char[] assembly = null;
+	private boolean isVolatile;
+	private boolean isInline;
+	private boolean isGoto;
 
 	public CPPASTASMDeclaration() {
 	}
@@ -39,6 +42,9 @@ public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration 
 	public CPPASTASMDeclaration copy(CopyStyle style) {
 		CPPASTASMDeclaration copy = new CPPASTASMDeclaration();
 		copy.assembly = assembly.clone();
+		copy.isVolatile = isVolatile;
+		copy.isInline = isInline;
+		copy.isGoto = isGoto;
 		return copy(copy, style);
 	}
 
@@ -53,6 +59,39 @@ public class CPPASTASMDeclaration extends ASTNode implements IASTASMDeclaration 
 	public void setAssembly(String assembly) {
 		assertNotFrozen();
 		this.assembly = assembly.toCharArray();
+	}
+
+	@Override
+	public boolean isVolatile() {
+		return isVolatile;
+	}
+
+	@Override
+	public void setVolatile(boolean value) {
+		assertNotFrozen();
+		isVolatile = value;
+	}
+
+	@Override
+	public boolean isInline() {
+		return isInline;
+	}
+
+	@Override
+	public void setInline(boolean value) {
+		assertNotFrozen();
+		isInline = value;
+	}
+
+	@Override
+	public boolean isGoto() {
+		return isGoto;
+	}
+
+	@Override
+	public void setGoto(boolean value) {
+		assertNotFrozen();
+		isGoto = value;
 	}
 
 	@Override

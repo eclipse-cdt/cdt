@@ -1867,8 +1867,26 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 
 	protected IASTDeclaration asmDeclaration() throws EndOfFileException, BacktrackException {
 		final int offset = consume().getOffset(); // t_asm
-		if (LT(1) == IToken.t_volatile) {
-			consume();
+		boolean isVolatile = false;
+		boolean isInline = false;
+		boolean isGoto = false;
+		loop: while (true) {
+			switch (LT(1)) {
+			case IToken.t_volatile:
+				isVolatile = true;
+				consume();
+				break;
+			case IToken.t_inline:
+				isInline = true;
+				consume();
+				break;
+			case IToken.t_goto:
+				isGoto = true;
+				consume();
+				break;
+			default:
+				break loop;
+			}
 		}
 
 		if (supportFunctionStyleAsm && LT(1) != IToken.tLPAREN) {
@@ -1879,7 +1897,7 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 		asmExpression(buffer);
 		int lastOffset = consume(IToken.tSEMI).getEndOffset();
 
-		return buildASMDirective(offset, buffer.toString(), lastOffset);
+		return buildASMDirective(offset, buffer.toString(), lastOffset, isVolatile, isInline, isGoto);
 	}
 
 	protected IASTDeclaration functionStyleAsmDeclaration() throws BacktrackException, EndOfFileException {
@@ -1956,7 +1974,15 @@ public abstract class AbstractGNUSourceCodeParser implements ISourceCodeParser {
 	}
 
 	protected IASTASMDeclaration buildASMDirective(int offset, String assembly, int lastOffset) {
+		return buildASMDirective(offset, assembly, lastOffset, false, false, false);
+	}
+
+	protected IASTASMDeclaration buildASMDirective(int offset, String assembly, int lastOffset, boolean isVolatile,
+			boolean isInline, boolean isGoto) {
 		IASTASMDeclaration result = nodeFactory.newASMDeclaration(assembly);
+		result.setVolatile(isVolatile);
+		result.setInline(isInline);
+		result.setGoto(isGoto);
 		((ASTNode) result).setOffsetAndLength(offset, lastOffset - offset);
 		return result;
 	}

@@ -11,6 +11,7 @@ public class Messages extends NLS {
 	public static String MakeBuildSettingsTab_BuildOutputLocation;
 	public static String MakeBuildSettingsTab_Clean;
 	public static String MakeBuildSettingsTab_Makefile;
+	public static String MakeBuildSettingsTab_UseTopLevelMakefile;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

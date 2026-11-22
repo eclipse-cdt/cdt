@@ -32,6 +32,7 @@ import org.eclipse.cdt.core.envvar.EnvironmentVariable;
 import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.core.build.BuildCommandUtil;
 import org.eclipse.cdt.internal.core.build.Messages;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.core.resources.IBuildConfiguration;
@@ -268,7 +269,8 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			List<String> command = new ArrayList<>();
 			command.add(parsedBuildCommand[0]);
 
-			if (!getBuildContainer().equals(getProject())) {
+			// -f is a make option, other build tools (e.g. ninja) reject it
+			if (!getBuildContainer().equals(getProject()) && BuildCommandUtil.acceptsMakefileOption(command.get(0))) {
 				Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
 				Path relative = getBuildDirectory().relativize(makefile);
 				command.add("-f"); //$NON-NLS-1$
@@ -333,7 +335,8 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			command.add(buildCommand.get(0));
 
 			// we need to add -f if the makefile isn't in the build directory
-			if (!getBuildContainer().equals(getProject())) {
+			// -f is a make option, other build tools (e.g. ninja) reject it
+			if (!getBuildContainer().equals(getProject()) && BuildCommandUtil.acceptsMakefileOption(command.get(0))) {
 				Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
 				Path relative = getBuildDirectory().relativize(makefile);
 				command.add("-f"); //$NON-NLS-1$

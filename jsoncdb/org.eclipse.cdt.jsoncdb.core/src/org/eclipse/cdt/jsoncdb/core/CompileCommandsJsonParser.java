@@ -210,7 +210,7 @@ public class CompileCommandsJsonParser {
 	private void processCommandEntry(CommandEntry sourceFileInfo, IFile jsonFile) throws CoreException {
 		// NOTE that this is the absolute file system path of the source file in
 		// CMake-notation (directory separator are forward slashes, even on windows)
-		final String file = sourceFileInfo.getFile();
+		String file = sourceFileInfo.getFile();
 		String cmdLine = sourceFileInfo.getCommand();
 		if (cmdLine == null) {
 			cmdLine = String.join(" ", sourceFileInfo.getArguments()); //$NON-NLS-1$
@@ -226,6 +226,13 @@ public class CompileCommandsJsonParser {
 				final String cwdStr = sourceFileInfo.getDirectory();
 				IPath cwd = cwdStr != null ? Path.fromOSString(cwdStr) : new Path(""); //$NON-NLS-1$
 				IResult result = parser.processArgs(cwd, pdr.getReducedCommandLine().stripLeading());
+
+				if (!cwd.isEmpty()) {
+					final IPath filePath = new Path(file);
+					if (!filePath.isAbsolute()) {
+						file = cwd.append(filePath).makeAbsolute().toString();
+					}
+				}
 				// remember result together with file name
 				rememberFileResult(file, result);
 

@@ -32,9 +32,12 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class MakeBuildSettingsTab extends CommonBuildTab {
+	private static final String TRUE = String.valueOf(true);
+	private static final String FALSE = String.valueOf(false);
 
 	private Button projectButton;
 	private Button configButton;
+	private Button useTopLevelMakefileButton;
 	private Text buildCmdText;
 	private Text cleanCmdText;
 
@@ -74,6 +77,10 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 		cmdGroup.setLayout(new GridLayout(2, false));
 		cmdGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
+		useTopLevelMakefileButton = new Button(cmdGroup, SWT.CHECK);
+		useTopLevelMakefileButton.setText(Messages.MakeBuildSettingsTab_UseTopLevelMakefile);
+		useTopLevelMakefileButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
+
 		Label label = new Label(cmdGroup, SWT.NONE);
 		label.setText(Messages.MakeBuildSettingsTab_Build);
 
@@ -92,13 +99,10 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 		return Messages.MakeBuildSettingsTab_Makefile;
 	}
 
-	@Override
-	protected void restoreProperties(Map<String, String> properties) {
-		// TODO Auto-generated method stub
-		super.restoreProperties(properties);
-
-		String container = properties.get(StandardBuildConfiguration.BUILD_CONTAINER);
+	private void updateControls(ICBuildConfiguration buildConfig, String container, String useTopLevelMakefile,
+			String buildCommand, String cleanCommand) {
 		if (container != null && !container.trim().isEmpty()) {
+
 			IPath containerLoc = new Path(container);
 			if (containerLoc.segmentCount() == 1) {
 				// TODO what if it's not the project?
@@ -110,15 +114,33 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 			}
 		}
 
-		String buildCommand = properties.get(StandardBuildConfiguration.BUILD_COMMAND);
+		if (useTopLevelMakefile != null && !useTopLevelMakefile.trim().isEmpty()) {
+			useTopLevelMakefileButton.setSelection(Boolean.valueOf(useTopLevelMakefile));
+		}
+
 		if (buildCommand != null && !buildCommand.trim().isEmpty()) {
 			buildCmdText.setText(buildCommand);
 		}
 
-		String cleanCommand = properties.get(StandardBuildConfiguration.CLEAN_COMMAND);
 		if (cleanCommand != null && !cleanCommand.trim().isEmpty()) {
 			cleanCmdText.setText(cleanCommand);
 		}
+	}
+
+	@Override
+	protected void restoreProperties(Map<String, String> properties) {
+		// TODO Auto-generated method stub
+		super.restoreProperties(properties);
+
+		String container = properties.get(StandardBuildConfiguration.BUILD_CONTAINER);
+
+		String useTopLevelMakefile = properties.get(StandardBuildConfiguration.BUILD_USE_TOP_LEVEL_MAKEFILE);
+
+		String buildCommand = properties.get(StandardBuildConfiguration.BUILD_COMMAND);
+
+		String cleanCommand = properties.get(StandardBuildConfiguration.CLEAN_COMMAND);
+
+		updateControls(getBuildConfiguration(), container, useTopLevelMakefile, buildCommand, cleanCommand);
 	}
 
 	@Override
@@ -127,15 +149,20 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 
 		try {
 			ICBuildConfiguration buildConfig = getBuildConfiguration();
-			if (buildConfig instanceof StandardBuildConfiguration) {
-				StandardBuildConfiguration stdConfig = (StandardBuildConfiguration) buildConfig;
+			if (buildConfig instanceof final StandardBuildConfiguration stdConfig) {
+				String buildContainerString = null;
 				if (defaultProject && !projectButton.getSelection()) {
-					properties.put(StandardBuildConfiguration.BUILD_CONTAINER,
-							stdConfig.getDefaultBuildContainer().getFullPath().toString());
+					buildContainerString = stdConfig.getDefaultBuildContainer().getFullPath().toString();
 				} else if (!defaultProject && projectButton.getSelection()) {
-					properties.put(StandardBuildConfiguration.BUILD_CONTAINER,
-							stdConfig.getProject().getFullPath().toString());
+					buildContainerString = stdConfig.getProject().getFullPath().toString();
 				}
+
+				if (buildContainerString != null && !buildContainerString.isEmpty()) {
+					properties.put(StandardBuildConfiguration.BUILD_CONTAINER, buildContainerString);
+				}
+
+				properties.put(StandardBuildConfiguration.BUILD_USE_TOP_LEVEL_MAKEFILE,
+						useTopLevelMakefileButton.getSelection() ? TRUE : FALSE);
 
 				String buildCommand = buildCmdText.getText().trim();
 				if (!buildCommand.isEmpty()) {
@@ -160,28 +187,16 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 		if (buildConfig == null) {
 			return;
 		}
+
 		String container = buildConfig.getProperty(StandardBuildConfiguration.BUILD_CONTAINER);
-		if (container != null && !container.trim().isEmpty()) {
-			IPath containerLoc = new Path(container);
-			if (containerLoc.segmentCount() == 1) {
-				// TODO what if it's not the project?
-				projectButton.setSelection(true);
-				defaultProject = true;
-			} else {
-				configButton.setSelection(true);
-				defaultProject = false;
-			}
-		}
+
+		String useTopLevelMakefile = buildConfig.getProperty(StandardBuildConfiguration.BUILD_USE_TOP_LEVEL_MAKEFILE);
 
 		String buildCommand = buildConfig.getProperty(StandardBuildConfiguration.BUILD_COMMAND);
-		if (buildCommand != null && !buildCommand.trim().isEmpty()) {
-			buildCmdText.setText(buildCommand);
-		}
 
 		String cleanCommand = buildConfig.getProperty(StandardBuildConfiguration.CLEAN_COMMAND);
-		if (cleanCommand != null && !cleanCommand.trim().isEmpty()) {
-			cleanCmdText.setText(cleanCommand);
-		}
+
+		updateControls(buildConfig, container, useTopLevelMakefile, buildCommand, cleanCommand);
 	}
 
 	@Override
@@ -190,13 +205,14 @@ public class MakeBuildSettingsTab extends CommonBuildTab {
 
 		try {
 			ICBuildConfiguration buildConfig = getBuildConfiguration();
-			if (buildConfig instanceof StandardBuildConfiguration) {
-				StandardBuildConfiguration stdConfig = (StandardBuildConfiguration) buildConfig;
+			if (buildConfig instanceof final StandardBuildConfiguration stdConfig) {
 				if (defaultProject && !projectButton.getSelection()) {
 					stdConfig.setBuildContainer(stdConfig.getDefaultBuildContainer());
 				} else if (!defaultProject && projectButton.getSelection()) {
 					stdConfig.setBuildContainer(stdConfig.getProject());
 				}
+
+				stdConfig.setUseTopLevelMakefile(useTopLevelMakefileButton.getSelection());
 
 				stdConfig.setBuildCommand(buildCmdText.getText());
 				stdConfig.setCleanCommand(cleanCmdText.getText());

@@ -42,7 +42,7 @@ public class MakefileBuildConfigurationProvider implements ICBuildConfigurationP
 			 */
 			return null;
 		}
-		return new StandardBuildConfiguration(config, name);
+		return new MakeBuildConfiguration(config, name);
 	}
 
 	@Override

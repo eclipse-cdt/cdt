@@ -529,7 +529,11 @@ public final class Arglets {
 				Pattern.compile("-march=\\\\S+"), //
 				Pattern.compile("-mcpu=\\\\S+"), //
 				Pattern.compile("-mtune=\\\\S+"), //
-				Pattern.compile("-pthread"), };
+				Pattern.compile("-pthread"), //
+				Pattern.compile("-x\\s*([^\\s\"']*)"), //
+				Pattern.compile("--language=([^\\s\"']*)"), //
+				Pattern.compile("--language\\s*([^\\s\"']*)"), //
+		};
 
 		/*-
 		 * @see org.eclipse.cdt.jsoncdb.core.participant.IArglet#processArgs(java.lang.String)

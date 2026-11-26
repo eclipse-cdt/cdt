@@ -53,11 +53,19 @@ import org.eclipse.launchbar.core.target.ILaunchTarget;
  * @since 6.2
  */
 public class StandardBuildConfiguration extends CBuildConfiguration {
+	private static final String TRUE = String.valueOf(true);
+	private static final String FALSE = String.valueOf(false);
+	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
 	/**
 	 * @since 6.4
 	 */
 	public static final String BUILD_CONTAINER = "stdbuild.build.container"; //$NON-NLS-1$
+
+	/** @since 9.4 */
+	public static final String BUILD_USE_TOP_LEVEL_MAKEFILE = "stdbuild.build.use.top.level.makefile"; //$NON-NLS-1$
+	private static final boolean DEFAULT_BUILD_USE_TOP_LEVEL_MAKEFILE = true;
+
 	/**
 	 * @since 6.4
 	 */
@@ -67,14 +75,21 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	 */
 	public static final String CLEAN_COMMAND = "stdbuild.clean.command"; //$NON-NLS-1$
 
+	/** @since 9.4 */
+	public static final String SCANNER_INFO_COMPILATION_DATABASE_PATH = "stdbuild.indexer.scanner.cdb-path"; //$NON-NLS-1$
+
 	private static final String DEFAULT_BUILD_COMMAND = "make"; //$NON-NLS-1$
 	private static final String DEFAULT_CLEAN_COMMAND = "make clean"; //$NON-NLS-1$
+	private static final String DEFAULT_SCANNER_INFO_COMPILATION_DATABASE_PATH = EMPTY_STRING;
 
 	private String buildCommand = DEFAULT_BUILD_COMMAND;
 	private String cleanCommand = DEFAULT_CLEAN_COMMAND;
 	private IContainer buildContainer;
 	private IEnvironmentVariable[] envVars;
 	private Stack<String> directoryStack = new Stack<>();
+
+	private boolean buildUseTopLevelMakefile = DEFAULT_BUILD_USE_TOP_LEVEL_MAKEFILE;
+	private String scannerInfoCompilationDatabasePath = DEFAULT_SCANNER_INFO_COMPILATION_DATABASE_PATH;
 
 	public StandardBuildConfiguration(IBuildConfiguration config, String name) throws CoreException {
 		super(config, name);
@@ -92,6 +107,13 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 		setupEnvVars();
 	}
 
+	/**
+	 * @since 9.4
+	 */
+	protected String getScannerInfoCompilationDatabasePath() {
+		return scannerInfoCompilationDatabasePath;
+	}
+
 	private IContainer getContainer(String containerPath) {
 		if (containerPath != null && !containerPath.trim().isEmpty()) {
 			IPath containerLoc = new org.eclipse.core.runtime.Path(containerPath);
@@ -107,6 +129,11 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	private void applyProperties() {
 		setBuildContainer(getProperty(BUILD_CONTAINER));
 
+		String useTopLevelMakefile = getProperty(BUILD_USE_TOP_LEVEL_MAKEFILE);
+		if (useTopLevelMakefile != null && !useTopLevelMakefile.isBlank()) {
+			this.buildUseTopLevelMakefile = Boolean.valueOf(useTopLevelMakefile);
+		}
+
 		String buildCommand = getProperty(BUILD_COMMAND);
 		if (buildCommand != null && !buildCommand.isBlank()) {
 			this.buildCommand = buildCommand;
@@ -119,6 +146,11 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			this.cleanCommand = cleanCommand;
 		} else {
 			this.cleanCommand = DEFAULT_CLEAN_COMMAND;
+		}
+
+		String scannerInfoCompilationDatabasePath = getProperty(SCANNER_INFO_COMPILATION_DATABASE_PATH);
+		if (scannerInfoCompilationDatabasePath != null && !scannerInfoCompilationDatabasePath.isBlank()) {
+			this.scannerInfoCompilationDatabasePath = scannerInfoCompilationDatabasePath;
 		}
 	}
 
@@ -165,10 +197,34 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 	public void setBuildContainer(IContainer buildContainer) {
 		this.buildContainer = buildContainer;
 		if (buildContainer == null) {
-			setProperty(BUILD_CONTAINER, ""); // overwrite old property value.
+			setProperty(BUILD_CONTAINER, EMPTY_STRING); // overwrite old property value.
 		} else {
 			setProperty(BUILD_CONTAINER, buildContainer.getFullPath().toString());
 		}
+	}
+
+	/**
+	 * Set a flag to build using Makefile in project root directory.
+	 *
+	 * @since 9.4
+	 */
+	public void setUseTopLevelMakefile(boolean value) {
+		this.buildUseTopLevelMakefile = value;
+		setProperty(BUILD_USE_TOP_LEVEL_MAKEFILE, value ? TRUE : FALSE);
+	}
+
+	/**
+	 * Set scanner info compilation database path to extract ScannerInfo data.
+	 *
+	 * @since 9.4
+	 */
+	public void setScannerInfoCompilationDatabasePath(String cdbPath) {
+		if (cdbPath == null) {
+			cdbPath = EMPTY_STRING;
+		}
+
+		this.scannerInfoCompilationDatabasePath = cdbPath;
+		setProperty(SCANNER_INFO_COMPILATION_DATABASE_PATH, cdbPath);
 	}
 
 	/**
@@ -233,10 +289,14 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 				CCorePlugin.log(e.getStatus());
 				return null;
 			}
+		case BUILD_USE_TOP_LEVEL_MAKEFILE:
+			return buildUseTopLevelMakefile ? TRUE : FALSE;
 		case BUILD_COMMAND:
 			return buildCommand;
 		case CLEAN_COMMAND:
 			return cleanCommand;
+		case SCANNER_INFO_COMPILATION_DATABASE_PATH:
+			return scannerInfoCompilationDatabasePath;
 		}
 
 		return null;
@@ -268,11 +328,13 @@ public class StandardBuildConfiguration extends CBuildConfiguration {
 			List<String> command = new ArrayList<>();
 			command.add(parsedBuildCommand[0]);
 
-			if (!getBuildContainer().equals(getProject())) {
-				Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
-				Path relative = getBuildDirectory().relativize(makefile);
-				command.add("-f"); //$NON-NLS-1$
-				command.add(relative.toString());
+			if (buildUseTopLevelMakefile) {
+				if (!getBuildContainer().equals(getProject())) {
+					Path makefile = Paths.get(getProject().getFile("Makefile").getLocationURI()); //$NON-NLS-1$
+					Path relative = getBuildDirectory().relativize(makefile);
+					command.add("-f"); //$NON-NLS-1$
+					command.add(relative.toString());
+				}
 			}
 
 			for (int i = 1; i < parsedBuildCommand.length; i++) {

@@ -525,9 +525,10 @@ public class CompileCommandsJsonParser {
 	 * @param compilerCommand      the command name of the compiler
 	 * @param builtinDetectionArgs the compiler arguments from the command-line that
 	 *                             affect built-in detection. For the GNU compilers,
-	 *                             these are options like {@code --sysroot} and
+	 *                             these are options like {@code --sysroot},
 	 *                             options that specify the language's standard
-	 *                             ({@code -std=c++17}.
+	 *                             ({@code -std=c++17} and options that specify language
+	 *                             ({@code -x c++}
 	 */
 	private void rememberBuiltinsDetection(String sourceFileName, IBuiltinsDetectionBehavior builtinsDetectionBehavior,
 			String compilerCommand, List<String> builtinDetectionArgs) {

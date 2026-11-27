@@ -32,6 +32,8 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *
  */
 public class MIExecInterrupt extends MICommand<MIInfo> {
+	private final boolean fAllThreads;
+
 	public MIExecInterrupt(IExecutionDMContext dmc) {
 		this(dmc, false);
 	}
@@ -57,10 +59,22 @@ public class MIExecInterrupt extends MICommand<MIInfo> {
 	 */
 	private MIExecInterrupt(IExecutionDMContext dmc, boolean allThreads, String groupId) {
 		super(dmc, "-exec-interrupt"); //$NON-NLS-1$
+		fAllThreads = allThreads;
 		if (allThreads) {
 			setParameters(new String[] { "--all" }); //$NON-NLS-1$
 		} else if (groupId != null) {
 			setParameters(new String[] { "--thread-group", groupId }); //$NON-NLS-1$
 		}
+	}
+
+	// GDB does not accept --thread or --thread-group together with --all
+	@Override
+	public boolean supportsThreadAndFrameOptions() {
+		return !fAllThreads && super.supportsThreadAndFrameOptions();
+	}
+
+	@Override
+	public boolean supportsThreadGroupOption() {
+		return !fAllThreads && super.supportsThreadGroupOption();
 	}
 }

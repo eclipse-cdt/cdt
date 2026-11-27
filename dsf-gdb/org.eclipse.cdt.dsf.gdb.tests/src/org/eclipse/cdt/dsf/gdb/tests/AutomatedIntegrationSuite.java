@@ -19,6 +19,7 @@ import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest_WithAlternativeProcessIdT
 import org.eclipse.cdt.dsf.gdb.service.GDBRegisterTest_WithContainerDMContextTest;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIBreakInsertCommand;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMICommandConstructCommand;
+import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIExecInterrupt;
 import org.eclipse.cdt.dsf.mi.service.command.commands.TestMIGDBSetSysroot;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStringHandlerTests;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadTests;
@@ -30,8 +31,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 // Add additional test case classes below
 @SuiteClasses({ MIThreadTests.class, TestMIBreakInsertCommand.class, TestMICommandConstructCommand.class,
-		TestMIGDBSetSysroot.class, LaunchUtilsTest.class, MIStringHandlerTests.class, ProcStatParserTest.class,
-		FilePartsTest.class, GDBRegisterTest.class, GDBRegisterTest_NoContainerTest.class,
+		TestMIExecInterrupt.class, TestMIGDBSetSysroot.class, LaunchUtilsTest.class, MIStringHandlerTests.class,
+		ProcStatParserTest.class, FilePartsTest.class, GDBRegisterTest.class, GDBRegisterTest_NoContainerTest.class,
 		GDBRegisterTest_WithAlternativeProcessIdTest.class, GDBRegisterTest_WithContainerDMContextTest.class, })
 public class AutomatedIntegrationSuite {
 	// Often overriding BeforeClass method here

@@ -72,6 +72,8 @@ public class IndexerPreferences {
 	public static final String KEY_INDEX_ALL_HEADER_VERSIONS = "indexAllHeaderVersions"; //$NON-NLS-1$
 	public static final String KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS = "indexAllVersionsSpecificHeaders"; //$NON-NLS-1$
 
+	public static final String KEY_AUTO_DETECT_CONTENT_TYPE = "autoDetectContentType"; //$NON-NLS-1$
+
 	private static final String DEFAULT_INDEX_IMPORT_LOCATION = ".settings/cdt-index.zip"; //$NON-NLS-1$
 	private static final int DEFAULT_UPDATE_POLICY = 0;
 	public static final int DEFAULT_FILE_SIZE_LIMIT_MB = 8;
@@ -335,6 +337,7 @@ public class IndexerPreferences {
 		prefs.putBoolean(KEY_SKIP_MACRO_REFERENCES, false);
 		prefs.put(KEY_INDEX_IMPORT_LOCATION, DEFAULT_INDEX_IMPORT_LOCATION);
 		prefs.putBoolean(KEY_INDEX_ALL_HEADER_VERSIONS, false);
+		prefs.putBoolean(KEY_AUTO_DETECT_CONTENT_TYPE, false);
 	}
 
 	public static void setDefaultIndexerId(String defaultId) {
@@ -454,5 +457,9 @@ public class IndexerPreferences {
 
 	public static boolean getReindexOnIndexerChange(IProject project) {
 		return getProjectPreferences(project).getBoolean(KEY_REINDEX_ON_INDEXER_CHANGE, true);
+	}
+
+	public static boolean getAutoDetectContentType(IProject project) {
+		return getProjectPreferences(project).getBoolean(KEY_AUTO_DETECT_CONTENT_TYPE, false);
 	}
 }

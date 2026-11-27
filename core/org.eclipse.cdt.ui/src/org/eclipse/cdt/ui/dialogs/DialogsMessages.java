@@ -21,6 +21,7 @@ package org.eclipse.cdt.ui.dialogs;
 import org.eclipse.osgi.util.NLS;
 
 class DialogsMessages extends NLS {
+	public static String AbstractIndexerPage_autoDetectContentType;
 	public static String AbstractIndexerPage_fileSizeLimit;
 	public static String AbstractIndexerPage_includedFileSizeLimit;
 	public static String AbstractIndexerPage_heuristicIncludes;

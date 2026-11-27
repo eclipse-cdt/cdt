@@ -58,6 +58,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	private Button fSkipMacroAndTypeReferences;
 	private Button fIndexAllHeaderVersions;
 	private Text fIndexAllVersionsSpecificHeaders;
+	private Button fAutoDetectContentType;
 
 	private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
 		@Override
@@ -152,6 +153,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 		fSkipReferences = createSkipReferencesButton(group);
 		fSkipImplicitReferences = createSkipImplicitReferencesButton(group);
 		fSkipMacroAndTypeReferences = createSkipMacroAndTypeReferencesButton(group);
+		fAutoDetectContentType = createAutoDetectContentTypeButton(group);
 
 		final SelectionAdapter selectionListener = new SelectionAdapter() {
 			@Override
@@ -245,6 +247,11 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 					.getProperty((IndexerPreferences.KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS), ""); //$NON-NLS-1$
 			fIndexAllVersionsSpecificHeaders.setText(indexAllVersionsSpecificHeaders);
 		}
+		if (fAutoDetectContentType != null) {
+			boolean autoDetectContentType = TRUE
+					.equals(properties.get((IndexerPreferences.KEY_AUTO_DETECT_CONTENT_TYPE)));
+			fAutoDetectContentType.setSelection(autoDetectContentType);
+		}
 		updateEnablement();
 	}
 
@@ -309,6 +316,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 			}
 
 			props.put((IndexerPreferences.KEY_INDEX_ALL_VERSIONS_SPECIFIC_HEADERS), sb.toString());
+		}
+		if (fAutoDetectContentType != null) {
+			props.put((IndexerPreferences.KEY_AUTO_DETECT_CONTENT_TYPE),
+					String.valueOf(fAutoDetectContentType.getSelection()));
 		}
 		return props;
 	}
@@ -419,6 +430,10 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 
 	private Button createSkipMacroAndTypeReferencesButton(Composite page) {
 		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_skipTypeAndMacroReferences);
+	}
+
+	private Button createAutoDetectContentTypeButton(Composite page) {
+		return ControlFactory.createCheckBox(page, DialogsMessages.AbstractIndexerPage_autoDetectContentType);
 	}
 
 	/**

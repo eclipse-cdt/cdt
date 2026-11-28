@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
@@ -77,6 +78,7 @@ import org.eclipse.cdt.internal.core.index.IndexBasedFileContentProvider;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.parser.ParserLogService;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContentProvider;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerIncludeResolutionHeuristics;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
 import org.eclipse.cdt.internal.core.util.ICanceler;
@@ -106,6 +108,8 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		CompositeValue.sDEBUG = Boolean
 				.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/parser/CompositeValue")); //$NON-NLS-1$
 	}
+
+	private static final String MACRO_CPLUSPLUS = new String("__cplusplus"); //$NON-NLS-1$
 
 	private URI location;
 	private String contentTypeId;
@@ -475,7 +479,7 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 			// Might be IResource.NULL_STAMP if original does not exist
 			IResource r = original.getResource();
 			if (r != null && r instanceof IFile) {
-				unitInfo.fTimestamp = ((IFile) r).getModificationStamp();
+				unitInfo.fTimestamp = r.getModificationStamp();
 			}
 		}
 
@@ -805,7 +809,32 @@ public class TranslationUnit extends Openable implements ITranslationUnit {
 		return contentTypeId;
 	}
 
+	private boolean contentHasCPlusPlusMacro() {
+		final IScannerInfo scannerInfo = getScannerInfo(true);
+		if (scannerInfo != null) {
+			if (scannerInfo.getDefinedSymbols().get(MACRO_CPLUSPLUS) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	protected void setContentTypeID(String id) {
+		final boolean autoDetectContentType = Optional.ofNullable(getCProject().getProject()) //
+				.map(p -> IndexerPreferences.getProperties(p))
+				.map(props -> props.getProperty(IndexerPreferences.KEY_AUTO_DETECT_CONTENT_TYPE)) //
+				.map(Boolean::valueOf).orElse(false); //
+
+		if (autoDetectContentType) {
+			if (contentHasCPlusPlusMacro()) {
+				if (isHeaderContentType(id)) {
+					id = CCorePlugin.CONTENT_TYPE_CXXHEADER;
+				} else if (isSourceContentType(id)) {
+					id = CCorePlugin.CONTENT_TYPE_CXXSOURCE;
+				}
+			}
+		}
+
 		contentTypeId = id;
 	}
 

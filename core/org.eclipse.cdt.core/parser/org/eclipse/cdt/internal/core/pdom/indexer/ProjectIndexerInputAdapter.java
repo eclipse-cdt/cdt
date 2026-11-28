@@ -31,6 +31,7 @@ import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
 import org.eclipse.cdt.core.parser.FileContent;
 import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.parser.InternalParserUtil;
 import org.eclipse.cdt.internal.core.pdom.AbstractIndexerTask.UnusedHeaderStrategy;
@@ -38,6 +39,7 @@ import org.eclipse.cdt.internal.core.pdom.IndexerInputAdapter;
 import org.eclipse.cdt.internal.core.resources.PathCanonicalizationStrategy;
 import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -264,7 +266,27 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 	@Override
 	public boolean isFileBuildConfigured(Object tuo) {
 		ITranslationUnit tu = (ITranslationUnit) tuo;
-		return !CoreModel.isScannerInformationEmpty(tu.getResource());
+		if (!CoreModel.isScannerInformationEmpty(tu.getResource())) {
+			return true;
+		}
+
+		// If project scanner info is obtained directly from compilation database,
+		// CoreModel can have no scanner info at all. To allow indexing only files
+		// included in build for such projects additionally check if scanner information
+		// is available via provider.
+		// TODO: maybe rename this method to isScannerInformationAvailable()
+
+		IProject rproject = tu.getCProject().getProject();
+		IResource resource = tu.getResource();
+		IResource infoResource = resource != null ? resource : rproject;
+		IScannerInfoProvider provider = CCorePlugin.getDefault().getScannerInfoProvider(rproject);
+		if (provider != null) {
+			IScannerInfo scanInfo = provider.getScannerInformation(infoResource);
+			if (scanInfo != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

@@ -47,9 +47,9 @@ import org.junit.runners.Suite;
 		MIRunControlNonStopTargetAvailableTest.class, MIExpressionsNonStopTest.class,
 		OperationsWhileTargetIsRunningNonStopTest.class, StepIntoSelectionNonStopTest.class,
 		GDBRemoteTracepointsTest.class, TraceFileTest.class, GDBConsoleSynchronizingTest.class, MIMemoryTest.class,
-		MIDisassemblyTest.class, GDBProcessesTest.class, PostMortemCoreTest.class, CommandTimeoutTest.class,
-		ThreadStackFrameSyncTest.class, CommandLineArgsTest.class, MIAsyncErrorProcessorTests.class,
-		MultiProcessRemoteTest.class, MIRunControlTargetAvailableRaceTest.class,
+		MIDisassemblyTest.class, GDBProcessesTest.class, GDBExitTest.class, PostMortemCoreTest.class,
+		CommandTimeoutTest.class, ThreadStackFrameSyncTest.class, CommandLineArgsTest.class,
+		MIAsyncErrorProcessorTests.class, MultiProcessRemoteTest.class, MIRunControlTargetAvailableRaceTest.class,
 		MIRunControlNonStopTargetAvailableRaceTest.class
 /* Add your test class here */
 })

@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -21,10 +23,15 @@ import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
+import org.eclipse.cdt.dsf.gdb.internal.service.ProcessStopper;
+import org.eclipse.cdt.dsf.mi.service.IMICommandControl;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIProcessDMContext;
 import org.eclipse.cdt.dsf.mi.service.IMIRunControl;
+import org.eclipse.cdt.dsf.mi.service.IMIRunControl.MIRunMode;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -64,8 +71,8 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 					if (getData() instanceof IMIContainerDMContext) {
 						IMIContainerDMContext containerDmc = (IMIContainerDMContext) getData();
 						IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
-						if (runControl != null && !runControl.isSuspended(containerDmc)) {
-							runControl.suspend(containerDmc, new ImmediateRequestMonitor(rm) {
+						if (runControl != null) {
+							stopProcess(runControl, containerDmc, new ImmediateRequestMonitor(rm) {
 								@Override
 								protected void handleCompleted() {
 									GDBProcesses_7_12.super.terminate(thread, rm);
@@ -110,8 +117,8 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 
 		IMIContainerDMContext containerDmc = DMContexts.getAncestorOfType(dmc, IMIContainerDMContext.class);
 		IMIRunControl runControl = getServicesTracker().getService(IMIRunControl.class);
-		if (containerDmc != null && runControl != null && !runControl.isSuspended(containerDmc)) {
-			runControl.suspend(containerDmc, new ImmediateRequestMonitor(rm) {
+		if (containerDmc != null && runControl != null) {
+			stopProcess(runControl, containerDmc, new ImmediateRequestMonitor(rm) {
 				@Override
 				protected void handleCompleted() {
 					GDBProcesses_7_12.super.detachDebuggerFromProcess(dmc, rm);
@@ -120,6 +127,61 @@ public class GDBProcesses_7_12 extends GDBProcesses_7_11 {
 		} else {
 			super.detachDebuggerFromProcess(dmc, rm);
 		}
+	}
+
+	/**
+	 * Suspends the process before a kill or a detach, if it runs. In a local session, also waits
+	 * until all its threads stop: GDB can hang in a kill or a detach while the program starts
+	 * threads, see #1065. Only this process is interrupted, so that the other processes of the
+	 * session keep running.
+	 */
+	private void stopProcess(IMIRunControl runControl, IMIContainerDMContext containerDmc, RequestMonitor rm) {
+		IGDBBackend backend = getServicesTracker().getService(IGDBBackend.class);
+		IMICommandControl control = getServicesTracker().getService(IMICommandControl.class);
+		if (backend == null || control == null || backend.getSessionType() != SessionType.LOCAL) {
+			if (runControl.isSuspended(containerDmc)) {
+				rm.done();
+			} else {
+				runControl.suspend(containerDmc, rm);
+			}
+			return;
+		}
+		RequestMonitor stopRm = ProcessStopper.withTimeout(getExecutor(), ProcessStopper.STOP_WAIT_TIME_MS, rm);
+		if (runControl.getRunMode() != MIRunMode.NON_STOP) {
+			// In all-stop mode, one interrupt stops all threads. Continue as soon as the process
+			// is suspended: if the kill or the detach comes later, the Debug view has time to
+			// select the stopped thread and open its source.
+			if (runControl.isSuspended(containerDmc)) {
+				stopRm.done();
+			} else {
+				runControl.suspend(containerDmc, stopRm);
+			}
+			return;
+		}
+		// In non-stop mode, GDB often does not stop a program that starts threads on
+		// -exec-interrupt --thread-group, so interrupt each thread, also the new ones. Send the
+		// interrupts directly: runControl.suspend() completes only on *stopped, which a thread
+		// that exits at the same time never sends. stopThreads() checks whether the threads stop.
+		long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(ProcessStopper.STOP_WAIT_TIME_MS);
+		ProcessStopper.stopThreads(getExecutor(), runControl, List.of(containerDmc),
+				running -> interruptRunningThreads(runControl, control, containerDmc), true, deadline, stopRm);
+	}
+
+	private void interruptRunningThreads(IMIRunControl runControl, IMICommandControl control,
+			IMIContainerDMContext containerDmc) {
+		runControl.getExecutionContexts(containerDmc,
+				new DataRequestMonitor<IExecutionDMContext[]>(getExecutor(), null) {
+					@Override
+					protected void handleSuccess() {
+						for (IExecutionDMContext thread : getData()) {
+							if (!runControl.isSuspended(thread)) {
+								// Ignore the reply: a thread can exit before GDB interrupts it
+								control.queueCommand(control.getCommandFactory().createMIExecInterrupt(thread),
+										new DataRequestMonitor<MIInfo>(getExecutor(), null));
+							}
+						}
+					}
+				});
 	}
 
 	/**

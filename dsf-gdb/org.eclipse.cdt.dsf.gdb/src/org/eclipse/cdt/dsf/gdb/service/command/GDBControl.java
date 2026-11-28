@@ -48,6 +48,8 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitorWithProgress;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
 import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
+import org.eclipse.cdt.dsf.datamodel.IDMContext;
+import org.eclipse.cdt.dsf.debug.service.IProcesses;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControl;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
@@ -57,10 +59,12 @@ import org.eclipse.cdt.dsf.gdb.IGDBLaunchConfigurationConstants;
 import org.eclipse.cdt.dsf.gdb.IGdbDebugConstants;
 import org.eclipse.cdt.dsf.gdb.internal.GdbPlugin;
 import org.eclipse.cdt.dsf.gdb.internal.Messages;
+import org.eclipse.cdt.dsf.gdb.internal.service.ProcessStopper;
 import org.eclipse.cdt.dsf.gdb.launching.FinalLaunchSequence;
 import org.eclipse.cdt.dsf.gdb.launching.GDBRemoteTCPLaunchTargetProvider;
 import org.eclipse.cdt.dsf.gdb.service.IGDBBackend;
 import org.eclipse.cdt.dsf.gdb.service.IGDBProcesses;
+import org.eclipse.cdt.dsf.gdb.service.SessionType;
 import org.eclipse.cdt.dsf.gdb.service.command.GdbCommandTimeoutManager.ICommandTimeoutListener;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend.BackendStateChangedEvent;
@@ -340,6 +344,20 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			fMIBackend.interrupt();
 		}
 
+		// GDB can hang in -gdb-exit while a running program starts threads, see #1065.
+		// So in async mode, stop the program first. The stop has its own time limit,
+		// so that -gdb-exit still gets the full getGDBExitWaitTime() after it.
+		stopRunningProcesses(runControl, new RequestMonitor(getExecutor(), null) {
+			@Override
+			protected void handleCompleted() {
+				// Also if the stop failed or took too long. If GDB then hangs in -gdb-exit,
+				// the force-quit timer destroys it.
+				exitGDB(rm);
+			}
+		});
+	}
+
+	private void exitGDB(RequestMonitor rm) {
 		// Schedule a runnable to be executed 2 seconds from now.
 		// If we don't get a response to the quit command, this
 		// runnable will kill the task.
@@ -371,6 +389,41 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 						// to leave enough time for the interrupt() to complete.
 					}
 				});
+	}
+
+	/**
+	 * Stops the processes that run while GDB accepts commands, that is in async mode, and waits
+	 * until all their threads stop, or until {@link ProcessStopper#STOP_WAIT_TIME_MS} has passed.
+	 * Does nothing for remote sessions: the hang of #1065 occurs with local programs, and
+	 * to halt a remote target, such as a JTAG probe, can take long.
+	 */
+	private void stopRunningProcesses(IMIRunControl runControl, RequestMonitor rm) {
+		IProcesses processes = getServicesTracker().getService(IProcesses.class);
+		if (runControl == null || processes == null || !runControl.isTargetAcceptingCommands()
+				|| fMIBackend.getSessionType() != SessionType.LOCAL) {
+			rm.done();
+			return;
+		}
+		long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(ProcessStopper.STOP_WAIT_TIME_MS);
+		// Completes rm also if GDB does not reply to the commands of the stop
+		RequestMonitor stopRm = ProcessStopper.withTimeout(getExecutor(), ProcessStopper.STOP_WAIT_TIME_MS, rm);
+		processes.getProcessesBeingDebugged(fControlDmc, new DataRequestMonitor<IDMContext[]>(getExecutor(), stopRm) {
+			@Override
+			protected void handleSuccess() {
+				List<IContainerDMContext> containers = new ArrayList<>();
+				for (IDMContext context : getData()) {
+					if (context instanceof IContainerDMContext container) {
+						containers.add(container);
+					}
+				}
+				// In non-stop mode, -exec-interrupt --thread-group can miss threads that start at
+				// the same time. GDB exits anyway, so interrupt all threads of all processes.
+				ProcessStopper.stopThreads(getExecutor(), runControl, containers,
+						running -> queueCommand(getCommandFactory().createMIExecInterrupt(running.get(0), true),
+								new DataRequestMonitor<MIInfo>(getExecutor(), null)),
+						false, deadline, stopRm);
+			}
+		});
 	}
 
 	/**
